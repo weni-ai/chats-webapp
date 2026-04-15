@@ -6,7 +6,6 @@
         :key="message.uuid"
         :quickMessage="message"
         @edit="openConfigMessageDrawer(message)"
-        @delete="deleteMessage(message)"
       />
     </section>
     <QuickMessageDrawer
@@ -156,10 +155,6 @@ export default {
       this.handleConnectOverlay(false);
       this.quickMessageToEdit = { title: '', text: '', shortcut: '' };
       this.showQuickMessageDrawer = false;
-    },
-
-    async deleteMessage(message) {
-      this.deleteQuickMessage(message.uuid);
     },
   },
 };

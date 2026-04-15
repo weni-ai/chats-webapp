@@ -15,6 +15,12 @@
           :text="$t('quick_messages.new')"
           @click="listSectorMessagesRef?.openConfigMessageDrawer()"
         />
+        <UnnnicButton
+          v-if="activeTab?.id === 'queues'"
+          iconLeft="add"
+          :text="$t('config_chats.queues.add_queue')"
+          @click="listSectorQueuesRef?.openConfigQueueDrawer()"
+        />
       </template>
       <template #tabs>
         <UnnnicTabs
@@ -45,6 +51,7 @@
             <section class="sector-edit__content">
               <ListSectorQueues
                 v-if="sector.uuid"
+                ref="listSectorQueues"
                 :sector="sector"
                 :data-testid="`sector-queues-list`"
               />
@@ -93,7 +100,7 @@ import { useConfig } from '@/store/modules/config';
 
 import FormSectorGeneral from '@/views/Settings/Forms/General.vue';
 import FormSectorExtraOptions from '@/views/Settings/Forms/ExtraOptions.vue';
-import ListSectorQueues from '@/views/Settings/Lists/ListSectorQueues.vue';
+import ListSectorQueues from '@/views/Settings/Lists/ListSectorQueues/index.vue';
 import ListSectorMessages from '@/views/Settings/Lists/ListSectorMessages/index.vue';
 
 import i18n from '@/plugins/i18n';
@@ -118,6 +125,7 @@ const { setCopilotActive, setCopilotCustomRulesActive, setCopilotCustomRules } =
   configStore;
 
 const listSectorMessagesRef = useTemplateRef('listSectorMessages');
+const listSectorQueuesRef = useTemplateRef('listSectorQueues');
 
 const activeTab = ref<{ name: string; id: string } | null>(null);
 

@@ -70,6 +70,7 @@ export default {
 
   async editQueue(queueInfo) {
     const response = await http.patch(`/queue/${queueInfo.uuid}/`, {
+      name: queueInfo.name,
       default_message: queueInfo.default_message,
       queue_limit: queueInfo.queue_limit,
     });

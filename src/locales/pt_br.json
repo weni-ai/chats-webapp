@@ -955,8 +955,9 @@
       "new": "Nova fila",
       "title": "Gestão de filas",
       "hint": "As filas são grupos de atendimento dentro do setor, você poderá criar novas filas ou editar quando quiser",
+      "filter_by_name": "Filtrar por nome da fila",
       "add_queue": "Adicionar fila",
-      "delete_this_queue": "Excluir esta fila",
+      "delete_this_queue": "Digite o nome da fila a excluir",
       "configure_queue": {
         "title": "Configurar fila",
         "tooltip": "As filas são grupos de atendimento dentro do setor. Você pode criar novas filas ou editá-las quando quiser após criar o setor."

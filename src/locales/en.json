@@ -950,8 +950,9 @@
       "new": "New queue",
       "title": "Queues Management",
       "hint": "Queues are support groups within the sector; you can create new queues or edit them whenever you want.",
+      "filter_by_name": "Filter by queue name",
       "add_queue": "Add queue",
-      "delete_this_queue": "Delete this queue",
+      "delete_this_queue": "Type the name of the queue to delete",
       "configure_queue": {
         "title": "Configure queue",
         "tooltip": "Queues are support groups within the sector. You can create new queues or edit them whenever you want with the created sector."

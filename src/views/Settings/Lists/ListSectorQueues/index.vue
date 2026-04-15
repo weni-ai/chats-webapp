@@ -9,7 +9,8 @@
         class="sector-queues-form__filters__input"
         iconLeft="search-1"
         size="md"
-        :placeholder="$t('search')"
+        :label="$t('config_chats.queues.filter_by_name')"
+        :placeholder="$t('type_to_filter')"
       />
       <ListOrdinator
         v-model="queueOrder"
@@ -17,70 +18,13 @@
       />
     </section>
     <section class="sector-queues-form-grid">
-      <UnnnicCard
-        class="sector-queues-form-grid__new-queue"
-        type="blank"
-        :text="$t('config_chats.queues.new')"
-        icon="add"
-        data-testid="create-sector-card"
-        @click.stop="openConfigQueueDrawer()"
-      />
-      <UnnnicSimpleCard
+      <QueueCard
         v-for="queue in queuesOrdered"
         :key="queue.uuid"
-        :title="queue.name"
-        clickable
-        class="sector-queues-form-grid-sector-card"
-        data-testid="queue-card"
-        @click="openConfigQueueDrawer(queue)"
-      >
-        <template #headerSlot>
-          <UnnnicDropdown position="top-left">
-            <template #trigger>
-              <UnnnicToolTip
-                enabled
-                :text="$t('config_chats.queues.delete_or_edit')"
-                side="left"
-              >
-                <UnnnicButton
-                  iconCenter="more_vert"
-                  type="tertiary"
-                  data-testid="open-dropdown-menu-button"
-                />
-              </UnnnicToolTip>
-            </template>
-            <UnnnicDropdownItem
-              data-testid="dropdown-edit"
-              @click="openConfigQueueDrawer(queue)"
-            >
-              <section class="dropdown-item-content">
-                <UnnnicIconSvg
-                  class="icon"
-                  icon="edit_square"
-                  size="sm"
-                />
-                <p>{{ $t('edit') }}</p>
-              </section>
-            </UnnnicDropdownItem>
-            <UnnnicDropdownItem
-              data-testid="dropdown-delete"
-              @click.stop="handlerOpenDeleteQueueModal(queue)"
-            >
-              <section
-                class="dropdown-item-content dropdown-item-content__delete"
-              >
-                <UnnnicIconSvg
-                  class="icon"
-                  icon="delete"
-                  size="sm"
-                  scheme="danger"
-                />
-                <p>{{ $t('exclude') }}</p>
-              </section>
-            </UnnnicDropdownItem>
-          </UnnnicDropdown>
-        </template>
-      </UnnnicSimpleCard>
+        :queue="queue"
+        @edit="openConfigQueueDrawer(queue)"
+        @delete="deleteQueue(queue)"
+      />
     </section>
   </section>
   <UnnnicDrawer
@@ -88,9 +32,7 @@
     ref="queueDrawer"
     :modelValue="showQueueDrawer"
     :title="
-      queueToConfig[0].uuid
-        ? queueToConfig[0].name
-        : $t('config_chats.queues.new')
+      queueToConfig[0].uuid ? editQueueTitle : $t('config_chats.queues.new')
     "
     :description="$t('config_chats.queues.in_sector', { sector: sector.name })"
     size="lg"
@@ -111,22 +53,10 @@
         v-model="queueToConfig"
         :sector="sector"
         data-testid="queue-config-form"
-        @update-queue-agents-count="updateAgentsCount($event)"
         @change-is-valid="validForm = $event"
       />
     </template>
   </UnnnicDrawer>
-  <ModalConfirmDelete
-    v-if="showDeleteQueueModal"
-    v-model="showDeleteQueueModal"
-    data-testid="delete-queue-modal"
-    :title="$t('delete_queue_modal.text', { queue: queueToDelete.name })"
-    :description="$t('cant_revert')"
-    :confirmText="queueToDelete.name"
-    :isLoading="isLoadingDeleteQueue"
-    @confirm="deleteQueue()"
-    @cancel="handlerCloseDeleteQueueModal()"
-  />
 </template>
 
 <script>
@@ -134,10 +64,11 @@ import { mapState } from 'pinia';
 
 import FormQueue from '@/views/Settings/Forms/Queue/index.vue';
 import ListOrdinator from '@/components/ListOrdinator.vue';
-import Queue from '@/services/api/resources/settings/queue';
-import ModalConfirmDelete from '@/components/ModalConfirmDelete.vue';
+import QueueCard from './QueueCard.vue';
 
 import { useFeatureFlag } from '@/store/modules/featureFlag';
+
+import Queue from '@/services/api/resources/settings/queue';
 
 import unnnic from '@weni/unnnic-system';
 
@@ -146,7 +77,7 @@ export default {
   components: {
     FormQueue,
     ListOrdinator,
-    ModalConfirmDelete,
+    QueueCard,
   },
   props: {
     sector: {
@@ -160,13 +91,11 @@ export default {
       page: 0,
       showQueueDrawer: false,
       queueToConfig: [{}],
+      editQueueTitle: '',
       loadingQueueConfig: false,
-      showDeleteQueueModal: false,
-      queueToDelete: {},
       validForm: false,
       queueNameFilter: '',
       queueOrder: 'alphabetical',
-      isLoadingDeleteQueue: false,
     };
   },
 
@@ -209,41 +138,10 @@ export default {
     this.getQueues();
   },
   methods: {
-    async deleteQueue() {
-      try {
-        this.isLoadingDeleteQueue = true;
-        await Queue.delete(this.queueToDelete.uuid);
-        this.queues = this.queues.filter(
-          (queue) => queue.uuid !== this.queueToDelete.uuid,
-        );
-        unnnic.unnnicCallAlert({
-          props: {
-            text: this.$t('config_chats.queues.message.delete_success'),
-            type: 'success',
-          },
-        });
-      } catch (error) {
-        unnnic.unnnicCallAlert({
-          props: {
-            text: this.$t('config_chats.queues.message.delete_error'),
-            type: 'error',
-          },
-        });
-        console.log(error);
-      } finally {
-        this.handlerCloseDeleteQueueModal();
-        this.isLoadingDeleteQueue = false;
-      }
-    },
-    handlerCloseDeleteQueueModal() {
-      this.handleConnectOverlay(false);
-      this.queueToDelete = {};
-      this.showDeleteQueueModal = false;
-    },
-    handlerOpenDeleteQueueModal(queue) {
-      this.handleConnectOverlay(true);
-      this.queueToDelete = queue;
-      this.showDeleteQueueModal = true;
+    async deleteQueue(deletedQueue) {
+      this.queues = this.queues.filter(
+        (queue) => queue.uuid !== deletedQueue.uuid,
+      );
     },
     handleConnectOverlay(active) {
       window.parent.postMessage({ event: 'changeOverlay', data: active }, '*');
@@ -252,7 +150,6 @@ export default {
       window.addEventListener('message', (message) => {
         const { event } = message.data;
         if (event === 'close') {
-          this.handlerCloseDeleteQueueModal();
           this.$refs.queueDrawer?.close();
         }
       });
@@ -261,6 +158,7 @@ export default {
       this.handleConnectOverlay(true);
 
       if (queue) {
+        this.editQueueTitle = queue.name;
         this.queueToConfig = [
           {
             ...queue,
@@ -330,6 +228,7 @@ export default {
           ]);
 
           const { data: updatedQueue } = await Queue.editQueue({
+            name,
             uuid,
             default_message,
             queue_limit: this.enableQueueLimitFeature
@@ -384,10 +283,6 @@ export default {
         this.closeQueueConfigDrawer();
       }
     },
-    updateAgentsCount(queue) {
-      const queueIndex = this.queues.findIndex((q) => q.uuid === queue.uuid);
-      if (queueIndex > -1) this.queues[queueIndex] = queue;
-    },
   },
 };
 </script>
@@ -395,25 +290,13 @@ export default {
 <style lang="scss" scoped>
 .sector-queues-form {
   display: grid;
-  gap: $unnnic-spacing-ant;
-
-  .dropdown-item-content {
-    display: flex;
-    align-items: center;
-    gap: $unnnic-spacing-xs;
-
-    white-space: nowrap;
-
-    &__delete {
-      color: red;
-    }
-  }
+  gap: $unnnic-space-3;
 
   &__filters {
     display: flex;
     flex-wrap: wrap;
     align-items: center;
-    gap: $unnnic-spacing-stack-sm $unnnic-spacing-inline-md;
+    gap: $unnnic-space-4 $unnnic-space-6;
 
     &__input {
       flex: 1;
@@ -427,53 +310,7 @@ export default {
   &-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    gap: $unnnic-spacing-xs;
-
-    &-sector-card {
-      min-height: 120px;
-      :deep(.unnnic-simple-card-header-container__title) {
-        color: $unnnic-color-fg-emphasized;
-      }
-      &__open-label {
-        color: $unnnic-color-fg-base;
-        font-family: $unnnic-font-family-secondary;
-        font-size: $unnnic-font-size-body-gt;
-        line-height: $unnnic-font-size-body-gt + $unnnic-line-height-md;
-      }
-      &-footer {
-        display: flex;
-        gap: $unnnic-spacing-nano;
-        &__agent-count {
-          color: $unnnic-color-fg-base;
-          font-family: $unnnic-font-family-secondary;
-          font-size: $unnnic-font-size-body-gt;
-          font-weight: $unnnic-font-weight-bold;
-          line-height: $unnnic-font-size-body-gt + $unnnic-line-height-md;
-        }
-        &__agent-label {
-          color: $unnnic-color-fg-base;
-          font-family: $unnnic-font-family-secondary;
-          font-size: $unnnic-font-size-body-gt;
-          line-height: $unnnic-font-size-body-gt + $unnnic-line-height-md;
-        }
-      }
-    }
-
-    &__new-queue:hover {
-      box-shadow: $unnnic-shadow-1;
-    }
-    &__new-queue:active {
-      border: 1px solid $unnnic-color-border-soft;
-    }
-    &__new-queue {
-      min-height: 120px;
-      :deep(.unnnic-card-blank__content) {
-        flex-direction: row;
-      }
-      :deep(.unnnic-card-blank__content__icon) {
-        font-size: $unnnic-font-size-title-md;
-      }
-    }
+    gap: $unnnic-space-2;
   }
 }
 </style>

@@ -953,8 +953,9 @@
       "new": "Nueva cola",
       "title": "Gestión de colas",
       "hint": "Las colas son grupos de atención dentro de un sector; podrás crear nuevas colas o editarlas cuando desees.",
+      "filter_by_name": "Filtrar por nombre de la cola",
       "add_queue": "Agregar cola",
-      "delete_this_queue": "Eliminar esta cola",
+      "delete_this_queue": "Escribe el nombre de la cola a eliminar",
       "configure_queue": {
         "title": "Configurar cola",
         "tooltip": "Las colas son grupos de atención dentro del sector. Puedes crear nuevas colas o editarlas cuando quieras después de crear el sector."

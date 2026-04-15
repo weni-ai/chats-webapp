@@ -1,62 +1,17 @@
 <template>
   <section class="sector-queues-form">
     <UnnnicInput
-      v-if="!isEditing"
       v-model="queueForm.name"
       :label="$t('queues.queue_name')"
       :placeholder="$t('queues.queue_name_placeholder')"
       data-testid="queue-name-input"
       class="input"
     />
-    <UnnnicChatText
-      v-if="isEditing"
-      class="sector-queues-form__automatic-message"
-      titleColor="neutral-dark"
-      size="small"
-      :title="$t('automatic_message.title')"
-      :info="$t('automatic_message.info')"
-    >
-      <template #actions>
-        <UnnnicButton
-          v-if="!editingAutomaticMessage"
-          class="sector-queues-form__automatic-message-button"
-          type="secondary"
-          iconCenter="edit"
-          data-testid="edit-automatic-message-button"
-          size="small"
-          @click="handlerEditAutomaticMessage()"
-        />
-      </template>
-      <template #description>
-        <UnnnicTextArea
-          v-if="editingAutomaticMessage"
-          ref="textEditor"
-          v-model="queueForm.default_message"
-          class="sector-queues-form__automatic-message-textarea"
-          :maxLength="250"
-          size="sm"
-          :placeholder="$t('automatic_message.placeholder')"
-          data-testid="automatic-message-textarea"
-          @focus="focusTextEditor"
-          @focusout="editingAutomaticMessage = false"
-        />
-
-        <p
-          v-else
-          data-testid="queue-default-message"
-        >
-          {{ queueForm.default_message || $t('automatic_message.placeholder') }}
-        </p>
-      </template>
-    </UnnnicChatText>
 
     <section
       v-if="enableQueueLimitFeature"
       class="sector-queues-form__limit-chats"
     >
-      <p class="sector-queues-form__limit-chats__title">
-        {{ $t('config_chats.queues.limit_chats.title') }}
-      </p>
       <section class="sector-queues-form__limit-chats__inputs">
         <UnnnicSwitch
           v-model="queueForm.queue_limit.is_active"
@@ -174,15 +129,6 @@ export default {
     },
   },
   methods: {
-    handlerEditAutomaticMessage() {
-      this.editingAutomaticMessage = true;
-      this.focusTextEditor();
-    },
-    focusTextEditor() {
-      this.$nextTick(() => {
-        this.$refs.textEditor?.focus();
-      });
-    },
     async handlerRemoveAgent(agentUuid) {
       if (this.isEditing) {
         this.queueForm.toRemoveAgentsUuids.push(agentUuid);
@@ -196,7 +142,6 @@ export default {
         (agent) => agent.uuid !== agentUuid,
       );
     },
-
     async handlerAddAgent(agent) {
       const { currentAgents } = this.queueForm;
 
@@ -247,24 +192,6 @@ export default {
       flex-direction: column;
       gap: $unnnic-space-2;
     }
-  }
-
-  &__automatic-message {
-    max-width: 100% !important;
-    max-height: 100% !important;
-
-    &-button {
-      :deep(.unnnic-icon-size--sm) {
-        font-size: $unnnic-font-size-title-sm;
-      }
-    }
-    &-textarea {
-      word-break: break-all;
-    }
-  }
-
-  :deep(.unnnic-form__label) {
-    margin-top: 0;
   }
 }
 </style>
