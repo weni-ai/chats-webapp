@@ -519,6 +519,18 @@
   "no_tags_assigned": "No tags assigned",
   "contact_await_for_you": "A contact is waiting for you!",
   "agent": "Agent",
+  "ai_text_improvement": {
+    "tooltip_disabled": "Write a response in the text field to enable improved responses with AI",
+    "tooltip_enabled": "Improve response with AI",
+    "tooltip_cancel": "Cancel AI response improvement",
+    "fix_grammar_and_spelling": "Fix grammar & spelling",
+    "make_more_empathetic": "Make more empathetic",
+    "rewrite_for_clarity": "Rewrite for clarity",
+    "improving_response": "Improving your response",
+    "improvement": "Improvement",
+    "error": "Error improving response with AI. Try again.",
+    "new": "New"
+  },
   "manager": "Manager",
   "you": "You",
   "queue": "Queue",
