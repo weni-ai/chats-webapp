@@ -44,70 +44,14 @@
         />
       </section>
       <section class="settings-sectors__sectors-list">
-        <UnnnicSimpleCard
+        <SectorCard
           v-for="sector in sectorsOrdered"
           :key="sector.id"
-          :title="sector.name"
-          clickable
-          class="sectors__card"
-          data-testid="settings-sectors-sector-card"
+          :sector="sector"
           @click="
             navigate('sectors.edit', { uuid: sector.uuid }, { tab: 'general' })
           "
-        >
-          <template #headerSlot>
-            <UnnnicDropdown position="top-left">
-              <template #trigger>
-                <UnnnicToolTip
-                  enabled
-                  :text="$t('quick_messages.delete_or_edit')"
-                  side="left"
-                >
-                  <UnnnicButton
-                    iconCenter="more_vert"
-                    type="tertiary"
-                    data-testid="open-dropdown-menu-button"
-                  />
-                </UnnnicToolTip>
-              </template>
-              <UnnnicDropdownItem
-                data-testid="dropdown-edit"
-                @click="
-                  navigate(
-                    'sectors.edit',
-                    { uuid: sector.uuid },
-                    { tab: 'general' },
-                  )
-                "
-              >
-                <section class="dropdown-item-content">
-                  <UnnnicIconSvg
-                    class="icon"
-                    icon="edit_square"
-                    size="sm"
-                  />
-                  <p>{{ $t('edit') }}</p>
-                </section>
-              </UnnnicDropdownItem>
-              <UnnnicDropdownItem
-                data-testid="dropdown-delete"
-                @click.stop="handlerOpenDeleteSectorModal(sector)"
-              >
-                <section
-                  class="dropdown-item-content dropdown-item-content__delete"
-                >
-                  <UnnnicIconSvg
-                    class="icon"
-                    icon="delete"
-                    size="sm"
-                    scheme="danger"
-                  />
-                  <p>{{ $t('exclude') }}</p>
-                </section>
-              </UnnnicDropdownItem>
-            </UnnnicDropdown>
-          </template>
-        </UnnnicSimpleCard>
+        />
       </section>
 
       <section
@@ -121,17 +65,6 @@
         />
       </section>
     </section>
-    <ModalConfirmDelete
-      v-if="showDeleteSectorModal"
-      v-model="showDeleteSectorModal"
-      data-testid="modal-delete-sector"
-      :title="$t('delete_sector') + ` ${toDeleteSector.name}`"
-      :description="$t('cant_revert')"
-      :confirmText="toDeleteSector.name"
-      :isLoading="isLoadingDeleteSector"
-      @confirm="handlerDeleteSector(toDeleteSector.uuid)"
-      @cancel="handlerCloseDeleteSectorModal()"
-    />
   </section>
 </template>
 
@@ -139,38 +72,28 @@
 import { computed, onMounted, ref } from 'vue';
 import { useRouter } from 'vue-router';
 import { storeToRefs } from 'pinia';
-import { UnnnicCallAlert } from '@weni/unnnic-system';
 
-import ModalConfirmDelete from '@/components/ModalConfirmDelete.vue';
 import ListOrdinator from '@/components/ListOrdinator.vue';
+import SectorCard from './SectorCard.vue';
 
 import { useSettings } from '@/store/modules/settings';
-
-import i18n from '@/plugins/i18n';
 
 defineOptions({
   name: 'SettingsSectors',
 });
 
 const router = useRouter();
-const { t } = i18n.global;
 
 const emit = defineEmits<{
   'open-new-sector-modal': [void];
 }>();
 
-const showDeleteSectorModal = ref(false);
 const sectorNameFilter = ref('');
 const sectorOrder = ref('alphabetical');
-const toDeleteSector = ref<{ uuid: string; name: string }>({
-  uuid: '',
-  name: '',
-});
-const isLoadingDeleteSector = ref(false);
 
 const settingsStore = useSettings();
 const { sectors, isLoadingSectors } = storeToRefs(settingsStore);
-const { getSectors, deleteSector } = settingsStore;
+const { getSectors } = settingsStore;
 
 const sectorsOrdered = computed(() => {
   let sectorsOrdered = sectors.value.slice().sort((a, b) => {
@@ -203,51 +126,6 @@ const sectorsOrdered = computed(() => {
 onMounted(() => {
   getSectors(true);
 });
-
-const handlerOpenDeleteSectorModal = (sector) => {
-  toDeleteSector.value = sector;
-  handleConnectOverlay(true);
-  showDeleteSectorModal.value = true;
-};
-
-const handlerCloseDeleteSectorModal = () => {
-  toDeleteSector.value = { uuid: '', name: '' };
-  handleConnectOverlay(false);
-  showDeleteSectorModal.value = false;
-};
-
-const handlerDeleteSector = async (sectorUuid) => {
-  try {
-    isLoadingDeleteSector.value = true;
-    await deleteSector(sectorUuid);
-
-    router.push({ name: 'sectors' });
-    UnnnicCallAlert({
-      props: {
-        text: t('sector_deleted_success'),
-        type: 'success',
-      },
-      seconds: 5,
-    });
-  } catch (error) {
-    console.log('error deleting sector', error);
-    UnnnicCallAlert({
-      props: {
-        text: t('sector_delete_error'),
-        type: 'error',
-      },
-      seconds: 5,
-    });
-  } finally {
-    isLoadingDeleteSector.value = false;
-    showDeleteSectorModal.value = false;
-    handleConnectOverlay(false);
-  }
-};
-
-const handleConnectOverlay = (active) => {
-  window.parent.postMessage({ event: 'changeOverlay', data: active }, '*');
-};
 
 const navigate = (name, params, query = {}) => {
   router.push({

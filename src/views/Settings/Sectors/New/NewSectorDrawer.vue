@@ -146,7 +146,7 @@ export default {
           secondary_project: '',
         },
         managers: [],
-        maxSimultaneousChatsByAgent: '',
+        rooms_limit: '',
         required_tags: false,
         quick_messages: [
           {
@@ -179,13 +179,9 @@ export default {
     ...mapWritableState(useSettings, ['sectors']),
     ...mapState(useConfig, ['enableGroupsMode']),
     showDiscartQuestion() {
-      const { name, maxSimultaneousChatsByAgent, managers } = this.sector;
+      const { name, rooms_limit, managers } = this.sector;
 
-      return !!(
-        name ||
-        Number(maxSimultaneousChatsByAgent || 0) ||
-        managers.length
-      );
+      return !!(name || Number(rooms_limit || 0) || managers.length);
     },
     activePageKey() {
       const mapper = {
@@ -227,7 +223,7 @@ export default {
           can_trigger_flows,
           sign_messages,
           name,
-          maxSimultaneousChatsByAgent,
+          rooms_limit,
           managers,
           config,
           automatic_message,
@@ -239,9 +235,7 @@ export default {
           can_trigger_flows,
           sign_messages,
           name,
-          rooms_limit: this.enableGroupsMode
-            ? '0'
-            : maxSimultaneousChatsByAgent,
+          rooms_limit: this.enableGroupsMode ? '0' : rooms_limit,
           config: this.enableGroupsMode
             ? config
             : { ...config, secondary_project: undefined },
@@ -301,8 +295,12 @@ export default {
           }),
         );
 
+        const validQuickMessages = this.sector.quick_messages.filter(
+          (quickMessage) => quickMessage.shortcut && quickMessage.text,
+        );
+
         await Promise.all(
-          this.sector.quick_messages.map((quickMessage) => {
+          validQuickMessages.map((quickMessage) => {
             return this.createQuickMessage({
               sectorUuid: this.sector.uuid,
               shortcut: quickMessage.shortcut,
