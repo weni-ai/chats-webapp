@@ -44,7 +44,10 @@
           </UnnnicTabsContent>
           <UnnnicTabsContent value="sectors">
             <section class="settings-page__content">
-              <SectorsList @open-new-sector-modal="openNewSectorDrawer" />
+              <SectorsList
+                v-if="activeTab === 'sectors'"
+                @open-new-sector-modal="openNewSectorDrawer"
+              />
             </section>
           </UnnnicTabsContent>
           <UnnnicTabsContent value="groups">

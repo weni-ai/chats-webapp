@@ -124,7 +124,7 @@ const sectorsOrdered = computed(() => {
 });
 
 onMounted(() => {
-  getSectors(true);
+  getSectors(true, true);
 });
 
 const navigate = (name, params, query = {}) => {

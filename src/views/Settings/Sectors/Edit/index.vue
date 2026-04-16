@@ -47,6 +47,7 @@
             <section class="sector-edit__content">
               <FormSectorGeneral
                 v-if="sector.uuid"
+                ref="formSectorGeneral"
                 v-model="sector"
                 isEditing
                 data-testid="general-form"
@@ -70,6 +71,7 @@
             <section class="sector-edit__content">
               <FormSectorExtraOptions
                 v-if="sector.uuid"
+                ref="formSectorExtraOptions"
                 v-model="sector"
                 data-testid="extra-options-form"
                 isEditing
@@ -139,6 +141,8 @@ const { setCopilotActive, setCopilotCustomRulesActive, setCopilotCustomRules } =
 
 const listSectorMessagesRef = useTemplateRef('listSectorMessages');
 const listSectorQueuesRef = useTemplateRef('listSectorQueues');
+const formSectorGeneralRef = useTemplateRef('formSectorGeneral');
+const formSectorExtraOptionsRef = useTemplateRef('formSectorExtraOptions');
 
 const activeTab = ref<{ name: string; id: string } | null>(null);
 
@@ -248,7 +252,12 @@ const handlerSectorData = async () => {
 };
 
 const handleSaveChanges = () => {
-  console.log('save changes');
+  if (activeTab.value?.id === 'general') {
+    formSectorGeneralRef.value?.saveSector();
+  }
+  if (activeTab.value?.id === 'extra_options') {
+    formSectorExtraOptionsRef.value?.save();
+  }
 };
 
 onMounted(async () => {
@@ -263,7 +272,7 @@ onUnmounted(() => {
   currentSector.value = null;
 });
 
-watch(currentSector, (sector) => {
+watch([currentSector, activeTab], ([sector, _activeTab]) => {
   if (sector) handlerSectorData();
 });
 </script>
