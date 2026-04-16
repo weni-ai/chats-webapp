@@ -9,7 +9,7 @@
     />
     <form
       class="form-sector-container"
-      @submit.prevent="$emit('submit')"
+      @submit.prevent="emit('submit')"
     >
       <section class="form-section">
         <h2 class="form-section__title">
@@ -61,9 +61,10 @@
   </section>
 </template>
 
-<script>
-import { mapState } from 'pinia';
-import { ref, watch } from 'vue';
+<script setup>
+import { storeToRefs } from 'pinia';
+import { computed, onMounted, ref, watch, nextTick } from 'vue';
+import { useRouter } from 'vue-router';
 
 import { useForm } from '@/composables/useForm';
 
@@ -78,395 +79,357 @@ import { useConfig } from '@/store/modules/config';
 
 import i18n from '@/plugins/i18n';
 
-import unnnic from '@weni/unnnic-system';
+import { UnnnicCallAlert } from '@weni/unnnic-system';
 import { removeDuplicatedItems } from '@/utils/array';
 
-export default {
+defineOptions({
   name: 'FormSector',
+});
 
-  components: {
-    TagGroup,
-    FillDefaultOption,
-    SectorWorkingDaySection,
+const emit = defineEmits([
+  'update:modelValue',
+  'submit',
+  'changeIsValid',
+  'hasChangesWorkday',
+  'sectorFormInitialSync',
+]);
+
+const props = defineProps({
+  isEditing: {
+    type: Boolean,
+    default: false,
   },
-  props: {
-    isEditing: {
-      type: Boolean,
-      default: false,
-    },
-    modelValue: {
-      type: Object,
-      required: true,
-    },
+  modelValue: {
+    type: Object,
+    required: true,
   },
-  emits: [
-    'update:modelValue',
-    'submit',
-    'changeIsValid',
-    'hasChangesWorkday',
-    'sectorFormInitialSync',
-  ],
+});
 
-  setup(_props, { emit }) {
-    const workdayState = ref({
-      workdayDaysTimeOptions: [],
-      selectedWorkdayDays: {},
-      selectedWorkdayDaysTime: {},
-      selectedProject: null,
-      selectedProjectHasSectorIntegration: false,
-    });
+const router = useRouter();
 
+const { me } = storeToRefs(useProfile());
+const { enableGroupsMode } = storeToRefs(useConfig());
+
+const t = (...args) => i18n.global.t(...args);
+
+const workdayState = ref({
+  workdayDaysTimeOptions: [],
+  selectedWorkdayDays: {},
+  selectedWorkdayDaysTime: {},
+  selectedProject: null,
+  selectedProjectHasSectorIntegration: false,
+});
+
+const { hasChanges: hasWorkdayChanges, resetBaseline: resetWorkdayBaseline } =
+  useForm({
+    source: workdayState,
+  });
+
+watch(
+  hasWorkdayChanges,
+  (dirty) => {
+    emit('hasChangesWorkday', dirty);
+  },
+  { immediate: true },
+);
+
+const useDefaultSector = ref(0);
+const selectedManager = ref(null);
+const removedManagers = ref([]);
+const managers = ref([]);
+const searchManager = ref('');
+const managersPage = ref(0);
+const managersLimitPerPage = 20;
+const projectUsersPage = ref(0);
+const projectUsersPerPage = 50;
+
+const workingDaySection = ref(null);
+
+const sector = computed({
+  get() {
+    return props.modelValue;
+  },
+  set(value) {
+    emit('update:modelValue', value);
+  },
+});
+
+const managersTags = computed(() =>
+  sector.value.managers.map((manager) => {
     const {
-      hasChanges: hasWorkdayChanges,
-      resetBaseline: resetWorkdayBaseline,
-    } = useForm({
-      source: workdayState,
-    });
+      user: { first_name, last_name, email },
+    } = manager;
+    const managerName = `${first_name} ${last_name}`.trim();
+    const formattedName = managerName ? `${managerName} (${email})` : email;
+    return { uuid: manager.uuid, name: formattedName };
+  }),
+);
 
-    watch(
-      hasWorkdayChanges,
-      (dirty) => {
-        emit('hasChangesWorkday', dirty);
-      },
-      { immediate: true },
+const managersNames = computed(() =>
+  managers.value.map((manager) => {
+    const {
+      user: { email, first_name, last_name },
+      uuid,
+    } = manager;
+
+    return {
+      uuid,
+      value: email,
+      label: first_name || last_name ? `${first_name} ${last_name}` : email,
+    };
+  }),
+);
+
+const isFormValid = computed(() => {
+  const { name, managers: sectorManagers, rooms_limit } = sector.value;
+
+  const {
+    workdayDaysTimeOptions,
+    selectedWorkdayDays,
+    selectedWorkdayDaysTime,
+    selectedProject,
+    selectedProjectHasSectorIntegration,
+  } = workdayState.value;
+
+  const hasWorkday = workdayDaysTimeOptions.length >= 1;
+
+  const selectedDaysWorkdayTimes = workdayDaysTimeOptions
+    .map((day) => {
+      if (selectedWorkdayDays[day]) {
+        return selectedWorkdayDaysTime[day];
+      }
+      return [];
+    })
+    .flat();
+
+  const validAllWorkdayTime = selectedDaysWorkdayTimes.every(
+    (time) => time.valid,
+  );
+
+  const commonValid = !!(name.trim() && validAllWorkdayTime && hasWorkday);
+
+  const groupValid =
+    !!selectedProject &&
+    (props.isEditing || !selectedProjectHasSectorIntegration);
+
+  const singleValid = !!(sectorManagers.length > 0 && rooms_limit);
+
+  return enableGroupsMode.value
+    ? commonValid && groupValid
+    : commonValid && singleValid;
+});
+
+watch(isFormValid, (valid) => emit('changeIsValid', valid), {
+  immediate: true,
+});
+
+watch(selectedManager, (option) => {
+  if (option?.uuid) {
+    addSelectedManager(option);
+  }
+});
+
+function onSectorWorkingDayInitialLoadComplete() {
+  nextTick(() => {
+    resetWorkdayBaseline();
+    emit('sectorFormInitialSync');
+  });
+}
+
+function updateDefaultSectorValue(activate) {
+  useDefaultSector.value = activate;
+  const defaultWorkTime = { start: '08:00', end: '18:00', valid: true };
+  if (activate) {
+    workingDaySection.value?.applyDefaultWorkdayActivate(defaultWorkTime);
+    workingDaySection.value?.handleSelectAllCountryHolidays(true);
+    const meManager = managers.value.find(
+      (manager) => manager.user.email === me.value.email,
     );
-
-    return {
-      workdayState,
-      resetWorkdayBaseline,
+    sector.value = {
+      ...sector.value,
+      name: t('config_chats.default_sector.name'),
+      rooms_limit: enableGroupsMode.value ? '' : '4',
+      managers: enableGroupsMode.value ? [] : [meManager],
     };
-  },
-
-  data() {
-    return {
-      useDefaultSector: 0,
-      selectedManager: null,
-      removedManagers: [],
+  } else {
+    workingDaySection.value?.applyDefaultWorkdayDeactivate();
+    workingDaySection.value?.handleSelectAllCountryHolidays(false);
+    sector.value = {
+      ...sector.value,
+      name: '',
+      rooms_limit: '',
       managers: [],
-      searchManager: '',
-      openModalDelete: false,
-      managersPage: 0,
-      managersLimitPerPage: 20,
-      projectUsersPage: 0,
-      projectUsersPerPage: 50,
     };
-  },
+  }
+}
 
-  computed: {
-    ...mapState(useProfile, ['me']),
-    ...mapState(useConfig, ['enableGroupsMode', 'project']),
-
-    managersTags() {
-      return this.sector.managers.map((manager) => {
-        const {
-          user: { first_name, last_name, email },
-        } = manager;
-        const managerName = `${first_name} ${last_name}`.trim();
-        const formattedName = managerName ? `${managerName} (${email})` : email;
-        return { uuid: manager.uuid, name: formattedName };
-      });
-    },
-
-    managersNames() {
-      return this.managers.map((manager) => {
-        const {
-          user: { email, first_name, last_name },
-          uuid,
-        } = manager;
-
-        return {
-          uuid,
-          value: email,
-          label: first_name || last_name ? `${first_name} ${last_name}` : email,
-        };
-      });
-    },
-
-    sector: {
-      get() {
-        return this.modelValue;
-      },
-      set(sector) {
-        this.$emit('update:modelValue', sector);
-      },
-    },
-
-    validForm() {
-      const { name, managers, rooms_limit } = this.sector;
-
-      const {
-        workdayDaysTimeOptions,
-        selectedWorkdayDays,
-        selectedWorkdayDaysTime,
-        selectedProject,
-        selectedProjectHasSectorIntegration,
-      } = this.workdayState;
-
-      const hasWorkday = workdayDaysTimeOptions.length >= 1;
-
-      const selectedDaysWorkdayTimes = workdayDaysTimeOptions
-        .map((day) => {
-          if (selectedWorkdayDays[day]) {
-            return selectedWorkdayDaysTime[day];
-          }
-          return [];
-        })
-        .flat();
-
-      const validAllWorkdayTime = selectedDaysWorkdayTimes.every(
-        (time) => time.valid,
-      );
-
-      const commonValid = !!(name.trim() && validAllWorkdayTime && hasWorkday);
-
-      const groupValid =
-        !!selectedProject &&
-        (this.isEditing || !selectedProjectHasSectorIntegration);
-
-      const singleValid = !!(managers.length > 0 && rooms_limit);
-
-      const valid = this.enableGroupsMode
-        ? commonValid && groupValid
-        : commonValid && singleValid;
-
-      this.$emit('changeIsValid', valid);
-
-      return valid;
-    },
-  },
-
-  watch: {
-    selectedManager(option) {
-      if (option?.uuid) {
-        this.addSelectedManager(option);
-      }
-    },
-  },
-
-  async mounted() {
-    const isDefaultSector =
-      this.sector.name === i18n.global.t('config_chats.default_sector.name');
-
-    if (this.isEditing && !this.enableGroupsMode) {
-      this.getSectorManagers();
-    } else if (isDefaultSector) {
-      this.useDefaultSector = 1;
+async function getSectorManagers() {
+  let hasNext = false;
+  try {
+    const offset = managersPage.value * managersLimitPerPage;
+    const { next, results } = await Sector.managers(
+      sector.value.uuid,
+      offset,
+      managersLimitPerPage,
+    );
+    hasNext = next;
+    managersPage.value += 1;
+    const concatManagers = sector.value.managers.concat(
+      results.map((manager) => ({
+        ...manager,
+        removed: false,
+      })),
+    );
+    sector.value.managers = removeDuplicatedItems(concatManagers, 'uuid');
+  } finally {
+    if (hasNext) {
+      await getSectorManagers();
     }
+  }
+}
 
-    if (!this.enableGroupsMode) await this.listProjectManagers();
-  },
+async function removeManager(managerUuid) {
+  if (props.isEditing) await Sector.removeManager(managerUuid);
 
-  methods: {
-    onSectorWorkingDayInitialLoadComplete() {
-      this.$nextTick(() => {
-        this.resetWorkdayBaseline();
-        this.$emit('sectorFormInitialSync');
-      });
-    },
+  removeManagerFromTheList(managerUuid);
+}
 
-    updateDefaultSectorValue(activate) {
-      this.useDefaultSector = activate;
-      const defaultWorkTime = { start: '08:00', end: '18:00', valid: true };
-      if (activate) {
-        this.$refs.workingDaySection?.applyDefaultWorkdayActivate(
-          defaultWorkTime,
-        );
-        this.$refs.workingDaySection?.handleSelectAllCountryHolidays(true);
-        const meManager = this.managers.find(
-          (manager) => manager.user.email === this.me.email,
-        );
-        this.sector = {
-          ...this.sector,
-          name: this.$t('config_chats.default_sector.name'),
-          rooms_limit: this.enableGroupsMode ? '' : '4',
-          managers: this.enableGroupsMode ? [] : [meManager],
-        };
-      } else {
-        this.$refs.workingDaySection?.applyDefaultWorkdayDeactivate();
-        this.$refs.workingDaySection?.handleSelectAllCountryHolidays(false);
-        this.sector = {
-          ...this.sector,
-          name: '',
-          rooms_limit: '',
-          managers: [],
-        };
-      }
-    },
+function removeManagerFromTheList(managerUuid) {
+  const manager = sector.value.managers.find((m) => m.uuid === managerUuid);
 
-    async getSectorManagers() {
-      let hasNext = false;
-      try {
-        const offset = this.managersPage * this.managersLimitPerPage;
-        const { next, results } = await Sector.managers(
-          this.sector.uuid,
-          offset,
-          this.managersLimitPerPage,
-        );
-        hasNext = next;
-        this.managersPage += 1;
-        const concatManagers = this.sector.managers.concat(
-          results.map((manager) => ({
-            ...manager,
-            removed: false,
-          })),
-        );
-        this.sector.managers = removeDuplicatedItems(concatManagers, 'uuid');
-      } finally {
-        if (hasNext) {
-          this.getSectorManagers();
-        }
-      }
-    },
+  removedManagers.value.push(manager);
+  sector.value.managers = sector.value.managers.filter(
+    (m) => m.uuid !== managerUuid,
+  );
+}
 
-    async removeManager(managerUuid) {
-      if (this.isEditing) await Sector.removeManager(managerUuid);
+function addSelectedManager(option) {
+  if (option?.uuid) {
+    const manager = managers.value.find((m) => m.uuid === option.uuid);
+    addSectorManager(manager);
+    selectedManager.value = null;
+  }
+}
 
-      this.removeManagerFromTheList(managerUuid);
-    },
+function addSectorManager(manager) {
+  if (manager) {
+    const nextManagers = sector.value.managers.some(
+      (mappedManager) => mappedManager.user.email === manager.user.email,
+    )
+      ? sector.value.managers
+      : [...sector.value.managers, manager];
 
-    removeManagerFromTheList(managerUuid) {
-      const manager = this.sector.managers.find(
-        (manager) => manager.uuid === managerUuid,
-      );
+    sector.value.managers = nextManagers;
 
-      this.removedManagers.push(manager);
-      this.sector.managers = this.sector.managers.filter(
-        (manager) => manager.uuid !== managerUuid,
-      );
-    },
+    if (props.isEditing) addManager(manager);
 
-    addSelectedManager(option) {
-      if (option?.uuid) {
-        const manager = this.managers.find((m) => m.uuid === option.uuid);
-        this.addSectorManager(manager);
-        this.selectedManager = null;
-      }
-    },
+    selectedManager.value = null;
+  }
+}
 
-    photo(link) {
-      if (![null, undefined, ''].includes(link)) {
-        const getOnlyPhoto = link.split('?')[0];
-        return getOnlyPhoto;
-      }
-      return link;
-    },
+async function addManager(manager) {
+  await Sector.addManager(sector.value.uuid, manager.uuid);
+  getSectorManagers();
+}
 
-    addSectorManager(manager) {
-      if (manager) {
-        const managers = this.sector.managers.some(
-          (mappedManager) => mappedManager.user.email === manager.user.email,
-        )
-          ? this.sector.managers
-          : [...this.sector.managers, manager];
+async function listProjectManagers() {
+  let hasNext = false;
+  try {
+    const offset = projectUsersPage.value * projectUsersPerPage;
+    const { results, next } = await Project.managers(
+      offset,
+      projectUsersPerPage,
+    );
+    projectUsersPage.value += 1;
+    managers.value = managers.value.concat(results);
 
-        this.sector.managers = managers;
+    hasNext = next;
+  } finally {
+    if (hasNext) {
+      await listProjectManagers();
+    }
+  }
+}
 
-        if (this.isEditing) this.addManager(manager);
+async function saveSector() {
+  const {
+    uuid,
+    name,
+    can_trigger_flows,
+    can_edit_custom_fields,
+    config,
+    sign_messages,
+    rooms_limit,
+    is_csat_enabled,
+  } = sector.value;
 
-        this.selectedManager = null;
-      }
-    },
+  const payload = {
+    name,
+    can_trigger_flows,
+    can_edit_custom_fields,
+    config,
+    sign_messages,
+    rooms_limit,
+    is_csat_enabled,
+  };
 
-    async addManager(manager) {
-      await Sector.addManager(this.sector.uuid, manager.uuid);
-      this.getSectorManagers();
-    },
+  try {
+    await Sector.update(uuid, payload);
+    await saveWorkingDays();
+    UnnnicCallAlert({
+      props: {
+        text: t('sector_update_success'),
+        type: 'success',
+      },
+      seconds: 5,
+    });
+    router.push('/settings');
+  } catch (error) {
+    UnnnicCallAlert({
+      props: {
+        text: t('sector_update_error'),
+        type: 'error',
+      },
+      seconds: 5,
+    });
+    console.log(error);
+  }
+}
 
-    async listProjectManagers() {
-      let hasNext = false;
-      try {
-        const offset = this.projectUsersPage * this.projectUsersPerPage;
-        const { results, next } = await Project.managers(
-          offset,
-          this.projectUsersPerPage,
-        );
-        this.projectUsersPage += 1;
-        this.managers = this.managers.concat(results);
+async function saveWorkingDays() {
+  const requestBody =
+    workingDaySection.value?.getWorkingDaysRequestBody() ?? {};
 
-        hasNext = next;
-      } finally {
-        if (hasNext) {
-          this.listProjectManagers();
-        }
-      }
-    },
+  await Sector.setSectorWorkingDays(sector.value.uuid, requestBody);
+}
 
-    hourValidate(hour) {
-      const inicialHour = hour.start;
-      const finalHour = hour.end;
+async function initCountryHolidays() {
+  await workingDaySection.value?.initCountryHolidays();
+}
 
-      if (inicialHour >= finalHour) {
-        this.validHour = false;
-        this.message =
-          !inicialHour && !finalHour
-            ? ''
-            : this.$t('config_chats.edit_sector.invalid_hours');
-      } else {
-        this.validHour = true;
-      }
-    },
+async function createCustomHolidays() {
+  await workingDaySection.value?.createCustomHolidays();
+}
 
-    async saveSector() {
-      const {
-        uuid,
-        name,
-        can_trigger_flows,
-        can_edit_custom_fields,
-        config,
-        sign_messages,
-        rooms_limit,
-        is_csat_enabled,
-      } = this.sector;
+onMounted(async () => {
+  const isDefaultSector =
+    sector.value.name === i18n.global.t('config_chats.default_sector.name');
 
-      const sector = {
-        name,
-        can_trigger_flows,
-        can_edit_custom_fields,
-        config,
-        sign_messages,
-        rooms_limit,
-        is_csat_enabled,
-      };
+  if (props.isEditing && !enableGroupsMode.value) {
+    getSectorManagers();
+  } else if (isDefaultSector) {
+    useDefaultSector.value = 1;
+  }
 
-      try {
-        await Sector.update(uuid, sector);
-        await this.saveWorkingDays();
-        unnnic.unnnicCallAlert({
-          props: {
-            text: this.$t('sector_update_success'),
-            type: 'success',
-          },
-          seconds: 5,
-        });
-        this.$router.push('/settings');
-      } catch (error) {
-        unnnic.unnnicCallAlert({
-          props: {
-            text: this.$t('sector_update_error'),
-            type: 'error',
-          },
-          seconds: 5,
-        });
-        console.log(error);
-      }
-    },
+  if (!enableGroupsMode.value) await listProjectManagers();
+});
 
-    async saveWorkingDays() {
-      const requestBody =
-        this.$refs.workingDaySection?.getWorkingDaysRequestBody() ?? {};
-
-      await Sector.setSectorWorkingDays(this.sector.uuid, requestBody);
-    },
-
-    async initCountryHolidays() {
-      await this.$refs.workingDaySection?.initCountryHolidays();
-    },
-
-    async createCustomHolidays() {
-      await this.$refs.workingDaySection?.createCustomHolidays();
-    },
-  },
-};
+defineExpose({
+  saveSector,
+  saveWorkingDays,
+  initCountryHolidays,
+  createCustomHolidays,
+});
 </script>
 
 <style lang="scss" scoped>
@@ -475,6 +438,7 @@ export default {
   flex-direction: column;
   gap: $unnnic-space-4;
   min-height: 600px;
+  margin-bottom: $unnnic-space-4;
 }
 
 .form-sector-container {
@@ -504,26 +468,10 @@ export default {
       font: $unnnic-font-display-3;
       color: $unnnic-color-fg-emphasized;
     }
-
-    &__handlers {
-      margin-top: $unnnic-spacing-md;
-      button {
-        width: 100%;
-      }
-    }
   }
 
   &__managers {
     margin-top: $unnnic-spacing-nano;
-    display: flex;
-    flex-direction: column;
-    gap: $unnnic-spacing-nano;
-    max-height: 250px;
-    overflow-y: auto;
   }
-}
-
-.form-section__label {
-  margin-bottom: $unnnic-space-1;
 }
 </style>

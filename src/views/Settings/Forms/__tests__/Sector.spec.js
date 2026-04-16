@@ -105,25 +105,19 @@ describe('FormSectorGeneral', () => {
   });
 
   it('should trigger getSectorManagers on mounted if isEditing is true and listProjectManagers', async () => {
-    const getSectorManagersSpy = vi.spyOn(
-      FormSectorGeneral.methods,
-      'getSectorManagers',
-    );
-    const listProjectManagersSpy = vi.spyOn(
-      FormSectorGeneral.methods,
-      'listProjectManagers',
-    );
+    const sectorManagersSpy = vi.spyOn(Sector, 'managers');
+    const projectManagersSpy = vi.spyOn(Project, 'managers');
 
-    const wrapper = createWrapper({ isEditing: true });
+    const testWrapper = createWrapper({ isEditing: true });
 
     await flushPromises();
 
-    expect(getSectorManagersSpy).toHaveBeenCalled();
-    expect(listProjectManagersSpy).toHaveBeenCalled();
+    expect(sectorManagersSpy).toHaveBeenCalled();
+    expect(projectManagersSpy).toHaveBeenCalled();
 
     await flushPromises();
 
-    wrapper.vm.sector.managers.forEach((manager) => {
+    testWrapper.vm.sector.managers.forEach((manager) => {
       expect(manager.removed).toBe(false);
     });
   });
@@ -456,11 +450,8 @@ describe('FormSectorGeneral', () => {
     );
   });
 
-  it('should call required methods when enableGroupsMode is true and isEditing is true', async () => {
-    const listSecondaryProjects = vi.spyOn(
-      FormSectorGeneral.methods,
-      'listSecondaryProjects',
-    );
+  it('should call Group.listProjects when enableGroupsMode is true and isEditing is true', async () => {
+    const listProjectsSpy = vi.spyOn(Group, 'listProjects');
 
     mount(FormSectorGeneral, {
       global: {
@@ -468,10 +459,21 @@ describe('FormSectorGeneral', () => {
           router,
           createTestingPinia({
             initialState: {
-              config: { project: { config: { its_principal: true } } },
+              config: {
+                enableGroupsMode: true,
+                project: { org: 'org-1', config: { its_principal: true } },
+              },
             },
           }),
         ],
+        stubs: {
+          SectorWorkingDaySection: {
+            template: '<div />',
+            mounted() {
+              this.$emit('initial-load-complete');
+            },
+          },
+        },
       },
       props: {
         modelValue: { ...defaultProps.modelValue },
@@ -481,6 +483,6 @@ describe('FormSectorGeneral', () => {
 
     await flushPromises();
 
-    expect(listSecondaryProjects).toHaveBeenCalled();
+    expect(listProjectsSpy).toHaveBeenCalled();
   });
 });
