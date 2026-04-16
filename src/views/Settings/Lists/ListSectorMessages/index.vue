@@ -1,6 +1,25 @@
 <template>
   <section class="sector-messages-form">
-    <section class="sector-messages-form-grid">
+    <section
+      v-if="sectorQuickMessagesShared.length === 0"
+      class="sector-messages-form__empty"
+    >
+      <h1 class="sector-messages-form__empty__title">
+        {{ $t('config_chats.quick_messages.empty.title') }}
+      </h1>
+      <p class="sector-messages-form__empty__description">
+        {{ $t('config_chats.quick_messages.empty.description') }}
+      </p>
+      <UnnnicButton
+        :text="$t('config_chats.quick_messages.create')"
+        type="primary"
+        @click="openConfigMessageDrawer()"
+      />
+    </section>
+    <section
+      v-else
+      class="sector-messages-form-grid"
+    >
       <QuickMessageCard
         v-for="message in sectorQuickMessagesShared"
         :key="message.uuid"
@@ -162,6 +181,22 @@ export default {
 
 <style lang="scss" scoped>
 .sector-messages-form {
+  &__empty {
+    height: 80vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    gap: $unnnic-space-3;
+    &__title {
+      font: $unnnic-font-display-2;
+      color: $unnnic-color-fg-emphasized;
+    }
+    &__description {
+      font: $unnnic-font-emphasis;
+      color: $unnnic-color-fg-base;
+    }
+  }
   &-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);

@@ -987,13 +987,18 @@
       }
     },
     "quick_messages": {
+      "add": "Adicionar nova mensagem rápida",
+      "create": "Criar mensagem rápida",
+      "delete_this_quick_message": "Excluir esta mensagem rápida",
+      "empty": {
+        "description": "Crie a primeira mensagem rápida",
+        "title": "Não há mensagens rápidas neste setor"
+      },
+      "new": "Nova mensagem rápida",
       "title": {
         "label": "Configurar uma mensagem rápida",
         "tooltip": "As mensagens rápidas são textos prontos que ajudam a padronizar o atendimento. Todos os agentes deste setor poderão usar essas mensagens. É possível cadastrar novas mensagens abaixo."
-      },
-      "new": "Nova mensagem rápida",
-      "add": "Adicionar nova mensagem rápida",
-      "delete_this_quick_message": "Excluir esta mensagem rápida"
+      }
     },
     "groups": {
       "new": {

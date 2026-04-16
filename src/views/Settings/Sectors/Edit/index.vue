@@ -16,7 +16,10 @@
           @click="handleSaveChanges"
         />
         <UnnnicButton
-          v-if="activeTab?.id === 'quick_messages'"
+          v-if="
+            activeTab?.id === 'quick_messages' &&
+            !!sectorQuickMessagesShared.length
+          "
           iconLeft="add"
           :text="$t('quick_messages.new')"
           @click="listSectorMessagesRef?.openConfigMessageDrawer()"
@@ -110,6 +113,7 @@ import { useRoute, useRouter } from 'vue-router';
 
 import { useSettings } from '@/store/modules/settings';
 import { useConfig } from '@/store/modules/config';
+import { useQuickMessageShared } from '@/store/modules/chats/quickMessagesShared';
 
 import FormSectorGeneral from '@/views/Settings/Forms/General.vue';
 import FormSectorExtraOptions from '@/views/Settings/Forms/ExtraOptions.vue';
@@ -138,6 +142,14 @@ const { currentSector } = storeToRefs(settingsStore);
 const configStore = useConfig();
 const { setCopilotActive, setCopilotCustomRulesActive, setCopilotCustomRules } =
   configStore;
+
+const quickMessageSharedStore = useQuickMessageShared();
+const { quickMessagesShared } = storeToRefs(quickMessageSharedStore);
+const sectorQuickMessagesShared = computed(() => {
+  return quickMessagesShared.value.filter(
+    (message) => message.sector === currentSector.value?.uuid,
+  );
+});
 
 const listSectorMessagesRef = useTemplateRef('listSectorMessages');
 const listSectorQueuesRef = useTemplateRef('listSectorQueues');

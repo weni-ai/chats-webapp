@@ -985,13 +985,18 @@
       }
     },
     "quick_messages": {
+      "add": "Agregar nuevo mensaje rápido",
+      "create": "Crear mensaje rápido",
+      "delete_this_quick_message": "Eliminar este mensaje rápido",
+      "empty": {
+        "description": "Crea el primer mensaje rápido",
+        "title": "No hay mensajes rápidos en este sector"
+      },
+      "new": "Nuevo mensaje rápido",
       "title": {
         "label": "Configurar un mensaje rápido",
         "tooltip": "Los mensajes rápidos son textos predeterminados que ayudan a estandarizar la atención. Todos los agentes de este sector podrán usar estos mensajes. Es posible registrar nuevos mensajes abajo."
-      },
-      "new": "Nuevo mensaje rápido",
-      "add": "Agregar nuevo mensaje rápido",
-      "delete_this_quick_message": "Eliminar este mensaje rápido"
+      }
     },
     "groups": {
       "new": {

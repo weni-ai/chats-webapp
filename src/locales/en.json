@@ -982,13 +982,18 @@
       }
     },
     "quick_messages": {
+      "add": "Add new quick message",
+      "create": "Create quick message",
+      "delete_this_quick_message": "Delete this quick message",
+      "empty": {
+        "description": "Create the first quick message",
+        "title": "There are no quick messages in this sector"
+      },
+      "new": "New quick message",
       "title": {
         "label": "Configure a quick message",
         "tooltip": "Quick messages are ready-made texts that help standardize customer service. All agents in this sector will be able to use these messages, and you can register new messages below."
-      },
-      "new": "New quick message",
-      "add": "Add new quick message",
-      "delete_this_quick_message": "Delete this quick message"
+      }
     },
     "groups": {
       "new": {
