@@ -278,7 +278,7 @@ describe('CardGroup.vue', () => {
     });
 
     it('handles checkbox change event for ongoing rooms', async () => {
-      const wrapper = createWrapper({ 
+      const wrapper = createWrapper({
         withSelection: true,
         roomsType: 'in_progress',
       });
@@ -294,7 +294,7 @@ describe('CardGroup.vue', () => {
     });
 
     it('handles checkbox change event for waiting rooms', async () => {
-      const wrapper = createWrapper({ 
+      const wrapper = createWrapper({
         withSelection: true,
         roomsType: 'waiting',
       });
@@ -389,7 +389,7 @@ describe('CardGroup.vue', () => {
 
   describe('watcher tests', () => {
     it('updates checkbox value when all rooms are selected', async () => {
-      const wrapper = createWrapper({ 
+      const wrapper = createWrapper({
         withSelection: true,
         roomsType: 'in_progress',
       });
@@ -406,7 +406,7 @@ describe('CardGroup.vue', () => {
     });
 
     it('updates checkbox value to "less" when some rooms are selected', async () => {
-      const wrapper = createWrapper({ 
+      const wrapper = createWrapper({
         withSelection: true,
         roomsType: 'in_progress',
       });
@@ -423,7 +423,7 @@ describe('CardGroup.vue', () => {
     });
 
     it('updates checkbox value to false when no rooms are selected', async () => {
-      const wrapper = createWrapper({ 
+      const wrapper = createWrapper({
         withSelection: true,
         roomsType: 'in_progress',
       });
@@ -575,7 +575,7 @@ describe('CardGroup.vue', () => {
     });
 
     it('handles complex state interactions', async () => {
-      const wrapper = createWrapper({ 
+      const wrapper = createWrapper({
         withSelection: true,
         roomsType: 'in_progress',
       });

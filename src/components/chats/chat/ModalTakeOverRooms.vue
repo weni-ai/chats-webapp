@@ -183,7 +183,7 @@ const emitClose = () => {
   &__description {
     font-size: $unnnic-font-size-body-lg;
     line-height: $unnnic-line-height-md;
-    color: $unnnic-color-neutral-darkest;
+    color: $unnnic-color-fg-emphasized;
     margin: 0;
   }
 }

@@ -21,7 +21,7 @@ export default {
 <style lang="scss" scoped>
 .table-pagination-loading {
   margin-top: $unnnic-spacing-md;
-  border-top: $unnnic-border-width-thinner solid $unnnic-color-neutral-soft;
+  border-top: 1px solid $unnnic-color-border-soft;
   padding-top: $unnnic-spacing-md;
 
   display: flex;

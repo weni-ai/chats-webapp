@@ -202,20 +202,20 @@ export default {
   }
 }
 .room-card {
-  border-top: 1px solid $unnnic-color-neutral-soft;
+  border-top: 1px solid $unnnic-color-border-soft;
 
   &:last-child {
-    border-bottom: 1px solid $unnnic-color-neutral-soft;
+    border-bottom: 1px solid $unnnic-color-border-soft;
   }
   &:active {
-    border-top: 1px solid $unnnic-color-neutral-cleanest;
-    border-bottom: 1px solid $unnnic-color-neutral-cleanest;
+    border-top: 1px solid $unnnic-color-border-soft;
+    border-bottom: 1px solid $unnnic-color-border-soft;
   }
   &--without-border {
     border: none;
   }
   &--hover {
-    background-color: $unnnic-color-neutral-lightest;
+    background-color: $unnnic-color-bg-base-soft;
   }
 
   &--selected {
@@ -225,19 +225,19 @@ export default {
 
 .discussion-container {
   :deep(.discussion-card:not(:last-child)) {
-    border-top: 1px solid $unnnic-color-neutral-soft;
+    border-top: 1px solid $unnnic-color-border-soft;
     border-bottom: none;
 
     &:active {
-      border-top: 1px solid $unnnic-color-neutral-cleanest;
-      border-bottom: 1px solid $unnnic-color-neutral-cleanest;
+      border-top: 1px solid $unnnic-color-border-soft;
+      border-bottom: 1px solid $unnnic-color-border-soft;
     }
   }
 
   :deep(.discussion-card:last-child) {
     &:active {
-      border-top: 1px solid $unnnic-color-neutral-cleanest;
-      border-bottom: 1px solid $unnnic-color-neutral-cleanest;
+      border-top: 1px solid $unnnic-color-border-soft;
+      border-bottom: 1px solid $unnnic-color-border-soft;
     }
   }
 
@@ -260,7 +260,7 @@ export default {
       // !important at fill is needed here because the
       // unnnicCollapse header is applying an unwanted style when hovering
       .primary {
-        fill: $unnnic-color-brand-weni !important;
+        fill: $unnnic-color-fg-accent !important;
       }
     }
   }

@@ -130,9 +130,9 @@ export default {
   position: absolute;
   bottom: calc(100% + $unnnic-spacing-xs);
 
-  background-color: $unnnic-color-background-snow;
+  background-color: $unnnic-color-bg-base;
   border-radius: $unnnic-border-radius-md;
-  box-shadow: $unnnic-shadow-level-near;
+  box-shadow: $unnnic-shadow-1;
 
   width: calc(100% - $unnnic-spacing-sm);
   max-height: 40vh;
@@ -160,19 +160,19 @@ export default {
   }
 
   &.error {
-    background-color: $unnnic-color-neutral-lightest;
+    background-color: $unnnic-color-bg-base-soft;
 
     .co-pilot__header {
       &__title {
         h1 {
-          color: $unnnic-color-neutral-dark;
+          color: $unnnic-color-fg-base;
         }
         :deep(svg > path) {
           fill: $unnnic-color-fg-critical;
         }
       }
       &__close {
-        background-color: $unnnic-color-neutral-lightest;
+        background-color: $unnnic-color-bg-base-soft;
       }
     }
 
@@ -181,7 +181,7 @@ export default {
         padding: 0;
         padding-top: $unnnic-spacing-xs;
 
-        background-color: $unnnic-color-neutral-lightest;
+        background-color: $unnnic-color-bg-base-soft;
 
         text-align: center;
       }
@@ -208,7 +208,7 @@ export default {
     justify-content: space-between;
     align-items: center;
 
-    border-bottom: 1px solid $unnnic-color-neutral-soft;
+    border-bottom: 1px solid $unnnic-color-border-soft;
 
     &__title {
       display: flex;
@@ -218,12 +218,12 @@ export default {
       :deep(.co-pilot__header__title__light-icon) {
         rotate: 180deg;
 
-        color: $unnnic-color-weni-600;
+        color: $unnnic-color-fg-accent;
         font-size: 20px;
       }
 
       h1 {
-        color: $unnnic-color-weni-600;
+        color: $unnnic-color-fg-accent;
         font-weight: $unnnic-font-weight-bold;
         font-size: $unnnic-font-size-body-md;
       }
@@ -234,7 +234,7 @@ export default {
       outline: none;
       border: none;
       padding: 0;
-      background-color: $unnnic-color-background-snow;
+      background-color: $unnnic-color-bg-base;
     }
   }
 
@@ -260,12 +260,13 @@ export default {
       padding: $unnnic-spacing-ant $unnnic-spacing-sm;
       line-height: $unnnic-font-size-body-lg + $unnnic-spacing-nano;
 
-      color: $unnnic-color-neutral-dark;
+      color: $unnnic-color-fg-base;
       font-size: $unnnic-font-size-body-md;
-      background-color: $unnnic-color-weni-50;
+      // Semantic token not exists
+      background-color: $unnnic-color-teal-1;
 
       &:active {
-        background-color: $unnnic-color-weni-100;
+        background-color: $unnnic-color-bg-accent-plain;
       }
     }
   }

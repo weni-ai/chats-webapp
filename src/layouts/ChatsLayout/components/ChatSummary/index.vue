@@ -188,8 +188,8 @@ export default {
 
         if (newValue && !this.skipAnimation) {
           await this.typeWriter(newValue, 10);
-        } else if (newValue) {
-          this.animatedText = newValue;
+        } else {
+          this.animatedText = newValue || '';
         }
       },
     },
@@ -291,18 +291,18 @@ export default {
 .chat-summary {
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
-  background: $unnnic-color-purple-100;
-  box-shadow: $unnnic-shadow-level-far;
+  background: $unnnic-color-bg-purple-plain;
+  box-shadow: $unnnic-shadow-1;
   padding: $unnnic-spacing-sm;
   gap: $unnnic-spacing-nano;
+  flex-shrink: 0;
 
   &--open {
     margin-left: v-bind(marginLeft);
   }
 
   &__generate-text {
-    color: $unnnic-color-neutral-clean;
+    color: $unnnic-color-fg-base;
 
     @keyframes wave {
       0%,
@@ -322,7 +322,7 @@ export default {
       height: 2px;
       border-radius: 50%;
       margin-right: 2px;
-      background-color: $unnnic-color-neutral-clean;
+      background-color: $unnnic-color-fg-base;
       animation: wave 1.5s linear infinite;
 
       &:nth-child(2) {
@@ -350,7 +350,7 @@ export default {
     gap: $unnnic-spacing-md;
     justify-content: space-between;
     text-align: justify;
-    color: $unnnic-color-neutral-dark;
+    color: $unnnic-color-fg-base;
     font-family: $unnnic-font-family-secondary;
     font-size: $unnnic-font-size-body-gt;
     line-height: $unnnic-font-size-body-gt + $unnnic-line-height-md;
@@ -367,7 +367,7 @@ export default {
     display: flex;
     gap: $unnnic-spacing-nano;
 
-    color: $unnnic-color-neutral-dark;
+    color: $unnnic-color-fg-base;
     font-family: $unnnic-font-family-secondary;
     font-size: $unnnic-font-size-body-md;
     line-height: $unnnic-font-size-body-md + $unnnic-line-height-md;

@@ -155,7 +155,7 @@ export default {
 
 <style lang="scss" scoped>
 .card-group-metrics {
-  background: $unnnic-color-background-snow;
+  background: $unnnic-color-bg-base;
   padding: $unnnic-spacing-inset-sm;
   border-radius: $unnnic-border-radius-sm;
 
@@ -164,7 +164,7 @@ export default {
     align-items: center;
     gap: $unnnic-spacing-stack-xs;
     font-size: $unnnic-font-size-title-sm;
-    color: $unnnic-color-neutral-darkest;
+    color: $unnnic-color-fg-emphasized;
     margin-bottom: $unnnic-spacing-inline-sm;
   }
 

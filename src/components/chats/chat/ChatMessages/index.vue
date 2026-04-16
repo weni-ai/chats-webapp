@@ -877,7 +877,7 @@ export default {
   &-chip {
     padding: 0 $unnnic-space-2;
     border-radius: $unnnic-border-radius-pill;
-    background-color: $unnnic-color-red-500;
+    background-color: $unnnic-color-bg-red-strong;
     color: $unnnic-color-fg-inverted;
     margin-bottom: -$unnnic-space-2;
     z-index: 1;
@@ -963,13 +963,13 @@ export default {
       &__label {
         font-size: $unnnic-font-size-body-md;
         line-height: 1.25rem;
-        color: $unnnic-color-neutral-cloudy;
+        color: $unnnic-color-fg-base;
       }
 
       &__line {
         flex: 1;
         height: 1px;
-        background: $unnnic-color-neutral-soft;
+        background: $unnnic-color-border-soft;
       }
     }
   }

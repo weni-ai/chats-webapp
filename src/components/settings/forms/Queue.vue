@@ -377,7 +377,7 @@ export default {
 .forms {
   &__title {
     font-weight: $unnnic-font-weight-bold;
-    color: $unnnic-color-neutral-dark;
+    color: $unnnic-color-fg-base;
     font-size: $unnnic-font-size-body-lg;
     line-height: $unnnic-line-height-large * 1.5;
   }

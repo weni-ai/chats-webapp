@@ -181,5 +181,10 @@ export default {
     padding: $unnnic-space-6;
     font: $unnnic-font-body;
   }
+
+  &__title {
+    font: $unnnic-font-display-2;
+    color: $unnnic-color-fg-emphasized;
+  }
 }
 </style>

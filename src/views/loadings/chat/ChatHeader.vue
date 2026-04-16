@@ -26,7 +26,7 @@ export default {
     gap: $unnnic-spacing-md;
     grid-template-columns: 40px 70%;
 
-    box-shadow: $unnnic-shadow-level-far;
+    box-shadow: $unnnic-shadow-1;
 
     & > * {
       width: 100%;

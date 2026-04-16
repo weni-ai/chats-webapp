@@ -62,7 +62,8 @@ const createWrapper = (props = {}) => {
           template: '<div><slot /></div>',
         },
         UnnnicDialogClose: {
-          template: '<button data-testid="dialog-close" @click="$emit(\'click\')"></button>',
+          template:
+            '<button data-testid="dialog-close" @click="$emit(\'click\')"></button>',
         },
         UnnnicDialogFooter: {
           template: '<div><slot /></div>',
@@ -122,9 +123,7 @@ describe('AiTransferModal.vue', () => {
 
   describe('Save button', () => {
     it('should disable save button when textarea is empty', () => {
-      const saveBtn = wrapper.find(
-        '[data-testid="ai-transfer-save-btn"]',
-      );
+      const saveBtn = wrapper.find('[data-testid="ai-transfer-save-btn"]');
       expect(saveBtn.attributes('disabled')).toBeDefined();
     });
 
@@ -132,9 +131,7 @@ describe('AiTransferModal.vue', () => {
       wrapper.vm.criteriaText = 'Some criteria';
       await wrapper.vm.$nextTick();
 
-      const saveBtn = wrapper.find(
-        '[data-testid="ai-transfer-save-btn"]',
-      );
+      const saveBtn = wrapper.find('[data-testid="ai-transfer-save-btn"]');
       expect(saveBtn.attributes('disabled')).toBeUndefined();
     });
 
@@ -201,9 +198,7 @@ describe('AiTransferModal.vue', () => {
 
   describe('Cancel button', () => {
     it('should close modal on cancel', async () => {
-      const cancelBtn = wrapper.find(
-        '[data-testid="ai-transfer-cancel-btn"]',
-      );
+      const cancelBtn = wrapper.find('[data-testid="ai-transfer-cancel-btn"]');
       await cancelBtn.trigger('click');
 
       expect(wrapper.emitted('update:modelValue')).toBeTruthy();

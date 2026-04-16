@@ -22,7 +22,7 @@ export default {
   gap: $unnnic-spacing-xs;
 
   .header__title {
-    color: $unnnic-color-gray-900;
+    color: $unnnic-color-fg-emphasized;
     font: $unnnic-font-display-1;
   }
 }

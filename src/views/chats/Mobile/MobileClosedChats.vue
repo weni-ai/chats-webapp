@@ -152,7 +152,7 @@ export default {
 
   height: 100%;
 
-  background-color: $unnnic-color-background-lightest;
+  background-color: $unnnic-color-bg-base-soft;
 
   :deep(.chat-messages) {
     padding: 0 $unnnic-spacing-ant;

@@ -908,6 +908,9 @@
       },
       "show_waiting_rooms_count": {
         "switch_label": "Show the counter with the number of chats waiting for human support"
+      },
+      "use_name_sector_in_rooms": {
+        "switch_label": "Display the department name in the chat title"
       }
     },
     "custom_sector": "Customize new sector (recommended)",
