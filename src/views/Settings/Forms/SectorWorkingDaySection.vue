@@ -110,20 +110,20 @@
         <h2 class="form-section__title">
           {{ $t('sector.link.title') }}
         </h2>
-        <fieldset>
-          <UnnnicSelect
-            v-model="selectedProject"
-            :options="projectsNames"
-            :label="$t('sector.link.label')"
-            :placeholder="$t('sector.link.project_placeholder')"
-            returnObject
-            clearable
-            enableSearch
-            :search="searchProject"
-            :disabled="isEditing"
-            @update:search="searchProject = $event"
-          />
-        </fieldset>
+
+        <UnnnicSelect
+          v-model="selectedProject"
+          :options="projectsNames"
+          :label="$t('sector.link.label')"
+          :placeholder="$t('sector.link.project_placeholder')"
+          returnObject
+          clearable
+          enableSearch
+          :search="searchProject"
+          :disabled="isEditing"
+          @update:search="searchProject = $event"
+        />
+
         <UnnnicDisclaimer
           v-if="isEditing"
           class="link-project-disclaimer"
