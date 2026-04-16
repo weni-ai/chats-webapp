@@ -10,6 +10,7 @@ export const useDashboard = defineStore('dashboard', {
     },
     showModalAssumedChat: false,
     assumedChatContactName: '',
+    assumedByUser: '',
     isLoadingViewedAgent: false,
   }),
   actions: {
@@ -21,6 +22,9 @@ export const useDashboard = defineStore('dashboard', {
     },
     setAssumedChatContactName(contactName) {
       this.assumedChatContactName = contactName;
+    },
+    setAssumedByUser(user) {
+      this.assumedByUser = user;
     },
 
     async getViewedAgentData(agentEmail) {

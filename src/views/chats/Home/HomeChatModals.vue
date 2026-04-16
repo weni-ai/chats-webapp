@@ -14,20 +14,13 @@
       @close-modal="closeModal('getChat')"
     />
 
-    <!-- TODO: It will be prioritized and replaced by a new modal; currently, it is not falling into any viewing cycle. -->
-    <!-- <UnnnicModal
-      data-testid="modal-assume-chat"
-      :text="$t('chats.your_chat_assumed', { contact: assumedChatContactName })"
-      :description="
-        $t('chats.your_chat_assumed_description', {
-          contact: assumedChatContactName,
-        })
-      "
-      modalIcon="check-circle-1-1"
-      scheme="feedback-green"
-      :showModal="modalsShowing.assumedChat"
-      @close="closeModal('assumedChat')"
-    /> -->
+    <HomeChatTakeoverRoom
+      v-if="showModalAssumedChat"
+      v-model="showModalAssumedChat"
+      :contactName="assumedChatContactName"
+      :assumedByUser="assumedByUser"
+      @close="closeModalTakeoverRoom"
+    />
 
     <ModalCloseChat
       v-if="modalsShowing.closeChat"
@@ -54,15 +47,15 @@
 import { mapActions, mapState, mapWritableState } from 'pinia';
 import isMobile from 'is-mobile';
 
-import { useRooms } from '@/store/modules/chats/rooms';
-import { useDashboard } from '@/store/modules/dashboard';
-
 import FileUploader from '@/components/chats/MessageManager/FileUploader.vue';
 import ModalGetChat from '@/components/chats/chat/ModalGetChat.vue';
-
+import HomeChatTakeoverRoom from './HomeChatTakeoverRoom.vue';
 import ModalCloseChat from './ModalCloseChat.vue';
+
 import { useMessageManager } from '@/store/modules/chats/messageManager';
 import { useFeatureFlag } from '@/store/modules/featureFlag';
+import { useRooms } from '@/store/modules/chats/rooms';
+import { useDashboard } from '@/store/modules/dashboard';
 
 export default {
   name: 'HomeChatModals',
@@ -71,6 +64,7 @@ export default {
     FileUploader,
     ModalGetChat,
     ModalCloseChat,
+    HomeChatTakeoverRoom,
   },
   emits: ['got-chat', 'file-uploader-progress', 'select-quick-message'],
 
@@ -80,7 +74,6 @@ export default {
 
       modalsShowing: {
         getChat: false,
-        assumedChat: false,
         closeChat: false,
         fileUploader: false,
       },
@@ -92,9 +85,10 @@ export default {
   computed: {
     ...mapState(useFeatureFlag, ['featureFlags']),
     ...mapState(useRooms, { room: (store) => store.activeRoom }),
-    ...mapState(useDashboard, [
+    ...mapWritableState(useDashboard, [
       'showModalAssumedChat',
       'assumedChatContactName',
+      'assumedByUser',
     ]),
     ...mapWritableState(useMessageManager, {
       modalFileUploaderFiles: 'mediaUploadFiles',
@@ -137,6 +131,12 @@ export default {
       if (filesType) {
         this.modalFileUploaderMediaType = filesType;
       }
+    },
+
+    closeModalTakeoverRoom() {
+      this.showModalAssumedChat = false;
+      this.assumedChatContactName = '';
+      this.assumedByUser = '';
     },
 
     emitGotChat() {
