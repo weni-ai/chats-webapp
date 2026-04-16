@@ -12,7 +12,18 @@
     <MessageManagerTextBoxUploadField ref="uploadField" />
     <MessageManagerTextBoxMedias v-if="mediaUploadFiles.length > 0" />
     <MessageManagerTextBoxAudioRecorder ref="audioRecorder" />
+    <section
+      v-if="showBackToOriginal"
+      class="text-box__textarea-row"
+    >
+      <MessageManagerTextBoxTextArea
+        ref="textArea"
+        @keydown="handleKeyDown"
+      />
+      <BackToOriginal @reverted="focus" />
+    </section>
     <MessageManagerTextBoxTextArea
+      v-else
       ref="textArea"
       @keydown="handleKeyDown"
     />
@@ -36,7 +47,7 @@
 </template>
 
 <script setup lang="ts">
-import { useTemplateRef, watch } from 'vue';
+import { computed, useTemplateRef, watch } from 'vue';
 import { storeToRefs } from 'pinia';
 import { vOnClickOutside } from '@vueuse/components';
 
@@ -45,6 +56,7 @@ import MessageManagerTextBoxAudioRecorder from './AudioRecorder.vue';
 import MessageManagerTextBoxActions from './Actions.vue';
 import MessageManagerTextBoxUploadField from './UploadField.vue';
 import MessageManagerTextBoxTextArea from './TextArea.vue';
+import BackToOriginal from './BackToOriginal.vue';
 
 import { useMessageManager } from '@/store/modules/chats/messageManager';
 import { useAiTextImprovement } from '@/store/modules/chats/aiTextImprovement';
@@ -71,7 +83,13 @@ const {
 } = storeToRefs(messageManager);
 
 const aiTextImprovementStore = useAiTextImprovement();
-const { isLoading: isAiImproving } = storeToRefs(aiTextImprovementStore);
+const { isLoading: isAiImproving, hasImprovedText } = storeToRefs(
+  aiTextImprovementStore,
+);
+
+const showBackToOriginal = computed(
+  () => hasImprovedText.value && !isAiImproving.value,
+);
 
 const textareaRef = useTemplateRef('textArea');
 const audioRecorderRef = useTemplateRef('audioRecorder');
@@ -158,6 +176,13 @@ defineExpose({
     background-color: $unnnic-color-bg-warning;
     border-color: $unnnic-color-border-warning;
   }
+  &__textarea-row {
+    display: flex;
+    align-items: stretch;
+    gap: $unnnic-space-2;
+    width: 100%;
+  }
+
   &__divider {
     border: 1px solid $unnnic-color-border-soft;
     width: 100%;
