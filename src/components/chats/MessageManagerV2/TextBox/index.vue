@@ -4,6 +4,7 @@
       'text-box',
       {
         'text-box--focused': inputMessageFocused,
+        'text-box--ai-improving': isAiImproving,
         'internal-note': isInternalNote,
       },
     ]"
@@ -22,6 +23,8 @@
       @open-upload-files="uploadFieldRef.clickInput()"
       @focus-input="focus"
       @send="handleSend"
+      @improvement-received="handleImprovementReceived"
+      @improvement-cancelled="handleImprovementCancelled"
     />
     <UnnnicEmojiPicker
       v-show="isEmojiPickerOpen"
@@ -44,6 +47,7 @@ import MessageManagerTextBoxUploadField from './UploadField.vue';
 import MessageManagerTextBoxTextArea from './TextArea.vue';
 
 import { useMessageManager } from '@/store/modules/chats/messageManager';
+import { useAiTextImprovement } from '@/store/modules/chats/aiTextImprovement';
 
 defineOptions({
   name: 'MessageManagerTextBox',
@@ -65,6 +69,9 @@ const {
   isEmojiPickerOpen,
   inputMessageFocused,
 } = storeToRefs(messageManager);
+
+const aiTextImprovementStore = useAiTextImprovement();
+const { isLoading: isAiImproving } = storeToRefs(aiTextImprovementStore);
 
 const textareaRef = useTemplateRef('textArea');
 const audioRecorderRef = useTemplateRef('audioRecorder');
@@ -102,6 +109,19 @@ const handleSend = async () => {
   }
 };
 
+const handleImprovementReceived = (improvedText: string) => {
+  inputMessage.value = improvedText;
+  focus();
+};
+
+const handleImprovementCancelled = () => {
+  const original = aiTextImprovementStore.originalText;
+  if (original) {
+    inputMessage.value = original;
+  }
+  focus();
+};
+
 const clearTextarea = () => {
   inputMessage.value = '';
   audioMessage.value = null;
@@ -130,6 +150,9 @@ defineExpose({
 
   &--focused {
     border-color: $unnnic-color-border-active;
+  }
+  &--ai-improving {
+    border-color: $unnnic-color-border-accent-strong;
   }
   &.internal-note {
     background-color: $unnnic-color-bg-warning;
