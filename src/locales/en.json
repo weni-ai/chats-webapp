@@ -529,7 +529,9 @@
     "improving_response": "Improving your response",
     "improvement": "Improvement",
     "error": "Error improving response with AI. Try again.",
-    "new": "New"
+    "new": "New",
+    "back_to_original": "Original",
+    "back_to_original_tooltip": "Return to original version (Ctrl+Z)"
   },
   "manager": "Manager",
   "you": "You",

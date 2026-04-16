@@ -525,7 +525,9 @@
     "improving_response": "Mejorando tu respuesta",
     "improvement": "Mejora",
     "error": "Error al mejorar respuesta con IA. Inténtalo de nuevo.",
-    "new": "Nuevo"
+    "new": "Nuevo",
+    "back_to_original": "Original",
+    "back_to_original_tooltip": "Volver a la versión original (Ctrl+Z)"
   },
   "manager": "Gerente",
   "you": "Tú",
