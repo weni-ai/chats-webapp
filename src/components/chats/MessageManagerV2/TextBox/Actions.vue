@@ -1,31 +1,38 @@
 <template>
   <section class="text-box__actions">
     <section class="text-box__actions__items">
-      <section
+      <template
         v-for="(action, index) in enabledActions"
         :key="index"
-        class="text-box__actions__item"
       >
-        <UnnnicToolTip
-          :enabled="!!action.tooltip"
-          :text="action.tooltip"
-          side="top"
-        >
-          <UnnnicButton
-            :iconCenter="action.icon"
-            :tooltip="action.tooltip"
-            :disabled="action.disabled"
-            type="tertiary"
-            size="small"
-            :pressed="action.pressed"
-            @click.stop="action.action()"
+        <section class="text-box__actions__item">
+          <UnnnicToolTip
+            :enabled="!!action.tooltip"
+            :text="action.tooltip"
+            side="top"
+          >
+            <UnnnicButton
+              :iconCenter="action.icon"
+              :tooltip="action.tooltip"
+              :disabled="action.disabled || isAiLoading"
+              type="tertiary"
+              size="small"
+              :pressed="action.pressed"
+              @click.stop="action.action()"
+            />
+          </UnnnicToolTip>
+          <hr
+            v-if="action.showDivider"
+            class="text-box__actions__divider"
           />
-        </UnnnicToolTip>
-        <hr
-          v-if="action.showDivider"
-          class="text-box__actions__divider"
+        </section>
+
+        <AiTextImprovement
+          v-if="action.insertAiAfter && showAiTextImprovement"
+          @improvement-received="emit('improvementReceived', $event)"
+          @improvement-cancelled="emit('improvementCancelled')"
         />
-      </section>
+      </template>
     </section>
     <UnnnicButton
       :iconLeft="isInternalNote ? '' : 'send'"
@@ -33,7 +40,7 @@
       :type="isInternalNote ? 'attention' : 'primary'"
       size="small"
       :text="isInternalNote ? $t('add') : $t('send')"
-      :disabled="disableSendButton"
+      :disabled="disableSendButton || isAiLoading"
       @click="emit('send')"
     />
   </section>
@@ -45,6 +52,10 @@ import { storeToRefs } from 'pinia';
 
 import { useMessageManager } from '@/store/modules/chats/messageManager';
 import { useDiscussions } from '@/store/modules/chats/discussions';
+import { useAiTextImprovement } from '@/store/modules/chats/aiTextImprovement';
+import { useFeatureFlag } from '@/store/modules/featureFlag';
+
+import AiTextImprovement from './AiTextImprovement.vue';
 
 import i18n from '@/plugins/i18n';
 
@@ -56,6 +67,8 @@ defineOptions({
 
 const discussionsStore = useDiscussions();
 const { activeDiscussion } = storeToRefs(discussionsStore);
+
+const featureFlagStore = useFeatureFlag();
 
 const messageManager = useMessageManager();
 const { clearInputs } = messageManager;
@@ -70,15 +83,29 @@ const {
   isSuggestionBoxOpen,
 } = storeToRefs(messageManager);
 
+const aiTextImprovementStore = useAiTextImprovement();
+const { isLoading: isAiLoading } = storeToRefs(aiTextImprovementStore);
+
+const showAiTextImprovement = computed(() => {
+  return (
+    featureFlagStore.featureFlags?.active_features?.includes(
+      'weniChatsAiTextImprovement',
+    ) && !activeDiscussion.value?.uuid
+  );
+});
+
 const emit = defineEmits<{
   startAudioRecording: [void];
   focusInput: [void];
   openUploadFiles: [void];
   send: [void];
+  improvementReceived: [text: string];
+  improvementCancelled: [void];
 }>();
 
 interface TextBoxAction {
   hideInDiscussion?: boolean;
+  insertAiAfter?: boolean;
   icon: string;
   tooltip?: string;
   disabled?: boolean;
@@ -86,10 +113,12 @@ interface TextBoxAction {
   pressed?: boolean;
   action: () => void;
 }
+
 const actions = computed<TextBoxAction[]>(() => {
   return [
     {
       hideInDiscussion: true,
+      insertAiAfter: true,
       icon: 'bolt',
       tooltip: t('quick_message'),
       pressed: isSuggestionBoxOpen.value,
@@ -226,20 +255,20 @@ const checkDisabledAction = (action: string) => {
 .text-box {
   &__actions {
     display: flex;
-    gap: $unnnic-space-1;
+    gap: $unnnic-space-2;
     align-items: center;
     justify-content: space-between;
     &__items {
       display: flex;
       flex-direction: row;
       align-items: center;
-      gap: $unnnic-space-1;
+      gap: $unnnic-space-2;
     }
     &__item {
       display: flex;
       flex-direction: row;
       align-items: center;
-      gap: $unnnic-space-1;
+      gap: $unnnic-space-2;
     }
     &__divider {
       height: stretch;
