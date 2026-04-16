@@ -17,11 +17,13 @@
     class="text-box__textarea-container"
   >
     <p class="text-box__ai-loading-text">
-      {{ $t('ai_text_improvement.improving_response')
-      }}<span class="text-box__ai-loading-dots"
-        ><span>.</span><span>.</span><span>.</span></span
-      >
+      {{ $t('ai_text_improvement.improving_response') }}
     </p>
+    <span class="text-box__ai-loading-dots">
+      <span class="text-box__ai-loading-dot" />
+      <span class="text-box__ai-loading-dot" />
+      <span class="text-box__ai-loading-dot" />
+    </span>
   </section>
   <section
     v-else-if="!isAudioRecorderVisible && mediaUploadFiles.length === 0"
@@ -209,32 +211,37 @@ defineExpose({
 }
 
 .text-box__ai-loading-dots {
-  span {
-    opacity: 0;
-    animation: dot-blink 1.4s infinite;
+  display: inline-flex;
+  align-items: flex-end;
+  gap: 3px;
+  margin-left: $unnnic-space-1;
+  padding-bottom: $unnnic-space-1;
+}
 
-    &:nth-child(1) {
-      animation-delay: 0s;
-    }
-    &:nth-child(2) {
-      animation-delay: 0.2s;
-    }
-    &:nth-child(3) {
-      animation-delay: 0.4s;
-    }
+.text-box__ai-loading-dot {
+  display: inline-block;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background-color: $unnnic-color-fg-muted;
+  animation: dot-jump 1.4s ease-in-out infinite;
+
+  &:nth-child(2) {
+    animation-delay: 0.16s;
+  }
+  &:nth-child(3) {
+    animation-delay: 0.32s;
   }
 }
 
-@keyframes dot-blink {
+@keyframes dot-jump {
   0%,
-  20% {
-    opacity: 0;
-  }
-  50% {
-    opacity: 1;
-  }
+  60%,
   100% {
-    opacity: 0;
+    transform: translateY(0);
+  }
+  30% {
+    transform: translateY(-6px);
   }
 }
 
