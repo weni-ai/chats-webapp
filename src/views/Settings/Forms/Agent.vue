@@ -11,7 +11,6 @@
       :search="searchAgent"
       @update:search="searchAgent = $event"
     />
-
     <TagGroup
       v-if="selectedAgents.length > 0"
       :tags="selectedAgentsTags"

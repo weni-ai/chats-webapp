@@ -136,7 +136,6 @@
           data-testid="sector-tag-group"
           disabledTag
           hasCloseIcon
-          selectable
           @close="removeTag($event)"
         />
       </section>
@@ -221,9 +220,6 @@ export default {
     },
     translationSignMessages() {
       return this.$t('sector.additional_options.agents_signature.switch_label');
-    },
-    tagsMarginBottom() {
-      return this.isEditing ? '78px' : '0';
     },
     filteredTags() {
       return this.tags.filter((tag) => tag.name.includes(this.tagName.trim()));
@@ -427,7 +423,6 @@ export default {
     display: flex;
     flex-direction: column;
     gap: $unnnic-space-4;
-    // margin-bottom: v-bind(tagsMarginBottom);
 
     &__title {
       font-weight: $unnnic-font-weight-bold;
@@ -441,9 +436,6 @@ export default {
       gap: $unnnic-spacing-stack-sm;
       &__input {
         flex: 1 1;
-        :deep(.unnnic-form__label) {
-          margin: 0px 0px $unnnic-spacing-xs 0px;
-        }
       }
     }
   }
