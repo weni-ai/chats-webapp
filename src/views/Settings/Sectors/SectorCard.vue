@@ -41,7 +41,7 @@
       v-if="openModalConfirmDelete"
       v-model="openModalConfirmDelete"
       :title="titleModalConfirmDelete"
-      :description="$t('delete_sector') + ` ${props.sector.name}`"
+      :description="$t('delete_sector_modal.text')"
       :confirmText="props.sector.name"
       :isLoading="isLoadingDelete"
       @confirm="handleDeleteSector"

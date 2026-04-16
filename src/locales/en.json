@@ -718,6 +718,9 @@
     "text": "Delete the queue {queue}",
     "description": "The queue {queue} will be permanently deleted."
   },
+  "delete_sector_modal": {
+    "text": "Type the name of the sector to delete"
+  },
   "cant_revert": "This option cannot be reversed",
   "confirm_typing": "Confirm by typing",
   "sector_deleted_success": "Sector deleted successfully!",

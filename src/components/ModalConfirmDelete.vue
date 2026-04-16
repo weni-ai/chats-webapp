@@ -21,7 +21,7 @@
           class="modal-confirm-destroy__content__input"
           :placeholder="confirmText"
           :message="$t('modal_confirm_delete.action_cannot_be_reversed')"
-          @keydown.enter="isValid ? emit('confirm') : null"
+          @keyup.enter.stop="isValid ? emit('confirm') : null"
         />
       </section>
       <UnnnicDialogFooter>

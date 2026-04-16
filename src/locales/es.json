@@ -721,6 +721,9 @@
     "text": "Eliminar la fila {queue}",
     "description": "La fila {queue} será eliminada permanentemente."
   },
+  "delete_sector_modal": {
+    "text": "Escribe el nombre del sector a eliminar"
+  },
   "cant_revert": "Esta opción no se puede revertir",
   "confirm_typing": "Confirmar escribiendo",
   "sector_deleted_success": "¡Sector eliminado con éxito!",
