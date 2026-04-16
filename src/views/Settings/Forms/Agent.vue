@@ -1,18 +1,17 @@
 <template>
   <section class="form-agent">
-    <section class="controls">
-      <UnnnicSelect
-        v-model="agentSelection"
-        :options="agentsNames"
-        :label="$t('agents.add.select.label')"
-        :placeholder="$t('agents.add.select.placeholder')"
-        returnObject
-        clearable
-        enableSearch
-        :search="searchAgent"
-        @update:search="searchAgent = $event"
-      />
-    </section>
+    <UnnnicSelect
+      v-model="agentSelection"
+      :options="agentsNames"
+      :label="$t('agents.add.select.label')"
+      :placeholder="$t('agents.add.select.placeholder')"
+      returnObject
+      clearable
+      enableSearch
+      :search="searchAgent"
+      @update:search="searchAgent = $event"
+    />
+
     <TagGroup
       v-if="selectedAgents.length > 0"
       :tags="selectedAgentsTags"
@@ -117,32 +116,6 @@ export default {
     validate() {
       return this.selectedAgents.length > 0;
     },
-    photo(link) {
-      if (![null, undefined, ''].includes(link)) {
-        const getOnlyPhoto = link.split('?')[0];
-        return getOnlyPhoto;
-      }
-      return link;
-    },
   },
 };
 </script>
-
-<style lang="scss" scoped>
-.form-agent {
-  .title {
-    font-weight: $unnnic-font-weight-bold;
-    color: $unnnic-color-fg-base;
-    font-size: $unnnic-font-size-body-lg;
-    line-height: 1.5rem;
-
-    margin-bottom: 0.5rem;
-  }
-
-  &__agents {
-    display: flex;
-    flex-direction: column;
-    gap: $unnnic-spacing-stack-xs;
-  }
-}
-</style>

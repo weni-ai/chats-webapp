@@ -224,8 +224,16 @@ watch(isFormValid, (valid) => emit('changeIsValid', valid), {
 });
 
 watch(selectedManager, (option) => {
-  if (option?.uuid) {
+  const validSelection =
+    option?.value &&
+    !sector.value.managers.some(
+      (manager) => manager.user.email === option.value,
+    );
+
+  if (validSelection) {
     addSelectedManager(option);
+  } else {
+    selectedManager.value = null;
   }
 });
 
