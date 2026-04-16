@@ -49,16 +49,5 @@ exports[`SectorExtraOptions > Should match the snapshot 1`] = `
       <unnnic-switch-stub data-v-8e9664ba="" size="small" label="" option="" helper="" textleft="" textright="Require tags at the end of human support" disabled="true" modelvalue="false" class="margin-y-space-1" data-testid="config-switch"></unnnic-switch-stub>
     </section>
   </section>
-  <section data-v-8e9664ba="" class="form-actions" style="display: none;"><button data-v-fb18c550="" data-v-8e9664ba="" data-testid="cancel-button" class="unnnic-button unnnic-button--size-large unnnic-button--tertiary">
-      <!---->
-      <!---->
-      <!----><span data-v-fb18c550="" class="unnnic-button__label" style="visibility: visible;" data-testid="button-label"> Cancel</span>
-      <!---->
-    </button><button data-v-fb18c550="" data-v-8e9664ba="" class="unnnic-button unnnic-button--size-large unnnic-button--primary">
-      <!---->
-      <!---->
-      <!----><span data-v-fb18c550="" class="unnnic-button__label" style="visibility: visible;" data-testid="button-label"> Save</span>
-      <!---->
-    </button></section>
 </section>"
 `;

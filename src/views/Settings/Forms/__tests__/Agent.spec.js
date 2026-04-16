@@ -24,21 +24,11 @@ describe('FormAgent', () => {
     wrapper = createWrapper();
   });
 
-  it('should render all section titles and tooltips', () => {
-    const titles = wrapper.findAll('.title');
-    const tooltips = wrapper.findAllComponents({ name: 'UnnnicToolTipStub' });
-
-    expect(titles.at(0).text()).toContain('Add agents info');
-
-    expect(titles.length).toBe(1);
-    expect(tooltips.length).toBe(1);
-  });
-
   it('should render all inputs', () => {
     const selects = wrapper.findAllComponents({ name: 'UnnnicSelect' });
 
     expect(selects.length).toBe(1);
-    expect(selects.at(0).props('label')).toMatch(/Select agent/gi);
+    expect(selects.at(0).props('label')).toMatch(/Add representative/gi);
   });
 
   it('should have a agents list rendered', async () => {
@@ -64,7 +54,7 @@ describe('FormAgent', () => {
     });
 
     const selectedMemberCards = wrapper.findAllComponents({
-      name: 'selected-member',
+      name: 'UnnnicTag',
     });
     expect(selectedMemberCards.length).toBe(2);
   });

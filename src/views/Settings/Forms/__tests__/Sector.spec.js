@@ -1,9 +1,11 @@
-import { expect, describe, it, vi } from 'vitest';
+import { expect, describe, it, vi, beforeEach } from 'vitest';
 import { flushPromises, mount } from '@vue/test-utils';
+import unnnic from '@weni/unnnic-system';
 
 import { createMemoryHistory, createRouter } from 'vue-router';
 import { createTestingPinia } from '@pinia/testing';
-import unnnic from '@weni/unnnic-system';
+
+import { useCompositionI18nInThisSpecFile } from '@/utils/test/compositionI18nVitest';
 
 import FormSectorGeneral from '../General.vue';
 import defaultProps from './mocks/sectorMock';
@@ -92,6 +94,7 @@ function createWrapper(props) {
 }
 
 describe('FormSectorGeneral', () => {
+  useCompositionI18nInThisSpecFile();
   let wrapper;
 
   beforeEach(() => {

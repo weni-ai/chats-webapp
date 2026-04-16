@@ -1,0 +1,184 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`EditSector.vue > Should match the snapshot 1`] = `
+"<section data-v-ac9ddd5b="" class="sector-edit">
+  <header data-v-c6575b33="" data-v-ac9ddd5b="" class="page-header 
+      page-header--has-back-button 
+      page-header--no-divider"><button data-v-fb18c550="" data-v-c6575b33="" data-testid="back-button" class="page-header__back-button unnnic-button unnnic-button--size-large unnnic-button--tertiary unnnic-button--icon-on-center page-header__back-button">
+      <!---->
+      <!----><span data-v-b593673c="" data-v-fb18c550="" class="unnnic-icon material-symbols-rounded unnnic-icon-scheme--fg-emphasized unnnic-icon-size--ant unnnic-icon__size--ant unnnic--clickable" data-testid="icon-center" translate="no" style="visibility: visible;">arrow_back_ios_new</span><span data-v-fb18c550="" class="unnnic-button__label" style="visibility: visible;" data-testid="button-label"> </span>
+      <!---->
+    </button>
+    <section data-v-c6575b33="" class="page-header__infos">
+      <section data-v-c6575b33="" class="page-header__main-infos">
+        <h1 data-v-c6575b33="" class="page-header__title" data-testid="page-title">Sector 1</h1>
+      </section>
+      <!---->
+    </section>
+    <section data-v-c6575b33="" class="page-header__actions" data-testid="page-actions"><button data-v-fb18c550="" data-v-ac9ddd5b="" disabled="" class="unnnic-button unnnic-button--size-large unnnic-button--primary">
+        <!---->
+        <!---->
+        <!----><span data-v-fb18c550="" class="unnnic-button__label" style="visibility: visible;" data-testid="button-label"> save_changes</span>
+        <!---->
+      </button>
+      <!--v-if-->
+      <!--v-if-->
+    </section>
+    <section data-v-c6575b33="" class="page-header__tabs" data-testid="page-tabs">
+      <div data-v-ac9ddd5b="" dir="ltr" data-orientation="horizontal">
+        <section data-v-c185b387="" data-v-ac9ddd5b="" class="unnnic-tabs-list">
+          <div data-v-c185b387="" class="unnnic-tabs-list__list" tabindex="0" data-orientation="horizontal" dir="ltr" style="outline: none;" role="tablist" aria-orientation="horizontal"><button data-v-3f0b0d7f="" data-v-ac9ddd5b="" class="unnnic-tabs-trigger transition-all" data-reka-collection-item="" tabindex="-1" data-orientation="horizontal" data-active="" id="reka-tabs-v-0-trigger-general" role="tab" type="button" aria-selected="true" aria-controls="reka-tabs-v-0-content-general" data-state="active"><span data-v-3f0b0d7f="" class="unnnic-tabs-trigger__content truncate">General</span></button><button data-v-3f0b0d7f="" data-v-ac9ddd5b="" class="unnnic-tabs-trigger transition-all" data-reka-collection-item="" tabindex="-1" data-orientation="horizontal" id="reka-tabs-v-0-trigger-queues" role="tab" type="button" aria-selected="false" aria-controls="reka-tabs-v-0-content-queues" data-state="inactive"><span data-v-3f0b0d7f="" class="unnnic-tabs-trigger__content truncate">Queues</span></button><button data-v-3f0b0d7f="" data-v-ac9ddd5b="" class="unnnic-tabs-trigger transition-all" data-reka-collection-item="" tabindex="-1" data-orientation="horizontal" id="reka-tabs-v-0-trigger-extra_options" role="tab" type="button" aria-selected="false" aria-controls="reka-tabs-v-0-content-extra_options" data-state="inactive"><span data-v-3f0b0d7f="" class="unnnic-tabs-trigger__content truncate">Extra options</span></button><button data-v-3f0b0d7f="" data-v-ac9ddd5b="" class="unnnic-tabs-trigger transition-all" data-reka-collection-item="" tabindex="-1" data-orientation="horizontal" id="reka-tabs-v-0-trigger-quick_messages" role="tab" type="button" aria-selected="false" aria-controls="reka-tabs-v-0-content-quick_messages" data-state="inactive"><span data-v-3f0b0d7f="" class="unnnic-tabs-trigger__content truncate">Quick messages</span></button></div>
+        </section>
+        <div data-v-ac9ddd5b="" id="reka-tabs-v-0-content-general" role="tabpanel" data-state="active" data-orientation="horizontal" aria-labelledby="reka-tabs-v-0-trigger-general" tabindex="0" style="" class="">
+          <section data-v-ac9ddd5b="" class="sector-edit__content">
+            <section data-v-1302def7="" data-v-ac9ddd5b="" class="form-wrapper" data-testid="general-form">
+              <!--v-if-->
+              <form data-v-1302def7="" class="form-sector-container">
+                <section data-v-1302def7="" class="form-section">
+                  <h2 data-v-1302def7="" class="form-section__title">sector.add_name_and_managers</h2>
+                  <section data-v-1302def7="" class="form-section__select-managers">
+                    <section data-v-61d29f44="" data-v-2dd04313="" data-v-1302def7="" class="unnnic-form-element unnnic-form md" data-testid="form-element">
+                      <section data-v-b52fcb11="" data-v-61d29f44="" class="unnnic-label unnnic-form-element__label">
+                        <p data-v-b52fcb11="" class="unnnic-label__label">sector.name</p>
+                        <!---->
+                      </section>
+                      <div data-v-227e7338="" data-v-2dd04313="" class="text-input size--md unnnic-form-input" hascloudycolor="false" mask=""><input data-v-043812be="" data-v-227e7338="" class="unnnic-form-input input-itself input size-md normal unnnic-form-input input-itself" hascloudycolor="false" placeholder="sector.placeholder" iconleft="" iconright="" iconleftclickable="false" iconrightclickable="false" showclear="false" type="text" value="Sector 1">
+                        <!---->
+                        <section data-v-227e7338="" class="icon-right-container">
+                          <!---->
+                          <!---->
+                        </section>
+                      </div>
+                      <!---->
+                    </section>
+                    <section data-v-1302def7="" class="form-section__select-managers__managers">
+                      <div data-v-38d626f4="" data-v-1302def7="" class="unnnic-select"><button data-v-df136255="" data-v-38d626f4="" class="unnnic-popover-trigger w-full" id="reka-popover-trigger-v-5" type="button" aria-haspopup="dialog" aria-expanded="false" aria-controls="" data-state="closed">
+                          <section data-v-61d29f44="" data-v-2dd04313="" data-v-38d626f4="" class="unnnic-form-element unnnic-form md unnnic-select__input" data-testid="form-element">
+                            <section data-v-b52fcb11="" data-v-61d29f44="" class="unnnic-label unnnic-form-element__label">
+                              <p data-v-b52fcb11="" class="unnnic-label__label">sector.managers.add.label</p>
+                              <!---->
+                            </section>
+                            <div data-v-227e7338="" data-v-2dd04313="" class="text-input size--md unnnic-select__input unnnic-form-input" hascloudycolor="false" mask=""><input data-v-043812be="" data-v-227e7338="" class="unnnic-select__input unnnic-form-input input-itself input size-md normal input--has-icon-right use-focus-prop unnnic-select__input unnnic-form-input input-itself" hascloudycolor="false" placeholder="sector.managers.add.placeholder" iconleft="" iconright="keyboard_arrow_down" iconleftclickable="false" iconrightclickable="false" showclear="false" type="text" readonly="" value="">
+                              <!---->
+                              <section data-v-227e7338="" class="icon-right-container">
+                                <!----><span data-v-b593673c="" data-v-227e7338="" class="unnnic-icon material-symbols-rounded unnnic-icon-scheme--fg-base unnnic-icon-size--ant unnnic-icon__size--ant icon-right" data-testid="material-icon" translate="no">keyboard_arrow_down</span>
+                              </section>
+                            </div>
+                            <!---->
+                          </section>
+                        </button>
+                        <div data-v-38d626f4="" disabled="false" defer="false" forcemount="false">
+                          <!---->
+                        </div>
+                      </div>
+                      <!--v-if-->
+                    </section>
+                  </section>
+                </section>
+                <section data-v-0d519847="" class="form-section">
+                  <h2 data-v-0d519847="" class="form-section__title">sector.managers.working_day.title</h2>
+                  <section data-v-0d519847="" class="form-section__inputs">
+                    <section data-v-0d519847="" class="form-section__inputs__workday-copy">
+                      <section data-v-ee5c330b="" data-v-0d519847="" class="unnnic-switch">
+                        <!----><label data-v-ee5c330b="" class="unnnic-switch__input-wrapper"><input data-v-ee5c330b="" class="unnnic-switch__input" type="checkbox">
+                          <p data-v-ee5c330b="" class="unnnic-switch__option" data-testid="switch-option"> sector.managers.working_day.copy_workday </p>
+                        </label>
+                        <!---->
+                      </section>
+                      <!--v-if-->
+                      <p data-v-0d519847="" class="form-section__subtitle">sector.managers.working_day.select_days</p>
+                      <section data-v-0d519847="" class="form-section__inputs__workday-config">
+                        <section data-v-0d519847="" class="form-section__inputs__workday-tags">
+                          <section data-v-b104247d="" data-v-0d519847="" class="chip chip--border chip--is-clickable form-section__inputs__workday-tags__tag" clickable="">
+                            <p data-v-b104247d="" class="chip__text">week_days.monday.short</p>
+                            <!----><span data-v-b593673c="" data-v-b104247d="" class="unnnic-icon material-symbols-rounded unnnic-icon-scheme--feedback-grey unnnic-icon-size--sm unnnic-icon__size--sm chip__icon" data-testid="material-icon" translate="no">add</span>
+                          </section>
+                          <section data-v-b104247d="" data-v-0d519847="" class="chip chip--border chip--is-clickable form-section__inputs__workday-tags__tag" clickable="">
+                            <p data-v-b104247d="" class="chip__text">week_days.tuesday.short</p>
+                            <!----><span data-v-b593673c="" data-v-b104247d="" class="unnnic-icon material-symbols-rounded unnnic-icon-scheme--feedback-grey unnnic-icon-size--sm unnnic-icon__size--sm chip__icon" data-testid="material-icon" translate="no">add</span>
+                          </section>
+                          <section data-v-b104247d="" data-v-0d519847="" class="chip chip--border chip--is-clickable form-section__inputs__workday-tags__tag" clickable="">
+                            <p data-v-b104247d="" class="chip__text">week_days.wednesday.short</p>
+                            <!----><span data-v-b593673c="" data-v-b104247d="" class="unnnic-icon material-symbols-rounded unnnic-icon-scheme--feedback-grey unnnic-icon-size--sm unnnic-icon__size--sm chip__icon" data-testid="material-icon" translate="no">add</span>
+                          </section>
+                          <section data-v-b104247d="" data-v-0d519847="" class="chip chip--border chip--is-clickable form-section__inputs__workday-tags__tag" clickable="">
+                            <p data-v-b104247d="" class="chip__text">week_days.thursday.short</p>
+                            <!----><span data-v-b593673c="" data-v-b104247d="" class="unnnic-icon material-symbols-rounded unnnic-icon-scheme--feedback-grey unnnic-icon-size--sm unnnic-icon__size--sm chip__icon" data-testid="material-icon" translate="no">add</span>
+                          </section>
+                          <section data-v-b104247d="" data-v-0d519847="" class="chip chip--border chip--is-clickable form-section__inputs__workday-tags__tag" clickable="">
+                            <p data-v-b104247d="" class="chip__text">week_days.friday.short</p>
+                            <!----><span data-v-b593673c="" data-v-b104247d="" class="unnnic-icon material-symbols-rounded unnnic-icon-scheme--feedback-grey unnnic-icon-size--sm unnnic-icon__size--sm chip__icon" data-testid="material-icon" translate="no">add</span>
+                          </section>
+                          <section data-v-b104247d="" data-v-0d519847="" class="chip chip--border chip--is-clickable form-section__inputs__workday-tags__tag" clickable="">
+                            <p data-v-b104247d="" class="chip__text">week_days.saturday.short</p>
+                            <!----><span data-v-b593673c="" data-v-b104247d="" class="unnnic-icon material-symbols-rounded unnnic-icon-scheme--feedback-grey unnnic-icon-size--sm unnnic-icon__size--sm chip__icon" data-testid="material-icon" translate="no">add</span>
+                          </section>
+                          <section data-v-b104247d="" data-v-0d519847="" class="chip chip--border chip--is-clickable form-section__inputs__workday-tags__tag" clickable="">
+                            <p data-v-b104247d="" class="chip__text">week_days.sunday.short</p>
+                            <!----><span data-v-b593673c="" data-v-b104247d="" class="unnnic-icon material-symbols-rounded unnnic-icon-scheme--feedback-grey unnnic-icon-size--sm unnnic-icon__size--sm chip__icon" data-testid="material-icon" translate="no">add</span>
+                          </section>
+                        </section>
+                      </section>
+                      <!--v-if-->
+                      <!--v-if-->
+                      <p data-v-0d519847="" class="form-section__subtitle">sector.managers.working_day.add_holidays</p>
+                      <section data-v-0d519847="" class="form-section__inputs__workday-time-config__holidays-container">
+                        <section data-v-14c8c277="" data-v-0d519847="" class="unnnic-checkbox"><label data-v-14c8c277="" class="unnnic-checkbox__input-wrapper"><input data-v-14c8c277="" class="unnnic-checkbox__input" type="checkbox">
+                            <p data-v-14c8c277="" class="unnnic-checkbox__label" data-testid="checkbox-text-right">country_holidays.title</p>
+                          </label>
+                          <!---->
+                        </section><button data-v-fb18c550="" data-v-0d519847="" class="unnnic-button unnnic-button--size-large unnnic-button--tertiary">
+                          <!---->
+                          <!---->
+                          <!----><span data-v-fb18c550="" class="unnnic-button__label" style="visibility: visible;" data-testid="button-label"> sector.managers.working_day.see_all_holidays</span>
+                          <!---->
+                        </button>
+                      </section>
+                      <section data-v-0d519847="" class="form-section__inputs__workday-time-config__holidays-container"><button data-v-fb18c550="" data-v-0d519847="" class="form-section__inputs__workday-time-config__holidays-container__button unnnic-button unnnic-button--size-large unnnic-button--secondary form-section__inputs__workday-time-config__holidays-container__button">
+                          <!----><span data-v-b593673c="" data-v-fb18c550="" class="unnnic-icon material-symbols-rounded unnnic-icon-scheme--fg-emphasized unnnic-icon-size--ant unnnic-icon__size--ant unnnic--clickable unnnic-button__icon-left" data-testid="icon-left" translate="no" style="visibility: visible;">add</span>
+                          <!----><span data-v-fb18c550="" class="unnnic-button__label" style="visibility: visible;" data-testid="button-label"> sector.managers.working_day.add_specific_dates</span>
+                          <!---->
+                        </button><button data-v-fb18c550="" data-v-0d519847="" class="form-section__inputs__workday-time-config__holidays-container__button unnnic-button unnnic-button--size-large unnnic-button--tertiary form-section__inputs__workday-time-config__holidays-container__button" disabled="">
+                          <!---->
+                          <!---->
+                          <!----><span data-v-fb18c550="" class="unnnic-button__label" style="visibility: visible;" data-testid="button-label"> sector.managers.working_day.see_all_specific_dates</span>
+                          <!---->
+                        </button></section>
+                    </section>
+                    <section data-v-61d29f44="" data-v-2dd04313="" data-v-0d519847="" class="unnnic-form-element unnnic-form md form-section__inputs--fill-w" data-testid="form-element">
+                      <section data-v-b52fcb11="" data-v-61d29f44="" class="unnnic-label unnnic-form-element__label">
+                        <p data-v-b52fcb11="" class="unnnic-label__label">sector.managers.working_day.limit_agents.label</p>
+                        <!---->
+                      </section>
+                      <div data-v-227e7338="" data-v-2dd04313="" class="text-input size--md form-section__inputs--fill-w unnnic-form-input" hascloudycolor="false" mask=""><input data-v-043812be="" data-v-227e7338="" class="form-section__inputs--fill-w unnnic-form-input input-itself input size-md normal form-section__inputs--fill-w unnnic-form-input input-itself" hascloudycolor="false" placeholder="4" iconleft="" iconright="" iconleftclickable="false" iconrightclickable="false" showclear="false" type="text" value="3">
+                        <!---->
+                        <section data-v-227e7338="" class="icon-right-container">
+                          <!---->
+                          <!---->
+                        </section>
+                      </div>
+                      <!---->
+                    </section>
+                  </section>
+                </section>
+                <!--v-if-->
+                <!--v-if-->
+                <!--v-if-->
+              </form>
+            </section>
+          </section>
+        </div>
+        <div data-v-ac9ddd5b="" id="reka-tabs-v-0-content-queues" role="tabpanel" data-state="inactive" data-orientation="horizontal" aria-labelledby="reka-tabs-v-0-trigger-queues" hidden="" tabindex="0" class="">
+          <!--v-if-->
+        </div>
+        <div data-v-ac9ddd5b="" id="reka-tabs-v-0-content-extra_options" role="tabpanel" data-state="inactive" data-orientation="horizontal" aria-labelledby="reka-tabs-v-0-trigger-extra_options" hidden="" tabindex="0" class="">
+          <!--v-if-->
+        </div>
+        <div data-v-ac9ddd5b="" id="reka-tabs-v-0-content-quick_messages" role="tabpanel" data-state="inactive" data-orientation="horizontal" aria-labelledby="reka-tabs-v-0-trigger-quick_messages" hidden="" tabindex="0" class="">
+          <!--v-if-->
+        </div>
+      </div>
+    </section>
+  </header>
+</section>"
+`;

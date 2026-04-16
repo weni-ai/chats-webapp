@@ -29,7 +29,7 @@ describe('useConfig Store', () => {
   it('should initialize with default state', () => {
     const config = useConfig();
     expect(config.token).toBe('');
-    expect(config.project).toEqual({ config: {} });
+    expect(config.project).toEqual({ name: '', uuid: '', config: {} });
     expect(config.status).toBe('');
     expect(config.socketClosedOffline).toBe(false);
     expect(config.copilot).toEqual({

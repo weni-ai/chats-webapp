@@ -1,0 +1,25 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`DiscartChangesModal.vue > to match snapshot 1`] = `
+"<div data-v-7a1d255d="" data-testid="discart-changes-modal"><button type="button" class="unnnic-dialog-close"></button>
+  <div data-v-7a1d255d="">
+    <div data-v-7a1d255d="">
+      <div data-v-7a1d255d="">Title</div>
+    </div>
+    <section data-v-7a1d255d="" class="discart-changes-modal__content">
+      <p data-v-7a1d255d="" class="discart-changes-modal__text">Text</p>
+    </section>
+    <div data-v-7a1d255d=""><button data-v-fb18c550="" data-v-7a1d255d="" class="unnnic-button unnnic-button--size-large unnnic-button--tertiary">
+        <!---->
+        <!---->
+        <!----><span data-v-fb18c550="" class="unnnic-button__label" style="visibility: visible;" data-testid="button-label"> back</span>
+        <!---->
+      </button><button data-v-fb18c550="" data-v-7a1d255d="" class="unnnic-button unnnic-button--size-large unnnic-button--primary">
+        <!---->
+        <!---->
+        <!----><span data-v-fb18c550="" class="unnnic-button__label" style="visibility: visible;" data-testid="button-label"> discart</span>
+        <!---->
+      </button></div>
+  </div>
+</div>"
+`;

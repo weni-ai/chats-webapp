@@ -5,7 +5,110 @@ exports[`NewGroupDrawer.vue > Snapshot > should match the snapshot 1`] = `
   data-v-app=""
 >
   
-  <!--v-if-->
+  <div
+    closeicon="close"
+    data-testid="drawer"
+    data-v-7e258225=""
+  >
+    <div>
+      
+      <section
+        class="unnnic-navigator-pages"
+        data-v-7e258225=""
+        data-v-dede7af4=""
+      >
+        
+        <section
+          class="unnnic-navigator-pages__page unnnic-navigator-pages__page--current"
+          data-testid="navigator-page"
+          data-v-dede7af4=""
+        >
+          <span
+            class="unnnic-navigator-pages__page-progress"
+            data-v-dede7af4=""
+          />
+          <p
+            class="unnnic-navigator-pages__page-title unnnic-navigator-pages__page-title--active"
+            data-testid="navigator-page-title"
+            data-v-dede7af4=""
+          >
+            General
+          </p>
+        </section>
+        <section
+          class="unnnic-navigator-pages__page"
+          data-testid="navigator-page"
+          data-v-dede7af4=""
+        >
+          <span
+            class="unnnic-navigator-pages__page-progress"
+            data-v-dede7af4=""
+          />
+          <p
+            class="unnnic-navigator-pages__page-title"
+            data-testid="navigator-page-title"
+            data-v-dede7af4=""
+          >
+            Projects
+          </p>
+        </section>
+        <section
+          class="unnnic-navigator-pages__page"
+          data-testid="navigator-page"
+          data-v-dede7af4=""
+        >
+          <span
+            class="unnnic-navigator-pages__page-progress"
+            data-v-dede7af4=""
+          />
+          <p
+            class="unnnic-navigator-pages__page-title"
+            data-testid="navigator-page-title"
+            data-v-dede7af4=""
+          >
+            Agents
+          </p>
+        </section>
+        
+      </section>
+      <section
+        class="form"
+        data-v-7e258225=""
+      >
+        <div
+          data-testid="general-form"
+          data-v-7e258225=""
+        />
+        <div
+          data-testid="projects-form"
+          data-v-7e258225=""
+          style="display: none;"
+        />
+        <div
+          data-testid="agents-form"
+          data-v-7e258225=""
+          style="display: none;"
+        />
+      </section>
+      
+    </div>
+    <button
+      data-testid="primary-button"
+      disabled=""
+    >
+      Continue
+    </button>
+    <button
+      data-testid="secondary-button"
+    >
+      Cancel
+    </button>
+    <button
+      data-testid="close-button"
+    >
+      Close
+    </button>
+  </div>
   <!--v-if-->
   
 </div>

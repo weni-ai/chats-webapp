@@ -8,6 +8,8 @@ import Group from '@/services/api/resources/settings/group';
 import Unnnic from '@weni/unnnic-system';
 import { useSettings } from '@/store/modules/settings';
 
+import { useCompositionI18nInThisSpecFile } from '@/utils/test/compositionI18nVitest';
+
 vi.mock('@/services/api/resources/settings/group', () => ({
   default: {
     listSectorsQueues: vi.fn(() => ({})),
@@ -37,7 +39,7 @@ const createWrapper = (props = {}) => {
   setActivePinia(pinia);
 
   return mount(NewGroupDrawer, {
-    props: { show: true, ...props },
+    props: { modelValue: true, ...props },
     global: {
       plugins: [pinia],
       stubs: {
@@ -110,6 +112,8 @@ const createWrapper = (props = {}) => {
 };
 
 describe('NewGroupDrawer.vue', () => {
+  useCompositionI18nInThisSpecFile();
+
   let wrapper;
 
   beforeEach(() => {
@@ -136,7 +140,7 @@ describe('NewGroupDrawer.vue', () => {
       await flushPromises();
       expect(wrapper.find('[data-testid="drawer"]').exists()).toBe(true);
 
-      await wrapper.setProps({ show: false });
+      await wrapper.setProps({ modelValue: false });
       await wrapper.vm.$nextTick();
       expect(wrapper.find('[data-testid="drawer"]').exists()).toBe(false);
     });

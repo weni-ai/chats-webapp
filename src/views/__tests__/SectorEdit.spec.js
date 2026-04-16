@@ -1,10 +1,11 @@
 import { mount, flushPromises } from '@vue/test-utils';
-import { describe, it, expect, vi } from 'vitest';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { createRouter, createWebHistory } from 'vue-router';
 import routes from '@/router/routes/settings';
 import { createTestingPinia } from '@pinia/testing';
 import SectorEdit from '@/views/Settings/Sectors/Edit/index.vue';
 import { useSettings } from '@/store/modules/settings';
+import { useCompositionI18nInThisSpecFile } from '@/utils/test/compositionI18nVitest';
 
 const mockSector1 = {
   id: 1,
@@ -78,6 +79,7 @@ const createWrapper = (props = {}) => {
 };
 
 describe('EditSector.vue', () => {
+  useCompositionI18nInThisSpecFile();
   let wrapper;
 
   beforeEach(async () => {
