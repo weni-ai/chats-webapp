@@ -55,6 +55,7 @@
         v-model="sector"
         :isEditing="isEditing"
         @sync-workday-state="workdayState = $event"
+        @initial-load-complete="onSectorWorkingDayInitialLoadComplete"
       />
     </form>
     <section
@@ -79,6 +80,9 @@
 
 <script>
 import { mapState } from 'pinia';
+import { ref, watch } from 'vue';
+
+import { useForm } from '@/composables/useForm';
 
 import Sector from '@/services/api/resources/settings/sector';
 import Project from '@/services/api/resources/settings/project';
@@ -112,7 +116,43 @@ export default {
       required: true,
     },
   },
-  emits: ['update:modelValue', 'submit', 'changeIsValid'],
+  emits: [
+    'update:modelValue',
+    'submit',
+    'changeIsValid',
+    'hasChangesWorkday',
+    'sectorFormInitialSync',
+  ],
+
+  setup(_props, { emit }) {
+    const workdayState = ref({
+      workdayDaysTimeOptions: [],
+      selectedWorkdayDays: {},
+      selectedWorkdayDaysTime: {},
+      selectedProject: null,
+      selectedProjectHasSectorIntegration: false,
+    });
+
+    const {
+      hasChanges: hasWorkdayChanges,
+      resetBaseline: resetWorkdayBaseline,
+    } = useForm({
+      source: workdayState,
+    });
+
+    watch(
+      hasWorkdayChanges,
+      (dirty) => {
+        emit('hasChangesWorkday', dirty);
+      },
+      { immediate: true },
+    );
+
+    return {
+      workdayState,
+      resetWorkdayBaseline,
+    };
+  },
 
   data() {
     return {
@@ -126,13 +166,6 @@ export default {
       managersLimitPerPage: 20,
       projectUsersPage: 0,
       projectUsersPerPage: 50,
-      workdayState: {
-        workdayDaysTimeOptions: [],
-        selectedWorkdayDays: {},
-        selectedWorkdayDaysTime: {},
-        selectedProject: null,
-        selectedProjectHasSectorIntegration: false,
-      },
     };
   },
 
@@ -241,6 +274,13 @@ export default {
   },
 
   methods: {
+    onSectorWorkingDayInitialLoadComplete() {
+      this.$nextTick(() => {
+        this.resetWorkdayBaseline();
+        this.$emit('sectorFormInitialSync');
+      });
+    },
+
     updateDefaultSectorValue(activate) {
       this.useDefaultSector = activate;
       const defaultWorkTime = { start: '08:00', end: '18:00', valid: true };

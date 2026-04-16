@@ -710,6 +710,7 @@
   "shortcut": "Shortcut",
   "message": "Message",
   "save": "Save",
+  "save_changes": "Save changes",
   "create": "Create",
   "use": "Use",
   "delete_sector": "Delete sector",

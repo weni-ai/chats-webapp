@@ -225,7 +225,7 @@ export default {
     },
   },
 
-  emits: ['update:modelValue', 'sync-workday-state'],
+  emits: ['update:modelValue', 'sync-workday-state', 'initial-load-complete'],
 
   data() {
     return {
@@ -418,17 +418,21 @@ export default {
     }
 
     if (this.enableGroupsMode) {
-      this.listSecondaryProjects().then(() => {
-        if (this.isEditing) {
-          const secondaryProjectUuid =
-            this.modelValue.config?.secondary_project;
-          const projectOption = this.projectsNames.find(
-            (p) => p.value === secondaryProjectUuid,
-          );
-          if (projectOption) this.selectedProject = projectOption;
+      await this.listSecondaryProjects();
+      if (this.isEditing) {
+        const secondaryProjectUuid = this.modelValue.config?.secondary_project;
+        const projectOption = this.projectsNames.find(
+          (p) => p.value === secondaryProjectUuid,
+        );
+        if (projectOption) {
+          this.selectedProject = projectOption;
         }
-      });
+      }
     }
+
+    await this.$nextTick();
+    await this.$nextTick();
+    this.$emit('initial-load-complete');
   },
 
   methods: {
@@ -579,28 +583,27 @@ export default {
     },
 
     async listSecondaryProjects() {
-      let hasNext = false;
       try {
-        const offset =
-          this.secondaryProjectsPage * this.secondaryProjectsLimitPerPage;
+        let hasNext = true;
 
-        const { results, next } = await Group.listProjects({
-          orgUuid: this.project.org,
-          limit: this.secondaryProjectsLimitPerPage,
-          offset,
-          params: { its_principal: false },
-        });
+        while (hasNext) {
+          const offset =
+            this.secondaryProjectsPage * this.secondaryProjectsLimitPerPage;
 
-        this.secondaryProjectsPage += 1;
-        this.projects = this.projects.concat(results);
+          const { results, next } = await Group.listProjects({
+            orgUuid: this.project.org,
+            limit: this.secondaryProjectsLimitPerPage,
+            offset,
+            params: { its_principal: false },
+          });
 
-        hasNext = next;
+          this.secondaryProjectsPage += 1;
+          this.projects = this.projects.concat(results);
+
+          hasNext = !!next;
+        }
       } catch (error) {
         console.error(error);
-      } finally {
-        if (hasNext) {
-          this.listSecondaryProjects();
-        }
       }
     },
 

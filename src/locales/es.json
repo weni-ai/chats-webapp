@@ -713,6 +713,7 @@
   "shortcut": "Atajo",
   "message": "Mensaje",
   "save": "Guardar",
+  "save_changes": "Guardar cambios",
   "create": "Crear",
   "use": "Usar",
   "delete_sector": "Eliminar sector",

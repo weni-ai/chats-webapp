@@ -10,6 +10,12 @@
     >
       <template #actions>
         <UnnnicButton
+          v-if="['general', 'extra_options'].includes(activeTab?.id)"
+          :text="$t('save_changes')"
+          :disabled="!hasChanges || !isValid"
+          @click="handleSaveChanges"
+        />
+        <UnnnicButton
           v-if="activeTab?.id === 'quick_messages'"
           iconLeft="add"
           :text="$t('quick_messages.new')"
@@ -44,6 +50,9 @@
                 v-model="sector"
                 isEditing
                 data-testid="general-form"
+                @change-is-valid="validGeneralForm = $event"
+                @has-changes-workday="hasChangesWorkday = $event"
+                @sector-form-initial-sync="syncFormBaselinesAfterChildren"
               />
             </section>
           </UnnnicTabsContent>
@@ -64,6 +73,7 @@
                 v-model="sector"
                 data-testid="extra-options-form"
                 isEditing
+                @change-is-valid="validExtraOptionsForm = $event"
               />
             </section>
           </UnnnicTabsContent>
@@ -86,6 +96,7 @@
 <script setup lang="ts">
 import {
   computed,
+  nextTick,
   onMounted,
   onUnmounted,
   ref,
@@ -104,6 +115,8 @@ import ListSectorQueues from '@/views/Settings/Lists/ListSectorQueues/index.vue'
 import ListSectorMessages from '@/views/Settings/Lists/ListSectorMessages/index.vue';
 
 import i18n from '@/plugins/i18n';
+
+import { useForm } from '@/composables/useForm';
 
 import type { Sector } from '@/types/Sector';
 
@@ -146,6 +159,31 @@ const sector = ref<Sector>({
   managers: [],
 });
 
+const validExtraOptionsForm = ref(false);
+const validGeneralForm = ref(false);
+const hasChangesWorkday = ref(false);
+
+const {
+  hasChanges: sectorDirty,
+  isValid,
+  resetBaseline,
+} = useForm({
+  source: sector,
+  ignorePaths: ['managers'],
+  validate: () => {
+    const tabId = activeTab.value?.id;
+    if (tabId === 'general') {
+      return validGeneralForm.value;
+    }
+    if (tabId === 'extra_options') {
+      return validExtraOptionsForm.value;
+    }
+    return true;
+  },
+});
+
+const hasChanges = computed(() => sectorDirty.value || hasChangesWorkday.value);
+
 const tabs = computed(() => [
   { name: t('sector.general'), id: 'general' },
   { name: t('sector.queues'), id: 'queues' },
@@ -172,7 +210,11 @@ const updateTab = (newTab: string) => {
   }
 };
 
-const handlerSectorData = () => {
+const syncFormBaselinesAfterChildren = async () => {
+  nextTick(() => resetBaseline());
+};
+
+const handlerSectorData = async () => {
   const {
     name,
     can_trigger_flows,
@@ -201,6 +243,12 @@ const handlerSectorData = () => {
   setCopilotActive(sector.value.config?.can_use_chat_completion);
   setCopilotCustomRulesActive(sector.value.config?.can_input_context);
   setCopilotCustomRules(sector.value.config?.completion_context);
+
+  await syncFormBaselinesAfterChildren();
+};
+
+const handleSaveChanges = () => {
+  console.log('save changes');
 };
 
 onMounted(async () => {

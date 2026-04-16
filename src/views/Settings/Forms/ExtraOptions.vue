@@ -230,8 +230,6 @@ export default {
         (this.sector.automatic_message.is_active &&
           this.sector.automatic_message.text?.length > 0);
 
-      this.$emit('changeIsValid', valid);
-
       return valid;
     },
     translationTriggerFlows() {
@@ -257,6 +255,12 @@ export default {
     },
   },
   watch: {
+    validForm: {
+      immediate: true,
+      handler(value) {
+        this.$emit('changeIsValid', value);
+      },
+    },
     'sector.is_csat_enabled': {
       handler(enabled) {
         if (enabled) {
