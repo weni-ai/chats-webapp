@@ -13,7 +13,18 @@
     />
   </button>
   <section
-    v-if="!isAudioRecorderVisible && mediaUploadFiles.length === 0"
+    v-if="isAiImproving"
+    class="text-box__textarea-container"
+  >
+    <p class="text-box__ai-loading-text">
+      {{ $t('ai_text_improvement.improving_response')
+      }}<span class="text-box__ai-loading-dots"
+        ><span>.</span><span>.</span><span>.</span></span
+      >
+    </p>
+  </section>
+  <section
+    v-else-if="!isAudioRecorderVisible && mediaUploadFiles.length === 0"
     class="text-box__textarea-container"
   >
     <p
@@ -44,6 +55,7 @@ import { onMounted, useTemplateRef, watch, nextTick } from 'vue';
 import { storeToRefs } from 'pinia';
 
 import { useMessageManager } from '@/store/modules/chats/messageManager';
+import { useAiTextImprovement } from '@/store/modules/chats/aiTextImprovement';
 
 defineOptions({
   name: 'MessageManagerTextBoxTextArea',
@@ -61,6 +73,9 @@ const {
   isAudioRecorderVisible,
   inputMessageFocused,
 } = storeToRefs(messageManager);
+
+const aiTextImprovementStore = useAiTextImprovement();
+const { isLoading: isAiImproving } = storeToRefs(aiTextImprovementStore);
 
 const MAX_TEXTAREA_ROWS = 5;
 
@@ -185,6 +200,41 @@ defineExpose({
   max-height: 104px;
   &::placeholder {
     color: $unnnic-color-fg-muted;
+  }
+}
+
+.text-box__ai-loading-text {
+  font: $unnnic-font-body;
+  color: $unnnic-color-fg-muted;
+}
+
+.text-box__ai-loading-dots {
+  span {
+    opacity: 0;
+    animation: dot-blink 1.4s infinite;
+
+    &:nth-child(1) {
+      animation-delay: 0s;
+    }
+    &:nth-child(2) {
+      animation-delay: 0.2s;
+    }
+    &:nth-child(3) {
+      animation-delay: 0.4s;
+    }
+  }
+}
+
+@keyframes dot-blink {
+  0%,
+  20% {
+    opacity: 0;
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
   }
 }
 
