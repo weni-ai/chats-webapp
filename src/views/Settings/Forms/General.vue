@@ -58,23 +58,6 @@
         @initial-load-complete="onSectorWorkingDayInitialLoadComplete"
       />
     </form>
-    <section
-      v-show="isEditing"
-      class="form-actions"
-    >
-      <UnnnicButton
-        :text="$t('cancel')"
-        type="tertiary"
-        data-testid="cancel-button"
-        @click.stop="$router.push('/settings')"
-      />
-      <UnnnicButton
-        :text="$t('save')"
-        :disabled="!validForm"
-        data-testid="general-save-button"
-        @click.stop="saveSector()"
-      />
-    </section>
   </section>
 </template>
 
@@ -494,30 +477,12 @@ export default {
   min-height: 600px;
 }
 
-.form-actions {
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  display: flex;
-  justify-content: space-between;
-  background-color: white;
-  padding: $unnnic-spacing-sm;
-
-  gap: $unnnic-spacing-sm;
-
-  > * {
-    flex: 1;
-  }
-}
-
 .form-sector-container {
   display: flex;
   flex-direction: column;
   gap: $unnnic-space-4;
   flex: 1;
   overflow-y: auto;
-  padding-bottom: $unnnic-spacing-awesome; // This padding is to prevent the content from being hidden
 
   .form-section {
     display: flex;

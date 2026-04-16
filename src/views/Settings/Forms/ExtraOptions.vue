@@ -153,22 +153,6 @@
         />
       </section>
     </section>
-    <section
-      v-show="isEditing"
-      class="form-actions"
-    >
-      <UnnnicButton
-        :text="$t('cancel')"
-        type="tertiary"
-        data-testid="cancel-button"
-        @click.stop="$router.push('/settings')"
-      />
-      <UnnnicButton
-        :text="$t('save')"
-        :disabled="!validForm"
-        @click.stop="save()"
-      />
-    </section>
   </section>
 </template>
 
@@ -401,23 +385,6 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.form-actions {
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  display: flex;
-  justify-content: space-between;
-  background-color: white;
-  padding: $unnnic-spacing-sm;
-
-  gap: $unnnic-spacing-sm;
-
-  > * {
-    flex: 1;
-  }
-}
-
 .margin-y-space-1 {
   margin-bottom: $unnnic-space-1;
   margin-top: $unnnic-space-1;
@@ -460,7 +427,7 @@ export default {
     display: flex;
     flex-direction: column;
     gap: $unnnic-space-4;
-    margin-bottom: v-bind(tagsMarginBottom);
+    // margin-bottom: v-bind(tagsMarginBottom);
 
     &__title {
       font-weight: $unnnic-font-weight-bold;
