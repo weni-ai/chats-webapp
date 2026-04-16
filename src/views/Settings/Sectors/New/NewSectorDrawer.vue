@@ -272,28 +272,16 @@ export default {
 
         await this.$refs.sectorExtraOptions.save(true);
 
-        const createQueuesRequests = this.sectorQueues.map((sectorQueue) =>
-          Queue.create({
-            name: sectorQueue.name,
-            default_message: '',
-            sectorUuid: this.sector.uuid,
-            queue_limit: this.enableQueueLimitFeature
-              ? sectorQueue.queue_limit
-              : { is_active: false, limit: null },
-          }),
-        );
+        const createQueuesBody = this.sectorQueues.map((sectorQueue) => ({
+          name: sectorQueue.name,
+          default_message: '',
+          queue_limit: this.enableQueueLimitFeature
+            ? sectorQueue.queue_limit
+            : { is_active: false, limit: null },
+          agents: sectorQueue.currentAgents.map((agent) => agent.user.email),
+        }));
 
-        const createdQueues = await Promise.all(createQueuesRequests);
-
-        await Promise.all(
-          createdQueues.map((createdQueue, index) => {
-            return Promise.all(
-              this.sectorQueues[index].currentAgents.map((agent) => {
-                return Queue.addAgent(createdQueue.uuid, agent.uuid);
-              }),
-            );
-          }),
-        );
+        await Queue.bulkCreate(this.sector.uuid, createQueuesBody);
 
         const validQuickMessages = this.sector.quick_messages.filter(
           (quickMessage) => quickMessage.shortcut && quickMessage.text,

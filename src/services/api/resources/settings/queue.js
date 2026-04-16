@@ -14,6 +14,14 @@ export default {
     return response.data;
   },
 
+  async bulkCreate(sector, queues) {
+    const response = await http.post('/queue/bulk_create/', {
+      sector,
+      queues,
+    });
+    return response.data;
+  },
+
   async list(sectorUuid, offset, limit) {
     const response = await http.get('/queue/', {
       params: {
