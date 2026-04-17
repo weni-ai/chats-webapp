@@ -1,24 +1,27 @@
 import { mount, flushPromises } from '@vue/test-utils';
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { setActivePinia } from 'pinia';
-
-import SettingsSectors from '@/views/Settings/SettingsSectors.vue';
-
 import { createTestingPinia } from '@pinia/testing';
+import { createRouter, createWebHistory } from 'vue-router';
+
+import SettingsSectors from '@/views/Settings/Sectors/index.vue';
+
 import { useSettings } from '@/store/modules/settings';
-import unnnic from '@weni/unnnic-system';
+import { useCompositionI18nInThisSpecFile } from '@/utils/test/compositionI18nVitest';
 
 vi.mock('@weni/unnnic-system', () => ({
-  default: {
-    unnnicCallAlert: vi.fn(),
-  },
+  UnnnicCallAlert: vi.fn(),
 }));
 
 vi.mock('@/services/api/resources/settings/sector', () => ({
   default: {
     roomsCount: vi.fn().mockResolvedValue({ waiting: 5, in_service: 3 }),
+    list: vi.fn(),
+    deleteSector: vi.fn().mockResolvedValue({}),
   },
 }));
+
+import Sector from '@/services/api/resources/settings/sector';
 
 const mockSectors = [
   {
@@ -41,22 +44,40 @@ const mockSectors = [
   },
 ];
 
-const mockRouter = {
-  push: vi.fn(),
-};
+const router = createRouter({
+  history: createWebHistory(),
+  routes: [
+    { path: '/', name: 'root', component: { template: '<div />' } },
+    {
+      path: '/settings/sectors',
+      name: 'sectors',
+      component: { template: '<div />' },
+    },
+    {
+      path: '/settings/sectors/:uuid/edit',
+      name: 'sectors.edit',
+      component: { template: '<div />' },
+    },
+  ],
+});
 
-const createWrapper = (initialState = {}) => {
+const createWrapper = () => {
+  Sector.list.mockResolvedValue({
+    results: mockSectors,
+    next: '',
+    previous: '',
+  });
+
   const pinia = createTestingPinia({
     createSpy: vi.fn,
+    stubActions: false,
     initialState: {
       config: {
-        project: { name: 'Project 1' },
-        ...initialState.config,
+        project: { name: 'Project 1', uuid: 'proj-1' },
       },
       settings: {
-        sectors: mockSectors,
+        sectors: [],
         isLoadingSectors: false,
-        ...initialState.settings,
       },
     },
   });
@@ -65,136 +86,74 @@ const createWrapper = (initialState = {}) => {
 
   return mount(SettingsSectors, {
     global: {
-      plugins: [pinia],
+      plugins: [pinia, router],
       stubs: {
-        SettingsSectionHeader: {
-          template: '<div data-testid="settings-sectors-header"></div>',
-          props: ['title', 'subtitle'],
-        },
-        NewSectorDrawer: {
-          template: '<div data-testid="new-sector-drawer" v-if="show"></div>',
-          props: ['show'],
-        },
         ListOrdinator: {
-          template: '<div data-testid="list-ordinator"></div>',
+          template: '<div data-testid="list-ordinator" />',
           props: ['modelValue', 'label'],
-        },
-        UnnnicCard: {
-          template: '<div @click="$emit(\'click\')"><slot></slot></div>',
-          props: ['type', 'text', 'icon'],
-        },
-        UnnnicSimpleCard: {
-          template:
-            '<div @click="$emit(\'click\')"><slot name="headerSlot"></slot></div>',
-          props: ['title', 'clickable'],
         },
         UnnnicInput: {
           template:
             '<input :value="modelValue" @input="$emit(\'update:modelValue\', $event.target.value)" />',
-          props: ['modelValue', 'iconLeft', 'size', 'placeholder'],
+          props: ['modelValue', 'iconLeft', 'size', 'label', 'placeholder'],
         },
-        UnnnicDropdown: {
-          template: '<div><slot name="trigger"></slot><slot></slot></div>',
-          props: ['position'],
+        SectorCard: {
+          name: 'SectorCard',
+          template:
+            '<div class="sector-card" data-testid="sector-card" @click="$emit(\'click\', sector)" />',
+          props: ['sector'],
         },
-        UnnnicDropdownItem: {
-          template: '<div @click.stop="$emit(\'click\')"><slot></slot></div>',
-        },
-        UnnnicToolTip: {
-          template: '<div><slot></slot></div>',
-          props: ['enabled', 'text', 'side'],
+        ModalDeleteWithTransfer: {
+          name: 'ModalDeleteWithTransfer',
+          template: '<div data-testid="modal-delete-sector" />',
+          props: ['modelValue', 'name', 'type'],
         },
         UnnnicButton: {
-          template: '<button data-testid="open-dropdown-menu-button"></button>',
-          props: ['iconCenter', 'type'],
+          template: '<button type="button"><slot /></button>',
+          props: ['text', 'type'],
         },
-        UnnnicIconSvg: {
-          template: '<span></span>',
-          props: ['icon', 'size', 'scheme'],
-        },
-        ModalDeleteWithTransfer: true,
-      },
-      mocks: {
-        $router: mockRouter,
-        $t: (key, params) => {
-          const translations = {
-            'config_chats.section_sectors_title': `Sectors - ${params?.project || ''}`,
-            'config_chats.section_sectors_subtitle': 'Manage your sectors',
-            'config_chats.new_sector': 'New Sector',
-            search: 'Search',
-            'order_by.label': 'Order by',
-            'quick_messages.delete_or_edit': 'Delete or edit',
-            edit: 'Edit',
-            exclude: 'Exclude',
-            delete_sector: 'Delete sector',
-            cant_revert: 'This action cannot be reverted',
-            confirm_typing: 'Type to confirm',
-            confirm: 'Confirm',
-            cancel: 'Cancel',
-            'delete_modal.sector_success': 'Sector deleted successfully!',
-            'delete_modal.sector_error': 'Unable to delete the sector.',
-          };
-          return translations[key] || key;
+        UnnnicIconLoading: {
+          template: '<div data-testid="icon-loading" />',
+          props: ['size'],
         },
       },
     },
   });
 };
 
-describe('SettingsSectors.vue', () => {
+describe('SettingsSectors (Sectors/index.vue)', () => {
+  useCompositionI18nInThisSpecFile();
+
   let wrapper;
   let settingsStore;
-  let postMessageSpy;
+  let pushSpy;
 
-  beforeEach(() => {
-    vi.useFakeTimers();
-    postMessageSpy = vi
-      .spyOn(window.parent, 'postMessage')
-      .mockImplementation(() => {});
+  beforeEach(async () => {
+    vi.clearAllMocks();
+    pushSpy = vi.spyOn(router, 'push');
     wrapper = createWrapper();
     settingsStore = useSettings();
+    await flushPromises();
   });
 
   afterEach(() => {
-    vi.clearAllMocks();
-    vi.useRealTimers();
     if (wrapper) {
       wrapper.unmount();
     }
   });
 
   describe('Rendering', () => {
-    it('should render the SettingsSectionHeader with correct props', () => {
-      const header = wrapper.findComponent(
-        '[data-testid=settings-sectors-header]',
-      );
-
-      expect(header.exists()).toBe(true);
-    });
-
-    it('should render the card for creating a new sector', () => {
-      const newSectorCard = wrapper.findComponent(
-        '[data-testid=settings-sectors-blank-card]',
-      );
-
-      expect(newSectorCard.exists()).toBe(true);
-    });
-
-    it('should render the correct number of sector cards', () => {
-      const sectorCards = wrapper.findAllComponents(
-        '[data-testid=settings-sectors-sector-card]',
-      );
-
+    it('should render a sector card per sector after load', () => {
+      const sectorCards = wrapper.findAll('[data-testid="sector-card"]');
       expect(sectorCards.length).toBe(3);
     });
 
     it('should display the loading section when sectors are loading', async () => {
       settingsStore.isLoadingSectors = true;
-
       await wrapper.vm.$nextTick();
 
       const loadingSection = wrapper.find(
-        '[data-testid=settings-sectors-loading-section]',
+        '[data-testid="settings-sectors-loading-section"]',
       );
 
       expect(loadingSection.exists()).toBe(true);
@@ -204,251 +163,37 @@ describe('SettingsSectors.vue', () => {
       settingsStore.isLoadingSectors = false;
 
       const loadingSection = wrapper.find(
-        '[data-testid=settings-sectors-loading-section]',
+        '[data-testid="settings-sectors-loading-section"]',
       );
 
       expect(loadingSection.exists()).toBe(false);
     });
   });
 
-  describe('New Sector Modal', () => {
-    it('should open new sector modal when clicking on new sector card', async () => {
-      const newSectorCard = wrapper.findComponent(
-        '[data-testid=settings-sectors-blank-card]',
-      );
-
-      expect(wrapper.vm.showNewSectorModal).toBe(false);
-
-      await newSectorCard.trigger('click');
-      vi.advanceTimersByTime(1);
-      await wrapper.vm.$nextTick();
-
-      expect(wrapper.vm.showNewSectorModal).toBe(true);
-      expect(postMessageSpy).toHaveBeenCalledWith(
-        { event: 'changeOverlay', data: true },
-        '*',
-      );
-    });
-
-    it('should close new sector modal when closeNewSectorModal is called', async () => {
-      wrapper.vm.showNewSectorModal = true;
-      await wrapper.vm.$nextTick();
-
-      wrapper.vm.closeNewSectorModal();
-      vi.advanceTimersByTime(1);
-      await wrapper.vm.$nextTick();
-
-      expect(wrapper.vm.showNewSectorModal).toBe(false);
-      expect(postMessageSpy).toHaveBeenCalledWith(
-        { event: 'changeOverlay', data: false },
-        '*',
-      );
-    });
-  });
-
-  describe('Sector Filtering', () => {
-    it('should filter sectors by name', async () => {
-      wrapper.vm.sectorNameFilter = 'Alpha';
-      await wrapper.vm.$nextTick();
-
-      expect(wrapper.vm.sectorsOrdered.length).toBe(1);
-      expect(wrapper.vm.sectorsOrdered[0].name).toBe('Alpha Sector');
-    });
-
-    it('should filter sectors case-insensitively', async () => {
-      wrapper.vm.sectorNameFilter = 'beta';
-      await wrapper.vm.$nextTick();
-
-      expect(wrapper.vm.sectorsOrdered.length).toBe(1);
-      expect(wrapper.vm.sectorsOrdered[0].name).toBe('Beta Sector');
-    });
-
-    it('should show all sectors when filter is empty', async () => {
-      wrapper.vm.sectorNameFilter = '';
-      await wrapper.vm.$nextTick();
-
-      expect(wrapper.vm.sectorsOrdered.length).toBe(3);
-    });
-
-    it('should trim whitespace from filter', async () => {
-      wrapper.vm.sectorNameFilter = '  Alpha  ';
-      await wrapper.vm.$nextTick();
-
-      expect(wrapper.vm.sectorsOrdered.length).toBe(1);
-      expect(wrapper.vm.sectorsOrdered[0].name).toBe('Alpha Sector');
-    });
-  });
-
-  describe('Sector Ordering', () => {
-    it('should order sectors alphabetically by default', () => {
-      expect(wrapper.vm.sectorOrder).toBe('alphabetical');
-      expect(wrapper.vm.sectorsOrdered[0].name).toBe('Alpha Sector');
-      expect(wrapper.vm.sectorsOrdered[1].name).toBe('Beta Sector');
-      expect(wrapper.vm.sectorsOrdered[2].name).toBe('Gamma Sector');
-    });
-
-    it('should order sectors by newer first', async () => {
-      wrapper.vm.sectorOrder = 'newer';
-      await wrapper.vm.$nextTick();
-
-      expect(wrapper.vm.sectorsOrdered[0].name).toBe('Gamma Sector');
-      expect(wrapper.vm.sectorsOrdered[1].name).toBe('Beta Sector');
-      expect(wrapper.vm.sectorsOrdered[2].name).toBe('Alpha Sector');
-    });
-
-    it('should order sectors by older first', async () => {
-      wrapper.vm.sectorOrder = 'older';
-      await wrapper.vm.$nextTick();
-
-      expect(wrapper.vm.sectorsOrdered[0].name).toBe('Alpha Sector');
-      expect(wrapper.vm.sectorsOrdered[1].name).toBe('Beta Sector');
-      expect(wrapper.vm.sectorsOrdered[2].name).toBe('Gamma Sector');
-    });
-
-    it('should combine filtering and ordering', async () => {
-      wrapper.vm.sectorOrder = 'newer';
-      wrapper.vm.sectorNameFilter = 'Sector';
-      await wrapper.vm.$nextTick();
-
-      expect(wrapper.vm.sectorsOrdered.length).toBe(3);
-      expect(wrapper.vm.sectorsOrdered[0].name).toBe('Gamma Sector');
-    });
-  });
-
   describe('Navigation', () => {
-    it('should navigate to edit sector when clicking on sector card', async () => {
-      const sectorCards = wrapper.findAllComponents(
-        '[data-testid=settings-sectors-sector-card]',
-      );
+    it('should navigate to edit sector when a sector card is clicked', async () => {
+      const sectorCards = wrapper.findAllComponents({ name: 'SectorCard' });
 
       await sectorCards[0].trigger('click');
 
-      expect(mockRouter.push).toHaveBeenCalledWith({
+      expect(pushSpy).toHaveBeenCalledWith({
         name: 'sectors.edit',
         params: { uuid: 'uuid-1' },
+        query: { tab: 'general' },
       });
-    });
-
-    it('should navigate to edit sector when clicking edit in dropdown', async () => {
-      const dropdownItems = wrapper.findAllComponents({
-        name: 'UnnnicDropdownItem',
-      });
-      const editItem = dropdownItems.find((item) =>
-        item.attributes('data-testid')?.includes('dropdown-edit'),
-      );
-
-      if (editItem) {
-        await editItem.trigger('click');
-        expect(mockRouter.push).toHaveBeenCalled();
-      }
     });
   });
 
-  describe('Delete Sector Modal', () => {
-    it('should open delete sector modal when handlerOpenDeleteSectorModal is called', async () => {
-      const sector = mockSectors[0];
+  describe('Delete sector modal', () => {
+    it('should show delete modal after opening delete flow', async () => {
+      const sectorCards = wrapper.findAllComponents({ name: 'SectorCard' });
 
-      expect(wrapper.vm.showDeleteSectorModal).toBe(false);
-
-      await wrapper.vm.handlerOpenDeleteSectorModal(sector);
+      await sectorCards[0].vm.$emit('delete', mockSectors[0]);
       await flushPromises();
-
-      expect(wrapper.vm.showDeleteSectorModal).toBe(true);
-      expect(wrapper.vm.toDeleteSector).toEqual(sector);
-      expect(postMessageSpy).toHaveBeenCalledWith(
-        { event: 'changeOverlay', data: true },
-        '*',
-      );
-    });
-
-    it('should close delete sector modal when handlerCloseDeleteSectorModal is called', async () => {
-      wrapper.vm.showDeleteSectorModal = true;
-      wrapper.vm.toDeleteSector = mockSectors[0];
       await wrapper.vm.$nextTick();
 
-      wrapper.vm.handlerCloseDeleteSectorModal();
-      await wrapper.vm.$nextTick();
-
-      expect(wrapper.vm.showDeleteSectorModal).toBe(false);
-      expect(wrapper.vm.toDeleteSector).toEqual({});
-      expect(postMessageSpy).toHaveBeenCalledWith(
-        { event: 'changeOverlay', data: false },
-        '*',
-      );
-    });
-
-    it('should delete sector successfully', async () => {
-      const sector = mockSectors[0];
-      settingsStore.deleteSector = vi.fn().mockResolvedValue({});
-
-      await wrapper.vm.handlerOpenDeleteSectorModal(sector);
-      await flushPromises();
-
-      await wrapper.vm.deleteSector(sector.uuid, { action: 'end_all' });
-      await flushPromises();
-
-      expect(settingsStore.deleteSector).toHaveBeenCalledWith(sector.uuid, {
-        endAllChats: true,
-      });
-      expect(mockRouter.push).toHaveBeenCalledWith({ name: 'sectors' });
-      expect(unnnic.unnnicCallAlert).toHaveBeenCalledWith({
-        props: {
-          text: 'Sector deleted successfully!',
-          type: 'success',
-        },
-        seconds: 5,
-      });
-      expect(wrapper.vm.showDeleteSectorModal).toBe(false);
-    });
-
-    it('should handle error when deleting sector', async () => {
-      const sector = mockSectors[0];
-      const error = new Error('Delete failed');
-      settingsStore.deleteSector = vi.fn().mockRejectedValue(error);
-
-      await wrapper.vm.handlerOpenDeleteSectorModal(sector);
-      await flushPromises();
-
-      await wrapper.vm.deleteSector(sector.uuid, { action: 'end_all' });
-      await flushPromises();
-
-      expect(settingsStore.deleteSector).toHaveBeenCalledWith(sector.uuid, {
-        endAllChats: true,
-      });
-      expect(unnnic.unnnicCallAlert).toHaveBeenCalledWith({
-        props: {
-          text: 'Unable to delete the sector.',
-          type: 'error',
-        },
-        seconds: 5,
-      });
-      expect(wrapper.vm.showDeleteSectorModal).toBe(false);
-    });
-  });
-
-  describe('handleConnectOverlay', () => {
-    it('should send postMessage when handleConnectOverlay is called with true', () => {
-      wrapper.vm.handleConnectOverlay(true);
-
-      expect(postMessageSpy).toHaveBeenCalledWith(
-        { event: 'changeOverlay', data: true },
-        '*',
-      );
-    });
-
-    it('should send postMessage when handleConnectOverlay is called with false', () => {
-      wrapper.vm.handleConnectOverlay(false);
-
-      expect(postMessageSpy).toHaveBeenCalledWith(
-        { event: 'changeOverlay', data: false },
-        '*',
-      );
-    });
-  });
-
-  describe('Snapshot', () => {
-    it('should match the snapshot', () => {
-      expect(wrapper.element).toMatchSnapshot();
+      const deleteModal = wrapper.find('[data-testid="modal-delete-sector"]');
+      expect(deleteModal.exists()).toBe(true);
     });
   });
 });

@@ -22,8 +22,10 @@
       </template>
       <template #tabs>
         <UnnnicTabs
-          v-model="activeTab"
+          defaultValue="general"
+          :modelValue="activeTab"
           class="settings-page__tabs"
+          @update:model-value="updateTab"
         >
           <UnnnicTabsList>
             <UnnnicTabsTrigger
@@ -42,7 +44,10 @@
           </UnnnicTabsContent>
           <UnnnicTabsContent value="sectors">
             <section class="settings-page__content">
-              <SectorsList @open-new-sector-modal="openNewSectorDrawer" />
+              <SectorsList
+                v-if="activeTab === 'sectors'"
+                @open-new-sector-modal="openNewSectorDrawer"
+              />
             </section>
           </UnnnicTabsContent>
           <UnnnicTabsContent value="groups">
@@ -67,8 +72,9 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref } from 'vue';
+import { computed, onMounted, ref } from 'vue';
 import { storeToRefs } from 'pinia';
+import { useRouter, useRoute } from 'vue-router';
 
 import { useConfig } from '@/store/modules/config';
 import { useSettings } from '@/store/modules/settings';
@@ -88,6 +94,9 @@ defineOptions({
 
 const { t } = i18n.global;
 
+const router = useRouter();
+const route = useRoute();
+
 const configStore = useConfig();
 const { isPrimaryProject, enableGroupsMode } = storeToRefs(configStore);
 
@@ -98,7 +107,7 @@ const showSettings = computed(() => {
   return !enableGroupsMode.value || isPrimaryProject.value;
 });
 
-const activeTab = ref('general');
+const activeTab = ref('');
 const settingsTabs = computed(() => {
   const tabs = [
     { label: t('config_chats.tabs.general'), value: 'general' },
@@ -111,6 +120,26 @@ const settingsTabs = computed(() => {
 
   return tabs;
 });
+
+const updateTab = (newTab: string) => {
+  const newActiveTab = settingsTabs.value.find((tab) =>
+    [tab.label, tab.value].includes(newTab),
+  );
+
+  if (!newActiveTab) return;
+
+  activeTab.value = newActiveTab.value;
+
+  if (activeTab.value) {
+    router.replace({
+      name: route.name,
+      query: {
+        tab: activeTab.value,
+      },
+    });
+  }
+};
+
 const showNewSectorButton = computed(() => {
   return activeTab.value === 'sectors' && sectors.value.length > 0;
 });
@@ -128,6 +157,10 @@ const openNewSectorDrawer = () => {
 const openNewGroupDrawer = () => {
   showNewGroupDrawer.value = true;
 };
+
+onMounted(() => {
+  updateTab((route.query.tab as string) || 'general');
+});
 </script>
 
 <style lang="scss" scoped>

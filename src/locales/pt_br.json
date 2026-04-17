@@ -142,6 +142,7 @@
   "number_chats": "Quantidade de chats",
   "language": "Idioma",
   "search": "Pesquisar",
+  "try_again": "Tentar novamente",
   "date_format_variable": "{day}/{month}/{year}",
   "undo": "Desfazer",
   "redo": "Refazer",
@@ -728,6 +729,7 @@
   "shortcut": "Atalho",
   "message": "Mensagem",
   "save": "Salvar",
+  "save_changes": "Salvar alterações",
   "create": "Criar",
   "use": "Usar",
   "delete_sector": "Deletar setor",
@@ -735,6 +737,9 @@
   "delete_queue_modal": {
     "text": "Excluir a fila {queue}",
     "description": "A fila {queue} será permanentemente excluída"
+  },
+  "delete_sector_modal": {
+    "text": "Digite o nome do setor a excluir"
   },
   "cant_revert": "Essa opção não poderá ser revertida",
   "confirm_typing": "Confirme digitando",
@@ -805,7 +810,7 @@
     "delete_your_quick_message": "Deletar sua mensagem rápida",
     "delete_confirm": "Você tem certeza que deseja excluir resposta rápida?",
     "delete_or_edit": "Excluir ou editar",
-    "delete_description": "Você tem certeza que deseja excluir a mensagem rápida {shortcut}?",
+    "delete_description": "Digite o atalho da mensagem rápida a excluir",
     "shortcut_tooltip": "Digite /{shortcut} para usar",
     "new": "Nova mensagem rápida",
     "add": "Adicionar nova mensagem rápida",
@@ -817,6 +822,8 @@
     "message_field_placeholder": "Exemplo: Olá, como posso ajudar você hoje? Continuarei ajudando você hoje.",
     "successfully_added": "Mensagem rápida adicionada",
     "successfully_updated": "Mensagem rápida atualizada",
+    "successfully_deleted": "Mensagem rápida excluída com sucesso",
+    "error_deleting": "Não foi possível excluir a mensagem rápida.",
     "error": "Falha ao definir mensagem rápida",
     "no_suggestions": "Nenhum resultado encontrado para o atalho digitado.",
     "disclaimer": "Digite o atalho / (barra) no campo de mensagem do chat para ativar a exibição de mensagens rápidas."
@@ -966,8 +973,9 @@
       "new": "Nova fila",
       "title": "Gestão de filas",
       "hint": "As filas são grupos de atendimento dentro do setor, você poderá criar novas filas ou editar quando quiser",
+      "filter_by_name": "Filtrar por nome da fila",
       "add_queue": "Adicionar fila",
-      "delete_this_queue": "Excluir esta fila",
+      "delete_this_queue": "Digite o nome da fila a excluir",
       "configure_queue": {
         "title": "Configurar fila",
         "tooltip": "As filas são grupos de atendimento dentro do setor. Você pode criar novas filas ou editá-las quando quiser após criar o setor."
@@ -993,13 +1001,18 @@
       }
     },
     "quick_messages": {
+      "add": "Adicionar nova mensagem rápida",
+      "create": "Criar mensagem rápida",
+      "delete_this_quick_message": "Excluir esta mensagem rápida",
+      "empty": {
+        "description": "Crie a primeira mensagem rápida",
+        "title": "Não há mensagens rápidas neste setor"
+      },
+      "new": "Nova mensagem rápida",
       "title": {
         "label": "Configurar uma mensagem rápida",
         "tooltip": "As mensagens rápidas são textos prontos que ajudam a padronizar o atendimento. Todos os agentes deste setor poderão usar essas mensagens. É possível cadastrar novas mensagens abaixo."
-      },
-      "new": "Nova mensagem rápida",
-      "add": "Adicionar nova mensagem rápida",
-      "delete_this_quick_message": "Excluir esta mensagem rápida"
+      }
     },
     "groups": {
       "new": {

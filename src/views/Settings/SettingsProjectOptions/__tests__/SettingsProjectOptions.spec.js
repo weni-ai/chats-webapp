@@ -6,6 +6,8 @@ import { createTestingPinia } from '@pinia/testing';
 import SettingsProjectOptions from '@/views/Settings/SettingsProjectOptions/index.vue';
 import SettingsProjectOptionsItem from '@/views/Settings/SettingsProjectOptions/SettingsProjectOptionsItem.vue';
 import Project from '@/services/api/resources/settings/project';
+
+import { useCompositionI18nInThisSpecFile } from '@/utils/test/compositionI18nVitest';
 import agentBuilder from '@/services/api/resources/settings/agentBuilder';
 
 vi.mock('@/services/api/resources/settings/project', () => ({
@@ -32,8 +34,8 @@ const defaultConfig = {
   can_close_chats_in_queue: false,
   can_use_bulk_take: false,
   can_use_queue_prioritization: false,
-  can_see_timer: false,
   can_see_waiting_rooms_count: true,
+  can_use_name_sector_in_rooms: false,
 };
 
 const createWrapper = ({
@@ -77,6 +79,8 @@ const createWrapper = ({
 };
 
 describe('SettingsProjectOptions.vue', () => {
+  useCompositionI18nInThisSpecFile();
+
   let wrapper;
 
   beforeEach(() => {
@@ -105,12 +109,10 @@ describe('SettingsProjectOptions.vue', () => {
       );
     });
 
-    it('should render the CustomBreakOption component inside the header', () => {
+    it('should render the header title', () => {
       const header = wrapper.find('.project-options__header');
       expect(header.exists()).toBe(true);
-      expect(header.findComponent({ name: 'CustomBreakOption' }).exists()).toBe(
-        true,
-      );
+      expect(header.find('.project-options__header__title').exists()).toBe(true);
     });
 
     it('should render toggle switches from optionsItems', () => {
@@ -188,8 +190,8 @@ describe('SettingsProjectOptions.vue', () => {
         'filter_offline_agents',
         'can_close_chats_in_queue',
         'can_use_queue_prioritization',
-        'can_see_timer',
         'can_see_waiting_rooms_count',
+        'can_use_name_sector_in_rooms',
       ];
 
       alwaysVisibleKeys.forEach((key) => {

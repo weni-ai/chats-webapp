@@ -85,7 +85,7 @@ describe('SectorExtraOptions', () => {
     );
 
     expect(switchs[2].props().textRight).toContain(
-      wrapper.vm.$t('sector.additional_options.edit_custom_fields'),
+      wrapper.vm.$t('sector.additional_options.edit_custom_fields.label'),
     );
   });
 

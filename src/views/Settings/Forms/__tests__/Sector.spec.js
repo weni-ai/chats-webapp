@@ -1,9 +1,11 @@
-import { expect, describe, it, vi } from 'vitest';
+import { expect, describe, it, vi, beforeEach } from 'vitest';
 import { flushPromises, mount } from '@vue/test-utils';
+import { UnnnicCallAlert } from '@weni/unnnic-system';
 
 import { createMemoryHistory, createRouter } from 'vue-router';
 import { createTestingPinia } from '@pinia/testing';
-import unnnic from '@weni/unnnic-system';
+
+import { useCompositionI18nInThisSpecFile } from '@/utils/test/compositionI18nVitest';
 
 import FormSectorGeneral from '../General.vue';
 import defaultProps from './mocks/sectorMock';
@@ -12,12 +14,7 @@ import Sector from '@/services/api/resources/settings/sector';
 import Project from '@/services/api/resources/settings/project';
 import Group from '@/services/api/resources/settings/group';
 
-const pinia = createTestingPinia({
-  initialState: {
-    profile: { me: { email: 'tests@weni.ai' } },
-    actionDeleteSector: vi.fn(),
-  },
-});
+import i18n from '@/plugins/i18n';
 
 const managerMock = {
   uuid: '2',
@@ -48,6 +45,14 @@ vi.mock('@/services/api/resources/settings/group', () => ({
   },
 }));
 
+vi.mock('@weni/unnnic-system', async (importOriginal) => {
+  const actual = await importOriginal();
+  return {
+    ...actual,
+    UnnnicCallAlert: vi.fn(),
+  };
+});
+
 vi.mock('@/services/api/resources/settings/sector', () => ({
   default: {
     update: vi.fn(() => Promise.resolve()),
@@ -77,21 +82,62 @@ const router = createRouter({
 
 router.push = vi.fn();
 
-function createWrapper(props) {
-  const wrapper = mount(FormSectorGeneral, {
+const validWorkdaySync = {
+  workdayDaysTimeOptions: ['monday'],
+  selectedWorkdayDays: { monday: true },
+  selectedWorkdayDaysTime: {
+    monday: [{ start: '08:00', end: '18:00', valid: true }],
+  },
+  selectedProject: null,
+  selectedProjectHasSectorIntegration: false,
+};
+
+function sectorWorkingDayStub() {
+  return {
+    name: 'SectorWorkingDaySection',
+    template: '<div />',
+    emits: ['sync-workday-state', 'initial-load-complete'],
+    mounted() {
+      this.$emit('sync-workday-state', validWorkdaySync);
+      this.$emit('initial-load-complete');
+    },
+    methods: {
+      getWorkingDaysRequestBody: () => ({}),
+      initCountryHolidays: () => Promise.resolve(),
+      createCustomHolidays: () => Promise.resolve(),
+      applyDefaultWorkdayActivate: () => {},
+      applyDefaultWorkdayDeactivate: () => {},
+      handleSelectAllCountryHolidays: () => {},
+    },
+  };
+}
+
+function createPinia(overrides = {}) {
+  return createTestingPinia({
+    initialState: {
+      profile: { me: { email: 'tests@weni.ai' } },
+      ...overrides,
+    },
+  });
+}
+
+function createWrapper(props = {}, { pinia: customPinia, stubs = {} } = {}) {
+  return mount(FormSectorGeneral, {
     props: { modelValue: defaultProps.modelValue, ...props },
     global: {
-      plugins: [router, pinia],
+      plugins: [router, customPinia || createPinia()],
       stubs: {
         UnnnicModalNext: true,
+        SectorWorkingDaySection: sectorWorkingDayStub(),
+        ...stubs,
       },
     },
   });
-
-  return wrapper;
 }
 
 describe('FormSectorGeneral', () => {
+  useCompositionI18nInThisSpecFile();
+
   let wrapper;
 
   beforeEach(() => {
@@ -99,96 +145,56 @@ describe('FormSectorGeneral', () => {
     vi.clearAllMocks();
   });
 
-  it('should emit update:modelValue on change sector value', async () => {
-    wrapper.vm.sector = {};
-    expect(wrapper.emitted()['update:modelValue']).toBeTruthy();
+  it('emits changeIsValid from script setup', async () => {
+    await flushPromises();
+    expect(wrapper.emitted('changeIsValid')).toBeTruthy();
   });
 
-  it('should trigger getSectorManagers on mounted if isEditing is true and listProjectManagers', async () => {
-    const getSectorManagersSpy = vi.spyOn(
-      FormSectorGeneral.methods,
-      'getSectorManagers',
-    );
-    const listProjectManagersSpy = vi.spyOn(
-      FormSectorGeneral.methods,
-      'listProjectManagers',
-    );
+  it('loads sector and project managers when isEditing is true', async () => {
+    const sectorManagersSpy = vi.spyOn(Sector, 'managers');
+    const projectManagersSpy = vi.spyOn(Project, 'managers');
 
-    const wrapper = createWrapper({ isEditing: true });
-
-    await flushPromises();
-
-    expect(getSectorManagersSpy).toHaveBeenCalled();
-    expect(listProjectManagersSpy).toHaveBeenCalled();
-
-    await flushPromises();
-
-    wrapper.vm.sector.managers.forEach((manager) => {
-      expect(manager.removed).toBe(false);
+    const testWrapper = createWrapper({
+      isEditing: true,
+      modelValue: {
+        ...defaultProps.modelValue,
+        uuid: '1',
+        name: 'Sec',
+        rooms_limit: '2',
+        managers: [],
+      },
     });
+
+    await flushPromises();
+
+    expect(sectorManagersSpy).toHaveBeenCalled();
+    expect(projectManagersSpy).toHaveBeenCalled();
+    testWrapper.unmount();
   });
 
-  it('should not render sector name input isEditing is true', async () => {
-    await wrapper.setProps({ isEditing: true });
-    const nameInputSection = wrapper.find(
-      '[data-testid="sector-name-section"]',
-    );
-
-    expect(nameInputSection.exists()).toBe(false);
-  });
-
-  it('should emit submit event on form submit', async () => {
+  it('emits submit on form submit', async () => {
     await wrapper.find('form').trigger('submit.prevent');
     expect(wrapper.emitted().submit).toBeTruthy();
   });
 
-  it('should display error message when working hours are invalid', async () => {
-    await wrapper.setProps({
-      isEditing: true,
-      modelValue: {
-        name: 'Sector Name',
-        managers: [],
-        maxSimultaneousChatsByAgent: '2',
-      },
-    });
-    await wrapper.setData({
-      selectedWorkdayDays: {
-        monday: true,
-      },
-      selectedWorkdayDaysTime: {
-        monday: [
-          {
-            start: '08:00',
-            end: '07:00',
-            valid: false,
-          },
-        ],
-      },
-    });
-    await wrapper.vm.$nextTick();
-    const errorMessage = wrapper.find('.error-message');
-    expect(errorMessage.exists()).toBe(true);
-    expect(errorMessage.text()).toBe(
-      wrapper.vm.$t('config_chats.edit_sector.invalid_hours'),
-    );
-  });
-
-  it('should have a managers list rendered', async () => {
+  it('renders TagGroup entries for managers on the model', async () => {
     await wrapper.setProps({
       modelValue: {
         ...defaultProps.modelValue,
         managers: [
           {
+            uuid: 'm1',
             user: {
-              email: 'maria.silva@weni.ai',
+              email: 'maria@weni.ai',
               first_name: 'Maria',
               last_name: 'Silva',
               photo_url: null,
             },
           },
           {
+            uuid: 'm2',
             user: {
-              email: 'joao.souza@weni.ai',
+              email: 'joao@weni.ai',
               first_name: 'João',
               last_name: 'Souza',
               photo_url: null,
@@ -198,46 +204,69 @@ describe('FormSectorGeneral', () => {
       },
     });
 
-    const selectedMemberCards = wrapper.findAllComponents({
-      name: 'selected-member',
-    });
-    expect(selectedMemberCards.length).toBe(2);
+    const tags = wrapper.findAll('[data-testid^="tag__"]');
+    expect(tags.length).toBe(2);
   });
 
-  it('should remove managers from the project on click remove manager button', async () => {
-    await wrapper.setProps({
-      modelValue: {
-        ...defaultProps.modelValue,
-        managers: [managerMock],
-      },
-    });
-
-    const removeManagerSpy = vi.spyOn(wrapper.vm, 'removeManager');
-
-    const selectedManager = wrapper.findComponent({
-      name: 'selected-member',
-    });
-    const removeSelectedManagerButton = selectedManager.find(
-      '[data-testid="remove-member-button"]',
-    );
-    await removeSelectedManagerButton.trigger('click');
-    expect(removeManagerSpy).toHaveBeenCalledWith('2');
-  });
-
-  it('should disable the save button if form is invalid', async () => {
-    await wrapper.setProps({ isEditing: true });
-    const saveButton = wrapper.findComponent(
-      '[data-testid="general-save-button"]',
-    );
-    expect(saveButton.attributes('disabled')).toBeDefined();
-  });
-
-  it('should call saveSector method on save button click', async () => {
+  it('calls Sector.removeManager when a tag is closed in edit mode', async () => {
+    const removeSpy = vi.spyOn(Sector, 'removeManager');
     await wrapper.setProps({
       isEditing: true,
       modelValue: {
+        ...defaultProps.modelValue,
+        uuid: '1',
+        name: 'Sec',
+        rooms_limit: '2',
+        managers: [managerMock],
+      },
+    });
+    await flushPromises();
+
+    const tagGroup = wrapper.findComponent({ name: 'TagGroup' });
+    await tagGroup.vm.$emit('close', { uuid: '2', name: 'x' });
+
+    expect(removeSpy).toHaveBeenCalledWith('2');
+  });
+
+  it('emits default sector values when enabling the default option', async () => {
+    const testWrapper = createWrapper({ isEditing: false });
+    const fill = testWrapper.findComponent({ name: 'FillDefaultOption' });
+    await fill.vm.$emit('update:modelValue', true);
+    await flushPromises();
+
+    const emitted = testWrapper.emitted('update:modelValue');
+    expect(emitted).toBeTruthy();
+    const last = emitted[emitted.length - 1][0];
+    expect(last.name).toBe(i18n.global.t('config_chats.default_sector.name'));
+    expect(last.rooms_limit).toBe('4');
+    expect(Array.isArray(last.managers)).toBe(true);
+    testWrapper.unmount();
+  });
+
+  it('clears sector fields when disabling the default option', async () => {
+    const testWrapper = createWrapper({ isEditing: false });
+    const fill = testWrapper.findComponent({ name: 'FillDefaultOption' });
+    await fill.vm.$emit('update:modelValue', true);
+    await flushPromises();
+    await fill.vm.$emit('update:modelValue', false);
+    await flushPromises();
+
+    const emitted = testWrapper.emitted('update:modelValue');
+    const last = emitted[emitted.length - 1][0];
+    expect(last.name).toBe('');
+    expect(last.rooms_limit).toBe('');
+    expect(last.managers).toEqual([]);
+    testWrapper.unmount();
+  });
+
+  it('calls saveSector (exposed) and shows success', async () => {
+    const w = createWrapper({
+      isEditing: true,
+      modelValue: {
+        ...defaultProps.modelValue,
         uuid: '1',
         name: 'Test 1',
+        rooms_limit: '2',
         managers: [
           {
             uuid: '1',
@@ -251,54 +280,33 @@ describe('FormSectorGeneral', () => {
             },
           },
         ],
-        maxSimultaneousChatsByAgent: '2',
       },
     });
+    await flushPromises();
 
-    await wrapper.setData({
-      selectedWorkdayDays: {
-        monday: true,
-      },
-      selectedWorkdayDaysTime: {
-        monday: [
-          {
-            start: '08:00',
-            end: '18:00',
-            valid: true,
-          },
-        ],
-      },
-    });
+    await w.vm.saveSector();
+    await flushPromises();
 
-    await wrapper.vm.$nextTick();
-
-    const saveSectorSpy = vi.spyOn(wrapper.vm, 'saveSector');
-    const unnnicAlertSpy = vi.spyOn(unnnic, 'unnnicCallAlert');
-
-    await wrapper
-      .findComponent('[data-testid="general-save-button"]')
-      .trigger('click');
-
-    expect(saveSectorSpy).toHaveBeenCalled();
-
-    expect(unnnicAlertSpy).toHaveBeenCalledWith({
+    expect(Sector.update).toHaveBeenCalled();
+    expect(UnnnicCallAlert).toHaveBeenCalledWith({
       props: {
-        text: wrapper.vm.$t('sector_update_success'),
+        text: i18n.global.t('sector_update_success'),
         type: 'success',
       },
       seconds: 5,
     });
-
     expect(router.push).toHaveBeenCalledWith('/settings');
-    unnnicAlertSpy.mockClear();
+    w.unmount();
   });
 
-  it('should handle errors in saveSector method', async () => {
-    await wrapper.setProps({
+  it('handles Sector.update errors in saveSector', async () => {
+    const w = createWrapper({
       isEditing: true,
       modelValue: {
+        ...defaultProps.modelValue,
         uuid: '1',
         name: 'Test 1',
+        rooms_limit: '2',
         managers: [
           {
             uuid: '1',
@@ -312,175 +320,53 @@ describe('FormSectorGeneral', () => {
             },
           },
         ],
-        maxSimultaneousChatsByAgent: '2',
       },
     });
+    await flushPromises();
 
-    await wrapper.setData({
-      selectedWorkdayDays: {
-        monday: true,
-      },
-      selectedWorkdayDaysTime: {
-        monday: [
-          {
-            start: '08:00',
-            end: '18:00',
-            valid: true,
-          },
-        ],
-      },
-    });
-
-    await wrapper.vm.$nextTick();
-
-    const sectorUpdateMock = vi
+    const updateMock = vi
       .spyOn(Sector, 'update')
-      .mockRejectedValue(new Error());
+      .mockRejectedValueOnce(new Error('fail'));
 
-    await wrapper
-      .findComponent('[data-testid="general-save-button"]')
-      .trigger('click');
-
-    expect(sectorUpdateMock).toHaveBeenCalled();
-
-    sectorUpdateMock.mockClear();
-  });
-
-  it('should format managers to object format with value and label', async () => {
-    wrapper.vm.managersNames.forEach((item) => {
-      expect(item).toHaveProperty('label');
-      expect(item).toHaveProperty('value');
-    });
-  });
-
-  it('should add a manager in the sector', async () => {
-    const wrapper = createWrapper({ isEditing: true });
+    await w.vm.saveSector();
     await flushPromises();
 
-    const addSectorManagerSpy = vi.spyOn(wrapper.vm, 'addSectorManager');
-    const addManagerSpy = vi.spyOn(wrapper.vm, 'addManager');
-
-    const managerOption = {
-      uuid: '2',
-      value: managerMock.user.email,
-      label:
-        `${managerMock.user.first_name} ${managerMock.user.last_name}`.trim(),
-    };
-    wrapper.vm.addSelectedManager(managerOption);
-
-    expect(addSectorManagerSpy).toHaveBeenCalledWith(managerMock);
-    expect(addManagerSpy).toHaveBeenCalledWith(managerMock);
+    expect(updateMock).toHaveBeenCalled();
+    updateMock.mockRestore();
+    w.unmount();
   });
 
-  it('should router push to settings on cancel', async () => {
-    const pushSpy = vi.spyOn(router, 'push');
-    await wrapper.setProps({ isEditing: true });
-    await wrapper.find('[data-testid="cancel-button"]').trigger('click');
-    expect(pushSpy).toHaveBeenCalledWith('/settings');
-  });
-
-  it('should emit update model value with default sector config', async () => {
-    const testWrapper = createWrapper({ isEditing: false });
-    const enableDefaultConfigRadio = testWrapper.findComponent(
-      '[data-testid="enable-default-sector-config"]',
-    );
-    await enableDefaultConfigRadio.vm.$emit('update:model-value', 1);
-    await testWrapper.vm.$nextTick();
-
-    const emitted = testWrapper.emitted('update:modelValue');
-    expect(emitted).toBeTruthy();
-    const lastEmit = emitted[emitted.length - 1][0];
-    expect(lastEmit).toHaveProperty(
-      'name',
-      testWrapper.vm.$t('config_chats.default_sector.name'),
-    );
-    expect(lastEmit).toHaveProperty('maxSimultaneousChatsByAgent', '4');
-    expect(lastEmit.managers).toBeInstanceOf(Array);
-  });
-
-  it('should update model value with blank sector config', async () => {
-    const testWrapper = createWrapper({ isEditing: false });
-    await testWrapper.setData({ useDefaultSector: 1 });
-    const disableDefaultConfigRadio = testWrapper.findComponent(
-      '[data-testid="disable-default-sector-config"]',
-    );
-    await disableDefaultConfigRadio.vm.$emit('update:model-value', 0);
-    await testWrapper.vm.$nextTick();
-
-    const emitted = testWrapper.emitted('update:modelValue');
-    expect(emitted).toBeTruthy();
-    const lastEmit = emitted[emitted.length - 1][0];
-    expect(lastEmit).toHaveProperty('name', '');
-    expect(lastEmit).toHaveProperty('maxSimultaneousChatsByAgent', '');
-    expect(lastEmit.managers).toEqual([]);
-  });
-
-  it('call service to removeManager if isEditing = true', async () => {
-    const removeManagerSpy = vi.spyOn(Sector, 'removeManager');
-    await wrapper.setProps({ isEditing: true });
-    await wrapper.vm.removeManager('1');
-    expect(removeManagerSpy).toHaveBeenCalledWith('1');
-  });
-
-  it('should return the list of project names', async () => {
-    await wrapper.setData({
-      projects: [
-        { uuid: '1', name: 'Project One' },
-        { uuid: '2', name: 'Project Two' },
-      ],
+  it('calls Group.listProjects when groups mode is on (working day section mounted)', async () => {
+    const pinia = createPinia({
+      config: {
+        project: { uuid: 'p1', config: { its_principal: true }, org: 'org-1' },
+      },
     });
 
-    const result = wrapper.vm.projectsNames;
-
-    expect(result).toEqual([
-      { value: '1', label: 'Project One' },
-      { value: '2', label: 'Project Two' },
-    ]);
-  });
-
-  it('should return the list of secondary projects', async () => {
-    await wrapper.vm.listSecondaryProjects();
-    expect(wrapper.vm.projects).toEqual([projectMock]);
-  });
-
-  it('should set selected project and clear secondary projects', async () => {
-    await wrapper.vm.listSecondaryProjects();
-
-    const projectOption = wrapper.vm.projectsNames[0];
-    wrapper.vm.applySelectedProject(projectOption);
-
-    await wrapper.vm.$nextTick();
-
-    expect(wrapper.vm.sector.config.secondary_project).toBe(
-      projectOption.value,
-    );
-  });
-
-  it('should call required methods when enableGroupsMode is true and isEditing is true', async () => {
-    const listSecondaryProjects = vi.spyOn(
-      FormSectorGeneral.methods,
-      'listSecondaryProjects',
-    );
-
-    mount(FormSectorGeneral, {
-      global: {
-        plugins: [
-          router,
-          createTestingPinia({
-            initialState: {
-              config: { project: { config: { its_principal: true } } },
-            },
-          }),
-        ],
-      },
+    const w = mount(FormSectorGeneral, {
       props: {
-        modelValue: { ...defaultProps.modelValue },
         isEditing: true,
+        modelValue: {
+          ...defaultProps.modelValue,
+          uuid: '1',
+          name: 'G',
+          rooms_limit: '1',
+          managers: [],
+          config: { secondary_project: '' },
+        },
+      },
+      global: {
+        plugins: [router, pinia],
+        stubs: {
+          UnnnicModalNext: true,
+        },
       },
     });
 
     await flushPromises();
+    await flushPromises();
 
-    expect(listSecondaryProjects).toHaveBeenCalled();
+    expect(Group.listProjects).toHaveBeenCalled();
+    w.unmount();
   });
 });

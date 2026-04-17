@@ -1,23 +1,31 @@
 import { expect, describe, it, vi, beforeEach } from 'vitest';
 import { flushPromises, mount } from '@vue/test-utils';
+import { createTestingPinia } from '@pinia/testing';
 
-import FormQueue from '../ListSectorQueues.vue';
+import ListSectorQueues from '../ListSectorQueues/index.vue';
 
-import unnnic from '@weni/unnnic-system';
+import { useCompositionI18nInThisSpecFile } from '@/utils/test/compositionI18nVitest';
 
 import Queue from '@/services/api/resources/settings/queue';
 import Project from '@/services/api/resources/settings/project';
 
-import { createTestingPinia } from '@pinia/testing';
+vi.mock('@weni/unnnic-system', () => ({
+  default: {
+    unnnicCallAlert: vi.fn(),
+  },
+}));
 
 vi.mock('@/services/api/resources/settings/queue', () => ({
   default: {
     list: vi.fn(),
+    create: vi.fn(),
     editQueue: vi.fn(),
     getQueueInformation: vi.fn(),
     agents: vi.fn(),
     delete: vi.fn(),
     roomsCount: vi.fn().mockResolvedValue({ waiting: 0, in_service: 0 }),
+    addAgent: vi.fn(),
+    removeAgent: vi.fn(),
   },
 }));
 
@@ -27,17 +35,7 @@ vi.mock('@/services/api/resources/settings/project', () => ({
   },
 }));
 
-vi.spyOn(Queue, 'list')
-  .mockResolvedValue({ results: [], next: false })
-  .mockResolvedValueOnce({
-    results: [{ uuid: 'queue-1', name: 'Queue 1', agents: 5 }],
-    next: true,
-  })
-  .mockResolvedValueOnce({
-    results: [{ uuid: 'queue-2', name: 'Queue 2', agents: 3 }],
-    next: false,
-  });
-
+vi.spyOn(Queue, 'create').mockResolvedValue({ uuid: 'new-q' });
 vi.spyOn(Queue, 'editQueue').mockResolvedValue({});
 
 vi.spyOn(Queue, 'getQueueInformation').mockResolvedValue({ uuid: 'queue-1' });
@@ -73,11 +71,15 @@ vi.spyOn(Queue, 'agents').mockResolvedValue({
 });
 
 const createWrapper = (props = {}) => {
-  return mount(FormQueue, {
+  return mount(ListSectorQueues, {
     global: {
       plugins: [createTestingPinia()],
       stubs: {
-        ModalDeleteWithTransfer: true,
+        ModalDeleteWithTransfer: {
+          name: 'ModalDeleteWithTransfer',
+          template: '<div data-testid="delete-queue-modal" />',
+          props: ['modelValue'],
+        },
       },
     },
     props,
@@ -85,141 +87,89 @@ const createWrapper = (props = {}) => {
 };
 
 describe('ListSectorQueues.vue', () => {
+  useCompositionI18nInThisSpecFile();
+
   let wrapper;
+
   beforeEach(async () => {
-    wrapper = createWrapper({ sector: { uuid: '1' } });
+    vi.clearAllMocks();
+    Queue.list
+      .mockResolvedValueOnce({
+        results: [{ uuid: 'queue-1', name: 'Queue 1', agents: 5 }],
+        next: true,
+      })
+      .mockResolvedValueOnce({
+        results: [{ uuid: 'queue-2', name: 'Queue 2', agents: 3 }],
+        next: false,
+      })
+      .mockResolvedValue({ results: [], next: false });
+
+    wrapper = createWrapper({ sector: { uuid: '1', name: 'Sector' } });
     await flushPromises();
   });
 
   it('should load paginated queues correctly', async () => {
     expect(wrapper.vm.queues).toHaveLength(2);
-
     expect(wrapper.vm.queues).toEqual([
       { uuid: 'queue-1', name: 'Queue 1', agents: 5 },
       { uuid: 'queue-2', name: 'Queue 2', agents: 3 },
     ]);
-
     expect(Queue.list).toHaveBeenCalledTimes(2);
     expect(Queue.list).toHaveBeenCalledWith('1', 0, 10);
     expect(Queue.list).toHaveBeenCalledWith('1', 10, 10);
   });
 
-  it('should open the new queue drawer when clicking the add button', async () => {
-    const openConfigQueueDrawer = vi.spyOn(wrapper.vm, 'openConfigQueueDrawer');
-
-    const callAlert = vi.spyOn(unnnic, 'unnnicCallAlert');
-
-    const createQueueCard = wrapper.find('[data-testid="create-sector-card"]');
-
-    await createQueueCard.trigger('click');
-
-    await new Promise((resolve) => setTimeout(resolve, 1));
-
-    expect(openConfigQueueDrawer).toHaveBeenCalled();
-
-    const queueConfigDrawer = wrapper.findComponent(
-      '[data-testid="queue-config-drawer"]',
-    );
-
-    const queueForm = wrapper.findComponent(
-      '[data-testid="queue-config-form"]',
-    );
-
-    expect(queueConfigDrawer.exists()).toBe(true);
-    expect(queueForm.exists()).toBe(true);
-    expect(queueForm.props().sector.uuid).toBe(wrapper.props().sector.uuid);
-    expect(queueForm.props().modelValue.uuid).toBe(undefined);
-
-    queueConfigDrawer.vm.$emit('primary-button-click');
-
-    expect(callAlert).toHaveBeenCalled();
-  });
-
-  it('should open the edit drawer when clicking on an existing queue', async () => {
-    await wrapper.setData({
-      queues: [{ uuid: 'queue-1', name: 'Queue 1', agents: 5 }],
-    });
-
-    const openConfigQueueDrawer = vi.spyOn(wrapper.vm, 'openConfigQueueDrawer');
-
-    const closeConfigQueueDrawer = vi.spyOn(
-      wrapper.vm,
-      'closeQueueConfigDrawer',
-    );
-
-    await wrapper.find('[data-testid="queue-card"]').trigger('click');
-
-    expect(openConfigQueueDrawer).toHaveBeenCalledWith({
-      uuid: 'queue-1',
-      name: 'Queue 1',
-      agents: 5,
-    });
-
-    await flushPromises();
-
-    const queueConfigDrawer = wrapper.findComponent(
-      '[data-testid="queue-config-drawer"]',
-    );
-
-    const queueSectorForm = wrapper.findComponent(
-      '[data-testid="queue-config-form"]',
-    );
-
-    expect(queueConfigDrawer.exists()).toBe(true);
-    expect(queueSectorForm.exists()).toBe(true);
-
-    expect(queueSectorForm.props().sector.uuid).toBe(
-      wrapper.props().sector.uuid,
-    );
-
-    expect(queueSectorForm.props().modelValue.uuid).toBe(
-      wrapper.vm.$data.queues[0].uuid,
-    );
-
-    await queueConfigDrawer.vm.$emit('close');
-
-    expect(closeConfigQueueDrawer).toHaveBeenCalled();
-  });
-
-  it('should display the delete modal when handlerOpenDeleteQueueModal is called', async () => {
-    await wrapper.vm.handlerOpenDeleteQueueModal({
-      uuid: 'queue-uuid',
-      name: 'Queue A',
-    });
-
+  it('should open the new queue drawer when openConfigQueueDrawer is called', async () => {
+    await wrapper.vm.openConfigQueueDrawer();
     await wrapper.vm.$nextTick();
 
-    expect(wrapper.vm.showDeleteQueueModal).toBe(true);
-    expect(wrapper.find('[data-testid="delete-queue-modal"]').exists()).toBe(
-      true,
-    );
+    expect(wrapper.vm.showQueueDrawer).toBe(true);
+    const drawer = wrapper.findComponent('[data-testid="queue-config-drawer"]');
+    const form = wrapper.findComponent('[data-testid="queue-config-form"]');
+    expect(drawer.exists()).toBe(true);
+    expect(form.exists()).toBe(true);
+    expect(form.props().sector.uuid).toBe('1');
+    expect(form.props().modelValue[0].uuid).toBeUndefined();
   });
 
-  it('should call deleteQueue method when confirming deletion', async () => {
-    const deleteQueueSpy = vi.spyOn(wrapper.vm, 'deleteQueue');
+  it('should open the edit drawer when a queue card is clicked', async () => {
+    await wrapper.setData({
+      queues: [
+        {
+          uuid: 'queue-1',
+          name: 'Queue 1',
+          agents: 5,
+          created_on: '2024-01-01T00:00:00Z',
+        },
+      ],
+    });
+    await wrapper.vm.$nextTick();
 
+    await wrapper.find('.queue-card').trigger('click');
+    await flushPromises();
+
+    expect(wrapper.vm.showQueueDrawer).toBe(true);
+    const form = wrapper.findComponent('[data-testid="queue-config-form"]');
+    expect(form.exists()).toBe(true);
+    expect(form.props().modelValue[0].uuid).toBe('queue-1');
+  });
+
+  it('should remove a queue from the list when deleteQueue runs', async () => {
+    vi.spyOn(Queue, 'delete').mockResolvedValue(undefined);
     await wrapper.setData({
       queues: [
         { uuid: 'queue-a', name: 'Queue A' },
         { uuid: 'queue-b', name: 'Queue B' },
       ],
+      queueToDelete: { uuid: 'queue-a', name: 'Queue A' },
+      showDeleteQueueModal: true,
     });
+    await wrapper.vm.$nextTick();
 
-    await wrapper.vm.handlerOpenDeleteQueueModal({
-      uuid: 'queue-a',
-      name: 'Queue A',
-    });
-
+    await wrapper.vm.deleteQueue({ action: 'end_all' });
     await flushPromises();
 
-    const deleteModal = wrapper.findComponent(
-      '[data-testid="delete-queue-modal"]',
-    );
-
-    await deleteModal.vm.$emit('confirm', { action: 'end_all' });
-    await flushPromises();
-
-    expect(deleteQueueSpy).toHaveBeenCalledTimes(1);
+    expect(Queue.delete).toHaveBeenCalledWith('queue-a', { endAllChats: true });
 
     expect(wrapper.vm.queues.length).toBe(1);
     expect(wrapper.vm.queues).toStrictEqual([
@@ -233,15 +183,16 @@ describe('ListSectorQueues.vue', () => {
       name: 'Queue A',
     });
 
+    await flushPromises();
     await wrapper.vm.$nextTick();
 
     const deleteModal = wrapper.findComponent(
       '[data-testid="delete-queue-modal"]',
     );
 
-    await deleteModal.vm.$emit('click-action-secondary');
+    await deleteModal.vm.$emit('cancel');
 
-    expect(wrapper.vm.showQueueDrawer).toBe(false);
-    expect(wrapper.vm.queueToConfig).toMatchObject({});
+    expect(wrapper.vm.showDeleteQueueModal).toBe(false);
+    expect(wrapper.vm.queueToDelete).toEqual({});
   });
 });

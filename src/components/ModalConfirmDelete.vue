@@ -4,15 +4,15 @@
     :open="open"
   >
     <UnnnicDialogContent>
-      <section class="modal-confirm-destroy__content">
-        <UnnnicIcon
-          icon="alert-circle-1"
-          size="xl"
-          scheme="feedback-red"
-        />
-        <p class="modal-confirm-destroy__content__title">
+      <UnnnicDialogHeader
+        type="warning"
+        :closeButton="false"
+      >
+        <UnnnicDialogTitle>
           {{ title }}
-        </p>
+        </UnnnicDialogTitle>
+      </UnnnicDialogHeader>
+      <section class="modal-confirm-destroy__content">
         <p class="modal-confirm-destroy__content__description">
           {{ description }}
         </p>
@@ -20,6 +20,8 @@
           v-model="inputConfirmText"
           class="modal-confirm-destroy__content__input"
           :placeholder="confirmText"
+          :message="$t('delete_modal.cannot_be_reversed')"
+          @keyup.enter.stop="isValid ? emit('confirm') : null"
         />
       </section>
       <UnnnicDialogFooter>
@@ -90,17 +92,11 @@ const isValid = computed(() => {
   &__content {
     display: flex;
     flex-direction: column;
-    align-items: center;
-    gap: $unnnic-space-4;
+    gap: $unnnic-space-1;
     padding: $unnnic-space-6;
 
-    &__title {
-      font: $unnnic-font-display-2;
-      color: $unnnic-color-fg-emphasized;
-    }
-
     &__description {
-      font: $unnnic-font-display-4;
+      font: $unnnic-font-body;
       color: $unnnic-color-fg-base;
     }
 

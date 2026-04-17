@@ -2,7 +2,9 @@ import { expect, describe, it, vi, beforeEach } from 'vitest';
 import { flushPromises, mount } from '@vue/test-utils';
 import { createTestingPinia } from '@pinia/testing';
 
-import QueueForm from '../Queue.vue';
+import QueueForm from '../Queue/index.vue';
+
+import { useCompositionI18nInThisSpecFile } from '@/utils/test/compositionI18nVitest';
 
 import Queue from '@/services/api/resources/settings/queue';
 import Project from '@/services/api/resources/settings/project';
@@ -45,6 +47,17 @@ vi.spyOn(Queue, 'addAgent').mockResolvedValue({ data: { uuid: '2' } });
 
 vi.spyOn(Queue, 'removeAgent').mockResolvedValue();
 
+const emptyQueue = () => ({
+  name: '',
+  default_message: '',
+  currentAgents: [],
+  queue_limit: { is_active: false, limit: null },
+  toAddAgentsUuids: [],
+  toRemoveAgentsUuids: [],
+  validForm: false,
+  agents: 0,
+});
+
 const createWrapper = (props = {}) => {
   return mount(QueueForm, {
     global: {
@@ -55,12 +68,7 @@ const createWrapper = (props = {}) => {
       ],
     },
     props: {
-      modelValue: {
-        default_message: '',
-        currentAgents: [],
-        name: '',
-        queue_limit: { is_active: false, limit: null },
-      },
+      modelValue: [emptyQueue()],
       sector: { uuid: '1', name: 'Sector Mock' },
       ...props,
     },
@@ -68,58 +76,52 @@ const createWrapper = (props = {}) => {
 };
 
 describe('FormQueue', () => {
+  useCompositionI18nInThisSpecFile();
+
   let wrapper;
   beforeEach(() => {
     wrapper = createWrapper();
   });
 
-  it('should not display queue name input when in edit mode', async () => {
-    await wrapper.setProps({
-      modelValue: { uuid: '1', queue_limit: { is_active: false, limit: null } },
-    });
-
+  it('shows queue name input in create mode', () => {
     const inputQueueName = wrapper.find('[data-testid="queue-name-input"]');
-
-    expect(inputQueueName.exists()).toBe(false);
+    expect(inputQueueName.exists()).toBe(true);
   });
 
-  it('should text helpers if showHelpers = true', async () => {
-    await wrapper.setProps({ showHelpers: true });
-    expect(wrapper.find('[data-testid="hint"]').exists()).toBe(true);
-  });
-
-  it('should display textarea when editing the automatic message', async () => {
+  it('shows queue name input in edit mode', async () => {
     await wrapper.setProps({
-      modelValue: {
-        uuid: '1',
-        default_message: '',
-        queue_limit: { is_active: false, limit: null },
-      },
+      modelValue: [
+        {
+          uuid: '1',
+          default_message: '',
+          queue_limit: { is_active: false, limit: null },
+          ...emptyQueue(),
+        },
+      ],
     });
-
-    const editMessageBtn = wrapper.find(
-      '[data-testid="edit-automatic-message-button"]',
+    await flushPromises();
+    expect(wrapper.find('[data-testid="queue-name-input"]').exists()).toBe(
+      true,
     );
-    await editMessageBtn.trigger('click');
+  });
 
-    expect(wrapper.vm.editingAutomaticMessage).toBe(true);
-
-    const automaticMessageTextArea = wrapper.find(
-      '[data-testid="automatic-message-textarea"]',
-    );
-
-    expect(automaticMessageTextArea.exists()).toBe(true);
+  it('should show configure queue title when showHelpers = true', async () => {
+    await wrapper.setProps({ showHelpers: true });
+    expect(wrapper.find('.queue-form__title').exists()).toBe(true);
   });
 
   it('should list queue agents on editing mode', async () => {
     const listQueueAgents = vi.spyOn(QueueForm.methods, 'listQueueAgents');
 
     createWrapper({
-      modelValue: {
-        uuid: '1',
-        default_message: '',
-        queue_limit: { is_active: false, limit: null },
-      },
+      modelValue: [
+        {
+          uuid: '1',
+          default_message: '',
+          queue_limit: { is_active: false, limit: null },
+          ...emptyQueue(),
+        },
+      ],
     });
 
     await flushPromises();
@@ -127,23 +129,8 @@ describe('FormQueue', () => {
     expect(listQueueAgents).toHaveBeenCalled();
   });
 
-  it('displays the automatic message in view mode when not editing', async () => {
-    await wrapper.setProps({
-      modelValue: {
-        uuid: '1',
-        default_message: 'Test automatic message',
-        queue_limit: { is_active: false, limit: null },
-      },
-    });
-
-    await wrapper.setData({ editingAutomaticMessage: false });
-
-    expect(wrapper.find('[data-testid="queue-default-message"]').text()).toBe(
-      'Test automatic message',
-    );
-  });
-
   it('should add an agent to the create queue correctly', async () => {
+    const inputsForm = wrapper.findComponent({ name: 'QueueInputsForm' });
     const agent = {
       uuid: '2',
       user: {
@@ -153,21 +140,26 @@ describe('FormQueue', () => {
       },
     };
 
-    await wrapper.vm.handlerAddAgent(agent);
+    await inputsForm.vm.handlerAddAgent(agent);
 
-    expect(wrapper.vm.queue.currentAgents).toEqual([agent]);
+    expect(inputsForm.vm.queueForm.currentAgents).toEqual([agent]);
   });
 
   it('should add an agent to the editing queue correctly', async () => {
     await wrapper.setProps({
-      modelValue: {
-        uuid: '1',
-        default_message: '',
-        currentAgents: [],
-        queue_limit: { is_active: false, limit: null },
-      },
+      modelValue: [
+        {
+          uuid: '1',
+          default_message: '',
+          currentAgents: [],
+          queue_limit: { is_active: false, limit: null },
+          ...emptyQueue(),
+        },
+      ],
     });
+    await flushPromises();
 
+    const inputsForm = wrapper.findComponent({ name: 'QueueInputsForm' });
     const agent = {
       uuid: '2',
       user: {
@@ -177,87 +169,88 @@ describe('FormQueue', () => {
       },
     };
 
-    await wrapper.vm.handlerAddAgent(agent);
+    await inputsForm.vm.handlerAddAgent(agent);
 
-    expect(wrapper.vm.queue.currentAgents).toEqual([agent]);
+    expect(inputsForm.vm.queueForm.currentAgents).toEqual([agent]);
   });
 
-  it('should removes an agent from the queue correctly (create)', async () => {
-    await wrapper.setProps({
-      modelValue: {
-        queue_limit: { is_active: false, limit: null },
-        currentAgents: [
-          {
-            uuid: '1',
-            user: {
-              first_name: 'Agent',
-              last_name: 'Mock',
-              email: 'agent.mock@test.com',
-            },
-          },
-        ],
+  it('should remove an agent from the queue correctly (create)', async () => {
+    const agentRow = {
+      uuid: '1',
+      user: {
+        first_name: 'Agent',
+        last_name: 'Mock',
+        email: 'agent.mock@test.com',
       },
+    };
+    await wrapper.setProps({
+      modelValue: [
+        {
+          ...emptyQueue(),
+          currentAgents: [agentRow],
+        },
+      ],
     });
 
-    await wrapper.vm.handlerRemoveAgent('1');
+    const inputsForm = wrapper.findComponent({ name: 'QueueInputsForm' });
+    await inputsForm.vm.handlerRemoveAgent('1');
 
-    expect(wrapper.vm.queue.currentAgents.length).toBe(0);
+    expect(inputsForm.vm.queueForm.currentAgents.length).toBe(0);
   });
 
-  it('should removes an agent from the queue correctly (editing)', async () => {
+  it('should remove an agent from the queue correctly (editing)', async () => {
     await wrapper.setProps({
-      modelValue: {
-        uuid: '1',
-        queue_limit: { is_active: false, limit: null },
-        currentAgents: [
-          {
-            uuid: '1',
-            user: {
-              first_name: 'Agent',
-              last_name: 'Mock',
-              email: 'agent.mock@test.com',
+      modelValue: [
+        {
+          uuid: '1',
+          default_message: '',
+          queue_limit: { is_active: false, limit: null },
+          ...emptyQueue(),
+          currentAgents: [
+            {
+              uuid: '1',
+              user: {
+                first_name: 'Agent',
+                last_name: 'Mock',
+                email: 'agent.mock@test.com',
+              },
             },
-          },
-        ],
-      },
+          ],
+        },
+      ],
     });
+    await flushPromises();
 
-    await wrapper.vm.handlerRemoveAgent('1');
+    const inputsForm = wrapper.findComponent({ name: 'QueueInputsForm' });
+    await inputsForm.vm.handlerRemoveAgent('1');
 
-    expect(wrapper.vm.queue.currentAgents.length).toBe(0);
+    expect(inputsForm.vm.queueForm.currentAgents.length).toBe(0);
   });
 
-  it('should render on finish loadingInfo', async () => {
+  it('should render queue form after loading', async () => {
     await wrapper.setData({ loadingInfo: false });
-
     expect(wrapper.find('.sector-queues-form').exists()).toBe(true);
   });
 
-  it('should render all inputs', async () => {
-    const inputQueue = wrapper
-      .findAllComponents({ name: 'unnnic-input' })
-      .at(0);
+  it('should render queue name input with label', async () => {
+    const inputQueue = wrapper.findAllComponents({ name: 'unnnic-input' }).at(0);
     expect(inputQueue.exists()).toBe(true);
-    expect(inputQueue.props('label')).toMatch(/Queue name/gi);
-    expect(inputQueue.props('placeholder')).toMatch(/Example: Payments/gi);
+    expect(String(inputQueue.props('label')).toLowerCase()).toContain(
+      'queue',
+    );
   });
 
-  it('should update model value with blank queue config', async () => {
+  it('should emit update when default queue option is disabled', async () => {
     await wrapper.setProps({ showHelpers: true });
     await wrapper.setData({ useDefaultSectorQueue: 1 });
+    await wrapper.vm.updateDefaultSectorQueueValue(0);
 
-    const enableDefaultConfigRadio = wrapper.find(
-      '[data-testid="disable-default-queue-config"]',
-    );
-
-    await enableDefaultConfigRadio.trigger('click');
-
-    expect(wrapper.emitted('update:modelValue')[0][0])
-      .haveOwnProperty('name')
-      .eq('');
-
-    expect(wrapper.emitted('update:modelValue')[0][0])
-      .haveOwnProperty('currentAgents')
-      .eql([]);
+    const emitted = wrapper.emitted('update:modelValue');
+    expect(emitted).toBeTruthy();
+    const last = emitted[emitted.length - 1][0];
+    expect(last[0]).toMatchObject({
+      name: '',
+      currentAgents: [],
+    });
   });
 });

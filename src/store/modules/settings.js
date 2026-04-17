@@ -26,7 +26,15 @@ export const useSettings = defineStore('settings', {
   }),
 
   actions: {
-    async getSectors(getAll = false) {
+    resetSectors() {
+      this.sectors = [];
+      this.nextSectors = '';
+      this.previousSectors = '';
+    },
+    async getSectors(getAll = false, forceRefresh = false) {
+      if (forceRefresh) {
+        this.resetSectors();
+      }
       const isInLastPage = !this.nextSectors && this.previousSectors;
 
       if (isInLastPage) return;

@@ -146,7 +146,7 @@ export default {
           secondary_project: '',
         },
         managers: [],
-        maxSimultaneousChatsByAgent: '',
+        rooms_limit: '',
         required_tags: false,
         quick_messages: [
           {
@@ -179,13 +179,9 @@ export default {
     ...mapWritableState(useSettings, ['sectors']),
     ...mapState(useConfig, ['enableGroupsMode']),
     showDiscartQuestion() {
-      const { name, maxSimultaneousChatsByAgent, managers } = this.sector;
+      const { name, rooms_limit, managers } = this.sector;
 
-      return !!(
-        name ||
-        Number(maxSimultaneousChatsByAgent || 0) ||
-        managers.length
-      );
+      return !!(name || Number(rooms_limit || 0) || managers.length);
     },
     activePageKey() {
       const mapper = {
@@ -227,7 +223,7 @@ export default {
           can_trigger_flows,
           sign_messages,
           name,
-          maxSimultaneousChatsByAgent,
+          rooms_limit,
           managers,
           config,
           automatic_message,
@@ -239,9 +235,7 @@ export default {
           can_trigger_flows,
           sign_messages,
           name,
-          rooms_limit: this.enableGroupsMode
-            ? '0'
-            : maxSimultaneousChatsByAgent,
+          rooms_limit: this.enableGroupsMode ? '0' : rooms_limit,
           config: this.enableGroupsMode
             ? config
             : { ...config, secondary_project: undefined },
@@ -278,31 +272,23 @@ export default {
 
         await this.$refs.sectorExtraOptions.save(true);
 
-        const createQueuesRequests = this.sectorQueues.map((sectorQueue) =>
-          Queue.create({
-            name: sectorQueue.name,
-            default_message: '',
-            sectorUuid: this.sector.uuid,
-            queue_limit: this.enableQueueLimitFeature
-              ? sectorQueue.queue_limit
-              : { is_active: false, limit: null },
-          }),
-        );
+        const createQueuesBody = this.sectorQueues.map((sectorQueue) => ({
+          name: sectorQueue.name,
+          default_message: '',
+          queue_limit: this.enableQueueLimitFeature
+            ? sectorQueue.queue_limit
+            : { is_active: false, limit: null },
+          agents: sectorQueue.currentAgents.map((agent) => agent.user.email),
+        }));
 
-        const createdQueues = await Promise.all(createQueuesRequests);
+        await Queue.bulkCreate(this.sector.uuid, createQueuesBody);
 
-        await Promise.all(
-          createdQueues.map((createdQueue, index) => {
-            return Promise.all(
-              this.sectorQueues[index].currentAgents.map((agent) => {
-                return Queue.addAgent(createdQueue.uuid, agent.uuid);
-              }),
-            );
-          }),
+        const validQuickMessages = this.sector.quick_messages.filter(
+          (quickMessage) => quickMessage.shortcut && quickMessage.text,
         );
 
         await Promise.all(
-          this.sector.quick_messages.map((quickMessage) => {
+          validQuickMessages.map((quickMessage) => {
             return this.createQuickMessage({
               sectorUuid: this.sector.uuid,
               shortcut: quickMessage.shortcut,

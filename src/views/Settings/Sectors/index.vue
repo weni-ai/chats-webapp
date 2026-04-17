@@ -44,62 +44,15 @@
         />
       </section>
       <section class="settings-sectors__sectors-list">
-        <UnnnicSimpleCard
+        <SectorCard
           v-for="sector in sectorsOrdered"
           :key="sector.id"
-          :title="sector.name"
-          clickable
-          class="sectors__card"
-          data-testid="settings-sectors-sector-card"
-          @click="navigate('sectors.edit', { uuid: sector.uuid })"
-        >
-          <template #headerSlot>
-            <UnnnicDropdown position="top-left">
-              <template #trigger>
-                <UnnnicToolTip
-                  enabled
-                  :text="$t('quick_messages.delete_or_edit')"
-                  side="left"
-                >
-                  <UnnnicButton
-                    iconCenter="more_vert"
-                    type="tertiary"
-                    data-testid="open-dropdown-menu-button"
-                  />
-                </UnnnicToolTip>
-              </template>
-              <UnnnicDropdownItem
-                data-testid="dropdown-edit"
-                @click="navigate('sectors.edit', { uuid: sector.uuid })"
-              >
-                <section class="dropdown-item-content">
-                  <UnnnicIconSvg
-                    class="icon"
-                    icon="edit_square"
-                    size="sm"
-                  />
-                  <p>{{ $t('edit') }}</p>
-                </section>
-              </UnnnicDropdownItem>
-              <UnnnicDropdownItem
-                data-testid="dropdown-delete"
-                @click.stop="handlerOpenDeleteSectorModal(sector)"
-              >
-                <section
-                  class="dropdown-item-content dropdown-item-content__delete"
-                >
-                  <UnnnicIconSvg
-                    class="icon"
-                    icon="delete"
-                    size="sm"
-                    scheme="danger"
-                  />
-                  <p>{{ $t('exclude') }}</p>
-                </section>
-              </UnnnicDropdownItem>
-            </UnnnicDropdown>
-          </template>
-        </UnnnicSimpleCard>
+          :sector="sector"
+          @click="
+            navigate('sectors.edit', { uuid: sector.uuid }, { tab: 'general' })
+          "
+          @delete="handlerOpenDeleteSectorModal"
+        />
       </section>
 
       <section
@@ -132,14 +85,16 @@
 import { computed, onMounted, ref } from 'vue';
 import { useRouter } from 'vue-router';
 import { storeToRefs } from 'pinia';
-import { UnnnicCallAlert } from '@weni/unnnic-system';
 
 import ModalDeleteWithTransfer from '@/components/ModalDeleteWithTransfer.vue';
 import ListOrdinator from '@/components/ListOrdinator.vue';
+import SectorCard from './SectorCard.vue';
 
 import { useSettings } from '@/store/modules/settings';
 
 import Sector from '@/services/api/resources/settings/sector';
+
+import { UnnnicCallAlert } from '@weni/unnnic-system';
 
 import i18n from '@/plugins/i18n';
 
@@ -147,8 +102,8 @@ defineOptions({
   name: 'SettingsSectors',
 });
 
-const router = useRouter();
 const { t } = i18n.global;
+const router = useRouter();
 
 const emit = defineEmits<{
   'open-new-sector-modal': [void];
@@ -197,7 +152,7 @@ const sectorsOrdered = computed(() => {
 });
 
 onMounted(() => {
-  getSectors(true);
+  getSectors(true, true);
 });
 
 const handlerOpenDeleteSectorModal = async (sector) => {
@@ -264,10 +219,11 @@ const handleConnectOverlay = (active) => {
   window.parent.postMessage({ event: 'changeOverlay', data: active }, '*');
 };
 
-const navigate = (name, params) => {
+const navigate = (name, params, query = {}) => {
   router.push({
     name,
     params,
+    query,
   });
 };
 </script>

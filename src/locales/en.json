@@ -142,6 +142,7 @@
   "number_chats": "Number of chats",
   "language": "Language",
   "search": "Search",
+  "try_again": "Try again",
   "date_format_variable": "{month}/{day}/{year}",
   "undo": "Undo",
   "redo": "Redo",
@@ -723,6 +724,7 @@
   "shortcut": "Shortcut",
   "message": "Message",
   "save": "Save",
+  "save_changes": "Save changes",
   "create": "Create",
   "use": "Use",
   "delete_sector": "Delete sector",
@@ -730,6 +732,9 @@
   "delete_queue_modal": {
     "text": "Delete the queue {queue}",
     "description": "The queue {queue} will be permanently deleted."
+  },
+  "delete_sector_modal": {
+    "text": "Type the name of the sector to delete"
   },
   "cant_revert": "This option cannot be reversed",
   "confirm_typing": "Confirm by typing",
@@ -800,7 +805,7 @@
     "delete_your_quick_message": "Delete your quick message",
     "delete_confirm": "Are you sure you'd like to delete quick message?",
     "delete_or_edit": "Delete or edit",
-    "delete_description": "Are you sure you want to delete the quick message {shortcut}?",
+    "delete_description": "Type the shortcut of the quick message to delete",
     "shortcut_tooltip": "Type /{shortcut} to use",
     "new": "New quick message",
     "add": "Add new quick message",
@@ -812,6 +817,8 @@
     "message_field_placeholder": "Example: Hello, how are you? I'll continue to support you today.",
     "successfully_added": "Quick message added",
     "successfully_updated": "Quick message updated",
+    "successfully_deleted": "Quick message deleted successfully!",
+    "error_deleting": "Unable to delete the quick message.",
     "error": "Failed to set quick message",
     "no_suggestions": "No results found for the entered shortcut.",
     "disclaimer": "Type the shortcut / (slash) in the chat message field to activate the display of quick messages."
@@ -961,8 +968,9 @@
       "new": "New queue",
       "title": "Queues Management",
       "hint": "Queues are support groups within the sector; you can create new queues or edit them whenever you want.",
+      "filter_by_name": "Filter by queue name",
       "add_queue": "Add queue",
-      "delete_this_queue": "Delete this queue",
+      "delete_this_queue": "Type the name of the queue to delete",
       "configure_queue": {
         "title": "Configure queue",
         "tooltip": "Queues are support groups within the sector. You can create new queues or edit them whenever you want with the created sector."
@@ -988,13 +996,18 @@
       }
     },
     "quick_messages": {
+      "add": "Add new quick message",
+      "create": "Create quick message",
+      "delete_this_quick_message": "Delete this quick message",
+      "empty": {
+        "description": "Create the first quick message",
+        "title": "There are no quick messages in this sector"
+      },
+      "new": "New quick message",
       "title": {
         "label": "Configure a quick message",
         "tooltip": "Quick messages are ready-made texts that help standardize customer service. All agents in this sector will be able to use these messages, and you can register new messages below."
-      },
-      "new": "New quick message",
-      "add": "Add new quick message",
-      "delete_this_quick_message": "Delete this quick message"
+      }
     },
     "groups": {
       "new": {
