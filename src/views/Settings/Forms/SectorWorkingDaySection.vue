@@ -177,6 +177,9 @@
 
 <script>
 import { mapActions, mapState } from 'pinia';
+
+import { cloneDeep } from 'lodash';
+
 import { useSettings } from '@/store/modules/settings';
 import { useConfig } from '@/store/modules/config';
 
@@ -195,13 +198,13 @@ const emptyWorkdayTime = {
 };
 
 const defaultEmptyWorkdayState = () => ({
-  monday: [JSON.parse(JSON.stringify(emptyWorkdayTime))],
-  tuesday: [JSON.parse(JSON.stringify(emptyWorkdayTime))],
-  wednesday: [JSON.parse(JSON.stringify(emptyWorkdayTime))],
-  thursday: [JSON.parse(JSON.stringify(emptyWorkdayTime))],
-  friday: [JSON.parse(JSON.stringify(emptyWorkdayTime))],
-  saturday: [JSON.parse(JSON.stringify(emptyWorkdayTime))],
-  sunday: [JSON.parse(JSON.stringify(emptyWorkdayTime))],
+  monday: [cloneDeep(emptyWorkdayTime)],
+  tuesday: [cloneDeep(emptyWorkdayTime)],
+  wednesday: [cloneDeep(emptyWorkdayTime)],
+  thursday: [cloneDeep(emptyWorkdayTime)],
+  friday: [cloneDeep(emptyWorkdayTime)],
+  saturday: [cloneDeep(emptyWorkdayTime)],
+  sunday: [cloneDeep(emptyWorkdayTime)],
 });
 
 export default {
@@ -359,17 +362,7 @@ export default {
           saturday: false,
           sunday: false,
         };
-        this.selectedWorkdayDaysTime = JSON.parse(
-          JSON.stringify({
-            monday: [emptyWorkdayTime],
-            tuesday: [emptyWorkdayTime],
-            wednesday: [emptyWorkdayTime],
-            thursday: [emptyWorkdayTime],
-            friday: [emptyWorkdayTime],
-            saturday: [emptyWorkdayTime],
-            sunday: [emptyWorkdayTime],
-          }),
-        );
+        this.selectedWorkdayDaysTime = defaultEmptyWorkdayState();
       }
     },
     enableCountryHolidays: {
@@ -552,7 +545,7 @@ export default {
         Object.keys(schedules).forEach((day) => {
           if (!schedules[day]) {
             this.selectedWorkdayDays[day] = false;
-            this.selectedWorkdayDaysTime[day] = [emptyWorkdayTime];
+            this.selectedWorkdayDaysTime[day] = [cloneDeep(emptyWorkdayTime)];
           } else {
             this.selectedWorkdayDays[day] = true;
             this.selectedWorkdayDaysTime[day] = schedules[day].map((time) => ({
@@ -610,7 +603,7 @@ export default {
     selectWorkdayDay(day) {
       this.selectedWorkdayDays[day] = !this.selectedWorkdayDays[day];
       if (!this.selectedWorkdayDays[day]) {
-        this.selectedWorkdayDaysTime[day] = [emptyWorkdayTime];
+        this.selectedWorkdayDaysTime[day] = [cloneDeep(emptyWorkdayTime)];
       }
     },
 
@@ -639,17 +632,15 @@ export default {
         saturday: false,
         sunday: false,
       };
-      this.selectedWorkdayDaysTime = JSON.parse(
-        JSON.stringify({
-          monday: [defaultWorkTime],
-          tuesday: [defaultWorkTime],
-          wednesday: [defaultWorkTime],
-          thursday: [defaultWorkTime],
-          friday: [defaultWorkTime],
-          saturday: [emptyWorkdayTime],
-          sunday: [emptyWorkdayTime],
-        }),
-      );
+      this.selectedWorkdayDaysTime = cloneDeep({
+        monday: [defaultWorkTime],
+        tuesday: [defaultWorkTime],
+        wednesday: [defaultWorkTime],
+        thursday: [defaultWorkTime],
+        friday: [defaultWorkTime],
+        saturday: [emptyWorkdayTime],
+        sunday: [emptyWorkdayTime],
+      });
     },
 
     applyDefaultWorkdayDeactivate() {
@@ -662,17 +653,7 @@ export default {
         saturday: false,
         sunday: false,
       };
-      this.selectedWorkdayDaysTime = JSON.parse(
-        JSON.stringify({
-          monday: [emptyWorkdayTime],
-          tuesday: [emptyWorkdayTime],
-          wednesday: [emptyWorkdayTime],
-          thursday: [emptyWorkdayTime],
-          friday: [emptyWorkdayTime],
-          saturday: [emptyWorkdayTime],
-          sunday: [emptyWorkdayTime],
-        }),
-      );
+      this.selectedWorkdayDaysTime = defaultEmptyWorkdayState();
     },
 
     async addCustomHolidays(holidays) {
@@ -712,12 +693,6 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-fieldset {
-  border: none;
-  padding: 0;
-  margin: 0;
-}
-
 .form-section {
   display: flex;
   flex-direction: column;
@@ -733,10 +708,7 @@ fieldset {
   }
 
   &__subtitle {
-    font-weight: $unnnic-font-weight-regular;
-    color: $unnnic-color-fg-base;
-    line-height: $unnnic-line-height-large * 1.5;
-    font-family: $unnnic-font-family-secondary;
+    font: $unnnic-font-body;
   }
 
   &__inputs {
@@ -747,12 +719,12 @@ fieldset {
     &__workday-copy {
       display: flex;
       flex-direction: column;
-      gap: $unnnic-spacing-sm;
+      gap: $unnnic-space-4;
     }
 
     &__workday-tags {
       display: flex;
-      gap: $unnnic-spacing-xs;
+      gap: $unnnic-space-2;
       &__tag {
         height: $unnnic-space-8;
       }
@@ -761,15 +733,15 @@ fieldset {
     &__workday-time-config {
       display: flex;
       flex-direction: column;
-      gap: $unnnic-spacing-sm;
+      gap: $unnnic-space-4;
 
       &__holidays-container {
         display: flex;
         align-items: center;
-        gap: $unnnic-spacing-xs;
+        gap: $unnnic-space-2;
 
         &__button {
-          max-width: 200px;
+          max-width: 240px;
         }
       }
     }
@@ -782,6 +754,6 @@ fieldset {
 
 .link-project-disclaimer {
   display: flex;
-  margin-top: $unnnic-spacing-ant;
+  margin-top: $unnnic-space-3;
 }
 </style>

@@ -28,7 +28,7 @@
           @click="open = false"
         />
         <UnnnicButton
-          text="Confirm"
+          :text="$t('delete')"
           type="warning"
           :loading="isLoadingDeleteCustomBreak"
           @click="deleteCustomBreak"
