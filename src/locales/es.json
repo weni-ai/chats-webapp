@@ -865,7 +865,8 @@
     "tabs": {
       "general": "General",
       "groups": "Grupos de proyectos",
-      "sectors": "Sectores"
+      "sectors": "Sectores",
+      "representatives": "Representantes"
     },
     "custom_breaks": {
       "title": "Pausas personalizadas",

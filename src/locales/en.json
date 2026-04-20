@@ -862,7 +862,8 @@
     "tabs": {
       "general": "General",
       "groups": "Projects groups",
-      "sectors": "Sectors"
+      "sectors": "Sectors",
+      "representatives": "Representatives"
     },
     "custom_breaks": {
       "title": "Custom breaks",
