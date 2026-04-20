@@ -880,7 +880,7 @@
     },
     "custom_breaks": {
       "title": "Custom breaks",
-      "description": "Add new custom breaks, all of which will have the same behavior as offline, i.e. the agent will not receive contacts while using these custom breaks.",
+      "description": "Custom breaks act as offline status. Representative will not receive new chat requests during these periods.",
       "fields": {
         "hint": "Add up to 10 different statuses to be used as custom breaks.",
         "name": "New status",
@@ -932,9 +932,8 @@
         "switch_inactive": "Take over chats in bulk"
       },
       "queue_prioritization": {
-        "tooltip": "This function allows representatives to choose the queues that will receive contacts, within those previously selected in the sector",
-        "switch_active": "Allow representatives to choose their queues within the sector",
-        "switch_inactive": "Allow representatives to choose their queues within the sector"
+        "switch_label": "Allows agents to choose which queues they receive chats from",
+        "hint": "If active, the resource will be visible only to the representatives in the Live Desk module."
       },
       "show_agent_status_count_timer": {
         "switch_active": "Show status timer for custom representative breaks",

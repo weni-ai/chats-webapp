@@ -74,7 +74,6 @@ export default {
   emits: ['update:modelValue'],
   data() {
     return {
-      test: [],
       editingAutomaticMessage: false,
     };
   },

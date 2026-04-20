@@ -102,7 +102,7 @@ const handlerCreateQuickMessage = async () => {
       },
     });
   } catch (error) {
-    console.log(error);
+    console.error('error create quick message', error);
     UnnnicCallAlert({
       props: {
         text: t('quick_messages.error'),
@@ -132,7 +132,7 @@ const handlerUpdateQuickMessage = async () => {
       },
     });
   } catch (error) {
-    console.log(error);
+    console.error('error update quick message', error);
     UnnnicCallAlert({
       props: {
         text: t('quick_messages.error'),
