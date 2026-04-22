@@ -16,7 +16,7 @@ interface ImproveResponse {
 }
 
 // TODO: Remove mock and uncomment real implementation when backend is ready
-const USE_MOCK = true;
+const USE_MOCK = false;
 
 const MOCK_RESPONSES: Record<AiTextImprovementType, (text: string) => string> =
   {
