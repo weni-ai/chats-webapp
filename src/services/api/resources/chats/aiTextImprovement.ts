@@ -1,4 +1,5 @@
 import http from '@/services/api/http';
+import { getProject } from '@/utils/config';
 
 export type AiTextImprovementType =
   | 'GRAMMAR_AND_SPELLING'
@@ -27,7 +28,10 @@ const MOCK_RESPONSES: Record<AiTextImprovementType, (text: string) => string> =
   };
 
 function mockImprove(
-  { text, type }: ImproveRequest,
+  {
+    text,
+    type,
+  }: { text: string; type: AiTextImprovementType; projectUuid: string },
   { signal }: { signal?: AbortSignal } = {},
 ): Promise<ImproveResponse> {
   return new Promise((resolve, reject) => {
@@ -48,13 +52,15 @@ export default {
     { text, type }: ImproveRequest,
     { signal }: { signal?: AbortSignal } = {},
   ): Promise<ImproveResponse> {
+    const projectUuid = getProject();
+
     if (USE_MOCK) {
-      return mockImprove({ text, type }, { signal });
+      return mockImprove({ text, type, projectUuid }, { signal });
     }
 
     const response = await http.post(
       '/ai_features/ai_text_improvement/',
-      { text, type },
+      { text, type, project_uuid: projectUuid },
       { signal },
     );
     return response.data;
