@@ -1066,6 +1066,12 @@
       "description": "Define los representantes de los sectores y las colas, así como el número máximo de chats por representante. Los cambios hechos aquí también se actualizarán en la configuración de sectores y colas",
       "select_all": "Seleccionar todos los representantes",
       "select_count": "{count} seleccionados",
+      "chats_limit": {
+        "label": "{count} chats simultáneos"
+      },
+      "sectors": {
+        "empty": "No agregado a ningún sector"
+      },
       "actions": {
         "queue-management_tooltip": "Cambiar representantes seleccionados de sectores/colas",
         "chats-limit-management_tooltip": "Definir el límite de chats simultáneos para los representantes seleccionados"

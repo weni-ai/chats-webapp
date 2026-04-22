@@ -1062,7 +1062,13 @@
       "title": "Representatives management",
       "description": "Define the representatives for the sectors and queues, as well as the maximum number of chats per representative. Changes made here will also be updated in the sector and queue settings.",
       "select_all": "Select all representatives",
-      "select_count": "{count} Selected",
+      "select_count": "{count} selected",
+      "chats_limit": {
+        "label": "{count} simultaneous chats"
+      },
+      "sectors": {
+        "empty": "Representative is not added to any sector"
+      },
       "actions": {
         "queue-management_tooltip": "Change selected representatives from sectors/queues",
         "chats-limit-management_tooltip": "Define the limit of simultaneous chats for the selected representatives"

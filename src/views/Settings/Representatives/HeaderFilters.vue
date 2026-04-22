@@ -52,6 +52,7 @@
 
 <script setup lang="ts">
 import { computed, onMounted, ref } from 'vue';
+import { watchDebounced } from '@vueuse/core';
 
 import { useConfig } from '@/store/modules/config';
 
@@ -107,9 +108,7 @@ const getRepresentativesOptions = async () => {
   const formattedResults = results.map((representative) => {
     const representativeName =
       `${representative.user.first_name} ${representative.user.last_name}`.trim();
-    const representativeLabel = representativeName
-      ? `${representativeName} (${representative.user.email})`
-      : representative.user.email;
+    const representativeLabel = representativeName || representative.user.email;
     return {
       label: representativeLabel,
       value: representative.user.email,
@@ -170,6 +169,20 @@ onMounted(async () => {
   getRepresentativesOptions();
   getSectorsOptions();
 });
+
+watchDebounced(
+  [selectedStatus, selectedRepresentatives, selectedSectors, selectedQueues],
+  () => {
+    const filters = {
+      status: selectedStatus.value,
+      representatives: selectedRepresentatives.value,
+      sectors: selectedSectors.value,
+      queues: selectedQueues.value,
+    };
+    console.log('TODO: request data', filters);
+  },
+  { debounce: 1000, maxWait: 2000, deep: true },
+);
 </script>
 
 <style lang="scss" scoped>

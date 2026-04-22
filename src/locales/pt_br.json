@@ -1068,6 +1068,12 @@
       "description": "Defina os representantes para os setores e filas, além do número máximo de chats por representante. As alterações feitas aqui também serão atualizadas nas configurações de setor e de fila",
       "select_all": "Selecionar todos os representantes",
       "select_count": "{count} selecionados",
+      "chats_limit": {
+        "label": "{count} chats simultâneos"
+      },
+      "sectors": {
+        "empty": "Não adicionado a nenhum setor"
+      },
       "actions": {
         "queue-management_tooltip": "Alterar representantes selecionados de setores/filas",
         "chats-limit-management_tooltip": "Definir o limite de chats simultâneos para os representantes selecionados"
