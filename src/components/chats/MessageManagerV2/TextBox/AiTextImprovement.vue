@@ -31,7 +31,7 @@
           </section>
         </UnnnicPopoverTrigger>
         <UnnnicPopoverContent
-          size="small"
+          size="medium"
           side="top"
           align="start"
         >
