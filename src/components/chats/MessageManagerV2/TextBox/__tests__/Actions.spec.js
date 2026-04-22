@@ -45,7 +45,7 @@ vi.spyOn(i18n.global, 't').mockImplementation((key) => key);
 
 const createWrapper = (options = {}) => {
   const {
-    featureFlags = { active_features: ['weniChatsAiTextImprovement'] },
+    featureFlags = { active_features: ['weniChatsAITextImprovement'] },
     activeDiscussion = null,
     inputMessage = '',
     isAiLoading = false,
@@ -131,27 +131,27 @@ describe('Actions', () => {
   describe('AI text improvement visibility', () => {
     it('should show AiTextImprovement when feature flag is active', () => {
       const wrapper = createWrapper();
-      expect(
-        wrapper.find('[data-testid="ai-text-improvement"]').exists(),
-      ).toBe(true);
+      expect(wrapper.find('[data-testid="ai-text-improvement"]').exists()).toBe(
+        true,
+      );
     });
 
     it('should hide AiTextImprovement when feature flag is off', () => {
       const wrapper = createWrapper({
         featureFlags: { active_features: [] },
       });
-      expect(
-        wrapper.find('[data-testid="ai-text-improvement"]').exists(),
-      ).toBe(false);
+      expect(wrapper.find('[data-testid="ai-text-improvement"]').exists()).toBe(
+        false,
+      );
     });
 
     it('should hide AiTextImprovement in discussion mode', () => {
       const wrapper = createWrapper({
         activeDiscussion: { uuid: 'disc-1' },
       });
-      expect(
-        wrapper.find('[data-testid="ai-text-improvement"]').exists(),
-      ).toBe(false);
+      expect(wrapper.find('[data-testid="ai-text-improvement"]').exists()).toBe(
+        false,
+      );
     });
   });
 

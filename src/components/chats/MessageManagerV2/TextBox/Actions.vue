@@ -89,7 +89,7 @@ const { isLoading: isAiLoading } = storeToRefs(aiTextImprovementStore);
 const showAiTextImprovement = computed(() => {
   return (
     featureFlagStore.featureFlags?.active_features?.includes(
-      'weniChatsAiTextImprovement',
+      'weniChatsAITextImprovement',
     ) && !activeDiscussion.value?.uuid
   );
 });
