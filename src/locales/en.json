@@ -457,6 +457,7 @@
       "assume_chat_confirmation": "When confirming you will remove the Chat from agent {viewedAgent} and will be responsible for Chat"
     }
   },
+  "select": "Select",
   "history": "History",
   "close_view": "Close view",
   "logout": "Logout",
@@ -1056,6 +1057,30 @@
     },
     "copilot": {
       "hint": "The Co-pilot is your agent's intelligent assistant; it can be activated later."
+    },
+    "representatives": {
+      "title": "Representatives management",
+      "description": "Define the representatives for the sectors and queues, as well as the maximum number of chats per representative. Changes made here will also be updated in the sector and queue settings.",
+      "select_all": "Select all representatives",
+      "select_count": "{count} Selected",
+      "actions": {
+        "queue-management_tooltip": "Change selected representatives from sectors/queues",
+        "chats-limit-management_tooltip": "Define the limit of simultaneous chats for the selected representatives"
+      },
+      "filter": {
+        "status": {
+          "label": "Filter by status"
+        },
+        "representatives": {
+          "label": "Filter by representatives"
+        },
+        "sectors": {
+          "label": "Filter by sector"
+        },
+        "queues": {
+          "label": "Filter by queue"
+        }
+      }
     },
     "new_sector": "New sector",
     "new_group": "New group",
