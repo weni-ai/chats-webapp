@@ -4,6 +4,7 @@
       :modelValue="props.modelValue"
       :textRight="props.name"
       :disabled="props.disabled"
+      :helper="props.hint"
       @update:model-value="emit('update:model-value', $event)"
     />
     <UnnnicToolTip
@@ -29,11 +30,13 @@ interface Props {
   name: string;
   tooltip?: string;
   disabled?: boolean;
+  hint?: string;
 }
 
 const props = withDefaults(defineProps<Props>(), {
   disabled: false,
   tooltip: '',
+  hint: '',
 });
 
 const emit = defineEmits<{

@@ -870,7 +870,7 @@
     },
     "custom_breaks": {
       "title": "Pausas personalizadas",
-      "description": "Añadir nuevas pausas personalizadas, que tendrán el mismo comportamiento que las pausas sin conexión, es decir, el agente no recibirá contactos mientras utilice estas pausas personalizadas.",
+      "description": "Las pausas personalizadas funcionan como estado sin conexión. El representante no recibirá nuevas solicitudes de chat durante esos períodos.",
       "fields": {
         "hint": "Agrega hasta 10 estados distintos para usarlos como pausas personalizadas.",
         "name": "Nuevo estado",
@@ -922,9 +922,8 @@
         "switch_inactive": "Asumir chats en masa"
       },
       "queue_prioritization": {
-        "tooltip": "Esta función permite a los representantes elegir las colas que recibirán contactos, dentro de las previamente seleccionadas en el sector",
-        "switch_active": "Permitir que los representantes elijan sus colas dentro del sector",
-        "switch_inactive": "Permitir que los representantes elijan sus colas dentro del sector"
+        "switch_label": "Permite a los agentes elegir de qué colas reciben chats",
+        "hint": "Si está activa, el recurso solo será visible para los representantes en el módulo Live Desk"
       },
       "show_agent_status_count_timer": {
         "switch_active": "Mostrar temporizador de estado en pausas personalizadas del representante",

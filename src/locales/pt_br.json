@@ -247,8 +247,8 @@
         "switch_label": "Disparo de modelos de mensagens"
       },
       "edit_custom_fields": {
-        "label": "Permitir que representantes editem informações personalizadas do contato",
-        "hint": "Quando ativa, permite que representantes editem os campos personalizados do contato na seção \"Todas as informações\"."
+        "label": "Permitir que atendentes editem informações personalizadas do contato",
+        "hint": "Quando ativa, permite que atendentes editem os campos personalizados do contato na seção \"Todas as informações\"."
       },
       "agents_signature": {
         "hint": "Cada mensagem trocada terá o nome do agente que está respondendo",
@@ -265,7 +265,7 @@
       "automated_message": {
         "title": "Mensagens automatizadas",
         "switch_label": "Enviar mensagem automática ao iniciar o atendimento",
-        "hint": "Envia automaticamente uma mensagem quando um chat é atribuído a um representante. A mensagem aparecerá como se enviada pelo representante atribuído.",
+        "hint": "Envia automaticamente uma mensagem quando um chat é atribuído a um atendente. A mensagem aparecerá como se enviada pelo atendente atribuído.",
         "field": {
           "title": "Mensagem automática",
           "placeholder": "Exemplo: Olá! Como posso ajudar você hoje?"
@@ -530,7 +530,7 @@
   "agents": {
     "add": {
       "select": {
-        "label": "Adicionar representante",
+        "label": "Adicionar atendente",
         "placeholder": "Pesquise pelo nome ou email"
       },
       "button": "Selecionar"
@@ -872,7 +872,7 @@
     },
     "custom_breaks": {
       "title": "Pausas personalizadas",
-      "description": "Adicione novas pausas personalizadas, que terão o mesmo comportamento que as off-line, ou seja, o agente não receberá contatos enquanto estiver usando essas pausas personalizadas.",
+      "description": "As pausas personalizadas funcionam como status offline. O atendente não receberá novas solicitações de chat durante esses períodos.",
       "fields": {
         "hint": "Adicione até 10 status diferentes para uso como pausas personalizadas.",
         "name": "Novo status",
@@ -903,13 +903,13 @@
         "textarea_placeholder": "Descreva os cenários ou critérios..."
       },
       "bulk_transfer": {
-        "tooltip": "Essa função permite que representantes transfiram diversos contatos de uma vez para uma fila ou representante",
-        "switch_active": "Transferir chats em massa para outra fila ou representante",
-        "switch_inactive": "Transferir chats em massa para outra fila ou representante"
+        "tooltip": "Essa função permite que atendentes transfiram diversos contatos de uma vez para uma fila ou atendente",
+        "switch_active": "Transferir chats em massa para outra fila ou atendente",
+        "switch_inactive": "Transferir chats em massa para outra fila ou atendente"
       },
       "block_transfer_to_off_agents": {
-        "switch_active": "Bloquear transferência de chats para representantes offline",
-        "switch_inactive": "Bloquear transferência de chats para representantes offline"
+        "switch_active": "Bloquear transferência de chats para atendentes offline",
+        "switch_inactive": "Bloquear transferência de chats para atendentes offline"
       },
       "bulk_close": {
         "switch_active": "Finalizar chats em massa",
@@ -924,13 +924,12 @@
         "switch_inactive": "Assumir chats em massa"
       },
       "queue_prioritization": {
-        "tooltip": "Essa função permite que representantes escolham as filas que receberão contatos, dentro das previamente selecionadas no setor",
-        "switch_active": "Permitir que representantes escolham suas filas dentro do setor",
-        "switch_inactive": "Permitir que representantes escolham suas filas dentro do setor"
+        "switch_label": "Permite que atendentes escolham de quais filas recebem chats",
+        "hint": "Se ativa, o recurso fica visível apenas para atendentes no módulo Live Desk"
       },
       "show_agent_status_count_timer": {
-        "switch_active": "Exibir temporizador de status em pausas personalizadas do representante",
-        "switch_inactive": "Exibir temporizador de status em pausas personalizadas do representante"
+        "switch_active": "Exibir temporizador de status em pausas personalizadas do atendente",
+        "switch_inactive": "Exibir temporizador de status em pausas personalizadas do atendente"
       },
       "show_waiting_rooms_count": {
         "switch_label": "Exibir o contador com o número de chats esperando atendimento humano"

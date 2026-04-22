@@ -52,6 +52,7 @@
           v-else
           v-model="projectConfig[item.key]"
           :name="item.name"
+          :hint="item.hint"
         />
       </template>
     </section>
@@ -159,11 +160,6 @@ export default {
         }`,
       );
     },
-    configUseNameSectorInRoomsTranslation() {
-      return this.$t(
-        `config_chats.project_configs.use_name_sector_in_rooms.switch_label`,
-      );
-    },
     configBlockCloseChatsInQueueTranslation() {
       const canCloseChatsInQueue = this.projectConfig.can_close_chats_in_queue;
       return this.$t(
@@ -180,26 +176,12 @@ export default {
         }`,
       );
     },
-    configQueuePrioritizationTranslation() {
-      const canQueuePrioritization =
-        this.projectConfig.can_use_queue_prioritization;
-      return this.$t(
-        `config_chats.project_configs.queue_prioritization.switch_${
-          canQueuePrioritization ? 'active' : 'inactive'
-        }`,
-      );
-    },
     configShowAgentStatusCountTimer() {
       const showAgentStatusCountTimer = this.projectConfig.can_see_timer;
       return this.$t(
         `config_chats.project_configs.show_agent_status_count_timer.switch_${
           showAgentStatusCountTimer ? 'active' : 'inactive'
         }`,
-      );
-    },
-    configShowWaitingRoomsCountTranslation() {
-      return this.$t(
-        'config_chats.project_configs.show_waiting_rooms_count.switch_label',
       );
     },
 
@@ -258,19 +240,28 @@ export default {
           key: 'can_use_queue_prioritization',
           type: 'flag',
           visible: true,
-          name: this.configQueuePrioritizationTranslation,
+          name: this.$t(
+            'config_chats.project_configs.queue_prioritization.switch_label',
+          ),
+          hint: this.$t(
+            'config_chats.project_configs.queue_prioritization.hint',
+          ),
         },
         {
           key: 'can_see_waiting_rooms_count',
           type: 'flag',
           visible: true,
-          name: this.configShowWaitingRoomsCountTranslation,
+          name: this.$t(
+            'config_chats.project_configs.show_waiting_rooms_count.switch_label',
+          ),
         },
         {
           key: 'can_use_name_sector_in_rooms',
           type: 'flag',
           visible: true,
-          name: this.configUseNameSectorInRoomsTranslation,
+          name: this.$t(
+            'config_chats.project_configs.use_name_sector_in_rooms.switch_label',
+          ),
         },
       ];
 
