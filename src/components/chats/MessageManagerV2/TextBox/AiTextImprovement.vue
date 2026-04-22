@@ -163,7 +163,7 @@ function handleCancel() {
 
   &__new-tag {
     position: absolute;
-    top: -8px;
+    top: -$unnnic-space-2;
     left: 50%;
     transform: translateX(-50%);
     z-index: 1;
