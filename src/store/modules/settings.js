@@ -110,13 +110,18 @@ export const useSettings = defineStore('settings', {
     },
 
     async getCustomBreaks() {
-      this.isLoadingCustomBreaks = true;
-      const configStore = useConfig();
-      const { results } = await CustomBreak.getCustomBreakStatusTypeList({
-        projectUuid: configStore.project.uuid,
-      });
-      this.customBreaks = results;
-      this.isLoadingCustomBreaks = false;
+      try {
+        this.isLoadingCustomBreaks = true;
+        const configStore = useConfig();
+        const { results } = await CustomBreak.getCustomBreakStatusTypeList({
+          projectUuid: configStore.project.uuid,
+        });
+        this.customBreaks = results;
+      } catch (error) {
+        console.error('Error getting custom breaks', error);
+      } finally {
+        this.isLoadingCustomBreaks = false;
+      }
     },
   },
 
