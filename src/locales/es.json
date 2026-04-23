@@ -354,7 +354,8 @@
     "feedback": {
       "forwarded_to_agent": "Contacto reenviado al agente {agent}",
       "forwarded_to_queue": "Contacto reenviado a la cola {queue}",
-      "transfer_to_agent": "{agent1} transferido a {agent2}",
+      "transfer_to_agent": "{agent1} transfirió el chat a {agent2}",
+      "transfer_to_agent_by_other": "{requestedBy} transfirió el chat de {agent1} a {agent2}",
       "transfer_to_queue": "{agent} transferido a la cola {queue}",
       "transfer_from_queue_to_queue": "Fue transferido de la cola {queue1} a la cola {queue2}",
       "transfer_from_queue_to_agent": "Fue transferido de la cola {queue} a {agent}",

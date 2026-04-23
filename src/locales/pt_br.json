@@ -354,7 +354,8 @@
     "feedback": {
       "forwarded_to_agent": "Contato encaminhado para agente {agent}",
       "forwarded_to_queue": "Contato encaminhado para fila {queue}",
-      "transfer_to_agent": "{agent1} transferiu para {agent2}",
+      "transfer_to_agent": "{agent1} transferiu o chat para {agent2}",
+      "transfer_to_agent_by_other": "{requestedBy} transferiu o chat de {agent1} para {agent2}",
       "transfer_to_queue": "{agent} transferiu para fila {queue}",
       "transfer_from_queue_to_queue": "Foi transferido da fila {queue1} para fila {queue2}",
       "transfer_from_queue_to_agent": "Foi transferido da fila {queue} para {agent}",
