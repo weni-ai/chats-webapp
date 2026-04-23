@@ -17,7 +17,12 @@ vi.mock('@/services/api/resources/settings/queue', () => ({
     getQueueInformation: vi.fn(),
     agents: vi.fn(),
     delete: vi.fn(),
-    roomsCount: vi.fn().mockResolvedValue({ waiting: 0, in_service: 0 }),
+  },
+}));
+
+vi.mock('@/services/api/resources/settings/rooms', () => ({
+  default: {
+    count: vi.fn().mockResolvedValue({ waiting: 0, in_service: 0 }),
   },
 }));
 
