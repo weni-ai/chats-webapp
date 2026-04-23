@@ -162,7 +162,7 @@ watch(
     gap: $unnnic-space-4;
   }
   &__representatives-list {
-    height: 56vh;
+    height: 53vh;
     overflow-y: auto;
     display: flex;
     flex-direction: column;
