@@ -1135,8 +1135,8 @@
   },
   "delete_modal": {
     "title": "Eliminar {name}",
-    "description_sector": "El sistema ha detectado que hay {count} conversaciones en curso en el sector {name}, seleccione qué desea hacer con ellas:",
-    "description_queue": "El sistema ha detectado que hay {count} conversaciones en curso en la fila {name}, seleccione qué desea hacer con ellas:",
+    "description_sector": "El sistema ha detectado {count} conversaciones en el sector {name} que están en atención o esperando para ser atendidas. Elija qué desea hacer con ellas",
+    "description_queue": "El sistema ha detectado {count} conversaciones en la fila {name} que están en atención o esperando para ser atendidas. Elija qué desea hacer con ellas",
     "transfer_chats": "Transferir conversaciones a otro sector/fila",
     "end_all_chats": "Finalizar todas las conversaciones",
     "select_sector": "Seleccione un sector",

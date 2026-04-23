@@ -1139,8 +1139,8 @@
   },
   "delete_modal": {
     "title": "Delete {name}",
-    "description_sector": "The system has detected that there are {count} in progress chats in the {name} sector, please select what you would like to do with them:",
-    "description_queue": "The system has detected that there are {count} in progress chats in the {name} queue, please select what you would like to do with them:",
+    "description_sector": "The system has detected {count} chats in the {name} sector that are in progress or waiting to be handled. Please choose what you'd like to do with them",
+    "description_queue": "The system has detected {count} chats in the {name} queue that are in progress or waiting to be handled. Please choose what you'd like to do with them",
     "transfer_chats": "Transfer chats to another sector/queue",
     "end_all_chats": "End all chats",
     "select_sector": "Select a sector",
