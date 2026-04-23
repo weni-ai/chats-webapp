@@ -154,6 +154,84 @@ describe('ChatMessagesFeedbackMessage', () => {
         expect(result.length).toBeGreaterThan(0);
       });
     });
+
+    it('should use transfer_to_agent when requested_by is the same user as from', () => {
+      const content = {
+        action: 'transfer',
+        from: { type: 'user', name: 'Eduardo', id: '7' },
+        to: { type: 'user', name: 'Marcus', id: '10' },
+        requested_by: { type: 'user', name: 'Eduardo', id: '7' },
+      };
+      const message = { text: JSON.stringify({ method: 'rt', content }) };
+      const wrapper = createWrapper({ message });
+      const result = wrapper.vm.createFeedbackLabel(message);
+
+      expect(result).toContain('chats.feedback.transfer_to_agent');
+      expect(result).not.toContain('transfer_to_agent_by_other');
+      expect(result).toContain('"agent1":"Eduardo"');
+      expect(result).toContain('"agent2":"Marcus"');
+    });
+
+    it('should use transfer_to_agent_by_other when requested_by differs from "from"', () => {
+      const content = {
+        action: 'transfer',
+        from: { type: 'user', name: 'Renata', id: '5' },
+        to: { type: 'user', name: 'Julia', id: '10' },
+        requested_by: { type: 'user', name: 'Leonardo', id: '7' },
+      };
+      const message = { text: JSON.stringify({ method: 'rt', content }) };
+      const wrapper = createWrapper({ message });
+      const result = wrapper.vm.createFeedbackLabel(message);
+
+      expect(result).toContain('chats.feedback.transfer_to_agent_by_other');
+      expect(result).toContain('"requestedBy":"Leonardo"');
+      expect(result).toContain('"agent1":"Renata"');
+      expect(result).toContain('"agent2":"Julia"');
+    });
+
+    it('should use transfer_to_agent when requested_by is missing', () => {
+      const content = {
+        action: 'transfer',
+        from: { type: 'user', name: 'Agent1', id: '1' },
+        to: { type: 'user', name: 'Agent2', id: '2' },
+      };
+      const message = { text: JSON.stringify({ method: 'rt', content }) };
+      const wrapper = createWrapper({ message });
+      const result = wrapper.vm.createFeedbackLabel(message);
+
+      expect(result).toContain('chats.feedback.transfer_to_agent');
+      expect(result).not.toContain('transfer_to_agent_by_other');
+    });
+
+    it('should use transfer_to_agent when requested_by is not a user', () => {
+      const content = {
+        action: 'transfer',
+        from: { type: 'user', name: 'Agent1', id: '1' },
+        to: { type: 'user', name: 'Agent2', id: '2' },
+        requested_by: { type: 'queue', name: 'Support', id: '99' },
+      };
+      const message = { text: JSON.stringify({ method: 'rt', content }) };
+      const wrapper = createWrapper({ message });
+      const result = wrapper.vm.createFeedbackLabel(message);
+
+      expect(result).toContain('chats.feedback.transfer_to_agent');
+      expect(result).not.toContain('transfer_to_agent_by_other');
+    });
+
+    it('should compare ids as strings (number vs string)', () => {
+      const content = {
+        action: 'transfer',
+        from: { type: 'user', name: 'Agent1', id: 7 },
+        to: { type: 'user', name: 'Agent2', id: 10 },
+        requested_by: { type: 'user', name: 'Agent1', id: '7' },
+      };
+      const message = { text: JSON.stringify({ method: 'rt', content }) };
+      const wrapper = createWrapper({ message });
+      const result = wrapper.vm.createFeedbackLabel(message);
+
+      expect(result).toContain('chats.feedback.transfer_to_agent');
+      expect(result).not.toContain('transfer_to_agent_by_other');
+    });
   });
 
   describe('RT Method Processing - Other Actions', () => {
