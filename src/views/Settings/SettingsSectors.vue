@@ -123,7 +123,7 @@ import { mapActions, mapState } from 'pinia';
 import { useConfig } from '@/store/modules/config';
 import { useSettings } from '@/store/modules/settings';
 
-import Sector from '@/services/api/resources/settings/sector';
+import Rooms from '@/services/api/resources/settings/rooms';
 
 import SettingsSectionHeader from './SettingsSectionHeader.vue';
 import ModalDeleteWithTransfer from '@/components/ModalDeleteWithTransfer.vue';
@@ -197,7 +197,9 @@ export default {
       this.handleConnectOverlay(true);
 
       try {
-        const { waiting, in_service } = await Sector.roomsCount(sector.uuid);
+        const { waiting, in_service } = await Rooms.count({
+          sector: sector.uuid,
+        });
         this.sectorRoomsCount = waiting + in_service;
       } catch {
         this.sectorRoomsCount = 0;
