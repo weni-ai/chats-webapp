@@ -55,11 +55,6 @@ export default {
     return response;
   },
 
-  async roomsCount(sectorUuid) {
-    const response = await http.get(`/sector/${sectorUuid}/rooms_count/`);
-    return response.data;
-  },
-
   async deleteSector(sectorUuid, { endAllChats, transferToQueue } = {}) {
     const profileStore = useProfile();
     const { me } = profileStore;

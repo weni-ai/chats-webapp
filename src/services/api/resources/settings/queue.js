@@ -37,11 +37,6 @@ export default {
     return response.data;
   },
 
-  async roomsCount(queueUuid) {
-    const response = await http.get(`/queue/${queueUuid}/rooms_count/`);
-    return response.data;
-  },
-
   async delete(queueUuid, { endAllChats, transferToQueue } = {}) {
     const params = {};
 
