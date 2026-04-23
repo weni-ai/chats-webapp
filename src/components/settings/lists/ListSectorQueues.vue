@@ -132,6 +132,7 @@ import { mapState } from 'pinia';
 import FormQueue from '../forms/Queue.vue';
 import ListOrdinator from '@/components/settings/ListOrdinator.vue';
 import Queue from '@/services/api/resources/settings/queue';
+import Rooms from '@/services/api/resources/settings/rooms';
 import ModalDeleteWithTransfer from '@/components/ModalDeleteWithTransfer.vue';
 
 import { useFeatureFlag } from '@/store/modules/featureFlag';
@@ -253,7 +254,9 @@ export default {
       this.queueToDelete = queue;
 
       try {
-        const { waiting, in_service } = await Queue.roomsCount(queue.uuid);
+        const { waiting, in_service } = await Rooms.count({
+          queue: queue.uuid,
+        });
         this.queueRoomsCount = waiting + in_service;
       } catch {
         this.queueRoomsCount = 0;
