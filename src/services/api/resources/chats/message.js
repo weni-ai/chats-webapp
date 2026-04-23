@@ -78,14 +78,23 @@ export default {
     return response.data;
   },
 
-  async sendRoomMessage(roomId, { text, user_email, seen, repliedMessageId }) {
-    const response = await http.post('/msg/', {
+  async sendRoomMessage(
+    roomId,
+    { text, user_email, seen, repliedMessageId, aiTextImprovement },
+  ) {
+    const payload = {
       room: roomId,
       text,
       user_email,
       seen,
       replied_message_id: repliedMessageId,
-    });
+    };
+
+    if (aiTextImprovement) {
+      payload.ai_text_improvement = aiTextImprovement;
+    }
+
+    const response = await http.post('/msg/', payload);
     return response.data;
   },
 
