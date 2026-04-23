@@ -14,9 +14,9 @@ vi.mock('@weni/unnnic-system', () => ({
   },
 }));
 
-vi.mock('@/services/api/resources/settings/sector', () => ({
+vi.mock('@/services/api/resources/settings/rooms', () => ({
   default: {
-    roomsCount: vi.fn().mockResolvedValue({ waiting: 5, in_service: 3 }),
+    count: vi.fn().mockResolvedValue({ waiting: 5, in_service: 3 }),
   },
 }));
 
