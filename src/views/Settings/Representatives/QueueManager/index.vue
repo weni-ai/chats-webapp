@@ -36,7 +36,7 @@
           />
           <UnnnicInput
             v-if="formData.chatsLimit.is_active"
-            v-model="formData.chatsLimit.limit"
+            v-model="formData.chatsLimit.total"
             :label="
               $t(
                 'config_chats.representatives.queue_manager.chats_limit.input_label',
@@ -113,7 +113,7 @@ const formData = ref({
   agents: [],
   toRemove: [],
   toAdd: [],
-  chatsLimit: { is_active: false, limit: null },
+  chatsLimit: { is_active: false, total: null },
 });
 
 const sectorQueueData = ref<{ name: string; queues: Record<string, any> }[]>(
@@ -126,7 +126,7 @@ const validLimitForm = computed(() => {
   if (!formData.value.chatsLimit.is_active) {
     return true;
   }
-  return !!formData.value.chatsLimit.limit;
+  return !!formData.value.chatsLimit.total;
 });
 
 const getQueuesPermissions = async () => {
@@ -256,7 +256,7 @@ watch(
   () => formData.value.chatsLimit.is_active,
   (value) => {
     if (!value) {
-      formData.value.chatsLimit.limit = null;
+      formData.value.chatsLimit.total = null;
     }
   },
 );
