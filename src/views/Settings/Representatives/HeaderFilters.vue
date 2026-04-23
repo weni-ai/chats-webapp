@@ -18,33 +18,37 @@
     </section>
     <section class="settings-representatives-header-filters__filters">
       <UnnnicMultiSelect
-        v-model="selectedStatus"
+        v-model="filters.status"
         class="settings-representatives-header-filters__filter"
         :options="statusOptions"
         :label="$t('config_chats.representatives.filter.status.label')"
         :placeholder="$t('select')"
+        clearable
       />
       <UnnnicMultiSelect
-        v-model="selectedRepresentatives"
+        v-model="filters.representatives"
         class="settings-representatives-header-filters__filter"
         :options="representativesOptions"
         :label="$t('config_chats.representatives.filter.representatives.label')"
         :placeholder="$t('select')"
+        clearable
       />
       <UnnnicMultiSelect
-        v-model="selectedSectors"
+        v-model="filters.sectors"
         class="settings-representatives-header-filters__filter"
         :options="sectorsOptions"
         :label="$t('config_chats.representatives.filter.sectors.label')"
         :placeholder="$t('select')"
+        clearable
       />
       <UnnnicMultiSelect
-        v-model="selectedQueues"
+        v-model="filters.queues"
         class="settings-representatives-header-filters__filter"
         :options="queuesOptions"
         :disabled="disableQueuesFilter"
         :label="$t('config_chats.representatives.filter.queues.label')"
         :placeholder="$t('select')"
+        clearable
       />
     </section>
   </section>
@@ -66,19 +70,35 @@ defineOptions({
   name: 'SettingsRepresentativesHeaderFilters',
 });
 
+interface Props {
+  modelValue: {
+    status: string[];
+    representatives: string[];
+    sectors: string[];
+    queues: string[];
+  };
+}
+const props = defineProps<Props>();
+
+const emit = defineEmits<{
+  'update:modelValue': [value: Props['modelValue']];
+  requestData: [void];
+}>();
+
+const filters = computed({
+  get: () => props.modelValue,
+  set: (value) => emit('update:modelValue', value),
+});
+
 const configStore = useConfig();
 const projectUuid = computed(() => configStore.project?.uuid);
 
-const selectedStatus = ref([]);
 const statusOptions = ref([]);
 
-const selectedRepresentatives = ref([]);
 const representativesOptions = ref([]);
 
-const selectedSectors = ref([]);
 const sectorsOptions = ref([]);
 
-const selectedQueues = ref([]);
 const queuesOptions = ref([]);
 
 const getStatusOptions = async () => {
@@ -161,7 +181,7 @@ const getQueuesOptions = async () => {
 };
 
 const disableQueuesFilter = computed(() => {
-  return selectedSectors.value.length === 0;
+  return filters.value.sectors.length === 0;
 });
 
 onMounted(async () => {
@@ -171,15 +191,9 @@ onMounted(async () => {
 });
 
 watchDebounced(
-  [selectedStatus, selectedRepresentatives, selectedSectors, selectedQueues],
+  filters.value,
   () => {
-    const filters = {
-      status: selectedStatus.value,
-      representatives: selectedRepresentatives.value,
-      sectors: selectedSectors.value,
-      queues: selectedQueues.value,
-    };
-    console.log('TODO: request data', filters);
+    emit('requestData');
   },
   { debounce: 1000, maxWait: 2000, deep: true },
 );

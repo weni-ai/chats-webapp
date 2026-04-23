@@ -80,5 +80,9 @@ const emit = defineEmits<{
     display: flex;
     gap: $unnnic-space-2;
   }
+  &__select-count {
+    color: $unnnic-color-fg-info;
+    font: $unnnic-font-caption-2;
+  }
 }
 </style>
