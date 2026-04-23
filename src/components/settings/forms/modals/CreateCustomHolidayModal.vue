@@ -1,46 +1,69 @@
 <template>
-  <UnnnicModalDialog
-    :modelValue="true"
-    :title="$t('sector.managers.working_day.add_non_working_dates')"
-    :primaryButtonProps="{ text: $t('save'), loading: isLoading }"
-    @primary-button-click="save"
-    @update:model-value="emitClose"
+  <UnnnicDialog
+    v-model:open="isOpen"
+    class="create-custom-holiday-modal"
+    data-testid="modal-dialog"
   >
-    <section class="create-custom-holiday-modal__body">
-      <section
-        v-for="(form, index) in forms"
-        :key="index"
-        class="create-custom-holiday-modal__form"
-        data-testid="create-custom-holiday-form"
-      >
-        <section class="create-custom-holiday-modal__form__input-date">
-          <p class="create-custom-holiday-modal__form__input-date__title">
-            {{ $t('sector.managers.working_day.select_date_or_period') }}
-          </p>
-          <UnnnicInputDatePicker
-            v-model="form.date"
-            hideOptions
-            next
-            fillW
-            :actionText="$t('confirm')"
-            disableClear
+    <UnnnicDialogContent>
+      <UnnnicDialogHeader>
+        <UnnnicDialogTitle data-testid="modal-title">
+          {{ $t('sector.managers.working_day.add_non_working_dates') }}
+        </UnnnicDialogTitle>
+      </UnnnicDialogHeader>
+      <section class="create-custom-holiday-modal__body">
+        <section
+          v-for="(form, index) in forms"
+          :key="index"
+          class="create-custom-holiday-modal__form"
+          data-testid="create-custom-holiday-form"
+        >
+          <section class="create-custom-holiday-modal__form__input-date">
+            <p class="create-custom-holiday-modal__form__input-date__title">
+              {{ $t('sector.managers.working_day.select_date_or_period') }}
+            </p>
+            <UnnnicInputDatePicker
+              v-model="form.date"
+              hideOptions
+              next
+              fillW
+              :actionText="$t('confirm')"
+              disableClear
+            />
+          </section>
+          <UnnnicSwitch
+            v-model="form.repeat"
+            :textRight="$t('sector.managers.working_day.repeat_annually')"
+            size="small"
           />
         </section>
-        <UnnnicSwitch
-          v-model="form.repeat"
-          :textRight="$t('sector.managers.working_day.repeat_annually')"
-          size="small"
+        <UnnnicButton
+          class="create-custom-holiday-modal__add-button"
+          data-testid="add-button"
+          iconCenter="add-1"
+          type="tertiary"
+          :text="$t('sector.managers.working_day.add_more_dates_or_periods')"
+          @click="addForm"
         />
       </section>
-      <UnnnicButton
-        class="create-custom-holiday-modal__add-button"
-        iconCenter="add-1"
-        type="tertiary"
-        :text="$t('sector.managers.working_day.add_more_dates_or_periods')"
-        @click="addForm"
-      />
-    </section>
-  </UnnnicModalDialog>
+      <UnnnicDialogFooter>
+        <UnnnicButton
+          :text="$t('cancel')"
+          type="tertiary"
+          data-testid="modal-close"
+          :disabled="isLoading"
+          @click="close"
+        />
+        <UnnnicButton
+          :text="$t('save')"
+          type="primary"
+          data-testid="primary-button"
+          :disabled="isLoading"
+          :loading="isLoading"
+          @click="save"
+        />
+      </UnnnicDialogFooter>
+    </UnnnicDialogContent>
+  </UnnnicDialog>
 </template>
 
 <script>
@@ -63,12 +86,20 @@ export default {
   data() {
     return {
       isLoading: false,
+      isOpen: true,
       forms: [{ date: { start: '', end: '' }, repeat: false }],
     };
   },
+  watch: {
+    isOpen(value) {
+      if (!value) {
+        this.$emit('close');
+      }
+    },
+  },
   methods: {
-    emitClose() {
-      this.$emit('close');
+    close() {
+      this.isOpen = false;
     },
     addForm() {
       this.forms.push({ date: { start: '', end: '' }, repeat: false });
@@ -111,7 +142,7 @@ export default {
         }
       }
       this.$emit('add-custom-holidays', this.forms);
-      this.emitClose();
+      this.close();
     },
   },
 };
@@ -122,17 +153,19 @@ export default {
   &__form {
     display: flex;
     flex-direction: column;
-    gap: $unnnic-spacing-sm;
+    gap: $unnnic-space-4;
     &__input-date {
       &__title {
-        margin-bottom: $unnnic-spacing-xs;
+        margin-bottom: $unnnic-space-1;
       }
     }
   }
   &__body {
     display: flex;
     flex-direction: column;
-    gap: $unnnic-spacing-sm;
+    gap: $unnnic-space-4;
+    padding: $unnnic-space-6;
+    overflow-y: auto;
   }
 }
 :deep(.unnnic-button--size-large.create-custom-holiday-modal__add-button) {

@@ -1,7 +1,8 @@
 // tests for ChatMessagesFeedbackMessage component
-import { describe, expect, it, vi } from 'vitest';
+import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest';
 import { mount } from '@vue/test-utils';
 import ChatMessagesFeedbackMessage from '../ChatMessagesFeedbackMessage.vue';
+import i18n from '@/plugins/i18n.js';
 
 describe('ChatMessagesFeedbackMessage', () => {
   const createWrapper = (props = {}) => {
@@ -123,6 +124,17 @@ describe('ChatMessagesFeedbackMessage', () => {
   });
 
   describe('RT Method Processing - Transfer Actions', () => {
+    let previousLocale;
+
+    beforeAll(() => {
+      previousLocale = i18n.global.locale;
+      i18n.global.locale = 'pt-br';
+    });
+
+    afterAll(() => {
+      i18n.global.locale = previousLocale;
+    });
+
     it('should handle all transfer combinations', () => {
       const transferCases = [
         {
@@ -153,6 +165,75 @@ describe('ChatMessagesFeedbackMessage', () => {
         expect(typeof result).toBe('string');
         expect(result.length).toBeGreaterThan(0);
       });
+    });
+
+    it('should render the standard transfer message when requested_by is the same user as from', () => {
+      const content = {
+        action: 'transfer',
+        from: { type: 'user', name: 'Eduardo', id: '7' },
+        to: { type: 'user', name: 'Marcus', id: '10' },
+        requested_by: { type: 'user', name: 'Eduardo', id: '7' },
+      };
+      const message = { text: JSON.stringify({ method: 'rt', content }) };
+      const wrapper = createWrapper({ message });
+      const result = wrapper.vm.createFeedbackLabel(message);
+
+      expect(result).toBe('Eduardo transferiu o chat para Marcus');
+    });
+
+    it('should render the "by other" transfer message when requested_by differs from "from"', () => {
+      const content = {
+        action: 'transfer',
+        from: { type: 'user', name: 'Renata', id: '5' },
+        to: { type: 'user', name: 'Julia', id: '10' },
+        requested_by: { type: 'user', name: 'Leonardo', id: '7' },
+      };
+      const message = { text: JSON.stringify({ method: 'rt', content }) };
+      const wrapper = createWrapper({ message });
+      const result = wrapper.vm.createFeedbackLabel(message);
+
+      expect(result).toBe('Leonardo transferiu o chat de Renata para Julia');
+    });
+
+    it('should render the standard transfer message when requested_by is missing', () => {
+      const content = {
+        action: 'transfer',
+        from: { type: 'user', name: 'Agent1', id: '1' },
+        to: { type: 'user', name: 'Agent2', id: '2' },
+      };
+      const message = { text: JSON.stringify({ method: 'rt', content }) };
+      const wrapper = createWrapper({ message });
+      const result = wrapper.vm.createFeedbackLabel(message);
+
+      expect(result).toBe('Agent1 transferiu o chat para Agent2');
+    });
+
+    it('should render the standard transfer message when requested_by is not a user', () => {
+      const content = {
+        action: 'transfer',
+        from: { type: 'user', name: 'Agent1', id: '1' },
+        to: { type: 'user', name: 'Agent2', id: '2' },
+        requested_by: { type: 'queue', name: 'Support', id: '99' },
+      };
+      const message = { text: JSON.stringify({ method: 'rt', content }) };
+      const wrapper = createWrapper({ message });
+      const result = wrapper.vm.createFeedbackLabel(message);
+
+      expect(result).toBe('Agent1 transferiu o chat para Agent2');
+    });
+
+    it('should compare ids as strings (number vs string)', () => {
+      const content = {
+        action: 'transfer',
+        from: { type: 'user', name: 'Agent1', id: 7 },
+        to: { type: 'user', name: 'Agent2', id: 10 },
+        requested_by: { type: 'user', name: 'Agent1', id: '7' },
+      };
+      const message = { text: JSON.stringify({ method: 'rt', content }) };
+      const wrapper = createWrapper({ message });
+      const result = wrapper.vm.createFeedbackLabel(message);
+
+      expect(result).toBe('Agent1 transferiu o chat para Agent2');
     });
   });
 

@@ -1,32 +1,38 @@
 <template>
-  <ChatSummary
-    v-if="shouldShowSummaryContent || hasArchivedContent"
-    :showSummary="!!shouldShowSummaryContent"
-    :isGeneratingSummary="isLoadingActiveRoomSummary"
-    :summaryText="activeRoomSummary.summary"
-    :feedback="activeRoomSummary.feedback"
-    :skipAnimation="skipSummaryAnimation"
-    :isArchived="room?.is_archived || false"
-    :archivedUrl="room?.archived_conversation_file_url || ''"
-    @close="openChatSummary = false"
-  />
-  <ChatMessages
-    ref="activeChatMessages"
-    :chatUuid="room?.uuid || ''"
-    :messages="roomMessages"
-    :messagesNext="roomMessagesNext || ''"
-    :messagesPrevious="roomMessagesPrevious || ''"
-    :messagesSorted="roomMessagesSorted"
-    :messagesSendingUuids="roomMessagesSendingUuids"
-    :messagesFailedUuids="roomMessagesFailedUuids"
-    :resendMessages="roomResendMessages"
-    :resendMedia="roomResendMedia"
-    :isLoading="isLoadingMessages || isLoadingInternalNotes"
-    :isClosedChat="!!room?.ended_at"
-    :enableReply="false"
-    @scroll-top="searchForMoreMessages"
-    @open-room-contact-info="$emit('open-room-contact-info')"
-  />
+  <section
+    class="room-messages"
+    data-testid="room-messages-wrapper"
+  >
+    <ChatSummary
+      v-if="shouldShowSummaryContent || hasArchivedContent"
+      :showSummary="!!shouldShowSummaryContent"
+      :isGeneratingSummary="isLoadingActiveRoomSummary"
+      :summaryText="activeRoomSummary.summary"
+      :feedback="activeRoomSummary.feedback"
+      :skipAnimation="skipSummaryAnimation"
+      :isArchived="room?.is_archived || false"
+      :archivedUrl="room?.archived_conversation_file_url || ''"
+      @close="openChatSummary = false"
+    />
+    <ChatMessages
+      ref="activeChatMessages"
+      class="room-messages__messages"
+      :chatUuid="room?.uuid || ''"
+      :messages="roomMessages"
+      :messagesNext="roomMessagesNext || ''"
+      :messagesPrevious="roomMessagesPrevious || ''"
+      :messagesSorted="roomMessagesSorted"
+      :messagesSendingUuids="roomMessagesSendingUuids"
+      :messagesFailedUuids="roomMessagesFailedUuids"
+      :resendMessages="roomResendMessages"
+      :resendMedia="roomResendMedia"
+      :isLoading="isLoadingMessages || isLoadingInternalNotes"
+      :isClosedChat="!!room?.ended_at"
+      :enableReply="false"
+      @scroll-top="searchForMoreMessages"
+      @open-room-contact-info="$emit('open-room-contact-info')"
+    />
+  </section>
 </template>
 <script>
 import { mapActions, mapState, mapWritableState } from 'pinia';
@@ -178,12 +184,12 @@ export default {
       }
     },
 
-    setRoomSummary(text, feedback, status) {
+    setRoomSummary(text, feedback, status = '') {
       this.isLoadingActiveRoomSummary = false;
       if (this.room) {
         this.roomsSummary[this.room.uuid] = {
           summary: text,
-          feedback,
+          feedback: feedback ?? { liked: null },
           status,
         };
       }
@@ -192,10 +198,12 @@ export default {
 
     async getRoomSummary() {
       if (!this.room) return;
+      const roomUuid = this.room.uuid;
       try {
         const { status, summary, feedback } = await RoomService.getSummary({
-          roomUuid: this.room.uuid,
+          roomUuid,
         });
+        if (this.room?.uuid !== roomUuid) return;
         if (['DONE', 'UNAVAILABLE'].includes(status)) {
           const unavailableText = this.$t('chats.summary.unavailable');
           this.setRoomSummary(
@@ -205,9 +213,10 @@ export default {
           );
         }
       } catch (error) {
+        if (this.room?.uuid !== roomUuid) return;
         console.log(error);
         const errorText = i18n.global.t('chats.summary.error');
-        this.setRoomSummary(errorText);
+        this.setRoomSummary(errorText, { liked: null }, 'ERROR');
       }
     },
 
@@ -267,3 +276,17 @@ export default {
   },
 };
 </script>
+
+<style lang="scss" scoped>
+.room-messages {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  height: 100%;
+
+  &__messages {
+    flex: 1 1 auto;
+    min-height: 0;
+  }
+}
+</style>
