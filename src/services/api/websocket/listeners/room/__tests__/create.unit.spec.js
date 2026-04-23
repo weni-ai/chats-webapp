@@ -7,6 +7,12 @@ vi.mock('@/store/modules/chats/rooms', () => ({
   useRooms: vi.fn(),
 }));
 
+vi.mock('@/store/modules/chats/roomCounters', () => ({
+  useRoomCounters: vi.fn(() => ({
+    handleCreate: vi.fn(),
+  })),
+}));
+
 vi.mock('@/store/modules/config', () => ({
   useConfig: vi.fn(() => ({})),
 }));
