@@ -3,11 +3,14 @@
     <RepresentativeCard
       v-for="representative in formattedRepresentatives"
       :key="representative.email"
-      :selected="props.selectedRepresentatives.includes(representative.email)"
-      :representative="representative"
-      @update:selected="
-        handleSelectedRepresentative(representative.email, $event)
+      :selected="
+        props.selectedRepresentatives.some(
+          (selectedRepresentative) =>
+            selectedRepresentative.email === representative.email,
+        )
       "
+      :representative="representative"
+      @update:selected="handleSelectedRepresentative(representative, $event)"
       @click="emit('click:representative', representative)"
     />
   </section>
@@ -24,7 +27,7 @@ defineOptions({
 // TODO: type
 interface Props {
   representatives: any[];
-  selectedRepresentatives: string[];
+  selectedRepresentatives: any[];
 }
 
 const props = defineProps<Props>();
@@ -43,17 +46,21 @@ const formattedRepresentatives = computed(() => {
   });
 });
 
-const handleSelectedRepresentative = (email: string, selected: boolean) => {
+const handleSelectedRepresentative = (
+  representative: any,
+  selected: boolean,
+) => {
   if (selected) {
     emit('update:selectedRepresentatives', [
       ...props.selectedRepresentatives,
-      email,
+      representative,
     ]);
   } else {
     emit(
       'update:selectedRepresentatives',
       props.selectedRepresentatives.filter(
-        (selectedRepresentativeEmail) => selectedRepresentativeEmail !== email,
+        (filterRepresentative) =>
+          filterRepresentative.email !== representative.email,
       ),
     );
   }

@@ -20,7 +20,8 @@ export default {
   async listRepresentativeQueuePermission({ representativeEmail }) {
     const endpoint = `/agent/queue_permissions/`;
     const params = {
-      email: representativeEmail,
+      agent: representativeEmail,
+      project: getProject(),
     };
     const response = await http.get(endpoint, {
       params,
@@ -40,6 +41,7 @@ export default {
       to_remove: toRemove,
       to_add: toAdd,
       chats_limit: chatsLimit,
+      project: getProject(),
     };
     const response = await http.post(endpoint, body);
     return response.data;
