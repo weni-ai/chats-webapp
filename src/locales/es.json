@@ -460,6 +460,7 @@
       "assume_chat_question_description": "¿Seguro de que deseas asumir el chat con {contact}?<br><br>Al confirmar, quitarás el chat del representante y serás responsable del chat."
     }
   },
+  "select": "Seleccionar",
   "history": "Historial",
   "close_view": "Cerrar la vista",
   "logout": "Cerrar sesión",
@@ -879,7 +880,8 @@
     "tabs": {
       "general": "General",
       "groups": "Grupos de proyectos",
-      "sectors": "Sectores"
+      "sectors": "Sectores",
+      "representatives": "Representantes"
     },
     "custom_breaks": {
       "title": "Pausas personalizadas",
@@ -1072,6 +1074,36 @@
     },
     "copilot": {
       "hint": "El Co-pilot es el asistente inteligente de tu agente; se podrá activar más tarde."
+    },
+    "representatives": {
+      "title": "Gestión de representantes",
+      "description": "Define los representantes de los sectores y las colas, así como el número máximo de chats por representante. Los cambios hechos aquí también se actualizarán en la configuración de sectores y colas",
+      "select_all": "Seleccionar todos los representantes",
+      "select_count": "{count} seleccionados",
+      "chats_limit": {
+        "label": "{count} chats simultáneos"
+      },
+      "sectors": {
+        "empty": "No agregado a ningún sector"
+      },
+      "actions": {
+        "queue-management_tooltip": "Cambiar representantes seleccionados de sectores/colas",
+        "chats-limit-management_tooltip": "Definir el límite de chats simultáneos para los representantes seleccionados"
+      },
+      "filter": {
+        "status": {
+          "label": "Filtrar por estado"
+        },
+        "representatives": {
+          "label": "Filtrar por representantes"
+        },
+        "sectors": {
+          "label": "Filtrar por sector"
+        },
+        "queues": {
+          "label": "Filtrar por cola"
+        }
+      }
     },
     "new_sector": "Nuevo sector",
     "new_group": "Nuevo grupo",

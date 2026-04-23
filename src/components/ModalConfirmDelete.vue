@@ -20,8 +20,8 @@
           v-model="inputConfirmText"
           class="modal-confirm-destroy__content__input"
           :placeholder="confirmText"
-          :message="$t('delete_modal.cannot_be_reversed')"
-          @keyup.enter.stop="isValid ? emit('confirm') : null"
+          :message="$t('modal_confirm_delete.action_cannot_be_reversed')"
+          @keyup.enter.stop="isValid && !isLoading ? emit('confirm') : null"
         />
       </section>
       <UnnnicDialogFooter>

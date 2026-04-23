@@ -457,6 +457,7 @@
       "assume_chat_question_description": "Are you sure you want to take over chat with {contact}?<br><br>When confirming you will remove the chat from representative and will be responsible for chat."
     }
   },
+  "select": "Select",
   "history": "History",
   "close_view": "Close view",
   "logout": "Logout",
@@ -876,7 +877,8 @@
     "tabs": {
       "general": "General",
       "groups": "Projects groups",
-      "sectors": "Sectors"
+      "sectors": "Sectors",
+      "representatives": "Representatives"
     },
     "custom_breaks": {
       "title": "Custom breaks",
@@ -1069,6 +1071,36 @@
     },
     "copilot": {
       "hint": "The Co-pilot is your agent's intelligent assistant; it can be activated later."
+    },
+    "representatives": {
+      "title": "Representatives management",
+      "description": "Define the representatives for the sectors and queues, as well as the maximum number of chats per representative. Changes made here will also be updated in the sector and queue settings.",
+      "select_all": "Select all representatives",
+      "select_count": "{count} selected",
+      "chats_limit": {
+        "label": "{count} simultaneous chats"
+      },
+      "sectors": {
+        "empty": "Representative is not added to any sector"
+      },
+      "actions": {
+        "queue-management_tooltip": "Change selected representatives from sectors/queues",
+        "chats-limit-management_tooltip": "Define the limit of simultaneous chats for the selected representatives"
+      },
+      "filter": {
+        "status": {
+          "label": "Filter by status"
+        },
+        "representatives": {
+          "label": "Filter by representatives"
+        },
+        "sectors": {
+          "label": "Filter by sector"
+        },
+        "queues": {
+          "label": "Filter by queue"
+        }
+      }
     },
     "new_sector": "New sector",
     "new_group": "New group",
