@@ -42,6 +42,14 @@
         :show="representativesLimit"
       />
     </section>
+    <QueueManager
+      v-if="showQueueManager"
+      :open="showQueueManager"
+      :representatives="toManagerRepresentative"
+      @close="closeQueueManager"
+      @update:open="closeQueueManager"
+      @success="handleFiltersChange()"
+    />
   </section>
 </template>
 
@@ -51,6 +59,7 @@ import { computed, onMounted, ref, watch } from 'vue';
 import HeaderFilters from './HeaderFilters.vue';
 import Actions from './Actions.vue';
 import RepresentativesList from './RepresentativesList/index.vue';
+import QueueManager from './QueueManager/index.vue';
 
 import RepresentativeService from '@/services/api/resources/settings/representative';
 
@@ -67,8 +76,16 @@ const openChatsLimitManagement = () => {
 };
 
 const handleClickRepresentative = (representative: any) => {
-  console.log('handleClickRepresentative', representative);
+  showQueueManager.value = true;
+  toManagerRepresentative.value = [representative];
 };
+const closeQueueManager = () => {
+  showQueueManager.value = false;
+  toManagerRepresentative.value = [];
+};
+
+const showQueueManager = ref(false);
+const toManagerRepresentative = ref([]);
 
 const isLoadingRepresentatives = ref(false);
 const representatives = ref([]);
@@ -83,6 +100,7 @@ const representativesFilters = ref({
 const representativesPage = ref(1);
 const representativesCount = ref(0);
 const representativesLimit = 15;
+
 const representativesTotalPages = computed(() => {
   return Math.ceil(representativesCount.value / representativesLimit);
 });

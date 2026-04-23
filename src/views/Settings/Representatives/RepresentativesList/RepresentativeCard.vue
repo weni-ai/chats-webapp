@@ -4,6 +4,7 @@
       <UnnnicCheckbox
         :modelValue="props.selected"
         @update:model-value="emit('update:selected', $event)"
+        @click.stop
       />
       <section class="representative-card__representative__container">
         <UnnnicToolTip

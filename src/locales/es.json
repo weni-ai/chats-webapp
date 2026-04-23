@@ -1080,6 +1080,22 @@
       "description": "Define los representantes de los sectores y las colas, así como el número máximo de chats por representante. Los cambios hechos aquí también se actualizarán en la configuración de sectores y colas",
       "select_all": "Seleccionar todos los representantes",
       "select_count": "{count} seleccionados",
+      "queue_manager": {
+        "title": "Gestionar {representativeName}",
+        "bulk_title": "Cambiar sectores y colas",
+        "chats_limit": {
+          "switch_label": "Definir límite en el número de chats simultáneos para este representante",
+          "switch_helper": "Un límite definido para un representante concreto reemplaza el límite a nivel de sector",
+          "input_label": "Número de chats simultáneos",
+          "input_placeholder": "Ej.: 4",
+          "input_helper": "Con 0, el representante toma los chats de la cola"
+        },
+        "sector_queues_checkbox": {
+          "title": "Sectores y colas"
+        },
+        "save_success": "Cambios guardados con éxito",
+        "save_error": "No se pudieron guardar los cambios"
+      },
       "chats_limit": {
         "label": "{count} chats simultáneos"
       },

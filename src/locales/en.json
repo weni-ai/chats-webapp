@@ -1077,6 +1077,22 @@
       "description": "Define the representatives for the sectors and queues, as well as the maximum number of chats per representative. Changes made here will also be updated in the sector and queue settings.",
       "select_all": "Select all representatives",
       "select_count": "{count} selected",
+      "queue_manager": {
+        "title": "Manage {representativeName}",
+        "bulk_title": "Change sectors and queues",
+        "chats_limit": {
+          "switch_label": "Define a limit on the number of simultaneous chats for this representative",
+          "switch_helper": "A limit set for a specific representative overrides the sector-level limit.",
+          "input_label": "Number of simultaneous chats",
+          "input_placeholder": "Example: 4",
+          "input_helper": "Set to 0 to have representatives pick up chats from the queue."
+        },
+        "sector_queues_checkbox": {
+          "title": "Sectors and queues"
+        },
+        "save_success": "Changes saved successfully!",
+        "save_error": "Unable to save changes."
+      },
       "chats_limit": {
         "label": "{count} simultaneous chats"
       },
