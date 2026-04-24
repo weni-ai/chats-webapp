@@ -20,7 +20,7 @@
     >
       <UnnnicIconSvg
         icon="alert-circle-1-1"
-        scheme="fg-inverted"
+        scheme="fg-on-primary"
         size="sm"
       />
     </UnnnicToolTip>
