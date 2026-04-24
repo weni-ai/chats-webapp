@@ -19,7 +19,7 @@ describe('useFeatureFlag Store', () => {
   it('should initialize with correct default state', () => {
     const featureFlagStore = useFeatureFlag();
 
-    expect(featureFlagStore.featureFlags).toEqual({});
+    expect(featureFlagStore.featureFlags).toEqual({ active_features: [] });
     expect(featureFlagStore.isLoadingFeatureFlags).toBe(false);
   });
 
@@ -88,7 +88,7 @@ describe('useFeatureFlag Store', () => {
 
     await featureFlagStore.getFeatureFlags();
 
-    expect(featureFlagStore.featureFlags).toEqual({});
+    expect(featureFlagStore.featureFlags).toEqual({ active_features: [] });
     expect(featureFlagStore.isLoadingFeatureFlags).toBe(false);
     expect(consoleSpy).toHaveBeenCalledWith(
       'Error getting feature flags',

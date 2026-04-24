@@ -363,7 +363,8 @@
     "feedback": {
       "forwarded_to_agent": "Contato encaminhado para agente {agent}",
       "forwarded_to_queue": "Contato encaminhado para fila {queue}",
-      "transfer_to_agent": "{agent1} transferiu para {agent2}",
+      "transfer_to_agent": "{agent1} transferiu o chat para {agent2}",
+      "transfer_to_agent_by_other": "{requestedBy} transferiu o chat de {agent1} para {agent2}",
       "transfer_to_queue": "{agent} transferiu para fila {queue}",
       "transfer_from_queue_to_queue": "Foi transferido da fila {queue1} para fila {queue2}",
       "transfer_from_queue_to_agent": "Foi transferido da fila {queue} para {agent}",
@@ -1240,8 +1241,8 @@
   },
   "delete_modal": {
     "title": "Excluir {name}",
-    "description_sector": "O sistema detectou que existem {count} conversas em andamento no setor {name}, selecione o que deseja fazer com elas:",
-    "description_queue": "O sistema detectou que existem {count} conversas em andamento na fila {name}, selecione o que deseja fazer com elas:",
+    "description_sector": "O sistema detectou {count} conversas no setor {name} que estão em atendimento ou aguardando para serem atendidas. Escolha o que deseja fazer com elas",
+    "description_queue": "O sistema detectou {count} conversas na fila {name} que estão em atendimento ou aguardando para serem atendidas. Escolha o que deseja fazer com elas",
     "transfer_chats": "Transferir conversas para outro setor/fila",
     "end_all_chats": "Encerrar todas as conversas",
     "select_sector": "Selecione um setor",

@@ -13,9 +13,14 @@ vi.mock('@weni/unnnic-system', () => ({
   UnnnicCallAlert: vi.fn(),
 }));
 
+vi.mock('@/services/api/resources/settings/rooms', () => ({
+  default: {
+    count: vi.fn().mockResolvedValue({ waiting: 5, in_service: 3 }),
+  },
+}));
+
 vi.mock('@/services/api/resources/settings/sector', () => ({
   default: {
-    roomsCount: vi.fn().mockResolvedValue({ waiting: 5, in_service: 3 }),
     list: vi.fn(),
     deleteSector: vi.fn().mockResolvedValue({}),
   },

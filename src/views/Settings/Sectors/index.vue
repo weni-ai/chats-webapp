@@ -90,6 +90,7 @@ import ModalDeleteWithTransfer from '@/components/ModalDeleteWithTransfer.vue';
 import ListOrdinator from '@/components/ListOrdinator.vue';
 import SectorCard from './SectorCard.vue';
 
+import Rooms from '@/services/api/resources/settings/rooms';
 import { useSettings } from '@/store/modules/settings';
 
 import Sector from '@/services/api/resources/settings/sector';
@@ -159,7 +160,9 @@ const handlerOpenDeleteSectorModal = async (sector) => {
   toDeleteSector.value = sector;
   handleConnectOverlay(true);
   try {
-    const { waiting, in_service } = await Sector.roomsCount(sector.uuid);
+    const { waiting, in_service } = await Rooms.count({
+      sector: sector.uuid,
+    });
     sectorRoomsCount.value = waiting + in_service;
   } catch {
     sectorRoomsCount.value = 0;
