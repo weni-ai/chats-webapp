@@ -1,135 +1,174 @@
 <template>
   <footer class="chats-layout-footer">
-    <ViewButton
-      v-if="!isOpen"
-      :handleClick="openDrawer"
-      :expandedMore="isOpen"
-      :showNewBadge="showNewBadge"
-      data-testid="view-btn"
-    />
-  </footer>
-  <Teleport
-    to="body"
-    data-testid="teleport-body"
-  >
-    <Transition name="expand">
-      <section
-        v-if="isOpen"
-        class="chats-layout-drawer"
-        :class="{ 'chats-layout-drawer--open': isOpen }"
-        data-testid="drawer"
+    <UnnnicPopover
+      v-model:open="isOpen"
+      data-testid="view-options-popover"
+    >
+      <UnnnicPopoverTrigger
+        as="div"
+        @click="handleTriggerClick"
       >
         <ViewButton
-          :handleClick="closeDrawer"
           :expandedMore="isOpen"
-          data-testid="view-btn-drawer"
+          :showNewBadge="showNewBadge"
+          data-testid="view-btn"
         />
-        <section class="chats-layout-drawer__options">
-          <section
-            class="chats-layout-drawer__option chats-layout-drawer--padding-left-space-4"
-          >
-            <UnnnicSwitch
-              v-if="!isViewMode"
-              v-model="sound"
-              data-testid="switch-sound"
-              size="small"
-              :textRight="$t('preferences.notifications.sound')"
-              @update:model-value="changeSound"
-            />
-          </section>
-          <section
-            class="chats-layout-drawer__option chats-layout-drawer--padding-left-space-4"
-          >
-            <UnnnicSwitch
-              v-model="darkMode"
-              data-testid="switch-dark-mode"
-              size="small"
-              :textRight="$t('preferences.appearance.dark_mode')"
-            />
-          </section>
+      </UnnnicPopoverTrigger>
 
-          <section class="chats-layout-drawer__option">
+      <UnnnicPopoverContent
+        class="view-options__content"
+        side="top"
+        align="start"
+        :sideOffset="0"
+        width="var(--reka-popper-anchor-width)"
+        data-testid="view-options-content"
+      >
+        <section class="view-options__items">
+          <UnnnicButton
+            class="view-options__item"
+            type="tertiary"
+            size="small"
+            iconLeft="history"
+            :text="$t('chats.see_history')"
+            data-testid="show-see_history"
+            @click="navigate('closed-rooms')"
+          />
+
+          <UnnnicButton
+            v-if="showFlowsTriggerButton || !isViewMode"
+            class="view-options__item"
+            type="tertiary"
+            size="small"
+            iconLeft="send"
+            :text="$t('flows')"
+            data-testid="show-flows-trigger"
+            @mousedown.prevent
+            @click="openFlowsTrigger"
+          />
+
+          <UnnnicButton
+            v-if="!isViewMode"
+            class="view-options__item"
+            type="tertiary"
+            size="small"
+            iconLeft="bolt"
+            :text="$t('quick_messages.title')"
+            data-testid="show-quick-messages"
+            @mousedown.prevent
+            @click="openQuickMessage"
+          />
+
+          <UnnnicButton
+            v-if="dashboard || !isViewMode"
+            class="view-options__item"
+            type="tertiary"
+            size="small"
+            iconLeft="bar_chart_4_bars"
+            text="Dashboard"
+            data-testid="show-dashboard"
+            @mousedown.prevent
+            @click="navigateToHumanServiceDashboard"
+          />
+        </section>
+
+        <hr class="view-options__separator" />
+
+        <section class="view-options__group">
+          <p class="view-options__group-label">
+            {{ $t('preferences.appearance.live_desk_theme') }}
+          </p>
+          <section
+            class="view-options__theme"
+            :aria-label="$t('preferences.appearance.live_desk_theme')"
+          >
             <UnnnicButton
-              v-if="showFlowsTriggerButton || !isViewMode"
-              data-testid="show-flows-trigger"
-              :text="$t('flows')"
+              class="view-options__theme-button"
+              :class="{
+                'view-options__theme-button--selected': !isDark,
+              }"
+              type="secondary"
               size="small"
-              type="tertiary"
-              iconLeft="send"
-              @mousedown.prevent
-              @click="openFlowsTrigger"
+              iconLeft="clear_day"
+              :text="$t('preferences.appearance.light')"
+              :aria-pressed="!isDark"
+              data-testid="theme-light-button"
+              @click="setTheme(THEMES.LIGHT)"
             />
-          </section>
-          <section class="chats-layout-drawer__option">
             <UnnnicButton
-              v-if="!isViewMode"
-              data-testid="show-quick-messages"
-              :text="$t('quick_messages.title')"
-              iconLeft="bolt"
-              type="tertiary"
+              class="view-options__theme-button"
+              :class="{
+                'view-options__theme-button--selected': isDark,
+              }"
+              type="secondary"
               size="small"
-              @mousedown.prevent
-              @click="openQuickMessage"
-            />
-          </section>
-          <section class="chats-layout-drawer__option">
-            <UnnnicButton
-              v-if="dashboard || !isViewMode"
-              data-testid="show-dashboard"
-              text="Dashboard"
-              iconLeft="bar_chart_4_bars"
-              type="tertiary"
-              size="small"
-              @mousedown.prevent
-              @click="navigateToHumanServiceDashboard"
-            />
-          </section>
-          <section class="chats-layout-drawer__option">
-            <UnnnicButton
-              class="chats-layout-drawer__button"
-              :text="$t('chats.see_history')"
-              iconLeft="history"
-              type="tertiary"
-              size="small"
-              data-testid="show-see_history"
-              @click="navigate('closed-rooms')"
+              iconLeft="dark_mode"
+              :text="$t('preferences.appearance.dark')"
+              :aria-pressed="isDark"
+              data-testid="theme-dark-button"
+              @click="setTheme(THEMES.DARK)"
             />
           </section>
         </section>
-      </section>
-    </Transition>
-  </Teleport>
+
+        <section
+          v-if="!isViewMode"
+          class="view-options__group"
+          data-testid="sound-notifications-group"
+        >
+          <p class="view-options__group-label">
+            {{ $t('preferences.notifications.sound_notifications') }}
+          </p>
+          <UnnnicSwitch
+            v-model="sound"
+            data-testid="switch-sound"
+            size="small"
+            :textRight="
+              sound
+                ? $t('preferences.notifications.on')
+                : $t('preferences.notifications.off')
+            "
+            @update:model-value="changeSound"
+          />
+        </section>
+      </UnnnicPopoverContent>
+    </UnnnicPopover>
+  </footer>
 </template>
 
-<script setup>
-import { computed, ref, onBeforeMount, onMounted, onUnmounted } from 'vue';
-import ViewButton from './ViewButton.vue';
-import { PREFERENCES_SOUND } from '@/services/api/websocket/soundNotification.js';
+<script setup lang="ts">
+import { computed, onBeforeMount, ref } from 'vue';
 import { useRouter } from 'vue-router';
+
+import ViewButton from './ViewButton.vue';
+
+import { PREFERENCES_SOUND } from '@/services/api/websocket/soundNotification.js';
 import { moduleStorage } from '@/utils/storage';
 import { useTheme } from '@/store/modules/theme';
 import { THEMES } from '@/utils/theme';
+
+type ThemeValue = (typeof THEMES)[keyof typeof THEMES];
 
 defineOptions({
   name: 'ViewOptions',
 });
 
-defineProps({
-  showFlowsTriggerButton: {
-    type: Boolean,
-    default: false,
+withDefaults(
+  defineProps<{
+    showFlowsTriggerButton?: boolean;
+    dashboard?: boolean;
+    isViewMode?: boolean;
+  }>(),
+  {
+    showFlowsTriggerButton: false,
+    dashboard: false,
+    isViewMode: false,
   },
-  dashboard: {
-    type: Boolean,
-    default: false,
-  },
-  isViewMode: {
-    type: Boolean,
-    default: false,
-  },
-});
+);
 
-const emit = defineEmits(['open-flows-trigger', 'show-quick-messages']);
+const emit = defineEmits<{
+  'open-flows-trigger': [void];
+  'show-quick-messages': [void];
+}>();
 
 const { push } = useRouter();
 
@@ -140,52 +179,36 @@ const sound = ref(false);
 const showNewBadge = ref(false);
 
 const themeStore = useTheme();
-const darkMode = computed({
-  get: () => themeStore.isDark,
-  set: (value) => themeStore.setTheme(value ? THEMES.DARK : THEMES.LIGHT),
-});
+const isDark = computed(() => themeStore.isDark);
+const setTheme = (theme: ThemeValue) => themeStore.setTheme(theme);
 
-const handleClickOutside = (event) => {
-  const drawer = event.target.closest('[data-testid="drawer"]');
-  const viewButton = event.target.closest('[data-testid="view-btn"]');
-
-  if (!drawer && !viewButton && isOpen.value) {
-    isOpen.value = false;
-  }
-};
-
-const closeDrawer = () => {
-  isOpen.value = false;
-};
-
-const openDrawer = () => {
-  isOpen.value = true;
-
-  if (showNewBadge.value) {
+function handleTriggerClick() {
+  if (!isOpen.value && showNewBadge.value) {
     showNewBadge.value = false;
     moduleStorage.setItem(VIEW_OPTIONS_NEW_SEEN_KEY, true);
   }
-};
+}
 
-const changeSound = () => {
+function changeSound() {
   moduleStorage.setItem(PREFERENCES_SOUND, sound.value ? 'yes' : 'no');
-};
+}
 
-const openFlowsTrigger = () => {
+function openFlowsTrigger() {
   emit('open-flows-trigger');
-};
+  isOpen.value = false;
+}
 
-const openQuickMessage = () => {
+function openQuickMessage() {
   emit('show-quick-messages');
-};
+  isOpen.value = false;
+}
 
-const navigate = (name) => {
-  push({
-    name,
-  });
-};
+function navigate(name: string) {
+  push({ name });
+  isOpen.value = false;
+}
 
-const navigateToHumanServiceDashboard = () => {
+function navigateToHumanServiceDashboard() {
   window.parent.postMessage(
     {
       event: 'redirect',
@@ -193,7 +216,8 @@ const navigateToHumanServiceDashboard = () => {
     },
     '*',
   );
-};
+  isOpen.value = false;
+}
 
 onBeforeMount(() => {
   sound.value = (moduleStorage.getItem(PREFERENCES_SOUND) || 'yes') === 'yes';
@@ -201,89 +225,96 @@ onBeforeMount(() => {
     moduleStorage.getItem(VIEW_OPTIONS_NEW_SEEN_KEY, false) !== true;
 });
 
-onMounted(async () => {
-  document.addEventListener('click', handleClickOutside);
-});
-
-onUnmounted(() => {
-  document.removeEventListener('click', handleClickOutside);
+defineExpose({
+  isOpen,
+  sound,
+  showNewBadge,
+  changeSound,
+  openFlowsTrigger,
+  openQuickMessage,
 });
 </script>
 
 <style lang="scss" scoped>
-.chats-layout-drawer {
-  position: fixed;
-  width: calc(100vw * (3 / 12));
-  z-index: 1000;
-
-  border-top: 1px solid $unnnic-color-border-soft;
-  border-bottom: 1px solid $unnnic-color-border-soft;
-  border-left: 1px solid $unnnic-color-border-soft;
-  background-color: $unnnic-color-bg-base-soft;
-
-  &--open {
-    bottom: 0;
-    display: flex;
-    flex-direction: column;
-  }
-
-  &__options {
-    display: flex;
-    flex-direction: column;
-    gap: $unnnic-space-2;
-    padding-top: $unnnic-space-2;
-  }
-
-  &--padding-left-space-4 {
-    padding-left: $unnnic-space-4;
-  }
-
-  &__option {
-    width: 100%;
-
-    &:hover {
-      background-color: $unnnic-color-bg-base-soft;
-    }
-
-    :deep(.unnnic-button--size-small) {
-      width: 100%;
-      display: flex;
-      align-items: center;
-      justify-content: start;
-    }
-
-    :deep(.material-symbols-rounded.unnnic-icon-size--sm) {
-      font-size: $unnnic-avatar-size-nano;
-      color: $unnnic-color-fg-base;
-    }
-
-    :deep(.unnnic-button__label) {
-      color: $unnnic-color-fg-base;
-    }
-  }
-}
-
 section.chats-layout .sidebar .chats-layout-footer {
   padding-right: 0;
 }
+</style>
 
-.expand-enter-active,
-.expand-leave-active {
-  transition: all 0.3s ease-out;
-  max-height: calc(100vw * (3 / 12));
-}
+<style lang="scss">
+.view-options {
+  &__content {
+    display: flex;
+    flex-direction: column;
+    gap: $unnnic-space-3;
+  }
 
-.expand-enter-from,
-.expand-leave-to {
-  max-height: 0;
-  opacity: 0;
-  overflow: hidden;
-}
+  &__items {
+    display: flex;
+    flex-direction: column;
+    gap: $unnnic-space-2;
+  }
 
-.expand-enter-to,
-.expand-leave-from {
-  max-height: calc(100vw * (3 / 12));
-  opacity: 1;
-  overflow: hidden;
+  &__item .unnnic-button {
+    width: 100%;
+    justify-content: flex-start;
+    padding: $unnnic-space-2 $unnnic-space-4;
+
+    .unnnic-button__label {
+      font-weight: $unnnic-font-weight-medium;
+      color: $unnnic-color-fg-emphasized;
+    }
+  }
+
+  &__separator {
+    margin: 0;
+    border: none;
+    border-top: 1px solid $unnnic-color-border-soft;
+  }
+
+  &__group {
+    display: flex;
+    flex-direction: column;
+    gap: $unnnic-space-2;
+  }
+
+  &__group-label {
+    margin: 0;
+
+    font-family: $unnnic-font-family-secondary;
+    font-size: $unnnic-font-size-body-gt;
+    font-weight: $unnnic-font-weight-regular;
+    line-height: $unnnic-font-size-body-gt + $unnnic-line-height-md;
+    color: $unnnic-color-fg-base;
+  }
+
+  &__theme {
+    display: flex;
+    gap: $unnnic-space-2;
+  }
+
+  &__theme-button {
+    flex: 1 0 0;
+
+    .unnnic-button {
+      width: 100%;
+      padding: $unnnic-space-3 $unnnic-space-4;
+
+      .unnnic-button__label {
+        color: $unnnic-color-fg-emphasized;
+      }
+    }
+
+    &--selected .unnnic-button.unnnic-button--secondary {
+      background-color: $unnnic-color-bg-accent-plain;
+      box-shadow: inset 0 0 0 1px $unnnic-color-border-accent-strong;
+
+      &:hover:enabled,
+      &:active:enabled {
+        background-color: $unnnic-color-bg-accent-plain;
+        box-shadow: inset 0 0 0 1px $unnnic-color-border-accent-strong;
+      }
+    }
+  }
 }
 </style>
