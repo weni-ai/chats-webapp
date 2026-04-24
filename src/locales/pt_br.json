@@ -78,11 +78,17 @@
     "title": "Preferências",
     "appearance": {
       "title": "Aparência",
-      "dark_mode": "Modo escuro"
+      "dark_mode": "Modo escuro",
+      "live_desk_theme": "Tema do Live Desk",
+      "light": "Claro",
+      "dark": "Escuro"
     },
     "notifications": {
       "title": "Notificações",
-      "sound": "Som"
+      "sound": "Som",
+      "sound_notifications": "Notificações sonoras",
+      "on": "Ativado",
+      "off": "Desativado"
     },
     "help": {
       "label": "Ajuda",
@@ -373,7 +379,7 @@
       "discussion_joined": "{agent} entrou na discussão",
       "agent_took_chat": "Ops! O chat com contato {contact} foi assumido por outro agente",
       "automatic_transfer_from_queue": "Sala atribuída ao {agent}.",
-      "see_all_internal_notes": "<b style='color: white;'>Ver notas internas</b>"
+      "see_all_internal_notes": "<b class='fg-on-primary'>Ver notas internas</b>"
     },
     "room_list": {
       "order_by": "Ordenar por:",
