@@ -20,7 +20,7 @@
     >
       <UnnnicIconSvg
         icon="alert-circle-1-1"
-        scheme="fg-inverted"
+        scheme="fg-on-primary"
         size="sm"
       />
     </UnnnicToolTip>
@@ -45,7 +45,7 @@ export default {
 
   background-color: $unnnic-color-fg-base;
 
-  color: $unnnic-color-fg-inverted;
+  color: $unnnic-color-fg-on-primary;
   font: $unnnic-font-body;
 
   &__trigger {

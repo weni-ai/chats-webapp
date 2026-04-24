@@ -31,10 +31,7 @@ export default {
   width: 100%;
   height: $unnnic-border-width-thin;
 
-  background-color: rgba(
-    $unnnic-color-border-soft,
-    $unnnic-opacity-level-light
-  );
+  background-color: $unnnic-color-border-soft;
 
   overflow: hidden;
 

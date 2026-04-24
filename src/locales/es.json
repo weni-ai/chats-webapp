@@ -71,11 +71,24 @@
     "error": "No se puede actualizar el estado, por favor, inténtelo de nuevo"
   },
   "view-option": "Opciones",
+  "view_options": {
+    "new_badge": "Nuevo"
+  },
   "preferences": {
     "title": "Preferencias",
+    "appearance": {
+      "title": "Apariencia",
+      "dark_mode": "Modo oscuro",
+      "live_desk_theme": "Tema del Live Desk",
+      "light": "Claro",
+      "dark": "Oscuro"
+    },
     "notifications": {
       "title": "Notificaciones",
-      "sound": "Sonido"
+      "sound": "Sonido",
+      "sound_notifications": "Notificaciones sonoras",
+      "on": "Activado",
+      "off": "Desactivado"
     },
     "help": {
       "label": "Ayuda",
@@ -366,7 +379,7 @@
       "discussion_joined": "{agent} se unió a la discusión",
       "agent_took_chat": "¡Ups! El chat con el contacto {contact} ha sido asumido por otro agente",
       "automatic_transfer_from_queue": "Sala asignada a {agent}.",
-      "see_all_internal_notes": "<b style='color: white;'>Ver notas internas</b>"
+      "see_all_internal_notes": "<b class='fg-on-primary'>Ver notas internas</b>"
     },
     "room_list": {
       "order_by": "Ordenar por:",

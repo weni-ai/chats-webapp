@@ -68,7 +68,7 @@ export default {
   display: flex;
   align-items: center;
   justify-content: center;
-  color: $unnnic-color-fg-inverted;
+  color: $unnnic-color-fg-on-primary;
 
   &__content {
     display: flex;

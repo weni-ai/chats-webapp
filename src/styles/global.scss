@@ -3,7 +3,11 @@
 
 * {
   box-sizing: border-box;
-  outline-color: $unnnic-color-weni-600;
+  outline-color: $unnnic-color-border-accent-strong;
+}
+
+.fg-on-primary {
+  color: $unnnic-color-fg-on-primary;
 }
 
 html,

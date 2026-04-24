@@ -54,17 +54,16 @@ export default {
   gap: $unnnic-space-1;
 
   &.is-active {
-    background: $unnnic-color-neutral-lightest;
+    background: $unnnic-color-bg-base-soft;
     border-radius: $unnnic-radius-2;
 
     &:active {
-      background: $unnnic-color-neutral-light;
+      background: $unnnic-color-bg-muted;
     }
   }
 
   &.copilot {
-    // Semantic token not exists
-    background: $unnnic-color-teal-1;
+    background: $unnnic-color-bg-accent-plain;
 
     &:active {
       background: $unnnic-color-bg-accent-plain;

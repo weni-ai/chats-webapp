@@ -10,12 +10,15 @@ import UnnnicSystem from './plugins/UnnnicSystem';
 import vMaskV3 from './plugins/vmask3';
 import router from './router';
 import { getJwtToken } from './utils/jwt';
+import { initTheme } from './utils/theme';
 
 import '@weni/unnnic-system/dist/style.css';
 import 'plyr/dist/plyr.css';
 
 import './registerServiceWorker';
 import './styles/global.scss';
+
+initTheme();
 
 getJwtToken().then(() => {
   const app = createApp(App);
