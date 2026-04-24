@@ -1081,6 +1081,10 @@
       "queue_manager": {
         "title": "Manage {representativeName}",
         "bulk_title": "Change sectors and queues",
+        "bulk_disclaimer_description": "The change will be applied to the {count} selected representatives.",
+        "bulk_add_action": "Add to a sector/queue",
+        "bulk_remove_action": "Remove from a sector/queue",
+        "bulk_select_action_description": "Select the bulk action you want to take with the selected representatives:",
         "chats_limit": {
           "switch_label": "Define a limit on the number of simultaneous chats for this representative",
           "switch_helper": "A limit set for a specific representative overrides the sector-level limit.",
@@ -1089,7 +1093,8 @@
           "input_helper": "Set to 0 to have representatives pick up chats from the queue."
         },
         "sector_queues_checkbox": {
-          "title": "Sectors and queues"
+          "title": "Sectors and queues",
+          "bulk_description": "Select the sectors and queues for the change:"
         },
         "save_success": "Changes saved successfully!",
         "save_error": "Unable to save changes."

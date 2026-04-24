@@ -17,7 +17,10 @@
         }}
       </p>
     </section>
-    <section class="settings-representatives-actions__actions-buttons">
+    <section
+      v-if="props.selectedCount > 0"
+      class="settings-representatives-actions__actions-buttons"
+    >
       <UnnnicToolTip
         :text="
           $t('config_chats.representatives.actions.queue-management_tooltip')

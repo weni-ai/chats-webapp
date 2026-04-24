@@ -40,7 +40,12 @@ export default {
       agents: representatives,
       to_remove: toRemove,
       to_add: toAdd,
-      chats_limit: chatsLimit,
+      chats_limit: chatsLimit
+        ? {
+            is_active: chatsLimit.is_active,
+            total: Number(chatsLimit.total),
+          }
+        : undefined,
       project: getProject(),
     };
     const response = await http.post(endpoint, body);

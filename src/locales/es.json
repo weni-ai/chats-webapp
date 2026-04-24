@@ -1084,6 +1084,10 @@
       "queue_manager": {
         "title": "Gestionar {representativeName}",
         "bulk_title": "Cambiar sectores y colas",
+        "bulk_disclaimer_description": "El cambio se aplicará a los {count} representantes seleccionados.",
+        "bulk_add_action": "Agregar a un sector/cola",
+        "bulk_remove_action": "Quitar de un sector/cola",
+        "bulk_select_action_description": "Selecciona la acción en lote que deseas aplicar a los representantes seleccionados:",
         "chats_limit": {
           "switch_label": "Definir límite en el número de chats simultáneos para este representante",
           "switch_helper": "Un límite definido para un representante concreto reemplaza el límite a nivel de sector",
@@ -1092,7 +1096,8 @@
           "input_helper": "Con 0, el representante toma los chats de la cola"
         },
         "sector_queues_checkbox": {
-          "title": "Sectores y colas"
+          "title": "Sectores y colas",
+          "bulk_description": "Selecciona los sectores y las colas para el cambio:"
         },
         "save_success": "Cambios guardados con éxito",
         "save_error": "No se pudieron guardar los cambios"

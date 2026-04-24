@@ -48,13 +48,14 @@
       :representatives="toManagerRepresentative"
       @close="closeQueueManager"
       @update:open="closeQueueManager"
-      @success="handleFiltersChange()"
+      @success="handleSuccessQueueManager()"
     />
   </section>
 </template>
 
 <script setup lang="ts">
 import { computed, onMounted, ref, watch } from 'vue';
+import { cloneDeep } from 'lodash';
 
 import HeaderFilters from './HeaderFilters.vue';
 import Actions from './Actions.vue';
@@ -68,16 +69,17 @@ defineOptions({
 });
 
 const openQueueManagement = () => {
-  console.log('openQueueManagement');
+  toManagerRepresentative.value = cloneDeep(selectedRepresentatives.value);
+  showQueueManager.value = true;
 };
 
 const openChatsLimitManagement = () => {
-  console.log('openChatsLimitManagement');
+  console.log('TODO:openChatsLimitManagement');
 };
 
 const handleClickRepresentative = (representative: any) => {
-  showQueueManager.value = true;
   toManagerRepresentative.value = [representative];
+  showQueueManager.value = true;
 };
 const closeQueueManager = () => {
   showQueueManager.value = false;
@@ -136,9 +138,7 @@ const getRepresentatives = async () => {
 const handleSelectAllRepresentatives = (selected: boolean) => {
   selectAllRepresentatives.value = selected;
   if (selected) {
-    selectedRepresentatives.value = representatives.value.map(
-      (representative) => representative.email,
-    );
+    selectedRepresentatives.value = cloneDeep(representatives.value);
   } else {
     selectedRepresentatives.value = [];
   }
@@ -147,6 +147,12 @@ const handleSelectAllRepresentatives = (selected: boolean) => {
 const handleFiltersChange = () => {
   if (representativesPage.value === 1) getRepresentatives();
   else representativesPage.value = 1;
+};
+
+const handleSuccessQueueManager = () => {
+  toManagerRepresentative.value = [];
+  selectedRepresentatives.value = [];
+  handleFiltersChange();
 };
 
 onMounted(async () => {
