@@ -185,9 +185,12 @@ const submitFeedback = async () => {
         border-radius: $unnnic-border-width-thick;
         cursor: pointer;
 
-        // TODO: confirm with design — no semantic token matches teal-4 yet
         &-selected {
-          background-color: $unnnic-color-teal-4;
+          background-color: $unnnic-color-bg-accent-strong;
+
+          .modal-feedback__content-form-item-label {
+            color: $unnnic-color-fg-on-primary;
+          }
         }
 
         &:hover {
