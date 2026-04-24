@@ -16,37 +16,29 @@
     <template #content>
       <section
         v-if="isLoadingQueuesPermissions"
-        class="settings-representatives-queue-manager__loading"
+        class="queue-manager__loading"
       >
         <UnnnicIconLoading />
       </section>
       <section
         v-else
-        class="settings-representatives-queue-manager__content"
+        class="queue-manager__body"
       >
         <section
           v-if="isBulk"
-          class="settings-representatives-queue-manager__content__bulk-header"
+          class="queue-manager__bulk"
         >
           <UnnnicDisclaimer :description="bulkDisclaimerDescription" />
-          <section
-            class="settings-representatives-queue-manager__content__bulk-header__select-action"
-          >
-            <section
-              class="settings-representatives-queue-manager__content__bulk-header__select-action__radio-group"
-            >
-              <p
-                class="settings-representatives-queue-manager__content__bulk-header__select-action__radio-group__description"
-              >
+          <section class="queue-manager__bulk-toolbar">
+            <section class="queue-manager__bulk-stack">
+              <p class="queue-manager__bulk-hint">
                 {{
                   $t(
                     'config_chats.representatives.queue_manager.bulk_select_action_description',
                   )
                 }}
               </p>
-              <section
-                class="settings-representatives-queue-manager__content__bulk-header__radio-options"
-              >
+              <section class="queue-manager__bulk-radios">
                 <UnnnicRadio
                   :modelValue="bulkSelectAction"
                   value="add"
@@ -75,7 +67,7 @@
         </section>
         <section
           v-else
-          class="settings-representatives-queue-manager__content__chats-limit"
+          class="queue-manager__chats-limit"
         >
           <SettingsProjectOptionsItem
             v-model="formData.chatsLimit.is_active"
@@ -112,9 +104,7 @@
             @update:model-value="hasChanges = true"
           />
         </section>
-        <section
-          class="settings-representatives-queue-manager__content__sectors-queues"
-        >
+        <section class="queue-manager__queues">
           <SectorQueuesCheckbox
             :selectedQueues="currentSelectedQueues"
             :sectors="sectorQueueData"
@@ -280,6 +270,18 @@ const makeSingleRepresentativeFormData = () => {
   };
 };
 
+const makeBulkFormData = () => {
+  return {
+    representatives: props.representatives.map(
+      (representative) => representative.email,
+    ),
+    toRemove:
+      bulkSelectAction.value === 'remove' ? currentSelectedQueues.value : [],
+    toAdd: bulkSelectAction.value === 'add' ? currentSelectedQueues.value : [],
+    chatsLimit: undefined,
+  };
+};
+
 const saveChanges = async () => {
   try {
     isLoadingSave.value = true;
@@ -297,18 +299,7 @@ const saveChanges = async () => {
     };
 
     if (isBulk.value) {
-      bodyData = {
-        representatives: props.representatives.map(
-          (representative) => representative.email,
-        ),
-        toRemove:
-          bulkSelectAction.value === 'remove'
-            ? currentSelectedQueues.value
-            : [],
-        toAdd:
-          bulkSelectAction.value === 'add' ? currentSelectedQueues.value : [],
-        chatsLimit: undefined,
-      };
+      bodyData = makeBulkFormData();
     } else {
       bodyData = makeSingleRepresentativeFormData();
     }
@@ -380,51 +371,52 @@ watch(
 </script>
 
 <style lang="scss" scoped>
-.settings-representatives-queue-manager {
-  &__loading {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100%;
-  }
-
-  &__content {
+.queue-manager {
+  &__body {
     display: flex;
     flex-direction: column;
     gap: $unnnic-space-6;
     margin-bottom: $unnnic-space-6;
+  }
 
-    &__bulk-header {
-      display: flex;
-      flex-direction: column;
-      gap: $unnnic-space-6;
+  &__loading {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+  }
 
-      &__radio-options {
-        display: flex;
-        gap: $unnnic-space-6;
-      }
+  &__bulk {
+    display: flex;
+    flex-direction: column;
+    gap: $unnnic-space-6;
+  }
 
-      &__select-action {
-        display: flex;
-        gap: $unnnic-space-6;
+  &__bulk-toolbar {
+    display: flex;
+    gap: $unnnic-space-6;
+  }
 
-        &__radio-group {
-          display: flex;
-          flex-direction: column;
-          gap: $unnnic-space-3;
-          &__description {
-            font: $unnnic-font-body;
-            color: $unnnic-color-fg-base;
-          }
-        }
-      }
-    }
+  &__bulk-stack {
+    display: flex;
+    flex-direction: column;
+    gap: $unnnic-space-3;
+  }
 
-    &__chats-limit {
-      display: flex;
-      flex-direction: column;
-      gap: $unnnic-space-2;
-    }
+  &__bulk-hint {
+    font: $unnnic-font-body;
+    color: $unnnic-color-fg-base;
+  }
+
+  &__bulk-radios {
+    display: flex;
+    gap: $unnnic-space-6;
+  }
+
+  &__chats-limit {
+    display: flex;
+    flex-direction: column;
+    gap: $unnnic-space-2;
   }
 }
 </style>
