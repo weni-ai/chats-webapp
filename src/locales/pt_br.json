@@ -1085,6 +1085,10 @@
       "queue_manager": {
         "title": "Gerenciar {representativeName}",
         "bulk_title": "Alterar setores e filas",
+        "bulk_disclaimer_description": "A alteração será aplicada aos {count} representantes selecionados.",
+        "bulk_add_action": "Adicionar a setor/fila",
+        "bulk_remove_action": "Remover de setor/fila",
+        "bulk_select_action_description": "Selecione a ação em lote que deseja aplicar aos representantes selecionados:",
         "chats_limit": {
           "switch_label": "Definir limite no número de chats simultâneos para este representante",
           "switch_helper": "Um limite definido para um representante específico substitui o limite a nível de setor",
@@ -1093,7 +1097,8 @@
           "input_helper": "Defina 0 para o representante puxar chats a partir da fila"
         },
         "sector_queues_checkbox": {
-          "title": "Setores e filas"
+          "title": "Setores e filas",
+          "bulk_description": "Selecione os setores e as filas para a alteração:"
         },
         "save_success": "Alterações salvas com sucesso",
         "save_error": "Não foi possível salvar as alterações"

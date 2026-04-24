@@ -1,6 +1,19 @@
 <template>
   <section class="sector-queues-checkbox">
-    <h1 class="sector-queues-checkbox__title">
+    <p
+      v-if="props.isBulk"
+      class="sector-queues-checkbox__bulk-description"
+    >
+      {{
+        $t(
+          'config_chats.representatives.queue_manager.sector_queues_checkbox.bulk_description',
+        )
+      }}
+    </p>
+    <h1
+      v-else
+      class="sector-queues-checkbox__title"
+    >
       {{
         $t(
           'config_chats.representatives.queue_manager.sector_queues_checkbox.title',
@@ -51,9 +64,12 @@ defineOptions({
 interface Props {
   selectedQueues: string[];
   sectors: { name: string; queues: Record<string, any> }[];
+  isBulk?: boolean;
 }
 
-const props = defineProps<Props>();
+const props = withDefaults(defineProps<Props>(), {
+  isBulk: false,
+});
 
 const emit = defineEmits<{
   'update:selectedQueues': [
@@ -116,6 +132,11 @@ const handleQueueSelect = (queueUuid: string, selected: boolean) => {
   display: flex;
   flex-direction: column;
   gap: $unnnic-space-4;
+
+  &__bulk-description {
+    font: $unnnic-font-body;
+    color: $unnnic-color-fg-base;
+  }
 
   &__title {
     font: $unnnic-font-display-3;
