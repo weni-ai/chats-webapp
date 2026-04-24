@@ -8,6 +8,7 @@ import {
   afterAll,
 } from 'vitest';
 import { mount, config } from '@vue/test-utils';
+import { createTestingPinia } from '@pinia/testing';
 import ViewOptions from '@/layouts/ChatsLayout/components/ViewOptions/index.vue';
 import i18n from '@/plugins/i18n';
 
@@ -16,15 +17,25 @@ vi.mock('vue-router', () => ({
   useRouter: () => ({ push: mockPush }),
 }));
 
+const UnnnicSystemPlugin = config.global.plugins.find(
+  (p) => p !== i18n && typeof p !== 'function',
+);
+
 beforeAll(() => {
-  config.global.plugins = config.global.plugins.filter(
-    (plugin) => plugin !== i18n,
+  config.global.plugins = (config.global.plugins || []).filter(
+    (plugin) => plugin !== i18n && plugin !== UnnnicSystemPlugin,
   );
 });
 
 afterAll(() => {
   if (!config.global.plugins.includes(i18n)) {
     config.global.plugins.push(i18n);
+  }
+  if (
+    UnnnicSystemPlugin &&
+    !config.global.plugins.includes(UnnnicSystemPlugin)
+  ) {
+    config.global.plugins.push(UnnnicSystemPlugin);
   }
 });
 
@@ -33,28 +44,66 @@ describe('ViewOptions', () => {
   let localStorageMock;
 
   const stubs = {
+    UnnnicPopover: {
+      name: 'UnnnicPopover',
+      template: '<div><slot /></div>',
+      props: ['open'],
+      emits: ['update:open'],
+    },
+    UnnnicPopoverTrigger: {
+      name: 'UnnnicPopoverTrigger',
+      template: '<div data-testid="popover-trigger"><slot /></div>',
+      props: ['asChild', 'as'],
+    },
+    UnnnicPopoverContent: {
+      name: 'UnnnicPopoverContent',
+      template: '<div v-bind="$attrs"><slot /></div>',
+      props: ['side', 'align', 'sideOffset', 'width'],
+    },
     UnnnicSwitch: {
+      name: 'UnnnicSwitch',
       template:
         '<input type="checkbox" data-testid="switch-sound" :model-value="modelValue" />',
       props: ['size', 'textRight', 'modelValue'],
     },
     UnnnicButton: {
-      template: '<button><slot /></button>',
-      props: ['text', 'iconLeft', 'type', 'size'],
+      name: 'UnnnicButton',
+      template:
+        '<button v-bind="$attrs" :type="\'button\'" :data-icon-left="iconLeft" :data-icon-right="iconRight" :data-type="type" @click="$emit(\'click\', $event)"><slot />{{ text }}</button>',
+      props: [
+        'text',
+        'iconLeft',
+        'iconRight',
+        'iconCenter',
+        'type',
+        'size',
+        'disabled',
+        'loading',
+        'pressed',
+      ],
+      emits: ['click'],
     },
-    teleport: true,
+    UnnnicIcon: {
+      name: 'UnnnicIcon',
+      template: '<i></i>',
+      props: ['icon', 'size', 'scheme'],
+    },
+    UnnnicTag: {
+      name: 'UnnnicTag',
+      template: '<span></span>',
+      props: ['type', 'text'],
+    },
   };
 
   const createWrapper = (props = {}) =>
     mount(ViewOptions, {
       props,
-      global: { mocks: { $t: (key) => key }, stubs },
+      global: {
+        mocks: { $t: (key) => key },
+        stubs,
+        plugins: [createTestingPinia({ stubActions: false })],
+      },
     });
-
-  const openDrawer = async (w) => {
-    w.vm.openDrawer();
-    await w.vm.$nextTick();
-  };
 
   beforeEach(() => {
     localStorageMock = {
@@ -66,6 +115,8 @@ describe('ViewOptions', () => {
     };
     Object.defineProperty(window, 'localStorage', {
       value: localStorageMock,
+      configurable: true,
+      writable: true,
     });
     mockPush.mockClear();
   });
@@ -124,21 +175,33 @@ describe('ViewOptions', () => {
       },
     ])(
       'should render $button=$visible with props $props',
-      async ({ button, props, visible }) => {
+      ({ button, props, visible }) => {
         wrapper = createWrapper(props);
-        await openDrawer(wrapper);
         expect(wrapper.find(`[data-testid="${button}"]`).exists()).toBe(
           visible,
         );
       },
     );
 
-    it('should always render see history button', async () => {
+    it('should always render see history button', () => {
       wrapper = createWrapper({ isViewMode: true });
-      await openDrawer(wrapper);
       expect(wrapper.find('[data-testid="show-see_history"]').exists()).toBe(
         true,
       );
+    });
+
+    it('should render the popover trigger, content and button', () => {
+      wrapper = createWrapper();
+      expect(
+        wrapper.find('[data-testid="view-options-popover"]').exists(),
+      ).toBe(true);
+      expect(wrapper.find('[data-testid="popover-trigger"]').exists()).toBe(
+        true,
+      );
+      expect(
+        wrapper.find('[data-testid="view-options-content"]').exists(),
+      ).toBe(true);
+      expect(wrapper.find('[data-testid="view-btn"]').exists()).toBe(true);
     });
   });
 
@@ -171,65 +234,125 @@ describe('ViewOptions', () => {
     });
   });
 
-  describe('Drawer Interactions', () => {
-    it('should toggle drawer open/close', async () => {
+  describe('Popover State', () => {
+    it('should start closed', () => {
       wrapper = createWrapper();
-      expect(wrapper.vm.isOpen).toBe(false);
-
-      await wrapper.vm.openDrawer();
-      expect(wrapper.vm.isOpen).toBe(true);
-
-      await wrapper.vm.closeDrawer();
       expect(wrapper.vm.isOpen).toBe(false);
     });
 
-    it('should close drawer when clicking outside', async () => {
+    it('should sync open state through v-model:open on UnnnicPopover', async () => {
       wrapper = createWrapper();
-      await wrapper.vm.openDrawer();
-      expect(wrapper.vm.isOpen).toBe(true);
+      const popover = wrapper.find('[data-testid="view-options-popover"]');
+      expect(popover.exists()).toBe(true);
 
-      const event = new MouseEvent('click', { bubbles: true });
-      Object.defineProperty(event, 'target', {
-        value: document.body,
-        enumerable: true,
-      });
-      document.dispatchEvent(event);
+      const popoverComponent = popover.getComponent({ name: 'UnnnicPopover' });
+      popoverComponent.vm.$emit('update:open', true);
       await wrapper.vm.$nextTick();
+      expect(wrapper.vm.isOpen).toBe(true);
+    });
 
-      expect(wrapper.vm.isOpen).toBe(false);
+    it('should clear the new badge the first time the trigger is clicked', async () => {
+      delete localStorageMock.storage['chats_viewOptionsNewSeen'];
+      wrapper = createWrapper();
+      expect(wrapper.vm.showNewBadge).toBe(true);
+
+      await wrapper.find('[data-testid="popover-trigger"]').trigger('click');
+      expect(wrapper.vm.showNewBadge).toBe(false);
+      expect(localStorageMock.setItem).toHaveBeenCalledWith(
+        'chats_viewOptionsNewSeen',
+        'true',
+      );
+    });
+
+    it('should not re-clear the new badge once already seen', async () => {
+      localStorageMock.storage['chats_viewOptionsNewSeen'] = 'true';
+      wrapper = createWrapper();
+      expect(wrapper.vm.showNewBadge).toBe(false);
+
+      await wrapper.find('[data-testid="popover-trigger"]').trigger('click');
+      expect(localStorageMock.setItem).not.toHaveBeenCalledWith(
+        'chats_viewOptionsNewSeen',
+        'true',
+      );
     });
   });
 
   describe('Events & Navigation', () => {
-    it('should emit open-flows-trigger', async () => {
+    it('should emit open-flows-trigger and close popover', async () => {
       wrapper = createWrapper();
+      wrapper.vm.isOpen = true;
       await wrapper.vm.openFlowsTrigger();
       expect(wrapper.emitted('open-flows-trigger')).toBeTruthy();
+      expect(wrapper.vm.isOpen).toBe(false);
     });
 
-    it('should emit show-quick-messages', async () => {
+    it('should emit show-quick-messages and close popover', async () => {
       wrapper = createWrapper();
+      wrapper.vm.isOpen = true;
       await wrapper.vm.openQuickMessage();
       expect(wrapper.emitted('show-quick-messages')).toBeTruthy();
+      expect(wrapper.vm.isOpen).toBe(false);
     });
 
     it.each([{ name: 'closed-rooms', testId: 'show-see_history', props: {} }])(
       'should navigate to $name when $testId is clicked',
       async ({ name, testId, props }) => {
         wrapper = createWrapper(props);
-        await openDrawer(wrapper);
         await wrapper.find(`[data-testid="${testId}"]`).trigger('click');
         expect(mockPush).toHaveBeenCalledWith({ name });
       },
     );
+
+    it('should post Dashboard navigation message and close popover', async () => {
+      const postMessageSpy = vi
+        .spyOn(window.parent, 'postMessage')
+        .mockImplementation(() => {});
+
+      wrapper = createWrapper({ dashboard: true });
+      wrapper.vm.isOpen = true;
+      await wrapper.find('[data-testid="show-dashboard"]').trigger('click');
+
+      expect(postMessageSpy).toHaveBeenCalledWith(
+        {
+          event: 'redirect',
+          path: 'insights:init/humanServiceDashboard',
+        },
+        '*',
+      );
+      expect(wrapper.vm.isOpen).toBe(false);
+
+      postMessageSpy.mockRestore();
+    });
   });
 
-  describe('Lifecycle', () => {
-    it('should clean up event listener on unmount', () => {
-      const spy = vi.spyOn(document, 'removeEventListener');
+  describe('Theme Selector', () => {
+    it('should render light and dark theme buttons', () => {
       wrapper = createWrapper();
-      wrapper.unmount();
-      expect(spy).toHaveBeenCalledWith('click', expect.any(Function));
+      expect(wrapper.find('[data-testid="theme-light-button"]').exists()).toBe(
+        true,
+      );
+      expect(wrapper.find('[data-testid="theme-dark-button"]').exists()).toBe(
+        true,
+      );
     });
+
+    it.each([
+      { theme: 'light', selected: 'theme-light-button' },
+      { theme: 'dark', selected: 'theme-dark-button' },
+    ])(
+      'should mark $selected as selected when theme is $theme',
+      async ({ theme, selected }) => {
+        wrapper = createWrapper();
+        const targetTestId =
+          theme === 'light' ? 'theme-light-button' : 'theme-dark-button';
+        await wrapper.find(`[data-testid="${targetTestId}"]`).trigger('click');
+
+        expect(
+          wrapper
+            .find(`[data-testid="${selected}"]`)
+            .attributes('aria-pressed'),
+        ).toBe('true');
+      },
+    );
   });
 });
