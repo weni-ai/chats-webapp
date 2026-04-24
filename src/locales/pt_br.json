@@ -71,8 +71,15 @@
     "error": "Não foi possível atualizar o seu status, por favor tente novamente"
   },
   "view-option": "Opções",
+  "view_options": {
+    "new_badge": "Novo"
+  },
   "preferences": {
     "title": "Preferências",
+    "appearance": {
+      "title": "Aparência",
+      "dark_mode": "Modo escuro"
+    },
     "notifications": {
       "title": "Notificações",
       "sound": "Som"

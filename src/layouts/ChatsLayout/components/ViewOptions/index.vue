@@ -4,6 +4,7 @@
       v-if="!isOpen"
       :handleClick="openDrawer"
       :expandedMore="isOpen"
+      :showNewBadge="showNewBadge"
       data-testid="view-btn"
     />
   </footer>
@@ -34,6 +35,16 @@
               size="small"
               :textRight="$t('preferences.notifications.sound')"
               @update:model-value="changeSound"
+            />
+          </section>
+          <section
+            class="chats-layout-drawer__option chats-layout-drawer--padding-left-space-4"
+          >
+            <UnnnicSwitch
+              v-model="darkMode"
+              data-testid="switch-dark-mode"
+              size="small"
+              :textRight="$t('preferences.appearance.dark_mode')"
             />
           </section>
 
@@ -91,11 +102,13 @@
 </template>
 
 <script setup>
-import { ref, onBeforeMount, onMounted, onUnmounted } from 'vue';
+import { computed, ref, onBeforeMount, onMounted, onUnmounted } from 'vue';
 import ViewButton from './ViewButton.vue';
 import { PREFERENCES_SOUND } from '@/services/api/websocket/soundNotification.js';
 import { useRouter } from 'vue-router';
 import { moduleStorage } from '@/utils/storage';
+import { useTheme } from '@/store/modules/theme';
+import { THEMES } from '@/utils/theme';
 
 defineOptions({
   name: 'ViewOptions',
@@ -120,8 +133,17 @@ const emit = defineEmits(['open-flows-trigger', 'show-quick-messages']);
 
 const { push } = useRouter();
 
+const VIEW_OPTIONS_NEW_SEEN_KEY = 'viewOptionsNewSeen';
+
 const isOpen = ref(false);
 const sound = ref(false);
+const showNewBadge = ref(false);
+
+const themeStore = useTheme();
+const darkMode = computed({
+  get: () => themeStore.isDark,
+  set: (value) => themeStore.setTheme(value ? THEMES.DARK : THEMES.LIGHT),
+});
 
 const handleClickOutside = (event) => {
   const drawer = event.target.closest('[data-testid="drawer"]');
@@ -138,6 +160,11 @@ const closeDrawer = () => {
 
 const openDrawer = () => {
   isOpen.value = true;
+
+  if (showNewBadge.value) {
+    showNewBadge.value = false;
+    moduleStorage.setItem(VIEW_OPTIONS_NEW_SEEN_KEY, true);
+  }
 };
 
 const changeSound = () => {
@@ -170,6 +197,8 @@ const navigateToHumanServiceDashboard = () => {
 
 onBeforeMount(() => {
   sound.value = (moduleStorage.getItem(PREFERENCES_SOUND) || 'yes') === 'yes';
+  showNewBadge.value =
+    moduleStorage.getItem(VIEW_OPTIONS_NEW_SEEN_KEY, false) !== true;
 });
 
 onMounted(async () => {

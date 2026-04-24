@@ -410,8 +410,7 @@ export default {
           background-color: $unnnic-color-bg-purple-strong;
 
           [class*='unnnic-icon'] {
-            // Semantic token not exists
-            color: $unnnic-color-teal-1;
+            color: $unnnic-color-fg-on-primary;
           }
         }
       }

@@ -7,12 +7,21 @@
       data-testid="header-btn"
       @click="handleClick"
     >
-      <p
-        class="view-button__text"
-        data-testid="header-text"
-      >
-        {{ $t('view-option') }}
-      </p>
+      <span class="view-button__label">
+        <p
+          class="view-button__text"
+          data-testid="header-text"
+        >
+          {{ $t('view-option') }}
+        </p>
+        <UnnnicTag
+          v-if="showNewBadge"
+          class="view-button__new-badge"
+          data-testid="header-new-badge"
+          type="default"
+          :text="$t('view_options.new_badge')"
+        />
+      </span>
       <UnnnicIcon
         data-testid="header-icon-expand"
         size="md"
@@ -26,6 +35,10 @@
 <script setup>
 defineProps({
   expandedMore: Boolean,
+  showNewBadge: {
+    type: Boolean,
+    default: false,
+  },
   handleClick: {
     type: Function,
     default: null,
@@ -71,6 +84,12 @@ defineProps({
     width: 100%;
     display: flex;
     justify-content: space-between;
+  }
+
+  &__label {
+    display: inline-flex;
+    align-items: center;
+    gap: $unnnic-spacing-nano;
   }
 
   &__text {

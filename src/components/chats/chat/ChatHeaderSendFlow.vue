@@ -45,7 +45,7 @@ export default {
 
   background-color: $unnnic-color-fg-base;
 
-  color: $unnnic-color-fg-inverted;
+  color: $unnnic-color-fg-on-primary;
   font: $unnnic-font-body;
 
   &__trigger {

@@ -71,8 +71,15 @@
     "error": "Unable to update status, please try again."
   },
   "view-option": "View Options",
+  "view_options": {
+    "new_badge": "New"
+  },
   "preferences": {
     "title": "Preferences",
+    "appearance": {
+      "title": "Appearance",
+      "dark_mode": "Dark mode"
+    },
     "notifications": {
       "title": "Notifications",
       "sound": "Sound"

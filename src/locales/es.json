@@ -71,8 +71,15 @@
     "error": "No se puede actualizar el estado, por favor, inténtelo de nuevo"
   },
   "view-option": "Opciones",
+  "view_options": {
+    "new_badge": "Nuevo"
+  },
   "preferences": {
     "title": "Preferencias",
+    "appearance": {
+      "title": "Apariencia",
+      "dark_mode": "Modo oscuro"
+    },
     "notifications": {
       "title": "Notificaciones",
       "sound": "Sonido"
