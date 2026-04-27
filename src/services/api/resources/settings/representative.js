@@ -45,7 +45,7 @@ export default {
       to_add: toAdd,
       chats_limit: chatsLimit
         ? {
-            is_active: chatsLimit.is_active,
+            active: chatsLimit.is_active,
             total: Number(chatsLimit.total),
           }
         : undefined,

@@ -235,7 +235,7 @@
           "label": "Número de chats simultáneos",
           "hint": "Defina 0 para que los representantes tomen chats de la cola",
           "placeholder": "Ejemplo: 4",
-          "tooltip": "Un límite definido para un representante específico reemplaza el límite a nivel de sector."
+          "tooltip": "El límite puede superarse cuando el representante toma los chats de forma manual o recibe transferencias. Si se define un límite para el representante, tendrá prioridad sobre el límite del equipo."
         },
         "message": {
           "create_custom_holiday": {
@@ -1087,6 +1087,8 @@
       "description": "Define los representantes de los sectores y las colas, así como el número máximo de chats por representante. Los cambios hechos aquí también se actualizarán en la configuración de sectores y colas",
       "select_all": "Seleccionar todos los representantes",
       "select_count": "{count} seleccionados",
+      "empty_list": "Aún no hay miembros con permiso de atención humana en este proyecto. Invita a alguien o actualiza los permisos de un miembro en Gestión de miembros para verlos aquí.",
+      "not_found_list": "Ningún representante encontrado. Prueba con otro filtro.",
       "queue_manager": {
         "title": "Gestionar {representativeName}",
         "bulk_title": "Cambiar sectores y colas",
@@ -1126,7 +1128,8 @@
           "label": "Filtrar por representantes"
         },
         "sectors": {
-          "label": "Filtrar por sector"
+          "label": "Filtrar por sector",
+          "all": "Todos los sectores"
         },
         "queues": {
           "label": "Filtrar por cola"

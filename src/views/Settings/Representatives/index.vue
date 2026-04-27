@@ -3,9 +3,11 @@
     <section class="settings-representatives__header">
       <HeaderFilters
         v-model="representativesFilters"
+        @update:has-representatives="hasRepresentativesInProject = $event"
         @request-data="handleFiltersChange()"
       />
       <Actions
+        v-if="representatives.length > 0"
         :selectAll="selectAllRepresentatives"
         :selectedCount="selectedRepresentatives.length"
         @update:select-all="handleSelectAllRepresentatives"
@@ -22,6 +24,7 @@
         v-else
         :representatives="representatives"
         :selectedRepresentatives="selectedRepresentatives"
+        :emptyRepresentatives="!hasRepresentativesInProject"
         @update:selected-representatives="selectedRepresentatives = $event"
         @click:representative="handleClickRepresentative"
       />
@@ -89,6 +92,7 @@ const closeQueueManager = () => {
 const showQueueManager = ref(false);
 const toManagerRepresentative = ref([]);
 
+const hasRepresentativesInProject = ref(false);
 const isLoadingRepresentatives = ref(false);
 const representatives = ref([]);
 const selectedRepresentatives = ref([]);

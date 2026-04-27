@@ -133,7 +133,8 @@ const settingsTabs = computed(() => {
   if (enableGroupsMode.value) {
     tabs.push({ label: t('config_chats.tabs.groups'), value: 'groups' });
   }
-  if (enableRepresentativesManagement.value) {
+
+  if (enableRepresentativesManagement.value && !enableGroupsMode.value) {
     tabs.push({
       label: t('config_chats.tabs.representatives'),
       value: 'representatives',

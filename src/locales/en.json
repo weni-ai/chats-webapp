@@ -235,7 +235,7 @@
           "label": "Number of simultaneous chats",
           "hint": "Set to 0 to have representatives pick up chats from the queue",
           "placeholder": "Example: 4",
-          "tooltip": "A limit set for a specific representative overrides the sector-level limit."
+          "tooltip": "The limit may be exceeded when the representative manually takes over chats or receives transfers. If a specific limit is set for the representative, it will take precedence over the team limit."
         },
         "message": {
           "create_custom_holiday": {
@@ -246,7 +246,7 @@
       }
     },
     "additional_options": {
-      "title": "Extras options",
+      "title": "Extra options",
       "template_message": {
         "switch_label": "Triggering message templates"
       },
@@ -272,7 +272,7 @@
         "hint": "Automatically send a message when a chat is assigned to an representative. The message will appear as if sent by the assigned representative.",
         "field": {
           "title": "Automatic message",
-          "placeholder": "Exemple: Hello! How can I help you today?"
+          "placeholder": "Example: Hello! How can I help you today?"
         }
       },
       "required_tags": {
@@ -1084,6 +1084,8 @@
       "description": "Define the representatives for the sectors and queues, as well as the maximum number of chats per representative. Changes made here will also be updated in the sector and queue settings.",
       "select_all": "Select all representatives",
       "select_count": "{count} selected",
+      "empty_list": "There are no members with permission for human support in this project yet. Invite a new member or update an existing member’s permissions in Member Management to see them here.",
+      "not_found_list": "No representative found. Try another filter.",
       "queue_manager": {
         "title": "Manage {representativeName}",
         "bulk_title": "Change sectors and queues",
@@ -1123,7 +1125,8 @@
           "label": "Filter by representatives"
         },
         "sectors": {
-          "label": "Filter by sector"
+          "label": "Filter by sector",
+          "all": "All sectors"
         },
         "queues": {
           "label": "Filter by queue"

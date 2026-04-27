@@ -235,7 +235,7 @@
           "label": "Número de chats simultâneos",
           "hint": "Defina 0 para que os atendentes peguem chats da fila",
           "placeholder": "Exemplo: 4",
-          "tooltip": "Um limite definido para um atendente específico substitui o limite do setor."
+          "tooltip": "O limite pode ser excedido quando o atendente assumir chats manualmente ou receber transferências. Se houver limite definido para o atendente, ele prevalece em relação ao limite da equipe."
         },
         "message": {
           "create_custom_holiday": {
@@ -1089,6 +1089,8 @@
       "description": "Defina os representantes para os setores e filas, além do número máximo de chats por representante. As alterações feitas aqui também serão atualizadas nas configurações de setor e de fila",
       "select_all": "Selecionar todos os representantes",
       "select_count": "{count} selecionados",
+      "empty_list": "Ainda não há membros com permissão para atendimento humano neste projeto. Convide um membro ou atualize as permissões de um membro em Gestão de membros para vê-los aqui.",
+      "not_found_list": "Nenhum representante encontrado. Tente outro filtro.",
       "queue_manager": {
         "title": "Gerenciar {representativeName}",
         "bulk_title": "Alterar setores e filas",
@@ -1128,7 +1130,8 @@
           "label": "Filtrar por representantes"
         },
         "sectors": {
-          "label": "Filtrar por setor"
+          "label": "Filtrar por setor",
+          "all": "Todos os setores"
         },
         "queues": {
           "label": "Filtrar por fila"
