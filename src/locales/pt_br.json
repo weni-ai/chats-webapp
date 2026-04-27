@@ -212,9 +212,9 @@
       "working_day": {
         "title": "Definições da jornada de trabalho",
         "copy_workday": "Copiar a jornada de trabalho de um setor já configurado",
-        "select_days": "Selecione os dias da semana de trabalho.",
-        "set_hours": "Defina os horários trabalhados para cada dia.",
-        "add_holidays": "Adicione feriados e datas específicas não trabalhadas.",
+        "select_days": "Selecione os dias da semana de trabalho:",
+        "set_hours": "Defina os horários trabalhados para cada dia:",
+        "add_holidays": "Adicione feriados e datas específicas não trabalhadas:",
         "add_non_working_dates": "Adicionar datas específicas não trabalhadas",
         "select_date_or_period": "Selecionar data ou período",
         "repeat_annually": "Repetir anualmente",
@@ -231,7 +231,11 @@
           "label": "Horário de encerramento"
         },
         "limit_agents": {
-          "label": "Limite de quantidade de atendimentos simultâneos por agente"
+          "title": "Defina um limite na quantidade de chats simultâneos por atendente",
+          "label": "Número de chats simultâneos",
+          "hint": "Defina 0 para que os atendentes peguem chats da fila",
+          "placeholder": "Exemplo: 4",
+          "tooltip": "Um limite definido para um atendente específico substitui o limite do setor."
         },
         "message": {
           "create_custom_holiday": {

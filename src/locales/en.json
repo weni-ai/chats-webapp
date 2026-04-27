@@ -212,9 +212,9 @@
       "working_day": {
         "title": "Definitions of the workday",
         "copy_workday": "Copy the workday of an already configured sector",
-        "select_days": "Select the days of the working week.",
-        "set_hours": "Set the hours worked for each day.",
-        "add_holidays": "Add holidays and specific non-working dates.",
+        "select_days": "Select the days of the working week:",
+        "set_hours": "Set the hours worked for each day:",
+        "add_holidays": "Add holidays and specific non-working dates:",
         "add_non_working_dates": "Add Specific Non-working Dates",
         "select_date_or_period": "Select date or period",
         "repeat_annually": "Repeat annually",
@@ -231,7 +231,11 @@
           "label": "Closing time"
         },
         "limit_agents": {
-          "label": "Limit on the number of simultaneous calls per agent"
+          "title": "Define a limit on the number of simultaneous chats per representative",
+          "label": "Number of simultaneous chats",
+          "hint": "Set to 0 to have representatives pick up chats from the queue",
+          "placeholder": "Example: 4",
+          "tooltip": "A limit set for a specific representative overrides the sector-level limit."
         },
         "message": {
           "create_custom_holiday": {

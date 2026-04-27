@@ -212,9 +212,9 @@
       "working_day": {
         "title": "Definiciones de la jornada laboral",
         "copy_workday": "Copiar la jornada laboral de un sector ya configurado",
-        "select_days": "Seleccione los días de la semana laboral.",
-        "set_hours": "Establezca las horas trabajadas para cada día.",
-        "add_holidays": "Agregue feriados y fechas específicas no laborables.",
+        "select_days": "Seleccione los días de la semana laboral:",
+        "set_hours": "Establezca las horas trabajadas para cada día:",
+        "add_holidays": "Agregue feriados y fechas específicas no laborables:",
         "add_non_working_dates": "Agregar fechas específicas no laborables",
         "select_date_or_period": "Seleccionar fecha o período",
         "repeat_annually": "Repetir anualmente",
@@ -231,7 +231,11 @@
           "label": "Tiempo de cierre"
         },
         "limit_agents": {
-          "label": "Límite en el número de llamadas simultáneas por agente"
+          "title": "Defina un límite en la cantidad de chats simultáneos por representante",
+          "label": "Número de chats simultáneos",
+          "hint": "Defina 0 para que los representantes tomen chats de la cola",
+          "placeholder": "Ejemplo: 4",
+          "tooltip": "Un límite definido para un representante específico reemplaza el límite a nivel de sector."
         },
         "message": {
           "create_custom_holiday": {
