@@ -235,7 +235,7 @@
           "label": "Número de chats simultáneos",
           "hint": "Defina 0 para que los representantes tomen chats de la cola",
           "placeholder": "Ejemplo: 4",
-          "tooltip": "Un límite definido para un representante específico reemplaza el límite a nivel de sector."
+          "tooltip": "El límite puede superarse cuando el representante toma los chats de forma manual o recibe transferencias. Si se define un límite para el representante, tendrá prioridad sobre el límite del equipo."
         },
         "message": {
           "create_custom_holiday": {
