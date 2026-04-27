@@ -255,7 +255,7 @@
         "hint": "Cuando está activa, permite que los representantes editen los campos personalizados del contacto en la sección \"Toda la información\"."
       },
       "agents_signature": {
-        "hint": "Cada mensaje intercambiado tendrá el nombre del agente que responde",
+        "hint": "Cada mensaje intercambiado tendrá el nombre del agente que responde.",
         "switch_label": "Usar firma"
       },
       "csat": {
@@ -806,7 +806,7 @@
     "without_personal_messages": "No has agregado ningún mensaje rápido aún. Haz clic en el botón <i>+ Mensaje</i> y agrega tu primer mensaje.",
     "without_messages_shared": "No hay mensajes rápidos compartidos para ti para usar.",
     "example_message": "Mensaje de ejemplo",
-    "example_message_description": "Los mensajes rápidos son textos predefinidos que facilitan la estandarización del servicio. Todos los agentes de este sector podrán utilizar los mensajes, y podrás registrar nuevos mensajes a continuación.",
+    "example_message_description": "Los mensajes rápidos son textos predefinidos que ayudan a estandarizar el soporte al cliente. Todos los representantes de este sector podrán usar estos mensajes. Puede crear nuevos mensajes o editarlos cuando desee con el sector creado.",
     "personal": "Tus mensajes",
     "shared": "Mensajes compartidos",
     "delete": "Eliminar mensaje rápido",
@@ -816,8 +816,9 @@
     "delete_description": "Escribe el atajo del mensaje rápido a eliminar",
     "shortcut_tooltip": "Escriba /{shortcut} para usar",
     "new": "Nuevo mensaje rápido",
+    "description_new": "Cree un nuevo mensaje rápido para que lo usen todos los representantes de este sector.",
     "add": "Agregar nuevo mensaje rápido",
-    "edit": "Editar mensaje rápido",
+    "edit": "Editar /{shortcut}",
     "available_shortcuts": "Atajos disponibles",
     "copilot": "¡Ahora ChatGPT es tu CoPiloto! ¡Usa las respuestas sugeridas por la Inteligencia Artificial para acelerar tus llamadas!",
     "title_field_placeholder": "Ej: Bienvenido",
@@ -965,7 +966,7 @@
       "invalid_hours": "La hora de inicio no puede ser mayor o igual a la hora de finalización.",
       "invalid_start_second_hour": "La hora de inicio del segundo período debe ser mayor o igual a la hora de finalización del primer período."
     },
-    "custom_queue": "Crear una fila personalizada",
+    "custom_queue": "Crear una fila personalizada (recomendado)",
     "default_queue": {
       "title": "Crear fila predeterminada (más rápido)",
       "name": "Fila predeterminada"
@@ -978,6 +979,7 @@
       "filter_by_name": "Filtrar por nombre de la cola",
       "add_queue": "Agregar cola",
       "delete_this_queue": "Escribe el nombre de la cola a eliminar",
+      "remove_tooltip": "Quitar esta cola",
       "configure_queue": {
         "title": "Configurar cola",
         "tooltip": "Las colas son grupos de atención dentro del sector. Puedes crear nuevas colas o editarlas cuando quieras después de crear el sector."
@@ -986,7 +988,7 @@
       "limit_chats": {
         "title": "Limite de chats esperando soporte",
         "switch": {
-          "label": "Limite de chats",
+          "label": "Limitar el número de chats en espera de soporte",
           "helper": "Cuando el límite es alcanzado, nuevos chats no serán creados.",
           "input_label": "Máximo de chats esperando",
           "input_placeholder": "Ejemplo: 50"
@@ -1097,7 +1099,7 @@
   "new_sector": {
     "sector_tip": "Cree un sector para administrar la operación de cumplimiento, incluidos roles, agentes y horas de administración",
     "queues_tip": "Las colas sirven para organizar los tipos de servicio dentro de un sector, a través de las colas es posible crear grupos de servicios, crear al menos una cola para gestionar un equipo de agentes",
-    "tags_tip": "Las etiquetas se utilizan para clasificar las características de los servicios y permiten buscar y filtrar chats a partir de ellos, definir etiquetas que sean relevantes para su contexto",
+    "tags_tip": "Las etiquetas se utilizan para clasificar las características de los servicios y permiten buscar y filtrar chats a partir de ellos, definir etiquetas que sean relevantes para su contexto.",
     "agent_tip": "Agregue miembros a su proyecto para poder establecer como administrador",
     "alert": {
       "create_success": "¡Nuevo sector {sectorName} creado!",

@@ -2,9 +2,14 @@
   <UnnnicDrawer
     ref="quickMessageDrawer"
     :modelValue="showQuickMessageDrawer"
+    :description="
+      quickMessageToEdit.uuid ? '' : $t('quick_messages.description_new')
+    "
     :title="
       quickMessageToEdit.uuid
-        ? $t('quick_messages.edit')
+        ? $t('quick_messages.edit', {
+            shortcut: quickMessageToEdit.shortcut,
+          })
         : $t('quick_messages.new')
     "
     size="lg"
@@ -13,6 +18,7 @@
     :loadingPrimaryButton="isLoadingQuickMessage"
     :secondaryButtonText="$t('cancel')"
     :disabledSecondaryButton="isLoadingQuickMessage"
+    closeIcon="close"
     data-testid="quick-message-config-drawer"
     @close="showQuickMessageDrawer = false"
     @primary-button-click="
