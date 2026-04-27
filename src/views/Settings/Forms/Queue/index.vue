@@ -1,5 +1,14 @@
 <template>
-  <section class="queue-form">
+  <section
+    v-if="loadingInfo"
+    class="queue-form--loading"
+  >
+    <UnnnicIconLoading />
+  </section>
+  <section
+    v-else
+    class="queue-form"
+  >
     <FillDefaultOption
       v-if="showHelpers"
       :modelValue="useDefaultSectorQueue"
@@ -246,6 +255,13 @@ export default {
   display: grid;
   gap: $unnnic-space-4;
   margin-bottom: $unnnic-space-4;
+
+  &--loading {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+  }
 
   &__queue-container {
     display: flex;

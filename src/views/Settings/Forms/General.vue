@@ -1,5 +1,14 @@
 <template>
-  <section class="form-wrapper">
+  <section
+    v-if="!isLoaded"
+    class="form-wrapper form-wrapper--loading"
+  >
+    <UnnnicIconLoading />
+  </section>
+  <section
+    v-else
+    class="form-wrapper"
+  >
     <FillDefaultOption
       v-if="!isEditing"
       :modelValue="useDefaultSector"
@@ -419,6 +428,8 @@ async function createCustomHolidays() {
   await workingDaySection.value?.createCustomHolidays();
 }
 
+const isLoaded = ref(false);
+
 onMounted(async () => {
   const isDefaultSector =
     sector.value.name === i18n.global.t('config_chats.default_sector.name');
@@ -430,6 +441,7 @@ onMounted(async () => {
   }
 
   if (!enableGroupsMode.value) await listProjectManagers();
+  isLoaded.value = true;
 });
 
 defineExpose({
@@ -447,6 +459,13 @@ defineExpose({
   gap: $unnnic-space-4;
   min-height: 600px;
   margin-bottom: $unnnic-space-4;
+
+  &--loading {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+  }
 }
 
 .form-sector-container {
