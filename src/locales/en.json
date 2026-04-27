@@ -212,9 +212,9 @@
       "working_day": {
         "title": "Definitions of the workday",
         "copy_workday": "Copy the workday of an already configured sector",
-        "select_days": "Select the days of the working week.",
-        "set_hours": "Set the hours worked for each day.",
-        "add_holidays": "Add holidays and specific non-working dates.",
+        "select_days": "Select the days of the working week:",
+        "set_hours": "Set the hours worked for each day:",
+        "add_holidays": "Add holidays and specific non-working dates:",
         "add_non_working_dates": "Add Specific Non-working Dates",
         "select_date_or_period": "Select date or period",
         "repeat_annually": "Repeat annually",
@@ -231,7 +231,11 @@
           "label": "Closing time"
         },
         "limit_agents": {
-          "label": "Limit on the number of simultaneous calls per agent"
+          "title": "Define a limit on the number of simultaneous chats per representative",
+          "label": "Number of simultaneous chats",
+          "hint": "Set to 0 to have representatives pick up chats from the queue",
+          "placeholder": "Example: 4",
+          "tooltip": "A limit set for a specific representative overrides the sector-level limit."
         },
         "message": {
           "create_custom_holiday": {
@@ -251,7 +255,7 @@
         "hint": "When active, it allows representatives to edit the custom fields of the contact in the \"All Information\" section."
       },
       "agents_signature": {
-        "hint": "Each message exchanged will have the name of the agent who is answering",
+        "hint": "Each message exchanged will have the name of the agent who is answering.",
         "switch_label": "Use signature"
       },
       "csat": {
@@ -800,7 +804,7 @@
     "without_personal_messages": "You have not added any quick messages yet. Click the <i>+ Message</i> button and add your first message.",
     "without_messages_shared": "There are no quick messages shared for you to use.",
     "example_message": "Example message",
-    "example_message_description": " Quick messages are ready-made texts that help standardize customer service. All agents in this sector will be able to use these messages, and you can register new messages below.",
+    "example_message_description": "Quick messages are ready-made texts that help standardize customer support. All representatives in this sector will be able to use these messages. You can create new messages or edit them whenever you want with the created sector.",
     "personal": "Your messages",
     "shared": "Shared messages",
     "delete": "Delete quick message",
@@ -810,8 +814,9 @@
     "delete_description": "Type the shortcut of the quick message to delete",
     "shortcut_tooltip": "Type /{shortcut} to use",
     "new": "New quick message",
+    "description_new": "Create a new quick message to be used by all representatives in this sector.",
     "add": "Add new quick message",
-    "edit": "Edit quick message",
+    "edit": "Edit /{shortcut}",
     "available_shortcuts": "Available shortcuts",
     "copilot": "Now ChatGPT is your CoPilot! Use the answers suggested by Artificial Intelligence to speed up your calls!",
     "title_field_placeholder": "Ex: Welcome",
@@ -960,7 +965,7 @@
       "invalid_hours": "Start time cannot be greater/equal to end time",
       "invalid_start_second_hour": "Start time of the second period must be greater than or equal to end time of the first period."
     },
-    "custom_queue": "Create a custom queue",
+    "custom_queue": "Create a custom queue (recommended)",
     "default_queue": {
       "title": "Create default queue (faster)",
       "name": "Default queue"
@@ -973,6 +978,7 @@
       "filter_by_name": "Filter by queue name",
       "add_queue": "Add queue",
       "delete_this_queue": "Type the name of the queue to delete",
+      "remove_tooltip": "Remove this queue",
       "configure_queue": {
         "title": "Configure queue",
         "tooltip": "Queues are support groups within the sector. You can create new queues or edit them whenever you want with the created sector."
@@ -981,7 +987,7 @@
       "limit_chats": {
         "title": "Limit of chats awaiting support",
         "switch": {
-          "label": "Limit chats",
+          "label": "Limit the number of chats waiting for support",
           "helper": "When the limit is reached, new chats won’t be created.",
           "input_label": "Maximum waiting chats",
           "input_placeholder": "Example: 50"
@@ -1143,7 +1149,7 @@
   "new_sector": {
     "sector_tip": "Create a sector to manage the fulfillment operation, including roles, agents and management hours",
     "queues_tip": "The queues serve to organize the types of service within a sector, through the queues it is possible to create service groups, create at least one queue to manage a team of agents",
-    "tags_tip": "Tags are used to classify service characteristics and make it possible to search and filter chats from them, define tags that are relevant to your context",
+    "tags_tip": "Tags are used to classify service characteristics and make it possible to search and filter chats from them, define tags that are relevant to your context.",
     "agent_tip": "Add members to your project to be able to set as a manager",
     "alert": {
       "create_success": "New sector {sectorName} created!",

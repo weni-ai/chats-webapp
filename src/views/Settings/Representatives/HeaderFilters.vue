@@ -34,12 +34,13 @@
         clearable
       />
       <UnnnicMultiSelect
-        v-model="filters.sectors"
+        :modelValue="filters.sectors"
         class="settings-representatives-header-filters__filter"
-        :options="sectorsOptions"
+        :options="sectorsOptionsFiltered"
         :label="$t('config_chats.representatives.filter.sectors.label')"
         :placeholder="$t('select')"
         clearable
+        @update:model-value="onSelectSectors"
       />
       <UnnnicMultiSelect
         v-model="filters.queues"
@@ -63,6 +64,7 @@ import { useConfig } from '@/store/modules/config';
 import PauseStatusService from '@/services/api/resources/chats/pauseStatus';
 import ProjectService from '@/services/api/resources/settings/project';
 import SectorService from '@/services/api/resources/settings/sector';
+import QueueService from '@/services/api/resources/settings/queue';
 
 import { removeDuplicatedItems } from '@/utils/array';
 
@@ -98,6 +100,17 @@ const statusOptions = ref([]);
 const representativesOptions = ref([]);
 
 const sectorsOptions = ref([]);
+const sectorsOptionsFiltered = computed(() => {
+  if (filters.value.sectors.includes('all')) {
+    return sectorsOptions.value.map((sectorOption) => {
+      if (sectorOption.value === 'all') {
+        return sectorOption;
+      }
+      return { ...sectorOption, disabled: true };
+    });
+  }
+  return sectorsOptions.value;
+});
 
 const queuesOptions = ref([]);
 
@@ -176,8 +189,42 @@ const getSectorsOptions = async () => {
   }
 };
 
+const queuesPage = ref(0);
 const getQueuesOptions = async () => {
-  // TODO: implement
+  let hasNext = false;
+  const { results, next } = await QueueService.listAllQueues({
+    limit: 20,
+    offset: queuesPage.value * 20,
+    filters: {
+      sectors: filters.value.sectors.filter((sector) => sector !== 'all'),
+    },
+  });
+  const formattedResults = results.flatMap((sector) => {
+    return sector.queues.map((queue) => ({
+      value: queue.uuid,
+      label: queue.name,
+    }));
+  });
+  queuesOptions.value = removeDuplicatedItems(
+    [...queuesOptions.value, ...formattedResults],
+    'value',
+  );
+  hasNext = next;
+  if (hasNext) {
+    queuesPage.value += 1;
+    await getQueuesOptions();
+  } else {
+    queuesPage.value = 0;
+  }
+};
+
+const onSelectSectors = async (sectors: string[]) => {
+  const isAllOptionsSelected = sectors.includes('all');
+
+  filters.value.sectors = isAllOptionsSelected ? ['all'] : sectors;
+
+  queuesOptions.value = [];
+  getQueuesOptions();
 };
 
 const disableQueuesFilter = computed(() => {

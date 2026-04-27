@@ -138,13 +138,37 @@
         />
       </section>
 
-      <UnnnicInput
+      <section
         v-else
-        v-model="roomsLimitModel"
-        :label="$t('sector.managers.working_day.limit_agents.label')"
-        placeholder="4"
-        class="form-section__inputs--fill-w"
-      />
+        class="form-section__inputs"
+      >
+        <section class="form-section__inputs__limit-agents">
+          <p class="form-section__title">
+            {{ $t('sector.managers.working_day.limit_agents.title') }}
+          </p>
+          <UnnnicToolTip
+            :text="$t('sector.managers.working_day.limit_agents.tooltip')"
+            side="right"
+            enabled
+          >
+            <UnnnicIcon
+              icon="info"
+              scheme="fg-base"
+              size="sm"
+            />
+          </UnnnicToolTip>
+        </section>
+
+        <UnnnicInput
+          v-model="roomsLimitModel"
+          :label="$t('sector.managers.working_day.limit_agents.label')"
+          :message="$t('sector.managers.working_day.limit_agents.hint')"
+          :placeholder="
+            $t('sector.managers.working_day.limit_agents.placeholder')
+          "
+          class="form-section__inputs--fill-w"
+        />
+      </section>
     </section>
   </section>
 
@@ -715,6 +739,12 @@ export default {
     display: flex;
     flex-direction: column;
     gap: $unnnic-space-4;
+
+    &__limit-agents {
+      display: flex;
+      align-items: center;
+      gap: $unnnic-space-2;
+    }
 
     &__workday-copy {
       display: flex;

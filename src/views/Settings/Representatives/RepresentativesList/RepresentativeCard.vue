@@ -29,7 +29,7 @@
     </section>
     <section class="representative-card__representative__sectors">
       <RepresentativeSectorList
-        v-if="props.representative.sector.length > 0"
+        v-if="hasSectors"
         :sectors="props.representative.sector"
       />
       <p
@@ -39,7 +39,10 @@
         {{ $t('config_chats.representatives.sectors.empty') }}
       </p>
     </section>
-    <section class="representative-card__representative__chats-limit">
+    <section
+      v-if="hasSectors"
+      class="representative-card__representative__chats-limit"
+    >
       <UnnnicTag
         scheme="blue"
         :text="
@@ -92,6 +95,10 @@ const props = defineProps<Props>();
 const emit = defineEmits<{
   'update:selected': [value: boolean];
 }>();
+
+const hasSectors = computed(() => {
+  return props.representative.sector.length > 0;
+});
 
 const statusColor = computed(() => {
   const colorMap = {

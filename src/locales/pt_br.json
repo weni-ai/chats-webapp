@@ -212,9 +212,9 @@
       "working_day": {
         "title": "Definições da jornada de trabalho",
         "copy_workday": "Copiar a jornada de trabalho de um setor já configurado",
-        "select_days": "Selecione os dias da semana de trabalho.",
-        "set_hours": "Defina os horários trabalhados para cada dia.",
-        "add_holidays": "Adicione feriados e datas específicas não trabalhadas.",
+        "select_days": "Selecione os dias da semana de trabalho:",
+        "set_hours": "Defina os horários trabalhados para cada dia:",
+        "add_holidays": "Adicione feriados e datas específicas não trabalhadas:",
         "add_non_working_dates": "Adicionar datas específicas não trabalhadas",
         "select_date_or_period": "Selecionar data ou período",
         "repeat_annually": "Repetir anualmente",
@@ -231,7 +231,11 @@
           "label": "Horário de encerramento"
         },
         "limit_agents": {
-          "label": "Limite de quantidade de atendimentos simultâneos por agente"
+          "title": "Defina um limite na quantidade de chats simultâneos por atendente",
+          "label": "Número de chats simultâneos",
+          "hint": "Defina 0 para que os atendentes peguem chats da fila",
+          "placeholder": "Exemplo: 4",
+          "tooltip": "Um limite definido para um atendente específico substitui o limite do setor."
         },
         "message": {
           "create_custom_holiday": {
@@ -251,7 +255,7 @@
         "hint": "Quando ativa, permite que atendentes editem os campos personalizados do contato na seção \"Todas as informações\"."
       },
       "agents_signature": {
-        "hint": "Cada mensagem trocada terá o nome do agente que está respondendo",
+        "hint": "Cada mensagem trocada terá o nome do agente que está respondendo.",
         "switch_label": "Usar assinatura"
       },
       "csat": {
@@ -805,7 +809,7 @@
     "without_personal_messages": "Você ainda não adicionou nenhuma mensagem rápida. Clique no botão <i>+ Mensagem</i> e adicione sua primeira mensagem.",
     "without_messages_shared": "Não há mensagens rápidas compartilhadas para você usar.",
     "example_message": "Mensagem de exemplo",
-    "example_message_description": "As mensagens rápidas são textos prontos que facilitam a padronização de atendimento, todos os agentes deste setor poderão utilizar as mensagens, você poderá cadastrar novas mensagens a seguir.",
+    "example_message_description": "As mensagens rápidas são textos prontos que ajudam a padronizar o atendimento. Todos os atendentes deste setor poderão usar essas mensagens. Crie novas mensagens ou edite-as quando quiser com o setor criado.",
     "personal": "Suas mensagens",
     "shared": "Mensagens compartilhadas",
     "delete": "Deletar mensagem rápida",
@@ -815,8 +819,9 @@
     "delete_description": "Digite o atalho da mensagem rápida a excluir",
     "shortcut_tooltip": "Digite /{shortcut} para usar",
     "new": "Nova mensagem rápida",
+    "description_new": "Crie uma nova mensagem rápida para ser usada por todos os atendentes deste setor.",
     "add": "Adicionar nova mensagem rápida",
-    "edit": "Editar mensagem rápida",
+    "edit": "Editar /{shortcut}",
     "available_shortcuts": "Atalhos disponíveis",
     "copilot": "Agora o ChatGPT é seu CoPiloto! Utilize as respostas sugeridas pela Inteligência artificial para agilizar seus atendimentos!",
     "title_field_placeholder": "Ex: Boas vindas",
@@ -965,7 +970,7 @@
       "invalid_hours": "Horário de início não pode ser maior/igual que horário final",
       "invalid_start_second_hour": "O horário de início do segundo período deve ser maior ou igual ao horário de término do primeiro período."
     },
-    "custom_queue": "Criar uma fila personalizada",
+    "custom_queue": "Criar uma fila personalizada (recomendado)",
     "default_queue": {
       "title": "Criar fila padrão (mais rápido)",
       "name": "Fila padrão"
@@ -978,6 +983,7 @@
       "filter_by_name": "Filtrar por nome da fila",
       "add_queue": "Adicionar fila",
       "delete_this_queue": "Digite o nome da fila a excluir",
+      "remove_tooltip": "Remover esta fila",
       "configure_queue": {
         "title": "Configurar fila",
         "tooltip": "As filas são grupos de atendimento dentro do setor. Você pode criar novas filas ou editá-las quando quiser após criar o setor."
@@ -986,7 +992,7 @@
       "limit_chats": {
         "title": "Limite de chats aguardando suporte",
         "switch": {
-          "label": "Limite de chats",
+          "label": "Limitar o número de chats aguardando atendimento",
           "helper": "Quando o limite é atingido, novos chats não serão criados.",
           "input_label": "Máximo de chats aguardando",
           "input_placeholder": "Exemplo: 50"
@@ -1148,7 +1154,7 @@
   "new_sector": {
     "sector_tip": "Crie um setor para gerenciar a operação de atendimento, adicionando gerentes, agentes e horário de funcionamento",
     "queues_tip": "As filas servem para organizar os tipos de atendimento dentro de um setor, através das filas é possível criar grupos de atendimento, crie pelo menos uma fila para gerenciar uma equipe de agentes",
-    "tags_tip": "As tags são usadas para classificar características do atendimento e possibilitar a pesquisa de filtragem dos chats a partir delas, defina tags que sejam relevantes para o seu contexto",
+    "tags_tip": "As tags são usadas para classificar características do atendimento e possibilitar a pesquisa de filtragem dos chats a partir delas, defina tags que sejam relevantes para o seu contexto.",
     "agent_tip": "Adicione membros no seu projeto para poder definir como gerente",
     "alert": {
       "create_success": "Novo setor {sectorName} criado!",
