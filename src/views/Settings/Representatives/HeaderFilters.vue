@@ -64,7 +64,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted, ref } from 'vue';
+import { computed, onMounted, ref, watch } from 'vue';
 import { watchDebounced } from '@vueuse/core';
 
 import { useConfig } from '@/store/modules/config';
@@ -93,6 +93,7 @@ const props = defineProps<Props>();
 
 const emit = defineEmits<{
   'update:modelValue': [value: Props['modelValue']];
+  'update:hasRepresentatives': [value: boolean];
   requestData: [void];
 }>();
 
@@ -280,6 +281,14 @@ onMounted(async () => {
   getRepresentativesOptions();
   getSectorsOptions();
 });
+
+watch(
+  () => representativesOptions.value,
+  (newRepresentativesOptions) => {
+    emit('update:hasRepresentatives', newRepresentativesOptions.length > 0);
+  },
+  { once: true, deep: true },
+);
 
 watchDebounced(
   filters.value,

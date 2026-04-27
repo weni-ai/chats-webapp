@@ -1084,6 +1084,8 @@
       "description": "Define the representatives for the sectors and queues, as well as the maximum number of chats per representative. Changes made here will also be updated in the sector and queue settings.",
       "select_all": "Select all representatives",
       "select_count": "{count} selected",
+      "empty_list": "There are no members with permission for human support in this project yet. Invite a new member or update an existing member’s permissions in Member Management to see them here.",
+      "not_found_list": "No representative found. Try another filter.",
       "queue_manager": {
         "title": "Manage {representativeName}",
         "bulk_title": "Change sectors and queues",

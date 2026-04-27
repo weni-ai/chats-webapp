@@ -1087,6 +1087,8 @@
       "description": "Define los representantes de los sectores y las colas, así como el número máximo de chats por representante. Los cambios hechos aquí también se actualizarán en la configuración de sectores y colas",
       "select_all": "Seleccionar todos los representantes",
       "select_count": "{count} seleccionados",
+      "empty_list": "Aún no hay miembros con permiso de atención humana en este proyecto. Invita a alguien o actualiza los permisos de un miembro en Gestión de miembros para verlos aquí.",
+      "not_found_list": "Ningún representante encontrado. Prueba con otro filtro.",
       "queue_manager": {
         "title": "Gestionar {representativeName}",
         "bulk_title": "Cambiar sectores y colas",

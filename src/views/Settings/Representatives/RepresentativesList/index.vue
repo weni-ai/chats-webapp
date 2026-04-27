@@ -1,7 +1,10 @@
 <template>
-  <section class="settings-representatives-list">
+  <section
+    v-if="props.representatives.length > 0"
+    class="settings-representatives-list"
+  >
     <RepresentativeCard
-      v-for="representative in formattedRepresentatives"
+      v-for="representative in props.representatives"
       :key="representative.email"
       :selected="
         props.selectedRepresentatives.some(
@@ -14,10 +17,21 @@
       @click="emit('click:representative', representative)"
     />
   </section>
+  <section
+    v-else
+    class="settings-representatives-list--empty"
+  >
+    <p class="settings-representatives-list--empty__title">
+      {{
+        emptyRepresentatives
+          ? $t('config_chats.representatives.empty_list')
+          : $t('config_chats.representatives.not_found_list')
+      }}
+    </p>
+  </section>
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue';
 import RepresentativeCard from './RepresentativeCard.vue';
 
 defineOptions({
@@ -28,23 +42,17 @@ defineOptions({
 interface Props {
   representatives: any[];
   selectedRepresentatives: any[];
+  emptyRepresentatives?: boolean;
 }
 
-const props = defineProps<Props>();
+const props = withDefaults(defineProps<Props>(), {
+  emptyRepresentatives: false,
+});
 
 const emit = defineEmits<{
   'update:selectedRepresentatives': [value: string[]];
   'click:representative': [value: any];
 }>();
-
-const formattedRepresentatives = computed(() => {
-  return props.representatives.map((representative) => {
-    const sanatizedSectors = representative.sector.filter(
-      (sector) => sector.queues.length > 0,
-    );
-    return { ...representative, sector: sanatizedSectors };
-  });
-});
 
 const handleSelectedRepresentative = (
   representative: any,
@@ -72,5 +80,11 @@ const handleSelectedRepresentative = (
   display: flex;
   flex-direction: column;
   gap: $unnnic-space-4;
+  &--empty {
+    &__title {
+      font: $unnnic-font-body;
+      color: $unnnic-color-fg-base;
+    }
+  }
 }
 </style>

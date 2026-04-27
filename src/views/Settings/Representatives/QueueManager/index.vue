@@ -340,24 +340,23 @@ onMounted(async () => {
     (representative) => representative.email,
   );
 
-  if (isBulk.value) {
-    // TODO
+  if (!isBulk.value) {
+    const hasEnabledChatsLimit = props.representatives[0].chats_limit.active;
 
-    return;
+    if (hasEnabledChatsLimit) {
+      formData.value.chatsLimit = {
+        is_active: true,
+        total: String(props.representatives[0].chats_limit.total),
+      };
+    }
+
+    currentSelectedQueues.value = sectorQueueData.value.flatMap((sector) => {
+      const filteredQueues = sector.queues.filter(
+        (queue) => queue.agent_in_queue,
+      );
+      return filteredQueues.map((queue) => queue.uuid);
+    });
   }
-
-  const hasEnabledChatsLimit = props.representatives[0].chats_limit.is_active;
-
-  if (hasEnabledChatsLimit) {
-    formData.value.chatsLimit = props.representatives[0].chats_limit;
-  }
-
-  currentSelectedQueues.value = sectorQueueData.value.flatMap((sector) => {
-    const filteredQueues = sector.queues.filter(
-      (queue) => queue.agent_in_queue,
-    );
-    return filteredQueues.map((queue) => queue.uuid);
-  });
 });
 
 watch(
