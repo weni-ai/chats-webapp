@@ -29,7 +29,10 @@
         @click:representative="handleClickRepresentative"
       />
     </section>
-    <section class="settings-representatives__pagination">
+    <section
+      v-if="representatives.length > 0"
+      class="settings-representatives__pagination"
+    >
       <p class="settings-representatives__pagination__count">
         {{
           $t('pagination', {
