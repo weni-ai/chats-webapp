@@ -26,17 +26,14 @@
 <script setup lang="ts">
 import { computed, nextTick, onMounted, onUnmounted, ref, watch } from 'vue';
 
+import type { RepresentativeSector } from '../types';
+
 defineOptions({
   name: 'RepresentativeSectorList',
 });
 
-interface Sector {
-  name: string;
-  queues: string[];
-}
-
 interface Props {
-  sectors: Sector[];
+  sectors: RepresentativeSector[];
 }
 
 const props = defineProps<Props>();
@@ -77,7 +74,7 @@ const overflowTooltip = computed(() =>
     .join(' · '),
 );
 
-function formatSectorTooltip(sector: Sector): string {
+function formatSectorTooltip(sector: RepresentativeSector): string {
   return sector.queues.join('; ').trim();
 }
 

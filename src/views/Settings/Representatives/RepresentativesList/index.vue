@@ -34,14 +34,15 @@
 <script setup lang="ts">
 import RepresentativeCard from './RepresentativeCard.vue';
 
+import type { Representative } from '../types';
+
 defineOptions({
   name: 'SettingsRepresentativesList',
 });
 
-// TODO: type
 interface Props {
-  representatives: any[];
-  selectedRepresentatives: any[];
+  representatives: Representative[];
+  selectedRepresentatives: Representative[];
   emptyRepresentatives?: boolean;
 }
 
@@ -50,12 +51,12 @@ const props = withDefaults(defineProps<Props>(), {
 });
 
 const emit = defineEmits<{
-  'update:selectedRepresentatives': [value: string[]];
-  'click:representative': [value: any];
+  'update:selectedRepresentatives': [value: Representative[]];
+  'click:representative': [value: Representative];
 }>();
 
 const handleSelectedRepresentative = (
-  representative: any,
+  representative: Representative,
   selected: boolean,
 ) => {
   if (selected) {

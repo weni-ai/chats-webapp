@@ -67,6 +67,8 @@ import QueueManager from './QueueManager/index.vue';
 
 import RepresentativeService from '@/services/api/resources/settings/representative';
 
+import type { Representative } from './types';
+
 defineOptions({
   name: 'SettingsRepresentatives',
 });
@@ -90,12 +92,12 @@ const closeQueueManager = () => {
 };
 
 const showQueueManager = ref(false);
-const toManagerRepresentative = ref([]);
+const toManagerRepresentative = ref<Representative[]>([]);
 
 const hasRepresentativesInProject = ref(false);
 const isLoadingRepresentatives = ref(false);
-const representatives = ref([]);
-const selectedRepresentatives = ref([]);
+const representatives = ref<Representative[]>([]);
+const selectedRepresentatives = ref<Representative[]>([]);
 const selectAllRepresentatives = ref(false);
 const representativesFilters = ref({
   status: [],
