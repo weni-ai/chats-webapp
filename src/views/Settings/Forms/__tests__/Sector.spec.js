@@ -230,6 +230,7 @@ describe('FormSectorGeneral', () => {
 
   it('emits default sector values when enabling the default option', async () => {
     const testWrapper = createWrapper({ isEditing: false });
+    await flushPromises();
     const fill = testWrapper.findComponent({ name: 'FillDefaultOption' });
     await fill.vm.$emit('update:modelValue', true);
     await flushPromises();
@@ -245,6 +246,7 @@ describe('FormSectorGeneral', () => {
 
   it('clears sector fields when disabling the default option', async () => {
     const testWrapper = createWrapper({ isEditing: false });
+    await flushPromises();
     const fill = testWrapper.findComponent({ name: 'FillDefaultOption' });
     await fill.vm.$emit('update:modelValue', true);
     await flushPromises();

@@ -6,7 +6,7 @@ exports[`SectorExtraOptions > Should match the snapshot 1`] = `
     <h2 data-v-8e9664ba="" class="switchs__title" data-testid="switchs-title">Extras options</h2>
     <unnnic-switch-stub data-v-8e9664ba="" size="small" label="" option="" helper="" textleft="" textright="Triggering message templates" disabled="false" modelvalue="false" class="margin-y-space-1" data-testid="config-switch"></unnnic-switch-stub>
     <section data-v-8e9664ba="" class="switchs__container">
-      <unnnic-switch-stub data-v-8e9664ba="" size="small" label="" option="" helper="Each message exchanged will have the name of the agent who is answering" textleft="" textright="Use signature" disabled="false" modelvalue="false" class="margin-y-space-1" data-testid="config-switch"></unnnic-switch-stub>
+      <unnnic-switch-stub data-v-8e9664ba="" size="small" label="" option="" helper="Each message exchanged will have the name of the agent who is answering." textleft="" textright="Use signature" disabled="false" modelvalue="false" class="margin-y-space-1" data-testid="config-switch"></unnnic-switch-stub>
     </section>
     <unnnic-switch-stub data-v-8e9664ba="" size="small" label="" option="" helper="When active, it allows representatives to edit the custom fields of the contact in the &quot;All Information&quot; section." textleft="" textright="Allow representatives to edit custom contact information" disabled="false" modelvalue="false" class="margin-y-space-1" data-testid="config-switch"></unnnic-switch-stub>
     <!--v-if-->
@@ -16,9 +16,7 @@ exports[`SectorExtraOptions > Should match the snapshot 1`] = `
     <!--v-if-->
   </section>
   <section data-v-8e9664ba="" class="tags">
-    <h2 data-v-8e9664ba="" class="tags__title" data-testid="tags-title">Tags <div data-v-03fa3548="" data-v-47313aed="" class="unnnic-tooltip-trigger unnnic-tooltip" data-testid="tooltip-trigger" data-state="closed" data-grace-area-trigger=""><svg data-v-b593673c="" data-v-8e9664ba="" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" aria-hidden="true" role="img" width="1em" height="1em" viewBox="0 0 24 24" class="iconify iconify--ri unnnic-icon unnnic-icon-scheme--fg-base unnnic-icon-size--sm" data-testid="iconify-icon">
-          <path fill="currentColor" d="M12 22C6.477 22 2 17.523 2 12S6.477 2 12 2s10 4.477 10 10s-4.477 10-10 10m0-2a8 8 0 1 0 0-16a8 8 0 0 0 0 16m-1-5h2v2h-2zm2-1.645V14h-2v-1.5a1 1 0 0 1 1-1a1.5 1.5 0 1 0-1.471-1.794l-1.962-.393A3.501 3.501 0 1 1 13 13.355"></path>
-        </svg></div>
+    <h2 data-v-8e9664ba="" class="tags__title" data-testid="tags-title">Tags <div data-v-03fa3548="" data-v-47313aed="" class="unnnic-tooltip-trigger unnnic-tooltip" data-testid="tooltip-trigger" data-state="closed" data-grace-area-trigger=""><svg data-v-b593673c="" data-v-8e9664ba="" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" aria-hidden="true" role="img" width="1em" height="1em" viewBox="0 0 16 16" class="unnnic-icon unnnic-icon-scheme--fg-base unnnic-icon-size--sm" data-testid="iconify-icon"></svg></div>
       <div data-v-47313aed="" disabled="false" defer="false" forcemount="false">
         <!---->
       </div>
