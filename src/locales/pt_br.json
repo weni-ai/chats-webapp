@@ -1128,7 +1128,8 @@
           "label": "Filtrar por representantes"
         },
         "sectors": {
-          "label": "Filtrar por setor"
+          "label": "Filtrar por setor",
+          "all": "Todos os setores"
         },
         "queues": {
           "label": "Filtrar por fila"

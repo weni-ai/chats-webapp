@@ -20,36 +20,44 @@
       <UnnnicMultiSelect
         v-model="filters.status"
         class="settings-representatives-header-filters__filter"
-        :options="statusOptions"
+        :options="filteredStatusOptions"
         :label="$t('config_chats.representatives.filter.status.label')"
         :placeholder="$t('select')"
         clearable
+        enableSearch
+        @update:search="statusSearch = $event"
       />
       <UnnnicMultiSelect
         v-model="filters.representatives"
         class="settings-representatives-header-filters__filter"
-        :options="representativesOptions"
+        :options="filteredRepresentativesOptions"
         :label="$t('config_chats.representatives.filter.representatives.label')"
         :placeholder="$t('select')"
         clearable
+        enableSearch
+        @update:search="representativesSearch = $event"
       />
       <UnnnicMultiSelect
         :modelValue="filters.sectors"
         class="settings-representatives-header-filters__filter"
-        :options="sectorsOptionsFiltered"
+        :options="filteredSectorsOptions"
         :label="$t('config_chats.representatives.filter.sectors.label')"
         :placeholder="$t('select')"
         clearable
+        enableSearch
+        @update:search="sectorsSearch = $event"
         @update:model-value="onSelectSectors"
       />
       <UnnnicMultiSelect
         v-model="filters.queues"
         class="settings-representatives-header-filters__filter"
-        :options="queuesOptions"
+        :options="filteredQueuesOptions"
         :disabled="disableQueuesFilter"
         :label="$t('config_chats.representatives.filter.queues.label')"
         :placeholder="$t('select')"
         clearable
+        enableSearch
+        @update:search="queuesSearch = $event"
       />
     </section>
   </section>
@@ -66,6 +74,7 @@ import ProjectService from '@/services/api/resources/settings/project';
 import SectorService from '@/services/api/resources/settings/sector';
 import QueueService from '@/services/api/resources/settings/queue';
 
+import i18n from '@/plugins/i18n';
 import { removeDuplicatedItems } from '@/utils/array';
 
 defineOptions({
@@ -95,12 +104,28 @@ const filters = computed({
 const configStore = useConfig();
 const projectUuid = computed(() => configStore.project?.uuid);
 
+const statusSearch = ref('');
 const statusOptions = ref([]);
+const filteredStatusOptions = computed(() => {
+  return statusOptions.value.filter((statusOption) => {
+    return statusOption.label
+      .toLowerCase()
+      .includes(statusSearch.value.toLowerCase());
+  });
+});
 
+const representativesSearch = ref('');
 const representativesOptions = ref([]);
-
+const filteredRepresentativesOptions = computed(() => {
+  return representativesOptions.value.filter((representativeOption) => {
+    return representativeOption.label
+      .toLowerCase()
+      .includes(representativesSearch.value.toLowerCase());
+  });
+});
+const sectorsSearch = ref('');
 const sectorsOptions = ref([]);
-const sectorsOptionsFiltered = computed(() => {
+const sectorsOptionsValidated = computed(() => {
   if (filters.value.sectors.includes('all')) {
     return sectorsOptions.value.map((sectorOption) => {
       if (sectorOption.value === 'all') {
@@ -111,8 +136,23 @@ const sectorsOptionsFiltered = computed(() => {
   }
   return sectorsOptions.value;
 });
+const filteredSectorsOptions = computed(() => {
+  return sectorsOptionsValidated.value.filter((sectorOption) => {
+    return sectorOption.label
+      .toLowerCase()
+      .includes(sectorsSearch.value.toLowerCase());
+  });
+});
 
+const queuesSearch = ref('');
 const queuesOptions = ref([]);
+const filteredQueuesOptions = computed(() => {
+  return queuesOptions.value.filter((queueOption) => {
+    return queueOption.label
+      .toLowerCase()
+      .includes(queuesSearch.value.toLowerCase());
+  });
+});
 
 const getStatusOptions = async () => {
   const { results } = await PauseStatusService.getCustomBreakStatusTypeList({
@@ -171,10 +211,13 @@ const getSectorsOptions = async () => {
     value: sector.uuid,
     label: sector.name,
   }));
-  // TODO: translate 'All'
+
   sectorsOptions.value = removeDuplicatedItems(
     [
-      { value: 'all', label: 'All' },
+      {
+        value: 'all',
+        label: i18n.global.t('config_chats.representatives.filter.sectors.all'),
+      },
       ...sectorsOptions.value,
       ...formattedResults,
     ],
@@ -224,6 +267,7 @@ const onSelectSectors = async (sectors: string[]) => {
   filters.value.sectors = isAllOptionsSelected ? ['all'] : sectors;
 
   queuesOptions.value = [];
+  filters.value.queues = [];
   getQueuesOptions();
 };
 

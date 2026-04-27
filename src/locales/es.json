@@ -1126,7 +1126,8 @@
           "label": "Filtrar por representantes"
         },
         "sectors": {
-          "label": "Filtrar por sector"
+          "label": "Filtrar por sector",
+          "all": "Todos los sectores"
         },
         "queues": {
           "label": "Filtrar por cola"

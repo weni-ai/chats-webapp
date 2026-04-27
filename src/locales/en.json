@@ -1123,7 +1123,8 @@
           "label": "Filter by representatives"
         },
         "sectors": {
-          "label": "Filter by sector"
+          "label": "Filter by sector",
+          "all": "All sectors"
         },
         "queues": {
           "label": "Filter by queue"
