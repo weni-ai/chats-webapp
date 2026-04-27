@@ -235,7 +235,7 @@
           "label": "Número de chats simultâneos",
           "hint": "Defina 0 para que os atendentes peguem chats da fila",
           "placeholder": "Exemplo: 4",
-          "tooltip": "Um limite definido para um atendente específico substitui o limite do setor."
+          "tooltip": "O limite pode ser excedido quando o atendente assumir chats manualmente ou receber transferências. Se houver limite definido para o atendente, ele prevalece em relação ao limite da equipe."
         },
         "message": {
           "create_custom_holiday": {
