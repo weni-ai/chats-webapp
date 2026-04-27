@@ -120,10 +120,19 @@ const paginationParams = computed(() => {
 const getRepresentatives = async () => {
   try {
     isLoadingRepresentatives.value = true;
+
     const { results, count } = await RepresentativeService.listAll({
       offset: (representativesPage.value - 1) * representativesLimit,
       limit: representativesLimit,
-      filters: representativesFilters.value,
+      filters: {
+        ...representativesFilters.value,
+        sectors: representativesFilters.value.sectors.filter(
+          (sector) => sector !== 'all',
+        ),
+        queues: representativesFilters.value.queues.filter(
+          (queue) => queue !== 'all',
+        ),
+      },
     });
 
     representatives.value = results.map(({ agent }) => agent);

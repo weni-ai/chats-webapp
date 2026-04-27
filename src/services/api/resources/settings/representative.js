@@ -9,7 +9,10 @@ export default {
     const params = {
       offset,
       limit,
-      ...(filters || {}),
+      agent: filters.representatives.join(',') || undefined,
+      status: filters.status.join(',') || undefined,
+      sector: filters.sectors.join(',') || undefined,
+      queue: filters.queues.join(',') || undefined,
     };
     const response = await http.get(endpoint, {
       params,

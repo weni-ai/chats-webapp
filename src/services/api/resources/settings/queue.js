@@ -34,6 +34,20 @@ export default {
     return response.data;
   },
 
+  async listAllQueues({ limit, offset, filters }) {
+    const projectUuid = getProject();
+    const endpoint = `/project/${projectUuid}/sectors/queues/`;
+    const params = {
+      limit,
+      offset,
+      sectors: filters.sectors.join(',') || undefined,
+    };
+    const response = await http.get(endpoint, {
+      params,
+    });
+    return response.data;
+  },
+
   async listByProject() {
     const response = await http.get('/queue/', {
       params: {
