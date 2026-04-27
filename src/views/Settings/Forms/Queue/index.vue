@@ -1,5 +1,14 @@
 <template>
-  <section class="queue-form">
+  <section
+    v-if="loadingInfo"
+    class="queue-form--loading"
+  >
+    <UnnnicIconLoading />
+  </section>
+  <section
+    v-else
+    class="queue-form"
+  >
     <FillDefaultOption
       v-if="showHelpers"
       :modelValue="useDefaultSectorQueue"
@@ -18,13 +27,11 @@
         enabled
         :text="$t('config_chats.queues.configure_queue.tooltip')"
       >
-        <section style="display: flex">
-          <UnnnicIcon
-            icon="ri:question-line"
-            scheme="fg-base"
-            size="sm"
-          />
-        </section>
+        <UnnnicIcon
+          icon="ri:question-line"
+          scheme="fg-base"
+          size="sm"
+        />
       </UnnnicToolTip>
     </section>
     <template v-if="!loadingInfo">
@@ -42,7 +49,7 @@
           </h2>
           <UnnnicToolTip
             enabled
-            :text="$t('config_chats.queues.delete_this_queue')"
+            :text="$t('config_chats.queues.remove_tooltip')"
           >
             <UnnnicIcon
               icon="delete"
@@ -248,6 +255,13 @@ export default {
   display: grid;
   gap: $unnnic-space-4;
   margin-bottom: $unnnic-space-4;
+
+  &--loading {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+  }
 
   &__queue-container {
     display: flex;
