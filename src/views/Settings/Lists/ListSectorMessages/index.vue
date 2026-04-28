@@ -48,6 +48,8 @@ import { useConfig } from '@/store/modules/config';
 
 import Sector from '@/services/api/resources/settings/sector';
 
+import { handleConnectOverlay } from '@/utils/overlay';
+
 import isMobile from 'is-mobile';
 
 export default {
@@ -103,9 +105,6 @@ export default {
       deleteQuickMessage: 'delete',
     }),
 
-    handleConnectOverlay(active) {
-      window.parent.postMessage({ event: 'changeOverlay', data: active }, '*');
-    },
     listenConnect() {
       window.addEventListener('message', (message) => {
         const { event } = message.data;
@@ -165,13 +164,13 @@ export default {
     },
 
     openConfigMessageDrawer(message = { title: '', text: '', shortcut: '' }) {
-      this.handleConnectOverlay(true);
+      handleConnectOverlay(true);
       this.quickMessageToEdit = { ...message };
       this.showQuickMessageDrawer = true;
     },
 
     closeConfigMessageDrawer() {
-      this.handleConnectOverlay(false);
+      handleConnectOverlay(false);
       this.quickMessageToEdit = { title: '', text: '', shortcut: '' };
       this.showQuickMessageDrawer = false;
     },
