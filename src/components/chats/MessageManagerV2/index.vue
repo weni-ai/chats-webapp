@@ -24,7 +24,7 @@
 </template>
 
 <script setup lang="ts">
-import { nextTick, ref, useTemplateRef } from 'vue';
+import { nextTick, ref, useTemplateRef, watch } from 'vue';
 import { storeToRefs } from 'pinia';
 
 import MessageManagerLoading from './MessageManagerLoading.vue';
@@ -43,7 +43,7 @@ interface Props {
   isLoading: boolean;
 }
 
-defineProps<Props>();
+const props = defineProps<Props>();
 
 const discussionsStore = useDiscussions();
 const { activeDiscussion } = storeToRefs(discussionsStore);
@@ -110,6 +110,15 @@ const closeSuggestionBox = () => {
   isSuggestionBoxOpen.value = false;
   inputMessage.value = '';
 };
+
+watch(
+  () => props.isLoading,
+  () => {
+    if (!props.isLoading) {
+      focusMessageManagerTextBox();
+    }
+  },
+);
 </script>
 
 <style lang="scss" scoped>
