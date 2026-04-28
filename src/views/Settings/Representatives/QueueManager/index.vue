@@ -335,6 +335,7 @@ const saveChanges = async () => {
 };
 
 onMounted(async () => {
+  handleConnectOverlay(true);
   await getQueuesPermissions();
 
   formData.value.agents = props.representatives.map(
@@ -358,8 +359,6 @@ onMounted(async () => {
       return filteredQueues.map((queue) => queue.uuid);
     });
   }
-
-  handleConnectOverlay(true);
 });
 
 onUnmounted(() => handleConnectOverlay(false));
