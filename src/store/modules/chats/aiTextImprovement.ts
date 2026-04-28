@@ -69,7 +69,7 @@ export const useAiTextImprovement = defineStore('aiTextImprovement', () => {
 
       return response.text;
     } catch (error: unknown) {
-      if (error instanceof DOMException && error.name === 'AbortError') {
+      if ((error as Error).name === 'CanceledError') {
         return null;
       }
 
