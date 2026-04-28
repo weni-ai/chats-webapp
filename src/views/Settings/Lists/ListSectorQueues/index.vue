@@ -196,12 +196,12 @@ export default {
       }
     },
     handlerCloseDeleteQueueModal() {
-      this.handleConnectOverlay(false);
+      handleConnectOverlay(false);
       this.queueToDelete = {};
       this.showDeleteQueueModal = false;
     },
     async handlerOpenDeleteQueueModal(queue) {
-      this.handleConnectOverlay(true);
+      handleConnectOverlay(true);
       this.queueToDelete = queue;
 
       try {
