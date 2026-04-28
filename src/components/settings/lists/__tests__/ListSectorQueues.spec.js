@@ -7,8 +7,10 @@ import unnnic from '@weni/unnnic-system';
 
 import Queue from '@/services/api/resources/settings/queue';
 import Project from '@/services/api/resources/settings/project';
+import Rooms from '@/services/api/resources/settings/rooms';
 
 import { createTestingPinia } from '@pinia/testing';
+import { useFeatureFlag } from '@/store/modules/featureFlag';
 
 vi.mock('@/services/api/resources/settings/queue', () => ({
   default: {
@@ -303,5 +305,44 @@ describe('ListSectorQueues.vue', () => {
 
     expect(wrapper.vm.showQueueDrawer).toBe(false);
     expect(wrapper.vm.queueToConfig).toMatchObject({});
+  });
+
+  describe('Feature Flag: weniChatsDeleteTransfer', () => {
+    it('should fetch rooms count when feature flag is enabled', async () => {
+      const featureFlagStore = useFeatureFlag();
+      featureFlagStore.featureFlags = {
+        active_features: ['weniChatsDeleteTransfer'],
+      };
+      await wrapper.vm.$nextTick();
+
+      Rooms.count.mockClear();
+      Rooms.count.mockResolvedValue({ waiting: 3, in_service: 2 });
+
+      await wrapper.vm.handlerOpenDeleteQueueModal({
+        uuid: 'queue-uuid',
+        name: 'Queue A',
+      });
+      await flushPromises();
+
+      expect(Rooms.count).toHaveBeenCalledWith({ queue: 'queue-uuid' });
+      expect(wrapper.vm.queueRoomsCount).toBe(5);
+    });
+
+    it('should not fetch rooms count when feature flag is disabled', async () => {
+      const featureFlagStore = useFeatureFlag();
+      featureFlagStore.featureFlags = { active_features: [] };
+      await wrapper.vm.$nextTick();
+
+      Rooms.count.mockClear();
+
+      await wrapper.vm.handlerOpenDeleteQueueModal({
+        uuid: 'queue-uuid',
+        name: 'Queue A',
+      });
+      await flushPromises();
+
+      expect(Rooms.count).not.toHaveBeenCalled();
+      expect(wrapper.vm.queueRoomsCount).toBe(0);
+    });
   });
 });

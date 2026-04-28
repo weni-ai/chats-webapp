@@ -6,7 +6,9 @@ import SettingsSectors from '@/views/Settings/SettingsSectors.vue';
 
 import { createTestingPinia } from '@pinia/testing';
 import { useSettings } from '@/store/modules/settings';
+import { useFeatureFlag } from '@/store/modules/featureFlag';
 import unnnic from '@weni/unnnic-system';
+import Rooms from '@/services/api/resources/settings/rooms';
 
 vi.mock('@weni/unnnic-system', () => ({
   default: {
@@ -57,6 +59,10 @@ const createWrapper = (initialState = {}) => {
         sectors: mockSectors,
         isLoadingSectors: false,
         ...initialState.settings,
+      },
+      featureFlag: {
+        featureFlags: { active_features: [] },
+        ...initialState.featureFlag,
       },
     },
   });
@@ -478,6 +484,38 @@ describe('SettingsSectors.vue', () => {
         { event: 'changeOverlay', data: false },
         '*',
       );
+    });
+  });
+
+  describe('Feature Flag: weniChatsDeleteTransfer', () => {
+    it('should fetch rooms count when feature flag is enabled', async () => {
+      const featureFlagStore = useFeatureFlag();
+      featureFlagStore.featureFlags = {
+        active_features: ['weniChatsDeleteTransfer'],
+      };
+      await wrapper.vm.$nextTick();
+
+      const sector = mockSectors[0];
+      await wrapper.vm.handlerOpenDeleteSectorModal(sector);
+      await flushPromises();
+
+      expect(Rooms.count).toHaveBeenCalledWith({ sector: sector.uuid });
+      expect(wrapper.vm.sectorRoomsCount).toBe(8);
+    });
+
+    it('should not fetch rooms count when feature flag is disabled', async () => {
+      const featureFlagStore = useFeatureFlag();
+      featureFlagStore.featureFlags = { active_features: [] };
+      await wrapper.vm.$nextTick();
+
+      Rooms.count.mockClear();
+
+      const sector = mockSectors[0];
+      await wrapper.vm.handlerOpenDeleteSectorModal(sector);
+      await flushPromises();
+
+      expect(Rooms.count).not.toHaveBeenCalled();
+      expect(wrapper.vm.sectorRoomsCount).toBe(0);
     });
   });
 

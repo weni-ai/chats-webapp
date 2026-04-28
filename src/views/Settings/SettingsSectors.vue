@@ -122,6 +122,7 @@ import { mapActions, mapState } from 'pinia';
 
 import { useConfig } from '@/store/modules/config';
 import { useSettings } from '@/store/modules/settings';
+import { useFeatureFlag } from '@/store/modules/featureFlag';
 
 import Rooms from '@/services/api/resources/settings/rooms';
 
@@ -158,6 +159,12 @@ export default {
       projectName: (store) => store.project.name,
     }),
     ...mapState(useSettings, ['sectors', 'isLoadingSectors']),
+    ...mapState(useFeatureFlag, ['featureFlags']),
+    isDeleteTransferEnabled() {
+      return this.featureFlags.active_features?.includes(
+        'weniChatsDeleteTransfer',
+      );
+    },
 
     sectorsOrdered() {
       let sectorsOrdered = this.sectors.slice().sort((a, b) => {
@@ -196,12 +203,16 @@ export default {
       this.toDeleteSector = sector;
       this.handleConnectOverlay(true);
 
-      try {
-        const { waiting, in_service } = await Rooms.count({
-          sector: sector.uuid,
-        });
-        this.sectorRoomsCount = waiting + in_service;
-      } catch {
+      if (this.isDeleteTransferEnabled) {
+        try {
+          const { waiting, in_service } = await Rooms.count({
+            sector: sector.uuid,
+          });
+          this.sectorRoomsCount = waiting + in_service;
+        } catch {
+          this.sectorRoomsCount = 0;
+        }
+      } else {
         this.sectorRoomsCount = 0;
       }
 
