@@ -28,6 +28,8 @@
               fillW
               :actionText="$t('confirm')"
               disableClear
+              disableShowOverwrittenValue
+              :inputFormat="$t('date_format')"
             />
           </section>
           <UnnnicSwitch
