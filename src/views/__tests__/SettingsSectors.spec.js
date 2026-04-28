@@ -377,7 +377,7 @@ describe('SettingsSectors.vue', () => {
       );
     });
 
-    it('should delete sector successfully', async () => {
+    it('should delete sector successfully with end_all action', async () => {
       const sector = mockSectors[0];
       settingsStore.deleteSector = vi.fn().mockResolvedValue({});
 
@@ -398,6 +398,41 @@ describe('SettingsSectors.vue', () => {
         },
         seconds: 5,
       });
+      expect(wrapper.vm.showDeleteSectorModal).toBe(false);
+    });
+
+    it('should delete sector with transfer action passing queue uuid', async () => {
+      const sector = mockSectors[0];
+      settingsStore.deleteSector = vi.fn().mockResolvedValue({});
+
+      await wrapper.vm.handlerOpenDeleteSectorModal(sector);
+      await flushPromises();
+
+      await wrapper.vm.deleteSector(sector.uuid, {
+        action: 'transfer',
+        transferQueueUuid: 'target-queue-uuid',
+      });
+      await flushPromises();
+
+      expect(settingsStore.deleteSector).toHaveBeenCalledWith(sector.uuid, {
+        transferToQueue: 'target-queue-uuid',
+      });
+      expect(mockRouter.push).toHaveBeenCalledWith({ name: 'sectors' });
+      expect(wrapper.vm.showDeleteSectorModal).toBe(false);
+    });
+
+    it('should delete sector without transfer options when payload is empty', async () => {
+      const sector = mockSectors[0];
+      settingsStore.deleteSector = vi.fn().mockResolvedValue({});
+
+      await wrapper.vm.handlerOpenDeleteSectorModal(sector);
+      await flushPromises();
+
+      await wrapper.vm.deleteSector(sector.uuid, {});
+      await flushPromises();
+
+      expect(settingsStore.deleteSector).toHaveBeenCalledWith(sector.uuid, {});
+      expect(mockRouter.push).toHaveBeenCalledWith({ name: 'sectors' });
       expect(wrapper.vm.showDeleteSectorModal).toBe(false);
     });
 

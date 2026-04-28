@@ -200,7 +200,7 @@ describe('ListSectorQueues.vue', () => {
     );
   });
 
-  it('should call deleteQueue method when confirming deletion', async () => {
+  it('should call deleteQueue method when confirming deletion with end_all', async () => {
     const deleteQueueSpy = vi.spyOn(wrapper.vm, 'deleteQueue');
 
     await wrapper.setData({
@@ -230,6 +230,61 @@ describe('ListSectorQueues.vue', () => {
     expect(wrapper.vm.queues).toStrictEqual([
       { uuid: 'queue-b', name: 'Queue B' },
     ]);
+  });
+
+  it('should call Queue.delete with transfer options when action is transfer', async () => {
+    await wrapper.setData({
+      queues: [
+        { uuid: 'queue-a', name: 'Queue A' },
+        { uuid: 'queue-b', name: 'Queue B' },
+      ],
+    });
+
+    await wrapper.vm.handlerOpenDeleteQueueModal({
+      uuid: 'queue-a',
+      name: 'Queue A',
+    });
+
+    await flushPromises();
+
+    const deleteModal = wrapper.findComponent(
+      '[data-testid="delete-queue-modal"]',
+    );
+
+    await deleteModal.vm.$emit('confirm', {
+      action: 'transfer',
+      transferQueueUuid: 'queue-b',
+    });
+    await flushPromises();
+
+    expect(Queue.delete).toHaveBeenCalledWith('queue-a', {
+      transferToQueue: 'queue-b',
+    });
+  });
+
+  it('should call Queue.delete without options when payload is empty', async () => {
+    await wrapper.setData({
+      queues: [
+        { uuid: 'queue-a', name: 'Queue A' },
+        { uuid: 'queue-b', name: 'Queue B' },
+      ],
+    });
+
+    await wrapper.vm.handlerOpenDeleteQueueModal({
+      uuid: 'queue-a',
+      name: 'Queue A',
+    });
+
+    await flushPromises();
+
+    const deleteModal = wrapper.findComponent(
+      '[data-testid="delete-queue-modal"]',
+    );
+
+    await deleteModal.vm.$emit('confirm', {});
+    await flushPromises();
+
+    expect(Queue.delete).toHaveBeenCalledWith('queue-a', {});
   });
 
   it('should close delete queue modal on cancel', async () => {
