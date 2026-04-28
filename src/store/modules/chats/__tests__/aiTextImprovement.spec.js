@@ -163,7 +163,7 @@ describe('aiTextImprovement store', () => {
 
     it('should return null without alert on abort', async () => {
       mockImprove.mockRejectedValue(
-        new DOMException('Aborted', 'AbortError'),
+        new DOMException('Aborted', 'CanceledError'),
       );
 
       const result = await store.requestImprovement('hello', 'CLARITY');
