@@ -14,6 +14,14 @@ export default {
     return response.data;
   },
 
+  async bulkCreate(sector, queues) {
+    const response = await http.post('/queue/bulk_create/', {
+      sector,
+      queues,
+    });
+    return response.data;
+  },
+
   async list(sectorUuid, offset, limit) {
     const response = await http.get('/queue/', {
       params: {
@@ -70,6 +78,7 @@ export default {
 
   async editQueue(queueInfo) {
     const response = await http.patch(`/queue/${queueInfo.uuid}/`, {
+      name: queueInfo.name,
       default_message: queueInfo.default_message,
       queue_limit: queueInfo.queue_limit,
     });

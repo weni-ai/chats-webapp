@@ -2,19 +2,20 @@
   <UnnnicDrawer
     v-show="!showConfirmDiscartChangesModal"
     ref="newProjectGroupDrawer"
-    :modelValue="show"
+    :modelValue="modelValue"
     :title="$t('config_chats.groups.new.title')"
     :primaryButtonText="activePageIndex === 2 ? $t('save') : $t('continue')"
     :secondaryButtonText="activePageIndex === 0 ? $t('cancel') : $t('back')"
     :disabledPrimaryButton="!isValid[activePageKey]"
     :loadingPrimaryButton="isLoadingCreate"
+    closeIcon="close"
     size="xl"
     @primary-button-click="
       activePageIndex === 2 ? finish() : (activePageIndex = activePageIndex + 1)
     "
     @secondary-button-click="
       activePageIndex === 0
-        ? $refs.newProjectGroupDrawer.close()
+        ? $emit('close')
         : (activePageIndex = activePageIndex - 1)
     "
     @close="closeDrawer"
@@ -44,7 +45,6 @@
       </section>
     </template>
   </UnnnicDrawer>
-
   <DiscartChangesModal
     v-if="showConfirmDiscartChangesModal"
     v-model="showConfirmDiscartChangesModal"
@@ -79,7 +79,7 @@ export default {
     DiscartChangesModal,
   },
   props: {
-    show: {
+    modelValue: {
       type: Boolean,
       required: true,
     },

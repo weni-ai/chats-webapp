@@ -1,8 +1,12 @@
 import { defineStore } from 'pinia';
+import cloneDeep from 'lodash.clonedeep';
+
+import { useConfig } from '@/store/modules/config';
+
 import Sector from '@/services/api/resources/settings/sector';
 import Group from '@/services/api/resources/settings/group';
+import CustomBreak from '@/services/api/resources/chats/pauseStatus';
 
-import cloneDeep from 'lodash.clonedeep';
 import { removeDuplicatedItems } from '@/utils/array';
 
 export const useSettings = defineStore('settings', {
@@ -17,10 +21,20 @@ export const useSettings = defineStore('settings', {
     nextGroups: '',
     previousGroups: '',
     currentGroup: null,
+    customBreaks: [],
+    isLoadingCustomBreaks: false,
   }),
 
   actions: {
-    async getSectors(getAll = false) {
+    resetSectors() {
+      this.sectors = [];
+      this.nextSectors = '';
+      this.previousSectors = '';
+    },
+    async getSectors(getAll = false, forceRefresh = false) {
+      if (forceRefresh) {
+        this.resetSectors();
+      }
       const isInLastPage = !this.nextSectors && this.previousSectors;
 
       if (isInLastPage) return;
@@ -93,6 +107,21 @@ export const useSettings = defineStore('settings', {
       this.sectors = this.sectors.filter(
         (sector) => sector.uuid !== sectorUuid,
       );
+    },
+
+    async getCustomBreaks() {
+      try {
+        this.isLoadingCustomBreaks = true;
+        const configStore = useConfig();
+        const { results } = await CustomBreak.getCustomBreakStatusTypeList({
+          projectUuid: configStore.project.uuid,
+        });
+        this.customBreaks = results;
+      } catch (error) {
+        console.error('Error getting custom breaks', error);
+      } finally {
+        this.isLoadingCustomBreaks = false;
+      }
     },
   },
 

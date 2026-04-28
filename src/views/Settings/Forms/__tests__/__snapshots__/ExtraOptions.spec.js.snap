@@ -1,0 +1,51 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`SectorExtraOptions > Should match the snapshot 1`] = `
+"<section data-v-8e9664ba="" class="sector-extra-options-form">
+  <section data-v-8e9664ba="" class="switchs">
+    <h2 data-v-8e9664ba="" class="switchs__title" data-testid="switchs-title">Extras options</h2>
+    <unnnic-switch-stub data-v-8e9664ba="" size="small" label="" option="" helper="" textleft="" textright="Triggering message templates" disabled="false" modelvalue="false" class="margin-y-space-1" data-testid="config-switch"></unnnic-switch-stub>
+    <section data-v-8e9664ba="" class="switchs__container">
+      <unnnic-switch-stub data-v-8e9664ba="" size="small" label="" option="" helper="Each message exchanged will have the name of the agent who is answering." textleft="" textright="Use signature" disabled="false" modelvalue="false" class="margin-y-space-1" data-testid="config-switch"></unnnic-switch-stub>
+    </section>
+    <unnnic-switch-stub data-v-8e9664ba="" size="small" label="" option="" helper="When active, it allows representatives to edit the custom fields of the contact in the &quot;All Information&quot; section." textleft="" textright="Allow representatives to edit custom contact information" disabled="false" modelvalue="false" class="margin-y-space-1" data-testid="config-switch"></unnnic-switch-stub>
+    <!--v-if-->
+  </section>
+  <section data-v-8e9664ba="" class="switchs">
+    <h2 data-v-8e9664ba="" class="switchs__title">Automated messages</h2>
+    <!--v-if-->
+  </section>
+  <section data-v-8e9664ba="" class="tags">
+    <h2 data-v-8e9664ba="" class="tags__title" data-testid="tags-title">Tags <div data-v-03fa3548="" data-v-47313aed="" class="unnnic-tooltip-trigger unnnic-tooltip" data-testid="tooltip-trigger" data-state="closed" data-grace-area-trigger=""><svg data-v-b593673c="" data-v-8e9664ba="" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" aria-hidden="true" role="img" width="1em" height="1em" viewBox="0 0 16 16" class="unnnic-icon unnnic-icon-scheme--fg-base unnnic-icon-size--sm" data-testid="iconify-icon"></svg></div>
+      <div data-v-47313aed="" disabled="false" defer="false" forcemount="false">
+        <!---->
+      </div>
+    </h2>
+    <section data-v-8e9664ba="" class="tags-form">
+      <section data-v-61d29f44="" data-v-2dd04313="" data-v-8e9664ba="" class="unnnic-form-element unnnic-form md tags-form__input" data-testid="tags-input-tag-name">
+        <section data-v-b52fcb11="" data-v-61d29f44="" class="unnnic-label unnnic-form-element__label">
+          <p data-v-b52fcb11="" class="unnnic-label__label">Tag name</p>
+          <!---->
+        </section>
+        <div data-v-227e7338="" data-v-2dd04313="" class="text-input size--md tags-form__input unnnic-form-input" data-testid="tags-input-tag-name" hascloudycolor="false" mask=""><input data-v-043812be="" data-v-227e7338="" class="tags-form__input unnnic-form-input input-itself input size-md normal tags-form__input unnnic-form-input input-itself" data-testid="tags-input-tag-name" hascloudycolor="false" placeholder="Enter the name of a tag to search or to add it" iconleft="" iconright="" iconleftclickable="false" iconrightclickable="false" showclear="false" type="text" maxlength="120" value="">
+          <!---->
+          <section data-v-227e7338="" class="icon-right-container">
+            <!---->
+            <!---->
+          </section>
+        </div>
+        <!---->
+      </section><button data-v-fb18c550="" data-v-8e9664ba="" data-testid="tags-add-tag-button" disabled="" class="unnnic-button unnnic-button--size-large unnnic-button--secondary">
+        <!---->
+        <!---->
+        <!----><span data-v-fb18c550="" class="unnnic-button__label" style="visibility: visible;" data-testid="button-label"> Add</span>
+        <!---->
+      </button>
+    </section>
+    <!--v-if-->
+    <section data-v-8e9664ba="" class="switchs__container required-tags">
+      <unnnic-switch-stub data-v-8e9664ba="" size="small" label="" option="" helper="" textleft="" textright="Require tags at the end of human support" disabled="true" modelvalue="false" class="margin-y-space-1" data-testid="config-switch"></unnnic-switch-stub>
+    </section>
+  </section>
+</section>"
+`;

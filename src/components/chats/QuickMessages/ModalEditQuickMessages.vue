@@ -35,7 +35,7 @@
 </template>
 
 <script>
-import MessageForm from '@/components/settings/forms/Messages.vue';
+import MessageForm from '@/views/Settings/Forms/Messages/MessageInputsForm.vue';
 
 export default {
   name: 'ModalEditQuickMessages',

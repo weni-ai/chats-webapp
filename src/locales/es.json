@@ -129,6 +129,8 @@
     "info": "Define una respuesta automática para enviar al contacto mientras espera asistencia, déjalo en blanco si no deseas ningún mensaje.",
     "placeholder": "Aún no has definido un mensaje automático. Por favor, define un mensaje para tus contactos que están esperando."
   },
+  "step_of": "Paso {step} de {total}",
+  "type_to_filter": "Escribe para filtrar",
   "attention": "Atención",
   "updates_saved": "Actualizaciones guardadas",
   "updated_info": "Información actualizada",
@@ -140,6 +142,7 @@
   "number_chats": "Cantidad de chats",
   "language": "Idioma",
   "search": "Buscar",
+  "try_again": "Inténtalo de nuevo",
   "date_format_variable": "{day}/{month}/{year}",
   "undo": "Deshacer",
   "redo": "Rehacer",
@@ -188,7 +191,7 @@
     "extra_options": "Opciones adicionales",
     "queues": "Colas",
     "tags": "Etiquetas",
-    "add": "Definir sector",
+    "add_name_and_managers": "Define un nombre para el sector y sus gerentes",
     "add_queue": "Agregar nueva cola",
     "name": "Nombre del sector",
     "placeholder": "Ejemplo: Financiero",
@@ -209,9 +212,9 @@
       "working_day": {
         "title": "Definiciones de la jornada laboral",
         "copy_workday": "Copiar la jornada laboral de un sector ya configurado",
-        "select_days": "Seleccione los días de la semana laboral.",
-        "set_hours": "Establezca las horas trabajadas para cada día.",
-        "add_holidays": "Agregue feriados y fechas específicas no laborables.",
+        "select_days": "Seleccione los días de la semana laboral:",
+        "set_hours": "Establezca las horas trabajadas para cada día:",
+        "add_holidays": "Agregue feriados y fechas específicas no laborables:",
         "add_non_working_dates": "Agregar fechas específicas no laborables",
         "select_date_or_period": "Seleccionar fecha o período",
         "repeat_annually": "Repetir anualmente",
@@ -219,6 +222,7 @@
         "see_all_holidays": "Ver todos los feriados",
         "add_specific_dates": "Agregar fechas específicas",
         "see_all_specific_dates": "Ver todas las fechas específicas",
+        "select_sector_to_copy": "Selecciona el sector a copiar",
         "copy_to_all": "Copiar a todos los días",
         "start": {
           "label": "Hora de inicio"
@@ -227,21 +231,32 @@
           "label": "Tiempo de cierre"
         },
         "limit_agents": {
-          "label": "Límite en el número de llamadas simultáneas por agente"
+          "title": "Defina un límite en la cantidad de chats simultáneos por representante",
+          "label": "Número de chats simultáneos",
+          "hint": "Defina 0 para que los representantes tomen chats de la cola",
+          "placeholder": "Ejemplo: 4",
+          "tooltip": "El límite puede superarse cuando el representante toma los chats de forma manual o recibe transferencias. Si se define un límite para el representante, tendrá prioridad sobre el límite del equipo."
+        },
+        "message": {
+          "create_custom_holiday": {
+            "error": "No se pudieron agregar algunas fechas no laborables. Verifica la información e inténtalo de nuevo.",
+            "success": "Fechas no laborables agregadas con éxito"
+          }
         }
       }
     },
     "additional_options": {
       "title": "Opciones extras",
       "template_message": {
-        "switch_active": "Activación de plantillas de mensajes activos",
-        "switch_disabled": "Activación de plantillas de mensajes deshabilitada"
+        "switch_label": "Envío de plantillas de mensajes"
       },
-      "edit_custom_fields": "Permitir que los agentes editen Custom Fields",
+      "edit_custom_fields": {
+        "label": "Permitir que los representantes editen la información personalizada del contacto",
+        "hint": "Cuando está activa, permite que los representantes editen los campos personalizados del contacto en la sección \"Toda la información\"."
+      },
       "agents_signature": {
-        "tooltip": "Cada mensaje intercambiado tendrá el nombre del agente que responde",
-        "switch_active": "Firma activa",
-        "switch_disabled": "Firma desactivada"
+        "hint": "Cada mensaje intercambiado tendrá el nombre del agente que responde.",
+        "switch_label": "Usar firma"
       },
       "csat": {
         "label": "Enviar automáticamente una encuesta de satisfacción después de que el soporte del Live desk termine",
@@ -251,19 +266,17 @@
           "content_2": "¿Deseas continuar de todas formas?"
         }
       },
-      "automatic_message": {
-        "switch_active": "Mensaje automático de apertura activo",
-        "switch_disabled": "Mensaje automático de apertura deshabilitado",
-        "tooltip": "Configura un mensaje que se envía automáticamente en nuevos chats tan pronto como se les asigna a su primer agente. El contacto verá este mensaje como si fuera enviado por el propio agente.",
+      "automated_message": {
+        "title": "Mensajes automatizados",
+        "switch_label": "Enviar mensaje automático al iniciar el soporte",
+        "hint": "Envía automáticamente un mensaje cuando un chat se asigna a un representante. El mensaje aparecerá como si lo hubiera enviado el representante asignado.",
         "field": {
           "title": "Mensaje automático",
           "placeholder": "Ejemplo: ¡Hola! ¿Cómo puedo ayudarte hoy?"
         }
       },
       "required_tags": {
-        "switch_active": "Requerir etiquetas al final de los soportes activo",
-        "switch_disabled": "Requerir etiquetas al final de los soportes deshabilitado",
-        "tooltip": "Agregue al menos una etiqueta para activar"
+        "switch_label": "Exigir etiquetas al final del soporte humano"
       }
     }
   },
@@ -372,12 +385,12 @@
       "order_by": "Ordenar por:",
       "most_recent": {
         "label": "Más reciente",
-        "ongoing_tooltip": "Más reciente: última mensagem intercambiada en el menor tiempo.",
-        "default_tooltip": "Más reciente: salas que han sido abiertas por menos tiempo."
+        "ongoing_tooltip": "Más reciente: última mensaje intercambiada en el menor tiempo.",
+        "waiting_tooltip": "Más reciente: salas que han sido abiertas por menos tiempo."
       },
       "oldest": {
         "label": "Más antiguo",
-        "ongoing_tooltip": "Más antiguo: última mensagem intercambiada en el mayor tiempo.",
+        "ongoing_tooltip": "Más antiguo: última mensaje intercambiada en el mayor tiempo.",
         "default_tooltip": "Más antiguo: salas que han sido abiertas por más tiempo."
       }
     },
@@ -535,9 +548,8 @@
   "queue": "Cola",
   "agents": {
     "add": {
-      "title": "Agregar agentes",
       "select": {
-        "label": "Agente seleccionado",
+        "label": "Agregar representante",
         "placeholder": "Busque el nombre o el correo electrónico"
       },
       "button": "Seleccione"
@@ -720,12 +732,17 @@
   "shortcut": "Atajo",
   "message": "Mensaje",
   "save": "Guardar",
+  "save_changes": "Guardar cambios",
+  "create": "Crear",
   "use": "Usar",
   "delete_sector": "Eliminar sector",
   "delete_queue": "Eliminar fila",
   "delete_queue_modal": {
     "text": "Eliminar la fila {queue}",
     "description": "La fila {queue} será eliminada permanentemente."
+  },
+  "delete_sector_modal": {
+    "text": "Escribe el nombre del sector a eliminar"
   },
   "cant_revert": "Esta opción no se puede revertir",
   "confirm_typing": "Confirmar escribiendo",
@@ -789,18 +806,19 @@
     "without_personal_messages": "No has agregado ningún mensaje rápido aún. Haz clic en el botón <i>+ Mensaje</i> y agrega tu primer mensaje.",
     "without_messages_shared": "No hay mensajes rápidos compartidos para ti para usar.",
     "example_message": "Mensaje de ejemplo",
-    "example_message_description": "Los mensajes rápidos son textos predefinidos que facilitan la estandarización del servicio. Todos los agentes de este sector podrán utilizar los mensajes, y podrás registrar nuevos mensajes a continuación.",
+    "example_message_description": "Los mensajes rápidos son textos predefinidos que ayudan a estandarizar el soporte al cliente. Todos los representantes de este sector podrán usar estos mensajes. Puede crear nuevos mensajes o editarlos cuando desee con el sector creado.",
     "personal": "Tus mensajes",
     "shared": "Mensajes compartidos",
     "delete": "Eliminar mensaje rápido",
     "delete_your_quick_message": "Eliminar tu mensaje rápido",
     "delete_confirm": "¿Estás seguro de que quieres eliminar el mensaje rápido?",
     "delete_or_edit": "Eliminar o editar",
-    "delete_description": "¿Estás seguro de que quieres eliminar el mensaje rápido {shortcut}?",
+    "delete_description": "Escribe el atajo del mensaje rápido a eliminar",
     "shortcut_tooltip": "Escriba /{shortcut} para usar",
     "new": "Nuevo mensaje rápido",
+    "description_new": "Cree un nuevo mensaje rápido para que lo usen todos los representantes de este sector.",
     "add": "Agregar nuevo mensaje rápido",
-    "edit": "Editar mensaje rápido",
+    "edit": "Editar /{shortcut}",
     "available_shortcuts": "Atajos disponibles",
     "copilot": "¡Ahora ChatGPT es tu CoPiloto! ¡Usa las respuestas sugeridas por la Inteligencia Artificial para acelerar tus llamadas!",
     "title_field_placeholder": "Ej: Bienvenido",
@@ -808,6 +826,8 @@
     "message_field_placeholder": "Ejemplo: Hola, ¿cómo estás? Continuaré ayudándote hoy.",
     "successfully_added": "Mensaje rápido agregado",
     "successfully_updated": "Mensaje rápido actualizado",
+    "successfully_deleted": "Mensaje rápido eliminado con éxito",
+    "error_deleting": "No se pudo eliminar el mensaje rápido.",
     "error": "Error al configurar el mensaje rápido",
     "no_suggestions": "No se encontraron resultados para el atajo ingresado.",
     "disclaimer": "Escribe el atajo / (barra) en el campo de mensaje del chat para activar la visualización de mensajes rápidos."
@@ -856,17 +876,22 @@
     }
   },
   "config_chats": {
-    "title": "Configuración",
-    "section_sectors_title": "Sectores en {project}",
+    "title": "Preferencias de Live Desk",
+    "section_sectors_title": "Gestión de sectores",
+    "section_groups_title": "Gestión de grupos de proyectos",
+    "filter_by_sector_name": "Filtrar por nombre del sector",
+    "filter_by_group_name": "Filtrar por nombre del grupo",
     "section_sectors_subtitle": "Agregue, vea y administre sectores, colas, administradores y agentes dentro de su organización.",
     "tabs": {
-      "settings": "Ajustes",
-      "groups": "Grupos de proyectos"
+      "general": "General",
+      "groups": "Grupos de proyectos",
+      "sectors": "Sectores"
     },
     "custom_breaks": {
       "title": "Pausas personalizadas",
-      "description": "Añadir nuevas pausas personalizadas, que tendrán el mismo comportamiento que las pausas sin conexión, es decir, el agente no recibirá contactos mientras utilice estas pausas personalizadas.",
+      "description": "Las pausas personalizadas funcionan como estado sin conexión. El representante no recibirá nuevas solicitudes de chat durante esos períodos.",
       "fields": {
+        "hint": "Agrega hasta 10 estados distintos para usarlos como pausas personalizadas.",
         "name": "Nuevo estado",
         "placeholder": "Ejemplo: Almuerzo"
       },
@@ -874,27 +899,34 @@
       "status_duplicate_name": "Estado ya comunicado",
       "status_success": "Estado añadido con éxito",
       "status_remove_success": "Estado {status} eliminado",
-      "status_error": "Ups, desafortunadamente los cambios no se han guardado, inténtalo de nuevo"
+      "status_error": "Ups, desafortunadamente los cambios no se han guardado, inténtalo de nuevo",
+      "delete_modal": {
+        "description_1": "¿Realmente deseas eliminar la pausa personalizada “{name}”?",
+        "description_2": "Una vez eliminada, sus datos ya no aparecerán en el panel de Live Desk y no podrán recuperarse.",
+        "error": "No se pudo eliminar la pausa personalizada.",
+        "success": "Pausa personalizada eliminada con éxito",
+        "title": "Eliminar pausa personalizada"
+      }
     },
     "changes_saved": "¡Cambios guardados con éxito!",
     "changes_not_saved": "No se pudieron guardar los cambios. Inténtalo de nuevo.",
     "project_configs": {
-      "title": "Preferencias de proyectos",
+      "title": "Definiciones",
       "ai_transfer": {
         "switch_active": "Permitir que los agentes de IA transfieran conversaciones al soporte humano",
         "switch_inactive": "Permitir que los agentes de IA transfieran conversaciones al soporte humano",
         "modal_title": "Escenarios o criterios que requieren transferencia al soporte humano",
-        "textarea_label": "Defina los escenarios o criterios que requieren transferencia al soporte humano",
+        "textarea_label": "Escenarios o criterios",
         "textarea_placeholder": "Describa los escenarios o criterios..."
       },
       "bulk_transfer": {
-        "tooltip": "Esta función permite a los agentes transferir varios contactos a la vez a una fila o agente",
-        "switch_active": "Transferir chats en masa a otra cola o agente activo",
-        "switch_inactive": "Transferir chats en masa a otra cola o agente desactivado"
+        "tooltip": "Esta función permite a los representantes transferir varios contactos a la vez a una fila o representante",
+        "switch_active": "Transferir chats en masa a otra cola o representante",
+        "switch_inactive": "Transferir chats en masa a otra cola o representante"
       },
       "block_transfer_to_off_agents": {
-        "switch_active": "Bloquear la transferencia de chats a agentes sin conexión activo",
-        "switch_inactive": "Bloquear la transferencia de chats a agentes sin conexión inactivo"
+        "switch_active": "Bloquear la transferencia de chats a representantes sin conexión",
+        "switch_inactive": "Bloquear la transferencia de chats a representantes sin conexión"
       },
       "bulk_close": {
         "switch_active": "Finalizar chats en masa activo",
@@ -909,13 +941,12 @@
         "switch_inactive": "Asumir chats en masa"
       },
       "queue_prioritization": {
-        "tooltip": "Esta función permite a los agentes elegir las colas que recibirán contactos, dentro de las previamente seleccionadas en el sector.",
-        "switch_active": "Permitir que los agentes elijan sus colas dentro del sector activo",
-        "switch_inactive": "Permitir que los agentes elijan sus colas dentro del sector inactivo"
+        "switch_label": "Permite a los agentes elegir de qué colas reciben chats",
+        "hint": "Si está activa, el recurso solo será visible para los representantes en el módulo Live Desk"
       },
       "show_agent_status_count_timer": {
-        "switch_active": "Mostrar temporizador de estado en pausas personalizadas del agente activo",
-        "switch_inactive": "Mostrar temporizador de estado en pausas personalizadas del agente inactivo"
+        "switch_active": "Mostrar temporizador de estado en pausas personalizadas del representante",
+        "switch_inactive": "Mostrar temporizador de estado en pausas personalizadas del representante"
       },
       "show_waiting_rooms_count": {
         "switch_label": "Mostrar el contador con el número de chats esperando soporte humano"
@@ -935,7 +966,7 @@
       "invalid_hours": "La hora de inicio no puede ser mayor o igual a la hora de finalización.",
       "invalid_start_second_hour": "La hora de inicio del segundo período debe ser mayor o igual a la hora de finalización del primer período."
     },
-    "custom_queue": "Crear una fila personalizada",
+    "custom_queue": "Crear una fila personalizada (recomendado)",
     "default_queue": {
       "title": "Crear fila predeterminada (más rápido)",
       "name": "Fila predeterminada"
@@ -943,14 +974,21 @@
     "queues": {
       "in_sector": "Fila en el sector {sector}",
       "new": "Nueva cola",
-      "info": "Las colas son grupos de atención dentro de un sector; es posible dirigir contactos de un flujo a una cola específica",
-      "hint": "Las colas son grupos de atención dentro de un sector; podrás crear nuevas filas o editarlas cuando desees.",
-      "queue_definitions": "Configuraciones de la cola",
+      "title": "Gestión de colas",
+      "hint": "Las colas son grupos de atención dentro de un sector; podrás crear nuevas colas o editarlas cuando desees.",
+      "filter_by_name": "Filtrar por nombre de la cola",
+      "add_queue": "Agregar cola",
+      "delete_this_queue": "Escribe el nombre de la cola a eliminar",
+      "remove_tooltip": "Quitar esta cola",
+      "configure_queue": {
+        "title": "Configurar cola",
+        "tooltip": "Las colas son grupos de atención dentro del sector. Puedes crear nuevas colas o editarlas cuando quieras después de crear el sector."
+      },
       "delete_or_edit": "Eliminar o editar",
       "limit_chats": {
         "title": "Limite de chats esperando soporte",
         "switch": {
-          "label": "Limite de chats",
+          "label": "Limitar el número de chats en espera de soporte",
           "helper": "Cuando el límite es alcanzado, nuevos chats no serán creados.",
           "input_label": "Máximo de chats esperando",
           "input_placeholder": "Ejemplo: 50"
@@ -964,6 +1002,20 @@
         "delete_error": "No se pudo eliminar la cola",
         "add_new_queue": "Esta nueva fila se agregará para todos los agentes. Puede eliminarla accediendo a <b>Configuración de Live desk > Grupos > Agentes</b>",
         "config_agents_group": "Agregue o elimine agentes de esta fila a través de los grupos de proyectos accediendo a <b>Configuración del Chat > Grupos de proyectos</b>"
+      }
+    },
+    "quick_messages": {
+      "add": "Agregar nuevo mensaje rápido",
+      "create": "Crear mensaje rápido",
+      "delete_this_quick_message": "Eliminar este mensaje rápido",
+      "empty": {
+        "description": "Crea el primer mensaje rápido",
+        "title": "No hay mensajes rápidos en este sector"
+      },
+      "new": "Nuevo mensaje rápido",
+      "title": {
+        "label": "Configurar un mensaje rápido",
+        "tooltip": "Los mensajes rápidos son textos predeterminados que ayudan a estandarizar la atención. Todos los agentes de este sector podrán usar estos mensajes. Es posible registrar nuevos mensajes abajo."
       }
     },
     "groups": {
@@ -1032,12 +1084,22 @@
     "new_group": "Nuevo grupo",
     "agent_title": "Agentes",
     "contacts": "Contactos",
-    "open": "Abrir"
+    "open": "Abrir",
+    "empty_sectors": {
+      "title": "No hay sectores en este proyecto",
+      "subtitle": "Crea el primer sector para empezar a usar el módulo Live Desk",
+      "action": "Crear sector"
+    },
+    "empty_groups": {
+      "title": "No hay grupos de proyectos en {projectName}",
+      "subtitle": "Crea el primer grupo",
+      "action": "Crear grupo de proyectos"
+    }
   },
   "new_sector": {
     "sector_tip": "Cree un sector para administrar la operación de cumplimiento, incluidos roles, agentes y horas de administración",
     "queues_tip": "Las colas sirven para organizar los tipos de servicio dentro de un sector, a través de las colas es posible crear grupos de servicios, crear al menos una cola para gestionar un equipo de agentes",
-    "tags_tip": "Las etiquetas se utilizan para clasificar las características de los servicios y permiten buscar y filtrar chats a partir de ellos, definir etiquetas que sean relevantes para su contexto",
+    "tags_tip": "Las etiquetas se utilizan para clasificar las características de los servicios y permiten buscar y filtrar chats a partir de ellos, definir etiquetas que sean relevantes para su contexto.",
     "agent_tip": "Agregue miembros a su proyecto para poder establecer como administrador",
     "alert": {
       "create_success": "¡Nuevo sector {sectorName} creado!",
@@ -1132,5 +1194,8 @@
       "text_2": "Además, los <b>campos personalizados</b> ahora pueden ser expandidos y contraídos, para que puedas ver lo que realmente importa sin tener que hacer scroll.",
       "text_3": "Y para hacer la interfaz más limpia, hemos cambiado el aspecto del botón <b>Iniciar discusión</b>."
     }
+  },
+  "modal_confirm_delete": {
+    "action_cannot_be_reversed": "Esta acción no se puede deshacer"
   }
 }
