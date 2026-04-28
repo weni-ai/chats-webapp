@@ -84,6 +84,8 @@ import { useFeatureFlag } from '@/store/modules/featureFlag';
 
 import Queue from '@/services/api/resources/settings/queue';
 
+import { handleConnectOverlay } from '@/utils/overlay';
+
 import unnnic from '@weni/unnnic-system';
 
 export default {
@@ -213,9 +215,6 @@ export default {
 
       this.showDeleteQueueModal = true;
     },
-    handleConnectOverlay(active) {
-      window.parent.postMessage({ event: 'changeOverlay', data: active }, '*');
-    },
     listenConnect() {
       window.addEventListener('message', (message) => {
         const { event } = message.data;
@@ -225,7 +224,7 @@ export default {
       });
     },
     openConfigQueueDrawer(queue = undefined) {
-      this.handleConnectOverlay(true);
+      handleConnectOverlay(true);
 
       if (queue) {
         this.editQueueTitle = queue.name;
@@ -257,7 +256,7 @@ export default {
       this.showQueueDrawer = true;
     },
     closeQueueConfigDrawer() {
-      this.handleConnectOverlay(false);
+      handleConnectOverlay(false);
       this.showQueueDrawer = false;
       this.queueToConfig = [{}];
     },

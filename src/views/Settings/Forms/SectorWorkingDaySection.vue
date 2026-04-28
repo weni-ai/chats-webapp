@@ -215,6 +215,8 @@ import CountryHolidaysModal from './modals/CountryHolidaysModal.vue';
 import CustomHolidaysModal from './modals/CustomHolidaysModal.vue';
 import CreateCustomHolidayModal from './modals/CreateCustomHolidayModal.vue';
 
+import { handleConnectOverlay } from '@/utils/overlay';
+
 const emptyWorkdayTime = {
   start: '',
   end: '',
@@ -457,12 +459,8 @@ export default {
       getSectors: 'getSectors',
     }),
 
-    handleConnectOverlay(active) {
-      window.parent.postMessage({ event: 'changeOverlay', data: active }, '*');
-    },
-
     handleModal(modal, open) {
-      this.handleConnectOverlay(open);
+      handleConnectOverlay(open);
       this[modal] = open;
     },
 
