@@ -1091,6 +1091,18 @@
       "select_count": "{count} selecionados",
       "empty_list": "Ainda não há membros com permissão para atendimento humano neste projeto. Convide um membro ou atualize as permissões de um membro em Gestão de membros para vê-los aqui.",
       "not_found_list": "Nenhum representante encontrado. Tente outro filtro.",
+      "save_success": "Alterações salvas com sucesso",
+      "save_error": "Não foi possível salvar as alterações",
+      "bulk_chats_limit_modal": {
+        "title": "Limite de chats simultâneos",
+        "disclaimer": "O limite será aplicado aos {count} representantes selecionados.",
+        "input": {
+          "label": "Definir o limite de chats simultâneos",
+          "tooltip": "Um limite definido para um representante específico substitui o limite a nível de setor",
+          "helper": "Defina 0 para que os representantes puxem chats a partir da fila",
+          "placeholder": "Exemplo: 4"
+        }
+      },
       "queue_manager": {
         "title": "Gerenciar {representativeName}",
         "bulk_title": "Alterar setores e filas",
@@ -1108,9 +1120,7 @@
         "sector_queues_checkbox": {
           "title": "Setores e filas",
           "bulk_description": "Selecione os setores e as filas para a alteração:"
-        },
-        "save_success": "Alterações salvas com sucesso",
-        "save_error": "Não foi possível salvar as alterações"
+        }
       },
       "chats_limit": {
         "label": "{count} chats simultâneos"

@@ -54,7 +54,15 @@
       :representatives="toManagerRepresentative"
       @close="closeQueueManager"
       @update:open="closeQueueManager"
-      @success="handleSuccessQueueManager()"
+      @success="handleSuccessSaveChanges()"
+    />
+    <BulkChatsLimitModal
+      v-if="showBulkChatsLimitModal"
+      :modelValue="showBulkChatsLimitModal"
+      :representatives="selectedRepresentatives"
+      @close="closeBulkChatsLimitModal"
+      @update:model-value="closeBulkChatsLimitModal"
+      @success="handleSuccessSaveChanges()"
     />
   </section>
 </template>
@@ -67,6 +75,7 @@ import HeaderFilters from './HeaderFilters.vue';
 import Actions from './Actions.vue';
 import RepresentativesList from './RepresentativesList/index.vue';
 import QueueManager from './QueueManager/index.vue';
+import BulkChatsLimitModal from './BulkChatsLimitModal.vue';
 
 import RepresentativeService from '@/services/api/resources/settings/representative';
 
@@ -82,7 +91,13 @@ const openQueueManagement = () => {
 };
 
 const openChatsLimitManagement = () => {
-  console.log('TODO:openChatsLimitManagement');
+  toManagerRepresentative.value = cloneDeep(selectedRepresentatives.value);
+  showBulkChatsLimitModal.value = true;
+};
+
+const closeBulkChatsLimitModal = () => {
+  showBulkChatsLimitModal.value = false;
+  toManagerRepresentative.value = [];
 };
 
 const handleClickRepresentative = (representative: any) => {
@@ -94,6 +109,7 @@ const closeQueueManager = () => {
   toManagerRepresentative.value = [];
 };
 
+const showBulkChatsLimitModal = ref(false);
 const showQueueManager = ref(false);
 const toManagerRepresentative = ref<Representative[]>([]);
 
@@ -167,9 +183,11 @@ const handleFiltersChange = () => {
   else representativesPage.value = 1;
 };
 
-const handleSuccessQueueManager = () => {
+const handleSuccessSaveChanges = () => {
   toManagerRepresentative.value = [];
   selectedRepresentatives.value = [];
+  showQueueManager.value = false;
+  showBulkChatsLimitModal.value = false;
   handleFiltersChange();
 };
 

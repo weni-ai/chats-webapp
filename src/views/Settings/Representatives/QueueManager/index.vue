@@ -309,9 +309,7 @@ const saveChanges = async () => {
 
     UnnnicCallAlert({
       props: {
-        text: i18n.global.t(
-          'config_chats.representatives.queue_manager.save_success',
-        ),
+        text: i18n.global.t('config_chats.representatives.save_success'),
         type: 'success',
       },
     });
@@ -320,7 +318,7 @@ const saveChanges = async () => {
   } catch (error) {
     console.error('Error saving changes', error);
     UnnnicToastManager.error(
-      i18n.global.t('config_chats.representatives.queue_manager.save_error'),
+      i18n.global.t('config_chats.representatives.save_error'),
       '',
       {
         button: {
