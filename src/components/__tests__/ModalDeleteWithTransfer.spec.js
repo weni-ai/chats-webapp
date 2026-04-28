@@ -1,5 +1,15 @@
+import {
+  beforeAll,
+  afterAll,
+  describe,
+  it,
+  expect,
+  vi,
+  beforeEach,
+  afterEach,
+} from 'vitest';
 import { mount, flushPromises, config } from '@vue/test-utils';
-import { beforeAll, afterAll, describe, it, expect, vi, beforeEach } from 'vitest';
+import { createPinia, setActivePinia } from 'pinia';
 
 import ModalDeleteWithTransfer from '@/components/ModalDeleteWithTransfer.vue';
 import i18n from '@/plugins/i18n';
@@ -14,6 +24,7 @@ afterAll(() => {
   if (!config.global.plugins.includes(i18n)) {
     config.global.plugins.push(i18n);
   }
+  vi.restoreAllMocks();
 });
 
 vi.mock('@/services/api/resources/settings/sector', () => ({
@@ -38,35 +49,51 @@ vi.mock('@/services/api/resources/settings/queue', () => ({
   },
 }));
 
-const createWrapper = (props = {}) => {
-  return mount(ModalDeleteWithTransfer, {
-    props: {
-      modelValue: true,
-      type: 'sector',
-      name: 'Test Sector',
-      inProgressChatsCount: 0,
-      isLoading: false,
-      excludeSectorUuid: '',
-      excludeQueueUuid: '',
-      ...props,
-    },
-  });
-};
-
 describe('ModalDeleteWithTransfer.vue', () => {
+  let wrapper;
+  let pinia;
+
+  const mountComponent = (props = {}) => {
+    return mount(ModalDeleteWithTransfer, {
+      props: {
+        modelValue: true,
+        type: 'sector',
+        name: 'Test Sector',
+        inProgressChatsCount: 0,
+        isLoading: false,
+        excludeSectorUuid: '',
+        excludeQueueUuid: '',
+        ...props,
+      },
+      global: {
+        plugins: [pinia],
+        mocks: { $t: (key) => key },
+      },
+    });
+  };
+
   beforeEach(() => {
     vi.clearAllMocks();
+    pinia = createPinia();
+    setActivePinia(pinia);
+  });
+
+  afterEach(() => {
+    if (wrapper) {
+      wrapper.unmount();
+      wrapper = null;
+    }
   });
 
   describe('isFormValid', () => {
     it('should be invalid when confirm text does not match name', () => {
-      const wrapper = createWrapper({ inProgressChatsCount: 0 });
+      wrapper = mountComponent({ inProgressChatsCount: 0 });
 
       expect(wrapper.vm.isFormValid).toBe(false);
     });
 
     it('should be valid when name matches and no active chats', async () => {
-      const wrapper = createWrapper({ inProgressChatsCount: 0 });
+      wrapper = mountComponent({ inProgressChatsCount: 0 });
 
       wrapper.vm.confirmText = 'Test Sector';
       await wrapper.vm.$nextTick();
@@ -75,7 +102,7 @@ describe('ModalDeleteWithTransfer.vue', () => {
     });
 
     it('should be invalid when transfer selected with active chats but no queue', async () => {
-      const wrapper = createWrapper({ inProgressChatsCount: 5 });
+      wrapper = mountComponent({ inProgressChatsCount: 5 });
       await flushPromises();
 
       wrapper.vm.confirmText = 'Test Sector';
@@ -88,7 +115,7 @@ describe('ModalDeleteWithTransfer.vue', () => {
     });
 
     it('should be invalid when transfer selected with active chats but empty queue value', async () => {
-      const wrapper = createWrapper({ inProgressChatsCount: 5 });
+      wrapper = mountComponent({ inProgressChatsCount: 5 });
       await flushPromises();
 
       wrapper.vm.confirmText = 'Test Sector';
@@ -101,7 +128,7 @@ describe('ModalDeleteWithTransfer.vue', () => {
     });
 
     it('should be invalid when transfer selected with active chats but no sector', async () => {
-      const wrapper = createWrapper({ inProgressChatsCount: 5 });
+      wrapper = mountComponent({ inProgressChatsCount: 5 });
       await flushPromises();
 
       wrapper.vm.confirmText = 'Test Sector';
@@ -114,12 +141,14 @@ describe('ModalDeleteWithTransfer.vue', () => {
     });
 
     it('should be valid when transfer selected with active chats and both sector and queue set', async () => {
-      const wrapper = createWrapper({ inProgressChatsCount: 5 });
+      wrapper = mountComponent({ inProgressChatsCount: 5 });
       await flushPromises();
 
       wrapper.vm.confirmText = 'Test Sector';
       wrapper.vm.selectedAction = 'transfer';
       wrapper.vm.selectedSector = { value: 'sector-1', label: 'Sector 1' };
+      await flushPromises();
+
       wrapper.vm.selectedQueue = { value: 'queue-1', label: 'Queue 1' };
       await wrapper.vm.$nextTick();
 
@@ -127,7 +156,7 @@ describe('ModalDeleteWithTransfer.vue', () => {
     });
 
     it('should be valid when end_all selected with active chats', async () => {
-      const wrapper = createWrapper({ inProgressChatsCount: 5 });
+      wrapper = mountComponent({ inProgressChatsCount: 5 });
       await flushPromises();
 
       wrapper.vm.confirmText = 'Test Sector';
@@ -140,7 +169,7 @@ describe('ModalDeleteWithTransfer.vue', () => {
 
   describe('handleConfirm', () => {
     it('should not emit confirm when form is invalid', async () => {
-      const wrapper = createWrapper({ inProgressChatsCount: 5 });
+      wrapper = mountComponent({ inProgressChatsCount: 5 });
       await flushPromises();
 
       wrapper.vm.confirmText = 'Wrong Name';
@@ -152,7 +181,7 @@ describe('ModalDeleteWithTransfer.vue', () => {
     });
 
     it('should not emit confirm when transfer selected but queue is null', async () => {
-      const wrapper = createWrapper({ inProgressChatsCount: 5 });
+      wrapper = mountComponent({ inProgressChatsCount: 5 });
       await flushPromises();
 
       wrapper.vm.confirmText = 'Test Sector';
@@ -167,7 +196,7 @@ describe('ModalDeleteWithTransfer.vue', () => {
     });
 
     it('should not emit confirm when transfer selected but queue value is empty', async () => {
-      const wrapper = createWrapper({ inProgressChatsCount: 5 });
+      wrapper = mountComponent({ inProgressChatsCount: 5 });
       await flushPromises();
 
       wrapper.vm.confirmText = 'Test Sector';
@@ -182,12 +211,14 @@ describe('ModalDeleteWithTransfer.vue', () => {
     });
 
     it('should emit confirm with transfer payload when queue is valid', async () => {
-      const wrapper = createWrapper({ inProgressChatsCount: 5 });
+      wrapper = mountComponent({ inProgressChatsCount: 5 });
       await flushPromises();
 
       wrapper.vm.confirmText = 'Test Sector';
       wrapper.vm.selectedAction = 'transfer';
       wrapper.vm.selectedSector = { value: 'sector-1', label: 'Sector 1' };
+      await flushPromises();
+
       wrapper.vm.selectedQueue = { value: 'queue-1', label: 'Queue 1' };
       await wrapper.vm.$nextTick();
 
@@ -202,7 +233,7 @@ describe('ModalDeleteWithTransfer.vue', () => {
     });
 
     it('should emit confirm with end_all payload', async () => {
-      const wrapper = createWrapper({ inProgressChatsCount: 5 });
+      wrapper = mountComponent({ inProgressChatsCount: 5 });
       await flushPromises();
 
       wrapper.vm.confirmText = 'Test Sector';
@@ -218,7 +249,7 @@ describe('ModalDeleteWithTransfer.vue', () => {
     });
 
     it('should emit confirm with empty payload when no active chats', async () => {
-      const wrapper = createWrapper({ inProgressChatsCount: 0 });
+      wrapper = mountComponent({ inProgressChatsCount: 0 });
 
       wrapper.vm.confirmText = 'Test Sector';
       await wrapper.vm.$nextTick();
@@ -230,7 +261,7 @@ describe('ModalDeleteWithTransfer.vue', () => {
     });
 
     it('should not include transfer data when no active chats even if selectedAction is transfer', async () => {
-      const wrapper = createWrapper({ inProgressChatsCount: 0 });
+      wrapper = mountComponent({ inProgressChatsCount: 0 });
 
       wrapper.vm.confirmText = 'Test Sector';
       wrapper.vm.selectedAction = 'transfer';
@@ -247,7 +278,7 @@ describe('ModalDeleteWithTransfer.vue', () => {
 
   describe('handleActionChange', () => {
     it('should reset sector and queue when switching to end_all', async () => {
-      const wrapper = createWrapper({ inProgressChatsCount: 5 });
+      wrapper = mountComponent({ inProgressChatsCount: 5 });
       await flushPromises();
 
       wrapper.vm.selectedSector = { value: 'sector-1', label: 'Sector 1' };
@@ -261,7 +292,7 @@ describe('ModalDeleteWithTransfer.vue', () => {
     });
 
     it('should not reset sector and queue when switching to transfer', async () => {
-      const wrapper = createWrapper({ inProgressChatsCount: 5 });
+      wrapper = mountComponent({ inProgressChatsCount: 5 });
       await flushPromises();
 
       wrapper.vm.selectedSector = { value: 'sector-1', label: 'Sector 1' };
@@ -269,8 +300,14 @@ describe('ModalDeleteWithTransfer.vue', () => {
 
       wrapper.vm.handleActionChange('transfer');
 
-      expect(wrapper.vm.selectedSector).toEqual({ value: 'sector-1', label: 'Sector 1' });
-      expect(wrapper.vm.selectedQueue).toEqual({ value: 'queue-1', label: 'Queue 1' });
+      expect(wrapper.vm.selectedSector).toEqual({
+        value: 'sector-1',
+        label: 'Sector 1',
+      });
+      expect(wrapper.vm.selectedQueue).toEqual({
+        value: 'queue-1',
+        label: 'Queue 1',
+      });
       expect(wrapper.vm.selectedAction).toBe('transfer');
     });
   });
