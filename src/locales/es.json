@@ -1089,6 +1089,18 @@
       "select_count": "{count} seleccionados",
       "empty_list": "Aún no hay miembros con permiso de atención humana en este proyecto. Invita a alguien o actualiza los permisos de un miembro en Gestión de miembros para verlos aquí.",
       "not_found_list": "Ningún representante encontrado. Prueba con otro filtro.",
+      "save_success": "Cambios guardados con éxito",
+      "save_error": "No se pudieron guardar los cambios",
+      "bulk_chats_limit_modal": {
+        "title": "Límite de chats simultáneos",
+        "disclaimer": "El límite se aplicará a los {count} representantes seleccionados.",
+        "input": {
+          "label": "Definir el límite de chats simultáneos",
+          "tooltip": "Un límite definido para un representante específico reemplaza el límite a nivel de sector",
+          "helper": "Con 0, los representantes toman los chats de la cola",
+          "placeholder": "Ejemplo: 4"
+        }
+      },
       "queue_manager": {
         "title": "Gestionar {representativeName}",
         "bulk_title": "Cambiar sectores y colas",
@@ -1106,9 +1118,7 @@
         "sector_queues_checkbox": {
           "title": "Sectores y colas",
           "bulk_description": "Selecciona los sectores y las colas para el cambio:"
-        },
-        "save_success": "Cambios guardados con éxito",
-        "save_error": "No se pudieron guardar los cambios"
+        }
       },
       "chats_limit": {
         "label": "{count} chats simultáneos"

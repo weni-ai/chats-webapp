@@ -129,14 +129,22 @@ import { UnnnicCallAlert, UnnnicToastManager } from '@weni/unnnic-system';
 
 import i18n from '@/plugins/i18n';
 
+import type { Representative, RepresentativeQueuePermission } from '../types';
+
 defineOptions({
   name: 'SettingsRepresentativesQueueManager',
 });
 
+interface BodyFormData {
+  representatives: string[];
+  toRemove: string[];
+  toAdd: string[];
+  chatsLimit: { is_active: boolean; total: number | null } | undefined;
+}
+
 interface Props {
   open: boolean;
-  // TODO: type
-  representatives: any[];
+  representatives: Representative[];
 }
 
 const props = defineProps<Props>();
@@ -153,9 +161,7 @@ const formData = ref({
   chatsLimit: { is_active: false, total: null },
 });
 
-const sectorQueueData = ref<{ name: string; queues: Record<string, any> }[]>(
-  [],
-);
+const sectorQueueData = ref<RepresentativeQueuePermission[]>([]);
 const currentSelectedQueues = ref([]);
 const hasChanges = ref(false);
 const isLoadingSave = ref(false);
@@ -286,12 +292,7 @@ const saveChanges = async () => {
   try {
     isLoadingSave.value = true;
 
-    let bodyData: {
-      representatives: string[];
-      toRemove: string[];
-      toAdd: string[];
-      chatsLimit: { is_active: boolean; total: number | null } | undefined;
-    } = {
+    let bodyData: BodyFormData = {
       representatives: [],
       toRemove: [],
       toAdd: [],
@@ -308,9 +309,7 @@ const saveChanges = async () => {
 
     UnnnicCallAlert({
       props: {
-        text: i18n.global.t(
-          'config_chats.representatives.queue_manager.save_success',
-        ),
+        text: i18n.global.t('config_chats.representatives.save_success'),
         type: 'success',
       },
     });
@@ -319,7 +318,7 @@ const saveChanges = async () => {
   } catch (error) {
     console.error('Error saving changes', error);
     UnnnicToastManager.error(
-      i18n.global.t('config_chats.representatives.queue_manager.save_error'),
+      i18n.global.t('config_chats.representatives.save_error'),
       '',
       {
         button: {

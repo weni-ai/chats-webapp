@@ -1086,6 +1086,18 @@
       "select_count": "{count} selected",
       "empty_list": "There are no members with permission for human support in this project yet. Invite a new member or update an existing member’s permissions in Member Management to see them here.",
       "not_found_list": "No representative found. Try another filter.",
+      "save_success": "Changes saved successfully!",
+      "save_error": "Unable to save changes.",
+      "bulk_chats_limit_modal": {
+        "title": "Limit of simultaneous chats",
+        "disclaimer": "The limit will be applied to the {count} selected representatives.",
+        "input": {
+          "label": "Define the limit of simultaneous chats",
+          "tooltip": "A limit set for a specific agent overrides the sector-level limit.",
+          "helper": "Set to 0 to have representatives pick up chats from the queue.",
+          "placeholder": "Example: 4"
+        }
+      },
       "queue_manager": {
         "title": "Manage {representativeName}",
         "bulk_title": "Change sectors and queues",
@@ -1103,9 +1115,7 @@
         "sector_queues_checkbox": {
           "title": "Sectors and queues",
           "bulk_description": "Select the sectors and queues for the change:"
-        },
-        "save_success": "Changes saved successfully!",
-        "save_error": "Unable to save changes."
+        }
       },
       "chats_limit": {
         "label": "{count} simultaneous chats"

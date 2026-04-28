@@ -64,26 +64,11 @@ import RepresentativeSectorList from './SectorList.vue';
 
 import i18n from '@/plugins/i18n';
 
+import type { Representative } from '../types';
+
 defineOptions({
   name: 'RepresentativeCard',
 });
-
-interface RepresentativeSector {
-  name: string;
-  queues: string[];
-}
-
-interface Representative {
-  name: string;
-  status: string;
-  chats_limit: {
-    active: boolean;
-    total: number | null;
-  };
-  email: string;
-  sector: RepresentativeSector[];
-  sector_chats_total_limit: number;
-}
 
 interface Props {
   selected: boolean;

@@ -29,7 +29,10 @@
         @click:representative="handleClickRepresentative"
       />
     </section>
-    <section class="settings-representatives__pagination">
+    <section
+      v-if="representatives.length > 0"
+      class="settings-representatives__pagination"
+    >
       <p class="settings-representatives__pagination__count">
         {{
           $t('pagination', {
@@ -51,7 +54,15 @@
       :representatives="toManagerRepresentative"
       @close="closeQueueManager"
       @update:open="closeQueueManager"
-      @success="handleSuccessQueueManager()"
+      @success="handleSuccessSaveChanges()"
+    />
+    <BulkChatsLimitModal
+      v-if="showBulkChatsLimitModal"
+      :modelValue="showBulkChatsLimitModal"
+      :representatives="selectedRepresentatives"
+      @close="closeBulkChatsLimitModal"
+      @update:model-value="closeBulkChatsLimitModal"
+      @success="handleSuccessSaveChanges()"
     />
   </section>
 </template>
@@ -64,8 +75,11 @@ import HeaderFilters from './HeaderFilters.vue';
 import Actions from './Actions.vue';
 import RepresentativesList from './RepresentativesList/index.vue';
 import QueueManager from './QueueManager/index.vue';
+import BulkChatsLimitModal from './BulkChatsLimitModal.vue';
 
 import RepresentativeService from '@/services/api/resources/settings/representative';
+
+import type { Representative } from './types';
 
 defineOptions({
   name: 'SettingsRepresentatives',
@@ -77,7 +91,13 @@ const openQueueManagement = () => {
 };
 
 const openChatsLimitManagement = () => {
-  console.log('TODO:openChatsLimitManagement');
+  toManagerRepresentative.value = cloneDeep(selectedRepresentatives.value);
+  showBulkChatsLimitModal.value = true;
+};
+
+const closeBulkChatsLimitModal = () => {
+  showBulkChatsLimitModal.value = false;
+  toManagerRepresentative.value = [];
 };
 
 const handleClickRepresentative = (representative: any) => {
@@ -89,13 +109,14 @@ const closeQueueManager = () => {
   toManagerRepresentative.value = [];
 };
 
+const showBulkChatsLimitModal = ref(false);
 const showQueueManager = ref(false);
-const toManagerRepresentative = ref([]);
+const toManagerRepresentative = ref<Representative[]>([]);
 
 const hasRepresentativesInProject = ref(false);
 const isLoadingRepresentatives = ref(false);
-const representatives = ref([]);
-const selectedRepresentatives = ref([]);
+const representatives = ref<Representative[]>([]);
+const selectedRepresentatives = ref<Representative[]>([]);
 const selectAllRepresentatives = ref(false);
 const representativesFilters = ref({
   status: [],
@@ -162,9 +183,11 @@ const handleFiltersChange = () => {
   else representativesPage.value = 1;
 };
 
-const handleSuccessQueueManager = () => {
+const handleSuccessSaveChanges = () => {
   toManagerRepresentative.value = [];
   selectedRepresentatives.value = [];
+  showQueueManager.value = false;
+  showBulkChatsLimitModal.value = false;
   handleFiltersChange();
 };
 
