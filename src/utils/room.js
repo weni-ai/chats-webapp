@@ -16,3 +16,22 @@ export const parseUrn = (room) => {
   };
   return infoNumber;
 };
+
+export const sanitizeDocument = (doc) => {
+  if (!doc) return '';
+  return doc.replaceAll(/[^a-zA-Z0-9]/g, '');
+};
+
+export const buildHistorySearchTerm = (room) => {
+  const { plataform, contactNum } = parseUrn(room);
+  const contactUrn =
+    plataform === 'whatsapp' ? contactNum.replace('+', '') : contactNum;
+
+  const parts = [];
+  if (contactUrn) parts.push(contactUrn);
+  if (room?.contact?.email) parts.push(room.contact.email);
+  if (room?.contact?.document)
+    parts.push(sanitizeDocument(room.contact.document));
+
+  return parts.join(',');
+};
