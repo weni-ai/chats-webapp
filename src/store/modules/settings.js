@@ -88,8 +88,8 @@ export const useSettings = defineStore('settings', {
       this.sectors.splice(index, 1, sector);
     },
 
-    async deleteSector(sectorUuid) {
-      await Sector.deleteSector(sectorUuid);
+    async deleteSector(sectorUuid, options = {}) {
+      await Sector.deleteSector(sectorUuid, options);
       this.sectors = this.sectors.filter(
         (sector) => sector.uuid !== sectorUuid,
       );

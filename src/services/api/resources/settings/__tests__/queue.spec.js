@@ -82,9 +82,13 @@ describe('Queue', () => {
   it('should delete a queue', async () => {
     const queueUuid = '456';
 
+    http.delete.mockResolvedValue({ data: undefined });
+
     await Queue.delete(queueUuid);
 
-    expect(http.delete).toHaveBeenCalledWith(`/queue/${queueUuid}/`);
+    expect(http.delete).toHaveBeenCalledWith(`/queue/${queueUuid}/`, {
+      params: {},
+    });
   });
 
   it('should list agents in a queue', async () => {

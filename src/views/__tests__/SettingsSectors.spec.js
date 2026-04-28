@@ -6,11 +6,19 @@ import SettingsSectors from '@/views/Settings/SettingsSectors.vue';
 
 import { createTestingPinia } from '@pinia/testing';
 import { useSettings } from '@/store/modules/settings';
+import { useFeatureFlag } from '@/store/modules/featureFlag';
 import unnnic from '@weni/unnnic-system';
+import Rooms from '@/services/api/resources/settings/rooms';
 
 vi.mock('@weni/unnnic-system', () => ({
   default: {
     unnnicCallAlert: vi.fn(),
+  },
+}));
+
+vi.mock('@/services/api/resources/settings/rooms', () => ({
+  default: {
+    count: vi.fn().mockResolvedValue({ waiting: 5, in_service: 3 }),
   },
 }));
 
@@ -51,6 +59,10 @@ const createWrapper = (initialState = {}) => {
         sectors: mockSectors,
         isLoadingSectors: false,
         ...initialState.settings,
+      },
+      featureFlag: {
+        featureFlags: { active_features: [] },
+        ...initialState.featureFlag,
       },
     },
   });
@@ -106,7 +118,7 @@ const createWrapper = (initialState = {}) => {
           template: '<span></span>',
           props: ['icon', 'size', 'scheme'],
         },
-        ModalConfirmDelete: true,
+        ModalDeleteWithTransfer: true,
       },
       mocks: {
         $router: mockRouter,
@@ -125,9 +137,8 @@ const createWrapper = (initialState = {}) => {
             confirm_typing: 'Type to confirm',
             confirm: 'Confirm',
             cancel: 'Cancel',
-            sector_deleted_success: 'Sector deleted successfully!',
-            sector_delete_error:
-              'Unable to delete sector, please try again later.',
+            'delete_modal.sector_success': 'Sector deleted successfully!',
+            'delete_modal.sector_error': 'Unable to delete the sector.',
           };
           return translations[key] || key;
         },
@@ -345,8 +356,8 @@ describe('SettingsSectors.vue', () => {
 
       expect(wrapper.vm.showDeleteSectorModal).toBe(false);
 
-      wrapper.vm.handlerOpenDeleteSectorModal(sector);
-      await wrapper.vm.$nextTick();
+      await wrapper.vm.handlerOpenDeleteSectorModal(sector);
+      await flushPromises();
 
       expect(wrapper.vm.showDeleteSectorModal).toBe(true);
       expect(wrapper.vm.toDeleteSector).toEqual(sector);
@@ -372,17 +383,19 @@ describe('SettingsSectors.vue', () => {
       );
     });
 
-    it('should delete sector successfully', async () => {
+    it('should delete sector successfully with end_all action', async () => {
       const sector = mockSectors[0];
       settingsStore.deleteSector = vi.fn().mockResolvedValue({});
 
-      wrapper.vm.handlerOpenDeleteSectorModal(sector);
-      await wrapper.vm.$nextTick();
-
-      await wrapper.vm.deleteSector(sector.uuid);
+      await wrapper.vm.handlerOpenDeleteSectorModal(sector);
       await flushPromises();
 
-      expect(settingsStore.deleteSector).toHaveBeenCalledWith(sector.uuid);
+      await wrapper.vm.deleteSector(sector.uuid, { action: 'end_all' });
+      await flushPromises();
+
+      expect(settingsStore.deleteSector).toHaveBeenCalledWith(sector.uuid, {
+        endAllChats: true,
+      });
       expect(mockRouter.push).toHaveBeenCalledWith({ name: 'sectors' });
       expect(unnnic.unnnicCallAlert).toHaveBeenCalledWith({
         props: {
@@ -394,30 +407,63 @@ describe('SettingsSectors.vue', () => {
       expect(wrapper.vm.showDeleteSectorModal).toBe(false);
     });
 
+    it('should delete sector with transfer action passing queue uuid', async () => {
+      const sector = mockSectors[0];
+      settingsStore.deleteSector = vi.fn().mockResolvedValue({});
+
+      await wrapper.vm.handlerOpenDeleteSectorModal(sector);
+      await flushPromises();
+
+      await wrapper.vm.deleteSector(sector.uuid, {
+        action: 'transfer',
+        transferQueueUuid: 'target-queue-uuid',
+      });
+      await flushPromises();
+
+      expect(settingsStore.deleteSector).toHaveBeenCalledWith(sector.uuid, {
+        transferToQueue: 'target-queue-uuid',
+      });
+      expect(mockRouter.push).toHaveBeenCalledWith({ name: 'sectors' });
+      expect(wrapper.vm.showDeleteSectorModal).toBe(false);
+    });
+
+    it('should delete sector without transfer options when payload is empty', async () => {
+      const sector = mockSectors[0];
+      settingsStore.deleteSector = vi.fn().mockResolvedValue({});
+
+      await wrapper.vm.handlerOpenDeleteSectorModal(sector);
+      await flushPromises();
+
+      await wrapper.vm.deleteSector(sector.uuid, {});
+      await flushPromises();
+
+      expect(settingsStore.deleteSector).toHaveBeenCalledWith(sector.uuid, {});
+      expect(mockRouter.push).toHaveBeenCalledWith({ name: 'sectors' });
+      expect(wrapper.vm.showDeleteSectorModal).toBe(false);
+    });
+
     it('should handle error when deleting sector', async () => {
       const sector = mockSectors[0];
       const error = new Error('Delete failed');
       settingsStore.deleteSector = vi.fn().mockRejectedValue(error);
-      const consoleSpy = vi.spyOn(console, 'log').mockImplementation(() => {});
 
-      wrapper.vm.handlerOpenDeleteSectorModal(sector);
-      await wrapper.vm.$nextTick();
-
-      await wrapper.vm.deleteSector(sector.uuid);
+      await wrapper.vm.handlerOpenDeleteSectorModal(sector);
       await flushPromises();
 
-      expect(settingsStore.deleteSector).toHaveBeenCalledWith(sector.uuid);
-      expect(consoleSpy).toHaveBeenCalledWith(error);
+      await wrapper.vm.deleteSector(sector.uuid, { action: 'end_all' });
+      await flushPromises();
+
+      expect(settingsStore.deleteSector).toHaveBeenCalledWith(sector.uuid, {
+        endAllChats: true,
+      });
       expect(unnnic.unnnicCallAlert).toHaveBeenCalledWith({
         props: {
-          text: 'Unable to delete sector, please try again later.',
+          text: 'Unable to delete the sector.',
           type: 'error',
         },
         seconds: 5,
       });
       expect(wrapper.vm.showDeleteSectorModal).toBe(false);
-
-      consoleSpy.mockRestore();
     });
   });
 
@@ -438,6 +484,38 @@ describe('SettingsSectors.vue', () => {
         { event: 'changeOverlay', data: false },
         '*',
       );
+    });
+  });
+
+  describe('Feature Flag: weniChatsDeleteTransfer', () => {
+    it('should fetch rooms count when feature flag is enabled', async () => {
+      const featureFlagStore = useFeatureFlag();
+      featureFlagStore.featureFlags = {
+        active_features: ['weniChatsDeleteTransfer'],
+      };
+      await wrapper.vm.$nextTick();
+
+      const sector = mockSectors[0];
+      await wrapper.vm.handlerOpenDeleteSectorModal(sector);
+      await flushPromises();
+
+      expect(Rooms.count).toHaveBeenCalledWith({ sector: sector.uuid });
+      expect(wrapper.vm.sectorRoomsCount).toBe(8);
+    });
+
+    it('should not fetch rooms count when feature flag is disabled', async () => {
+      const featureFlagStore = useFeatureFlag();
+      featureFlagStore.featureFlags = { active_features: [] };
+      await wrapper.vm.$nextTick();
+
+      Rooms.count.mockClear();
+
+      const sector = mockSectors[0];
+      await wrapper.vm.handlerOpenDeleteSectorModal(sector);
+      await flushPromises();
+
+      expect(Rooms.count).not.toHaveBeenCalled();
+      expect(wrapper.vm.sectorRoomsCount).toBe(0);
     });
   });
 

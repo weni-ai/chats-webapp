@@ -1134,5 +1134,24 @@
       "text_2": "Além disso, os <b>campos personalizados</b> agora podem ser expandidos e recolhidos, para que você possa ver o que realmente importa sem ter que rolar.",
       "text_3": "E para tornar a interface mais limpa, mudamos o visual do botão <b>Iniciar discussão</b>."
     }
+  },
+  "delete_modal": {
+    "title": "Excluir {name}",
+    "description_sector": "O sistema detectou {count} conversas no setor {name} que estão em atendimento ou aguardando para serem atendidas. Escolha o que deseja fazer com elas",
+    "description_queue": "O sistema detectou {count} conversas na fila {name} que estão em atendimento ou aguardando para serem atendidas. Escolha o que deseja fazer com elas",
+    "transfer_chats": "Transferir conversas para outro setor/fila",
+    "end_all_chats": "Encerrar todas as conversas",
+    "select_sector": "Selecione um setor",
+    "select_queue": "Selecione uma fila",
+    "type_name_sector": "Digite o nome do setor para excluir",
+    "type_name_queue": "Digite o nome da fila para excluir",
+    "cannot_be_reversed": "Esta ação não pode ser revertida.",
+    "delete_button": "Excluir",
+    "sector_success": "Setor excluído com sucesso!",
+    "sector_error": "Não foi possível excluir o setor.",
+    "queue_success": "Fila excluída com sucesso!",
+    "queue_error": "Não foi possível excluir a fila.",
+    "transfer_error_sector": "Não foi possível transferir as conversas. Exclusão do setor cancelada",
+    "transfer_error_queue": "Não foi possível transferir as conversas. Exclusão da fila cancelada"
   }
 }

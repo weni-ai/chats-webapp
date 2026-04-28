@@ -112,15 +112,16 @@
       />
     </template>
   </UnnnicDrawer>
-  <ModalConfirmDelete
+  <ModalDeleteWithTransfer
     v-if="showDeleteQueueModal"
     v-model="showDeleteQueueModal"
     data-testid="delete-queue-modal"
-    :title="$t('delete_queue_modal.text', { queue: queueToDelete.name })"
-    :description="$t('cant_revert')"
-    :confirmText="queueToDelete.name"
+    type="queue"
+    :name="queueToDelete.name"
+    :excludeQueueUuid="queueToDelete.uuid"
+    :inProgressChatsCount="queueRoomsCount"
     :isLoading="isLoadingDeleteQueue"
-    @confirm="deleteQueue()"
+    @confirm="deleteQueue"
     @cancel="handlerCloseDeleteQueueModal()"
   />
 </template>
@@ -131,7 +132,8 @@ import { mapState } from 'pinia';
 import FormQueue from '../forms/Queue.vue';
 import ListOrdinator from '@/components/settings/ListOrdinator.vue';
 import Queue from '@/services/api/resources/settings/queue';
-import ModalConfirmDelete from '@/components/ModalConfirmDelete.vue';
+import Rooms from '@/services/api/resources/settings/rooms';
+import ModalDeleteWithTransfer from '@/components/ModalDeleteWithTransfer.vue';
 
 import { useFeatureFlag } from '@/store/modules/featureFlag';
 
@@ -142,7 +144,7 @@ export default {
   components: {
     FormQueue,
     ListOrdinator,
-    ModalConfirmDelete,
+    ModalDeleteWithTransfer,
   },
   props: {
     sector: {
@@ -163,6 +165,7 @@ export default {
       queueNameFilter: '',
       queueOrder: 'alphabetical',
       isLoadingDeleteQueue: false,
+      queueRoomsCount: 0,
     };
   },
 
@@ -170,6 +173,11 @@ export default {
     ...mapState(useFeatureFlag, ['featureFlags']),
     enableQueueLimitFeature() {
       return this.featureFlags.active_features?.includes('weniChatsQueueLimit');
+    },
+    isDeleteTransferEnabled() {
+      return this.featureFlags.active_features?.includes(
+        'weniChatsDeleteTransfer',
+      );
     },
     queuesOrdered() {
       let queuesOrdered = this.queues.slice().sort((a, b) => {
@@ -205,27 +213,37 @@ export default {
     this.getQueues();
   },
   methods: {
-    async deleteQueue() {
+    async deleteQueue(transferPayload) {
       try {
         this.isLoadingDeleteQueue = true;
-        await Queue.delete(this.queueToDelete.uuid);
+
+        const options = {};
+        if (transferPayload.action === 'transfer') {
+          options.transferToQueue = transferPayload.transferQueueUuid;
+        } else if (transferPayload.action === 'end_all') {
+          options.endAllChats = true;
+        }
+
+        await Queue.delete(this.queueToDelete.uuid, options);
         this.queues = this.queues.filter(
           (queue) => queue.uuid !== this.queueToDelete.uuid,
         );
         unnnic.unnnicCallAlert({
           props: {
-            text: this.$t('config_chats.queues.message.delete_success'),
+            text: this.$t('delete_modal.queue_success'),
             type: 'success',
           },
         });
       } catch (error) {
+        const isTransferConflict = error?.response?.status === 409;
         unnnic.unnnicCallAlert({
           props: {
-            text: this.$t('config_chats.queues.message.delete_error'),
+            text: isTransferConflict
+              ? this.$t('delete_modal.transfer_error_queue')
+              : this.$t('delete_modal.queue_error'),
             type: 'error',
           },
         });
-        console.log(error);
       } finally {
         this.handlerCloseDeleteQueueModal();
         this.isLoadingDeleteQueue = false;
@@ -236,9 +254,23 @@ export default {
       this.queueToDelete = {};
       this.showDeleteQueueModal = false;
     },
-    handlerOpenDeleteQueueModal(queue) {
+    async handlerOpenDeleteQueueModal(queue) {
       this.handleConnectOverlay(true);
       this.queueToDelete = queue;
+
+      if (this.isDeleteTransferEnabled) {
+        try {
+          const { waiting, in_service } = await Rooms.count({
+            queue: queue.uuid,
+          });
+          this.queueRoomsCount = waiting + in_service;
+        } catch {
+          this.queueRoomsCount = 0;
+        }
+      } else {
+        this.queueRoomsCount = 0;
+      }
+
       this.showDeleteQueueModal = true;
     },
     handleConnectOverlay(active) {
