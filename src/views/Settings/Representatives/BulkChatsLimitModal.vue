@@ -59,13 +59,15 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref } from 'vue';
+import { computed, onMounted, onUnmounted, ref } from 'vue';
 
 import RepresentativeService from '@/services/api/resources/settings/representative';
 
 import { UnnnicCallAlert, UnnnicToastManager } from '@weni/unnnic-system';
 
 import i18n from '@/plugins/i18n';
+
+import { handleConnectOverlay } from '@/utils/overlay';
 
 import type { Representative } from './types';
 
@@ -136,6 +138,14 @@ const save = async () => {
     isLoadingSave.value = false;
   }
 };
+
+onMounted(() => {
+  handleConnectOverlay(true);
+});
+
+onUnmounted(() => {
+  handleConnectOverlay(false);
+});
 </script>
 
 <style lang="scss" scoped>
