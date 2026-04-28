@@ -465,6 +465,7 @@
       "assume_chat_confirmation": "Ao confirmar você removerá o Chat do agente {viewedAgent} e será o responsável pelo Chat"
     }
   },
+  "select": "Selecionar",
   "history": "Histórico",
   "close_view": "Fechar visualização",
   "logout": "Sair",
@@ -887,7 +888,8 @@
     "tabs": {
       "general": "Geral",
       "groups": "Grupos de projetos",
-      "sectors": "Setores"
+      "sectors": "Setores",
+      "representatives": "Atendentes"
     },
     "custom_breaks": {
       "title": "Pausas personalizadas",
@@ -1081,6 +1083,70 @@
     },
     "copilot": {
       "hint": "O Co-pilot é o assistente inteligente do seu agente, ele poderá ser ativo mais tarde."
+    },
+    "representatives": {
+      "title": "Gestão de representantes",
+      "description": "Defina os representantes para os setores e filas, além do número máximo de chats por representante. As alterações feitas aqui também serão atualizadas nas configurações de setor e de fila",
+      "select_all": "Selecionar todos os representantes",
+      "select_count": "{count} selecionados",
+      "empty_list": "Ainda não há membros com permissão para atendimento humano neste projeto. Convide um membro ou atualize as permissões de um membro em Gestão de membros para vê-los aqui.",
+      "not_found_list": "Nenhum representante encontrado. Tente outro filtro.",
+      "save_success": "Alterações salvas com sucesso",
+      "save_error": "Não foi possível salvar as alterações",
+      "bulk_chats_limit_modal": {
+        "title": "Limite de chats simultâneos",
+        "disclaimer": "O limite será aplicado aos {count} representantes selecionados.",
+        "input": {
+          "label": "Definir o limite de chats simultâneos",
+          "tooltip": "Um limite definido para um representante específico substitui o limite a nível de setor",
+          "helper": "Defina 0 para que os representantes puxem chats a partir da fila",
+          "placeholder": "Exemplo: 4"
+        }
+      },
+      "queue_manager": {
+        "title": "Gerenciar {representativeName}",
+        "bulk_title": "Alterar setores e filas",
+        "bulk_disclaimer_description": "A alteração será aplicada aos {count} representantes selecionados.",
+        "bulk_add_action": "Adicionar a setor/fila",
+        "bulk_remove_action": "Remover de setor/fila",
+        "bulk_select_action_description": "Selecione a ação em lote que deseja aplicar aos representantes selecionados:",
+        "chats_limit": {
+          "switch_label": "Definir limite no número de chats simultâneos para este representante",
+          "switch_helper": "Um limite definido para um representante específico substitui o limite a nível de setor",
+          "input_label": "Número de chats simultâneos",
+          "input_placeholder": "Ex.: 4",
+          "input_helper": "Defina 0 para o representante puxar chats a partir da fila"
+        },
+        "sector_queues_checkbox": {
+          "title": "Setores e filas",
+          "bulk_description": "Selecione os setores e as filas para a alteração:"
+        }
+      },
+      "chats_limit": {
+        "label": "{count} chats simultâneos"
+      },
+      "sectors": {
+        "empty": "Não adicionado a nenhum setor"
+      },
+      "actions": {
+        "queue-management_tooltip": "Alterar representantes selecionados de setores/filas",
+        "chats-limit-management_tooltip": "Definir o limite de chats simultâneos para os representantes selecionados"
+      },
+      "filter": {
+        "status": {
+          "label": "Filtrar por status"
+        },
+        "representatives": {
+          "label": "Filtrar por representantes"
+        },
+        "sectors": {
+          "label": "Filtrar por setor",
+          "all": "Todos os setores"
+        },
+        "queues": {
+          "label": "Filtrar por fila"
+        }
+      }
     },
     "new_sector": "Novo setor",
     "new_group": "Novo grupo",

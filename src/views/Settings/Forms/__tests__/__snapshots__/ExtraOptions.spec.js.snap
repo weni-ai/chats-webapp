@@ -3,7 +3,7 @@
 exports[`SectorExtraOptions > Should match the snapshot 1`] = `
 "<section data-v-8e9664ba="" class="sector-extra-options-form">
   <section data-v-8e9664ba="" class="switchs">
-    <h2 data-v-8e9664ba="" class="switchs__title" data-testid="switchs-title">Extras options</h2>
+    <h2 data-v-8e9664ba="" class="switchs__title" data-testid="switchs-title">Extra options</h2>
     <unnnic-switch-stub data-v-8e9664ba="" size="small" label="" option="" helper="" textleft="" textright="Triggering message templates" disabled="false" modelvalue="false" class="margin-y-space-1" data-testid="config-switch"></unnnic-switch-stub>
     <section data-v-8e9664ba="" class="switchs__container">
       <unnnic-switch-stub data-v-8e9664ba="" size="small" label="" option="" helper="Each message exchanged will have the name of the agent who is answering." textleft="" textright="Use signature" disabled="false" modelvalue="false" class="margin-y-space-1" data-testid="config-switch"></unnnic-switch-stub>
