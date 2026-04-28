@@ -128,6 +128,8 @@ import DeleteGroupModal from './DeleteGroupModal.vue';
 import { useSettings } from '@/store/modules/settings';
 import { useConfig } from '@/store/modules/config';
 
+import { handleConnectOverlay } from '@/utils/overlay';
+
 defineOptions({
   name: 'SettingsGroups',
 });
@@ -179,10 +181,6 @@ const orderedGroups = computed(() => {
       )
     : groupsOrdered;
 });
-
-const handleConnectOverlay = (active: boolean) => {
-  window.parent.postMessage({ event: 'changeOverlay', data: active }, '*');
-};
 
 const openEditGroupDrawer = (group: any) => {
   editGroup.value = group;

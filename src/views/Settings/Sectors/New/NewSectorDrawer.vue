@@ -105,6 +105,8 @@ import isMobile from 'is-mobile';
 
 import Unnnic from '@weni/unnnic-system';
 
+import { handleConnectOverlay } from '@/utils/overlay';
+
 export default {
   name: 'NewSectorDrawer',
   components: {
@@ -203,7 +205,11 @@ export default {
     },
   },
   mounted() {
+    handleConnectOverlay(true);
     this.listenConnect();
+  },
+  unmounted() {
+    handleConnectOverlay(false);
   },
   methods: {
     ...mapActions(useQuickMessageShared, {
@@ -318,7 +324,7 @@ export default {
         console.log(error);
       } finally {
         this.isLoadingCreate = false;
-        window.parent.postMessage({ event: 'changeOverlay', data: false }, '*');
+        handleConnectOverlay(false);
         this.handleCloseNewSectorDrawer(true);
       }
     },
