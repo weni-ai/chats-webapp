@@ -118,7 +118,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted, ref, watch } from 'vue';
+import { computed, onMounted, onUnmounted, ref, watch } from 'vue';
 
 import SettingsProjectOptionsItem from '../../SettingsProjectOptions/SettingsProjectOptionsItem.vue';
 import SectorQueuesCheckbox from './SectorQueuesCheckbox.vue';
@@ -128,6 +128,8 @@ import RepresentativeService from '@/services/api/resources/settings/representat
 import { UnnnicCallAlert, UnnnicToastManager } from '@weni/unnnic-system';
 
 import i18n from '@/plugins/i18n';
+
+import { handleConnectOverlay } from '@/utils/overlay';
 
 import type { Representative, RepresentativeQueuePermission } from '../types';
 
@@ -356,7 +358,11 @@ onMounted(async () => {
       return filteredQueues.map((queue) => queue.uuid);
     });
   }
+
+  handleConnectOverlay(true);
 });
+
+onUnmounted(() => handleConnectOverlay(false));
 
 watch(
   () => formData.value.chatsLimit.is_active,
