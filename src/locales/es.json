@@ -129,6 +129,7 @@
     "info": "Define una respuesta automática para enviar al contacto mientras espera asistencia, déjalo en blanco si no deseas ningún mensaje.",
     "placeholder": "Aún no has definido un mensaje automático. Por favor, define un mensaje para tus contactos que están esperando."
   },
+  "chats_count": "{count} chat | {count} chats",
   "attention": "Atención",
   "updates_saved": "Actualizaciones guardadas",
   "updated_info": "Información actualizada",
@@ -274,7 +275,8 @@
     "queue_name_placeholder": "Ejemplo: Pagos",
     "queue_title": "Cola en",
     "queue_table_name": "Nombre",
-    "quantity_agents": "Cantidad de agentes"
+    "quantity_agents": "Cantidad de agentes",
+    "search": "Buscar una cola"
   },
   "export": {
     "metrics": "Exportar métricas en {filetype}",
@@ -490,11 +492,13 @@
   "all": "Todos",
   "back_to_chats": "@:back a los chats",
   "filter": {
+    "label": "Filtro",
     "empty_tags": "No hay etiquetas disponibles",
     "by_tag": "Filtrar por tag",
     "by_tags": "Filtrar por tags",
     "by_agent": "Filtrar por agente",
     "by_date": "Filtrar por @.lower:date",
+    "by_queue": "Filtrar por cola",
     "clear_all": "Limpiar filtros",
     "dates": {
       "today": "Hoy",

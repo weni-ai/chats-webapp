@@ -129,6 +129,7 @@
     "info": "Defina uma resposta automática para ser enviada ao contato enquanto está aguardando atendimento, deixe em branco caso não queira nenhuma mensagem.",
     "placeholder": "Por enquanto você não definiu uma mensagem automática, defina uma mensagem para seus contatos que estão aguardando"
   },
+  "chats_count": "{count} chat | {count} chats",
   "attention": "Atenção",
   "updates_saved": "Atualizações salvas",
   "updated_info": "Informações atualizadas",
@@ -274,7 +275,8 @@
     "queue_name_placeholder": "Exemplo: Pagamentos",
     "queue_title": "Filas em",
     "queue_table_name": "Nome",
-    "quantity_agents": "Qtd de agentes"
+    "quantity_agents": "Qtd de agentes",
+    "search": "Buscar uma fila"
   },
   "export": {
     "metrics": "Exportar métricas em {filetype}",
@@ -490,11 +492,13 @@
   "all": "Todos",
   "back_to_chats": "@:back para chats",
   "filter": {
+    "label": "Filtro",
     "empty_tags": "Nenhuma tag disponível",
     "by_tag": "Filtrar por tag",
     "by_tags": "Filtrar por tags",
     "by_agent": "Filtrar por agente",
     "by_date": "Filtrar por @.lower:date",
+    "by_queue": "Filtrar por fila",
     "clear_all": "Limpar filtros",
     "dates": {
       "today": "Hoje",

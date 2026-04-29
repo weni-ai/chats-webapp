@@ -129,6 +129,7 @@
     "info": "Define an automatic response to be sent to the contact while they are waiting for assistance, leave it blank if you don’t want any message.",
     "placeholder": "You haven't set an automatic message yet. Please define a message for your contacts who are waiting."
   },
+  "chats_count": "{count} chat | {count} chats",
   "attention": "Attention",
   "updates_saved": "Updates saved",
   "updated_info": "Updated information",
@@ -281,7 +282,8 @@
     "queue_name_placeholder": "Example: Payments",
     "queue_title": "Queues in",
     "queue_table_name": "Name",
-    "quantity_agents": "Number of agents"
+    "quantity_agents": "Number of agents",
+    "search": "Search a queue"
   },
   "export": {
     "metrics": "Export metrics as {filetype}",
@@ -494,11 +496,13 @@
   "all": "All",
   "back_to_chats": "@:back to chats",
   "filter": {
+    "label": "Filter",
     "empty_tags": "No tags available",
     "by_tag": "Filter by tag",
     "by_tags": "Filter by tags",
     "by_agent": "Filter by agent",
     "by_date": "Filter by @.lower:date",
+    "by_queue": "Filter by queue",
     "clear_all": "Clear filters",
     "dates": {
       "today": "Today",

@@ -115,6 +115,7 @@ describe('TheCardGroups.vue', () => {
           },
         },
         stubs: {
+          QueueFilter: true,
           UnnnicInput: {
             template: '<input data-testid="unnnic-input" v-bind="$attrs" />',
             props: [
@@ -422,12 +423,12 @@ describe('TheCardGroups.vue', () => {
       expect(wrapper.vm.orderBy[wrapper.vm.activeTab]).toBe(
         '-last_interaction',
       );
-      expect(listRoomSpy).toHaveBeenCalledWith(
-        true,
-        '-last_interaction',
-        'ongoing',
-        true,
-      );
+      expect(listRoomSpy).toHaveBeenCalledWith({
+        concat: true,
+        order: '-last_interaction',
+        roomsType: 'ongoing',
+        silent: true,
+      });
     });
 
     it('handles older filter correctly', async () => {
@@ -439,12 +440,12 @@ describe('TheCardGroups.vue', () => {
       await wrapper.find('[data-testid="older-filter"]').trigger('click');
 
       expect(wrapper.vm.orderBy[wrapper.vm.activeTab]).toBe('last_interaction');
-      expect(listRoomSpy).toHaveBeenCalledWith(
-        true,
-        'last_interaction',
-        'ongoing',
-        true,
-      );
+      expect(listRoomSpy).toHaveBeenCalledWith({
+        concat: true,
+        order: 'last_interaction',
+        roomsType: 'ongoing',
+        silent: true,
+      });
     });
 
     it('applies correct CSS classes for active filters', async () => {
@@ -805,11 +806,11 @@ describe('TheCardGroups.vue', () => {
       wrapper.vm.searchForMoreRooms();
 
       expect(wrapper.vm.page.ongoing).toBe(1);
-      expect(listRoomSpy).toHaveBeenCalledWith(
-        true,
-        '-last_interaction',
-        'ongoing',
-      );
+      expect(listRoomSpy).toHaveBeenCalledWith({
+        concat: true,
+        order: '-last_interaction',
+        roomsType: 'ongoing',
+      });
     });
 
     it('does not load more rooms when hasNext is false', () => {
@@ -879,12 +880,12 @@ describe('TheCardGroups.vue', () => {
         roomsStore.waitingQueue = [];
         await wrapper.vm.$nextTick();
 
-        expect(listRoomSpy).toHaveBeenCalledWith(
-          true,
-          wrapper.vm.orderBy.waiting,
-          'waiting',
-          true,
-        );
+        expect(listRoomSpy).toHaveBeenCalledWith({
+          concat: true,
+          order: wrapper.vm.orderBy.waiting,
+          roomsType: 'waiting',
+          silent: true,
+        });
         expect(wrapper.vm.page.waiting).toBe(0);
       });
 
@@ -1023,18 +1024,24 @@ describe('TheCardGroups.vue', () => {
       const discussionsStore = useDiscussions();
 
       wrapper = createWrapper({ viewedAgent: 'test-agent' });
+      await flushPromises();
+
+      roomsStore.getAll.mockClear();
+      discussionsStore.getAll.mockClear();
 
       await wrapper.vm.listRoom();
       await wrapper.vm.listDiscussions();
 
       expect(roomsStore.getAll).toHaveBeenCalledWith({
-        offset: 0,
+        cleanRoomType: '',
         concat: undefined,
-        order: '-last_interaction',
-        limit: 30,
         contact: '',
-        viewedAgent: 'test-agent',
+        filterQueues: [],
+        limit: 30,
+        offset: 0,
+        order: '-last_interaction',
         roomsType: '',
+        viewedAgent: 'test-agent',
       });
 
       expect(discussionsStore.getAll).toHaveBeenCalledWith({

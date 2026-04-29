@@ -1,4 +1,4 @@
-import { vi, describe, it, expect } from 'vitest';
+import { vi, describe, it, expect, beforeEach } from 'vitest';
 import roomService from '../room';
 import http from '@/services/api/http';
 import { useProfile } from '@/store/modules/profile';
@@ -41,6 +41,8 @@ describe('Room service', () => {
           limit: params.limit,
           ordering: params.order,
           search: params.contact,
+          room_status: undefined,
+          queues: '',
           email: params.viewedAgent,
         },
       });
@@ -491,6 +493,10 @@ describe('Room service', () => {
   });
 
   describe('getAll - additional edge cases', () => {
+    beforeEach(() => {
+      http.get.mockClear();
+    });
+
     it('should make a GET request without viewedAgent parameter', async () => {
       const mockResponse = { data: [] };
       http.get.mockResolvedValue(mockResponse);
@@ -505,6 +511,8 @@ describe('Room service', () => {
           limit: 10,
           ordering: 'desc',
           search: 'contact',
+          room_status: undefined,
+          queues: '',
         },
       });
       expect(result).toEqual(mockResponse.data);
@@ -524,6 +532,8 @@ describe('Room service', () => {
           limit: 10,
           ordering: 'asc',
           search: null,
+          room_status: undefined,
+          queues: '',
         },
       });
       expect(result).toEqual(mockResponse.data);
@@ -552,6 +562,8 @@ describe('Room service', () => {
           limit: 0,
           ordering: 'asc',
           search: '',
+          room_status: undefined,
+          queues: '',
         },
       });
       expect(result).toEqual(mockResponse.data);

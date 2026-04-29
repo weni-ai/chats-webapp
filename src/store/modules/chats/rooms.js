@@ -40,6 +40,7 @@ export const useRooms = defineStore('rooms', {
       ongoing: 0,
       flow_start: 0,
     },
+    filterQueues: [],
   }),
 
   actions: {
@@ -140,6 +141,7 @@ export const useRooms = defineStore('rooms', {
       viewedAgent,
       roomsType,
       cleanRoomType,
+      filterQueues,
     }) {
       const response = await Room.getAll(
         offset,
@@ -148,6 +150,7 @@ export const useRooms = defineStore('rooms', {
         order,
         viewedAgent,
         roomsType,
+        filterQueues,
       );
 
       if (cleanRoomType) {

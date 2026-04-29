@@ -100,41 +100,45 @@
           class="apply-filter"
           data-testid="filter-controls"
         >
-          <UnnnicToolTip
-            enabled
-            :text="
-              activeTab === 'ongoing'
-                ? $t('chats.room_list.most_recent.ongoing_tooltip')
-                : $t('chats.room_list.most_recent.waiting_tooltip')
-            "
-            side="top"
-          >
-            <span
-              :class="{ 'filter-active': orderBy[activeTab].includes('-') }"
-              data-testid="most-recent-filter"
-              @click="handleMostRecentFilter"
+          <section class="apply-filter__order-by">
+            <UnnnicToolTip
+              enabled
+              :text="
+                activeTab === 'ongoing'
+                  ? $t('chats.room_list.most_recent.ongoing_tooltip')
+                  : $t('chats.room_list.most_recent.waiting_tooltip')
+              "
+              side="top"
             >
-              {{ $t('chats.room_list.most_recent.label') }}
-            </span>
-          </UnnnicToolTip>
-          <span> | </span>
-          <UnnnicToolTip
-            enabled
-            :text="
-              activeTab === 'ongoing'
-                ? $t('chats.room_list.oldest.ongoing_tooltip')
-                : $t('chats.room_list.oldest.default_tooltip')
-            "
-            side="top"
-          >
-            <span
-              :class="{ 'filter-active': !orderBy[activeTab].includes('-') }"
-              data-testid="older-filter"
-              @click="handleOlderFilter"
+              <span
+                :class="{ 'filter-active': orderBy[activeTab].includes('-') }"
+                data-testid="most-recent-filter"
+                @click="handleMostRecentFilter"
+              >
+                {{ $t('chats.room_list.most_recent.label') }}
+              </span>
+            </UnnnicToolTip>
+            <span> | </span>
+            <UnnnicToolTip
+              enabled
+              :text="
+                activeTab === 'ongoing'
+                  ? $t('chats.room_list.oldest.ongoing_tooltip')
+                  : $t('chats.room_list.oldest.default_tooltip')
+              "
+              side="top"
             >
-              {{ $t('chats.room_list.oldest.label') }}
-            </span>
-          </UnnnicToolTip>
+              <span
+                :class="{ 'filter-active': !orderBy[activeTab].includes('-') }"
+                data-testid="older-filter"
+                @click="handleOlderFilter"
+              >
+                {{ $t('chats.room_list.oldest.label') }}
+              </span>
+            </UnnnicToolTip>
+          </section>
+          <!-- TODO: handle view mode case -->
+          <QueueFilter v-if="activeTab === 'waiting'" />
         </div>
       </div>
       <CardGroup
@@ -191,6 +195,8 @@ import RoomsListLoading from '@/views/loadings/RoomsList.vue';
 import CardGroup from './CardGroup/index.vue';
 import TabChip from './TabChip.vue';
 import ModalQueuePriorizations from '@/components/ModalQueuePriorizations.vue';
+import QueueFilter from './QueueFilter.vue';
+
 import Room from '@/services/api/resources/chats/room';
 
 export default {
@@ -200,6 +206,7 @@ export default {
     CardGroup,
     ModalQueuePriorizations,
     TabChip,
+    QueueFilter,
   },
   props: {
     disabled: {
@@ -253,6 +260,7 @@ export default {
       listRoomHasNext: 'hasNextRooms',
       newMessagesByRoom: 'newMessagesByRoom',
       maxPinLimit: 'maxPinLimit',
+      filterQueues: 'filterQueues',
     }),
     ...mapState(useConfig, ['project']),
     ...mapState(useProfile, ['me']),
@@ -505,7 +513,7 @@ export default {
         if (this.timerId !== 0) clearTimeout(this.timerId);
         this.timerId = setTimeout(() => {
           this.page.search = 0;
-          this.listRoom(false);
+          this.listRoom({ concat: false });
           this.listDiscussions();
           if (newNameOfContact) {
             this.isSearching = true;
@@ -515,13 +523,39 @@ export default {
         }, TIME_TO_WAIT_TYPING);
       },
     },
+    filterQueues: {
+      deep: true,
+      handler() {
+        // TODO: check view mode logic
+        this.listRoom({
+          cleanRoomType: 'waiting',
+          concat: true,
+          forceShowLoadingRooms: true,
+          order: this.orderBy.waiting,
+          roomsType: 'waiting',
+          silent: false,
+        });
+      },
+    },
   },
   async created() {
     this.allRooms = [];
     await Promise.all([
-      this.listRoom(true, this.orderBy.waiting, 'waiting'),
-      this.listRoom(true, this.orderBy.ongoing, 'ongoing'),
-      this.listRoom(true, this.orderBy.flow_start, 'flow_start'),
+      this.listRoom({
+        concat: true,
+        order: this.orderBy.waiting,
+        roomsType: 'waiting',
+      }),
+      this.listRoom({
+        concat: true,
+        order: this.orderBy.ongoing,
+        roomsType: 'ongoing',
+      }),
+      this.listRoom({
+        concat: true,
+        order: this.orderBy.flow_start,
+        roomsType: 'flow_start',
+      }),
       this.listDiscussions(),
     ]).then(() => {
       this.initialLoaded = true;
@@ -566,16 +600,19 @@ export default {
     clearField() {
       this.nameOfContact = '';
     },
-    async listRoom(
+    async listRoom({
+      cleanRoomType = '',
       concat,
+      forceShowLoadingRooms = false,
       order = this.orderBy[this.activeTab],
       roomsType = '',
       silent = false,
-    ) {
-      this.showLoadingRooms = silent ? false : !concat;
+    } = {}) {
+      this.showLoadingRooms = silent ? false : forceShowLoadingRooms || !concat;
       const { viewedAgent } = this;
       try {
         this.isLoadingRooms = true;
+
         const offset =
           (roomsType ? this.page[roomsType] : this.page.search) * this.limit;
 
@@ -587,6 +624,8 @@ export default {
           contact: this.nameOfContact,
           viewedAgent,
           roomsType,
+          cleanRoomType,
+          filterQueues: roomsType === 'waiting' ? this.filterQueues : [], // TODO: check view mode logic
         });
       } catch (error) {
         console.error('Error listing rooms', error);
@@ -598,15 +637,27 @@ export default {
     searchForMoreRooms() {
       if (this.listRoomHasNext[this.activeTab]) {
         this.page[this.activeTab] += 1;
-        this.listRoom(true, this.orderBy[this.activeTab], this.activeTab);
+        this.listRoom({
+          concat: true,
+          order: this.orderBy[this.activeTab],
+          roomsType: this.activeTab,
+        });
       } else if (this.nameOfContact) {
         this.page.search += 1;
-        this.listRoom(true, this.orderBy[this.activeTab]);
+        this.listRoom({
+          concat: true,
+          order: this.orderBy[this.activeTab],
+        });
       }
     },
     async refetchWaitingRooms() {
       this.page.waiting = 0;
-      await this.listRoom(true, this.orderBy.waiting, 'waiting', true);
+      await this.listRoom({
+        concat: true,
+        order: this.orderBy.waiting,
+        roomsType: 'waiting',
+        silent: true,
+      });
     },
     async listDiscussions() {
       try {
@@ -675,12 +726,12 @@ export default {
           uuid: room.uuid,
         };
         await types[type].request();
-        await this.listRoom(
-          true,
-          this.orderBy[this.activeTab],
-          'ongoing',
-          true,
-        );
+        await this.listRoom({
+          concat: true,
+          order: this.orderBy[this.activeTab],
+          roomsType: 'ongoing',
+          silent: true,
+        });
         unnnic.unnnicCallAlert({
           props: {
             text: types[type].successMessage,
@@ -728,7 +779,12 @@ export default {
 
       this.orderBy[this.activeTab] = orderByValue;
 
-      this.listRoom(true, this.orderBy[this.activeTab], this.activeTab, true);
+      this.listRoom({
+        concat: true,
+        order: this.orderBy[this.activeTab],
+        roomsType: this.activeTab,
+        silent: true,
+      });
     },
     handleOlderFilter() {
       const orderByValue =
@@ -736,7 +792,12 @@ export default {
 
       this.orderBy[this.activeTab] = orderByValue;
 
-      this.listRoom(true, this.orderBy[this.activeTab], this.activeTab, true);
+      this.listRoom({
+        concat: true,
+        order: this.orderBy[this.activeTab],
+        roomsType: this.activeTab,
+        silent: true,
+      });
     },
     handleSelectAllOngoingRooms() {
       if (!this.selectAllOngoingRoomsValue) {
@@ -820,6 +881,9 @@ export default {
     color: $unnnic-color-fg-base;
 
     .apply-filter {
+      display: flex;
+      align-items: center;
+      gap: $unnnic-space-3;
       cursor: pointer;
     }
 
