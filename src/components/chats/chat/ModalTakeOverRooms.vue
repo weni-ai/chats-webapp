@@ -70,7 +70,7 @@ const open = computed({
 });
 
 const roomsStore = useRooms();
-const { selectedWaitingRooms } = storeToRefs(roomsStore);
+const { selectedWaitingRooms, activeTab } = storeToRefs(roomsStore);
 
 const currentSelectedRooms = computed(() => selectedWaitingRooms.value);
 
@@ -137,6 +137,7 @@ const executeBulkTake = async () => {
       seconds: 5,
     });
     clearSelectionsAndClose();
+    activeTab.value = 'ongoing';
   } else if (totalFailed > 0 && totalSuccess > 0) {
     unnnicCallAlert({
       props: {
