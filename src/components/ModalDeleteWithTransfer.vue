@@ -177,9 +177,11 @@ const isFormValid = computed(() => {
   const nameMatches = confirmText.value === props.name;
   if (!nameMatches) return false;
 
-  if (!hasActiveChats.value || selectedAction.value === 'end_all') return true;
+  if (selectedAction.value === 'transfer' && hasActiveChats.value) {
+    return !!selectedSector.value?.value && !!selectedQueue.value?.value;
+  }
 
-  return !!selectedSector.value?.value && !!selectedQueue.value?.value;
+  return true;
 });
 
 function handleActionChange(value) {
@@ -193,11 +195,20 @@ function handleActionChange(value) {
 }
 
 function handleConfirm() {
-  const payload = { action: selectedAction.value };
+  if (!isFormValid.value) return;
 
-  if (selectedAction.value === 'transfer') {
-    payload.transferSectorUuid = selectedSector.value?.value;
-    payload.transferQueueUuid = selectedQueue.value?.value || null;
+  const payload = {};
+
+  if (hasActiveChats.value) {
+    payload.action = selectedAction.value;
+
+    if (selectedAction.value === 'transfer') {
+      const queueUuid = selectedQueue.value?.value;
+      if (!queueUuid) return;
+
+      payload.transferSectorUuid = selectedSector.value?.value;
+      payload.transferQueueUuid = queueUuid;
+    }
   }
 
   emit('confirm', payload);

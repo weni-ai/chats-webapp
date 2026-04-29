@@ -125,6 +125,11 @@ export default {
     enableQueueLimitFeature() {
       return this.featureFlags.active_features?.includes('weniChatsQueueLimit');
     },
+    isDeleteTransferEnabled() {
+      return this.featureFlags.active_features?.includes(
+        'weniChatsDeleteTransfer',
+      );
+    },
     queuesOrdered() {
       let queuesOrdered = this.queues.slice().sort((a, b) => {
         let first = null;
@@ -204,12 +209,16 @@ export default {
       handleConnectOverlay(true);
       this.queueToDelete = queue;
 
-      try {
-        const { waiting, in_service } = await Rooms.count({
-          queue: queue.uuid,
-        });
-        this.queueRoomsCount = waiting + in_service;
-      } catch {
+      if (this.isDeleteTransferEnabled) {
+        try {
+          const { waiting, in_service } = await Rooms.count({
+            queue: queue.uuid,
+          });
+          this.queueRoomsCount = waiting + in_service;
+        } catch {
+          this.queueRoomsCount = 0;
+        }
+      } else {
         this.queueRoomsCount = 0;
       }
 
