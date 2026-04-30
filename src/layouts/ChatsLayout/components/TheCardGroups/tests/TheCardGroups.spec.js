@@ -4,6 +4,7 @@ import { createTestingPinia } from '@pinia/testing';
 import { setActivePinia } from 'pinia';
 
 import { useRooms } from '@/store/modules/chats/rooms';
+import { useRoomCounters } from '@/store/modules/chats/roomCounters';
 import { useConfig } from '@/store/modules/config';
 import { useProfile } from '@/store/modules/profile';
 import { useDiscussions } from '@/store/modules/chats/discussions';
@@ -153,7 +154,11 @@ describe('TheCardGroups.vue', () => {
     roomsStore.agentRooms = mockRooms;
     roomsStore.waitingQueue = [];
     roomsStore.waitingContactAnswer = [];
-    roomsStore.hasNextRooms = false;
+    roomsStore.hasNextRooms = {
+      waiting: false,
+      ongoing: false,
+      flow_start: false,
+    };
     roomsStore.newMessagesByRoom = {};
     roomsStore.maxPinLimit = 5;
     roomsStore.getAll = vi.fn().mockResolvedValue();
@@ -391,7 +396,6 @@ describe('TheCardGroups.vue', () => {
       discussionsStore.discussions = [];
 
       wrapper = createWrapper();
-      wrapper.vm.isLoadingRooms = false;
 
       expect(wrapper.vm.showNoResultsError).toBe(true);
     });
@@ -814,7 +818,11 @@ describe('TheCardGroups.vue', () => {
 
     it('does not load more rooms when hasNext is false', () => {
       const roomsStore = useRooms();
-      roomsStore.hasNextRooms = false;
+      roomsStore.hasNextRooms = {
+        waiting: false,
+        ongoing: false,
+        flow_start: false,
+      };
 
       wrapper = createWrapper();
       const listRoomSpy = vi.spyOn(wrapper.vm, 'listRoom');
@@ -866,18 +874,18 @@ describe('TheCardGroups.vue', () => {
 
       it('triggers refetch when rooms go empty but counter shows more', async () => {
         const roomsStore = useRooms();
+        const countersStore = useRoomCounters();
         roomsStore.waitingQueue = waitingRooms;
-        roomsStore.roomsCount = { waiting: 10, ongoing: 0, flow_start: 0 };
+        countersStore.counts = { waiting: 10, ongoing: 0, flow_start: 0 };
 
         wrapper = createWrapper();
         await flushPromises();
         wrapper.vm.initialLoaded = true;
-        wrapper.vm.isLoadingRooms = false;
 
         const listRoomSpy = vi.spyOn(wrapper.vm, 'listRoom');
 
         roomsStore.waitingQueue = [];
-        await wrapper.vm.$nextTick();
+        await flushPromises();
 
         expect(listRoomSpy).toHaveBeenCalledWith(
           true,
@@ -890,27 +898,28 @@ describe('TheCardGroups.vue', () => {
 
       it('does not refetch when rooms go empty and counter is also 0', async () => {
         const roomsStore = useRooms();
+        const countersStore = useRoomCounters();
         roomsStore.waitingQueue = waitingRooms;
-        roomsStore.roomsCount = { waiting: 2, ongoing: 0, flow_start: 0 };
+        countersStore.counts = { waiting: 2, ongoing: 0, flow_start: 0 };
 
         wrapper = createWrapper();
         await flushPromises();
         wrapper.vm.initialLoaded = true;
-        wrapper.vm.isLoadingRooms = false;
 
         const listRoomSpy = vi.spyOn(wrapper.vm, 'listRoom');
 
-        roomsStore.roomsCount.waiting = 0;
+        countersStore.counts.waiting = 0;
         roomsStore.waitingQueue = [];
-        await wrapper.vm.$nextTick();
+        await flushPromises();
 
         expect(listRoomSpy).not.toHaveBeenCalled();
       });
 
       it('does not refetch on initial load when rooms start empty', async () => {
         const roomsStore = useRooms();
+        const countersStore = useRoomCounters();
         roomsStore.waitingQueue = [];
-        roomsStore.roomsCount = { waiting: 5, ongoing: 0, flow_start: 0 };
+        countersStore.counts = { waiting: 5, ongoing: 0, flow_start: 0 };
 
         wrapper = createWrapper();
         await flushPromises();
@@ -925,36 +934,41 @@ describe('TheCardGroups.vue', () => {
 
       it('does not refetch when isLoadingRooms is true', async () => {
         const roomsStore = useRooms();
+        const countersStore = useRoomCounters();
         roomsStore.waitingQueue = waitingRooms;
-        roomsStore.roomsCount = { waiting: 10, ongoing: 0, flow_start: 0 };
+        countersStore.counts = { waiting: 10, ongoing: 0, flow_start: 0 };
 
         wrapper = createWrapper();
         await flushPromises();
         wrapper.vm.initialLoaded = true;
-        wrapper.vm.isLoadingRooms = true;
+        wrapper.vm.isLoadingRooms = {
+          ongoing: true,
+          waiting: true,
+          flow_start: true,
+        };
 
         const listRoomSpy = vi.spyOn(wrapper.vm, 'listRoom');
 
         roomsStore.waitingQueue = [];
-        await wrapper.vm.$nextTick();
+        await flushPromises();
 
         expect(listRoomSpy).not.toHaveBeenCalled();
       });
 
       it('does not refetch when rooms decrease but list is not empty', async () => {
         const roomsStore = useRooms();
+        const countersStore = useRoomCounters();
         roomsStore.waitingQueue = waitingRooms;
-        roomsStore.roomsCount = { waiting: 10, ongoing: 0, flow_start: 0 };
+        countersStore.counts = { waiting: 10, ongoing: 0, flow_start: 0 };
 
         wrapper = createWrapper();
         await flushPromises();
         wrapper.vm.initialLoaded = true;
-        wrapper.vm.isLoadingRooms = false;
 
         const listRoomSpy = vi.spyOn(wrapper.vm, 'listRoom');
 
         roomsStore.waitingQueue = [waitingRooms[0]];
-        await wrapper.vm.$nextTick();
+        await flushPromises();
 
         expect(listRoomSpy).not.toHaveBeenCalled();
       });
@@ -998,7 +1012,7 @@ describe('TheCardGroups.vue', () => {
         'Error listing rooms',
         expect.any(Error),
       );
-      expect(wrapper.vm.isLoadingRooms).toBe(false);
+      expect(wrapper.vm.showLoadingRooms).toBe(false);
     });
 
     it('handles listDiscussions errors gracefully', async () => {

@@ -1,0 +1,22 @@
+{
+  "ai_text_improvement": {
+    "tooltip_disabled": "Scrie un răspuns în câmpul de text pentru a activa răspunsuri îmbunătățite cu AI",
+    "tooltip_enabled": "Îmbunătățește răspunsul cu AI",
+    "tooltip_cancel": "Anulează îmbunătățirea răspunsului cu AI",
+    "fix_grammar_and_spelling": "Corectează ortografia și gramatica",
+    "make_more_empathetic": "Fă-l mai empatic",
+    "rewrite_for_clarity": "Rescrie pentru claritate",
+    "improving_response": "Îmbunătățește-ți răspunsul",
+    "improvement": "Îmbunătățire",
+    "error": "Eroare la îmbunătățirea răspunsului cu AI. Încearcă din nou.",
+    "new": "New",
+    "back_to_original": "Original",
+    "back_to_original_tooltip": "Revenire la versiunea originală (Ctrl+Z)"
+  },
+  "chats": {
+    "feedback": {
+      "transfer_to_agent": "{agent1} a transferat conversația către {agent2}",
+      "transfer_to_agent_by_other": "{requestedBy} a transferat conversația lui {agent1} către {agent2}"
+    }
+  }
+}
