@@ -156,7 +156,11 @@ describe('ViewMode', () => {
       expect(wrapper.vm.room).toEqual(mockRoom);
       expect(wrapper.vm.rooms).toEqual([mockRoom]);
       expect(wrapper.vm.discussion).toEqual(mockDiscussion);
-      expect(wrapper.vm.me).toEqual({ email: 'user@example.com' });
+      expect(wrapper.vm.me).toEqual({
+        email: 'user@example.com',
+        project_permission_role: null,
+        queues: [],
+      });
       expect(wrapper.vm.roomMessagesNext).toBe('token');
     });
   });
@@ -605,7 +609,11 @@ describe('ViewMode', () => {
       expect(wrapperEmpty.vm.viewedAgent).toEqual({ email: '', name: '' });
       expect(wrapperEmpty.vm.room).toBeNull();
       expect(wrapperEmpty.vm.discussion).toBeNull();
-      expect(wrapperEmpty.vm.me).toEqual({ email: 'test@example.com' });
+      expect(wrapperEmpty.vm.me).toEqual({
+        email: 'test@example.com',
+        project_permission_role: null,
+        queues: [],
+      });
       expect(wrapperEmpty.vm.rooms).toEqual([]);
 
       const wrapperFull = createWrapper({
@@ -619,7 +627,11 @@ describe('ViewMode', () => {
       expect(wrapperFull.vm.viewedAgent).toEqual(mockAgent);
       expect(wrapperFull.vm.room).toEqual(mockRoom);
       expect(wrapperFull.vm.discussion).toEqual(mockDiscussion);
-      expect(wrapperFull.vm.me).toEqual({ email: 'different@example.com' });
+      expect(wrapperFull.vm.me).toEqual({
+        email: 'different@example.com',
+        project_permission_role: null,
+        queues: [],
+      });
       expect(wrapperFull.vm.rooms).toEqual([mockRoom]);
       expect(wrapperFull.vm.roomMessagesNext).toBe('next-page');
     });
