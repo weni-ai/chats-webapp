@@ -17,7 +17,11 @@ describe('useProfile Store', () => {
 
   it('should initialize with an empty me object', () => {
     const profile = useProfile();
-    expect(profile.me).toEqual({});
+    expect(profile.me).toEqual({
+      email: '',
+      project_permission_role: null,
+      queues: [],
+    });
   });
 
   it('should update me state when setMe is called', () => {
@@ -26,7 +30,7 @@ describe('useProfile Store', () => {
 
     profile.setMe(user);
 
-    expect(profile.me).toEqual({ ...user, queues: undefined });
+    expect(profile.me).toEqual({ ...user, queues: [] });
   });
 
   it('should retain queues when updating user with setMe', () => {
