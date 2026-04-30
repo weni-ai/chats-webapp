@@ -200,6 +200,11 @@ defineExpose({
   outline: none;
   font: $unnnic-font-body;
   max-height: 104px;
+
+  background-color: transparent;
+  color: $unnnic-color-fg-emphasized;
+  caret-color: $unnnic-color-fg-emphasized;
+
   &::placeholder {
     color: $unnnic-color-fg-muted;
   }
