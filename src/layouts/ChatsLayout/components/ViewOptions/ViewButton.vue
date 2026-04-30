@@ -1,8 +1,9 @@
 <template>
   <UnnnicButton
-    type="tertiary"
+    type="secondary"
     size="large"
     class="view-button"
+    pressed
     data-testid="header-btn"
     :iconRight="expandedMore ? 'expand_more' : 'expand_less'"
     @click="emit('click', $event)"
