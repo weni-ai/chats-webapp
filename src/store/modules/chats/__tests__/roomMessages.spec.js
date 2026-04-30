@@ -86,6 +86,8 @@ describe('useRoomMessages Store', () => {
         seen: true,
         text: 'Hello',
         user_email: roomStore.activeRoom.user.email,
+        aiTextImprovement: null,
+        repliedMessageId: undefined,
       },
     );
   });

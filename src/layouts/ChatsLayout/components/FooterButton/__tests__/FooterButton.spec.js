@@ -336,6 +336,74 @@ describe('FooterButton', () => {
       wrapper.vm.handleModalTakeOverRooms();
       expect(wrapper.vm.isModalTakeOverRoomsOpened).toBe(false);
     });
+
+    it('should reset all modal states when selected rooms become empty (ongoing)', async () => {
+      const wrapper = createWrapper(['room1'], 'ongoing', {
+        can_use_bulk_transfer: true,
+        can_use_bulk_close: true,
+        activeFeatures: ['weniChatsBulkClose'],
+      });
+
+      await wrapper.setData({
+        isModalTransferRoomsOpened: true,
+        isModalCloseRoomsOpened: true,
+      });
+
+      const roomsStore = useRooms();
+      roomsStore.selectedOngoingRooms = [];
+      await wrapper.vm.$nextTick();
+
+      expect(wrapper.vm.isModalTransferRoomsOpened).toBe(false);
+      expect(wrapper.vm.isModalCloseRoomsOpened).toBe(false);
+    });
+
+    it('should reset all modal states when selected rooms become empty (waiting)', async () => {
+      const wrapper = createWrapper(['room1'], 'waiting', {
+        can_use_bulk_take: true,
+        can_use_bulk_transfer: true,
+        can_use_bulk_close: true,
+        activeFeatures: [
+          'weniChatsBulkTake',
+          'weniChatsBulkTransfer',
+          'weniChatsBulkClose',
+        ],
+      });
+
+      await wrapper.setData({
+        isModalTakeOverRoomsOpened: true,
+        isModalTransferRoomsOpened: true,
+        isModalCloseRoomsOpened: true,
+      });
+
+      const roomsStore = useRooms();
+      roomsStore.selectedWaitingRooms = [];
+      await wrapper.vm.$nextTick();
+
+      expect(wrapper.vm.isModalTakeOverRoomsOpened).toBe(false);
+      expect(wrapper.vm.isModalTransferRoomsOpened).toBe(false);
+      expect(wrapper.vm.isModalCloseRoomsOpened).toBe(false);
+    });
+
+    it('should not reopen close modal when selecting a new room after bulk close', async () => {
+      const wrapper = createWrapper(['room1', 'room2'], 'ongoing', {
+        can_use_bulk_close: true,
+        activeFeatures: ['weniChatsBulkClose'],
+      });
+
+      await wrapper.setData({ isModalCloseRoomsOpened: true });
+      expect(wrapper.vm.isModalCloseRoomsOpened).toBe(true);
+
+      const roomsStore = useRooms();
+      roomsStore.selectedOngoingRooms = [];
+      await wrapper.vm.$nextTick();
+
+      expect(wrapper.vm.isModalCloseRoomsOpened).toBe(false);
+
+      roomsStore.selectedOngoingRooms = ['room3'];
+      await wrapper.vm.$nextTick();
+
+      expect(wrapper.vm.isModalCloseRoomsOpened).toBe(false);
+    });
   });
 
   describe('Transfer button on waiting tab', () => {

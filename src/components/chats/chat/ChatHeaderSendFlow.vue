@@ -39,15 +39,14 @@ export default {
   display: flex;
   justify-content: center;
   align-items: center;
-  gap: $unnnic-spacing-nano;
+  gap: $unnnic-space-1;
 
-  padding: $unnnic-spacing-nano;
+  padding: $unnnic-space-1;
 
-  background-color: $unnnic-color-bg-base-soft;
+  background-color: $unnnic-color-fg-base;
 
   color: $unnnic-color-fg-inverted;
-  font-size: $unnnic-font-size-body-gt;
-  line-height: $unnnic-font-size-body-gt + $unnnic-line-height-md;
+  font: $unnnic-font-body;
 
   &__trigger {
     text-decoration: underline;

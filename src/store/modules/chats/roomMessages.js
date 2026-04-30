@@ -222,7 +222,7 @@ export const useRoomMessages = defineStore('roomMessages', {
       }
     },
 
-    async sendRoomMessage(text, repliedMessage) {
+    async sendRoomMessage(text, repliedMessage, aiTextImprovement = null) {
       const roomsStore = useRooms();
       const { activeRoom } = roomsStore;
 
@@ -240,6 +240,7 @@ export const useRoomMessages = defineStore('roomMessages', {
             user_email: activeRoom.user.email,
             seen: true,
             repliedMessageId: repliedMessage?.uuid,
+            aiTextImprovement,
           }),
         addMessage: (message) => this.handlingAddMessage({ message }),
         addSortedMessage: (message) => this.addRoomMessageSorted({ message }),

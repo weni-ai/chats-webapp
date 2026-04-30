@@ -188,8 +188,8 @@ export default {
 
         if (newValue && !this.skipAnimation) {
           await this.typeWriter(newValue, 10);
-        } else if (newValue) {
-          this.animatedText = newValue;
+        } else {
+          this.animatedText = newValue || '';
         }
       },
     },
@@ -291,11 +291,11 @@ export default {
 .chat-summary {
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
   background: $unnnic-color-bg-purple-plain;
   box-shadow: $unnnic-shadow-1;
   padding: $unnnic-spacing-sm;
   gap: $unnnic-spacing-nano;
+  flex-shrink: 0;
 
   &--open {
     margin-left: v-bind(marginLeft);

@@ -7,8 +7,10 @@ import unnnic from '@weni/unnnic-system';
 
 import Queue from '@/services/api/resources/settings/queue';
 import Project from '@/services/api/resources/settings/project';
+import Rooms from '@/services/api/resources/settings/rooms';
 
 import { createTestingPinia } from '@pinia/testing';
+import { useFeatureFlag } from '@/store/modules/featureFlag';
 
 vi.mock('@/services/api/resources/settings/queue', () => ({
   default: {
@@ -17,6 +19,12 @@ vi.mock('@/services/api/resources/settings/queue', () => ({
     getQueueInformation: vi.fn(),
     agents: vi.fn(),
     delete: vi.fn(),
+  },
+}));
+
+vi.mock('@/services/api/resources/settings/rooms', () => ({
+  default: {
+    count: vi.fn().mockResolvedValue({ waiting: 0, in_service: 0 }),
   },
 }));
 
@@ -76,7 +84,7 @@ const createWrapper = (props = {}) => {
     global: {
       plugins: [createTestingPinia()],
       stubs: {
-        ModalConfirmDelete: true,
+        ModalDeleteWithTransfer: true,
       },
     },
     props,
@@ -194,10 +202,8 @@ describe('ListSectorQueues.vue', () => {
     );
   });
 
-  it('should call deleteQueue method when confirming deletion', async () => {
-    const deleteQueueSpy = vi
-      .spyOn(wrapper.vm, 'deleteQueue')
-      .mockImplementation();
+  it('should call deleteQueue method when confirming deletion with end_all', async () => {
+    const deleteQueueSpy = vi.spyOn(wrapper.vm, 'deleteQueue');
 
     await wrapper.setData({
       queues: [
@@ -211,13 +217,14 @@ describe('ListSectorQueues.vue', () => {
       name: 'Queue A',
     });
 
-    await wrapper.vm.$nextTick();
+    await flushPromises();
 
     const deleteModal = wrapper.findComponent(
       '[data-testid="delete-queue-modal"]',
     );
 
-    await deleteModal.vm.$emit('confirm');
+    await deleteModal.vm.$emit('confirm', { action: 'end_all' });
+    await flushPromises();
 
     expect(deleteQueueSpy).toHaveBeenCalledTimes(1);
 
@@ -225,6 +232,61 @@ describe('ListSectorQueues.vue', () => {
     expect(wrapper.vm.queues).toStrictEqual([
       { uuid: 'queue-b', name: 'Queue B' },
     ]);
+  });
+
+  it('should call Queue.delete with transfer options when action is transfer', async () => {
+    await wrapper.setData({
+      queues: [
+        { uuid: 'queue-a', name: 'Queue A' },
+        { uuid: 'queue-b', name: 'Queue B' },
+      ],
+    });
+
+    await wrapper.vm.handlerOpenDeleteQueueModal({
+      uuid: 'queue-a',
+      name: 'Queue A',
+    });
+
+    await flushPromises();
+
+    const deleteModal = wrapper.findComponent(
+      '[data-testid="delete-queue-modal"]',
+    );
+
+    await deleteModal.vm.$emit('confirm', {
+      action: 'transfer',
+      transferQueueUuid: 'queue-b',
+    });
+    await flushPromises();
+
+    expect(Queue.delete).toHaveBeenCalledWith('queue-a', {
+      transferToQueue: 'queue-b',
+    });
+  });
+
+  it('should call Queue.delete without options when payload is empty', async () => {
+    await wrapper.setData({
+      queues: [
+        { uuid: 'queue-a', name: 'Queue A' },
+        { uuid: 'queue-b', name: 'Queue B' },
+      ],
+    });
+
+    await wrapper.vm.handlerOpenDeleteQueueModal({
+      uuid: 'queue-a',
+      name: 'Queue A',
+    });
+
+    await flushPromises();
+
+    const deleteModal = wrapper.findComponent(
+      '[data-testid="delete-queue-modal"]',
+    );
+
+    await deleteModal.vm.$emit('confirm', {});
+    await flushPromises();
+
+    expect(Queue.delete).toHaveBeenCalledWith('queue-a', {});
   });
 
   it('should close delete queue modal on cancel', async () => {
@@ -243,5 +305,44 @@ describe('ListSectorQueues.vue', () => {
 
     expect(wrapper.vm.showQueueDrawer).toBe(false);
     expect(wrapper.vm.queueToConfig).toMatchObject({});
+  });
+
+  describe('Feature Flag: weniChatsDeleteTransfer', () => {
+    it('should fetch rooms count when feature flag is enabled', async () => {
+      const featureFlagStore = useFeatureFlag();
+      featureFlagStore.featureFlags = {
+        active_features: ['weniChatsDeleteTransfer'],
+      };
+      await wrapper.vm.$nextTick();
+
+      Rooms.count.mockClear();
+      Rooms.count.mockResolvedValue({ waiting: 3, in_service: 2 });
+
+      await wrapper.vm.handlerOpenDeleteQueueModal({
+        uuid: 'queue-uuid',
+        name: 'Queue A',
+      });
+      await flushPromises();
+
+      expect(Rooms.count).toHaveBeenCalledWith({ queue: 'queue-uuid' });
+      expect(wrapper.vm.queueRoomsCount).toBe(5);
+    });
+
+    it('should not fetch rooms count when feature flag is disabled', async () => {
+      const featureFlagStore = useFeatureFlag();
+      featureFlagStore.featureFlags = { active_features: [] };
+      await wrapper.vm.$nextTick();
+
+      Rooms.count.mockClear();
+
+      await wrapper.vm.handlerOpenDeleteQueueModal({
+        uuid: 'queue-uuid',
+        name: 'Queue A',
+      });
+      await flushPromises();
+
+      expect(Rooms.count).not.toHaveBeenCalled();
+      expect(wrapper.vm.queueRoomsCount).toBe(0);
+    });
   });
 });

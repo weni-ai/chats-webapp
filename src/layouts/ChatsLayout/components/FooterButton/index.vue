@@ -199,6 +199,13 @@ export default {
       this.isModalTransferRoomsOpened = false;
       this.isModalCloseRoomsOpened = false;
     },
+    currentSelectedRooms(newVal) {
+      if (newVal.length === 0) {
+        this.isModalTakeOverRoomsOpened = false;
+        this.isModalTransferRoomsOpened = false;
+        this.isModalCloseRoomsOpened = false;
+      }
+    },
   },
 
   methods: {

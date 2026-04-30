@@ -74,32 +74,50 @@ export default {
         return '';
       }
 
-      const getTransferLabel = (action, from, to) => {
-        if (action === 'transfer') {
-          if (from?.type === 'user' && to?.type === 'queue') {
-            return t('chats.feedback.transfer_to_queue', {
-              agent: from.name,
-              queue: to.name,
-            });
-          }
-          if (from?.type === 'queue' && to?.type === 'queue') {
-            return t('chats.feedback.transfer_from_queue_to_queue', {
-              queue1: from.name,
-              queue2: to.name,
-            });
-          }
-          if (from?.type === 'queue' && to?.type === 'user') {
-            return t('chats.feedback.transfer_from_queue_to_agent', {
-              queue: from.name,
-              agent: to.name,
-            });
-          }
-          if (from?.type === 'user' && to?.type === 'user') {
-            return t('chats.feedback.transfer_to_agent', {
-              agent1: from.name,
-              agent2: to.name,
-            });
-          }
+      const getTransferUserToUserLabel = (from, to, requestedBy) => {
+        const isTransferByOther =
+          requestedBy?.type === 'user' &&
+          requestedBy?.id &&
+          from?.id &&
+          String(requestedBy.id) !== String(from.id);
+
+        if (isTransferByOther) {
+          return t('chats.feedback.transfer_to_agent_by_other', {
+            requestedBy: requestedBy.name,
+            agent1: from.name,
+            agent2: to.name,
+          });
+        }
+
+        return t('chats.feedback.transfer_to_agent', {
+          agent1: from.name,
+          agent2: to.name,
+        });
+      };
+
+      const getTransferLabel = (action, from, to, requestedBy) => {
+        if (action !== 'transfer') return '';
+
+        if (from?.type === 'user' && to?.type === 'queue') {
+          return t('chats.feedback.transfer_to_queue', {
+            agent: from.name,
+            queue: to.name,
+          });
+        }
+        if (from?.type === 'queue' && to?.type === 'queue') {
+          return t('chats.feedback.transfer_from_queue_to_queue', {
+            queue1: from.name,
+            queue2: to.name,
+          });
+        }
+        if (from?.type === 'queue' && to?.type === 'user') {
+          return t('chats.feedback.transfer_from_queue_to_agent', {
+            queue: from.name,
+            agent: to.name,
+          });
+        }
+        if (from?.type === 'user' && to?.type === 'user') {
+          return getTransferUserToUserLabel(from, to, requestedBy);
         }
         return '';
       };
@@ -133,7 +151,12 @@ export default {
       const feedbackLabels = {
         rt:
           getPickLabel(content.action, content.from, content.to) ||
-          getTransferLabel(content.action, content.from, content.to) ||
+          getTransferLabel(
+            content.action,
+            content.from,
+            content.to,
+            content.requested_by,
+          ) ||
           getForwardLabel(content.action, content.to) ||
           getAutoAssignFromQueueLabel(content.action, content.from, content.to),
         fs: `${t('flow')} <i>${content.name}</i> ${t('sent')}`,

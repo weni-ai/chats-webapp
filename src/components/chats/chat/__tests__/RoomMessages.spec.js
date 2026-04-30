@@ -150,6 +150,21 @@ describe('RoomMessages.vue', () => {
   });
 
   describe('rendering', () => {
+    it('renders a single root wrapper section to keep summary and messages constrained to one parent layout cell', async () => {
+      RoomNotes.getInternalNotes.mockResolvedValue({ results: [] });
+      const wrapper = createWrapper();
+
+      await flushPromises();
+
+      const wrapperEl = wrapper.find('[data-testid="room-messages-wrapper"]');
+      expect(wrapperEl.exists()).toBe(true);
+      expect(wrapperEl.element.tagName).toBe('SECTION');
+      expect(wrapperEl.classes()).toContain('room-messages');
+
+      const chatMessages = wrapper.findComponent({ name: 'ChatMessages' });
+      expect(wrapperEl.element.contains(chatMessages.element)).toBe(true);
+    });
+
     it('renders ChatMessages with room data from store', async () => {
       RoomNotes.getInternalNotes.mockResolvedValue({ results: [] });
       const wrapper = createWrapper();
@@ -432,7 +447,11 @@ describe('RoomMessages.vue', () => {
       await wrapper.vm.getRoomSummary();
 
       const errorText = i18n.global.t('chats.summary.error');
-      expect(wrapper.vm.setRoomSummary).toHaveBeenCalledWith(errorText);
+      expect(wrapper.vm.setRoomSummary).toHaveBeenCalledWith(
+        errorText,
+        { liked: null },
+        'ERROR',
+      );
     });
 
     it('does not call API when room is null', async () => {
