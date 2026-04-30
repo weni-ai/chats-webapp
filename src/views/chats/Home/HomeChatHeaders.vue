@@ -32,7 +32,7 @@
               <UnnnicIcon
                 icon="bi:stars"
                 clickable
-                scheme="gray-900"
+                scheme="fg-emphasized"
                 size="ant"
                 @click="openActiveRoomSummary = !openActiveRoomSummary"
               />
@@ -57,7 +57,7 @@
               <UnnnicIcon
                 icon="search"
                 clickable
-                scheme="gray-900"
+                scheme="fg-emphasized"
                 size="ant"
                 @click="showSearchMessagesDrawer = !showSearchMessagesDrawer"
               />
@@ -98,7 +98,7 @@
                 icon="sync_alt"
                 size="ant"
                 clickable
-                scheme="gray-900"
+                scheme="fg-emphasized"
                 @click="openTransferModal"
               />
             </section>
