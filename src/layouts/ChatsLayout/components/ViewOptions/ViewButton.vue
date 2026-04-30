@@ -1,7 +1,7 @@
 <template>
   <UnnnicButton
     type="tertiary"
-    size="small"
+    size="large"
     class="view-button"
     data-testid="header-btn"
     :iconRight="expandedMore ? 'expand_more' : 'expand_less'"
@@ -50,30 +50,6 @@ const emit = defineEmits<{
 <style lang="scss" scoped>
 .view-button {
   width: 100%;
-
-  :deep(.unnnic-button.unnnic-button--size-small.unnnic-button--tertiary) {
-    width: 100%;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: $unnnic-space-2;
-
-    padding: $unnnic-space-4 $unnnic-spacing-xs;
-    border-radius: 0;
-    border-top: 1px solid $unnnic-color-border-soft;
-    border-right: 1px solid $unnnic-color-border-soft;
-    background-color: $unnnic-color-bg-base;
-
-    &:hover:enabled {
-      background-color: $unnnic-color-bg-base-soft;
-      border-top: 1px solid $unnnic-color-border-soft;
-      border-right: 1px solid $unnnic-color-border-soft;
-    }
-
-    &:active:enabled {
-      background-color: $unnnic-color-bg-muted;
-    }
-  }
 
   :deep(.unnnic-button__label) {
     flex: 1 0 auto;
