@@ -55,12 +55,15 @@ export default {
     return response;
   },
 
-  async deleteSector(sectorUuid) {
+  async deleteSector(sectorUuid, { endAllChats, transferToQueue } = {}) {
     const profileStore = useProfile();
     const { me } = profileStore;
-    const response = await http.delete(
-      `/sector/${sectorUuid}/?user=${me?.email}`,
-    );
+    const params = { user: me?.email };
+
+    if (endAllChats) params.end_all_chats = true;
+    if (transferToQueue) params.transfer_to_queue = transferToQueue;
+
+    const response = await http.delete(`/sector/${sectorUuid}/`, { params });
     return response.data;
   },
 
