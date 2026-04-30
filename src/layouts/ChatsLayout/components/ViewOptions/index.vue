@@ -6,6 +6,7 @@
     >
       <UnnnicPopoverTrigger
         as="div"
+        class="view-options__trigger"
         @click="handleTriggerClick"
       >
         <ViewButton
@@ -73,62 +74,64 @@
 
         <hr class="view-options__separator" />
 
-        <section class="view-options__group">
-          <p class="view-options__group-label">
-            {{ $t('preferences.appearance.live_desk_theme') }}
-          </p>
+        <section class="view-options__preferences">
+          <section class="view-options__group">
+            <p class="view-options__group-label">
+              {{ $t('preferences.appearance.live_desk_theme') }}
+            </p>
+            <section
+              class="view-options__theme"
+              :aria-label="$t('preferences.appearance.live_desk_theme')"
+            >
+              <UnnnicButton
+                class="view-options__theme-button"
+                :class="{
+                  'view-options__theme-button--selected': !isDark,
+                }"
+                type="secondary"
+                size="small"
+                iconLeft="clear_day"
+                :text="$t('preferences.appearance.light')"
+                :aria-pressed="!isDark"
+                data-testid="theme-light-button"
+                @click="setTheme(THEMES.LIGHT)"
+              />
+              <UnnnicButton
+                class="view-options__theme-button"
+                :class="{
+                  'view-options__theme-button--selected': isDark,
+                }"
+                type="secondary"
+                size="small"
+                iconLeft="dark_mode"
+                :text="$t('preferences.appearance.dark')"
+                :aria-pressed="isDark"
+                data-testid="theme-dark-button"
+                @click="setTheme(THEMES.DARK)"
+              />
+            </section>
+          </section>
+
           <section
-            class="view-options__theme"
-            :aria-label="$t('preferences.appearance.live_desk_theme')"
+            v-if="!isViewMode"
+            class="view-options__group"
+            data-testid="sound-notifications-group"
           >
-            <UnnnicButton
-              class="view-options__theme-button"
-              :class="{
-                'view-options__theme-button--selected': !isDark,
-              }"
-              type="secondary"
+            <p class="view-options__group-label">
+              {{ $t('preferences.notifications.sound_notifications') }}
+            </p>
+            <UnnnicSwitch
+              v-model="sound"
+              data-testid="switch-sound"
               size="small"
-              iconLeft="clear_day"
-              :text="$t('preferences.appearance.light')"
-              :aria-pressed="!isDark"
-              data-testid="theme-light-button"
-              @click="setTheme(THEMES.LIGHT)"
-            />
-            <UnnnicButton
-              class="view-options__theme-button"
-              :class="{
-                'view-options__theme-button--selected': isDark,
-              }"
-              type="secondary"
-              size="small"
-              iconLeft="dark_mode"
-              :text="$t('preferences.appearance.dark')"
-              :aria-pressed="isDark"
-              data-testid="theme-dark-button"
-              @click="setTheme(THEMES.DARK)"
+              :textRight="
+                sound
+                  ? $t('preferences.notifications.on')
+                  : $t('preferences.notifications.off')
+              "
+              @update:model-value="changeSound"
             />
           </section>
-        </section>
-
-        <section
-          v-if="!isViewMode"
-          class="view-options__group"
-          data-testid="sound-notifications-group"
-        >
-          <p class="view-options__group-label">
-            {{ $t('preferences.notifications.sound_notifications') }}
-          </p>
-          <UnnnicSwitch
-            v-model="sound"
-            data-testid="switch-sound"
-            size="small"
-            :textRight="
-              sound
-                ? $t('preferences.notifications.on')
-                : $t('preferences.notifications.off')
-            "
-            @update:model-value="changeSound"
-          />
         </section>
       </UnnnicPopoverContent>
     </UnnnicPopover>
@@ -242,22 +245,33 @@ section.chats-layout .sidebar .chats-layout-footer {
 </style>
 
 <style lang="scss">
-.view-options {
-  &__content {
-    display: flex;
-    flex-direction: column;
-    gap: $unnnic-space-3;
-  }
+.view-options__content.unnnic-popover {
+  display: flex;
+  flex-direction: column;
+  gap: $unnnic-space-4;
 
+  padding: $unnnic-space-4;
+  border-radius: $unnnic-border-radius-lg;
+}
+
+.view-options {
   &__items {
     display: flex;
     flex-direction: column;
     gap: $unnnic-space-2;
   }
 
-  &__item .unnnic-button {
+  &__preferences {
+    display: flex;
+    flex-direction: column;
+    gap: $unnnic-space-3;
+  }
+
+  &__item.unnnic-button.unnnic-button--tertiary {
+    display: flex;
     width: 100%;
     justify-content: flex-start;
+    gap: $unnnic-space-2;
     padding: $unnnic-space-2 $unnnic-space-4;
 
     .unnnic-button__label {
@@ -267,7 +281,7 @@ section.chats-layout .sidebar .chats-layout-footer {
   }
 
   &__separator {
-    margin: 0;
+    margin: $unnnic-space-4 0;
     border: none;
     border-top: 1px solid $unnnic-color-border-soft;
   }
@@ -293,27 +307,25 @@ section.chats-layout .sidebar .chats-layout-footer {
     gap: $unnnic-space-2;
   }
 
-  &__theme-button {
+  &__theme-button.unnnic-button.unnnic-button--secondary {
     flex: 1 0 0;
+    width: 100%;
+    min-width: 0;
+    padding: $unnnic-space-3 $unnnic-space-4;
 
-    .unnnic-button {
-      width: 100%;
-      padding: $unnnic-space-3 $unnnic-space-4;
-
-      .unnnic-button__label {
-        color: $unnnic-color-fg-emphasized;
-      }
+    .unnnic-button__label {
+      color: $unnnic-color-fg-emphasized;
     }
+  }
 
-    &--selected .unnnic-button.unnnic-button--secondary {
+  &__theme-button--selected.unnnic-button.unnnic-button--secondary {
+    background-color: $unnnic-color-bg-accent-plain;
+    box-shadow: inset 0 0 0 1px $unnnic-color-border-accent-strong;
+
+    &:hover:enabled,
+    &:active:enabled {
       background-color: $unnnic-color-bg-accent-plain;
       box-shadow: inset 0 0 0 1px $unnnic-color-border-accent-strong;
-
-      &:hover:enabled,
-      &:active:enabled {
-        background-color: $unnnic-color-bg-accent-plain;
-        box-shadow: inset 0 0 0 1px $unnnic-color-border-accent-strong;
-      }
     }
   }
 }
