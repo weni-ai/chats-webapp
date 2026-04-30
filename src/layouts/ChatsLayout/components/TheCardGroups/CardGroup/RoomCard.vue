@@ -48,7 +48,16 @@
       @click="$emit('click')"
       @click-pin="$emit('clickPin', $event)"
       @keypress.enter="$emit('click')"
-    />
+    >
+      <template #avatar>
+        <UnnnicChatsUserAvatar
+          :username="formattedContactName"
+          :active="hover || (room.uuid === activeRoomId && active)"
+          scheme="bg-muted"
+          textColor="fg-emphasized"
+        />
+      </template>
+    </UnnnicChatsContact>
   </section>
 </template>
 

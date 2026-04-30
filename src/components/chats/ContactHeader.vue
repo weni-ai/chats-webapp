@@ -4,7 +4,11 @@
       :class="['contact-header__container', { clickable }]"
       @click="clickable ? emit('click') : null"
     >
-      <UnnnicChatsUserAvatar :username="contactName" />
+      <UnnnicChatsUserAvatar
+        :username="contactName"
+        scheme="bg-muted"
+        textColor="fg-emphasized"
+      />
       <section class="contact-header__name">
         <p>
           {{ contactName || `[${$t('unnamed_contact')}]` }}

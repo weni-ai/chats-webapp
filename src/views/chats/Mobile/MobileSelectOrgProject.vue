@@ -173,7 +173,7 @@ export default {
   min-width: 100%;
 
   * {
-    color: $unnnic-color-red-7;
+    color: $unnnic-color-fg-critical;
   }
 }
 </style>

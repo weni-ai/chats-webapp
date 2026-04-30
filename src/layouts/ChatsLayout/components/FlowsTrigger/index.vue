@@ -137,7 +137,18 @@
                 :selected="selected.some((search) => search.uuid === item.uuid)"
                 @click="setContacts(item)"
                 @keypress.enter="setGroups(item)"
-              />
+              >
+                <template #avatar>
+                  <UnnnicChatsUserAvatar
+                    :username="item.name"
+                    :active="
+                      selected.some((search) => search.uuid === item.uuid)
+                    "
+                    scheme="bg-muted"
+                    textColor="fg-emphasized"
+                  />
+                </template>
+              </UnnnicChatsContact>
             </UnnnicCollapse>
           </template>
           <template v-if="letters['unnamed_contact']">
@@ -161,7 +172,18 @@
                 :selected="selected.some((search) => search.uuid === item.uuid)"
                 @click="setContacts(item)"
                 @keypress.enter="setContacts(item)"
-              />
+              >
+                <template #avatar>
+                  <UnnnicChatsUserAvatar
+                    :username="`[${$t('flows_trigger.unnamed_contact')}]`"
+                    :active="
+                      selected.some((search) => search.uuid === item.uuid)
+                    "
+                    scheme="bg-muted"
+                    textColor="fg-emphasized"
+                  />
+                </template>
+              </UnnnicChatsContact>
             </UnnnicCollapse>
           </template>
         </section>
