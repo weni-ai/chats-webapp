@@ -85,6 +85,7 @@ export default {
   },
   computed: {
     countryName() {
+      if (!this.countryCode) return this.$t('country.label');
       const locale = this.$i18n.locale;
       return new Intl.DisplayNames(locale, { type: 'region' }).of(
         this.countryCode,
