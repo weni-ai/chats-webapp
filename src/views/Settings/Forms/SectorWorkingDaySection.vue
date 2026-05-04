@@ -73,7 +73,7 @@
             :modelValue="selectAllCountryHolidays"
             :textRight="
               $t('country_holidays.title', {
-                country: $t(`country.${countryCode || 'label'}`),
+                country: countryName,
               })
             "
             @update:model-value="handleSelectAllCountryHolidays"
@@ -353,6 +353,12 @@ export default {
         selectedProjectHasSectorIntegration:
           this.selectedProjectHasSectorIntegration,
       };
+    },
+    countryName() {
+      const locale = this.$i18n.locale;
+      return new Intl.DisplayNames(locale, { type: 'region' }).of(
+        this.countryCode,
+      );
     },
   },
 
