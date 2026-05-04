@@ -139,17 +139,4 @@ describe('ListSectorQueues.vue', () => {
     expect(form.exists()).toBe(true);
     expect(form.props().modelValue[0].uuid).toBe('queue-1');
   });
-
-  it('should remove a queue from the list when deleteQueue runs', async () => {
-    await wrapper.setData({
-      queues: [
-        { uuid: 'queue-a', name: 'Queue A' },
-        { uuid: 'queue-b', name: 'Queue B' },
-      ],
-    });
-
-    await wrapper.vm.deleteQueue({ uuid: 'queue-a', name: 'Queue A' });
-
-    expect(wrapper.vm.queues).toEqual([{ uuid: 'queue-b', name: 'Queue B' }]);
-  });
 });

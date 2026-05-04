@@ -11,110 +11,140 @@
       :search="searchAgent"
       @update:search="searchAgent = $event"
     />
-    <TagGroup
-      v-if="selectedAgents.length > 0"
-      :tags="selectedAgentsTags"
-      disabledTag
-      hasCloseIcon
-      @close="(agent) => remove(agent.uuid)"
-    />
+    <section
+      v-if="selectedAgents?.length > 0"
+      ref="selectedAgentsContainer"
+      class="form-agent__selected-agents"
+    >
+      <TagGroup
+        :tags="selectedAgentsTags"
+        disabledTag
+        hasCloseIcon
+        @close="(agent) => remove(agent.uuid)"
+      />
+    </section>
   </section>
 </template>
 
-<script>
+<script lang="ts" setup>
+import { computed, nextTick, ref, useTemplateRef, watch } from 'vue';
+import { useInfiniteScroll } from '@vueuse/core';
+
 import TagGroup from '@/components/TagGroup.vue';
 
-export default {
+interface Agent {
+  uuid: string;
+  role: number;
+  project: string;
+  user: {
+    email: string;
+    first_name: string;
+    last_name: string;
+  };
+}
+
+interface SelectedAgent extends Agent {
+  queue: string;
+}
+
+interface Props {
+  canLoadMore: boolean;
+  agents: Agent[];
+  modelValue: SelectedAgent[];
+}
+
+defineOptions({
   name: 'FormAgent',
+});
 
-  components: {
-    TagGroup,
+const props = withDefaults(defineProps<Props>(), {
+  canLoadMore: false,
+  agents: () => [],
+});
+
+const emit = defineEmits<{
+  'update:modelValue': [value: SelectedAgent[]];
+  validate: [value: boolean];
+  remove: [agentUuid: string];
+  select: [agent: Agent];
+  loadMore: [];
+}>();
+
+const selectedAgentsContainer = useTemplateRef('selectedAgentsContainer');
+
+useInfiniteScroll(
+  selectedAgentsContainer,
+  () => {
+    emit('loadMore');
   },
+  { distance: 10, canLoadMore: () => props.canLoadMore },
+);
 
-  props: {
-    agents: {
-      type: Array,
-      default: () => [],
-    },
-    modelValue: {
-      type: Array,
-      default: () => [],
-    },
-  },
-  emits: ['update:modelValue', 'validate', 'remove', 'select'],
+const agentSelection = ref<Agent | null>(null);
+const searchAgent = ref('');
 
-  data() {
+const selectedAgents = computed({
+  get: () => props.modelValue,
+  set: (value) => emit('update:modelValue', value),
+});
+
+const agentsNames = computed(() => {
+  return props.agents.map((agent) => {
+    const { uuid, user } = agent;
     return {
-      agentSelection: null,
-      searchAgent: '',
+      uuid,
+      value: user.email,
+      label:
+        user.first_name || user.last_name
+          ? `${user.first_name} ${user.last_name}`
+          : user.email,
     };
-  },
+  });
+});
 
-  computed: {
-    selectedAgentsTags() {
-      return this.selectedAgents.map((agent) => {
-        const {
-          user: { first_name, last_name, email },
-        } = agent;
-        const agentName = `${first_name} ${last_name}`.trim();
-        const formattedName = agentName ? `${agentName} (${email})` : email;
-        return { uuid: agent.uuid, name: formattedName };
-      });
-    },
-    agentsNames() {
-      return this.agents.map((agent) => {
-        const {
-          user: { email, first_name, last_name },
-          uuid,
-        } = agent;
+const selectedAgentsTags = computed(() => {
+  return selectedAgents.value?.map((agent) => {
+    const {
+      user: { first_name, last_name, email },
+    } = agent;
+    const agentName = `${first_name} ${last_name}`.trim();
+    const formattedName = agentName ? `${agentName} (${email})` : email;
+    return { uuid: agent.uuid, name: formattedName };
+  });
+});
 
-        return {
-          uuid,
-          value: email,
-          label: first_name || last_name ? `${first_name} ${last_name}` : email,
-        };
-      });
-    },
-    selectedAgents: {
-      get() {
-        return this.modelValue;
-      },
-      set(agents) {
-        this.$emit('update:modelValue', agents);
-      },
-    },
-  },
+const validForm = computed(() => {
+  return selectedAgents.value?.length > 0;
+});
 
-  watch: {
-    selectedAgents: {
-      deep: true,
-      immediate: true,
-      handler() {
-        this.$emit('validate', this.validate());
-      },
-    },
-    agentSelection(newVal) {
-      if (!newVal?.value) {
-        return;
-      }
-      const agent = this.agents.find((agent) => agent.uuid === newVal.uuid);
-      if (!agent) {
-        return;
-      }
-      this.$emit('select', agent);
-      this.$nextTick(() => {
-        this.agentSelection = null;
-      });
-    },
-  },
-
-  methods: {
-    remove(agentUuid) {
-      this.$emit('remove', agentUuid);
-    },
-    validate() {
-      return this.selectedAgents.length > 0;
-    },
-  },
+const remove = (agentUuid: string) => {
+  emit('remove', agentUuid);
 };
+
+watch([() => selectedAgents.value, () => validForm.value], () => {
+  emit('validate', validForm.value);
+});
+
+watch(agentSelection, (newVal) => {
+  if (!newVal) {
+    return;
+  }
+  const agent = props.agents.find((agent) => agent.uuid === newVal.uuid);
+  if (!agent) {
+    return;
+  }
+  emit('select', agent);
+  nextTick(() => {
+    agentSelection.value = null;
+  });
+});
 </script>
+
+<style lang="scss" scoped>
+.form-agent {
+  &__selected-agents {
+    height: 60vh;
+    overflow-y: auto;
+  }
+}
+</style>
