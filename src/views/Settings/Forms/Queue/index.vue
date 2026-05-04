@@ -65,6 +65,8 @@
             :key="index"
             :modelValue="queue"
             :agentsOptions="agentsOptions"
+            :canLoadMoreCurrentAgents="!isLoadingCurrentAgents"
+            @load-more-current-agents="listQueueAgents"
             @update:model-value="queues[index] = $event"
           />
           <hr
@@ -98,6 +100,7 @@ import { useConfig } from '@/store/modules/config';
 import { useFeatureFlag } from '@/store/modules/featureFlag';
 
 import { cloneDeep } from 'lodash';
+import { removeDuplicatedItems } from '@/utils/array';
 
 export default {
   name: 'FormQueue',
@@ -123,11 +126,11 @@ export default {
   data() {
     return {
       agentsPage: 0,
+      agentsLimitPerPage: 50,
       editingAutomaticMessage: false,
       loadingInfo: false,
       agentsOptions: [],
       useDefaultSectorQueue: 0,
-      agentsLimitPerPage: 50,
       formTemplate: {
         name: '',
         default_message: '',
@@ -138,6 +141,10 @@ export default {
         toRemoveAgentsUuids: [],
         validForm: false,
       },
+      currentAgentsPage: 0,
+      currentAgentsLimitPerPage: 100,
+      isLoadingCurrentAgents: false,
+      hasLoadedAllCurrentAgents: false,
     };
   },
 
@@ -243,8 +250,29 @@ export default {
       }
     },
     async listQueueAgents() {
-      const response = await Queue.agents(this.queues[0].uuid, 0, 9999);
-      this.queues[0].currentAgents = response.results;
+      if (this.hasLoadedAllCurrentAgents) return;
+      try {
+        this.isLoadingCurrentAgents = true;
+        const { results, next } = await Queue.agents(
+          this.queues[0].uuid,
+          this.currentAgentsPage * this.currentAgentsLimitPerPage,
+          this.currentAgentsLimitPerPage,
+        );
+        this.queues[0].currentAgents = removeDuplicatedItems(
+          this.queues[0].currentAgents.concat(results),
+          'uuid',
+        );
+
+        if (next) {
+          this.currentAgentsPage += 1;
+        } else {
+          this.hasLoadedAllCurrentAgents = true;
+        }
+      } catch (error) {
+        console.error('Error listing queue agents', error);
+      } finally {
+        this.isLoadingCurrentAgents = false;
+      }
     },
   },
 };

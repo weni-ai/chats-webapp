@@ -4,6 +4,10 @@ import FormAgent from '../Agent.vue';
 import defaultProps from './mocks/agentMock';
 import { expect, it } from 'vitest';
 
+import { useCompositionI18nInThisSpecFile } from '@/utils/test/compositionI18nVitest';
+
+useCompositionI18nInThisSpecFile();
+
 function createWrapper() {
   const wrapper = mount(FormAgent, {
     props: defaultProps,
@@ -28,7 +32,7 @@ describe('FormAgent', () => {
     const selects = wrapper.findAllComponents({ name: 'UnnnicSelect' });
 
     expect(selects.length).toBe(1);
-    expect(selects.at(0).props('label')).toMatch(/Add representative/gi);
+    expect(selects.at(0).props('label')).toMatch('agents.add.select.label');
   });
 
   it('should have a agents list rendered', async () => {

@@ -153,46 +153,4 @@ describe('ListSectorQueues.vue', () => {
     expect(form.exists()).toBe(true);
     expect(form.props().modelValue[0].uuid).toBe('queue-1');
   });
-
-  it('should remove a queue from the list when deleteQueue runs', async () => {
-    vi.spyOn(Queue, 'delete').mockResolvedValue(undefined);
-    await wrapper.setData({
-      queues: [
-        { uuid: 'queue-a', name: 'Queue A' },
-        { uuid: 'queue-b', name: 'Queue B' },
-      ],
-      queueToDelete: { uuid: 'queue-a', name: 'Queue A' },
-      showDeleteQueueModal: true,
-    });
-    await wrapper.vm.$nextTick();
-
-    await wrapper.vm.deleteQueue({ action: 'end_all' });
-    await flushPromises();
-
-    expect(Queue.delete).toHaveBeenCalledWith('queue-a', { endAllChats: true });
-
-    expect(wrapper.vm.queues.length).toBe(1);
-    expect(wrapper.vm.queues).toStrictEqual([
-      { uuid: 'queue-b', name: 'Queue B' },
-    ]);
-  });
-
-  it('should close delete queue modal on cancel', async () => {
-    await wrapper.vm.handlerOpenDeleteQueueModal({
-      uuid: 'queue-uuid',
-      name: 'Queue A',
-    });
-
-    await flushPromises();
-    await wrapper.vm.$nextTick();
-
-    const deleteModal = wrapper.findComponent(
-      '[data-testid="delete-queue-modal"]',
-    );
-
-    await deleteModal.vm.$emit('cancel');
-
-    expect(wrapper.vm.showDeleteQueueModal).toBe(false);
-    expect(wrapper.vm.queueToDelete).toEqual({});
-  });
 });

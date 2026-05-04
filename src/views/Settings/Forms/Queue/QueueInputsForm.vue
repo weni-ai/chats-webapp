@@ -43,6 +43,8 @@
       v-else
       :modelValue="queueForm.currentAgents"
       :agents="agentsOptions"
+      :canLoadMore="canLoadMoreCurrentAgents"
+      @load-more="$emit('load-more-current-agents')"
       @remove="handlerRemoveAgent($event)"
       @select="handlerAddAgent($event)"
     />
@@ -71,8 +73,12 @@ export default {
       type: Array,
       required: true,
     },
+    canLoadMoreCurrentAgents: {
+      type: Boolean,
+      default: false,
+    },
   },
-  emits: ['update:modelValue'],
+  emits: ['update:modelValue', 'load-more-current-agents'],
   data() {
     return {
       editingAutomaticMessage: false,
