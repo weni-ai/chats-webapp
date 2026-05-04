@@ -30,7 +30,7 @@
     <QuickMessageDrawer
       v-if="showQuickMessageDrawer"
       :modelValue="showQuickMessageDrawer"
-      :sector="sector.uuid"
+      :sector="sector"
       :quickMessage="quickMessageToEdit"
       @update:model-value="closeConfigMessageDrawer()"
     />

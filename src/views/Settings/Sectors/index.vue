@@ -54,7 +54,6 @@
           @delete="handlerOpenDeleteSectorModal"
         />
       </section>
-
       <section
         v-if="isLoadingSectors"
         data-testid="settings-sectors-loading-section"
@@ -93,8 +92,7 @@ import SectorCard from './SectorCard.vue';
 import Rooms from '@/services/api/resources/settings/rooms';
 import { useSettings } from '@/store/modules/settings';
 
-import Sector from '@/services/api/resources/settings/sector';
-
+import { handleConnectOverlay } from '@/utils/overlay';
 import { UnnnicCallAlert } from '@weni/unnnic-system';
 
 import i18n from '@/plugins/i18n';
@@ -216,10 +214,6 @@ const handlerDeleteSector = async (sectorUuid, transferPayload) => {
     showDeleteSectorModal.value = false;
     handleConnectOverlay(false);
   }
-};
-
-const handleConnectOverlay = (active) => {
-  window.parent.postMessage({ event: 'changeOverlay', data: active }, '*');
 };
 
 const navigate = (name, params, query = {}) => {

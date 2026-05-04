@@ -1,6 +1,7 @@
 <template>
   <section class="sector-queues-form">
     <UnnnicInput
+      v-if="!isEditing"
       v-model="queueForm.name"
       :label="$t('queues.queue_name')"
       :placeholder="$t('queues.queue_name_placeholder')"

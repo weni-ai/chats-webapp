@@ -246,7 +246,7 @@
         "limit_agents": {
           "title": "Defina un límite en la cantidad de chats simultáneos por representante",
           "label": "Número de chats simultáneos",
-          "hint": "Defina 0 para que los representantes tomen chats de la cola",
+          "hint": "Defina 0 para que los representantes tomen chats de la cola.",
           "placeholder": "Ejemplo: 4",
           "tooltip": "El límite puede superarse cuando el representante toma los chats de forma manual o recibe transferencias. Si se define un límite para el representante, tendrá prioridad sobre el límite del equipo."
         },
@@ -830,7 +830,7 @@
     "delete_description": "Escribe el atajo del mensaje rápido a eliminar",
     "shortcut_tooltip": "Escriba /{shortcut} para usar",
     "new": "Nuevo mensaje rápido",
-    "description_new": "Cree un nuevo mensaje rápido para que lo usen todos los representantes de este sector.",
+    "description_new": "Mensaje rápido en el sector {sector}",
     "add": "Agregar nuevo mensaje rápido",
     "edit": "Editar /{shortcut}",
     "available_shortcuts": "Atajos disponibles",
@@ -1096,7 +1096,7 @@
       "hint": "El Co-pilot es el asistente inteligente de tu agente; se podrá activar más tarde."
     },
     "representatives": {
-      "title": "Gestión de representantes",
+      "title": "Gestión de Representantes",
       "description": "Define los representantes de los sectores y las colas, así como el número máximo de chats por representante. Los cambios hechos aquí también se actualizarán en la configuración de sectores y colas",
       "select_all": "Seleccionar todos los representantes",
       "select_count": "{count} seleccionados",
@@ -1140,8 +1140,8 @@
         "empty": "No agregado a ningún sector"
       },
       "actions": {
-        "queue-management_tooltip": "Cambiar representantes seleccionados de sectores/colas",
-        "chats-limit-management_tooltip": "Definir el límite de chats simultáneos para los representantes seleccionados"
+        "queue-management_tooltip": "Cambiar representantes seleccionados de sectores/colas.",
+        "chats-limit-management_tooltip": "Definir el límite de chats simultáneos para los representantes seleccionados."
       },
       "filter": {
         "status": {
@@ -1151,11 +1151,11 @@
           "label": "Filtrar por representantes"
         },
         "sectors": {
-          "label": "Filtrar por sector",
+          "label": "Filtrar por sectores",
           "all": "Todos los sectores"
         },
         "queues": {
-          "label": "Filtrar por cola"
+          "label": "Filtrar por colas"
         }
       }
     },
@@ -1273,6 +1273,9 @@
       "text_2": "Además, los <b>campos personalizados</b> ahora pueden ser expandidos y contraídos, para que puedas ver lo que realmente importa sin tener que hacer scroll.",
       "text_3": "Y para hacer la interfaz más limpia, hemos cambiado el aspecto del botón <b>Iniciar discusión</b>."
     }
+  },
+  "modal_confirm_delete": {
+    "action_cannot_be_reversed": "Esta acción no se puede deshacer"
   },
   "delete_modal": {
     "title": "Eliminar {name}",

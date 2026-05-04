@@ -74,6 +74,7 @@ const emit = defineEmits<{
 .settings-representatives-actions {
   display: flex;
   justify-content: space-between;
+  padding: 0 $unnnic-space-4;
   &__select-all-container {
     display: flex;
     align-items: center;

@@ -246,7 +246,7 @@
         "limit_agents": {
           "title": "Define a limit on the number of simultaneous chats per representative",
           "label": "Number of simultaneous chats",
-          "hint": "Set to 0 to have representatives pick up chats from the queue",
+          "hint": "Set to 0 to have representatives pick up chats from the queue.",
           "placeholder": "Example: 4",
           "tooltip": "The limit may be exceeded when the representative manually takes over chats or receives transfers. If a specific limit is set for the representative, it will take precedence over the team limit."
         },
@@ -827,7 +827,7 @@
     "delete_description": "Type the shortcut of the quick message to delete",
     "shortcut_tooltip": "Type /{shortcut} to use",
     "new": "New quick message",
-    "description_new": "Create a new quick message to be used by all representatives in this sector.",
+    "description_new": "Quick message in the {sector} sector",
     "add": "Add new quick message",
     "edit": "Edit /{shortcut}",
     "available_shortcuts": "Available shortcuts",
@@ -991,7 +991,7 @@
       "filter_by_name": "Filter by queue name",
       "add_queue": "Add queue",
       "delete_this_queue": "Type the name of the queue to delete",
-      "remove_tooltip": "Remove this queue",
+      "remove_tooltip": "Delete this queue",
       "configure_queue": {
         "title": "Configure queue",
         "tooltip": "Queues are support groups within the sector. You can create new queues or edit them whenever you want with the created sector."
@@ -1093,7 +1093,7 @@
       "hint": "The Co-pilot is your agent's intelligent assistant; it can be activated later."
     },
     "representatives": {
-      "title": "Representatives management",
+      "title": "Representatives Management",
       "description": "Define the representatives for the sectors and queues, as well as the maximum number of chats per representative. Changes made here will also be updated in the sector and queue settings.",
       "select_all": "Select all representatives",
       "select_count": "{count} selected",
@@ -1106,7 +1106,7 @@
         "disclaimer": "The limit will be applied to the {count} selected representatives.",
         "input": {
           "label": "Define the limit of simultaneous chats",
-          "tooltip": "A limit set for a specific agent overrides the sector-level limit.",
+          "tooltip": "A limit set for a specific representative overrides the sector-level limit.",
           "helper": "Set to 0 to have representatives pick up chats from the queue.",
           "placeholder": "Example: 4"
         }
@@ -1137,8 +1137,8 @@
         "empty": "Representative is not added to any sector"
       },
       "actions": {
-        "queue-management_tooltip": "Change selected representatives from sectors/queues",
-        "chats-limit-management_tooltip": "Define the limit of simultaneous chats for the selected representatives"
+        "queue-management_tooltip": "Change selected representatives from sectors/queues.",
+        "chats-limit-management_tooltip": "Define the limit of simultaneous chats for the selected representatives."
       },
       "filter": {
         "status": {
@@ -1148,11 +1148,11 @@
           "label": "Filter by representatives"
         },
         "sectors": {
-          "label": "Filter by sector",
+          "label": "Filter by sectors",
           "all": "All sectors"
         },
         "queues": {
-          "label": "Filter by queue"
+          "label": "Filter by queues"
         }
       }
     },
@@ -1270,6 +1270,9 @@
       "text_2": "In addition, <b>custom fields</b> can now be collapsed and expanded, so you can see what really matters without having to scroll.",
       "text_3": "And to make the interface cleaner, we've changed the look of the <b>Start discussion</b> button."
     }
+  },
+  "modal_confirm_delete": {
+    "action_cannot_be_reversed": "This action cannot be reversed"
   },
   "delete_modal": {
     "title": "Delete {name}",
