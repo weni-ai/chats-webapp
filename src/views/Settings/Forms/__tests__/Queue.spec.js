@@ -88,7 +88,7 @@ describe('FormQueue', () => {
     expect(inputQueueName.exists()).toBe(true);
   });
 
-  it('shows queue name input in edit mode', async () => {
+  it('not shows queue name input in edit mode', async () => {
     await wrapper.setProps({
       modelValue: [
         {
@@ -101,7 +101,7 @@ describe('FormQueue', () => {
     });
     await flushPromises();
     expect(wrapper.find('[data-testid="queue-name-input"]').exists()).toBe(
-      true,
+      false,
     );
   });
 
@@ -233,11 +233,11 @@ describe('FormQueue', () => {
   });
 
   it('should render queue name input with label', async () => {
-    const inputQueue = wrapper.findAllComponents({ name: 'unnnic-input' }).at(0);
+    const inputQueue = wrapper
+      .findAllComponents({ name: 'unnnic-input' })
+      .at(0);
     expect(inputQueue.exists()).toBe(true);
-    expect(String(inputQueue.props('label')).toLowerCase()).toContain(
-      'queue',
-    );
+    expect(String(inputQueue.props('label')).toLowerCase()).toContain('queue');
   });
 
   it('should emit update when default queue option is disabled', async () => {
