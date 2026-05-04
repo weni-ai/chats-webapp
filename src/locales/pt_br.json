@@ -233,7 +233,7 @@
         "limit_agents": {
           "title": "Defina um limite na quantidade de chats simultâneos por atendente",
           "label": "Número de chats simultâneos",
-          "hint": "Defina 0 para que os atendentes peguem chats da fila",
+          "hint": "Defina 0 para que os atendentes peguem chats da fila.",
           "placeholder": "Exemplo: 4",
           "tooltip": "O limite pode ser excedido quando o atendente assumir chats manualmente ou receber transferências. Se houver limite definido para o atendente, ele prevalece em relação ao limite da equipe."
         },
@@ -818,7 +818,7 @@
     "delete_description": "Digite o atalho da mensagem rápida a excluir",
     "shortcut_tooltip": "Digite /{shortcut} para usar",
     "new": "Nova mensagem rápida",
-    "description_new": "Crie uma nova mensagem rápida para ser usada por todos os atendentes deste setor.",
+    "description_new": "Mensagem rápida no setor {sector}",
     "add": "Adicionar nova mensagem rápida",
     "edit": "Editar /{shortcut}",
     "available_shortcuts": "Atalhos disponíveis",
@@ -981,7 +981,7 @@
       "filter_by_name": "Filtrar por nome da fila",
       "add_queue": "Adicionar fila",
       "delete_this_queue": "Digite o nome da fila a excluir",
-      "remove_tooltip": "Remover esta fila",
+      "remove_tooltip": "Excluir esta fila",
       "configure_queue": {
         "title": "Configurar fila",
         "tooltip": "As filas são grupos de atendimento dentro do setor. Você pode criar novas filas ou editá-las quando quiser após criar o setor."
