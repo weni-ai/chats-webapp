@@ -9,7 +9,7 @@
         <UnnnicDialogTitle data-testid="modal-title">
           {{
             $t('country_holidays.title', {
-              country: $t(`country.${countryCode || 'label'}`),
+              country: countryName,
             })
           }}
         </UnnnicDialogTitle>
@@ -82,6 +82,14 @@ export default {
       isLoadingRequest: false,
       isOpen: true,
     };
+  },
+  computed: {
+    countryName() {
+      const locale = this.$i18n.locale;
+      return new Intl.DisplayNames(locale, { type: 'region' }).of(
+        this.countryCode,
+      );
+    },
   },
   watch: {
     isOpen(value) {
