@@ -306,7 +306,6 @@ export default {
           ]);
 
           const { data: updatedQueue } = await Queue.editQueue({
-            name,
             uuid,
             default_message,
             queue_limit: this.enableQueueLimitFeature

@@ -3,7 +3,9 @@
     ref="quickMessageDrawer"
     :modelValue="showQuickMessageDrawer"
     :description="
-      quickMessageToEdit.uuid ? '' : $t('quick_messages.description_new')
+      quickMessageToEdit.uuid
+        ? ''
+        : $t('quick_messages.description_new', { sector: props.sector?.name })
     "
     :title="
       quickMessageToEdit.uuid
@@ -63,7 +65,7 @@ const { create: createQuickMessageShared, update: updateQuickMessageShared } =
 interface Props {
   modelValue: boolean;
   quickMessage?: QuickMessage;
-  sector: string;
+  sector: Record<string, any>;
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -96,7 +98,7 @@ const handlerCreateQuickMessage = async () => {
     isLoadingQuickMessage.value = true;
     const { shortcut, text } = quickMessageToEdit.value;
     await createQuickMessageShared({
-      sectorUuid: props.sector,
+      sectorUuid: props.sector?.uuid,
       text,
       title: '',
       shortcut,

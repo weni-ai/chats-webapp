@@ -233,7 +233,7 @@
         "limit_agents": {
           "title": "Defina un límite en la cantidad de chats simultáneos por representante",
           "label": "Número de chats simultáneos",
-          "hint": "Defina 0 para que los representantes tomen chats de la cola",
+          "hint": "Defina 0 para que los representantes tomen chats de la cola.",
           "placeholder": "Ejemplo: 4",
           "tooltip": "El límite puede superarse cuando el representante toma los chats de forma manual o recibe transferencias. Si se define un límite para el representante, tendrá prioridad sobre el límite del equipo."
         },
@@ -817,7 +817,7 @@
     "delete_description": "Escribe el atajo del mensaje rápido a eliminar",
     "shortcut_tooltip": "Escriba /{shortcut} para usar",
     "new": "Nuevo mensaje rápido",
-    "description_new": "Cree un nuevo mensaje rápido para que lo usen todos los representantes de este sector.",
+    "description_new": "Mensaje rápido en el sector {sector}",
     "add": "Agregar nuevo mensaje rápido",
     "edit": "Editar /{shortcut}",
     "available_shortcuts": "Atajos disponibles",
