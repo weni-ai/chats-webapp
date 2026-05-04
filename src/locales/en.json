@@ -1080,7 +1080,7 @@
       "hint": "The Co-pilot is your agent's intelligent assistant; it can be activated later."
     },
     "representatives": {
-      "title": "Representatives management",
+      "title": "Representatives Management",
       "description": "Define the representatives for the sectors and queues, as well as the maximum number of chats per representative. Changes made here will also be updated in the sector and queue settings.",
       "select_all": "Select all representatives",
       "select_count": "{count} selected",
@@ -1093,7 +1093,7 @@
         "disclaimer": "The limit will be applied to the {count} selected representatives.",
         "input": {
           "label": "Define the limit of simultaneous chats",
-          "tooltip": "A limit set for a specific agent overrides the sector-level limit.",
+          "tooltip": "A limit set for a specific representative overrides the sector-level limit.",
           "helper": "Set to 0 to have representatives pick up chats from the queue.",
           "placeholder": "Example: 4"
         }
@@ -1124,8 +1124,8 @@
         "empty": "Representative is not added to any sector"
       },
       "actions": {
-        "queue-management_tooltip": "Change selected representatives from sectors/queues",
-        "chats-limit-management_tooltip": "Define the limit of simultaneous chats for the selected representatives"
+        "queue-management_tooltip": "Change selected representatives from sectors/queues.",
+        "chats-limit-management_tooltip": "Define the limit of simultaneous chats for the selected representatives."
       },
       "filter": {
         "status": {
@@ -1135,11 +1135,11 @@
           "label": "Filter by representatives"
         },
         "sectors": {
-          "label": "Filter by sector",
+          "label": "Filter by sectors",
           "all": "All sectors"
         },
         "queues": {
-          "label": "Filter by queue"
+          "label": "Filter by queues"
         }
       }
     },

@@ -1085,37 +1085,37 @@
       "hint": "O Co-pilot é o assistente inteligente do seu agente, ele poderá ser ativo mais tarde."
     },
     "representatives": {
-      "title": "Gestão de representantes",
-      "description": "Defina os representantes para os setores e filas, além do número máximo de chats por representante. As alterações feitas aqui também serão atualizadas nas configurações de setor e de fila",
-      "select_all": "Selecionar todos os representantes",
+      "title": "Gestão de Atendentes",
+      "description": "Defina os atendentes para os setores e filas, além do número máximo de chats por atendente. As alterações feitas aqui também serão atualizadas nas configurações de setor e de fila",
+      "select_all": "Selecionar todos os atendentes",
       "select_count": "{count} selecionados",
       "empty_list": "Ainda não há membros com permissão para atendimento humano neste projeto. Convide um membro ou atualize as permissões de um membro em Gestão de membros para vê-los aqui.",
-      "not_found_list": "Nenhum representante encontrado. Tente outro filtro.",
+      "not_found_list": "Nenhum atendente encontrado. Tente outro filtro.",
       "save_success": "Alterações salvas com sucesso",
       "save_error": "Não foi possível salvar as alterações",
       "bulk_chats_limit_modal": {
         "title": "Limite de chats simultâneos",
-        "disclaimer": "O limite será aplicado aos {count} representantes selecionados.",
+        "disclaimer": "O limite será aplicado aos {count} atendentes selecionados.",
         "input": {
           "label": "Definir o limite de chats simultâneos",
-          "tooltip": "Um limite definido para um representante específico substitui o limite a nível de setor",
-          "helper": "Defina 0 para que os representantes puxem chats a partir da fila",
+          "tooltip": "Um limite definido para um atendente específico substitui o limite a nível de setor",
+          "helper": "Defina 0 para que os atendentes puxem chats a partir da fila",
           "placeholder": "Exemplo: 4"
         }
       },
       "queue_manager": {
         "title": "Gerenciar {representativeName}",
         "bulk_title": "Alterar setores e filas",
-        "bulk_disclaimer_description": "A alteração será aplicada aos {count} representantes selecionados.",
+        "bulk_disclaimer_description": "A alteração será aplicada aos {count} atendentes selecionados.",
         "bulk_add_action": "Adicionar a setor/fila",
         "bulk_remove_action": "Remover de setor/fila",
-        "bulk_select_action_description": "Selecione a ação em lote que deseja aplicar aos representantes selecionados:",
+        "bulk_select_action_description": "Selecione a ação em lote que deseja aplicar aos atendentes selecionados:",
         "chats_limit": {
-          "switch_label": "Definir limite no número de chats simultâneos para este representante",
-          "switch_helper": "Um limite definido para um representante específico substitui o limite a nível de setor",
+          "switch_label": "Definir limite no número de chats simultâneos para este atendente",
+          "switch_helper": "Um limite definido para um atendente específico substitui o limite a nível de setor",
           "input_label": "Número de chats simultâneos",
           "input_placeholder": "Ex.: 4",
-          "input_helper": "Defina 0 para o representante puxar chats a partir da fila"
+          "input_helper": "Defina 0 para o atendente puxar chats a partir da fila"
         },
         "sector_queues_checkbox": {
           "title": "Setores e filas",
@@ -1129,22 +1129,22 @@
         "empty": "Não adicionado a nenhum setor"
       },
       "actions": {
-        "queue-management_tooltip": "Alterar representantes selecionados de setores/filas",
-        "chats-limit-management_tooltip": "Definir o limite de chats simultâneos para os representantes selecionados"
+        "queue-management_tooltip": "Alterar atendentes selecionados de setores/filas.",
+        "chats-limit-management_tooltip": "Definir o limite de chats simultâneos para os atendentes selecionados."
       },
       "filter": {
         "status": {
           "label": "Filtrar por status"
         },
         "representatives": {
-          "label": "Filtrar por representantes"
+          "label": "Filtrar por atendentes"
         },
         "sectors": {
-          "label": "Filtrar por setor",
+          "label": "Filtrar por setores",
           "all": "Todos os setores"
         },
         "queues": {
-          "label": "Filtrar por fila"
+          "label": "Filtrar por filas"
         }
       }
     },
