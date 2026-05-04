@@ -1,4 +1,4 @@
-import { ref, computed, nextTick, watch } from 'vue';
+import { ref, computed, watch } from 'vue';
 import { defineStore, storeToRefs } from 'pinia';
 
 import { useRooms } from './rooms';
@@ -79,6 +79,7 @@ export const useMessageManager = defineStore('messageManager', () => {
     if (!inputMessageTrimmed) return;
     const text = `${t('internal_note')}: ${inputMessageTrimmed}`;
     await roomMessagesStore.sendRoomInternalNote({ text });
+    clearInputs();
   }
 
   async function sendTextMessage(repliedMessage) {
@@ -88,6 +89,7 @@ export const useMessageManager = defineStore('messageManager', () => {
       const aiTextImprovementPayload =
         aiTextImprovementStore.getAiTextImprovementPayload(message);
 
+      console.log('sendTextMessage', inputMessage.value);
       clearInputs();
       aiTextImprovementStore.reset();
 
@@ -148,9 +150,6 @@ export const useMessageManager = defineStore('messageManager', () => {
       await sendTextMessage(repliedMessage);
       await sendAudioMessage(repliedMessage);
     }
-    nextTick(() => {
-      clearInputs();
-    });
   }
 
   function addMediaUploadFiles(files: File[] | FileList) {
