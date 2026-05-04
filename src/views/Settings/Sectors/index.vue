@@ -51,9 +51,9 @@
           @click="
             navigate('sectors.edit', { uuid: sector.uuid }, { tab: 'general' })
           "
+          @delete="handlerOpenDeleteSectorModal"
         />
       </section>
-
       <section
         v-if="isLoadingSectors"
         data-testid="settings-sectors-loading-section"
@@ -65,6 +65,18 @@
         />
       </section>
     </section>
+    <ModalDeleteWithTransfer
+      v-if="showDeleteSectorModal"
+      v-model="showDeleteSectorModal"
+      data-testid="modal-delete-sector"
+      type="sector"
+      :name="toDeleteSector.name"
+      :excludeSectorUuid="toDeleteSector.uuid"
+      :inProgressChatsCount="sectorRoomsCount"
+      :isLoading="isLoadingDeleteSector"
+      @confirm="handlerDeleteSector(toDeleteSector.uuid, $event)"
+      @cancel="handlerCloseDeleteSectorModal()"
+    />
   </section>
 </template>
 
@@ -73,27 +85,42 @@ import { computed, onMounted, ref } from 'vue';
 import { useRouter } from 'vue-router';
 import { storeToRefs } from 'pinia';
 
+import ModalDeleteWithTransfer from '@/components/ModalDeleteWithTransfer.vue';
 import ListOrdinator from '@/components/ListOrdinator.vue';
 import SectorCard from './SectorCard.vue';
 
+import Rooms from '@/services/api/resources/settings/rooms';
 import { useSettings } from '@/store/modules/settings';
+
+import { handleConnectOverlay } from '@/utils/overlay';
+import { UnnnicCallAlert } from '@weni/unnnic-system';
+
+import i18n from '@/plugins/i18n';
 
 defineOptions({
   name: 'SettingsSectors',
 });
 
+const { t } = i18n.global;
 const router = useRouter();
 
 const emit = defineEmits<{
   'open-new-sector-modal': [void];
 }>();
 
+const showDeleteSectorModal = ref(false);
 const sectorNameFilter = ref('');
 const sectorOrder = ref('alphabetical');
+const toDeleteSector = ref<{ uuid: string; name: string }>({
+  uuid: '',
+  name: '',
+});
+const sectorRoomsCount = ref(0);
+const isLoadingDeleteSector = ref(false);
 
 const settingsStore = useSettings();
 const { sectors, isLoadingSectors } = storeToRefs(settingsStore);
-const { getSectors } = settingsStore;
+const { getSectors, deleteSector } = settingsStore;
 
 const sectorsOrdered = computed(() => {
   let sectorsOrdered = sectors.value.slice().sort((a, b) => {
@@ -126,6 +153,69 @@ const sectorsOrdered = computed(() => {
 onMounted(() => {
   getSectors(true, true);
 });
+
+const handlerOpenDeleteSectorModal = async (sector) => {
+  toDeleteSector.value = sector;
+  handleConnectOverlay(true);
+  try {
+    console.log('sector', sector);
+    const { waiting, in_service } = await Rooms.count({
+      sector: sector.uuid,
+    });
+    sectorRoomsCount.value = waiting + in_service;
+  } catch {
+    sectorRoomsCount.value = 0;
+  }
+
+  showDeleteSectorModal.value = true;
+};
+
+const handlerCloseDeleteSectorModal = () => {
+  toDeleteSector.value = { uuid: '', name: '' };
+  handleConnectOverlay(false);
+  showDeleteSectorModal.value = false;
+};
+
+const handlerDeleteSector = async (sectorUuid, transferPayload) => {
+  try {
+    isLoadingDeleteSector.value = true;
+
+    const options: Record<string, any> = {};
+
+    if (transferPayload.action === 'transfer') {
+      options.transferToQueue = transferPayload.transferQueueUuid;
+    } else if (transferPayload.action === 'end_all') {
+      options.endAllChats = true;
+    }
+
+    await deleteSector(sectorUuid, options);
+
+    router.push({ name: 'sectors' });
+
+    UnnnicCallAlert({
+      props: {
+        text: t('delete_modal.sector_success'),
+        type: 'success',
+      },
+      seconds: 5,
+    });
+  } catch (error) {
+    const isTransferConflict = error?.response?.status === 409;
+    UnnnicCallAlert({
+      props: {
+        text: isTransferConflict
+          ? t('delete_modal.transfer_error_sector')
+          : t('delete_modal.sector_error'),
+        type: 'error',
+      },
+      seconds: 5,
+    });
+  } finally {
+    isLoadingDeleteSector.value = false;
+    showDeleteSectorModal.value = false;
+    handleConnectOverlay(false);
+  }
+};
 
 const navigate = (name, params, query = {}) => {
   router.push({
