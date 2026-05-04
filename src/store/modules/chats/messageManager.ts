@@ -89,7 +89,6 @@ export const useMessageManager = defineStore('messageManager', () => {
       const aiTextImprovementPayload =
         aiTextImprovementStore.getAiTextImprovementPayload(message);
 
-      console.log('sendTextMessage', inputMessage.value);
       clearInputs();
       aiTextImprovementStore.reset();
 
