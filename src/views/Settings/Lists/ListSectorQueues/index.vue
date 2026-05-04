@@ -23,7 +23,7 @@
         :key="queue.uuid"
         :queue="queue"
         @edit="openConfigQueueDrawer(queue)"
-        @delete="deleteQueue(queue)"
+        @delete="handlerOpenDeleteQueueModal"
       />
     </section>
   </section>
@@ -57,6 +57,18 @@
       />
     </template>
   </UnnnicDrawer>
+  <ModalDeleteWithTransfer
+    v-if="showDeleteQueueModal"
+    v-model="showDeleteQueueModal"
+    data-testid="delete-queue-modal"
+    type="queue"
+    :name="queueToDelete.name"
+    :excludeQueueUuid="queueToDelete.uuid"
+    :inProgressChatsCount="queueRoomsCount"
+    :isLoading="isLoadingDeleteQueue"
+    @confirm="deleteQueue"
+    @cancel="handlerCloseDeleteQueueModal()"
+  />
 </template>
 
 <script>
@@ -64,6 +76,8 @@ import { mapState } from 'pinia';
 
 import FormQueue from '@/views/Settings/Forms/Queue/index.vue';
 import ListOrdinator from '@/components/ListOrdinator.vue';
+import Rooms from '@/services/api/resources/settings/rooms';
+import ModalDeleteWithTransfer from '@/components/ModalDeleteWithTransfer.vue';
 import QueueCard from './QueueCard.vue';
 
 import { useFeatureFlag } from '@/store/modules/featureFlag';
@@ -79,6 +93,7 @@ export default {
   components: {
     FormQueue,
     ListOrdinator,
+    ModalDeleteWithTransfer,
     QueueCard,
   },
   props: {
@@ -98,6 +113,10 @@ export default {
       validForm: false,
       queueNameFilter: '',
       queueOrder: 'alphabetical',
+      isLoadingDeleteQueue: false,
+      queueRoomsCount: 0,
+      showDeleteQueueModal: false,
+      queueToDelete: {},
     };
   },
 
@@ -105,6 +124,11 @@ export default {
     ...mapState(useFeatureFlag, ['featureFlags']),
     enableQueueLimitFeature() {
       return this.featureFlags.active_features?.includes('weniChatsQueueLimit');
+    },
+    isDeleteTransferEnabled() {
+      return this.featureFlags.active_features?.includes(
+        'weniChatsDeleteTransfer',
+      );
     },
     queuesOrdered() {
       let queuesOrdered = this.queues.slice().sort((a, b) => {
@@ -140,10 +164,65 @@ export default {
     this.getQueues();
   },
   methods: {
-    async deleteQueue(deletedQueue) {
-      this.queues = this.queues.filter(
-        (queue) => queue.uuid !== deletedQueue.uuid,
-      );
+    async deleteQueue(transferPayload) {
+      try {
+        this.isLoadingDeleteQueue = true;
+
+        const options = {};
+        if (transferPayload.action === 'transfer') {
+          options.transferToQueue = transferPayload.transferQueueUuid;
+        } else if (transferPayload.action === 'end_all') {
+          options.endAllChats = true;
+        }
+
+        await Queue.delete(this.queueToDelete.uuid, options);
+        this.queues = this.queues.filter(
+          (queue) => queue.uuid !== this.queueToDelete.uuid,
+        );
+        unnnic.unnnicCallAlert({
+          props: {
+            text: this.$t('delete_modal.queue_success'),
+            type: 'success',
+          },
+        });
+      } catch (error) {
+        const isTransferConflict = error?.response?.status === 409;
+        unnnic.unnnicCallAlert({
+          props: {
+            text: isTransferConflict
+              ? this.$t('delete_modal.transfer_error_queue')
+              : this.$t('delete_modal.queue_error'),
+            type: 'error',
+          },
+        });
+      } finally {
+        this.handlerCloseDeleteQueueModal();
+        this.isLoadingDeleteQueue = false;
+      }
+    },
+    handlerCloseDeleteQueueModal() {
+      handleConnectOverlay(false);
+      this.queueToDelete = {};
+      this.showDeleteQueueModal = false;
+    },
+    async handlerOpenDeleteQueueModal(queue) {
+      handleConnectOverlay(true);
+      this.queueToDelete = queue;
+
+      if (this.isDeleteTransferEnabled) {
+        try {
+          const { waiting, in_service } = await Rooms.count({
+            queue: queue.uuid,
+          });
+          this.queueRoomsCount = waiting + in_service;
+        } catch {
+          this.queueRoomsCount = 0;
+        }
+      } else {
+        this.queueRoomsCount = 0;
+      }
+
+      this.showDeleteQueueModal = true;
     },
     listenConnect() {
       window.addEventListener('message', (message) => {

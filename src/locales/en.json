@@ -531,7 +531,7 @@
     "tooltip_disabled": "Write a response in the text field to enable improved responses with AI",
     "tooltip_enabled": "Improve response with AI",
     "tooltip_cancel": "Cancel AI response improvement",
-    "fix_grammar_and_spelling": "Fix grammar & spelling",
+    "fix_grammar_and_spelling": "Fix spelling and grammar",
     "make_more_empathetic": "Make more empathetic",
     "rewrite_for_clarity": "Rewrite for clarity",
     "improving_response": "Improving your response",
@@ -539,7 +539,7 @@
     "error": "Error improving response with AI. Try again.",
     "new": "New",
     "back_to_original": "Original",
-    "back_to_original_tooltip": "Return to original version (Ctrl+Z)"
+    "back_to_original_tooltip": "Go back to original version (Ctrl+Z)"
   },
   "manager": "Manager",
   "you": "You",
@@ -1260,5 +1260,24 @@
   },
   "modal_confirm_delete": {
     "action_cannot_be_reversed": "This action cannot be reversed"
+  },
+  "delete_modal": {
+    "title": "Delete {name}",
+    "description_sector": "The system has detected {count} chats in the {name} sector that are in progress or waiting to be handled. Please choose what you'd like to do with them",
+    "description_queue": "The system has detected {count} chats in the {name} queue that are in progress or waiting to be handled. Please choose what you'd like to do with them",
+    "transfer_chats": "Transfer chats to another sector/queue",
+    "end_all_chats": "End all chats",
+    "select_sector": "Select a sector",
+    "select_queue": "Select a queue",
+    "type_name_sector": "Type the name of the sector to delete",
+    "type_name_queue": "Type the name of the queue to delete",
+    "cannot_be_reversed": "This action cannot be reversed.",
+    "delete_button": "Delete",
+    "sector_success": "Sector deleted successfully!",
+    "sector_error": "Unable to delete the sector.",
+    "queue_success": "Queue deleted successfully!",
+    "queue_error": "Unable to delete the queue.",
+    "transfer_error_sector": "Rooms couldn't be transferred. Sector deletion aborted",
+    "transfer_error_queue": "Rooms couldn't be transferred. Queue deletion aborted"
   }
 }

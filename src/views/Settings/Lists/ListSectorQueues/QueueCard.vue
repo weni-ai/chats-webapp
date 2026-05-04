@@ -32,37 +32,18 @@
             :label="$t('delete')"
             icon="delete"
             scheme="fg-critical"
-            @click="showModalConfirmDelete()"
+            @click="emitDelete"
           />
         </UnnnicPopoverContent>
       </UnnnicPopover>
     </section>
-    <ModalConfirmDelete
-      v-if="openModalConfirmDelete"
-      v-model="openModalConfirmDelete"
-      :title="titleModalConfirmDelete"
-      :description="$t('config_chats.queues.delete_this_queue')"
-      :confirmText="props.queue.name"
-      :isLoading="isLoadingDelete"
-      @confirm="deleteQueue"
-      @cancel="openModalConfirmDelete = false"
-    />
   </section>
 </template>
 
 <script setup lang="ts">
-import { computed, ref } from 'vue';
-import { UnnnicToastManager, UnnnicCallAlert } from '@weni/unnnic-system';
-
-import ModalConfirmDelete from '@/components/ModalConfirmDelete.vue';
-
-import QueueService from '@/services/api/resources/settings/queue';
+import { ref } from 'vue';
 
 import type { Queue } from '@/types/Queue';
-
-import i18n from '@/plugins/i18n';
-
-const { t } = i18n.global;
 
 defineOptions({
   name: 'QueueCard',
@@ -79,50 +60,15 @@ const emit = defineEmits<{
 }>();
 
 const openPopover = ref(false);
-const openModalConfirmDelete = ref(false);
-const isLoadingDelete = ref(false);
-
-const titleModalConfirmDelete = computed(() => {
-  return `${t('delete')} ${props.queue.name}`;
-});
-
-const showModalConfirmDelete = () => {
-  openPopover.value = false;
-  openModalConfirmDelete.value = true;
-};
 
 const emitEdit = () => {
   openPopover.value = false;
   emit('edit', props.queue);
 };
 
-const deleteQueue = async () => {
-  try {
-    isLoadingDelete.value = true;
-    await QueueService.delete(props.queue.uuid);
-    UnnnicCallAlert({
-      props: {
-        text: t('config_chats.queues.message.delete_success'),
-        type: 'success',
-      },
-    });
-    emit('delete', props.queue);
-  } catch (error) {
-    console.error(error);
-    UnnnicToastManager.error(
-      t('config_chats.queues.message.delete_error'),
-      '',
-      {
-        button: {
-          text: t('try_again'),
-          action: () => showModalConfirmDelete(),
-        },
-      },
-    );
-  } finally {
-    openModalConfirmDelete.value = false;
-    isLoadingDelete.value = false;
-  }
+const emitDelete = () => {
+  openPopover.value = false;
+  emit('delete', props.queue);
 };
 </script>
 
