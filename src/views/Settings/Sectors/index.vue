@@ -158,7 +158,6 @@ const handlerOpenDeleteSectorModal = async (sector) => {
   toDeleteSector.value = sector;
   handleConnectOverlay(true);
   try {
-    console.log('sector', sector);
     const { waiting, in_service } = await Rooms.count({
       sector: sector.uuid,
     });
