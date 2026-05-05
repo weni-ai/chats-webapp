@@ -591,8 +591,13 @@ describe('State Rooms', () => {
 
       it('should handle room transfers', async () => {
         const routerReplace = vi.fn();
+        const roomWithAssignee = {
+          ...humanServiceRoomsStore.rooms[0],
+          user: { email: 'testing@weni.ai' },
+        };
         humanServiceRoomsStore.$patch({
-          activeRoom: { ...humanServiceRoomsStore.rooms[0] },
+          rooms: [roomWithAssignee, ...humanServiceRoomsStore.rooms.slice(1)],
+          activeRoom: roomWithAssignee,
         });
         const roomUuid = humanServiceRoomsStore.activeRoom.uuid;
 
@@ -617,11 +622,30 @@ describe('State Rooms', () => {
       });
 
       it('should show modal for assumed chat', async () => {
+        humanServiceRoomsStore.$patch({
+          rooms: humanServiceRoomsStore.rooms.map((r) =>
+            r.uuid === '1'
+              ? {
+                  ...r,
+                  user: {
+                    email: 'testing@weni.ai',
+                    first_name: 'Agent',
+                    last_name: 'One',
+                  },
+                }
+              : r,
+          ),
+        });
+
         await updateRoom(
           {
-            id: '5',
-            user: { email: 'testing-adm@weni.ai' },
-            transfer_history: { from: { type: 'user' } },
+            uuid: '1',
+            user: {
+              email: 'testing-adm@weni.ai',
+              first_name: 'Admin',
+              last_name: 'User',
+            },
+            transfer_history: { from: { type: 'user' }, action: 'pick' },
             contact: { name: 'Cliente 1' },
           },
           {

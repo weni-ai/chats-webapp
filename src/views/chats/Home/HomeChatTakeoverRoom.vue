@@ -9,7 +9,10 @@
       <section class="home-chat-takeover-room__content">
         <p class="home-chat-takeover-room__description">
           {{
-            $t('chats.your_chat_assumed_description', { contact: contactName })
+            $t('chats.your_chat_assumed_description', {
+              contact: contactName,
+              representative: assumedByUser,
+            })
           }}
         </p>
       </section>
@@ -23,6 +26,7 @@ import { computed } from 'vue';
 interface Props {
   modelValue: boolean;
   contactName: string;
+  assumedByUser: string;
 }
 
 const emit = defineEmits<{

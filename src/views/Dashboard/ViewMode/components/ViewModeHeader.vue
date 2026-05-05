@@ -11,6 +11,7 @@
       <UnnnicIcon
         icon="visibility"
         size="md"
+        scheme="fg-inverted"
         data-testid="visibility-icon"
       />
       {{ $t('dashboard.view-mode.title', { viewedAgent }) }}
@@ -30,6 +31,7 @@
         <UnnnicIcon
           size="sm"
           icon="close-1"
+          scheme="fg-inverted"
           data-testid="close-icon"
         />
       </UnnnicToolTip>
@@ -103,6 +105,8 @@ export default {
     font-weight: $unnnic-font-weight-regular;
 
     flex: 1;
+
+    color: $unnnic-color-fg-inverted;
   }
 
   .close-button {
