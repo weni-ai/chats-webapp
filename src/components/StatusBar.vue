@@ -39,7 +39,7 @@
           data-testid="header-icon-expand"
           size="md"
           :icon="isOpen ? 'expand_less' : 'expand_more'"
-          scheme="neutral-darkest"
+          scheme="fg-base"
         />
       </section>
     </section>
@@ -515,7 +515,7 @@ watch(
   }
 
   &--gray {
-    background-color: $unnnic-color-bg-base-soft;
+    background-color: $unnnic-color-bg-muted;
   }
 
   &--brown {
@@ -555,10 +555,10 @@ watch(
     &__label {
       color: $unnnic-color-fg-base;
       font-family: $unnnic-font-family-secondary;
-      font-size: $unnnic-font-size-body-md;
+      font-size: $unnnic-font-size-body-gt;
       font-style: normal;
-      font-weight: $unnnic-font-weight-regular;
-      line-height: $unnnic-font-size-body-md + $unnnic-line-height-md;
+      font-weight: $unnnic-font-weight-bold;
+      line-height: $unnnic-font-size-body-gt + $unnnic-line-height-md;
     }
   }
 
