@@ -15,7 +15,7 @@
     />
 
     <HomeChatTakeoverRoom
-      v-if="showModalAssumedChat"
+      v-if="enableChatTakeoverFeedbackModal && showModalAssumedChat"
       v-model="showModalAssumedChat"
       :contactName="assumedChatContactName"
       :assumedByUser="assumedByUser"
@@ -93,6 +93,11 @@ export default {
     ...mapWritableState(useMessageManager, {
       modalFileUploaderFiles: 'mediaUploadFiles',
     }),
+    enableChatTakeoverFeedbackModal() {
+      return this.featureFlags.active_features?.includes(
+        'weniChatsChatTakeoverFeedbackModal',
+      );
+    },
     enableMessageManagerV2() {
       return this.featureFlags.active_features?.includes(
         'weniChatsInputMessageV2',
