@@ -90,7 +90,8 @@ import QueueService from '@/services/api/resources/chats/queues';
 import i18n from '@/plugins/i18n';
 
 const roomsStore = useRooms();
-const { filterQueues, activeTab } = storeToRefs(roomsStore);
+const { filterQueues, activeTab, selectedOngoingRooms, selectedWaitingRooms } =
+  storeToRefs(roomsStore);
 
 const hasFilterQueues = computed(() => filterQueues.value.length > 0);
 
@@ -154,11 +155,15 @@ const handleSelectedQueues = (queueUuid: string, isSelected: boolean) => {
 };
 
 const clearFilterQueues = () => {
+  selectedOngoingRooms.value = [];
+  selectedWaitingRooms.value = [];
   filterQueues.value = [];
   openPopover.value = false;
 };
 
 const applyFilterQueues = () => {
+  selectedOngoingRooms.value = [];
+  selectedWaitingRooms.value = [];
   filterQueues.value = cloneDeep(selectedQueues.value);
   openPopover.value = false;
 };

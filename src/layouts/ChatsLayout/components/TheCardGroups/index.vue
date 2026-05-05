@@ -91,6 +91,7 @@
               size="sm"
               class="select-all-checkbox"
               :label="selectedText"
+              :disabled="countRooms[activeTab] === 0"
               @change="handleSelectAllRooms()"
             />
           </UnnnicToolTip>
@@ -278,6 +279,7 @@ export default {
       'discussionsCount',
       'showDiscussionsDot',
     ]),
+
     showWaitingDot() {
       return (
         this.rooms_queue?.length > 0 &&
@@ -300,6 +302,7 @@ export default {
 
       return tabs;
     },
+
     currentSelectedRooms() {
       return this.activeTab === 'ongoing'
         ? this.selectedOngoingRooms
@@ -336,7 +339,7 @@ export default {
         return false;
       }
 
-      return this.countRooms[this.activeTab] > 0;
+      return true;
     },
 
     showQueueFilter() {
@@ -374,21 +377,19 @@ export default {
         this.project.config?.can_use_bulk_take &&
         !this.isViewMode;
       const blockCloseInQueue = this.project.config?.can_close_chats_in_queue;
-      const hasRooms = this.countRooms[this.activeTab] > 0;
 
       if (this.activeTab === 'waiting') {
         const canBulkTransferInWaiting =
           this.isBulkTransferFeatureEnabled && canBulkTransfer;
         return (
-          hasRooms &&
-          (canBulkTake ||
-            canBulkTransferInWaiting ||
-            (canBulkClose && !blockCloseInQueue))
+          canBulkTake ||
+          canBulkTransferInWaiting ||
+          (canBulkClose && !blockCloseInQueue)
         );
       }
 
       if (this.activeTab === 'ongoing') {
-        return hasRooms && (canBulkTransfer || canBulkClose);
+        return canBulkTransfer || canBulkClose;
       }
 
       return false;
@@ -431,6 +432,8 @@ export default {
     },
 
     isAllRoomsSelected() {
+      if (this.countRooms[this.activeTab] === 0) return false;
+
       if (this.activeTab === 'ongoing') {
         return this.selectAllOngoingRoomsValue;
       }
