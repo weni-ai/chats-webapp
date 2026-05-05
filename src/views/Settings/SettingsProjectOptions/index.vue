@@ -275,6 +275,7 @@ export default {
       handler(newProject) {
         if (newProject.config) {
           const config = {
+            ...this.projectConfig,
             ...newProject.config,
             can_see_waiting_rooms_count:
               newProject.config.can_see_waiting_rooms_count === undefined
