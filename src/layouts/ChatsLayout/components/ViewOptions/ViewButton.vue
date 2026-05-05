@@ -1,11 +1,10 @@
 <template>
-  <UnnnicButton
-    type="secondary"
-    size="large"
+  <section
     class="view-button"
-    pressed
+    role="button"
+    tabindex="0"
+    :aria-expanded="expandedMore"
     data-testid="header-btn"
-    :iconRight="expandedMore ? 'expand_more' : 'expand_less'"
     @click="emit('click', $event)"
   >
     <span class="view-button__label">
@@ -23,7 +22,14 @@
         :text="$t('view_options.new_badge')"
       />
     </span>
-  </UnnnicButton>
+    <UnnnicIcon
+      class="view-button__chevron"
+      data-testid="header-chevron"
+      :icon="expandedMore ? 'keyboard_arrow_up' : 'keyboard_arrow_down'"
+      size="ant"
+      scheme="fg-base"
+    />
+  </section>
 </template>
 
 <script setup lang="ts">
@@ -44,24 +50,46 @@ withDefaults(
 );
 
 const emit = defineEmits<{
-  click: [event: MouseEvent];
+  click: [event: MouseEvent | KeyboardEvent];
 }>();
 </script>
 
 <style lang="scss" scoped>
 .view-button {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: $unnnic-space-2;
   width: 100%;
 
-  :deep(.unnnic-button__label) {
-    flex: 1 0 auto;
-    display: flex;
-    justify-content: flex-start;
+  padding: $unnnic-space-4 $unnnic-spacing-xs;
+
+  background-color: $unnnic-color-bg-base;
+  border-top: 1px solid $unnnic-color-border-soft;
+  border-right: 1px solid $unnnic-color-border-base;
+
+  cursor: pointer;
+  user-select: none;
+  outline: none;
+
+  &:hover {
+    background-color: $unnnic-color-bg-base-soft;
+  }
+
+  &:active {
+    background-color: $unnnic-color-bg-muted;
+  }
+
+  &:focus-visible {
+    outline: 2px solid $unnnic-color-border-accent-strong;
+    outline-offset: -2px;
   }
 
   &__label {
     display: inline-flex;
     align-items: center;
     gap: $unnnic-space-2;
+    min-width: 0;
   }
 
   &__text {
