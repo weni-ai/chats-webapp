@@ -518,7 +518,7 @@ export default {
         const TIME_TO_WAIT_TYPING = 1300;
         if (this.timerId !== 0) clearTimeout(this.timerId);
         this.timerId = setTimeout(() => {
-          this.page.search = 0;
+          this.resetPages();
           this.listRoom({
             cleanRoomType: 'ongoing',
             concat: true,
@@ -547,6 +547,7 @@ export default {
       deep: true,
       handler() {
         if (this.isViewMode) {
+          this.page.ongoing = 0;
           this.listRoom({
             cleanRoomType: 'ongoing',
             concat: true,
@@ -556,6 +557,7 @@ export default {
             silent: false,
           });
         }
+        this.page.waiting = 0;
         this.listRoom({
           cleanRoomType: 'waiting',
           concat: true,
@@ -599,6 +601,14 @@ export default {
       setActiveDiscussion: 'setActiveDiscussion',
       getAllDiscussion: 'getAll',
     }),
+    resetPages() {
+      this.page = {
+        search: 0,
+        ongoing: 0,
+        waiting: 0,
+        flow_start: 0,
+      };
+    },
     getShowDotByTab(tab) {
       const dotsMap = {
         ongoing: this.showOngoingDot,
