@@ -9,7 +9,15 @@ import { getURLParams } from '@/utils/requests';
 import i18n from '@/plugins/i18n';
 
 export default {
-  async getAll(offset, limit, contact, order, viewedAgent, roomsType) {
+  async getAll(
+    offset,
+    limit,
+    contact,
+    order,
+    viewedAgent,
+    roomsType,
+    filterQueues,
+  ) {
     const params = {
       is_active: true,
       project: getProject(),
@@ -18,6 +26,7 @@ export default {
       ordering: order,
       search: contact,
       room_status: roomsType,
+      queues: (filterQueues || []).join(','),
     };
 
     if (viewedAgent) {

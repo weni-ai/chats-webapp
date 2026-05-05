@@ -39,4 +39,13 @@ export default {
     const responses = await Promise.all(requests);
     return responses.every((response) => response.status === 200);
   },
+
+  async getQueuesToFilter() {
+    const url = '/rooms_count/by_queue/';
+    const params = {
+      project: getProject(),
+    };
+    const response = await http.get(url, { params });
+    return response.data;
+  },
 };
