@@ -1,39 +1,64 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
 exports[`ViewButton > Snapshot > should match the snapshot 1`] = `
-<section
-  aria-expanded="true"
-  class="view-button"
-  data-testid="header-btn"
-  data-v-905ee5f6=""
-  role="button"
-  tabindex="0"
+<div
+  data-v-app=""
 >
-  <span
-    class="view-button__label"
+  
+  <!--
+    Trigger for the View Options popover. Modeled after \`StatusBar.vue\`:
+    a plain \`&lt;section&gt;\` with \`role="button"\` instead of an \`UnnnicButton\`,
+    so it composes cleanly with the popover anchor (full-width, edge-to-
+    edge, custom borders) without fighting the library button's defaults.
+
+    Visual contract — Figma "More options" footer trigger
+    (nodes 615:6068 dark/closed, 687:17392 light/closed,
+     969:14715 light/open, 969:15326 dark/open):
+
+      • bg          → bg-base
+      • border-top  → border-soft   (separator from the room list)
+      • border-right → border-base  (sidebar divider)
+      • text        → fg-base, font Semi Bold 14/20
+      • chevron     → keyboard_arrow_up when open, _down when closed
+
+    All values resolve through the design-system CSS variables, so the
+    same template adapts to light and dark themes without overrides.
+  -->
+  <section
+    aria-expanded="true"
+    class="view-button"
+    data-testid="header-btn"
     data-v-905ee5f6=""
+    role="button"
+    tabindex="0"
   >
     <span
-      class="view-button__text"
-      data-testid="header-text"
+      class="view-button__label"
       data-v-905ee5f6=""
     >
-      view-option
+      <span
+        class="view-button__text"
+        data-testid="header-text"
+        data-v-905ee5f6=""
+      >
+        view-option
+      </span>
+      <span
+        class="view-button__new-badge"
+        data-testid="header-new-badge"
+        data-text="view_options.new_badge"
+        data-v-905ee5f6=""
+      />
     </span>
-    <span
-      class="view-button__new-badge"
-      data-testid="header-new-badge"
-      data-text="view_options.new_badge"
+    <i
+      class="view-button__chevron"
+      data-icon="keyboard_arrow_up"
+      data-scheme="fg-base"
+      data-size="ant"
+      data-testid="header-chevron"
       data-v-905ee5f6=""
     />
-  </span>
-  <i
-    class="view-button__chevron"
-    data-icon="keyboard_arrow_up"
-    data-scheme="fg-base"
-    data-size="ant"
-    data-testid="header-chevron"
-    data-v-905ee5f6=""
-  />
-</section>
+  </section>
+  
+</div>
 `;
