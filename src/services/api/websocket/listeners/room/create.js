@@ -14,6 +14,16 @@ export default async (room, { app }) => {
   if (!isExistingRoom) {
     const roomType = getRoomType(room);
 
+    // TODO: refact to work in view mode
+    const isWaitingRoom = roomType === 'waiting';
+    const emptyQueuesFilter = roomsStore.filterQueues.length === 0;
+    const isValidRoomFilterQueue =
+      emptyQueuesFilter || roomsStore.filterQueues.includes(room.queue?.uuid);
+
+    if (!isValidRoomFilterQueue && isWaitingRoom) {
+      return;
+    }
+
     const addAfter = !roomsStore.orderBy[roomType].includes('-');
     roomsStore.addRoom(room, { after: addAfter });
 

@@ -82,20 +82,33 @@ export default async (room, { app }) => {
   lastAppRef = app;
 
   const featureFlagStore = useFeatureFlag();
+
   const useNewRoomUpdate =
     featureFlagStore.featureFlags?.active_features?.includes(
       'WeniChatsNewRoomUpdate',
     );
-  if (!useNewRoomUpdate) {
-    return handleUpdateLegacy(room, app, roomsStore);
-  }
 
   const isKnown =
-    roomsStore.rooms.some((r) => r.uuid === room.uuid) ||
+    roomsStore.rooms.some((existingRoom) => existingRoom.uuid === room.uuid) ||
     pendingUpdates.has(room.uuid);
 
   const roomType = getRoomType(room);
+
+  const isWaitingRoom = roomType === 'waiting';
+  const emptyQueuesFilter = roomsStore.filterQueues.length === 0;
+  const isValidRoomFilterQueue =
+    emptyQueuesFilter || roomsStore.filterQueues.includes(room.queue?.uuid);
+
   const isRoomForMe = room.user?.email === app.me.email;
+
+  // TODO: refact to work in view mode
+  if (!isValidRoomFilterQueue && isWaitingRoom) {
+    return;
+  }
+
+  if (!useNewRoomUpdate) {
+    return handleUpdateLegacy(room, app, roomsStore);
+  }
 
   if (!isKnown && !notifiedRoomUuids.has(room.uuid)) {
     notifiedRoomUuids.add(room.uuid);

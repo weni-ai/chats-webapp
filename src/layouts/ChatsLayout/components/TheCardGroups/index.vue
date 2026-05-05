@@ -77,7 +77,6 @@
         />
       </section>
       <div
-        v-if="showOrderBy"
         class="order-by"
         data-testid="order-by-section"
       >
@@ -100,7 +99,10 @@
           class="apply-filter"
           data-testid="filter-controls"
         >
-          <section class="apply-filter__order-by">
+          <section
+            v-if="showOrderBy"
+            class="apply-filter__order-by"
+          >
             <UnnnicToolTip
               enabled
               :text="
@@ -508,7 +510,21 @@ export default {
         if (this.timerId !== 0) clearTimeout(this.timerId);
         this.timerId = setTimeout(() => {
           this.page.search = 0;
-          this.listRoom({ concat: false });
+          this.listRoom({
+            cleanRoomType: 'ongoing',
+            concat: true,
+            roomsType: 'ongoing',
+          });
+          this.listRoom({
+            cleanRoomType: 'waiting',
+            concat: true,
+            roomsType: 'waiting',
+          });
+          this.listRoom({
+            cleanRoomType: 'flow_start',
+            concat: true,
+            roomsType: 'flow_start',
+          });
           this.listDiscussions();
           if (newNameOfContact) {
             this.isSearching = true;
