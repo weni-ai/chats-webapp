@@ -174,7 +174,8 @@
   "without_results": "No matching results",
   "without_chats": {
     "in_progress": "All wrapped up! You’ll be notified when new chats are assigned and they’ll appear in this list.",
-    "waiting": "Queue cleared! All contacts have been assigned to an agent."
+    "waiting": "Queue cleared! All contacts have been assigned to an agent.",
+    "filtered": "No chats {roomType} in the filtered queues. Remove the filter to see all chats."
   },
   "other": "Other",
   "select_smart": {
@@ -409,7 +410,7 @@
     "waiting": "Waiting",
     "waiting_tooltip": "Chats to be handled",
     "waiting_assistance": "Waiting for assistance",
-    "in_progress": "Ongoing",
+    "in_progress": "In progress",
     "sent_flows": "Sent flows",
     "to_end_rate_the_chat": "To end, rate the chat",
     "to_end_required_tags": "To end this conversation, please select at least one tag.",

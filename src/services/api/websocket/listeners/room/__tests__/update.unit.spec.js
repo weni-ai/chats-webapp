@@ -6,6 +6,12 @@ import wsRoomUpdate, {
 import { useRooms } from '@/store/modules/chats/rooms';
 import SoundNotification from '@/services/api/websocket/soundNotification';
 
+vi.mock('@/store/modules/dashboard', () => ({
+  useDashboard: vi.fn(() => ({
+    viewedAgent: { email: '' },
+  })),
+}));
+
 vi.mock('@/store/modules/chats/rooms', () => ({
   useRooms: vi.fn(),
 }));
@@ -53,6 +59,7 @@ describe('Room update', () => {
       addRoom: vi.fn(),
       updateRoom: vi.fn(),
       resetNewMessagesByRoom: vi.fn(),
+      filterQueues: [],
     };
 
     useRooms.mockReturnValue(roomsStoreMock);

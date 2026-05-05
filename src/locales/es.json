@@ -174,7 +174,8 @@
   "without_results": "No hay resultados coincidentes",
   "without_chats": {
     "in_progress": "¡Todo listo! Serás notificado cuando se asignen nuevos chats y aparecerán en esta lista.",
-    "waiting": "Cola vacía! Todos los contactos han sido asignados a un agente."
+    "waiting": "Cola vacía! Todos los contactos han sido asignados a un agente.",
+    "filtered": "No hay chats {roomType} en las colas filtradas. Quita el filtro para ver todos los chats."
   },
   "other": "Otro",
   "select_smart": {
@@ -405,7 +406,7 @@
     "waiting": "Esperando",
     "waiting_tooltip": "Chats que deben ser atendidos",
     "waiting_assistance": "Esperando asistencia",
-    "in_progress": "En curso",
+    "in_progress": "En progreso",
     "sent_flows": "Flujos enviados",
     "to_end_rate_the_chat": "Para cerrar califica el chat",
     "to_end_required_tags": "Para cerrar, agrega al menos una etiqueta",

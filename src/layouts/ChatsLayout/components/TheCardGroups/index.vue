@@ -340,7 +340,10 @@ export default {
     },
 
     showQueueFilter() {
-      return this.isViewMode || this.activeTab === 'waiting';
+      return (
+        (this.isViewMode || this.activeTab === 'waiting') &&
+        this.activeTab !== 'discussions'
+      );
     },
 
     isBulkCloseFeatureEnabled() {
