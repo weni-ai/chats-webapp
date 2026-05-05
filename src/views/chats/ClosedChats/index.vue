@@ -70,7 +70,7 @@
                 <UnnnicIcon
                   icon="search"
                   clickable
-                  scheme="gray-900"
+                  scheme="fg-emphasized"
                   size="ant"
                   @click="showSearchMessagesDrawer = !showSearchMessagesDrawer"
                 />
