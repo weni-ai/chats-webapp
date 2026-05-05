@@ -537,7 +537,7 @@
     "tooltip_disabled": "Write a response in the text field to enable improved responses with AI",
     "tooltip_enabled": "Improve response with AI",
     "tooltip_cancel": "Cancel AI response improvement",
-    "fix_grammar_and_spelling": "Fix grammar & spelling",
+    "fix_grammar_and_spelling": "Fix spelling and grammar",
     "make_more_empathetic": "Make more empathetic",
     "rewrite_for_clarity": "Rewrite for clarity",
     "improving_response": "Improving your response",
@@ -545,7 +545,7 @@
     "error": "Error improving response with AI. Try again.",
     "new": "New",
     "back_to_original": "Original",
-    "back_to_original_tooltip": "Return to original version (Ctrl+Z)"
+    "back_to_original_tooltip": "Go back to original version (Ctrl+Z)"
   },
   "manager": "Manager",
   "you": "You",
