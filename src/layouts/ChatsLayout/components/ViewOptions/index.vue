@@ -254,6 +254,19 @@ section.chats-layout .sidebar .chats-layout-footer {
   border-radius: $unnnic-border-radius-lg;
 }
 
+// Reka UI writes the popper offset directly into the floating wrapper's
+// inline `style` attribute (computed by floating-ui from `sideOffset` and
+// the available space). Inline styles always beat regular declarations,
+// so the only way to force an exact `margin-top` is overriding it via a
+// `!important` rule scoped tightly to our wrapper.
+//
+// `:has(.view-options__content)` ensures we only target the wrapper that
+// hosts THIS popover — other Reka popovers (tooltips, dropdowns, etc.)
+// keep their default offsets.
+[data-reka-popper-content-wrapper]:has(.view-options__content) {
+  margin-top: -4px;
+}
+
 .view-options {
   &__items {
     display: flex;
