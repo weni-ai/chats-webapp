@@ -1,4 +1,5 @@
 import { defineStore } from 'pinia';
+import { cloneDeep } from 'lodash';
 
 import { useDashboard } from '../dashboard';
 import { useFeatureFlag } from '../featureFlag';
@@ -112,6 +113,10 @@ export const useRooms = defineStore('rooms', {
         const profileStore = useProfile();
         const isProjectAdmin = profileStore.me.project_permission_role === 1;
 
+        if (viewedAgentEmail) {
+          return room.user?.email === viewedAgentEmail;
+        }
+
         if (isProjectAdmin && !room.user) return true;
 
         const userHasRoomQueue = !!profileStore.me.queues?.find(
@@ -120,10 +125,6 @@ export const useRooms = defineStore('rooms', {
         );
 
         if (!room.user && userHasRoomQueue) return true;
-
-        if (viewedAgentEmail) {
-          return room.user?.email === viewedAgentEmail;
-        }
 
         return room.user?.email === userEmail;
       } catch {
@@ -233,8 +234,10 @@ export const useRooms = defineStore('rooms', {
       });
 
       const roomIndex = this.rooms.findIndex((r) => r.uuid === room.uuid);
+      let oldRoom = null;
 
       if (roomIndex !== -1) {
+        oldRoom = cloneDeep(this.rooms[roomIndex]);
         if (shouldBeVisible) {
           this.rooms[roomIndex] = {
             is_pinned: this.rooms[roomIndex]?.is_pinned,
@@ -255,6 +258,7 @@ export const useRooms = defineStore('rooms', {
       });
 
       this._handleTransferSideEffects({
+        oldRoom,
         room,
         userEmail,
         routerReplace,
@@ -264,6 +268,13 @@ export const useRooms = defineStore('rooms', {
 
     _updateRoomLegacy({ room, userEmail, routerReplace, viewedAgentEmail }) {
       const rooms = this.rooms;
+
+      const roomIndex = this.rooms.findIndex((r) => r.uuid === room.uuid);
+      let oldRoom = null;
+      if (roomIndex !== -1) {
+        oldRoom = cloneDeep(this.rooms[roomIndex]);
+      }
+
       const filteredRooms = rooms
         .map((mappedRoom) =>
           mappedRoom.uuid === room.uuid
@@ -287,6 +298,7 @@ export const useRooms = defineStore('rooms', {
       this.rooms = filteredRooms;
 
       this._handleTransferSideEffects({
+        oldRoom,
         room,
         userEmail,
         routerReplace,
@@ -295,20 +307,26 @@ export const useRooms = defineStore('rooms', {
     },
 
     _handleTransferSideEffects({
+      oldRoom,
       room,
       userEmail,
       routerReplace,
       viewedAgentEmail,
     }) {
-      const dashboardStore = useDashboard();
-
       const isTransferedToOtherUser =
-        room.user && room.user.email !== userEmail;
+        room.user &&
+        room.user.email !== userEmail &&
+        oldRoom?.user &&
+        oldRoom?.user?.email === userEmail;
 
-      const isTransferedByMe = room.transferred_by === userEmail;
+      const isTransferedByMe =
+        room.transfer_history?.requested_by?.email === userEmail &&
+        room.transfer_history?.action === 'transfer' &&
+        room.transfer_history?.to?.email !== userEmail;
 
       const isTransferedByViewedAgent =
-        room.transferred_by === viewedAgentEmail;
+        room.transfer_history?.requested_by?.email === viewedAgentEmail &&
+        room.transfer_history?.action === 'transfer';
 
       const isTransferedFromAQueue =
         room.transfer_history?.from?.type === 'queue' ||
@@ -319,11 +337,12 @@ export const useRooms = defineStore('rooms', {
 
       if (!isTransferedByMe && isTransferedToOtherUser) {
         if (!isTransferedFromAQueue && !room.is_waiting && !viewedAgentEmail) {
-          dashboardStore.setShowModalAssumedChat(true);
+          const dashboardStore = useDashboard();
           dashboardStore.setAssumedChatContactName(room.contact.name);
           const userName =
             `${room.user.first_name} ${room.user.last_name}`.trim();
           dashboardStore.setAssumedByUser(userName || room.user.email);
+          dashboardStore.setShowModalAssumedChat(true);
         }
 
         if (isActiveRoom && !viewedAgentEmail) {
@@ -336,6 +355,18 @@ export const useRooms = defineStore('rooms', {
       if (!room.is_waiting && isActiveRoom) {
         if (isTransferedByViewedAgent) {
           this.setActiveRoom(null);
+          return;
+        }
+        const canStillSee = this.checkUserSeenRoom({
+          room,
+          userEmail,
+          viewedAgentEmail,
+        });
+        if (!canStillSee) {
+          this.setActiveRoom(null);
+          if (!viewedAgentEmail && routerReplace) {
+            routerReplace();
+          }
           return;
         }
         this.setActiveRoom({ ...room });

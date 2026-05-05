@@ -424,7 +424,7 @@
     "get_chat_error": "Error al intentar obtener el chat",
     "you_got_chat": "Tienes el chat",
     "your_chat_assumed": "Chat asumido por otro representante",
-    "your_chat_assumed_description": "Tu chat con {contact} ha sido asumido por otro representante",
+    "your_chat_assumed_description": "Tu chat con {contact} ha sido asumido por {representative}",
     "closed_chats": {
       "history": "Historia",
       "project_history": "Historia del proyecto",
