@@ -9,6 +9,13 @@ export const THEMES = Object.freeze({
 
 const DARK_CLASS = 'dark';
 
+// Event name used to broadcast theme changes to the embedding webapp
+// (Connect). Matches the contract agreed with the host: the chats iframe is
+// always the source of truth for the theme, Connect is just a consumer.
+export const THEME_PARENT_EVENT = 'chats:theme';
+
+const LIGHT_ONLY_ROUTE_PREFIXES = ['/settings'];
+
 export function isValidTheme(value) {
   return value === THEMES.LIGHT || value === THEMES.DARK;
 }
@@ -30,6 +37,45 @@ export function applyTheme(theme) {
   root.classList.toggle(DARK_CLASS, theme === THEMES.DARK);
 }
 
+export function isLightOnlyRoute(path) {
+  if (typeof path !== 'string') return false;
+  return LIGHT_ONLY_ROUTE_PREFIXES.some((prefix) => path.startsWith(prefix));
+}
+
+function getCurrentRoutePath() {
+  if (typeof globalThis === 'undefined' || !globalThis.window?.location) {
+    return '';
+  }
+  return globalThis.window.location.pathname || '';
+}
+
+export function applyEffectiveTheme(
+  storedTheme,
+  routePath = getCurrentRoutePath(),
+) {
+  const effective = isLightOnlyRoute(routePath) ? THEMES.LIGHT : storedTheme;
+  applyTheme(effective);
+}
+
+/**
+ * Broadcasts the current theme to the parent frame so cross-origin hosts
+ * (Connect) can react. Follows the existing postMessage pattern used across
+ * the app (e.g. `chats:update-unread-messages`, `getLanguage`, `redirect`).
+ *
+ * The contract is one-way (chats → host) and must be re-emitted on every
+ * iframe (re)mount — Connect doesn't have access to the chats `localStorage`
+ * because of the cross-origin boundary, so this is the only reliable signal.
+ */
+export function notifyParentOfTheme(theme) {
+  if (!isValidTheme(theme)) return;
+  if (typeof globalThis === 'undefined' || !globalThis.window?.parent) return;
+  const payload = { event: THEME_PARENT_EVENT, theme };
+  globalThis.window.parent.postMessage(payload, '*');
+}
+
 export function initTheme() {
-  applyTheme(getStoredTheme());
+  // Synchronous, runs before the Vue app mounts. Reading
+  // `window.location.pathname` here means a deep-link straight into
+  // `/settings` paints in light mode immediately — no flash of dark theme.
+  applyEffectiveTheme(getStoredTheme());
 }
