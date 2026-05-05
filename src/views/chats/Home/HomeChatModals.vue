@@ -15,7 +15,7 @@
     />
 
     <HomeChatTakeoverRoom
-      v-if="showModalAssumedChat"
+      v-if="enableChatTakeoverFeedbackModal && showModalAssumedChat"
       v-model="showModalAssumedChat"
       :contactName="assumedChatContactName"
       :assumedByUser="assumedByUser"
