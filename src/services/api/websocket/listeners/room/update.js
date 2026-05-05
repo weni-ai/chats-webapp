@@ -3,6 +3,7 @@ import SoundNotification from '@/services/api/websocket/soundNotification';
 import { useFeatureFlag } from '@/store/modules/featureFlag';
 import { useRooms } from '@/store/modules/chats/rooms';
 import { useRoomCounters } from '@/store/modules/chats/roomCounters';
+import { useDashboard } from '@/store/modules/dashboard';
 import { getRoomType } from '@/utils/room';
 
 const BATCH_FLUSH_DELAY_MS = 80;
@@ -79,14 +80,17 @@ export function resetBatchState() {
 
 export default async (room, { app }) => {
   const roomsStore = useRooms();
-  lastAppRef = app;
-
+  const dashboardStore = useDashboard();
   const featureFlagStore = useFeatureFlag();
+
+  lastAppRef = app;
 
   const useNewRoomUpdate =
     featureFlagStore.featureFlags?.active_features?.includes(
       'WeniChatsNewRoomUpdate',
     );
+
+  const isViewMode = dashboardStore.viewedAgent.email !== '';
 
   const isKnown =
     roomsStore.rooms.some((existingRoom) => existingRoom.uuid === room.uuid) ||
@@ -101,8 +105,7 @@ export default async (room, { app }) => {
 
   const isRoomForMe = room.user?.email === app.me.email;
 
-  // TODO: refact to work in view mode
-  if (!isValidRoomFilterQueue && isWaitingRoom) {
+  if (!isValidRoomFilterQueue && (isWaitingRoom || isViewMode)) {
     return;
   }
 

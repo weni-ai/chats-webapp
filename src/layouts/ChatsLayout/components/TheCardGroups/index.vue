@@ -139,8 +139,7 @@
               </span>
             </UnnnicToolTip>
           </section>
-          <!-- TODO: handle view mode case -->
-          <QueueFilter v-if="activeTab === 'waiting'" />
+          <QueueFilter v-if="showQueueFilter" />
         </div>
       </div>
       <CardGroup
@@ -279,7 +278,6 @@ export default {
       'discussionsCount',
       'showDiscussionsDot',
     ]),
-
     showWaitingDot() {
       return (
         this.rooms_queue?.length > 0 &&
@@ -339,6 +337,10 @@ export default {
       }
 
       return this.countRooms[this.activeTab] > 0;
+    },
+
+    showQueueFilter() {
+      return this.isViewMode || this.activeTab === 'waiting';
     },
 
     isBulkCloseFeatureEnabled() {
@@ -537,7 +539,16 @@ export default {
     filterQueues: {
       deep: true,
       handler() {
-        // TODO: check view mode logic
+        if (this.isViewMode) {
+          this.listRoom({
+            cleanRoomType: 'ongoing',
+            concat: true,
+            forceShowLoadingRooms: true,
+            order: this.orderBy.ongoing,
+            roomsType: 'ongoing',
+            silent: false,
+          });
+        }
         this.listRoom({
           cleanRoomType: 'waiting',
           concat: true,
@@ -616,6 +627,8 @@ export default {
         const offset =
           (roomsType ? this.page[roomsType] : this.page.search) * this.limit;
 
+        const useFilterQueues = this.isViewMode || roomsType === 'waiting';
+
         await this.getAllRooms({
           offset: offset,
           concat,
@@ -625,7 +638,7 @@ export default {
           viewedAgent,
           roomsType,
           cleanRoomType,
-          filterQueues: roomsType === 'waiting' ? this.filterQueues : [], // TODO: check view mode logic
+          filterQueues: useFilterQueues ? this.filterQueues : [],
         });
       } catch (error) {
         console.error('Error listing rooms', error);

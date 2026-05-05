@@ -1,6 +1,7 @@
 import SoundNotification from '@/services/api/websocket/soundNotification';
 import { useRooms } from '@/store/modules/chats/rooms';
 import { useRoomCounters } from '@/store/modules/chats/roomCounters';
+import { useDashboard } from '@/store/modules/dashboard';
 import { getRoomType } from '@/utils/room';
 
 export default async (room, { app }) => {
@@ -12,15 +13,16 @@ export default async (room, { app }) => {
   );
 
   if (!isExistingRoom) {
+    const dashboardStore = useDashboard();
+    const isViewMode = dashboardStore.viewedAgent.email !== '';
     const roomType = getRoomType(room);
 
-    // TODO: refact to work in view mode
     const isWaitingRoom = roomType === 'waiting';
     const emptyQueuesFilter = roomsStore.filterQueues.length === 0;
     const isValidRoomFilterQueue =
       emptyQueuesFilter || roomsStore.filterQueues.includes(room.queue?.uuid);
 
-    if (!isValidRoomFilterQueue && isWaitingRoom) {
+    if (!isValidRoomFilterQueue && (isViewMode || isWaitingRoom)) {
       return;
     }
 
