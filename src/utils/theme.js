@@ -14,6 +14,8 @@ const DARK_CLASS = 'dark';
 // always the source of truth for the theme, Connect is just a consumer.
 export const THEME_PARENT_EVENT = 'chats:theme';
 
+const LIGHT_ONLY_ROUTE_PREFIXES = ['/settings'];
+
 export function isValidTheme(value) {
   return value === THEMES.LIGHT || value === THEMES.DARK;
 }
@@ -35,6 +37,26 @@ export function applyTheme(theme) {
   root.classList.toggle(DARK_CLASS, theme === THEMES.DARK);
 }
 
+export function isLightOnlyRoute(path) {
+  if (typeof path !== 'string') return false;
+  return LIGHT_ONLY_ROUTE_PREFIXES.some((prefix) => path.startsWith(prefix));
+}
+
+function getCurrentRoutePath() {
+  if (typeof globalThis === 'undefined' || !globalThis.window?.location) {
+    return '';
+  }
+  return globalThis.window.location.pathname || '';
+}
+
+export function applyEffectiveTheme(
+  storedTheme,
+  routePath = getCurrentRoutePath(),
+) {
+  const effective = isLightOnlyRoute(routePath) ? THEMES.LIGHT : storedTheme;
+  applyTheme(effective);
+}
+
 /**
  * Broadcasts the current theme to the parent frame so cross-origin hosts
  * (Connect) can react. Follows the existing postMessage pattern used across
@@ -52,5 +74,8 @@ export function notifyParentOfTheme(theme) {
 }
 
 export function initTheme() {
-  applyTheme(getStoredTheme());
+  // Synchronous, runs before the Vue app mounts. Reading
+  // `window.location.pathname` here means a deep-link straight into
+  // `/settings` paints in light mode immediately — no flash of dark theme.
+  applyEffectiveTheme(getStoredTheme());
 }

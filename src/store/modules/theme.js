@@ -2,7 +2,7 @@ import { defineStore } from 'pinia';
 
 import {
   THEMES,
-  applyTheme,
+  applyEffectiveTheme,
   getStoredTheme,
   isValidTheme,
   notifyParentOfTheme,
@@ -23,10 +23,15 @@ export const useTheme = defineStore('theme', {
       if (!isValidTheme(theme) || this.theme === theme) return;
       this.theme = theme;
       persistTheme(theme);
-      applyTheme(theme);
+      // Use `applyEffectiveTheme` so toggles made elsewhere don't accidentally
+      // re-enable dark on light-only routes (e.g. `/settings`). The persisted
+      // preference is still updated above — only the visual layer is gated.
+      applyEffectiveTheme(theme);
       // Broadcast every user-driven theme change up to the embedding host.
       // The initial mount is announced separately from `App.vue`, so this
-      // call covers all subsequent toggles.
+      // call covers all subsequent toggles. We always emit the persisted
+      // preference (not the route-effective one) so Connect mirrors the
+      // user's actual choice regardless of which chats page is open.
       notifyParentOfTheme(theme);
     },
 
