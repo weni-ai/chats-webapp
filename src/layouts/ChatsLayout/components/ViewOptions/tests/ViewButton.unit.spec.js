@@ -24,12 +24,11 @@ describe('ViewButton', () => {
       global: {
         mocks: { $t: (key) => key },
         stubs: {
-          UnnnicButton: {
-            name: 'UnnnicButton',
+          UnnnicIcon: {
+            name: 'UnnnicIcon',
             template:
-              '<button v-bind="$attrs" :data-icon-right="iconRight" :data-icon-left="iconLeft" :data-type="type" data-testid="header-btn" @click="$emit(\'click\', $event)"><slot /></button>',
-            props: ['text', 'iconLeft', 'iconRight', 'type', 'size'],
-            emits: ['click'],
+              '<i v-bind="$attrs" :data-icon="icon" :data-scheme="scheme" :data-size="size" data-testid="header-chevron"></i>',
+            props: ['icon', 'scheme', 'size'],
           },
           UnnnicTag: {
             name: 'UnnnicTag',
@@ -62,14 +61,26 @@ describe('ViewButton', () => {
     });
 
     it.each([
-      { expandedMore: true, expectedIcon: 'expand_more' },
-      { expandedMore: false, expectedIcon: 'expand_less' },
+      { expandedMore: true, expectedIcon: 'keyboard_arrow_up' },
+      { expandedMore: false, expectedIcon: 'keyboard_arrow_down' },
     ])(
-      'should pass iconRight=$expectedIcon when expandedMore is $expandedMore',
+      'should render chevron icon=$expectedIcon when expandedMore is $expandedMore',
       ({ expandedMore, expectedIcon }) => {
         wrapper = createWrapper({ expandedMore });
-        const button = wrapper.find('[data-testid="header-btn"]');
-        expect(button.attributes('data-icon-right')).toBe(expectedIcon);
+        const chevron = wrapper.find('[data-testid="header-chevron"]');
+        expect(chevron.attributes('data-icon')).toBe(expectedIcon);
+      },
+    );
+
+    it.each([
+      { expandedMore: true, expected: 'true' },
+      { expandedMore: false, expected: 'false' },
+    ])(
+      'should reflect expandedMore via aria-expanded=$expected',
+      ({ expandedMore, expected }) => {
+        wrapper = createWrapper({ expandedMore });
+        const trigger = wrapper.find('[data-testid="header-btn"]');
+        expect(trigger.attributes('aria-expanded')).toBe(expected);
       },
     );
 
