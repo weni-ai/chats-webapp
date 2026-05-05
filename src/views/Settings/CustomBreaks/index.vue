@@ -172,9 +172,7 @@ const closeDeleteCustomBreakModal = () => {
 
 watch(
   () => project.value.config.can_see_timer,
-  (newValue, oldValue) => {
-    if (oldValue === undefined) return;
-
+  (newValue) => {
     ProjectService.update({
       ...project.value.config,
       can_see_timer: newValue,
