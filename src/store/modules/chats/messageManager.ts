@@ -1,10 +1,11 @@
-import { ref, computed, nextTick, watch } from 'vue';
+import { ref, computed, watch } from 'vue';
 import { defineStore, storeToRefs } from 'pinia';
 
 import { useRooms } from './rooms';
 import { useDiscussions } from './discussions';
 import { useRoomMessages } from './roomMessages';
 import { useDiscussionMessages } from './discussionMessages';
+import { useAiTextImprovement } from './aiTextImprovement';
 
 import i18n from '@/plugins/i18n';
 
@@ -50,6 +51,9 @@ export const useMessageManager = defineStore('messageManager', () => {
     isCopilotOpen.value = false;
     isEmojiPickerOpen.value = false;
     replyMessage.value = null;
+
+    const aiTextImprovementStore = useAiTextImprovement();
+    aiTextImprovementStore.reset();
   }
 
   const isLoadingSend = ref(false);
@@ -75,16 +79,27 @@ export const useMessageManager = defineStore('messageManager', () => {
     if (!inputMessageTrimmed) return;
     const text = `${t('internal_note')}: ${inputMessageTrimmed}`;
     await roomMessagesStore.sendRoomInternalNote({ text });
+    clearInputs();
   }
 
   async function sendTextMessage(repliedMessage) {
     const message = inputMessage.value.trim();
     if (message) {
+      const aiTextImprovementStore = useAiTextImprovement();
+      const aiTextImprovementPayload =
+        aiTextImprovementStore.getAiTextImprovementPayload(message);
+
       clearInputs();
+      aiTextImprovementStore.reset();
+
       if (discussionsStore.activeDiscussion?.uuid) {
         await discussionMessagesStore.sendDiscussionMessage(message);
       } else {
-        await roomMessagesStore.sendRoomMessage(message, repliedMessage);
+        await roomMessagesStore.sendRoomMessage(
+          message,
+          repliedMessage,
+          aiTextImprovementPayload,
+        );
       }
     }
   }
@@ -134,9 +149,6 @@ export const useMessageManager = defineStore('messageManager', () => {
       await sendTextMessage(repliedMessage);
       await sendAudioMessage(repliedMessage);
     }
-    nextTick(() => {
-      clearInputs();
-    });
   }
 
   function addMediaUploadFiles(files: File[] | FileList) {

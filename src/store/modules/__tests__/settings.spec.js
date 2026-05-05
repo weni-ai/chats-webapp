@@ -84,7 +84,7 @@ describe('useSettings Store', () => {
 
     await settings.deleteSector('uuid-1');
 
-    expect(Sector.deleteSector).toHaveBeenCalledWith('uuid-1');
+    expect(Sector.deleteSector).toHaveBeenCalledWith('uuid-1', {});
     expect(settings.sectors.length).toBe(0);
   });
 

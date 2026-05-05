@@ -102,15 +102,16 @@
     data-testid="new-sector-drawer"
     @close="closeNewSectorModal()"
   />
-  <ModalConfirmDelete
+  <ModalDeleteWithTransfer
     v-if="showDeleteSectorModal"
     v-model="showDeleteSectorModal"
     data-testid="modal-delete-sector"
-    :title="$t('delete_sector') + ` ${toDeleteSector.name}`"
-    :description="$t('cant_revert')"
-    :confirmText="toDeleteSector.name"
+    type="sector"
+    :name="toDeleteSector.name"
+    :excludeSectorUuid="toDeleteSector.uuid"
+    :inProgressChatsCount="sectorRoomsCount"
     :isLoading="isLoadingDeleteSector"
-    @confirm="deleteSector(toDeleteSector.uuid)"
+    @confirm="deleteSector(toDeleteSector.uuid, $event)"
     @cancel="handlerCloseDeleteSectorModal()"
   />
 </template>
@@ -121,9 +122,12 @@ import { mapActions, mapState } from 'pinia';
 
 import { useConfig } from '@/store/modules/config';
 import { useSettings } from '@/store/modules/settings';
+import { useFeatureFlag } from '@/store/modules/featureFlag';
+
+import Rooms from '@/services/api/resources/settings/rooms';
 
 import SettingsSectionHeader from './SettingsSectionHeader.vue';
-import ModalConfirmDelete from '@/components/ModalConfirmDelete.vue';
+import ModalDeleteWithTransfer from '@/components/ModalDeleteWithTransfer.vue';
 
 import NewSectorDrawer from './Sectors/New/NewSectorDrawer.vue';
 import ListOrdinator from '@/components/settings/ListOrdinator.vue';
@@ -135,7 +139,7 @@ export default {
     SettingsSectionHeader,
     NewSectorDrawer,
     ListOrdinator,
-    ModalConfirmDelete,
+    ModalDeleteWithTransfer,
   },
 
   data() {
@@ -146,6 +150,7 @@ export default {
       sectorOrder: 'alphabetical',
       toDeleteSector: {},
       isLoadingDeleteSector: false,
+      sectorRoomsCount: 0,
     };
   },
 
@@ -154,6 +159,12 @@ export default {
       projectName: (store) => store.project.name,
     }),
     ...mapState(useSettings, ['sectors', 'isLoadingSectors']),
+    ...mapState(useFeatureFlag, ['featureFlags']),
+    isDeleteTransferEnabled() {
+      return this.featureFlags.active_features?.includes(
+        'weniChatsDeleteTransfer',
+      );
+    },
 
     sectorsOrdered() {
       let sectorsOrdered = this.sectors.slice().sort((a, b) => {
@@ -188,9 +199,23 @@ export default {
     ...mapActions(useSettings, {
       actionDeleteSector: 'deleteSector',
     }),
-    handlerOpenDeleteSectorModal(sector) {
+    async handlerOpenDeleteSectorModal(sector) {
       this.toDeleteSector = sector;
       this.handleConnectOverlay(true);
+
+      if (this.isDeleteTransferEnabled) {
+        try {
+          const { waiting, in_service } = await Rooms.count({
+            sector: sector.uuid,
+          });
+          this.sectorRoomsCount = waiting + in_service;
+        } catch {
+          this.sectorRoomsCount = 0;
+        }
+      } else {
+        this.sectorRoomsCount = 0;
+      }
+
       this.showDeleteSectorModal = true;
     },
 
@@ -200,24 +225,34 @@ export default {
       this.showDeleteSectorModal = false;
     },
 
-    async deleteSector(sectorUuid) {
+    async deleteSector(sectorUuid, transferPayload) {
       try {
         this.isLoadingDeleteSector = true;
-        await this.actionDeleteSector(sectorUuid);
+
+        const options = {};
+        if (transferPayload.action === 'transfer') {
+          options.transferToQueue = transferPayload.transferQueueUuid;
+        } else if (transferPayload.action === 'end_all') {
+          options.endAllChats = true;
+        }
+
+        await this.actionDeleteSector(sectorUuid, options);
 
         this.$router.push({ name: 'sectors' });
         unnnic.unnnicCallAlert({
           props: {
-            text: this.$t('sector_deleted_success'),
+            text: this.$t('delete_modal.sector_success'),
             type: 'success',
           },
           seconds: 5,
         });
       } catch (error) {
-        console.log(error);
+        const isTransferConflict = error?.response?.status === 409;
         unnnic.unnnicCallAlert({
           props: {
-            text: this.$t('sector_delete_error'),
+            text: isTransferConflict
+              ? this.$t('delete_modal.transfer_error_sector')
+              : this.$t('delete_modal.sector_error'),
             type: 'error',
           },
           seconds: 5,

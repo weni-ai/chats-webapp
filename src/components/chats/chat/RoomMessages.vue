@@ -1,32 +1,38 @@
 <template>
-  <ChatSummary
-    v-if="shouldShowSummaryContent || hasArchivedContent"
-    :showSummary="!!shouldShowSummaryContent"
-    :isGeneratingSummary="isLoadingActiveRoomSummary"
-    :summaryText="activeRoomSummary.summary"
-    :feedback="activeRoomSummary.feedback"
-    :skipAnimation="skipSummaryAnimation"
-    :isArchived="room?.is_archived || false"
-    :archivedUrl="room?.archived_conversation_file_url || ''"
-    @close="openChatSummary = false"
-  />
-  <ChatMessages
-    ref="activeChatMessages"
-    :chatUuid="room?.uuid || ''"
-    :messages="roomMessages"
-    :messagesNext="roomMessagesNext || ''"
-    :messagesPrevious="roomMessagesPrevious || ''"
-    :messagesSorted="roomMessagesSorted"
-    :messagesSendingUuids="roomMessagesSendingUuids"
-    :messagesFailedUuids="roomMessagesFailedUuids"
-    :resendMessages="roomResendMessages"
-    :resendMedia="roomResendMedia"
-    :isLoading="isLoadingMessages || isLoadingInternalNotes"
-    :isClosedChat="!!room?.ended_at"
-    :enableReply="false"
-    @scroll-top="searchForMoreMessages"
-    @open-room-contact-info="$emit('open-room-contact-info')"
-  />
+  <section
+    class="room-messages"
+    data-testid="room-messages-wrapper"
+  >
+    <ChatSummary
+      v-if="shouldShowSummaryContent || hasArchivedContent"
+      :showSummary="!!shouldShowSummaryContent"
+      :isGeneratingSummary="isLoadingActiveRoomSummary"
+      :summaryText="activeRoomSummary.summary"
+      :feedback="activeRoomSummary.feedback"
+      :skipAnimation="skipSummaryAnimation"
+      :isArchived="room?.is_archived || false"
+      :archivedUrl="room?.archived_conversation_file_url || ''"
+      @close="openChatSummary = false"
+    />
+    <ChatMessages
+      ref="activeChatMessages"
+      class="room-messages__messages"
+      :chatUuid="room?.uuid || ''"
+      :messages="roomMessages"
+      :messagesNext="roomMessagesNext || ''"
+      :messagesPrevious="roomMessagesPrevious || ''"
+      :messagesSorted="roomMessagesSorted"
+      :messagesSendingUuids="roomMessagesSendingUuids"
+      :messagesFailedUuids="roomMessagesFailedUuids"
+      :resendMessages="roomResendMessages"
+      :resendMedia="roomResendMedia"
+      :isLoading="isLoadingMessages || isLoadingInternalNotes"
+      :isClosedChat="!!room?.ended_at"
+      :enableReply="false"
+      @scroll-top="searchForMoreMessages"
+      @open-room-contact-info="$emit('open-room-contact-info')"
+    />
+  </section>
 </template>
 <script>
 import { mapActions, mapState, mapWritableState } from 'pinia';
@@ -270,3 +276,17 @@ export default {
   },
 };
 </script>
+
+<style lang="scss" scoped>
+.room-messages {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  height: 100%;
+
+  &__messages {
+    flex: 1 1 auto;
+    min-height: 0;
+  }
+}
+</style>

@@ -4,6 +4,7 @@
       'text-box',
       {
         'text-box--focused': inputMessageFocused,
+        'text-box--ai-improving': isAiImproving,
         'internal-note': isInternalNote,
       },
     ]"
@@ -11,7 +12,18 @@
     <MessageManagerTextBoxUploadField ref="uploadField" />
     <MessageManagerTextBoxMedias v-if="mediaUploadFiles.length > 0" />
     <MessageManagerTextBoxAudioRecorder ref="audioRecorder" />
+    <section
+      v-if="showBackToOriginal"
+      class="text-box__textarea-row"
+    >
+      <MessageManagerTextBoxTextArea
+        ref="textArea"
+        @keydown="handleKeyDown"
+      />
+      <BackToOriginal @reverted="focus" />
+    </section>
     <MessageManagerTextBoxTextArea
+      v-else
       ref="textArea"
       @keydown="handleKeyDown"
     />
@@ -22,6 +34,8 @@
       @open-upload-files="uploadFieldRef.clickInput()"
       @focus-input="focus"
       @send="handleSend"
+      @improvement-received="handleImprovementReceived"
+      @improvement-cancelled="handleImprovementCancelled"
     />
     <UnnnicEmojiPicker
       v-show="isEmojiPickerOpen"
@@ -33,7 +47,7 @@
 </template>
 
 <script setup lang="ts">
-import { useTemplateRef, watch } from 'vue';
+import { computed, useTemplateRef, watch } from 'vue';
 import { storeToRefs } from 'pinia';
 import { vOnClickOutside } from '@vueuse/components';
 
@@ -42,8 +56,10 @@ import MessageManagerTextBoxAudioRecorder from './AudioRecorder.vue';
 import MessageManagerTextBoxActions from './Actions.vue';
 import MessageManagerTextBoxUploadField from './UploadField.vue';
 import MessageManagerTextBoxTextArea from './TextArea.vue';
+import BackToOriginal from './BackToOriginal.vue';
 
 import { useMessageManager } from '@/store/modules/chats/messageManager';
+import { useAiTextImprovement } from '@/store/modules/chats/aiTextImprovement';
 
 defineOptions({
   name: 'MessageManagerTextBox',
@@ -65,6 +81,15 @@ const {
   isEmojiPickerOpen,
   inputMessageFocused,
 } = storeToRefs(messageManager);
+
+const aiTextImprovementStore = useAiTextImprovement();
+const { isLoading: isAiImproving, hasImprovedText } = storeToRefs(
+  aiTextImprovementStore,
+);
+
+const showBackToOriginal = computed(
+  () => hasImprovedText.value && !isAiImproving.value,
+);
 
 const textareaRef = useTemplateRef('textArea');
 const audioRecorderRef = useTemplateRef('audioRecorder');
@@ -102,6 +127,19 @@ const handleSend = async () => {
   }
 };
 
+const handleImprovementReceived = (improvedText: string) => {
+  inputMessage.value = improvedText;
+  focus();
+};
+
+const handleImprovementCancelled = () => {
+  const original = aiTextImprovementStore.originalText;
+  if (original) {
+    inputMessage.value = original;
+  }
+  focus();
+};
+
 const clearTextarea = () => {
   inputMessage.value = '';
   audioMessage.value = null;
@@ -131,10 +169,20 @@ defineExpose({
   &--focused {
     border-color: $unnnic-color-border-active;
   }
+  &--ai-improving {
+    border-color: $unnnic-color-border-accent-strong;
+  }
   &.internal-note {
     background-color: $unnnic-color-bg-warning;
     border-color: $unnnic-color-border-warning;
   }
+  &__textarea-row {
+    display: flex;
+    align-items: stretch;
+    gap: $unnnic-space-2;
+    width: 100%;
+  }
+
   &__divider {
     border: 1px solid $unnnic-color-border-soft;
     width: 100%;

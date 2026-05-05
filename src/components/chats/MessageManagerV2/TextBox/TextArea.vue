@@ -13,7 +13,20 @@
     />
   </button>
   <section
-    v-if="!isAudioRecorderVisible && mediaUploadFiles.length === 0"
+    v-if="isAiImproving"
+    class="text-box__textarea-container"
+  >
+    <p class="text-box__ai-loading-text">
+      {{ $t('ai_text_improvement.improving_response') }}
+    </p>
+    <span class="text-box__ai-loading-dots">
+      <span class="text-box__ai-loading-dot" />
+      <span class="text-box__ai-loading-dot" />
+      <span class="text-box__ai-loading-dot" />
+    </span>
+  </section>
+  <section
+    v-else-if="!isAudioRecorderVisible && mediaUploadFiles.length === 0"
     class="text-box__textarea-container"
   >
     <p
@@ -44,6 +57,7 @@ import { onMounted, useTemplateRef, watch, nextTick } from 'vue';
 import { storeToRefs } from 'pinia';
 
 import { useMessageManager } from '@/store/modules/chats/messageManager';
+import { useAiTextImprovement } from '@/store/modules/chats/aiTextImprovement';
 
 defineOptions({
   name: 'MessageManagerTextBoxTextArea',
@@ -61,6 +75,9 @@ const {
   isAudioRecorderVisible,
   inputMessageFocused,
 } = storeToRefs(messageManager);
+
+const aiTextImprovementStore = useAiTextImprovement();
+const { isLoading: isAiImproving } = storeToRefs(aiTextImprovementStore);
 
 const MAX_TEXTAREA_ROWS = 5;
 
@@ -185,6 +202,46 @@ defineExpose({
   max-height: 104px;
   &::placeholder {
     color: $unnnic-color-fg-muted;
+  }
+}
+
+.text-box__ai-loading-text {
+  font: $unnnic-font-body;
+  color: $unnnic-color-fg-muted;
+}
+
+.text-box__ai-loading-dots {
+  display: inline-flex;
+  align-items: flex-end;
+  gap: 3px;
+  margin-left: $unnnic-space-1;
+  padding-bottom: $unnnic-space-1;
+}
+
+.text-box__ai-loading-dot {
+  display: inline-block;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background-color: $unnnic-color-fg-muted;
+  animation: dot-jump 1.4s ease-in-out infinite;
+
+  &:nth-child(2) {
+    animation-delay: 0.16s;
+  }
+  &:nth-child(3) {
+    animation-delay: 0.32s;
+  }
+}
+
+@keyframes dot-jump {
+  0%,
+  60%,
+  100% {
+    transform: translateY(0);
+  }
+  30% {
+    transform: translateY(-6px);
   }
 }
 

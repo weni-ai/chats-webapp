@@ -5,6 +5,9 @@ import { useRooms } from '../rooms';
 import Message from '@/services/api/resources/chats/message';
 
 vi.mock('../rooms');
+vi.mock('@/store/modules/profile', () => ({
+  useProfile: vi.fn(() => ({ me: { email: 'test@test.com' } })),
+}));
 vi.mock('@/services/api/resources/chats/message', () => ({
   default: {
     getByRoom: vi.fn(),
@@ -37,9 +40,11 @@ describe('useRoomMessages Store', () => {
   });
 
   it('should add a failed message', () => {
-    roomMessagesStore.isMessageInActiveRoom = vi.fn().mockReturnValue(true);
-    roomMessagesStore.isMessageInActiveRoom = vi.fn().mockReturnValue(true);
-    const message = { uuid: '123', room: 'room-1' };
+    const message = {
+      uuid: '123',
+      room: 'room-123',
+      user: { email: 'test@test.com' },
+    };
     roomMessagesStore.addFailedMessage({ message });
     expect(roomMessagesStore.roomMessagesFailedUuids).toContain('123');
   });
@@ -86,6 +91,8 @@ describe('useRoomMessages Store', () => {
         seen: true,
         text: 'Hello',
         user_email: roomStore.activeRoom.user.email,
+        aiTextImprovement: null,
+        repliedMessageId: undefined,
       },
     );
   });

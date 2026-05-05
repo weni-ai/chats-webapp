@@ -354,7 +354,8 @@
     "feedback": {
       "forwarded_to_agent": "Contacto reenviado al agente {agent}",
       "forwarded_to_queue": "Contacto reenviado a la cola {queue}",
-      "transfer_to_agent": "{agent1} transferido a {agent2}",
+      "transfer_to_agent": "{agent1} transfirió el chat a {agent2}",
+      "transfer_to_agent_by_other": "{requestedBy} transfirió el chat de {agent1} a {agent2}",
       "transfer_to_queue": "{agent} transferido a la cola {queue}",
       "transfer_from_queue_to_queue": "Fue transferido de la cola {queue1} a la cola {queue2}",
       "transfer_from_queue_to_agent": "Fue transferido de la cola {queue} a {agent}",
@@ -515,6 +516,20 @@
   "no_tags_assigned": "No se han asignado etiquetas",
   "contact_await_for_you": "¡Un contacto está esperando por ti!",
   "agent": "Agente",
+  "ai_text_improvement": {
+    "tooltip_disabled": "Escribe una respuesta en el campo de texto para activar respuestas mejoradas con IA",
+    "tooltip_enabled": "Mejorar respuesta con IA",
+    "tooltip_cancel": "Cancelar respuestas mejoradas con IA",
+    "fix_grammar_and_spelling": "Corregir gramática y ortografía",
+    "make_more_empathetic": "Hacerla más empática",
+    "rewrite_for_clarity": "Reescribir con claridad",
+    "improving_response": "Mejorando respuesta",
+    "improvement": "Respuesta mejorada",
+    "error": "Error al mejorar respuesta con IA. Vuelve a intentarlo.",
+    "new": "Nueva",
+    "back_to_original": "Original",
+    "back_to_original_tooltip": "Volver a la versión original (Ctrl+Z)"
+  },
   "manager": "Gerente",
   "you": "Tú",
   "queue": "Cola",
@@ -1117,5 +1132,24 @@
       "text_2": "Además, los <b>campos personalizados</b> ahora pueden ser expandidos y contraídos, para que puedas ver lo que realmente importa sin tener que hacer scroll.",
       "text_3": "Y para hacer la interfaz más limpia, hemos cambiado el aspecto del botón <b>Iniciar discusión</b>."
     }
+  },
+  "delete_modal": {
+    "title": "Eliminar {name}",
+    "description_sector": "El sistema ha detectado {count} conversaciones en el sector {name} que están en atención o esperando para ser atendidas. Elija qué desea hacer con ellas",
+    "description_queue": "El sistema ha detectado {count} conversaciones en la fila {name} que están en atención o esperando para ser atendidas. Elija qué desea hacer con ellas",
+    "transfer_chats": "Transferir conversaciones a otro sector/fila",
+    "end_all_chats": "Finalizar todas las conversaciones",
+    "select_sector": "Seleccione un sector",
+    "select_queue": "Seleccione una fila",
+    "type_name_sector": "Escriba el nombre del sector para eliminar",
+    "type_name_queue": "Escriba el nombre de la fila para eliminar",
+    "cannot_be_reversed": "Esta acción no se puede revertir.",
+    "delete_button": "Eliminar",
+    "sector_success": "¡Sector eliminado con éxito!",
+    "sector_error": "No se pudo eliminar el sector.",
+    "queue_success": "¡Fila eliminada con éxito!",
+    "queue_error": "No se pudo eliminar la fila.",
+    "transfer_error_sector": "No se pudieron transferir las conversaciones. Eliminación del sector cancelada",
+    "transfer_error_queue": "No se pudieron transferir las conversaciones. Eliminación de la fila cancelada"
   }
 }
