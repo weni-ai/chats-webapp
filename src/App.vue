@@ -33,7 +33,7 @@ import { useDashboard } from './store/modules/dashboard';
 import { useFeatureFlag } from './store/modules/featureFlag';
 import { useTheme } from './store/modules/theme';
 
-import { notifyParentOfTheme } from '@/utils/theme';
+import { applyEffectiveTheme, notifyParentOfTheme } from '@/utils/theme';
 
 import initHotjar from '@/plugins/Hotjar';
 import {
@@ -161,6 +161,17 @@ export default {
       immediate: true,
       handler() {
         this.wsConnect();
+      },
+    },
+
+    // Re-apply the visual theme on every navigation so light-only routes
+    // (currently `/settings`) stay light even when the stored preference is
+    // dark, and revert back to the stored theme when the user leaves them.
+    // The store value is never touched — this is a presentation-only flip.
+    '$route.path': {
+      immediate: true,
+      handler() {
+        applyEffectiveTheme(useTheme().theme);
       },
     },
   },
