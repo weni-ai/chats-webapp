@@ -286,6 +286,8 @@ section.chats-layout .sidebar .chats-layout-footer {
     justify-content: flex-start;
     gap: $unnnic-space-2;
     padding: $unnnic-space-2 $unnnic-space-4;
+    font-weight: $unnnic-font-weight-medium;
+    color: $unnnic-color-fg-emphasized;
 
     .unnnic-button__label {
       font-weight: $unnnic-font-weight-medium;
