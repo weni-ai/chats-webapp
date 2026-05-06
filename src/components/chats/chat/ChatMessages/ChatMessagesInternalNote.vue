@@ -117,7 +117,7 @@ export default {
   }
 
   &-text {
-    color: $unnnic-color-fg-emphasized;
+    color: $unnnic-color-fg-base;
     font: $unnnic-font-body;
     word-break: break-word;
   }
@@ -128,7 +128,7 @@ export default {
 
   &-agent-name {
     font-weight: $unnnic-font-weight-bold;
-    color: $unnnic-color-fg-emphasized;
+    color: $unnnic-color-fg-base;
   }
 }
 </style>
