@@ -1297,5 +1297,13 @@
     "queue_error": "Unable to delete the queue.",
     "transfer_error_sector": "Rooms couldn't be transferred. Sector deletion aborted",
     "transfer_error_queue": "Rooms couldn't be transferred. Queue deletion aborted"
+  },
+  "room_card": {
+    "last_message": {
+      "you_prefix": "You"
+    },
+    "pending_response": {
+      "tooltip": "You did not respond to this contact"
+    }
   }
 }

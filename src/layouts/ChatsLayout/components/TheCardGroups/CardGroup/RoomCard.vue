@@ -31,7 +31,7 @@
         'room-card__contact--hover': hover,
       }"
       :title="formattedContactName"
-      :lastMessage="room.last_message"
+      :lastMessage="displayedLastMessage"
       :waitingTime="waitingTimeComputed"
       :unreadMessages="unreadMessages"
       :forceShowUnreadMessages="forceShowUnreadMessages && !!unreadMessages"
@@ -44,6 +44,10 @@
       :lastInteractionTime="lastInteractionTime"
       :lastInteractionTimePrefix="lastInteractionTimePrefix"
       :projectName="handleProjectName"
+      :pendingResponse="showPendingResponse"
+      :pendingResponseTooltip="
+        showPendingResponse ? pendingResponseTooltipText : ''
+      "
       data-testid="room-card-contact"
       @click="$emit('click')"
       @click-pin="$emit('clickPin', $event)"
@@ -66,6 +70,8 @@ import { mapState } from 'pinia';
 
 import { useRooms } from '@/store/modules/chats/rooms';
 import { useConfig } from '@/store/modules/config';
+import { useFeatureFlag } from '@/store/modules/featureFlag';
+import { useProfile } from '@/store/modules/profile';
 import { formatContactName } from '@/utils/chats';
 
 const ONE_MINUTE_IN_MILLISECONDS = 60000;
@@ -122,6 +128,57 @@ export default {
       enableAutomaticRoomRouting: 'enableAutomaticRoomRouting',
       project: 'project',
     }),
+    ...mapState(useFeatureFlag, {
+      featureFlags: 'featureFlags',
+    }),
+    ...mapState(useProfile, {
+      me: 'me',
+    }),
+    isPendingResponseFeatureEnabled() {
+      return !!this.featureFlags?.active_features?.includes(
+        'weniChatsPendingResponse',
+      );
+    },
+    isLastMessageFromAgent() {
+      return !!this.room.last_message?.user;
+    },
+    isLastMessageFromContact() {
+      return !!this.room.last_message?.contact && !this.room.last_message?.user;
+    },
+    showPendingResponse() {
+      const isYouAgentForThisRoom = this.room.user?.email === this.me?.email;
+      return (
+        this.isPendingResponseFeatureEnabled &&
+        this.isProgressRoom &&
+        this.isLastMessageFromContact &&
+        this.unreadMessages === 0 &&
+        isYouAgentForThisRoom
+      );
+    },
+    pendingResponseTooltipText() {
+      return this.$t('room_card.pending_response.tooltip');
+    },
+    displayedLastMessage() {
+      const { last_message: lastMessage } = this.room;
+
+      const shouldPrefix =
+        this.isPendingResponseFeatureEnabled &&
+        this.isProgressRoom &&
+        this.isLastMessageFromAgent &&
+        lastMessage &&
+        typeof lastMessage === 'object' &&
+        lastMessage?.user === this.me?.email;
+
+      if (!shouldPrefix) return lastMessage;
+
+      const youPrefix = this.$t('room_card.last_message.you_prefix');
+      const originalText = lastMessage.text || '';
+
+      return {
+        ...lastMessage,
+        text: originalText ? `${youPrefix}: ${originalText}` : `${youPrefix}: `,
+      };
+    },
     hideContactMessageInfo() {
       return this.roomType === 'waiting' && this.enableAutomaticRoomRouting;
     },
