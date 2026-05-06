@@ -761,7 +761,7 @@ describe('RoomCard.vue', () => {
       wrapper.unmount();
     });
 
-    it('flag on + lastMessage.user is an object (real API shape): does NOT prefix because typeof user !== string equals me.email', () => {
+    it('flag on + lastMessage.user is an object whose email equals me.email (real API shape): prefixes lastMessage.text with You:', () => {
       enableFlag();
 
       const wrapper = createWrapper({
@@ -771,6 +771,50 @@ describe('RoomCard.vue', () => {
 
       expect(wrapper.vm.isLastMessageFromAgent).toBe(true);
       expect(wrapper.vm.showPendingResponse).toBe(false);
+      expect(wrapper.vm.displayedLastMessage.text).toMatch(/: Hello message$/);
+      expect(wrapper.vm.displayedLastMessage.text).not.toBe('Hello message');
+
+      wrapper.unmount();
+    });
+
+    it('flag on + lastMessage.user is an object with a different email: does not prefix', () => {
+      enableFlag();
+
+      const wrapper = createWrapper({
+        roomType: 'in_progress',
+        room: buildRoom({
+          fromAgent: true,
+          unreadCount: 0,
+          lastMessageUser: {
+            first_name: 'Other',
+            last_name: 'Agent',
+            email: 'other-agent@weni.ai',
+          },
+        }),
+      });
+
+      expect(wrapper.vm.isLastMessageFromAgent).toBe(true);
+      expect(wrapper.vm.displayedLastMessage.text).toBe('Hello message');
+
+      wrapper.unmount();
+    });
+
+    it('flag on + lastMessage.user is an object without email field: does not prefix', () => {
+      enableFlag();
+
+      const wrapper = createWrapper({
+        roomType: 'in_progress',
+        room: buildRoom({
+          fromAgent: true,
+          unreadCount: 0,
+          lastMessageUser: {
+            first_name: 'Agent',
+            last_name: 'User',
+          },
+        }),
+      });
+
+      expect(wrapper.vm.isLastMessageFromAgent).toBe(true);
       expect(wrapper.vm.displayedLastMessage.text).toBe('Hello message');
 
       wrapper.unmount();
@@ -796,7 +840,7 @@ describe('RoomCard.vue', () => {
       wrapper.unmount();
     });
 
-    it('flag on + lastMessage.user is a different email: does not prefix', () => {
+    it('flag on + lastMessage.user is a different email string: does not prefix', () => {
       enableFlag();
 
       const wrapper = createWrapper({
