@@ -157,8 +157,8 @@ export default {
         this.isProgressRoom &&
         this.isLastMessageFromAgent &&
         lastMessage &&
-        typeof lastMessage === 'object' &&
-        lastMessage?.user === this.me?.email;
+        (lastMessage?.user === this.me?.email ||
+          lastMessage?.user?.email === this.me?.email);
 
       if (!shouldPrefix) return lastMessage;
 
