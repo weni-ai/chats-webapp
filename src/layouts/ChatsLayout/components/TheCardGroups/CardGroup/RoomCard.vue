@@ -14,6 +14,7 @@
       v-if="withSelection"
       enabled
       :text="checkboxValue ? $t('deselect_this_chat') : $t('select_this_chat')"
+      class="room-card__checkbox-tooltip"
       side="right"
     >
       <UnnnicCheckbox
@@ -204,9 +205,17 @@ export default {
 .room-card__container {
   display: grid;
   align-items: center;
+  background-color: $unnnic-color-bg-base;
 
   :deep(.room-card__contact) {
     border: none;
+    background-color: transparent;
+  }
+
+  :deep(.room-card__contact:hover),
+  :deep(.room-card__contact.selected),
+  :deep(.room-card__contact.selected:hover) {
+    background-color: transparent;
   }
 
   :deep(.room-card__contact:active) {
@@ -218,15 +227,15 @@ export default {
   }
 
   &--hover {
-    background-color: $unnnic-color-bg-base-soft !important;
-
-    :deep(.room-card__contact) {
-      background-color: $unnnic-color-bg-base-soft !important;
-    }
+    background-color: $unnnic-color-bg-base-soft;
   }
 
   &--with-selection {
     grid-template-columns: auto 1fr;
+  }
+
+  &--selected {
+    background-color: $unnnic-color-bg-base-soft;
   }
 
   .room-card__contact--selected {
