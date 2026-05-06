@@ -143,7 +143,7 @@ watch(agentSelection, (newVal) => {
 <style lang="scss" scoped>
 .form-agent {
   &__selected-agents {
-    height: 60vh;
+    max-height: 60vh;
     overflow-y: auto;
   }
 }
