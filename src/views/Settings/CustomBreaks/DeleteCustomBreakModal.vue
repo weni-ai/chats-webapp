@@ -39,8 +39,8 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref } from 'vue';
-import { UnnnicCallAlert } from '@weni/unnnic-system';
+import { computed, onMounted, onUnmounted, ref } from 'vue';
+import { storeToRefs } from 'pinia';
 
 import { useSettings } from '@/store/modules/settings';
 
@@ -48,8 +48,10 @@ import CustomBreakService from '@/services/api/resources/chats/pauseStatus';
 
 import i18n from '@/plugins/i18n';
 
+import { UnnnicCallAlert } from '@weni/unnnic-system';
+import { handleConnectOverlay } from '@/utils/overlay';
+
 import { CustomBreak } from './types';
-import { storeToRefs } from 'pinia';
 
 defineOptions({
   name: 'DeleteCustomBreakModal',
@@ -109,6 +111,13 @@ const deleteCustomBreak = async () => {
     isLoadingDeleteCustomBreak.value = false;
   }
 };
+
+onMounted(() => {
+  handleConnectOverlay(true);
+});
+onUnmounted(() => {
+  handleConnectOverlay(false);
+});
 </script>
 
 <style lang="scss" scoped>
