@@ -101,12 +101,12 @@ export default {
 .chat-messages__internal-note {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: $unnnic-space-1;
   background-color: $unnnic-color-bg-yellow-plain;
-  padding: $unnnic-spacing-xs $unnnic-spacing-ant;
-  border-radius: $unnnic-border-radius-md;
+  padding: $unnnic-space-4 $unnnic-space-3;
+  border-radius: $unnnic-radius-2;
   width: 100%;
-  box-shadow: 0 2px 5px -1px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.1);
   cursor: pointer;
 
   &-container {
@@ -127,7 +127,7 @@ export default {
   }
 
   &-agent-name {
-    font-weight: $unnnic-font-weight-bold;
+    font: $unnnic-font-emphasis;
     color: $unnnic-color-fg-base;
   }
 }
