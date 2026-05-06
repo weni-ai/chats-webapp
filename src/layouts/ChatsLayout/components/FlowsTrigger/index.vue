@@ -2,7 +2,7 @@
 <template>
   <AsideSlotTemplate>
     <template #header>
-      <UnnnicChatsHeader
+      <ChatsHeader
         :title="$t('flows_trigger.title')"
         :subtitle="$t('flows_trigger.subtitle', { project: projectName })"
         avatarIcon="send"
@@ -251,19 +251,22 @@ import ModalRemoveSelectedContacts from '@/components/chats/FlowsTrigger/ModalRe
 import SelectedContactsSection from '@/components/chats/FlowsTrigger/SelectedContactsSection.vue';
 import SendFlow from '@/components/chats/FlowsTrigger/SendFlow.vue';
 import ModalProgressBarFalse from '@/components/ModalProgressBarFalse.vue';
-import callUnnnicAlert from '@/utils/callUnnnicAlert';
-import Group from '@/services/api/resources/settings/group.js';
+import ChatsHeader from '@/components/chats/ChatHeader.vue';
 
 import FlowsContactsLoading from '@/views/loadings/FlowsTrigger/FlowsContactsLoading.vue';
 
 import FlowsTrigger from '@/services/api/resources/chats/flowsTrigger.js';
 import FlowsAPI from '@/services/api/resources/flows/flowsTrigger.js';
 import { useRooms } from '@/store/modules/chats/rooms';
+import Group from '@/services/api/resources/settings/group.js';
+
+import callUnnnicAlert from '@/utils/callUnnnicAlert';
 
 export default {
   name: 'FlowsTrigger',
 
   components: {
+    ChatsHeader,
     AsideSlotTemplate,
     AsideSlotTemplateSection,
     FlowsContactsLoading,

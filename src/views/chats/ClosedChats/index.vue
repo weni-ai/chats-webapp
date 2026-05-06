@@ -18,7 +18,7 @@
         {{ contactName || `[${$t('unnamed_contact')}]` }}
       </p>
     </section>
-    <UnnnicChatsHeader
+    <ChatsHeader
       v-if="project && !selectedRoom"
       class="closed-chats__table-header"
       :title="project.name"
@@ -125,6 +125,7 @@ import ClosedChatsRoomsTable from './RoomsTable.vue';
 import ContactHeader from '@/components/chats/ContactHeader.vue';
 import SearchMessages from '@/components/chats/SearchMessages/index.vue';
 import WarningArchivedMessages from '@/components/WarningArchivedMessages.vue';
+import ChatsHeader from '@/components/chats/ChatHeader.vue';
 
 import { useFeatureFlag } from '@/store/modules/featureFlag';
 
@@ -132,6 +133,7 @@ export default {
   name: 'ClosedChats',
 
   components: {
+    ChatsHeader,
     ClosedChatsHeaderLoading,
     ChatHeaderLoading,
     ContactInfo,

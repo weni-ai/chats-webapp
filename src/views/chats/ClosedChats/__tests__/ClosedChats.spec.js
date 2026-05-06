@@ -159,7 +159,7 @@ describe('ClosedChats.vue', () => {
           ChatHeaderLoading: {
             template: '<div data-testid="chat-header-loading"></div>',
           },
-          UnnnicChatsHeader: {
+          ChatsHeader: {
             template: '<div data-testid="unnnic-chats-header"><slot /></div>',
             props: [
               'title',
