@@ -12,18 +12,33 @@ exports[`ViewButton > Snapshot > should match the snapshot 1`] = `
   <span
     class="view-button__label"
     data-v-905ee5f6=""
+    role="button"
+    tabindex="0"
   >
     <span
-      class="view-button__text"
-      data-testid="header-text"
+      class="view-button__label"
       data-v-905ee5f6=""
     >
-      view-option
+      <span
+        class="view-button__text"
+        data-testid="header-text"
+        data-v-905ee5f6=""
+      >
+        view-option
+      </span>
+      <span
+        class="view-button__new-badge"
+        data-testid="header-new-badge"
+        data-text="view_options.new_badge"
+        data-v-905ee5f6=""
+      />
     </span>
-    <span
-      class="view-button__new-badge"
-      data-testid="header-new-badge"
-      data-text="view_options.new_badge"
+    <i
+      class="view-button__chevron"
+      data-icon="keyboard_arrow_up"
+      data-scheme="fg-base"
+      data-size="ant"
+      data-testid="header-chevron"
       data-v-905ee5f6=""
     />
   </span>

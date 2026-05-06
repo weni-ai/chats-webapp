@@ -361,7 +361,7 @@ export default {
       flex-direction: column;
       height: 100%;
       overflow-y: hidden;
-      background: rgba(253, 245, 233, 0.25);
+      background-color: $unnnic-color-bg-base;
 
       :deep(.chat-messages) {
         padding: 0 $unnnic-space-4 0 $unnnic-space-4;
