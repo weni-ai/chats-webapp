@@ -18,14 +18,6 @@ vi.mock('@/views/loadings/RoomsList.vue', () => ({
   },
 }));
 
-vi.mock('@/components/ModalQueuePriorizations.vue', () => ({
-  default: {
-    name: 'ModalQueuePriorizations',
-    emits: ['close'],
-    template: '<div data-testid="mocked-modal-queue">Modal</div>',
-  },
-}));
-
 vi.mock('@/services/api/resources/chats/room', () => ({
   default: {
     pinRoom: vi.fn(),
@@ -200,42 +192,6 @@ describe('TheCardGroups.vue', () => {
       expect(
         wrapper.find('[data-testid="search-contact-input"]').exists(),
       ).toBe(true);
-      expect(wrapper.find('[data-testid="chat-groups-header"]').exists()).toBe(
-        true,
-      );
-    });
-
-    it('renders queue prioritization button when conditions are met', () => {
-      wrapper = createWrapper();
-
-      expect(
-        wrapper.findComponent({ name: 'UnnnicToolTipStub' }).exists(),
-      ).toBe(true);
-      expect(
-        wrapper.find('[data-testid="queue-prioritization-button"]').exists(),
-      ).toBe(true);
-    });
-
-    it('hides queue prioritization button for admin users', () => {
-      const profileStore = useProfile();
-      profileStore.me.project_permission_role = 1; // Admin
-
-      wrapper = createWrapper();
-
-      expect(
-        wrapper.find('[data-testid="queue-prioritization-button"]').exists(),
-      ).toBe(false);
-    });
-
-    it('hides queue prioritization button when config disabled', () => {
-      const configStore = useConfig();
-      configStore.project.config.can_use_queue_prioritization = false;
-
-      wrapper = createWrapper();
-
-      expect(
-        wrapper.find('[data-testid="queue-prioritization-button"]').exists(),
-      ).toBe(false);
     });
 
     it('renders loading state', async () => {
@@ -341,35 +297,9 @@ describe('TheCardGroups.vue', () => {
         'Queue cleared! All contacts have been assigned to an agent',
       );
     });
-
-    it('renders modal when showModalQueue is true', async () => {
-      wrapper = createWrapper();
-
-      await wrapper.setData({ showModalQueue: true });
-      await wrapper.vm.$nextTick();
-
-      expect(
-        wrapper.find('[data-testid="queue-prioritization-modal"]').exists(),
-      ).toBe(true);
-    });
   });
 
   describe('computed properties tests', () => {
-    it('calculates isUserAdmin correctly for admin user', () => {
-      const profileStore = useProfile();
-      profileStore.me.project_permission_role = 1;
-
-      wrapper = createWrapper();
-
-      expect(wrapper.vm.isUserAdmin).toBe(true);
-    });
-
-    it('calculates isUserAdmin correctly for non-admin user', () => {
-      wrapper = createWrapper();
-
-      expect(wrapper.vm.isUserAdmin).toBe(false);
-    });
-
     it('calculates totalUnreadMessages correctly', () => {
       const roomsStore = useRooms();
       roomsStore.newMessagesByRoom = {
@@ -503,22 +433,6 @@ describe('TheCardGroups.vue', () => {
       wrapper.vm.timerId = setTimeout(() => {}, TIME_TO_WAIT_TYPING);
 
       expect(clearTimeoutSpy).toHaveBeenCalled();
-    });
-  });
-
-  describe('modal functionality tests', () => {
-    it('toggles modal queue correctly', async () => {
-      wrapper = createWrapper();
-
-      await wrapper
-        .find('[data-testid="queue-prioritization-button"]')
-        .trigger('click');
-
-      expect(wrapper.vm.showModalQueue).toBe(true);
-
-      wrapper.vm.handleModalQueuePriorization();
-
-      expect(wrapper.vm.showModalQueue).toBe(false);
     });
   });
 

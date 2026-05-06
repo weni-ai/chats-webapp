@@ -15,30 +15,7 @@
       data-testid="search-contact-input"
       @icon-right-click="nameOfContact = ''"
     />
-    <section
-      class="chat-groups__header"
-      data-testid="chat-groups-header"
-    >
-      <UnnnicToolTip
-        v-if="
-          !isMobile &&
-          !isUserAdmin &&
-          project.config?.can_use_queue_prioritization
-        "
-        enabled
-        :text="$t('chats.select_queues')"
-        side="right"
-        data-testid="queue-prioritization-tooltip"
-      >
-        <UnnnicButton
-          iconCenter="filter_list"
-          type="secondary"
-          size="small"
-          data-testid="queue-prioritization-button"
-          @click="handleModalQueuePriorization"
-        />
-      </UnnnicToolTip>
-    </section>
+
     <RoomsListLoading
       v-if="showLoadingRooms || !initialLoaded"
       data-testid="rooms-loading"
@@ -167,12 +144,6 @@
         @open="openRoom"
       />
     </section>
-    <ModalQueuePriorizations
-      v-if="showModalQueue"
-      v-model="showModalQueue"
-      data-testid="queue-prioritization-modal"
-      @close="handleModalQueuePriorization"
-    />
   </div>
 </template>
 <script>
@@ -190,7 +161,6 @@ import { useFeatureFlag } from '@/store/modules/featureFlag';
 import RoomsListLoading from '@/views/loadings/RoomsList.vue';
 import CardGroup from './CardGroup/index.vue';
 import TabChip from './TabChip.vue';
-import ModalQueuePriorizations from '@/components/ModalQueuePriorizations.vue';
 import Room from '@/services/api/resources/chats/room';
 
 export default {
@@ -198,7 +168,6 @@ export default {
   components: {
     RoomsListLoading,
     CardGroup,
-    ModalQueuePriorizations,
     TabChip,
   },
   props: {
@@ -372,11 +341,6 @@ export default {
       }
 
       return false;
-    },
-
-    isUserAdmin() {
-      const ROLE_ADMIN = 1;
-      return this.me.project_permission_role === ROLE_ADMIN;
     },
 
     totalUnreadMessages() {
@@ -627,9 +591,7 @@ export default {
         this.searchForMoreRooms(true);
       }
     },
-    handleModalQueuePriorization() {
-      this.showModalQueue = !this.showModalQueue;
-    },
+
     async handlePinRoom(room, type) {
       const isLoadingSamePinRoom =
         this.pinRoomLoading.status && this.pinRoomLoading.uuid === room.uuid;
