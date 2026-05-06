@@ -3,6 +3,7 @@ import http from '@/services/api/http';
 import { getProject } from '@/utils/config';
 
 import { useProfile } from '@/store/modules/profile';
+import { useDashboard } from '@/store/modules/dashboard';
 
 export default {
   async getListQueues() {
@@ -41,9 +42,12 @@ export default {
   },
 
   async getQueuesToFilter() {
+    const dashboardStore = useDashboard();
+
     const url = '/rooms_count/by_queue/';
     const params = {
       project: getProject(),
+      email: dashboardStore.viewedAgent?.email || undefined,
     };
     const response = await http.get(url, { params });
     return response.data;
