@@ -290,7 +290,7 @@ export default {
       )
         return true;
 
-      return !!this.room.user;
+      return !!this.room?.user;
     },
   },
 

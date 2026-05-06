@@ -15,29 +15,47 @@ import api from '@/services/api/resources/chats/pauseStatus';
 import { createTestingPinia } from '@pinia/testing';
 import Profile from '@/services/api/resources/profile';
 import { setActivePinia } from 'pinia';
-import unnnic from '@weni/unnnic-system';
+import { UnnnicCallAlert } from '@weni/unnnic-system';
 import { moduleStorage } from '@/utils/storage';
 
 vi.mock('@weni/unnnic-system', () => ({
-  default: {
-    unnnicCallAlert: vi.fn(),
+  UnnnicCallAlert: vi.fn(),
+}));
+
+vi.mock('is-mobile', () => ({
+  default: vi.fn(() => false),
+}));
+
+const statusBarStoreMocks = vi.hoisted(() => ({
+  profileMe: {
+    email: 'test@example.com',
+    project_permission_role: 1,
   },
+  configProject: {
+    uuid: 'test-uuid',
+    config: {
+      can_see_timer: true,
+      can_use_queue_prioritization: false,
+    },
+  },
+  getStatus: vi.fn().mockResolvedValue({
+    data: { connection_status: 'ONLINE' },
+  }),
+}));
+
+vi.mock('@/store/modules/profile', () => ({
+  useProfile: () => ({
+    me: statusBarStoreMocks.profileMe,
+  }),
 }));
 
 vi.mock('@/store/modules/config', () => ({
   useConfig: () => ({
-    project: {
-      uuid: 'test-uuid',
-      config: {
-        can_see_timer: true,
-      },
-    },
+    project: statusBarStoreMocks.configProject,
     status: 'ONLINE',
     socketClosedOffline: false,
     setSocketClosedOffline: vi.fn(),
-    getStatus: vi.fn().mockResolvedValue({
-      data: { connection_status: 'ONLINE' },
-    }),
+    getStatus: statusBarStoreMocks.getStatus,
     $patch: vi.fn(),
   }),
 }));
@@ -139,6 +157,11 @@ describe('StatusBar', () => {
     setActivePinia(pinia);
     moduleStorage.clear({ useSession: true });
     vi.useFakeTimers();
+
+    statusBarStoreMocks.profileMe.email = 'test@example.com';
+    statusBarStoreMocks.profileMe.project_permission_role = 1;
+    statusBarStoreMocks.configProject.config.can_see_timer = true;
+    statusBarStoreMocks.configProject.config.can_use_queue_prioritization = false;
   });
 
   afterEach(() => {
@@ -162,6 +185,13 @@ describe('StatusBar', () => {
               '<div class="unnnic-icon" data-testid="unnnic-icon"><slot /></div>',
             props: ['icon', 'scheme'],
           },
+          ModalQueuePriorizations: {
+            name: 'ModalQueuePriorizations',
+            props: ['modelValue'],
+            emits: ['update:modelValue'],
+            template:
+              '<div data-testid="queue-prioritization-modal" v-if="modelValue">Modal</div>',
+          },
         },
       },
     });
@@ -181,6 +211,67 @@ describe('StatusBar', () => {
     });
   });
 
+  describe('Queue prioritization', () => {
+    it('renders queue prioritization control when config enabled and user is not admin', async () => {
+      statusBarStoreMocks.profileMe.project_permission_role = 2;
+      statusBarStoreMocks.configProject.config.can_use_queue_prioritization = true;
+
+      wrapper = createWrapper();
+      await flushPromises();
+
+      expect(wrapper.find('.status-bar__queue-priorization').exists()).toBe(
+        true,
+      );
+    });
+
+    it('hides queue prioritization control for admin users', async () => {
+      statusBarStoreMocks.profileMe.project_permission_role = 1;
+      statusBarStoreMocks.configProject.config.can_use_queue_prioritization = true;
+
+      wrapper = createWrapper();
+      await flushPromises();
+
+      expect(wrapper.find('.status-bar__queue-priorization').exists()).toBe(
+        false,
+      );
+    });
+
+    it('hides queue prioritization control when config is disabled', async () => {
+      statusBarStoreMocks.profileMe.project_permission_role = 2;
+      statusBarStoreMocks.configProject.config.can_use_queue_prioritization = false;
+
+      wrapper = createWrapper();
+      await flushPromises();
+
+      expect(wrapper.find('.status-bar__queue-priorization').exists()).toBe(
+        false,
+      );
+    });
+
+    it('opens and closes queue prioritization modal', async () => {
+      statusBarStoreMocks.profileMe.project_permission_role = 2;
+      statusBarStoreMocks.configProject.config.can_use_queue_prioritization = true;
+
+      wrapper = createWrapper();
+      await flushPromises();
+
+      await wrapper.find('.status-bar__queue-priorization').trigger('click');
+      await wrapper.vm.$nextTick();
+
+      expect(
+        wrapper.find('[data-testid="queue-prioritization-modal"]').exists(),
+      ).toBe(true);
+
+      const modal = wrapper.findComponent({ name: 'ModalQueuePriorizations' });
+      await modal.vm.$emit('update:modelValue', false);
+      await wrapper.vm.$nextTick();
+
+      expect(
+        wrapper.find('[data-testid="queue-prioritization-modal"]').exists(),
+      ).toBe(false);
+    });
+  });
+
   describe('Dropdown Functionality', () => {
     it('should toggle dropdown when clicking on status bar', async () => {
       wrapper = createWrapper();
@@ -188,9 +279,7 @@ describe('StatusBar', () => {
         wrapper.find('[data-testid="status-bar-list-open"]').exists(),
       ).toBe(false);
 
-      await wrapper
-        .find('[data-testid="status-bar-selected"]')
-        .trigger('click');
+      await wrapper.find('.status-bar__content').trigger('click');
       expect(
         wrapper.find('[data-testid="status-bar-list-open"]').exists(),
       ).toBe(true);
@@ -198,9 +287,7 @@ describe('StatusBar', () => {
       vi.advanceTimersByTime(300);
       await wrapper.vm.$nextTick();
 
-      await wrapper
-        .find('[data-testid="status-bar-selected"]')
-        .trigger('click');
+      await wrapper.find('.status-bar__content').trigger('click');
       expect(
         wrapper.find('[data-testid="status-bar-list-open"]').exists(),
       ).toBe(false);
@@ -209,9 +296,7 @@ describe('StatusBar', () => {
     it('should prevent immediate outside clicks from closing dropdown', async () => {
       wrapper = createWrapper();
 
-      await wrapper
-        .find('[data-testid="status-bar-selected"]')
-        .trigger('click');
+      await wrapper.find('.status-bar__content').trigger('click');
       expect(wrapper.vm.isOpen).toBe(true);
       expect(wrapper.vm.isToggling).toBe(true);
 
@@ -238,15 +323,11 @@ describe('StatusBar', () => {
     it('should ignore rapid successive clicks', async () => {
       wrapper = createWrapper();
 
-      await wrapper
-        .find('[data-testid="status-bar-selected"]')
-        .trigger('click');
+      await wrapper.find('.status-bar__content').trigger('click');
       expect(wrapper.vm.isOpen).toBe(true);
       expect(wrapper.vm.isToggling).toBe(true);
 
-      await wrapper
-        .find('[data-testid="status-bar-selected"]')
-        .trigger('click');
+      await wrapper.find('.status-bar__content').trigger('click');
       expect(wrapper.vm.isOpen).toBe(true);
 
       vi.advanceTimersByTime(300);
@@ -254,9 +335,7 @@ describe('StatusBar', () => {
 
       expect(wrapper.vm.isToggling).toBe(false);
 
-      await wrapper
-        .find('[data-testid="status-bar-selected"]')
-        .trigger('click');
+      await wrapper.find('.status-bar__content').trigger('click');
       expect(wrapper.vm.isOpen).toBe(false);
     });
   });
@@ -464,7 +543,7 @@ describe('StatusBar', () => {
       const onlineStatus = { value: 'active', label: 'Online', color: 'green' };
       wrapper.vm.showStatusAlert(onlineStatus, true);
 
-      expect(unnnic.unnnicCallAlert).toHaveBeenCalledWith({
+      expect(UnnnicCallAlert).toHaveBeenCalledWith({
         props: {
           text: 'Status updated to Online',
           icon: 'indicator',
@@ -487,7 +566,7 @@ describe('StatusBar', () => {
       };
       wrapper.vm.showStatusAlert(offlineStatus, true);
 
-      expect(unnnic.unnnicCallAlert).toHaveBeenCalledWith({
+      expect(UnnnicCallAlert).toHaveBeenCalledWith({
         props: {
           text: 'Status updated to Offline',
           icon: 'indicator',
@@ -506,7 +585,7 @@ describe('StatusBar', () => {
       const customStatus = { value: 'lunch', label: 'Lunch', color: 'brown' };
       wrapper.vm.showStatusAlert(customStatus, true);
 
-      expect(unnnic.unnnicCallAlert).toHaveBeenCalledWith({
+      expect(UnnnicCallAlert).toHaveBeenCalledWith({
         props: {
           text: 'Status updated to Lunch',
           icon: 'indicator',
@@ -525,7 +604,7 @@ describe('StatusBar', () => {
       const status = { value: 'active', label: 'Online', color: 'green' };
       wrapper.vm.showStatusAlert(status, false);
 
-      expect(unnnic.unnnicCallAlert).toHaveBeenCalledWith({
+      expect(UnnnicCallAlert).toHaveBeenCalledWith({
         props: {
           text: 'Unable to update status, please try again.',
           icon: 'indicator',
@@ -550,7 +629,7 @@ describe('StatusBar', () => {
       await items[0].trigger('click');
       await flushPromises();
 
-      expect(unnnic.unnnicCallAlert).toHaveBeenCalledWith({
+      expect(UnnnicCallAlert).toHaveBeenCalledWith({
         props: {
           text: 'Unable to update status, please try again.',
           icon: 'indicator',
@@ -574,7 +653,7 @@ describe('StatusBar', () => {
       await items[1].trigger('click');
       await flushPromises();
 
-      expect(unnnic.unnnicCallAlert).toHaveBeenCalledWith({
+      expect(UnnnicCallAlert).toHaveBeenCalledWith({
         props: {
           text: 'Unable to update status, please try again.',
           icon: 'indicator',

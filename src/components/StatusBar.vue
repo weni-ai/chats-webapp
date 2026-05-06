@@ -6,17 +6,20 @@
     <section
       class="status-bar__selected"
       data-testid="status-bar-selected"
-      @click="toggleDropdown"
     >
-      <section class="status-bar__content">
+      <section
+        class="status-bar__content"
+        @click="toggleDropdown"
+      >
         <section
           class="status-bar__icon"
           data-testid="status-bar-icon"
           :class="`status-bar--${selectedStatus.color}`"
-        ></section>
+        />
         <p
           class="status-bar__label"
           data-testid="selected-status-label"
+          :title="selectedStatus.label"
         >
           {{ selectedStatus.label }}
         </p>
@@ -30,15 +33,28 @@
         >
           {{ formattedTime }}
         </section>
-      </section>
-      <section class="status-bar__set-status">
-        <p class="status-bar__set-status__label">
-          {{ $t('status.set_status') }}
-        </p>
         <UnnnicIcon
           data-testid="header-icon-expand"
           size="md"
           :icon="isOpen ? 'expand_less' : 'expand_more'"
+          scheme="fg-base"
+        />
+      </section>
+      <section
+        v-if="
+          !isMobile() &&
+          !isUserAdmin &&
+          project.config?.can_use_queue_prioritization
+        "
+        class="status-bar__queue-priorization"
+        @click="isOpenModalQueuePriorizations = true"
+      >
+        <p class="status-bar__queue-priorization__title">
+          {{ $t('chats.assigned_queues') }}
+        </p>
+        <UnnnicIcon
+          icon="edit_square"
+          size="ant"
           scheme="fg-base"
         />
       </section>
@@ -70,19 +86,29 @@
         </li>
       </ul>
     </Transition>
+    <ModalQueuePriorizations
+      v-if="isOpenModalQueuePriorizations"
+      v-model="isOpenModalQueuePriorizations"
+    />
   </header>
 </template>
 
 <script setup lang="ts">
 import { ref, computed, onMounted, onUnmounted, watch } from 'vue';
+import { storeToRefs } from 'pinia';
+import { intervalToDuration, parseISO, type Duration } from 'date-fns';
+import isMobile from 'is-mobile';
+
+import ModalQueuePriorizations from '@/components/ModalQueuePriorizations.vue';
+
 import { useConfig } from '@/store/modules/config';
 import { useProfile } from '@/store/modules/profile';
-import { intervalToDuration, parseISO, type Duration } from 'date-fns';
+
 import api from '@/services/api/resources/chats/pauseStatus';
 import Profile from '@/services/api/resources/profile';
-import unnnic from '@weni/unnnic-system';
+
 import i18n from '@/plugins/i18n';
-import { storeToRefs } from 'pinia';
+import { UnnnicCallAlert } from '@weni/unnnic-system';
 import { moduleStorage } from '@/utils/storage';
 
 interface Status {
@@ -91,6 +117,11 @@ interface Status {
   color: string;
   statusUuid?: string | null;
 }
+
+const profileStore = useProfile();
+const configStore = useConfig();
+const { status: configStatus, customStatus: configCustomStatus } =
+  storeToRefs(configStore);
 
 const statuses = ref<Status[]>([
   { value: 'active', label: 'Online', color: 'green' },
@@ -103,13 +134,17 @@ const filteredStatuses = computed(() => {
   );
 });
 
+const isOpenModalQueuePriorizations = ref(false);
+
+const isUserAdmin = computed(() => {
+  const ROLE_ADMIN = 1;
+  return profileStore.me.project_permission_role === ROLE_ADMIN;
+});
+
 const isOpen = ref(false);
 const startDate = ref<string | null>(null);
 const elapsedTime = ref<Duration | number>(0);
 let intervalId: ReturnType<typeof setInterval> | null = null;
-const configStore = useConfig();
-const { status: configStatus, customStatus: configCustomStatus } =
-  storeToRefs(configStore);
 
 const statusAgentKey = (configStore.project as unknown as { uuid: string })
   ?.uuid
@@ -126,7 +161,6 @@ const selectedStatus = ref<Status>(
     : statuses.value[1],
 );
 
-const profileStore = useProfile();
 const project = computed(() => configStore.project);
 const loadingActiveStatus = ref(false);
 const isToggling = ref(false);
@@ -417,7 +451,7 @@ const showStatusAlert = (status: Status | undefined, isSuccess = true) => {
     ? scheme[schemeKey] || scheme.default
     : scheme.error;
 
-  unnnic.unnnicCallAlert({
+  UnnnicCallAlert({
     props: {
       text: isSuccess
         ? i18n.global.t('status-bar.success', { status: status?.label })
@@ -487,8 +521,18 @@ watch(
   border-bottom: 1px solid $unnnic-color-border-soft;
   border-left: 1px solid $unnnic-color-border-soft;
   background: $unnnic-color-bg-base;
-  cursor: pointer;
   margin-bottom: $unnnic-spacing-ant;
+
+  &__queue-priorization {
+    display: flex;
+    align-items: center;
+    gap: $unnnic-space-1;
+    cursor: pointer;
+    &__title {
+      font: $unnnic-font-action;
+      color: $unnnic-color-fg-base;
+    }
+  }
 
   &__selected {
     width: 100%;
@@ -501,6 +545,7 @@ watch(
     display: flex;
     align-items: center;
     gap: $unnnic-border-radius-md;
+    cursor: pointer;
   }
 
   &__icon {
@@ -546,20 +591,11 @@ watch(
     font-size: $unnnic-font-size-body-gt;
     font-weight: $unnnic-font-weight-bold;
     line-height: $unnnic-font-size-body-gt + $unnnic-line-height-md;
-  }
 
-  &__set-status {
-    display: flex;
-    align-items: center;
-    gap: $unnnic-spacing-nano;
-    &__label {
-      color: $unnnic-color-fg-base;
-      font-family: $unnnic-font-family-secondary;
-      font-size: $unnnic-font-size-body-gt;
-      font-style: normal;
-      font-weight: $unnnic-font-weight-bold;
-      line-height: $unnnic-font-size-body-gt + $unnnic-line-height-md;
-    }
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+    max-width: 100px;
   }
 
   &__list {
