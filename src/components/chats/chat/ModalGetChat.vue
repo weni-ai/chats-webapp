@@ -150,6 +150,7 @@ export default {
         if (this.whenGetChat) this.whenGetChat();
 
         this.close();
+        this.activeTab = 'ongoing';
       } catch (error) {
         console.error('error to get chat', error);
         unnnic.unnnicCallAlert({

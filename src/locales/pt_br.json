@@ -1158,5 +1158,13 @@
     "queue_error": "Não foi possível excluir a fila.",
     "transfer_error_sector": "Não foi possível transferir as conversas. Exclusão do setor cancelada",
     "transfer_error_queue": "Não foi possível transferir as conversas. Exclusão da fila cancelada"
+  },
+  "room_card": {
+    "last_message": {
+      "you_prefix": "Você"
+    },
+    "pending_response": {
+      "tooltip": "Você não respondeu a este contato"
+    }
   }
 }
