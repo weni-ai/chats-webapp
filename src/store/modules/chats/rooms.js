@@ -36,6 +36,12 @@ export const useRooms = defineStore('rooms', {
       waiting: 'added_to_queue_at',
     },
     showOngoingDot: false,
+    roomsCount: {
+      waiting: 0,
+      ongoing: 0,
+      flow_start: 0,
+    },
+    filterQueues: [],
   }),
 
   actions: {
@@ -136,6 +142,7 @@ export const useRooms = defineStore('rooms', {
       viewedAgent,
       roomsType,
       cleanRoomType,
+      filterQueues,
     }) {
       const response = await Room.getAll(
         offset,
@@ -144,6 +151,7 @@ export const useRooms = defineStore('rooms', {
         order,
         viewedAgent,
         roomsType,
+        filterQueues,
       );
 
       if (cleanRoomType) {

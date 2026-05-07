@@ -11,6 +11,12 @@ import { useRoomCounters } from '@/store/modules/chats/roomCounters';
 import { useFeatureFlag } from '@/store/modules/featureFlag';
 import SoundNotification from '@/services/api/websocket/soundNotification';
 
+vi.mock('@/store/modules/dashboard', () => ({
+  useDashboard: vi.fn(() => ({
+    viewedAgent: { email: '' },
+  })),
+}));
+
 vi.mock('@/store/modules/chats/rooms', () => ({
   useRooms: vi.fn(),
 }));
@@ -55,6 +61,7 @@ const buildRoomsStoreMock = () => ({
   })),
   resetNewMessagesByRoom: vi.fn(),
   getAll: vi.fn().mockResolvedValue(undefined),
+  filterQueues: [],
 });
 
 const buildCountersMock = () => ({

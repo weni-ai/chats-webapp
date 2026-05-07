@@ -3,6 +3,7 @@ import SoundNotification from '@/services/api/websocket/soundNotification';
 import { useFeatureFlag } from '@/store/modules/featureFlag';
 import { useRooms } from '@/store/modules/chats/rooms';
 import { useRoomCounters } from '@/store/modules/chats/roomCounters';
+import { useDashboard } from '@/store/modules/dashboard';
 import { getRoomType } from '@/utils/room';
 
 const BATCH_FLUSH_DELAY_MS = 80;
@@ -255,23 +256,38 @@ export function setAppRef(app) {
 
 export default async (room, { app }) => {
   const roomsStore = useRooms();
+  const dashboardStore = useDashboard();
+  const featureFlagStore = useFeatureFlag();
+
   lastAppRef = app;
 
-  const featureFlagStore = useFeatureFlag();
   const useNewRoomUpdate =
     featureFlagStore.featureFlags?.active_features?.includes(
       'WeniChatsNewRoomUpdate',
     );
-  if (!useNewRoomUpdate) {
-    return handleUpdateLegacy(room, app, roomsStore);
-  }
+
+  const isViewMode = dashboardStore.viewedAgent.email !== '';
 
   const isKnown =
-    roomsStore.rooms.some((r) => r.uuid === room.uuid) ||
+    roomsStore.rooms.some((existingRoom) => existingRoom.uuid === room.uuid) ||
     pendingEvents.has(room.uuid);
 
   const roomType = getRoomType(room);
+
+  const isWaitingRoom = roomType === 'waiting';
+  const emptyQueuesFilter = roomsStore.filterQueues.length === 0;
+  const isValidRoomFilterQueue =
+    emptyQueuesFilter || roomsStore.filterQueues.includes(room.queue?.uuid);
+
   const isRoomForMe = room.user?.email === app.me.email;
+
+  if (!isValidRoomFilterQueue && (isWaitingRoom || isViewMode)) {
+    return;
+  }
+
+  if (!useNewRoomUpdate) {
+    return handleUpdateLegacy(room, app, roomsStore);
+  }
 
   if (!isKnown && !notifiedRoomUuids.has(room.uuid)) {
     notifiedRoomUuids.add(room.uuid);
