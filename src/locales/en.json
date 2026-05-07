@@ -787,7 +787,6 @@
   "flows": "Flows",
   "flows_trigger": {
     "title": "Flows trigger",
-    "subtitle": "Contacts of {project}",
     "triggered_flows": {
       "title": "Triggered flows",
       "single": "Triggered flow",

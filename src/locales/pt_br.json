@@ -792,7 +792,6 @@
   "flows": "Fluxos",
   "flows_trigger": {
     "title": "Disparo de fluxos",
-    "subtitle": "Contatos de {project}",
     "triggered_flows": {
       "title": "Fluxos disparados",
       "single": "Fluxo disparado",

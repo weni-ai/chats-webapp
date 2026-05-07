@@ -2,12 +2,22 @@
 <template>
   <AsideSlotTemplate>
     <template #header>
-      <UnnnicChatsHeader
+      <UnnnicPageHeader
+        class="flows-trigger__page-header"
         :title="$t('flows_trigger.title')"
-        :subtitle="$t('flows_trigger.subtitle', { project: projectName })"
-        avatarIcon="send"
-        :close="() => $emit('close')"
-      />
+        data-testid="flows-trigger-header"
+      >
+        <template #actions>
+          <UnnnicButton
+            type="tertiary"
+            size="small"
+            iconCenter="close"
+            :ariaLabel="$t('close')"
+            data-testid="flows-trigger-close"
+            @click="$emit('close')"
+          />
+        </template>
+      </UnnnicPageHeader>
     </template>
     <AsideSlotTemplateSection
       v-if="showSendFlowStep && !isLoadingCheckProjectPrincipal"
@@ -341,7 +351,6 @@ export default {
 
   computed: {
     ...mapState(useConfig, {
-      projectName: (store) => store.project.name,
       project: (store) => store.project,
     }),
     ...mapState(useRooms, {
@@ -725,6 +734,28 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.flows-trigger__page-header {
+  padding: $unnnic-space-2 $unnnic-space-4;
+
+  :deep(.page-header) {
+    margin-top: 0;
+    padding-bottom: $unnnic-space-2;
+
+    grid-template-columns: 1fr auto;
+    gap: $unnnic-space-2;
+  }
+
+  :deep(.page-header__title) {
+    font: $unnnic-font-display-3;
+  }
+
+  :deep(.page-header__actions) {
+    > * {
+      width: auto;
+    }
+  }
+}
+
 .flows-trigger {
   display: flex;
   overflow: hidden;

@@ -790,7 +790,6 @@
   "flows": "Flujos",
   "flows_trigger": {
     "title": "Activación de flujo",
-    "subtitle": "Contactos de {project}",
     "triggered_flows": {
       "title": "Flujos activados",
       "single": "Flujo activado",
