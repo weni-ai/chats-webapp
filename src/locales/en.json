@@ -951,7 +951,8 @@
         "switch_label": "Show the counter with the number of chats waiting for human support"
       },
       "use_name_sector_in_rooms": {
-        "switch_label": "Display the department name in the chat title"
+        "switch_label": "Show chat sector in the conversation list",
+        "hint": "When enabled, a tag with the chat’s sector will be displayed next to the contact’s name."
       }
     },
     "custom_sector": "Customize new sector (recommended)",

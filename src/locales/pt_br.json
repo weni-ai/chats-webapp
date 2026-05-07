@@ -956,7 +956,8 @@
         "switch_label": "Exibir o contador com o número de chats esperando atendimento humano"
       },
       "use_name_sector_in_rooms": {
-        "switch_label": "Mostrar o nome do setor no título do chat"
+        "switch_label": "Mostrar setor do chat na lista de conversas",
+        "hint": "Quando ativada, uma tag com o setor do chat será exibida ao lado do nome do contato."
       }
     },
     "custom_sector": "Personalizar novo setor (recomendado)",
