@@ -4,10 +4,9 @@
     class="settings-view__project-options"
   >
     <section class="project-options__header">
-      <SettingsSectionHeader
-        :title="$t('config_chats.project_configs.title')"
-      />
-      <CustomBreakOption />
+      <p class="project-options__header__title">
+        {{ $t('config_chats.project_configs.title') }}
+      </p>
     </section>
 
     <section class="project-options__items__config">
@@ -38,6 +37,7 @@
                 data-testid="ai-transfer-criteria-display"
               />
               <UnnnicButton
+                class="project-options__ai-transfer__edit-btn"
                 type="tertiary"
                 iconCenter="edit_square"
                 size="small"
@@ -52,6 +52,7 @@
           v-else
           v-model="projectConfig[item.key]"
           :name="item.name"
+          :hint="item.hint"
         />
       </template>
     </section>
@@ -80,8 +81,7 @@ import Project from '@/services/api/resources/settings/project';
 import agentBuilder from '@/services/api/resources/settings/agentBuilder';
 
 import SettingsProjectOptionsItem from './SettingsProjectOptionsItem.vue';
-import SettingsSectionHeader from '../SettingsSectionHeader.vue';
-import CustomBreakOption from './CustomBreakOption.vue';
+
 import AiTransferModal from './AiTransferModal.vue';
 import AiTransferDisableModal from './AiTransferDisableModal.vue';
 
@@ -89,9 +89,7 @@ export default {
   name: 'SettingsProjectOptions',
 
   components: {
-    SettingsSectionHeader,
     SettingsProjectOptionsItem,
-    CustomBreakOption,
     AiTransferModal,
     AiTransferDisableModal,
   },
@@ -170,11 +168,6 @@ export default {
         }`,
       );
     },
-    configUseNameSectorInRoomsTranslation() {
-      return this.$t(
-        `config_chats.project_configs.use_name_sector_in_rooms.switch_label`,
-      );
-    },
     configBlockCloseChatsInQueueTranslation() {
       const canCloseChatsInQueue = this.projectConfig.can_close_chats_in_queue;
       return this.$t(
@@ -191,26 +184,12 @@ export default {
         }`,
       );
     },
-    configQueuePrioritizationTranslation() {
-      const canQueuePrioritization =
-        this.projectConfig.can_use_queue_prioritization;
-      return this.$t(
-        `config_chats.project_configs.queue_prioritization.switch_${
-          canQueuePrioritization ? 'active' : 'inactive'
-        }`,
-      );
-    },
     configShowAgentStatusCountTimer() {
       const showAgentStatusCountTimer = this.projectConfig.can_see_timer;
       return this.$t(
         `config_chats.project_configs.show_agent_status_count_timer.switch_${
           showAgentStatusCountTimer ? 'active' : 'inactive'
         }`,
-      );
-    },
-    configShowWaitingRoomsCountTranslation() {
-      return this.$t(
-        'config_chats.project_configs.show_waiting_rooms_count.switch_label',
       );
     },
 
@@ -269,25 +248,31 @@ export default {
           key: 'can_use_queue_prioritization',
           type: 'flag',
           visible: true,
-          name: this.configQueuePrioritizationTranslation,
-        },
-        {
-          key: 'can_see_timer',
-          type: 'flag',
-          visible: true,
-          name: this.configShowAgentStatusCountTimer,
+          name: this.$t(
+            'config_chats.project_configs.queue_prioritization.switch_label',
+          ),
+          hint: this.$t(
+            'config_chats.project_configs.queue_prioritization.hint',
+          ),
         },
         {
           key: 'can_see_waiting_rooms_count',
           type: 'flag',
           visible: true,
-          name: this.configShowWaitingRoomsCountTranslation,
+          name: this.$t(
+            'config_chats.project_configs.show_waiting_rooms_count.switch_label',
+          ),
         },
         {
           key: 'can_use_name_sector_in_rooms',
           type: 'flag',
           visible: true,
-          name: this.configUseNameSectorInRoomsTranslation,
+          name: this.$t(
+            'config_chats.project_configs.use_name_sector_in_rooms.switch_label',
+          ),
+          hint: this.$t(
+            'config_chats.project_configs.use_name_sector_in_rooms.hint',
+          ),
         },
       ];
 
@@ -412,12 +397,17 @@ export default {
 .settings-view__project-options {
   display: flex;
   flex-direction: column;
-  gap: $unnnic-spacing-ant;
+  gap: $unnnic-space-4;
 
   .project-options__header {
     display: flex;
     align-items: center;
     justify-content: space-between;
+
+    &__title {
+      font: $unnnic-font-display-3;
+      color: $unnnic-color-fg-emphasized;
+    }
   }
 
   .project-options__items__config {
@@ -434,7 +424,12 @@ export default {
     &__inline {
       display: flex;
       align-items: flex-start;
-      gap: $unnnic-spacing-xs;
+      gap: $unnnic-space-2;
+    }
+
+    &__edit-btn {
+      align-self: flex-end;
+      margin-bottom: $unnnic-space-4;
     }
 
     &__criteria {
