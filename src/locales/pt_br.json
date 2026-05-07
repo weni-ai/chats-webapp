@@ -455,9 +455,11 @@
     "your_chat_assumed": "O Chat com {contact} foi transferido",
     "your_chat_assumed_description": "Seu chat com {contact} foi assumido por outro agente",
     "closed_chats": {
+      "contact_history": "Histórico do contato",
+      "general_history": "Histórico geral",
       "history": "Histórico",
-      "project_history": "Histórico do projeto",
-      "contact_history": "Histórico do contato"
+      "history_description": "Histórico de todos os atendimentos do projeto {projectName}",
+      "project_history": "Histórico do projeto"
     },
     "select_queues": "Selecionar filas",
     "select_services_queues": "Selecionar filas de atendimento",

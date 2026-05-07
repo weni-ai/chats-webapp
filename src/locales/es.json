@@ -455,9 +455,11 @@
     "your_chat_assumed": "El chat con {contact} ha sido transferido",
     "your_chat_assumed_description": "Otro agente se ha hecho cargo de su chat con {contacto}",
     "closed_chats": {
-      "history": "Historia",
-      "project_history": "Historia del proyecto",
-      "contact_history": "Historia del contacto"
+      "contact_history": "Historial del contacto",
+      "general_history": "Historial general",
+      "history": "Historial",
+      "history_description": "Historial de todos los registros de atención del proyecto {projectName}",
+      "project_history": "Historial del proyecto"
     },
     "select_queues": "Seleccionar colas",
     "select_services_queues": "Seleccionar colas de atención",

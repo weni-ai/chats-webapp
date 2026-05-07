@@ -452,9 +452,11 @@
     "your_chat_assumed": "Chat with {contact} has been transferred",
     "your_chat_assumed_description": "Your chat with {contact} has been taken over by another agent",
     "closed_chats": {
+      "contact_history": "Contact history",
+      "general_history": "General history",
       "history": "History",
-      "project_history": "Project history",
-      "contact_history": "Contact history"
+      "history_description": "History of all support records for the {projectName} project",
+      "project_history": "Project history"
     },
     "select_queues": "Select queues",
     "select_services_queues": "Select service queues",
