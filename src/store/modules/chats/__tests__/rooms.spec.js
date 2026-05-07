@@ -5,6 +5,7 @@ import { setActivePinia, createPinia } from 'pinia';
 import { useRooms } from '@/store/modules/chats/rooms';
 import { useProfile } from '@/store/modules/profile';
 import { useDashboard } from '@/store/modules/dashboard';
+import { useFeatureFlag } from '@/store/modules/featureFlag';
 
 import { roomsMock } from './mocks/roomsMock';
 import {
@@ -495,7 +496,7 @@ describe('State Rooms', () => {
           adminRoomsStore,
           adminProfileStore,
           dashboardStore,
-          { uuid: '3', queue: { uuid: '1' } },
+          { uuid: '1', queue: { uuid: '1' } },
           true,
         );
 
@@ -506,7 +507,7 @@ describe('State Rooms', () => {
           adminProfileStore,
           dashboardStore,
           {
-            uuid: '4',
+            uuid: '2',
             queue: { uuid: '1' },
             user: { email: 'testing@weni.ai' },
           },
@@ -572,7 +573,7 @@ describe('State Rooms', () => {
           humanServiceProfileStore,
           dashboardStore,
           {
-            uuid: '3',
+            uuid: '2',
             queue: { uuid: '3' },
             user: { email: 'testing@weni.ai' },
           },
@@ -636,6 +637,80 @@ describe('State Rooms', () => {
         expect(dashboardStore.showModalAssumedChat).eq(true);
         expect(dashboardStore.assumedChatContactName).eq('Cliente 1');
       });
+    });
+  });
+
+  describe('applyClose', () => {
+    let roomsStore;
+
+    beforeEach(() => {
+      mocks.useProfile.mockReturnValue(mockProfileAdminState);
+      roomsStore = useRooms();
+      roomsStore.$patch({
+        rooms: [
+          { uuid: 'r1', user: { email: 'a' }, is_waiting: false },
+          { uuid: 'r2', user: null, is_waiting: false },
+        ],
+        activeRoom: null,
+      });
+    });
+
+    it('removes the room from the array and returns the resolved roomType', () => {
+      const roomType = roomsStore.applyClose('r1');
+
+      expect(roomType).toBe('ongoing');
+      expect(existRoomByUuid(roomsStore, 'r1')).toBe(false);
+    });
+
+    it('falls back to the provided room payload when the local room is gone', () => {
+      const fallback = { uuid: 'gone', user: null, is_waiting: true };
+
+      const roomType = roomsStore.applyClose('gone', fallback);
+
+      expect(roomType).toBe('flow_start');
+    });
+
+    it('returns null when the uuid is missing and there is no fallback', () => {
+      expect(roomsStore.applyClose('missing')).toBeNull();
+      expect(roomsStore.applyClose(null)).toBeNull();
+    });
+
+    it('clears the active room when the closed room was active', () => {
+      const room = { uuid: 'r-active', user: { email: 'a' }, is_waiting: false };
+      roomsStore.$patch({ rooms: [room], activeRoom: room });
+
+      roomsStore.applyClose('r-active');
+
+      expect(roomsStore.activeRoom).toBeNull();
+    });
+  });
+
+  describe('updateRoom (alreadyClosedThisBatch guard)', () => {
+    let roomsStore;
+    const userEmail = 'testing@weni.ai';
+
+    beforeEach(() => {
+      mocks.useProfile.mockReturnValue(mockProfileAdminState);
+      roomsStore = useRooms();
+      roomsStore.$patch({ rooms: [] });
+      const featureFlagStore = useFeatureFlag();
+      featureFlagStore.$patch({
+        featureFlags: { active_features: ['WeniChatsNewRoomUpdate'] },
+      });
+    });
+
+    it('does not re-add a closed room when alreadyClosedThisBatch is true', () => {
+      const room = { uuid: 'r-closed', user: { email: userEmail }, is_waiting: false };
+
+      roomsStore.updateRoom({
+        room,
+        userEmail,
+        routerReplace: vi.fn(),
+        viewedAgentEmail: null,
+        alreadyClosedThisBatch: true,
+      });
+
+      expect(existRoomByUuid(roomsStore, 'r-closed')).toBe(false);
     });
   });
 });

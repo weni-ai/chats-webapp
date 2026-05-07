@@ -131,6 +131,7 @@
   },
   "step_of": "Paso {step} de {total}",
   "type_to_filter": "Escribe para filtrar",
+  "chats_count": "{count} chat | {count} chats",
   "attention": "Atención",
   "updates_saved": "Actualizaciones guardadas",
   "updated_info": "Información actualizada",
@@ -176,7 +177,8 @@
   "without_results": "No hay resultados coincidentes",
   "without_chats": {
     "in_progress": "¡Todo listo! Serás notificado cuando se asignen nuevos chats y aparecerán en esta lista.",
-    "waiting": "Cola vacía! Todos los contactos han sido asignados a un agente."
+    "waiting": "Cola vacía! Todos los contactos han sido asignados a un agente.",
+    "filtered": "No hay chats {roomType} en las colas filtradas. Quita el filtro para ver todos los chats."
   },
   "other": "Otro",
   "select_smart": {
@@ -287,7 +289,8 @@
     "queue_name_placeholder": "Ejemplo: Pagos",
     "queue_title": "Cola en",
     "queue_table_name": "Nombre",
-    "quantity_agents": "Cantidad de agentes"
+    "quantity_agents": "Cantidad de agentes",
+    "search": "Buscar una cola"
   },
   "export": {
     "metrics": "Exportar métricas en {filetype}",
@@ -416,7 +419,7 @@
     "waiting": "Esperando",
     "waiting_tooltip": "Chats que deben ser atendidos",
     "waiting_assistance": "Esperando asistencia",
-    "in_progress": "En curso",
+    "in_progress": "En progreso",
     "sent_flows": "Flujos enviados",
     "to_end_rate_the_chat": "Para cerrar califica el chat",
     "to_end_required_tags": "Para cerrar, agrega al menos una etiqueta",
@@ -503,11 +506,13 @@
   "all": "Todos",
   "back_to_chats": "@:back a los chats",
   "filter": {
+    "label": "Filtro",
     "empty_tags": "No hay etiquetas disponibles",
     "by_tag": "Filtrar por tag",
     "by_tags": "Filtrar por tags",
     "by_agent": "Filtrar por agente",
     "by_date": "Filtrar por @.lower:date",
+    "by_queue": "Filtrar por cola",
     "clear_all": "Limpiar filtros",
     "dates": {
       "today": "Hoy",
