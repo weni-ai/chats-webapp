@@ -211,7 +211,13 @@ export const useRooms = defineStore('rooms', {
       return undefined;
     },
 
-    updateRoom({ room, userEmail, routerReplace, viewedAgentEmail }) {
+    updateRoom({
+      room,
+      userEmail,
+      routerReplace,
+      viewedAgentEmail,
+      alreadyClosedThisBatch = false,
+    }) {
       const featureFlagStore = useFeatureFlag();
       const useNewRoomUpdate =
         featureFlagStore.featureFlags?.active_features?.includes(
@@ -230,10 +236,31 @@ export const useRooms = defineStore('rooms', {
         userEmail,
         routerReplace,
         viewedAgentEmail,
+        alreadyClosedThisBatch,
       });
     },
 
-    _updateRoomSafe({ room, userEmail, routerReplace, viewedAgentEmail }) {
+    applyClose(uuid, fallbackRoom) {
+      if (!uuid) return null;
+      const existingRoom = this.rooms.find((r) => r.uuid === uuid);
+      let roomType = null;
+      if (existingRoom) {
+        roomType = getRoomType(existingRoom);
+      } else if (fallbackRoom) {
+        roomType = getRoomType(fallbackRoom);
+      }
+
+      this.removeRoom(uuid);
+      return roomType;
+    },
+
+    _updateRoomSafe({
+      room,
+      userEmail,
+      routerReplace,
+      viewedAgentEmail,
+      alreadyClosedThisBatch = false,
+    }) {
       const shouldBeVisible = this.checkUserSeenRoom({
         room,
         viewedAgentEmail,
@@ -253,7 +280,7 @@ export const useRooms = defineStore('rooms', {
         } else {
           this.rooms.splice(roomIndex, 1);
         }
-      } else if (shouldBeVisible) {
+      } else if (shouldBeVisible && !alreadyClosedThisBatch) {
         this.rooms.unshift({ ...room });
       }
 
