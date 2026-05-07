@@ -62,6 +62,11 @@
       :initialCriteria="aiTransferConfig.criteria"
       @saved="handleAiTransferSaved"
     />
+
+    <AiTransferDisableModal
+      v-model="showAiTransferDisableModal"
+      @confirm="handleAiTransferDisableConfirm"
+    />
   </section>
 </template>
 
@@ -78,6 +83,7 @@ import agentBuilder from '@/services/api/resources/settings/agentBuilder';
 import SettingsProjectOptionsItem from './SettingsProjectOptionsItem.vue';
 
 import AiTransferModal from './AiTransferModal.vue';
+import AiTransferDisableModal from './AiTransferDisableModal.vue';
 
 export default {
   name: 'SettingsProjectOptions',
@@ -85,6 +91,7 @@ export default {
   components: {
     SettingsProjectOptionsItem,
     AiTransferModal,
+    AiTransferDisableModal,
   },
 
   data() {
@@ -106,6 +113,7 @@ export default {
         criteria: '',
       },
       showAiTransferModal: false,
+      showAiTransferDisableModal: false,
       switchResetKey: 0,
     };
   },
@@ -296,6 +304,11 @@ export default {
         this.switchResetKey += 1;
       }
     },
+    showAiTransferDisableModal(newVal) {
+      if (!newVal && this.aiTransferConfig.enabled) {
+        this.switchResetKey += 1;
+      }
+    },
   },
 
   async mounted() {
@@ -317,13 +330,26 @@ export default {
       if (value && !this.aiTransferConfig.enabled) {
         this.showAiTransferModal = true;
       } else if (!value) {
-        this.aiTransferConfig.enabled = false;
-        this.aiTransferConfig.criteria = '';
-        agentBuilder.updateAiTransferConfig({
-          enabled: false,
-          criteria: '',
-        });
+        if (this.aiTransferConfig.criteria) {
+          this.showAiTransferDisableModal = true;
+        } else {
+          this.disableAiTransfer();
+        }
       }
+    },
+
+    disableAiTransfer() {
+      this.aiTransferConfig.enabled = false;
+      this.aiTransferConfig.criteria = '';
+      agentBuilder.updateAiTransferConfig({
+        enabled: false,
+        criteria: '',
+      });
+    },
+
+    handleAiTransferDisableConfirm() {
+      this.disableAiTransfer();
+      this.showAiTransferDisableModal = false;
     },
 
     openAiTransferModal() {
