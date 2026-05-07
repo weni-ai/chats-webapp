@@ -270,6 +270,9 @@ export default {
           name: this.$t(
             'config_chats.project_configs.use_name_sector_in_rooms.switch_label',
           ),
+          hint: this.$t(
+            'config_chats.project_configs.use_name_sector_in_rooms.hint',
+          ),
         },
       ];
 
