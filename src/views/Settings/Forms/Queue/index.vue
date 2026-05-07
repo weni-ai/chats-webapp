@@ -250,7 +250,7 @@ export default {
       }
     },
     async listQueueAgents() {
-      if (this.hasLoadedAllCurrentAgents) return;
+      if (this.hasLoadedAllCurrentAgents || !this.queues[0].uuid) return;
       try {
         this.isLoadingCurrentAgents = true;
         const { results, next } = await Queue.agents(
