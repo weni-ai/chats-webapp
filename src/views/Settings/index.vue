@@ -55,6 +55,11 @@
               <GroupsList @open-new-group-modal="openNewGroupDrawer" />
             </section>
           </UnnnicTabsContent>
+          <UnnnicTabsContent value="representatives">
+            <section class="settings-page__content">
+              <RepresentativesSettings />
+            </section>
+          </UnnnicTabsContent>
         </UnnnicTabs>
       </template>
     </UnnnicPageHeader>
@@ -78,11 +83,13 @@ import { useRouter, useRoute } from 'vue-router';
 
 import { useConfig } from '@/store/modules/config';
 import { useSettings } from '@/store/modules/settings';
+import { useFeatureFlag } from '@/store/modules/featureFlag';
 
 import SettingsProjectOptions from '@/views/Settings/SettingsProjectOptions/index.vue';
 import CustomBreaks from '@/views/Settings/CustomBreaks/index.vue';
 import SectorsList from '@/views/Settings/Sectors/index.vue';
 import GroupsList from '@/views/Settings/Groups/index.vue';
+import RepresentativesSettings from '@/views/Settings/Representatives/index.vue';
 import NewSectorDrawer from '@/views/Settings/Sectors/New/NewSectorDrawer.vue';
 import NewGroupDrawer from '@/views/Settings/Groups/New.vue';
 
@@ -103,6 +110,15 @@ const { isPrimaryProject, enableGroupsMode } = storeToRefs(configStore);
 const settingsStore = useSettings();
 const { sectors, groups } = storeToRefs(settingsStore);
 
+const featureFlagStore = useFeatureFlag();
+const { featureFlags } = storeToRefs(featureFlagStore);
+
+const enableRepresentativesManagement = computed(() => {
+  return featureFlags.value.active_features?.includes(
+    'weniChatsRepresentativesManagement',
+  );
+});
+
 const showSettings = computed(() => {
   return !enableGroupsMode.value || isPrimaryProject.value;
 });
@@ -116,6 +132,13 @@ const settingsTabs = computed(() => {
 
   if (enableGroupsMode.value) {
     tabs.push({ label: t('config_chats.tabs.groups'), value: 'groups' });
+  }
+
+  if (enableRepresentativesManagement.value && !enableGroupsMode.value) {
+    tabs.push({
+      label: t('config_chats.tabs.representatives'),
+      value: 'representatives',
+    });
   }
 
   return tabs;
