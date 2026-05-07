@@ -235,6 +235,125 @@ describe('ChatMessagesFeedbackMessage', () => {
 
       expect(result).toBe('Agent1 transferiu o chat para Agent2');
     });
+
+    it('should render the user→queue "by other" message when requested_by is a different user', () => {
+      const content = {
+        action: 'transfer',
+        from: { type: 'user', name: 'Renata', id: '5' },
+        to: { type: 'queue', name: 'Dúvidas' },
+        requested_by: { type: 'user', name: 'Leonardo', id: '7' },
+      };
+      const message = { text: JSON.stringify({ method: 'rt', content }) };
+      const wrapper = createWrapper({ message });
+      const result = wrapper.vm.createFeedbackLabel(message);
+
+      expect(result).toBe(
+        'Leonardo transferiu o chat de Renata para a fila Dúvidas',
+      );
+    });
+
+    it('should render the standard user→queue message when requested_by matches "from"', () => {
+      const content = {
+        action: 'transfer',
+        from: { type: 'user', name: 'Renata', id: '5' },
+        to: { type: 'queue', name: 'Dúvidas' },
+        requested_by: { type: 'user', name: 'Renata', id: '5' },
+      };
+      const message = { text: JSON.stringify({ method: 'rt', content }) };
+      const wrapper = createWrapper({ message });
+      const result = wrapper.vm.createFeedbackLabel(message);
+
+      expect(result).toBe('Renata transferiu o chat para a fila Dúvidas');
+    });
+
+    it('should render the standard user→queue message when requested_by is missing', () => {
+      const content = {
+        action: 'transfer',
+        from: { type: 'user', name: 'Renata', id: '5' },
+        to: { type: 'queue', name: 'Dúvidas' },
+      };
+      const message = { text: JSON.stringify({ method: 'rt', content }) };
+      const wrapper = createWrapper({ message });
+      const result = wrapper.vm.createFeedbackLabel(message);
+
+      expect(result).toBe('Renata transferiu o chat para a fila Dúvidas');
+    });
+
+    it('should render the queue→queue "by other" message when requested_by is a user', () => {
+      const content = {
+        action: 'transfer',
+        from: { type: 'queue', name: 'Financeiro' },
+        to: { type: 'queue', name: 'Dúvidas' },
+        requested_by: { type: 'user', name: 'Leonardo', id: '7' },
+      };
+      const message = { text: JSON.stringify({ method: 'rt', content }) };
+      const wrapper = createWrapper({ message });
+      const result = wrapper.vm.createFeedbackLabel(message);
+
+      expect(result).toBe(
+        'Leonardo transferiu o chat da fila Financeiro para a fila Dúvidas',
+      );
+    });
+
+    it('should fall back to the passive queue→queue message when requested_by is missing', () => {
+      const content = {
+        action: 'transfer',
+        from: { type: 'queue', name: 'Financeiro' },
+        to: { type: 'queue', name: 'Dúvidas' },
+      };
+      const message = { text: JSON.stringify({ method: 'rt', content }) };
+      const wrapper = createWrapper({ message });
+      const result = wrapper.vm.createFeedbackLabel(message);
+
+      expect(result).toBe(
+        'Foi transferido da fila Financeiro para fila Dúvidas',
+      );
+    });
+
+    it('should render the queue→user "by other" message when requested_by is a user', () => {
+      const content = {
+        action: 'transfer',
+        from: { type: 'queue', name: 'Financeiro' },
+        to: { type: 'user', name: 'Renata' },
+        requested_by: { type: 'user', name: 'Leonardo', id: '7' },
+      };
+      const message = { text: JSON.stringify({ method: 'rt', content }) };
+      const wrapper = createWrapper({ message });
+      const result = wrapper.vm.createFeedbackLabel(message);
+
+      expect(result).toBe(
+        'Leonardo transferiu o chat da fila Financeiro para Renata',
+      );
+    });
+
+    it('should fall back to the passive queue→user message when requested_by is missing', () => {
+      const content = {
+        action: 'transfer',
+        from: { type: 'queue', name: 'Financeiro' },
+        to: { type: 'user', name: 'Renata' },
+      };
+      const message = { text: JSON.stringify({ method: 'rt', content }) };
+      const wrapper = createWrapper({ message });
+      const result = wrapper.vm.createFeedbackLabel(message);
+
+      expect(result).toBe('Foi transferido da fila Financeiro para Renata');
+    });
+
+    it('should ignore requested_by on queue-originated transfers when it is not a user', () => {
+      const content = {
+        action: 'transfer',
+        from: { type: 'queue', name: 'Financeiro' },
+        to: { type: 'queue', name: 'Dúvidas' },
+        requested_by: { type: 'queue', name: 'Outra fila' },
+      };
+      const message = { text: JSON.stringify({ method: 'rt', content }) };
+      const wrapper = createWrapper({ message });
+      const result = wrapper.vm.createFeedbackLabel(message);
+
+      expect(result).toBe(
+        'Foi transferido da fila Financeiro para fila Dúvidas',
+      );
+    });
   });
 
   describe('RT Method Processing - Other Actions', () => {
@@ -332,6 +451,33 @@ describe('ChatMessagesFeedbackMessage', () => {
 
       expect(result).toBeTruthy();
       expect(typeof result).toBe('string');
+    });
+
+    it('should handle cc (chat closed) method with content.user as a string', () => {
+      const content = { user: 'Leonardo' };
+      const message = { text: JSON.stringify({ method: 'cc', content }) };
+      const wrapper = createWrapper({ message });
+      const result = wrapper.vm.createFeedbackLabel(message);
+
+      expect(result).toBe('Chat ended by Leonardo');
+    });
+
+    it('should handle cc method with content.user as an object exposing name', () => {
+      const content = { user: { name: 'Leonardo', id: '7' } };
+      const message = { text: JSON.stringify({ method: 'cc', content }) };
+      const wrapper = createWrapper({ message });
+      const result = wrapper.vm.createFeedbackLabel(message);
+
+      expect(result).toBe('Chat ended by Leonardo');
+    });
+
+    it('should return empty for cc method when user data is missing', () => {
+      const content = { user: {} };
+      const message = { text: JSON.stringify({ method: 'cc', content }) };
+      const wrapper = createWrapper({ message });
+      const result = wrapper.vm.createFeedbackLabel(message);
+
+      expect(result).toBe('');
     });
 
     it('should return empty for unknown methods', () => {
@@ -468,6 +614,7 @@ describe('ChatMessagesFeedbackMessage', () => {
         },
         { method: 'dc', content: { user: 'U1', queue: 'Q1' } },
         { method: 'da', content: { user: 'U1' } },
+        { method: 'cc', content: { user: 'U1' } },
       ];
 
       allFormats.forEach((format, index) => {
