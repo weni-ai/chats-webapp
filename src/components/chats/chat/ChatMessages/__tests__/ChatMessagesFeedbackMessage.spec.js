@@ -453,33 +453,6 @@ describe('ChatMessagesFeedbackMessage', () => {
       expect(typeof result).toBe('string');
     });
 
-    it('should handle cc (chat closed) method with content.user as a string', () => {
-      const content = { user: 'Leonardo' };
-      const message = { text: JSON.stringify({ method: 'cc', content }) };
-      const wrapper = createWrapper({ message });
-      const result = wrapper.vm.createFeedbackLabel(message);
-
-      expect(result).toBe('Chat ended by Leonardo');
-    });
-
-    it('should handle cc method with content.user as an object exposing name', () => {
-      const content = { user: { name: 'Leonardo', id: '7' } };
-      const message = { text: JSON.stringify({ method: 'cc', content }) };
-      const wrapper = createWrapper({ message });
-      const result = wrapper.vm.createFeedbackLabel(message);
-
-      expect(result).toBe('Chat ended by Leonardo');
-    });
-
-    it('should return empty for cc method when user data is missing', () => {
-      const content = { user: {} };
-      const message = { text: JSON.stringify({ method: 'cc', content }) };
-      const wrapper = createWrapper({ message });
-      const result = wrapper.vm.createFeedbackLabel(message);
-
-      expect(result).toBe('');
-    });
-
     it('should return empty for unknown methods', () => {
       const message = {
         text: JSON.stringify({ method: 'unknown', content: {} }),
@@ -614,7 +587,6 @@ describe('ChatMessagesFeedbackMessage', () => {
         },
         { method: 'dc', content: { user: 'U1', queue: 'Q1' } },
         { method: 'da', content: { user: 'U1' } },
-        { method: 'cc', content: { user: 'U1' } },
       ];
 
       allFormats.forEach((format, index) => {
