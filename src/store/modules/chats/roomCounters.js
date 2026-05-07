@@ -1,10 +1,13 @@
 import { defineStore } from 'pinia';
 
+const TYPE_CACHE_MAX_ENTRIES = 1000;
+
 export const useRoomCounters = defineStore('roomCounters', {
   state: () => ({
     counts: { waiting: 0, ongoing: 0, flow_start: 0 },
     _headroom: { waiting: 0, ongoing: 0, flow_start: 0 },
     _typeCache: {},
+    _typeCacheOrder: [],
   }),
 
   actions: {
@@ -16,8 +19,15 @@ export const useRoomCounters = defineStore('roomCounters', {
 
     cacheRoomTypes(rooms, getRoomTypeFn) {
       for (const room of rooms) {
-        if (room.uuid) this._typeCache[room.uuid] = getRoomTypeFn(room);
+        if (room.uuid) this._setTypeCache(room.uuid, getRoomTypeFn(room));
       }
+    },
+
+    clearTypeCache(uuid) {
+      if (!uuid || !(uuid in this._typeCache)) return;
+      delete this._typeCache[uuid];
+      const idx = this._typeCacheOrder.indexOf(uuid);
+      if (idx !== -1) this._typeCacheOrder.splice(idx, 1);
     },
 
     handleCreate(type) {
@@ -28,6 +38,23 @@ export const useRoomCounters = defineStore('roomCounters', {
     handleClose(type) {
       if (!type || !(type in this.counts)) return;
       this.counts[type] = Math.max(0, this.counts[type] - 1);
+    },
+
+    _setTypeCache(uuid, type) {
+      if (!uuid || !type) return;
+      if (uuid in this._typeCache) {
+        this._typeCache[uuid] = type;
+        const idx = this._typeCacheOrder.indexOf(uuid);
+        if (idx !== -1) this._typeCacheOrder.splice(idx, 1);
+        this._typeCacheOrder.push(uuid);
+        return;
+      }
+      this._typeCache[uuid] = type;
+      this._typeCacheOrder.push(uuid);
+      while (this._typeCacheOrder.length > TYPE_CACHE_MAX_ENTRIES) {
+        const evicted = this._typeCacheOrder.shift();
+        if (evicted !== undefined) delete this._typeCache[evicted];
+      }
     },
 
     _incrementType(type) {
@@ -78,7 +105,7 @@ export const useRoomCounters = defineStore('roomCounters', {
       const typeChanged =
         resolvedOldType && newType && resolvedOldType !== newType;
 
-      if (roomUuid && newType) this._typeCache[roomUuid] = newType;
+      if (roomUuid && newType) this._setTypeCache(roomUuid, newType);
 
       if (wasInArray && isNowInArray) {
         this._handleBothInArray(typeChanged, resolvedOldType, newType);

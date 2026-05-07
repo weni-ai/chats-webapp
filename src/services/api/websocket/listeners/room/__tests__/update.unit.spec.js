@@ -1,9 +1,14 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import wsRoomUpdate, {
   flushPendingUpdates,
   resetBatchState,
+  markPendingClose,
+  unmarkPendingClose,
 } from '@/services/api/websocket/listeners/room/update';
+import wsDeleteRoom from '@/services/api/websocket/listeners/room/delete';
 import { useRooms } from '@/store/modules/chats/rooms';
+import { useRoomCounters } from '@/store/modules/chats/roomCounters';
+import { useFeatureFlag } from '@/store/modules/featureFlag';
 import SoundNotification from '@/services/api/websocket/soundNotification';
 
 vi.mock('@/store/modules/dashboard', () => ({
@@ -17,15 +22,11 @@ vi.mock('@/store/modules/chats/rooms', () => ({
 }));
 
 vi.mock('@/store/modules/chats/roomCounters', () => ({
-  useRoomCounters: vi.fn(() => ({
-    handleRoomUpdate: vi.fn(),
-  })),
+  useRoomCounters: vi.fn(),
 }));
 
 vi.mock('@/store/modules/featureFlag', () => ({
-  useFeatureFlag: vi.fn(() => ({
-    featureFlags: { active_features: [] },
-  })),
+  useFeatureFlag: vi.fn(),
 }));
 
 vi.mock('@/services/api/websocket/soundNotification', () => ({
@@ -34,100 +35,81 @@ vi.mock('@/services/api/websocket/soundNotification', () => ({
   })),
 }));
 
-describe('Room update', () => {
+const buildAppMock = () => ({
+  me: { email: 'user@example.com' },
+  $router: { replace: vi.fn() },
+  viewedAgent: { email: 'agent@example.com' },
+});
+
+const buildRoomsStoreMock = () => ({
+  rooms: [],
+  filterQueues: [],
+  orderBy: {
+    ongoing: '-last_interaction',
+    waiting: 'added_to_queue_at',
+    flow_start: '-last_interaction',
+  },
+  activeTab: 'ongoing',
+  showOngoingDot: false,
+  addRoom: vi.fn(),
+  applyClose: vi.fn(),
+  updateRoom: vi.fn(() => ({
+    wasInArray: false,
+    isNowInArray: true,
+    oldType: null,
+    newType: 'ongoing',
+    roomUuid: 'room1',
+  })),
+  resetNewMessagesByRoom: vi.fn(),
+  getAll: vi.fn().mockResolvedValue(undefined),
+});
+
+const buildCountersMock = () => ({
+  handleClose: vi.fn(),
+  handleRoomUpdate: vi.fn(),
+  clearTypeCache: vi.fn(),
+});
+
+const enableNewLogic = () =>
+  useFeatureFlag.mockReturnValue({
+    featureFlags: { active_features: ['WeniChatsNewRoomUpdate'] },
+  });
+
+const disableNewLogic = () =>
+  useFeatureFlag.mockReturnValue({
+    featureFlags: { active_features: [] },
+  });
+
+describe('Room update (legacy path)', () => {
   let appMock;
   let roomsStoreMock;
+  let countersMock;
   let soundNotificationMock;
 
   beforeEach(() => {
     resetBatchState();
-
-    appMock = {
-      me: {
-        email: 'user@example.com',
-      },
-      $router: {
-        replace: vi.fn(),
-      },
-      viewedAgent: {
-        email: 'agent@example.com',
-      },
-    };
-
-    roomsStoreMock = {
-      rooms: [],
-      addRoom: vi.fn(),
-      updateRoom: vi.fn(),
-      resetNewMessagesByRoom: vi.fn(),
-      filterQueues: [],
-    };
-
+    appMock = buildAppMock();
+    roomsStoreMock = buildRoomsStoreMock();
+    countersMock = buildCountersMock();
     useRooms.mockReturnValue(roomsStoreMock);
-
+    useRoomCounters.mockReturnValue(countersMock);
+    disableNewLogic();
     soundNotificationMock = new SoundNotification('achievement-confirmation');
     SoundNotification.mockReturnValue(soundNotificationMock);
   });
 
-  it('should not add the room if it already exists in roomsStore', () => {
-    const room = {
-      uuid: 'room1',
-      transfer_history: { action: 'transfer' },
-      unread_msgs: 1,
-    };
-    roomsStoreMock.rooms = [{ uuid: 'room1' }];
-
-    wsRoomUpdate(room, { app: appMock });
-
-    expect(roomsStoreMock.addRoom).not.toHaveBeenCalled();
-    expect(soundNotificationMock.notify).not.toHaveBeenCalled();
+  afterEach(() => {
+    resetBatchState();
   });
 
-  it('should add the room and play achievement sound if transfer action is "transfer"', () => {
-    const room = {
-      uuid: 'room1',
-      transfer_history: { action: 'transfer' },
-      unread_msgs: 1,
-    };
-
-    wsRoomUpdate(room, { app: appMock });
-
-    expect(soundNotificationMock.notify).toHaveBeenCalledWith();
-
-    flushPendingUpdates();
-
-    expect(roomsStoreMock.updateRoom).toHaveBeenCalledWith(
-      expect.objectContaining({ room }),
-    );
-  });
-
-  it('should add the room and play select sound if transfer action is "forward"', () => {
-    const room = {
-      uuid: 'room1',
-      transfer_history: { action: 'forward' },
-      unread_msgs: 1,
-    };
-    soundNotificationMock.notify.mockClear();
-
-    wsRoomUpdate(room, { app: appMock });
-
-    expect(soundNotificationMock.notify).toHaveBeenCalledWith();
-
-    flushPendingUpdates();
-
-    expect(roomsStoreMock.updateRoom).toHaveBeenCalledWith(
-      expect.objectContaining({ room }),
-    );
-  });
-
-  it('should update the room in the store', () => {
+  it('updates the room synchronously when the feature flag is off', async () => {
     const room = {
       uuid: 'room1',
       transfer_history: { action: 'forward' },
       unread_msgs: 1,
     };
 
-    wsRoomUpdate(room, { app: appMock });
-    flushPendingUpdates();
+    await wsRoomUpdate(room, { app: appMock });
 
     expect(roomsStoreMock.updateRoom).toHaveBeenCalledWith({
       room,
@@ -137,31 +119,215 @@ describe('Room update', () => {
     });
   });
 
-  it('should reset new messages if unread_msgs is 0', () => {
+  it('plays the achievement sound when transfer action is "transfer"', async () => {
+    const room = {
+      uuid: 'room1',
+      transfer_history: { action: 'transfer' },
+      unread_msgs: 1,
+    };
+
+    await wsRoomUpdate(room, { app: appMock });
+
+    expect(soundNotificationMock.notify).toHaveBeenCalledWith();
+  });
+
+  it('resets new messages when unread_msgs is 0', async () => {
     const room = {
       uuid: 'room1',
       unread_msgs: 0,
       transfer_history: { action: 'forward' },
     };
 
-    wsRoomUpdate(room, { app: appMock });
-    flushPendingUpdates();
+    await wsRoomUpdate(room, { app: appMock });
 
     expect(roomsStoreMock.resetNewMessagesByRoom).toHaveBeenCalledWith({
       room: room.uuid,
     });
   });
+});
 
-  it('should not reset new messages if unread_msgs is greater than 0', () => {
+describe('Room update (new unified pipeline)', () => {
+  let appMock;
+  let roomsStoreMock;
+  let countersMock;
+  let soundNotificationMock;
+
+  beforeEach(() => {
+    resetBatchState();
+    appMock = buildAppMock();
+    roomsStoreMock = buildRoomsStoreMock();
+    countersMock = buildCountersMock();
+    useRooms.mockReturnValue(roomsStoreMock);
+    useRoomCounters.mockReturnValue(countersMock);
+    enableNewLogic();
+    soundNotificationMock = new SoundNotification('achievement-confirmation');
+    SoundNotification.mockReturnValue(soundNotificationMock);
+  });
+
+  afterEach(() => {
+    resetBatchState();
+  });
+
+  it('batches updates and only mutates the store after flush', async () => {
     const room = {
       uuid: 'room1',
-      unread_msgs: 1,
       transfer_history: { action: 'forward' },
+      unread_msgs: 0,
     };
 
-    wsRoomUpdate(room, { app: appMock });
+    await wsRoomUpdate(room, { app: appMock });
+
+    expect(roomsStoreMock.updateRoom).not.toHaveBeenCalled();
+
     flushPendingUpdates();
 
-    expect(roomsStoreMock.resetNewMessagesByRoom).not.toHaveBeenCalled();
+    expect(roomsStoreMock.updateRoom).toHaveBeenCalledWith(
+      expect.objectContaining({ room }),
+    );
+    expect(roomsStoreMock.resetNewMessagesByRoom).toHaveBeenCalledWith({
+      room: room.uuid,
+    });
+  });
+
+  it('lets a close event in the same batch override an update for the same room (close wins)', async () => {
+    const room = {
+      uuid: 'room-x',
+      user: { email: appMock.me.email },
+      is_waiting: false,
+    };
+    roomsStoreMock.applyClose.mockReturnValue('ongoing');
+
+    await wsRoomUpdate(room, { app: appMock });
+    await wsDeleteRoom(room, { app: appMock });
+
+    flushPendingUpdates();
+
+    expect(roomsStoreMock.applyClose).toHaveBeenCalledWith('room-x', room);
+    expect(countersMock.handleClose).toHaveBeenCalledWith('ongoing');
+    expect(roomsStoreMock.updateRoom).not.toHaveBeenCalled();
+    expect(countersMock.handleRoomUpdate).not.toHaveBeenCalled();
+  });
+
+  it('treats an update with is_active=false as an implicit close', async () => {
+    const room = {
+      uuid: 'room-inactive',
+      user: { email: appMock.me.email },
+      is_waiting: false,
+      is_active: false,
+    };
+    roomsStoreMock.applyClose.mockReturnValue('ongoing');
+
+    await wsRoomUpdate(room, { app: appMock });
+    flushPendingUpdates();
+
+    expect(roomsStoreMock.applyClose).toHaveBeenCalledWith(
+      'room-inactive',
+      room,
+    );
+    expect(countersMock.handleClose).toHaveBeenCalledWith('ongoing');
+    expect(roomsStoreMock.updateRoom).not.toHaveBeenCalled();
+  });
+
+  it('decrements once for 10 simultaneous closes (no double counting via headroom path)', async () => {
+    roomsStoreMock.applyClose.mockReturnValue('ongoing');
+
+    for (let i = 0; i < 10; i++) {
+      const room = {
+        uuid: `room-${i}`,
+        user: { email: appMock.me.email },
+        is_waiting: false,
+      };
+      await wsRoomUpdate(room, { app: appMock });
+      await wsDeleteRoom(room, { app: appMock });
+    }
+
+    flushPendingUpdates();
+
+    expect(roomsStoreMock.applyClose).toHaveBeenCalledTimes(10);
+    expect(countersMock.handleClose).toHaveBeenCalledTimes(10);
+    expect(countersMock.handleRoomUpdate).not.toHaveBeenCalled();
+  });
+
+  it('does not decrement the counter when the close is for a room marked optimistically', async () => {
+    const room = {
+      uuid: 'optimistic-room',
+      user: { email: appMock.me.email },
+      is_waiting: false,
+    };
+    roomsStoreMock.applyClose.mockReturnValue('ongoing');
+
+    markPendingClose('optimistic-room');
+    await wsDeleteRoom(room, { app: appMock });
+    flushPendingUpdates();
+
+    expect(roomsStoreMock.applyClose).toHaveBeenCalledWith(
+      'optimistic-room',
+      room,
+    );
+    expect(countersMock.handleClose).not.toHaveBeenCalled();
+  });
+
+  it('drops a stale update that arrives shortly after a close (recently-closed window)', async () => {
+    const room = {
+      uuid: 'stale-room',
+      user: { email: appMock.me.email },
+      is_waiting: false,
+    };
+    roomsStoreMock.applyClose.mockReturnValue('ongoing');
+
+    await wsDeleteRoom(room, { app: appMock });
+    flushPendingUpdates();
+    expect(roomsStoreMock.applyClose).toHaveBeenCalledTimes(1);
+
+    await wsRoomUpdate(room, { app: appMock });
+    flushPendingUpdates();
+
+    expect(roomsStoreMock.updateRoom).not.toHaveBeenCalled();
+  });
+
+  it('schedules a reconciliation getAll for each touched type after a burst', async () => {
+    const RECONCILIATION_DELAY_MS = 1500;
+    roomsStoreMock.applyClose.mockReturnValue('ongoing');
+
+    for (let i = 0; i < 5; i++) {
+      const room = {
+        uuid: `burst-${i}`,
+        user: { email: appMock.me.email },
+        is_waiting: false,
+      };
+      await wsDeleteRoom(room, { app: appMock });
+    }
+
+    vi.useFakeTimers();
+    flushPendingUpdates();
+    expect(roomsStoreMock.getAll).not.toHaveBeenCalled();
+
+    await vi.advanceTimersByTimeAsync(RECONCILIATION_DELAY_MS + 50);
+
+    expect(roomsStoreMock.getAll).toHaveBeenCalledWith(
+      expect.objectContaining({
+        roomsType: 'ongoing',
+        cleanRoomType: 'ongoing',
+      }),
+    );
+
+    vi.useRealTimers();
+  });
+
+  it('unmarkPendingClose removes a previously marked uuid', async () => {
+    const room = {
+      uuid: 'unmark-room',
+      user: { email: appMock.me.email },
+      is_waiting: false,
+    };
+    roomsStoreMock.applyClose.mockReturnValue('ongoing');
+
+    markPendingClose('unmark-room');
+    unmarkPendingClose('unmark-room');
+
+    await wsDeleteRoom(room, { app: appMock });
+    flushPendingUpdates();
+
+    expect(countersMock.handleClose).toHaveBeenCalledWith('ongoing');
   });
 });
