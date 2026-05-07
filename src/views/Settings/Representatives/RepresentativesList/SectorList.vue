@@ -2,6 +2,7 @@
   <section
     ref="containerElementRef"
     class="sector-list"
+    data-testid="representative-sector-list"
   >
     <UnnnicToolTip
       v-for="(sector, index) in sectorsToShow"
@@ -10,7 +11,9 @@
       side="top"
       :text="formatSectorTooltip(sector)"
     >
-      <UnnnicTag :text="sector.name" />
+      <span :data-testid="'representative-sector-list-item-' + index">
+        <UnnnicTag :text="sector.name" />
+      </span>
     </UnnnicToolTip>
     <UnnnicToolTip
       v-if="hiddenSectorsCount > 0"
@@ -18,7 +21,9 @@
       side="top"
       :text="overflowTooltip"
     >
-      <UnnnicTag :text="`+${hiddenSectorsCount}`" />
+      <span data-testid="representative-sector-list-overflow">
+        <UnnnicTag :text="`+${hiddenSectorsCount}`" />
+      </span>
     </UnnnicToolTip>
   </section>
 </template>

@@ -1,7 +1,14 @@
 <template>
-  <section class="settings-representatives-actions">
-    <section class="settings-representatives-actions__select-all-container">
+  <section
+    class="settings-representatives-actions"
+    data-testid="representatives-actions"
+  >
+    <section
+      class="settings-representatives-actions__select-all-container"
+      data-testid="representatives-actions-select-all"
+    >
       <UnnnicCheckbox
+        data-testid="representatives-actions-select-all-checkbox"
         :modelValue="props.selectAll"
         :label="$t('config_chats.representatives.select_all')"
         @update:model-value="emit('update:selectAll', $event)"
@@ -9,6 +16,7 @@
       <p
         v-if="props.selectedCount > 0"
         class="settings-representatives-actions__select-count"
+        data-testid="representatives-actions-select-count"
       >
         {{
           $t('config_chats.representatives.select_count', {
@@ -20,6 +28,7 @@
     <section
       v-if="props.selectedCount > 0"
       class="settings-representatives-actions__actions-buttons"
+      data-testid="representatives-actions-buttons"
     >
       <UnnnicToolTip
         :text="
@@ -28,6 +37,7 @@
         enabled
       >
         <UnnnicButton
+          data-testid="representatives-actions-queue-button"
           iconCenter="swap_vert"
           type="secondary"
           @click="emit('open-queue-management')"
@@ -42,6 +52,7 @@
         enabled
       >
         <UnnnicButton
+          data-testid="representatives-actions-chats-limit-button"
           iconCenter="forum"
           type="secondary"
           @click="emit('open-chats-limit-management')"

@@ -1,7 +1,14 @@
 <template>
-  <section class="representative-card">
-    <section class="representative-card__representative__info">
+  <section
+    class="representative-card"
+    data-testid="representative-card"
+  >
+    <section
+      class="representative-card__representative__info"
+      data-testid="representative-card-info"
+    >
       <UnnnicCheckbox
+        data-testid="representative-card-checkbox"
         :modelValue="props.selected"
         @update:model-value="emit('update:selected', $event)"
         @click.stop
@@ -12,22 +19,32 @@
           :text="statusTooltip"
         >
           <UnnnicIcon
+            data-testid="representative-card-status-icon"
             icon="icon-park-outline:dot"
             size="sm"
             :scheme="statusColor"
           />
         </UnnnicToolTip>
         <section class="representative-card__representative__name-container">
-          <p class="representative-card__representative__name">
+          <p
+            class="representative-card__representative__name"
+            data-testid="representative-card-name"
+          >
             {{ props.representative.name }}
           </p>
-          <p class="representative-card__representative__email">
+          <p
+            class="representative-card__representative__email"
+            data-testid="representative-card-email"
+          >
             {{ props.representative.email }}
           </p>
         </section>
       </section>
     </section>
-    <section class="representative-card__representative__sectors">
+    <section
+      class="representative-card__representative__sectors"
+      data-testid="representative-card-sectors"
+    >
       <RepresentativeSectorList
         v-if="hasSectors"
         :sectors="props.representative.sector"
@@ -35,6 +52,7 @@
       <p
         v-else
         class="representative-card__representative__sectors--empty"
+        data-testid="representative-card-sectors-empty"
       >
         {{ $t('config_chats.representatives.sectors.empty') }}
       </p>
@@ -42,6 +60,7 @@
     <section
       v-if="hasSectors"
       class="representative-card__representative__chats-limit"
+      data-testid="representative-card-chats-limit"
     >
       <UnnnicTag
         scheme="blue"
