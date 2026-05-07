@@ -7,6 +7,8 @@ import EditGroupDrawer from '../Edit.vue';
 import Group from '@/services/api/resources/settings/group';
 import Unnnic from '@weni/unnnic-system';
 
+import { useCompositionI18nInThisSpecFile } from '@/utils/test/compositionI18nVitest';
+
 vi.mock('@/services/api/resources/settings/group', () => ({
   default: {
     show: vi.fn(),
@@ -53,7 +55,7 @@ const createWrapper = (props = {}) => {
   setActivePinia(pinia);
 
   return mount(EditGroupDrawer, {
-    props: { show: true, projectGroup: mockProjectGroup, ...props },
+    props: { modelValue: true, projectGroup: mockProjectGroup, ...props },
     global: {
       plugins: [pinia],
       components: {
@@ -83,6 +85,8 @@ const createWrapper = (props = {}) => {
 };
 
 describe('EditGroupDrawer.vue', () => {
+  useCompositionI18nInThisSpecFile();
+
   let wrapper;
 
   beforeEach(() => {
@@ -114,7 +118,7 @@ describe('EditGroupDrawer.vue', () => {
       expect(drawer.exists()).toBe(true);
       expect(drawer.props('modelValue')).toBe(true);
 
-      await wrapper.setProps({ show: false });
+      await wrapper.setProps({ modelValue: false });
       await wrapper.vm.$nextTick();
       await flushPromises();
       drawer = wrapper.findComponent({ name: 'UnnnicDrawerStub' });

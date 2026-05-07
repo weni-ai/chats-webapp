@@ -4,15 +4,15 @@ import { createTestingPinia } from '@pinia/testing';
 
 import NewSectorDrawer from '../NewSectorDrawer.vue';
 
+import { useCompositionI18nInThisSpecFile } from '@/utils/test/compositionI18nVitest';
+
 import Unnnic from '@weni/unnnic-system';
-import General from '@/components/settings/forms/General.vue';
-import ExtraOptions from '@/components/settings/forms/ExtraOptions.vue';
-import FormQueue from '@/components/settings/forms/Queue.vue';
+import General from '@/views/Settings/Forms/General.vue';
+import ExtraOptions from '@/views/Settings/Forms/ExtraOptions.vue';
+import FormQueue from '@/views/Settings/Forms/Queue/index.vue';
 
 import Sector from '@/services/api/resources/settings/sector';
 import Queue from '@/services/api/resources/settings/queue';
-
-import i18n from '@/plugins/i18n';
 
 const managerMock = {
   uuid: '2',
@@ -29,6 +29,7 @@ const managerMock = {
 
 vi.mock('@/services/api/resources/settings/queue', () => ({
   default: {
+    bulkCreate: vi.fn(),
     create: vi.fn(),
     addAgent: vi.fn(),
     editQueue: vi.fn(),
@@ -62,6 +63,8 @@ vi.mock('@/services/api/resources/settings/project', () => ({
 }));
 
 describe('NewSectorDrawer', () => {
+  useCompositionI18nInThisSpecFile();
+
   let wrapper;
 
   beforeEach(() => {
@@ -69,7 +72,6 @@ describe('NewSectorDrawer', () => {
       props: { modelValue: true },
       global: {
         plugins: [
-          i18n,
           createTestingPinia({
             initialState: {
               profile: { me: { email: 'tests@weni.ai' } },
@@ -106,7 +108,7 @@ describe('NewSectorDrawer', () => {
     await wrapper.setData({ activePageIndex: 3 });
 
     expect(wrapper.find('[data-testid="primary-button"]').text()).toBe(
-      wrapper.vm.$t('save'),
+      wrapper.vm.$t('create'),
     );
     expect(wrapper.find('[data-testid="secondary-button"]').text()).toBe(
       wrapper.vm.$t('back'),
@@ -114,7 +116,7 @@ describe('NewSectorDrawer', () => {
   });
 
   it('displays the correct page content based on activePageIndex', async () => {
-    await wrapper.setData({ activePageIndex: 2 });
+    await wrapper.setData({ activePageIndex: 1 });
     expect(
       wrapper.findComponent('[data-testid="queue-form"]').isVisible(),
     ).toBe(true);
@@ -142,7 +144,9 @@ describe('NewSectorDrawer', () => {
   });
 
   it('displays DiscartChangesModal if there are unsaved changes and close button is clicked', async () => {
-    await wrapper.setData({ showDiscartQuestion: true });
+    await wrapper.setData({
+      sector: { ...wrapper.vm.sector, name: 'Draft' },
+    });
 
     await wrapper.vm.handleCloseNewSectorDrawer();
     expect(
@@ -164,6 +168,7 @@ describe('NewSectorDrawer', () => {
     const dataMock = {
       showConfirmDiscartChangesModal: true,
       sector: {
+        ...wrapper.vm.sector,
         uuid: '',
         name: 'Sector Mock',
         can_trigger_flows: true,
@@ -174,7 +179,7 @@ describe('NewSectorDrawer', () => {
           text: '',
         },
         managers: [],
-        maxSimultaneousChatsByAgent: '4',
+        rooms_limit: '4',
       },
     };
     await wrapper.setData(dataMock);
@@ -218,78 +223,45 @@ describe('NewSectorDrawer', () => {
 
   it('should create a sector, add managers, create a queue, and show a success alert', async () => {
     const createdSectorMock = { uuid: 'sector-uuid', name: 'Test Sector' };
-    const createdQueueMock = { uuid: 'queue-uuid' };
 
     vi.spyOn(Sector, 'create').mockResolvedValue(createdSectorMock);
-    vi.spyOn(Queue, 'create').mockResolvedValue(createdQueueMock);
+    vi.spyOn(Queue, 'bulkCreate').mockResolvedValue(undefined);
     vi.spyOn(Sector, 'addManager').mockResolvedValue(true);
-    vi.spyOn(Queue, 'addAgent').mockResolvedValue(true);
 
     const unnnicAlertSpy = vi.spyOn(Unnnic, 'unnnicCallAlert');
-    const finishSpy = vi.spyOn(wrapper.vm, 'finish');
 
     await wrapper.setData({
+      activePageIndex: 3,
       sector: {
+        ...wrapper.vm.sector,
         name: 'Test Sector',
         managers: [managerMock],
-        maxSimultaneousChatsByAgent: '5',
+        rooms_limit: '5',
         automatic_message: {
           is_active: false,
           text: '',
         },
       },
-      sectorQueue: {
-        name: 'Test Queue',
-        currentAgents: [managerMock],
+      sectorQueues: [
+        {
+          name: 'Test Queue',
+          currentAgents: [managerMock],
+          queue_limit: { is_active: false, limit: null },
+          agents: 0,
+        },
+      ],
+      isValid: {
+        general: true,
+        extraOptions: true,
+        queue: true,
+        quick_messages: true,
       },
     });
 
-    const generalForm = wrapper.findComponent('[data-testid="general-form"]');
-
-    await generalForm.setData({
-      selectedWorkdayDays: {
-        monday: true,
-      },
-      selectedWorkdayDaysTime: {
-        monday: [{ start: '08:00', end: '17:00', valid: true }],
-      },
-    });
-
-    await wrapper.vm.$nextTick();
-
-    const extraOptionsForm = wrapper.findComponent(ExtraOptions);
-
-    const mockTag = { name: 'Tag Mock', uuid: '1' };
-
-    await extraOptionsForm.setData({
-      toAddTags: [mockTag],
-      tags: [mockTag],
-      currentTags: [mockTag],
-    });
-
-    await wrapper.vm.$nextTick();
-
-    expect(wrapper.vm.isValid.general).toBe(true);
-    expect(wrapper.vm.isValid.extraOptions).toBe(true);
-
-    await wrapper.find('[data-testid="primary-button"]').trigger('click');
-
-    expect(wrapper.vm.activePageIndex).toBe(1);
-
-    await wrapper.find('[data-testid="primary-button"]').trigger('click');
-
-    expect(wrapper.vm.activePageIndex).toBe(2);
-
-    await wrapper.find('[data-testid="primary-button"]').trigger('click');
-
-    expect(wrapper.vm.activePageIndex).toBe(3);
-
-    await wrapper.find('[data-testid="primary-button"]').trigger('click');
-
-    expect(finishSpy).toHaveBeenCalled();
-
+    await wrapper.vm.finish();
     await flushPromises();
 
+    expect(Queue.bulkCreate).toHaveBeenCalled();
     expect(unnnicAlertSpy).toHaveBeenCalledWith({
       props: {
         text: wrapper.vm.$t('new_sector.alert.create_success', {
