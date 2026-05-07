@@ -918,8 +918,12 @@
         "switch_active": "Permitir que agentes de IA transfiram conversas para atendimento humano",
         "switch_inactive": "Permitir que agentes de IA transfiram conversas para atendimento humano",
         "modal_title": "Cenários ou critérios que requerem transferência para atendimento humano",
-        "textarea_label": "Cenários ou critérios",
-        "textarea_placeholder": "Descreva os cenários ou critérios..."
+        "textarea_label": "Defina os cenários ou critérios que requerem transferência para atendimento humano",
+        "textarea_placeholder": "Descreva os cenários ou critérios...",
+        "disable_modal": {
+          "description": "Desativar essa opção excluirá permanentemente o prompt de cenários e critérios. Será necessário configurá-lo novamente ao reativar.",
+          "confirmation": "Deseja continuar mesmo assim?"
+        }
       },
       "bulk_transfer": {
         "tooltip": "Essa função permite que atendentes transfiram diversos contatos de uma vez para uma fila ou atendente",
@@ -1219,5 +1223,13 @@
     "queue_error": "Não foi possível excluir a fila.",
     "transfer_error_sector": "Não foi possível transferir as conversas. Exclusão do setor cancelada",
     "transfer_error_queue": "Não foi possível transferir as conversas. Exclusão da fila cancelada"
+  },
+  "room_card": {
+    "last_message": {
+      "you_prefix": "Você"
+    },
+    "pending_response": {
+      "tooltip": "Você não respondeu a este contato"
+    }
   }
 }

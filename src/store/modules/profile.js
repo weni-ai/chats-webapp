@@ -3,7 +3,11 @@ import { defineStore } from 'pinia';
 
 export const useProfile = defineStore('profile', {
   state: () => ({
-    me: {},
+    me: {
+      email: '',
+      project_permission_role: null,
+      queues: [],
+    },
   }),
   actions: {
     setMe(user) {

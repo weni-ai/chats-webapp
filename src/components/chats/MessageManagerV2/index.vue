@@ -24,7 +24,7 @@
 </template>
 
 <script setup lang="ts">
-import { nextTick, ref, useTemplateRef, watch } from 'vue';
+import { nextTick, onMounted, ref, useTemplateRef, watch } from 'vue';
 import { storeToRefs } from 'pinia';
 
 import MessageManagerLoading from './MessageManagerLoading.vue';
@@ -34,6 +34,8 @@ import CoPilot from './CoPilot.vue';
 
 import { useDiscussions } from '@/store/modules/chats/discussions';
 import { useMessageManager } from '@/store/modules/chats/messageManager';
+import { useRooms } from '@/store/modules/chats/rooms';
+import { useProfile } from '@/store/modules/profile';
 
 defineOptions({
   name: 'MessageManagerV2',
@@ -44,6 +46,12 @@ interface Props {
 }
 
 const props = defineProps<Props>();
+
+const profileStore = useProfile();
+const { me } = storeToRefs(profileStore);
+
+const roomsStore = useRooms();
+const { activeRoom } = storeToRefs(roomsStore);
 
 const discussionsStore = useDiscussions();
 const { activeDiscussion } = storeToRefs(discussionsStore);
@@ -56,6 +64,7 @@ const {
   isSuggestionBoxOpen,
   isInternalNote,
   mediaUploadFiles,
+  inputMessageFocused,
 } = storeToRefs(messageManager);
 
 const keyboardEvent = ref<KeyboardEvent | null>(null);
@@ -111,14 +120,25 @@ const closeSuggestionBox = () => {
   inputMessage.value = '';
 };
 
+const handleOpenMeActiveRoom = () => {
+  const isMeActiveRoom = activeRoom.value?.user?.email === me.value?.email;
+  if (isMeActiveRoom && !inputMessageFocused.value) {
+    focusMessageManagerTextBox();
+  }
+};
+
 watch(
   () => props.isLoading,
   () => {
-    if (!props.isLoading) {
+    if (!props.isLoading && !inputMessageFocused.value) {
       focusMessageManagerTextBox();
     }
   },
 );
+
+onMounted(() => {
+  handleOpenMeActiveRoom();
+});
 </script>
 
 <style lang="scss" scoped>
