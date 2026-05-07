@@ -182,6 +182,7 @@ import unnnic from '@weni/unnnic-system';
 import env from '@/utils/env';
 
 import { useRooms } from '@/store/modules/chats/rooms';
+import { useRoomCounters } from '@/store/modules/chats/roomCounters';
 import { useConfig } from '@/store/modules/config';
 import { useProfile } from '@/store/modules/profile';
 import { useDiscussions } from '@/store/modules/chats/discussions';
@@ -228,7 +229,11 @@ export default {
       nameOfContact: '',
       timerId: 0,
       showLoadingRooms: false,
-      isLoadingRooms: false,
+      isLoadingRooms: {
+        ongoing: false,
+        waiting: false,
+        flow_start: false,
+      },
       isSearching: false,
       isMobile: isMobile(),
       showModalQueue: false,
@@ -258,12 +263,8 @@ export default {
     ...mapState(useProfile, ['me']),
     ...mapState(useDiscussions, ['discussions']),
     ...mapState(useFeatureFlag, ['featureFlags']),
-    ...mapWritableState(useRooms, [
-      'orderBy',
-      'roomsCount',
-      'activeTab',
-      'showOngoingDot',
-    ]),
+    ...mapWritableState(useRooms, ['orderBy', 'activeTab', 'showOngoingDot']),
+    ...mapState(useRoomCounters, { roomsCount: 'counts' }),
     ...mapWritableState(useDiscussions, [
       'discussionsCount',
       'showDiscussionsDot',
@@ -462,29 +463,23 @@ export default {
       },
     },
     rooms_ongoing: {
-      deep: true,
       handler(newRooms, oldRooms) {
-        this.updateRoomsCount(newRooms.length, oldRooms.length, 'ongoing');
-      },
-    },
-    rooms_queue: {
-      deep: true,
-      handler(newRooms, oldRooms) {
-        this.updateRoomsCount(newRooms.length, oldRooms.length, 'waiting');
-
         const roomsWentEmpty = newRooms.length === 0 && oldRooms.length > 0;
-        const counterShowsMore = this.roomsCount.waiting > 0;
-        const isNotLoading = !this.isLoadingRooms;
-
-        if (roomsWentEmpty && counterShowsMore && isNotLoading) {
-          this.refetchWaitingRooms();
+        if (roomsWentEmpty && this.roomsCount.ongoing > 0) {
+          this.$nextTick(() => {
+            this.refetchRooms('ongoing');
+          });
         }
       },
     },
-    rooms_flow_start: {
-      deep: true,
+    rooms_queue: {
       handler(newRooms, oldRooms) {
-        this.updateRoomsCount(newRooms.length, oldRooms.length, 'flow_start');
+        const roomsWentEmpty = newRooms.length === 0 && oldRooms.length > 0;
+        if (roomsWentEmpty && this.roomsCount.waiting > 0) {
+          this.$nextTick(() => {
+            this.refetchRooms('waiting');
+          });
+        }
       },
     },
     totalUnreadMessages: {
@@ -546,16 +541,6 @@ export default {
 
       return dotsMap[tab] || false;
     },
-    updateRoomsCount(newSize, oldSize, key) {
-      if (newSize === oldSize || !this.initialLoaded || this.isLoadingRooms)
-        return;
-
-      newSize > oldSize ? this.roomsCount[key]++ : this.roomsCount[key]--;
-
-      if (this.roomsCount[key] < 0) {
-        this.roomsCount[key] = 0;
-      }
-    },
     async openRoom(room) {
       await this.setActiveRoom(room);
       await this.setActiveDiscussion(null);
@@ -575,7 +560,7 @@ export default {
       this.showLoadingRooms = silent ? false : !concat;
       const { viewedAgent } = this;
       try {
-        this.isLoadingRooms = true;
+        this.isLoadingRooms[roomsType] = true;
         const offset =
           (roomsType ? this.page[roomsType] : this.page.search) * this.limit;
 
@@ -592,7 +577,7 @@ export default {
         console.error('Error listing rooms', error);
       } finally {
         this.showLoadingRooms = false;
-        this.isLoadingRooms = false;
+        this.isLoadingRooms[roomsType] = false;
       }
     },
     searchForMoreRooms() {
@@ -604,9 +589,10 @@ export default {
         this.listRoom(true, this.orderBy[this.activeTab]);
       }
     },
-    async refetchWaitingRooms() {
-      this.page.waiting = 0;
-      await this.listRoom(true, this.orderBy.waiting, 'waiting', true);
+    async refetchRooms(roomsType) {
+      if (this.isLoadingRooms[roomsType]) return;
+      this.page[roomsType] = 0;
+      await this.listRoom(true, this.orderBy[roomsType], roomsType, true);
     },
     async listDiscussions() {
       try {

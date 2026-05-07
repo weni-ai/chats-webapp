@@ -73,7 +73,14 @@ import Queue from '@/services/api/resources/settings/queue';
 import ChatClassifier from '@/components/chats/ChatClassifier.vue';
 
 import { useRooms } from '@/store/modules/chats/rooms';
+import { useRoomCounters } from '@/store/modules/chats/roomCounters';
+import { useFeatureFlag } from '@/store/modules/featureFlag';
 import { useFeedback } from '@/store/modules/feedback';
+
+import {
+  markPendingClose,
+  unmarkPendingClose,
+} from '@/services/api/websocket/listeners/room/update';
 
 import feedbackService from '@/services/api/resources/chats/feedback';
 
@@ -175,14 +182,40 @@ export default {
         else this.isLoadingTags = false;
       }
     },
+    isNewRoomUpdateEnabled() {
+      const featureFlagStore = useFeatureFlag();
+      return !!featureFlagStore.featureFlags?.active_features?.includes(
+        'WeniChatsNewRoomUpdate',
+      );
+    },
     async closeRoom() {
       this.isLoadingCloseRoom = true;
       const { uuid } = this.room;
 
-      const tagsUuids = this.tags.map((tag) => tag.uuid);
-      await Room.close(uuid, tagsUuids);
+      const useNewLogic = this.isNewRoomUpdateEnabled();
+      if (useNewLogic) markPendingClose(uuid);
 
-      this.removeRoom(uuid);
+      const tagsUuids = this.tags.map((tag) => tag.uuid);
+
+      try {
+        await Room.close(uuid, tagsUuids);
+      } catch (error) {
+        if (useNewLogic) unmarkPendingClose(uuid);
+        this.isLoadingCloseRoom = false;
+        throw error;
+      }
+
+      if (useNewLogic) {
+        const roomsStore = useRooms();
+        const counters = useRoomCounters();
+        const roomType = roomsStore.applyClose(uuid, this.room);
+        if (roomType) {
+          counters.handleClose(roomType);
+          counters.clearTypeCache(uuid);
+        }
+      } else {
+        this.removeRoom(uuid);
+      }
 
       this.isLoadingCloseRoom = false;
 
