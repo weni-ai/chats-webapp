@@ -352,21 +352,25 @@
       }
     },
     "feedback": {
-      "forwarded_to_agent": "Contato encaminhado para agente {agent}",
-      "forwarded_to_queue": "Contato encaminhado para fila {queue}",
-      "transfer_to_agent": "{agent1} transferiu o chat para {agent2}",
-      "transfer_to_agent_by_other": "{requestedBy} transferiu o chat de {agent1} para {agent2}",
-      "transfer_to_queue": "{agent} transferiu para fila {queue}",
-      "transfer_from_queue_to_queue": "Foi transferido da fila {queue1} para fila {queue2}",
-      "transfer_from_queue_to_agent": "Foi transferido da fila {queue} para {agent}",
-      "pick_of_queue": "{agent} pegou da fila {queue}",
-      "pick_of_agent": "{manager} assumiu o chat de {agent}",
-      "edit_custom_field": "editou o custom field",
+      "agent_took_chat": "Ops! O chat com contato {contact} foi assumido por outro agente",
+      "automatic_transfer_from_queue": "Chat atribuído a {agent}",
+      "chat_ended_by": "Chat encerrado por {agent}",
       "discussion_created": "{agent} iniciou a discussão com fila {queue}",
       "discussion_joined": "{agent} entrou na discussão",
-      "agent_took_chat": "Ops! O chat com contato {contact} foi assumido por outro agente",
-      "automatic_transfer_from_queue": "Sala atribuída ao {agent}.",
-      "see_all_internal_notes": "<b style='color: white;'>Ver notas internas</b>"
+      "edit_custom_field": "editou o custom field",
+      "forwarded_to_agent": "Contato encaminhado para agente {agent}",
+      "forwarded_to_queue": "Chat encaminhado para a fila {queue}",
+      "pick_of_agent": "{manager} assumiu o chat que estava com {agent}",
+      "pick_of_queue": "{agent} assumiu o chat da fila {queue}",
+      "see_all_internal_notes": "<b style='color: white;'>Ver notas internas</b>",
+      "transfer_from_queue_to_agent": "Foi transferido da fila {queue} para {agent}",
+      "transfer_from_queue_to_agent_by_other": "{requestedBy} transferiu o chat da fila {queue} para {agent}",
+      "transfer_from_queue_to_queue": "Foi transferido da fila {queue1} para fila {queue2}",
+      "transfer_from_queue_to_queue_by_other": "{requestedBy} transferiu o chat da fila {queue1} para a fila {queue2}",
+      "transfer_to_agent": "{agent1} transferiu o chat para {agent2}",
+      "transfer_to_agent_by_other": "{requestedBy} transferiu o chat de {agent1} para {agent2}",
+      "transfer_to_queue": "{agent} transferiu o chat para a fila {queue}",
+      "transfer_to_queue_by_other": "{requestedBy} transferiu o chat de {agent} para a fila {queue}"
     },
     "room_list": {
       "order_by": "Ordenar por:",
@@ -566,7 +570,7 @@
   "view": "Visualizar",
   "see": "Ver",
   "chat_with": {
-    "bot": "Chat com bot"
+    "bot": "Atendimento automatizado"
   },
   "waiting_answer": {
     "send_template": "Você enviou um modelo de mensagem",

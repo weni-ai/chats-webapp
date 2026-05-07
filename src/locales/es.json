@@ -352,21 +352,25 @@
       }
     },
     "feedback": {
-      "forwarded_to_agent": "Contacto reenviado al agente {agent}",
-      "forwarded_to_queue": "Contacto reenviado a la cola {queue}",
-      "transfer_to_agent": "{agent1} transfirió el chat a {agent2}",
-      "transfer_to_agent_by_other": "{requestedBy} transfirió el chat de {agent1} a {agent2}",
-      "transfer_to_queue": "{agent} transferido a la cola {queue}",
-      "transfer_from_queue_to_queue": "Fue transferido de la cola {queue1} a la cola {queue2}",
-      "transfer_from_queue_to_agent": "Fue transferido de la cola {queue} a {agent}",
-      "pick_of_queue": "{agent} lo obtuvo de la cola {queue}",
-      "pick_of_agent": "{manager} se ha hecho cargo del chat de {agent}",
-      "edit_custom_field": "editado el custom field",
+      "agent_took_chat": "¡Ups! El chat con el contacto {contact} ha sido asumido por otro agente",
+      "automatic_transfer_from_queue": "Chat asignado a {agent}",
+      "chat_ended_by": "Chat cerrado por {agent}",
       "discussion_created": "{agent} inició la discusión con la cola {queue}",
       "discussion_joined": "{agent} se unió a la discusión",
-      "agent_took_chat": "¡Ups! El chat con el contacto {contact} ha sido asumido por otro agente",
-      "automatic_transfer_from_queue": "Sala asignada a {agent}.",
-      "see_all_internal_notes": "<b style='color: white;'>Ver notas internas</b>"
+      "edit_custom_field": "editado el custom field",
+      "forwarded_to_agent": "Contacto reenviado al agente {agent}",
+      "forwarded_to_queue": "Chat reenviado a la cola {queue}",
+      "pick_of_agent": "{manager} se hizo cargo del chat que estaba con {agent}",
+      "pick_of_queue": "{agent} se hizo cargo del chat de la cola {queue}",
+      "see_all_internal_notes": "<b style='color: white;'>Ver notas internas</b>",
+      "transfer_from_queue_to_agent": "Fue transferido de la cola {queue} a {agent}",
+      "transfer_from_queue_to_agent_by_other": "{requestedBy} transfirió el chat de la cola {queue} a {agent}",
+      "transfer_from_queue_to_queue": "Fue transferido de la cola {queue1} a la cola {queue2}",
+      "transfer_from_queue_to_queue_by_other": "{requestedBy} transfirió el chat de la cola {queue1} a la cola {queue2}",
+      "transfer_to_agent": "{agent1} transfirió el chat a {agent2}",
+      "transfer_to_agent_by_other": "{requestedBy} transfirió el chat de {agent1} a {agent2}",
+      "transfer_to_queue": "{agent} transfirió el chat a la cola {queue}",
+      "transfer_to_queue_by_other": "{requestedBy} transfirió el chat de {agent} a la cola {queue}"
     },
     "room_list": {
       "order_by": "Ordenar por:",
@@ -566,7 +570,7 @@
   "view": "Ver",
   "see": "Ver",
   "chat_with": {
-    "bot": "Chat con bot"
+    "bot": "Atención automatizada"
   },
   "waiting_answer": {
     "send_template": "Enviaste una plantilla de mensaje",
