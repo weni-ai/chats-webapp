@@ -15,6 +15,7 @@ exports[`ViewModeHeader > Snapshot > should match snapshot 1`] = `
       data-icon="visibility"
       data-testid="visibility-icon"
       data-v-d329e103=""
+      scheme="fg-inverted"
     />
      dashboard.view-mode.title_Test User
   </h1>
@@ -31,6 +32,7 @@ exports[`ViewModeHeader > Snapshot > should match snapshot 1`] = `
         data-icon="close-1"
         data-testid="close-icon"
         data-v-d329e103=""
+        scheme="fg-inverted"
       />
       
     </div>

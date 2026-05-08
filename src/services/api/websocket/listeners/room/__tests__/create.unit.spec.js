@@ -3,8 +3,20 @@ import wsRoomCreate from '@/services/api/websocket/listeners/room/create';
 import { useRooms } from '@/store/modules/chats/rooms';
 import SoundNotification from '@/services/api/websocket/soundNotification';
 
+vi.mock('@/store/modules/dashboard', () => ({
+  useDashboard: vi.fn(() => ({
+    viewedAgent: { email: '' },
+  })),
+}));
+
 vi.mock('@/store/modules/chats/rooms', () => ({
   useRooms: vi.fn(),
+}));
+
+vi.mock('@/store/modules/chats/roomCounters', () => ({
+  useRoomCounters: vi.fn(() => ({
+    handleCreate: vi.fn(),
+  })),
 }));
 
 vi.mock('@/store/modules/config', () => ({
@@ -37,6 +49,7 @@ describe('Room create', () => {
         flow_start: '-last_interaction',
       },
       addRoom: vi.fn(),
+      filterQueues: [],
     };
 
     useRooms.mockReturnValue(roomsStoreMock);

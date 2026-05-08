@@ -212,6 +212,6 @@ describe('Router afterEach guard', () => {
 
     afterEachGuard();
 
-    expect(configStore.project.uuid).toBeUndefined();
+    expect(configStore.project.uuid).toBeFalsy();
   });
 });

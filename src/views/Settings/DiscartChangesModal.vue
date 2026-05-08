@@ -5,10 +5,10 @@
   >
     <UnnnicDialogContent size="small">
       <UnnnicDialogHeader>
-        <UnnnicDialogTitle>{{ title }}</UnnnicDialogTitle>
+        <UnnnicDialogTitle>{{ props.title }}</UnnnicDialogTitle>
       </UnnnicDialogHeader>
       <section class="discart-changes-modal__content">
-        <p class="discart-changes-modal__text">{{ text }}</p>
+        <p class="discart-changes-modal__text">{{ props.text }}</p>
       </section>
       <UnnnicDialogFooter>
         <UnnnicButton
@@ -26,48 +26,43 @@
   </UnnnicDialog>
 </template>
 
-<script>
-export default {
+<script setup lang="ts">
+import { computed } from 'vue';
+
+defineOptions({
   name: 'DiscartChangesModal',
-  props: {
-    modelValue: {
-      type: Boolean,
-      required: true,
-    },
-    title: {
-      type: String,
-      default: '',
-    },
-    text: {
-      type: String,
-      default: '',
-    },
+});
+
+interface Props {
+  modelValue: boolean;
+  title?: string;
+  text?: string;
+}
+
+const props = withDefaults(defineProps<Props>(), {
+  title: '',
+  text: '',
+});
+const emit = defineEmits<{
+  'update:modelValue': [value: boolean];
+  confirm: [void];
+  cancel: [void];
+}>();
+
+const open = computed({
+  get() {
+    return props.modelValue;
   },
-  emits: ['update:modelValue', 'confirm', 'cancel'],
-  computed: {
-    open: {
-      get() {
-        return this.modelValue;
-      },
-      set(value) {
-        this.$emit('update:modelValue', value);
-      },
-    },
+  set(value) {
+    emit('update:modelValue', value);
   },
-};
+});
 </script>
 
 <style lang="scss" scoped>
 .discart-changes-modal {
   &__content {
     padding: $unnnic-space-6;
-  }
-  &__text {
-    text-align: left;
-    font-size: $unnnic-font-size-body-gt;
-    font-family: $unnnic-font-family-secondary;
-    line-height: 2 * $unnnic-font-size-body-md;
-    color: $unnnic-color-fg-base;
   }
 }
 </style>
