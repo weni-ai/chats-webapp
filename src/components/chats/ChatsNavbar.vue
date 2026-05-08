@@ -31,14 +31,8 @@
 </template>
 
 <script>
-import UnnnicIcon from '../Icon.vue';
-
 export default {
   name: 'UnnnicChatsNavbar',
-
-  components: {
-    UnnnicIcon,
-  },
 
   props: {
     links: {
@@ -107,8 +101,6 @@ export default {
 </script>
 
 <style lang="scss">
-@use '@/assets/scss/unnnic' as *;
-
 .unnnic-chats-navbar {
   width: 100vw;
   max-width: 100%;
