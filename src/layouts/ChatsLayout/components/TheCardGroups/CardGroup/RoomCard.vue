@@ -24,7 +24,7 @@
         @change="checkboxValue = $event"
       />
     </UnnnicToolTip>
-    <UnnnicChatsContact
+    <ChatContact
       :class="{
         'room-card__contact': true,
         'room-card__contact--selected': room.uuid === activeRoomId && active,
@@ -63,12 +63,19 @@ import { useRooms } from '@/store/modules/chats/rooms';
 import { useConfig } from '@/store/modules/config';
 import { useFeatureFlag } from '@/store/modules/featureFlag';
 import { useProfile } from '@/store/modules/profile';
+
+import ChatContact from '@/components/chats/ChatContact.vue';
+
 import { formatContactName } from '@/utils/chats';
 
 const ONE_MINUTE_IN_MILLISECONDS = 60000;
 
 export default {
   name: 'RoomCard',
+
+  components: {
+    ChatContact,
+  },
 
   props: {
     room: {

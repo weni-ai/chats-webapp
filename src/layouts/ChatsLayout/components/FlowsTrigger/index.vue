@@ -126,7 +126,7 @@
                 })
               "
             >
-              <UnnnicChatsContact
+              <ChatContact
                 v-for="item in element"
                 :key="item.uuid"
                 class="flows-trigger__groups__group__contact"
@@ -150,7 +150,7 @@
                 })
               "
             >
-              <UnnnicChatsContact
+              <ChatContact
                 v-for="item in letters['unnamed_contact']"
                 :key="item.uuid"
                 class="flows-trigger__groups__group__contact"
@@ -240,6 +240,7 @@
 import isMobile from 'is-mobile';
 import { mapState } from 'pinia';
 
+import { useRooms } from '@/store/modules/chats/rooms';
 import { useConfig } from '@/store/modules/config';
 
 import AsideSlotTemplate from '@/components/layouts/chats/AsideSlotTemplate/index.vue';
@@ -252,15 +253,15 @@ import SelectedContactsSection from '@/components/chats/FlowsTrigger/SelectedCon
 import SendFlow from '@/components/chats/FlowsTrigger/SendFlow.vue';
 import ModalProgressBarFalse from '@/components/ModalProgressBarFalse.vue';
 import ChatsHeader from '@/components/chats/ChatHeader.vue';
+import ChatContact from '@/components/chats/ChatContact.vue';
+
+import callUnnnicAlert from '@/utils/callUnnnicAlert';
 
 import FlowsContactsLoading from '@/views/loadings/FlowsTrigger/FlowsContactsLoading.vue';
 
 import FlowsTrigger from '@/services/api/resources/chats/flowsTrigger.js';
 import FlowsAPI from '@/services/api/resources/flows/flowsTrigger.js';
-import { useRooms } from '@/store/modules/chats/rooms';
 import Group from '@/services/api/resources/settings/group.js';
-
-import callUnnnicAlert from '@/utils/callUnnnicAlert';
 
 export default {
   name: 'FlowsTrigger',
@@ -277,6 +278,7 @@ export default {
     SelectedContactsSection,
     SendFlow,
     ModalProgressBarFalse,
+    ChatContact,
   },
 
   props: {

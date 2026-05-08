@@ -115,6 +115,7 @@
   "start": "Iniciar",
   "submit": "Enviar",
   "details": "Detalhes",
+  "discussion_about": "Discussão sobre {discussionGoal}",
   "doubts": "Dúvidas",
   "finance": "Financeiro",
   "chats_in_the_period": "Chats no período",
@@ -529,6 +530,7 @@
   },
   "pagination": "{from} - {to} de {total}",
   "contact": "Contato",
+  "unread_messages": "{unreadMessages} mensagens não lidas",
   "unnamed_contact": "Contato sem nome",
   "unnamed_agent": "Atendente sem nome",
   "no_agent_assigned": "Nenhum agente atribuído",
@@ -550,6 +552,7 @@
     "back_to_original_tooltip": "Voltar para a versão original (Ctrl+Z)"
   },
   "manager": "Gerente",
+  "yesterday": "Ontem",
   "you": "Você",
   "queue": "Fila",
   "agents": {
