@@ -1,0 +1,23 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`UnnnicChatsContact > should match snapshot 1`] = `
+"<div data-v-82d91188="" class="chats-contact" tabindex="0">
+  <section data-v-231483f2="" data-v-82d91188="" class="user-avatar user-avatar--xl user-avatar--gray-200"><span data-v-231483f2="" class="text-gray-900">C</span></section>
+  <div data-v-82d91188="" class="chats-contact__infos">
+    <section data-v-82d91188="" class="chats-contact__infos__title-container">
+      <h1 data-v-82d91188="" class="chats-contact__infos__title ellipsis" title="Contact Name">Contact Name</h1>
+      <!--v-if-->
+    </section>
+    <div data-v-82d91188="" class="chats-contact__infos__additional-information">
+      <p data-v-82d91188="" class="ellipsis subtitle" title="Message">Message</p>
+    </div>
+  </div>
+  <section data-v-82d91188="" class="chats-contact__infos__unread-messages-container">
+    <!--v-if-->
+    <section data-v-82d91188="" class="chats-contact__infos__unread-messages-container__pin-container">
+      <!--v-if-->
+    </section>
+  </section>
+  <div data-v-82d91188="" class="chats-contact__ripples" aria-hidden="true"></div>
+</div>"
+`;
