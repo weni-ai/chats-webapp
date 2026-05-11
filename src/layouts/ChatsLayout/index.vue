@@ -170,6 +170,8 @@ export default {
 
 <style lang="scss" scoped>
 section.chats-layout {
+  --chats-column-header-height: 57px;
+
   padding: 0;
 
   height: 100vh;
