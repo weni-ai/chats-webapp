@@ -556,7 +556,7 @@ export default {
 
           // Array filter to prevent 'null' or 'undefined' values in contact response
           this.listOfContacts = this.listOfContacts
-            .concat(response || [])
+            .concat(response.data?.results || [])
             .filter((contact) => contact);
 
           this.hasNext = response.next;
@@ -777,12 +777,17 @@ export default {
 
 .flows-trigger__handlers {
   margin-top: auto;
+  margin-right: -$unnnic-space-2;
+  margin-bottom: -$unnnic-space-2;
+  margin-left: -$unnnic-space-2;
+  padding: $unnnic-space-2;
 
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: $unnnic-spacing-xs;
-  align-items: end;
+  gap: $unnnic-space-2;
+  align-items: center;
 
-  background-color: $unnnic-color-bg-base-soft;
+  border-top: 1px solid $unnnic-color-border-base;
+  background-color: $unnnic-color-bg-base;
 }
 </style>
