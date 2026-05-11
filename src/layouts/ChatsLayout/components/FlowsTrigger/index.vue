@@ -727,13 +727,14 @@ export default {
   display: flex;
   overflow: hidden;
   flex-direction: column;
-  gap: $unnnic-spacing-sm;
-
-  overflow: hidden;
 
   background-color: $unnnic-color-bg-base;
 
   padding: $unnnic-space-2;
+
+  > * + :not(.flows-trigger__handlers) {
+    margin-top: $unnnic-space-4;
+  }
 
   &__header {
     display: grid;
