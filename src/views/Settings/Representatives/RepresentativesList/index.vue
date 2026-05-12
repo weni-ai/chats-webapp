@@ -2,6 +2,7 @@
   <section
     v-if="props.representatives.length > 0"
     class="settings-representatives-list"
+    data-testid="representatives-list"
   >
     <RepresentativeCard
       v-for="representative in props.representatives"
@@ -20,8 +21,12 @@
   <section
     v-else
     class="settings-representatives-list--empty"
+    data-testid="representatives-list-empty"
   >
-    <p class="settings-representatives-list--empty__title">
+    <p
+      class="settings-representatives-list--empty__title"
+      data-testid="representatives-list-empty-message"
+    >
       {{
         emptyRepresentatives
           ? $t('config_chats.representatives.empty_list')

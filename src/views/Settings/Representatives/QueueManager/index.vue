@@ -17,19 +17,25 @@
       <section
         v-if="isLoadingQueuesPermissions"
         class="queue-manager__loading"
+        data-testid="queue-manager-loading"
       >
         <UnnnicIconLoading />
       </section>
       <section
         v-else
         class="queue-manager__body"
+        data-testid="queue-manager-body"
       >
         <section
           v-if="isBulk"
           class="queue-manager__bulk"
+          data-testid="queue-manager-bulk"
         >
           <UnnnicDisclaimer :description="bulkDisclaimerDescription" />
-          <section class="queue-manager__bulk-toolbar">
+          <section
+            class="queue-manager__bulk-toolbar"
+            data-testid="queue-manager-bulk-toolbar"
+          >
             <section class="queue-manager__bulk-stack">
               <p class="queue-manager__bulk-hint">
                 {{
@@ -38,7 +44,10 @@
                   )
                 }}
               </p>
-              <section class="queue-manager__bulk-radios">
+              <section
+                class="queue-manager__bulk-radios"
+                data-testid="queue-manager-bulk-radios"
+              >
                 <UnnnicRadio
                   :modelValue="bulkSelectAction"
                   value="add"
@@ -68,6 +77,7 @@
         <section
           v-else
           class="queue-manager__chats-limit"
+          data-testid="queue-manager-chats-limit"
         >
           <SettingsProjectOptionsItem
             v-model="formData.chatsLimit.is_active"
@@ -104,7 +114,10 @@
             @update:model-value="hasChanges = true"
           />
         </section>
-        <section class="queue-manager__queues">
+        <section
+          class="queue-manager__queues"
+          data-testid="queue-manager-queues"
+        >
           <SectorQueuesCheckbox
             :selectedQueues="currentSelectedQueues"
             :sectors="sectorQueueData"

@@ -6,7 +6,10 @@
           {{ $t('config_chats.representatives.bulk_chats_limit_modal.title') }}
         </UnnnicDialogTitle>
       </UnnnicDialogHeader>
-      <section class="bulk-chats-limit-modal__content">
+      <section
+        class="bulk-chats-limit-modal__content"
+        data-testid="bulk-chats-limit-modal-content"
+      >
         <UnnnicDisclaimer
           :description="
             $t(
@@ -17,6 +20,7 @@
         />
         <UnnnicInput
           v-model="limit"
+          data-testid="bulk-chats-limit-input"
           :label="
             $t(
               'config_chats.representatives.bulk_chats_limit_modal.input.label',
@@ -41,12 +45,14 @@
       </section>
       <UnnnicDialogFooter>
         <UnnnicButton
+          data-testid="bulk-chats-limit-cancel-button"
           :text="$t('cancel')"
           type="tertiary"
           :disabled="isLoadingSave"
           @click="emit('update:modelValue', false)"
         />
         <UnnnicButton
+          data-testid="bulk-chats-limit-save-button"
           :text="$t('save')"
           type="primary"
           :loading="isLoadingSave"

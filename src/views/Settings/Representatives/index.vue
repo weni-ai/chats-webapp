@@ -1,5 +1,8 @@
 <template>
-  <section class="settings-representatives">
+  <section
+    class="settings-representatives"
+    data-testid="representatives-page"
+  >
     <section class="settings-representatives__header">
       <HeaderFilters
         v-model="representativesFilters"
@@ -15,11 +18,17 @@
         @open-chats-limit-management="openChatsLimitManagement"
       />
     </section>
-    <section class="settings-representatives__representatives-list">
-      <UnnnicIconLoading
+    <section
+      class="settings-representatives__representatives-list"
+      data-testid="representatives-page-list-region"
+    >
+      <div
         v-if="isLoadingRepresentatives"
         class="settings-representatives__representatives-list__loading"
-      />
+        data-testid="representatives-page-loading"
+      >
+        <UnnnicIconLoading />
+      </div>
       <RepresentativesList
         v-else
         :representatives="representatives"
@@ -32,6 +41,7 @@
     <section
       v-if="representatives.length > 0"
       class="settings-representatives__pagination"
+      data-testid="representatives-page-pagination"
     >
       <p class="settings-representatives__pagination__count">
         {{
@@ -44,6 +54,7 @@
       </p>
       <UnnnicPagination
         v-model="representativesPage"
+        data-testid="representatives-page-pagination-control"
         :max="representativesTotalPages"
         :show="representativesLimit"
       />

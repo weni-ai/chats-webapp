@@ -942,7 +942,7 @@
         "switch_active": "Permitir que los agentes de IA transfieran conversaciones al soporte humano",
         "switch_inactive": "Permitir que los agentes de IA transfieran conversaciones al soporte humano",
         "modal_title": "Escenarios o criterios que requieren transferencia al soporte humano",
-        "textarea_label": "Escenarios o criterios",
+        "textarea_label": "Defina los escenarios o criterios que requieren transferencia al soporte humano",
         "textarea_placeholder": "Describa los escenarios o criterios...",
         "disable_modal": {
           "description": "Desactivar esta opción eliminará permanentemente el prompt de escenarios y criterios. Será necesario configurarlo nuevamente al reactivarla.",

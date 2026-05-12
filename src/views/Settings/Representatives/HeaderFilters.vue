@@ -1,7 +1,16 @@
 <template>
-  <section class="settings-representatives-header-filters">
-    <section class="settings-representatives-header-filters__title-container">
-      <h1 class="settings-representatives-header-filters__title">
+  <section
+    class="settings-representatives-header-filters"
+    data-testid="representatives-header-filters"
+  >
+    <section
+      class="settings-representatives-header-filters__title-container"
+      data-testid="representatives-header-filters-title-row"
+    >
+      <h1
+        class="settings-representatives-header-filters__title"
+        data-testid="representatives-header-filters-title"
+      >
         {{ $t('config_chats.representatives.title') }}
       </h1>
       <UnnnicToolTip
@@ -16,9 +25,13 @@
         />
       </UnnnicToolTip>
     </section>
-    <section class="settings-representatives-header-filters__filters">
+    <section
+      class="settings-representatives-header-filters__filters"
+      data-testid="representatives-header-filters-filters"
+    >
       <UnnnicMultiSelect
         v-model="filters.status"
+        data-testid="representatives-header-filters-status"
         class="settings-representatives-header-filters__filter"
         :options="filteredStatusOptions"
         :label="$t('config_chats.representatives.filter.status.label')"
@@ -29,6 +42,7 @@
       />
       <UnnnicMultiSelect
         v-model="filters.representatives"
+        data-testid="representatives-header-filters-representatives"
         class="settings-representatives-header-filters__filter"
         :options="filteredRepresentativesOptions"
         :label="$t('config_chats.representatives.filter.representatives.label')"
@@ -39,6 +53,7 @@
       />
       <UnnnicMultiSelect
         :modelValue="filters.sectors"
+        data-testid="representatives-header-filters-sectors"
         class="settings-representatives-header-filters__filter"
         :options="filteredSectorsOptions"
         :label="$t('config_chats.representatives.filter.sectors.label')"
@@ -50,6 +65,7 @@
       />
       <UnnnicMultiSelect
         v-model="filters.queues"
+        data-testid="representatives-header-filters-queues"
         class="settings-representatives-header-filters__filter"
         :options="filteredQueuesOptions"
         :disabled="disableQueuesFilter"

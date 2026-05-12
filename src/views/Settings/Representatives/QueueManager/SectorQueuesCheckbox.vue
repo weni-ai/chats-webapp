@@ -1,8 +1,12 @@
 <template>
-  <section class="sector-queues-checkbox">
+  <section
+    class="sector-queues-checkbox"
+    data-testid="sector-queues-checkbox-root"
+  >
     <p
       v-if="props.isBulk"
       class="sector-queues-checkbox__bulk-description"
+      data-testid="sector-queues-checkbox-bulk-description"
     >
       {{
         $t(
@@ -13,6 +17,7 @@
     <h1
       v-else
       class="sector-queues-checkbox__title"
+      data-testid="sector-queues-checkbox-title"
     >
       {{
         $t(
@@ -24,9 +29,13 @@
       v-for="(sector, index) in validSectors"
       :key="index"
     >
-      <section class="sector-queues-checkbox__sector-block">
+      <section
+        class="sector-queues-checkbox__sector-block"
+        :data-testid="'sector-queues-checkbox-sector-block-' + index"
+      >
         <UnnnicCheckbox
           class="sector-queues-checkbox__sector-checkbox"
+          :data-testid="'sector-queues-checkbox-sector-toggle-' + index"
           :label="sector.name"
           :modelValue="
             sector.queues.every((queue) =>
@@ -36,10 +45,14 @@
           @update:model-value="handleSectorSelect(sector, $event)"
         />
 
-        <section class="sector-queues-checkbox__sector-queues">
+        <section
+          class="sector-queues-checkbox__sector-queues"
+          :data-testid="'sector-queues-checkbox-sector-queues-' + index"
+        >
           <UnnnicCheckbox
             v-for="queue in sector.queues"
             :key="queue.uuid"
+            :data-testid="'sector-queues-checkbox-queue-' + queue.uuid"
             :modelValue="props.selectedQueues.includes(queue.uuid)"
             :label="queue.name"
             @update:model-value="handleQueueSelect(queue.uuid, $event)"
@@ -49,6 +62,7 @@
       <hr
         v-if="index !== validSectors.length - 1"
         class="sector-queues-checkbox__divider"
+        :data-testid="'sector-queues-checkbox-divider-' + index"
       />
     </template>
   </section>

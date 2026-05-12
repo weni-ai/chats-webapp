@@ -1,5 +1,8 @@
 <template>
-  <section class="queue-filter">
+  <section
+    class="queue-filter"
+    data-testid="queue-filter"
+  >
     <UnnnicPopover
       :open="openPopover"
       @update:open="openPopover = $event"
@@ -13,6 +16,7 @@
         >
           <section class="queue-filter__trigger">
             <UnnnicIcon
+              data-testid="queue-filter-trigger-icon"
               icon="filter_list"
               size="ant"
               :scheme="hasFilterQueues ? 'fg-accent' : 'fg-emphasized'"
@@ -20,6 +24,7 @@
             <p
               v-if="hasFilterQueues"
               class="queue-filter__count"
+              data-testid="queue-filter-count"
             >
               ({{ filterQueues.length }})
             </p>
@@ -30,22 +35,26 @@
         <section class="queue-filter__content">
           <UnnnicInput
             v-model="searchQueue"
+            data-testid="queue-filter-search-input"
             iconLeft="search-1"
             :placeholder="$t('queues.search')"
           />
           <section
             v-if="isLoadingQueuesOptions"
             class="queue-filter__loading"
+            data-testid="queue-filter-loading"
           >
             <UnnnicIconLoading />
           </section>
           <section
             v-else
             class="queue-filter__checkboxes"
+            data-testid="queue-filter-checkbox-list"
           >
             <UnnnicCheckbox
               v-for="queue in queuesOptionsFiltered"
               :key="queue.value"
+              :data-testid="'queue-filter-queue-option-' + queue.value"
               :modelValue="selectedQueues.includes(queue.value)"
               :label="queue.label"
               @update:model-value="handleSelectedQueues(queue.value, $event)"
@@ -54,11 +63,13 @@
         </section>
         <UnnnicPopoverFooter>
           <UnnnicButton
+            data-testid="queue-filter-clear-button"
             :text="$t('clear')"
             type="tertiary"
             @click="clearFilterQueues"
           />
           <UnnnicButton
+            data-testid="queue-filter-apply-button"
             :text="$t('filter.label')"
             type="primary"
             :disabled="isLoadingQueuesOptions || !selectedQueues.length"
@@ -70,6 +81,7 @@
     <UnnnicIcon
       v-if="hasFilterQueues"
       class="queue-filter__close"
+      data-testid="queue-filter-close-icon"
       icon="close"
       size="ant"
       clickable

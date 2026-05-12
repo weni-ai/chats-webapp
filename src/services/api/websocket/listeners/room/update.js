@@ -269,7 +269,7 @@ export default async (room, { app }) => {
   const isViewMode = dashboardStore.viewedAgent.email !== '';
 
   const isKnown =
-    roomsStore.rooms.some((r) => r.uuid === room.uuid) ||
+    roomsStore.rooms.some((existingRoom) => existingRoom.uuid === room.uuid) ||
     pendingEvents.has(room.uuid);
 
   const roomType = getRoomType(room);
