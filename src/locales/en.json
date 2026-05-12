@@ -456,9 +456,11 @@
     "your_chat_assumed": "Chat taken over by another representative",
     "your_chat_assumed_description": "Your chat with {contact} has been taken over by {representative}",
     "closed_chats": {
+      "contact_history": "Contact history",
+      "general_history": "General history",
       "history": "History",
-      "project_history": "Project history",
-      "contact_history": "Contact history"
+      "history_description": "History of all support records for the {projectName} project",
+      "project_history": "Project history"
     },
     "assigned_queues": "Assigned queues",
     "select_queues": "Select queues",
@@ -791,7 +793,6 @@
   "flows": "Flows",
   "flows_trigger": {
     "title": "Flows trigger",
-    "subtitle": "Contacts of {project}",
     "triggered_flows": {
       "title": "Triggered flows",
       "single": "Triggered flow",

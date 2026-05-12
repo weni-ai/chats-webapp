@@ -459,9 +459,11 @@
     "your_chat_assumed": "Chat assumido por outro atendente",
     "your_chat_assumed_description": "Seu chat com {contact} foi assumido por {representative}",
     "closed_chats": {
+      "contact_history": "Histórico do contato",
+      "general_history": "Histórico geral",
       "history": "Histórico",
-      "project_history": "Histórico do projeto",
-      "contact_history": "Histórico do contato"
+      "history_description": "Histórico de todos os atendimentos do projeto {projectName}",
+      "project_history": "Histórico do projeto"
     },
     "assigned_queues": "Filas atribuídas",
     "select_queues": "Selecionar filas",
@@ -796,7 +798,6 @@
   "flows": "Fluxos",
   "flows_trigger": {
     "title": "Disparo de fluxos",
-    "subtitle": "Contatos de {project}",
     "triggered_flows": {
       "title": "Fluxos disparados",
       "single": "Fluxo disparado",

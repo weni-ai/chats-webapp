@@ -516,6 +516,7 @@ watch(
   position: relative;
   display: flex;
   padding: $unnnic-spacing-sm;
+  min-height: var(--chats-column-header-height, 57px);
   justify-content: space-between;
   align-items: center;
   border-bottom: 1px solid $unnnic-color-border-soft;

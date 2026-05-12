@@ -94,7 +94,7 @@
                 :text="$t('preferences.appearance.light')"
                 :aria-pressed="!isDark"
                 data-testid="theme-light-button"
-                @click="setTheme(THEMES.LIGHT)"
+                @click="setTheme('light')"
               />
               <UnnnicButton
                 class="view-options__theme-button"
@@ -107,7 +107,7 @@
                 :text="$t('preferences.appearance.dark')"
                 :aria-pressed="isDark"
                 data-testid="theme-dark-button"
-                @click="setTheme(THEMES.DARK)"
+                @click="setTheme('dark')"
               />
             </section>
           </section>
@@ -146,10 +146,7 @@ import ViewButton from './ViewButton.vue';
 
 import { PREFERENCES_SOUND } from '@/services/api/websocket/soundNotification.js';
 import { moduleStorage } from '@/utils/storage';
-import { useTheme } from '@/store/modules/theme';
-import { THEMES } from '@/utils/theme';
-
-type ThemeValue = (typeof THEMES)[keyof typeof THEMES];
+import { useTheme } from '@weni/unnnic-system';
 
 defineOptions({
   name: 'ViewOptions',
@@ -181,9 +178,8 @@ const isOpen = ref(false);
 const sound = ref(false);
 const showNewBadge = ref(false);
 
-const themeStore = useTheme();
-const isDark = computed(() => themeStore.isDark);
-const setTheme = (theme: ThemeValue) => themeStore.setTheme(theme);
+const { resolvedTheme, setTheme } = useTheme();
+const isDark = computed(() => resolvedTheme.value === 'dark');
 
 function handleTriggerClick() {
   if (!isOpen.value && showNewBadge.value) {

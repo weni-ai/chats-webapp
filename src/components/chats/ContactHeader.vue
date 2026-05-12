@@ -50,6 +50,7 @@ const hasActionsSlot = computed(() => !!slots.actions?.());
   align-items: center;
   justify-content: space-between;
   padding: $unnnic-space-2 $unnnic-space-4;
+  min-height: var(--chats-column-header-height, 57px);
   width: 100%;
   border-bottom: 1px solid $unnnic-color-border-soft;
 
