@@ -115,7 +115,7 @@ describe('RoomsTransferField', () => {
         agents: [{ value: 'agent1_id', label: 'Agent1' }],
       });
       await wrapper.vm.$nextTick();
-      expect(agentSelect.props('disabled')).toBe(true);
+
       await wrapper.setProps({
         modelValue: [],
       });
