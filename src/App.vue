@@ -31,9 +31,9 @@ import { useQuickMessageShared } from './store/modules/chats/quickMessagesShared
 import { useRooms } from './store/modules/chats/rooms';
 import { useDashboard } from './store/modules/dashboard';
 import { useFeatureFlag } from './store/modules/featureFlag';
-import { useTheme } from './store/modules/theme';
+import { useTheme } from '@weni/unnnic-system';
 
-import { applyEffectiveTheme, notifyParentOfTheme } from '@/utils/theme';
+import { notifyParentOfTheme } from '@/utils/theme';
 
 import initHotjar from '@/plugins/Hotjar';
 import {
@@ -59,6 +59,9 @@ export default {
     );
 
     if (projectUuid) setProjectLocalStorage(projectUuid);
+
+    const { resolvedTheme } = useTheme();
+    return { resolvedTheme };
   },
 
   data() {
@@ -164,15 +167,8 @@ export default {
       },
     },
 
-    // Re-apply the visual theme on every navigation so light-only routes
-    // (currently `/settings`) stay light even when the stored preference is
-    // dark, and revert back to the stored theme when the user leaves them.
-    // The store value is never touched — this is a presentation-only flip.
-    '$route.path': {
-      immediate: true,
-      handler() {
-        applyEffectiveTheme(useTheme().theme);
-      },
+    resolvedTheme(theme) {
+      notifyParentOfTheme(theme);
     },
   },
 
@@ -303,16 +299,8 @@ export default {
       });
     },
 
-    /**
-     * Announce the current theme to the embedding host (Connect) via
-     * `postMessage`. Called on every iframe mount because the iframe is
-     * reloaded on each `chatsRedirect` from the host, and the host can't
-     * read the chats `localStorage` (cross-origin). This is the only
-     * reliable signal Connect has to mirror the chats theme on the parent
-     * frame and avoid a "flash of wrong theme".
-     */
     announceThemeToParent() {
-      notifyParentOfTheme(useTheme().theme);
+      notifyParentOfTheme(this.resolvedTheme);
     },
 
     async onboarding() {
