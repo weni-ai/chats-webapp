@@ -1,3 +1,20 @@
+export const THEME_PARENT_EVENT = 'chats:theme';
+
+const DARK_CLASS = 'dark';
+
+const LIGHT_ONLY_ROUTE_PREFIXES = ['/settings'];
+
+export function isLightOnlyRoute(path) {
+  if (typeof path !== 'string') return false;
+  return LIGHT_ONLY_ROUTE_PREFIXES.some((prefix) => path.startsWith(prefix));
+}
+
+export function applyRouteAwareTheme(theme, routePath) {
+  if (typeof document === 'undefined') return;
+  const wantsDark = theme === 'dark' && !isLightOnlyRoute(routePath);
+  document.documentElement.classList.toggle(DARK_CLASS, wantsDark);
+}
+
 /**
  * Broadcasts the current theme to the parent frame so cross-origin hosts
  * (Connect) can react. Follows the existing postMessage pattern used across
@@ -7,9 +24,6 @@
  * iframe (re)mount — Connect doesn't have access to the chats `localStorage`
  * because of the cross-origin boundary, so this is the only reliable signal.
  */
-
-export const THEME_PARENT_EVENT = 'chats:theme';
-
 export function notifyParentOfTheme(theme) {
   if (typeof theme !== 'string') return;
   if (typeof globalThis === 'undefined' || !globalThis.window?.parent) return;
