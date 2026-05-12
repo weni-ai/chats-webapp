@@ -165,12 +165,6 @@ describe('ClosedChats.vue', () => {
             props: ['type', 'size', 'iconCenter', 'ariaLabel'],
             emits: ['click'],
           },
-          UnnnicPageHeader: {
-            template:
-              '<header :data-testid="$attrs[`data-testid`]"><button data-testid="closed-chats-back-button" @click="$emit(`back`)" /><h1 data-testid="closed-chats-page-header-title">{{ title }}</h1><p v-if="description" data-testid="closed-chats-page-header-description">{{ description }}</p></header>',
-            props: ['title', 'description', 'hasBackButton', 'hideDivider'],
-            emits: ['back'],
-          },
           RoomMessages: {
             template: '<div data-testid="room-messages"></div>',
           },
@@ -212,26 +206,25 @@ describe('ClosedChats.vue', () => {
       expect(
         wrapper.find('[data-testid="closed-chats-header-loading"]').exists(),
       ).toBe(false);
-      expect(
-        wrapper.find('[data-testid="closed-chats-page-header"]').exists(),
-      ).toBe(true);
-      expect(
-        wrapper
-          .find('[data-testid="closed-chats-page-header-title"]')
-          .text(),
-      ).toBe('chats.closed_chats.general_history');
-      expect(
-        wrapper
-          .find('[data-testid="closed-chats-page-header-description"]')
-          .exists(),
-      ).toBe(true);
+
+      const header = wrapper.find(
+        '[data-testid="closed-chats-page-header"]',
+      );
+      expect(header.exists()).toBe(true);
+      expect(header.find('[data-testid="page-title"]').text()).toBe(
+        'General history',
+      );
+      expect(header.find('[data-testid="page-description"]').exists()).toBe(
+        true,
+      );
     });
 
     it('back button on project header navigates back to home', async () => {
       wrapper = createWrapper();
 
       await wrapper
-        .find('[data-testid="closed-chats-back-button"]')
+        .find('[data-testid="closed-chats-page-header"]')
+        .find('[data-testid="back-button"]')
         .trigger('click');
 
       expect(wrapper.vm.$router.push).toHaveBeenCalledWith({ name: 'home' });

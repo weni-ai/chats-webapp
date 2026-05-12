@@ -1,0 +1,11 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`ClosedChatsHeaderLoading.vue > to match snapshot 1`] = `
+"<header data-v-aa2d7ba8="" class="closed-chats-header-loading">
+  <div data-v-aa2d7ba8="" class="closed-chats-header-loading__back"><span class="unnnic-skeleton" style="--skeleton-bg: var(--unnnic-color-bg-muted); --skeleton-highlight: var(--unnnic-color-bg-base-soft); --skeleton-duration: 2s;"> ‌ </span></div>
+  <section data-v-aa2d7ba8="" class="closed-chats-header-loading__content">
+    <div data-v-aa2d7ba8="" class="closed-chats-header-loading__title"><span class="unnnic-skeleton" style="--skeleton-bg: var(--unnnic-color-bg-muted); --skeleton-highlight: var(--unnnic-color-bg-base-soft); --skeleton-duration: 2s;"> ‌ </span></div>
+    <div data-v-aa2d7ba8="" class="closed-chats-header-loading__description"><span class="unnnic-skeleton" style="--skeleton-bg: var(--unnnic-color-bg-muted); --skeleton-highlight: var(--unnnic-color-bg-base-soft); --skeleton-duration: 2s;"> ‌ </span></div>
+  </section>
+</header>"
+`;
