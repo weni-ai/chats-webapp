@@ -28,14 +28,10 @@
       <section class="modal-close-rooms__content">
         <p class="modal-close-rooms__subtitle">
           {{
-            $tc(
-              'bulk_close.chats_count_sector',
-              currentSectorData.rooms.length,
-              {
-                count: currentSectorData.rooms.length,
-                sector: currentSectorData.name,
-              },
-            )
+            $t('bulk_close.chats_count_sector', {
+              count: currentSectorData.rooms.length,
+              sector: currentSectorData.name,
+            })
           }}
         </p>
 
@@ -228,7 +224,7 @@ const disclaimerDescription = computed(() => {
     ? 'bulk_close.required_tags_description'
     : 'bulk_close.optional_tags_description';
 
-  return i18n.global.tc(descriptionKey, currentSectorData.value.rooms.length, {
+  return i18n.global.t(descriptionKey, {
     count: currentSectorData.value.rooms.length,
   });
 });
@@ -506,7 +502,7 @@ const executeBulkClose = async () => {
   if (totalFailed === 0 && totalSuccess > 0) {
     unnnicCallAlert({
       props: {
-        text: i18n.global.tc('bulk_close.success_message', totalSuccess, {
+        text: i18n.global.t('bulk_close.success_message', {
           count: totalSuccess,
         }),
         type: 'success',
@@ -517,11 +513,10 @@ const executeBulkClose = async () => {
   } else if (totalFailed > 0 && totalSuccess > 0) {
     unnnicCallAlert({
       props: {
-        text: i18n.global.tc(
-          'bulk_close.partial_success_message',
-          totalSuccess,
-          { success: totalSuccess, failed: totalFailed },
-        ),
+        text: i18n.global.t('bulk_close.partial_success_message', {
+          success: totalSuccess,
+          failed: totalFailed,
+        }),
         type: 'attention',
       },
       seconds: 5,

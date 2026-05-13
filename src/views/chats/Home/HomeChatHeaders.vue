@@ -90,7 +90,7 @@
               featureFlags.active_features?.includes('weniChatsContactInfoV2')
             "
             enabled
-            :text="$tc('transfer_contact', 1)"
+            :text="$t('transfer_contact', { count: 1 })"
             side="left"
           >
             <section class="home-chat-headers__icon">
@@ -279,7 +279,7 @@ export default {
     },
     headerDiscussionSubtitle() {
       const { discussion } = this;
-      return `${this.$tc('discussions.title')} ${this.$t('about')} ${
+      return `${this.$t('discussions.title', { count: 1 })} ${this.$t('about')} ${
         discussion?.contact
       }`;
     },

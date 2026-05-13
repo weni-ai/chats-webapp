@@ -9,7 +9,9 @@ describe('WarningArchivedMessages', () => {
   const createWrapper = (options = {}) => {
     const defaultOptions = {
       global: {
-        plugins: [i18n],
+        mocks: {
+          $t: (key, params) => i18n.global.t(key, params),
+        },
         stubs: {
           UnnnicDisclaimer: {
             name: 'UnnnicDisclaimer',
@@ -124,7 +126,9 @@ describe('WarningArchivedMessages', () => {
     it('should render with UnnnicDisclaimer component structure', () => {
       wrapper = createWrapper({
         global: {
-          plugins: [i18n],
+          mocks: {
+            $t: (key, params) => i18n.global.t(key, params),
+          },
           stubs: {
             UnnnicDisclaimer: {
               name: 'UnnnicDisclaimer',

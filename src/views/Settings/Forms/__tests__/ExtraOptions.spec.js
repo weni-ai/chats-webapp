@@ -47,6 +47,9 @@ function createWrapper(props = {}) {
     props: { modelValue: sectorExtraOptionsMock, isEditing: false, ...props },
     global: {
       plugins: [router, createTestingPinia()],
+      mocks: {
+        $t: (msg) => msg,
+      },
       stubs: {
         UnnnicSwitch: true,
       },

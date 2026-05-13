@@ -54,10 +54,9 @@ function createWrapper(store, props = {}) {
     },
     global: {
       plugins: [store],
-      mocks: {
-        $t: (key) => key,
-        $tc: (key, count, params) => `${key}_${count}`,
-      },
+        mocks: {
+          $t: (key) => key,
+        },
       stubs: {
         UnnnicDialog: {
           template: '<div><slot /></div>',

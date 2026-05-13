@@ -11,6 +11,7 @@ import { useDiscussions } from '@/store/modules/chats/discussions';
 import { useFeatureFlag } from '@/store/modules/featureFlag';
 
 import TheCardGroups from '../index.vue';
+import i18n from '@/plugins/i18n';
 
 vi.mock('@/views/loadings/RoomsList.vue', () => ({
   default: {
@@ -112,7 +113,9 @@ describe('TheCardGroups.vue', () => {
               'chats.errors.default':
                 'An error occurred, please try again later',
             };
-            return translations[key] || key;
+            return Object.prototype.hasOwnProperty.call(translations, key)
+              ? translations[key]
+              : i18n.global.t(key, params);
           },
         },
         stubs: {

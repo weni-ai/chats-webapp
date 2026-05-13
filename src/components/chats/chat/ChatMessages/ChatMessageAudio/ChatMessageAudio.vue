@@ -13,7 +13,7 @@
       :isLoadingTranscription="isLoadingTranscription"
       :transcriptionText="transcriptionText"
       :fluidBar="canShowTranscriptionAudioAction"
-      :locale="i18n.global.locale"
+      :locale="i18n.global.locale.value"
       @update:show-transcription-text="showTranscriptionText = $event"
       @failed-click="emit('failed-click')"
     >
