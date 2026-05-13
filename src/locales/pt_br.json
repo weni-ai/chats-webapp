@@ -426,7 +426,7 @@
     "tags_help": "As tags ajudam a localizar os chats e também gerar bons relatórios",
     "chat_with_contact_ended": "Chat com {contact} encerrado",
     "see_history": "Histórico geral",
-    "tag_request": "@:please classifique o atendimento",
+    "tag_request": "Por favor classifique o atendimento",
     "closed_in": "Chat encerrado em",
     "closed": "Chat encerrado",
     "transfer": {
@@ -505,14 +505,14 @@
   "close": "Fechar",
   "ended_by": "Finalizado por",
   "all": "Todos",
-  "back_to_chats": "@:back para chats",
+  "back_to_chats": "Voltar para chats",
   "filter": {
     "label": "Filtro",
     "empty_tags": "Nenhuma tag disponível",
     "by_tag": "Filtrar por tag",
     "by_tags": "Filtrar por tags",
     "by_agent": "Filtrar por agente",
-    "by_date": "Filtrar por @.lower:date",
+    "by_date": "Filtrar por data",
     "by_queue": "Filtrar por fila",
     "clear_all": "Limpar filtros",
     "dates": {

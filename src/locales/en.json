@@ -423,7 +423,7 @@
     "tags_help": "Tags help you locate chats and also generate good reports",
     "chat_with_contact_ended": "Chat with {contact} closed",
     "see_history": "General history",
-    "tag_request": "@:please tag the chat",
+    "tag_request": "Please tag the chat",
     "closed_in": "Chat closed in",
     "closed": "Closed chat",
     "transfer": {
@@ -502,14 +502,14 @@
   "close": "Close",
   "ended_by": "Ended by",
   "all": "All",
-  "back_to_chats": "@:back to chats",
+  "back_to_chats": "Back to chats",
   "filter": {
     "label": "Filter",
     "empty_tags": "No tags available",
     "by_tag": "Filter by tag",
     "by_tags": "Filter by tags",
     "by_agent": "Filter by agent",
-    "by_date": "Filter by @.lower:date",
+    "by_date": "Filter by date",
     "by_queue": "Filter by queue",
     "clear_all": "Clear filters",
     "dates": {

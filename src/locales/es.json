@@ -426,7 +426,7 @@
     "tags_help": "Las etiquetas te ayudan a localizar chats y también a generar buenos informes.",
     "chat_with_contact_ended": "Chat con {contact} cerrado",
     "see_history": "Historial general",
-    "tag_request": "@:please calificar el chat",
+    "tag_request": "Por favor califica el chat",
     "closed_in": "Chat cerrado en",
     "closed": "Chat cerrado",
     "transfer": {
@@ -505,14 +505,14 @@
   "close": "Fechar",
   "ended_by": "Cerrado por",
   "all": "Todos",
-  "back_to_chats": "@:back a los chats",
+  "back_to_chats": "Volver a los chats",
   "filter": {
     "label": "Filtro",
     "empty_tags": "No hay etiquetas disponibles",
     "by_tag": "Filtrar por tag",
     "by_tags": "Filtrar por tags",
     "by_agent": "Filtrar por agente",
-    "by_date": "Filtrar por @.lower:date",
+    "by_date": "Filtrar por fecha",
     "by_queue": "Filtrar por cola",
     "clear_all": "Limpiar filtros",
     "dates": {
