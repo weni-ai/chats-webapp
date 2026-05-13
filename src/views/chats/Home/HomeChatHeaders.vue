@@ -170,7 +170,7 @@ import DiscussionHeader from '@/components/chats/DiscussionHeader.vue';
 import ModalCloseDiscussion from '@/views/chats/Home/ModalCloseDiscussion.vue';
 
 import { formatContactName } from '@/utils/chats';
-import { parseUrn } from '@/utils/room';
+import { buildHistorySearchTerm } from '@/utils/room';
 import { isUserAdmin } from '@/utils/permissions';
 
 export default {
@@ -308,10 +308,10 @@ export default {
       return this.$emit('back');
     },
     openHistory() {
-      const { plataform, contactNum } = parseUrn(this.room);
+      if (!this.room?.has_history) return;
+
+      const contactUrn = buildHistorySearchTerm(this.room);
       const protocol = this.room.protocol;
-      const contactUrn =
-        plataform === 'whatsapp' ? contactNum.replace('+', '') : contactNum;
 
       const A_YEAR_AGO = dateFnsFormat(
         dateFnsSubYears(new Date(), 1),
