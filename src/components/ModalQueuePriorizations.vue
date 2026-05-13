@@ -9,8 +9,7 @@
           {{ $t('chats.select_services_queues') }}
         </p>
         <UnnnicDisclaimer
-          v-if="!verifySelectedLength"
-          :description="$t('chats.select_at_least')"
+          :description="$t('chats.select_queues_priorization_hint')"
           type="attention"
         />
         <section class="queue-modal-select">
@@ -19,8 +18,9 @@
               v-model="selectedQueues"
               data-testid="queue-priorizations-select"
               :options="queues"
-              :label="$t('chats.select_the_queues')"
+              :label="$t('chats.define_the_queues')"
               :placeholder="$t('chats.select_your_queues')"
+              :message="$t('chats.select_at_least')"
               returnObject
               clearable
               enableSearch
