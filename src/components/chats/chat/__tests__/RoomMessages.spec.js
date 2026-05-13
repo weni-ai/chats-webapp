@@ -130,9 +130,6 @@ const createWrapper = (props = {}, piniaState = {}) => {
     },
     global: {
       plugins: [pinia],
-      mocks: {
-        $t: (key) => key,
-      },
     },
   });
 };
@@ -464,7 +461,6 @@ describe('RoomMessages.vue', () => {
         props: { showRoomSummary: false },
         global: {
           plugins: [pinia],
-          mocks: { $t: (key) => key },
         },
       });
 

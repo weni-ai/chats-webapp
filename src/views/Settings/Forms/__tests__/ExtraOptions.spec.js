@@ -7,6 +7,7 @@ import { createMemoryHistory, createRouter } from 'vue-router';
 import FormSectorExtraOptions from '../ExtraOptions.vue';
 
 import unnnic from '@weni/unnnic-system';
+import i18n from '@/plugins/i18n';
 
 const defaultTags = [
   { uuid: 'finance', name: 'Financeiro' },
@@ -60,6 +61,7 @@ describe('SectorExtraOptions', () => {
   let wrapper;
 
   beforeEach(async () => {
+    i18n.global.locale.value = 'en';
     wrapper = createWrapper();
     await flushPromises();
   });

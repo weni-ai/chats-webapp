@@ -14,7 +14,7 @@
         :key="discussionClosed.uuid"
         class="contact-info__discussions__list-item"
       >
-        <p>{{ $t('discussions.title') }}:</p>
+        <p>{{ $t('discussions.title', { count: 1 }) }}:</p>
         <button
           class="contact-info__discussions__list-item-link"
           data-testid="contact-info-discussion-list-item"

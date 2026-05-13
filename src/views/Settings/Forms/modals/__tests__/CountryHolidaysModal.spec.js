@@ -39,9 +39,6 @@ describe('CountryHolidaysModal', () => {
         ...props,
       },
       global: {
-        mocks: {
-          $t: (key) => key,
-        },
         stubs: {
           UnnnicSwitch: {
             template: `

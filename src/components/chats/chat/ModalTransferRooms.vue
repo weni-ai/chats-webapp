@@ -112,11 +112,9 @@ export default {
         : this.selectedWaitingRooms;
     },
     disclaimerDescription() {
-      return i18n.global.tc(
-        'bulk_transfer.selected_chats_count',
-        this.currentSelectedRooms.length,
-        { count: this.currentSelectedRooms.length },
-      );
+      return i18n.global.t('bulk_transfer.selected_chats_count', {
+        count: this.currentSelectedRooms.length,
+      });
     },
   },
 

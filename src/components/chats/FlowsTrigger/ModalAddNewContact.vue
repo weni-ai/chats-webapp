@@ -142,11 +142,10 @@ export default {
       } catch (error) {
         if (error?.response?.status === 400) {
           const prepareTel = this.contact.tel.replace(/[^0-9]/g, '');
-          const contact = [`${prepareTel}`];
           callUnnnicAlert({
             props: {
               text: this.$t('flows_trigger.contact_already_exists', {
-                contact,
+                contact: prepareTel,
               }),
               type: 'error',
             },

@@ -2,6 +2,7 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { mount } from '@vue/test-utils';
 import { unnnicButton as UnnnicButton } from '@weni/unnnic-system';
 import TextBox from '../TextBox.vue';
+import i18n from '@/plugins/i18n';
 
 import * as isMobile from 'is-mobile';
 
@@ -34,7 +35,7 @@ describe('TextBox', () => {
   });
 
   it('should displays the placeholder text in the textarea', () => {
-    const placeholder = 'Message';
+    const placeholder = i18n.global.t('message');
 
     const textarea = wrapper.find('[data-testid="text-area"]');
     expect(textarea.element.placeholder).toBe(placeholder);

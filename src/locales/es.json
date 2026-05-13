@@ -115,7 +115,7 @@
     "description": "Suelta tu archivo aquí para enviar"
   },
   "waiting_for": {
-    "minutes": "Esperando por un minuto | Esperando por {n} minutos"
+    "minutes": "{n, plural, one {Esperando por un minuto} other {Esperando por {n} minutos}}"
   },
   "chat_message": {
     "reply_message": {
@@ -144,7 +144,7 @@
   },
   "step_of": "Paso {step} de {total}",
   "type_to_filter": "Escribe para filtrar",
-  "chats_count": "{count} chat | {count} chats",
+  "chats_count": "{count, plural, one {{count} chat} other {{count} chats}}",
   "attention": "Atención",
   "updates_saved": "Actualizaciones guardadas",
   "updated_info": "Información actualizada",
@@ -168,7 +168,7 @@
   "transfer_all_selected_chats": "Transferir todos los chats seleccionados",
   "take_over_all_selected_chats_tooltip": "Asumir todos los chats seleccionados",
   "end_all_selected_chats_tooltip": "Finalizar todos los chats seleccionados",
-  "number_of_chats_selected": "{count} chat seleccionado | {count} chats seleccionados",
+  "number_of_chats_selected": "{count, plural, one {{count} chat seleccionado} other {{count} chats seleccionados}}",
   "image": "Imagen",
   "video": "Vídeo",
   "audio_message": "Mensaje de audio",
@@ -443,7 +443,7 @@
     "tags_help": "Las etiquetas te ayudan a localizar chats y también a generar buenos informes.",
     "chat_with_contact_ended": "Chat con {contact} cerrado",
     "see_history": "Historial general",
-    "tag_request": "@:please calificar el chat",
+    "tag_request": "Por favor califica el chat",
     "closed_in": "Chat cerrado en",
     "closed": "Chat cerrado",
     "transfer": {
@@ -526,14 +526,14 @@
   "close": "Fechar",
   "ended_by": "Cerrado por",
   "all": "Todos",
-  "back_to_chats": "@:back a los chats",
+  "back_to_chats": "Volver a los chats",
   "filter": {
     "label": "Filtro",
     "empty_tags": "No hay etiquetas disponibles",
     "by_tag": "Filtrar por tag",
     "by_tags": "Filtrar por tags",
     "by_agent": "Filtrar por agente",
-    "by_date": "Filtrar por @.lower:date",
+    "by_date": "Filtrar por fecha",
     "by_queue": "Filtrar por cola",
     "clear_all": "Limpiar filtros",
     "dates": {
@@ -620,16 +620,16 @@
   "chat_closed_by": {
     "agent": "Chat cerrado por el agente"
   },
-  "transfer_contact": "Transferir contacto | Transferir contacts",
+  "transfer_contact": "{count, plural, one {Transferir contacto} other {Transferir contactos}}",
   "bulk_transfer": {
     "transfer_selected_contacts": "Transferir contactos seleccionados",
     "transfer_all": "Transferir todos",
-    "selected_chats_count": "{count} chat seleccionado para transferencia. | {count} chats seleccionados para transferencia.",
-    "success_message": "¡{count} chat transferido con éxito! | ¡{count} chats transferidos con éxito!",
-    "partial_success_message": "{success} chat transferido, {failed} falló. Intente nuevamente. | {success} chats transferidos, {failed} fallaron. Intente nuevamente.",
+    "selected_chats_count": "{count, plural, one {{count} chat seleccionado para transferencia.} other {{count} chats seleccionados para transferencia.}}",
+    "success_message": "{count, plural, one {¡{count} chat transferido con éxito!} other {¡{count} chats transferidos con éxito!}}",
+    "partial_success_message": "{success, plural, one {{success} chat transferido, {failed} falló. Intente nuevamente.} other {{success} chats transferidos, {failed} fallaron. Intente nuevamente.}}",
     "error_message": "No fue posible transferir los chats, intente nuevamente",
-    "agent_transfer_success": "Contacto transferido con éxito al agente {agent} | Contactos transferidos con éxito al agente {agent}",
-    "queue_transfer_success": "Contacto transferido con éxito a la cola {queue} | Contactos transferidos con éxito a la cola {queue}",
+    "agent_transfer_success": "{count, plural, one {Contacto transferido con éxito al agente {agent}} other {Contactos transferidos con éxito al agente {agent}}}",
+    "queue_transfer_success": "{count, plural, one {Contacto transferido con éxito a la cola {queue}} other {Contactos transferidos con éxito a la cola {queue}}}",
     "error": "No fue posible transferir los contactos, intente nuevamente",
     "disclaimer": {
       "transfer_to_other_sector": "Al transferir el chat a una cola en otro sector, las etiquetas agregadas se eliminarán.",
@@ -640,19 +640,19 @@
   "bulk_close": {
     "close_selected_contacts": "Cerrar contactos seleccionados",
     "confirm_close_selected": "¿Está seguro de que desea cerrar los contactos seleccionados?",
-    "success_message": "¡{count} chat finalizado con éxito! | ¡{count} chats finalizados con éxito!",
-    "partial_success_message": "{success} chat finalizado, {failed} falló. Intente nuevamente. | {success} chats finalizados, {failed} fallaron. Intente nuevamente.",
+    "success_message": "{count, plural, one {¡{count} chat finalizado con éxito!} other {¡{count} chats finalizados con éxito!}}",
+    "partial_success_message": "{success, plural, one {{success} chat finalizado, {failed} falló. Intente nuevamente.} other {{success} chats finalizados, {failed} fallaron. Intente nuevamente.}}",
     "error_message": "No fue posible cerrar los chats, intente nuevamente",
     "end_all_selected_chats": "Finalizar todos los chats seleccionados",
     "sector_tag": "Sector {current} de {total}",
-    "chats_count_sector": "{count} chat · sector {sector} | {count} chats · sector {sector}",
+    "chats_count_sector": "{count, plural, one {{count} chat · sector {sector}} other {{count} chats · sector {sector}}}",
     "required_tags_title": "Las tags son obligatorias para finalizar chats en el sector {sector}",
-    "required_tags_description": "Si selecciona alguna tag a continuación, se aplicará al {count} chat y reemplazará cualquier tag existente. | Si selecciona alguna tag a continuación, se aplicará a los {count} chats y reemplazará cualquier tag existente.",
+    "required_tags_description": "{count, plural, one {Si selecciona alguna tag a continuación, se aplicará al {count} chat y reemplazará cualquier tag existente.} other {Si selecciona alguna tag a continuación, se aplicará a los {count} chats y reemplazará cualquier tag existente.}}",
     "next_sector": "Siguiente sector",
     "end_all_chats": "Finalizar todos ({count} chats)",
     "back": "Volver",
     "optional_tags_title": "Las tags no son obligatorias para finalizar chats en el sector {sector}",
-    "optional_tags_description": "Si selecciona alguna tag a continuación, se aplicará al {count} chat y reemplazará cualquier tag existente. | Si selecciona alguna tag a continuación, se aplicará a los {count} chats y reemplazará cualquier tag existente.",
+    "optional_tags_description": "{count, plural, one {Si selecciona alguna tag a continuación, se aplicará al {count} chat y reemplazará cualquier tag existente.} other {Si selecciona alguna tag a continuación, se aplicará a los {count} chats y reemplazará cualquier tag existente.}}",
     "no_tags_in_sector": "No hay tags registradas en este sector para ser seleccionadas."
   },
   "close_chat": {
@@ -660,11 +660,11 @@
   },
   "bulk_take": {
     "title": "Asumir todos los chats seleccionados",
-    "selected_chats_count": "{count} chat está seleccionado para asumir. | {count} chats están seleccionados para asumir.",
+    "selected_chats_count": "{count, plural, one {{count} chat está seleccionado para asumir.} other {{count} chats están seleccionados para asumir.}}",
     "confirm_take_over_selected": "¿Está seguro de que desea asumir todos los chats seleccionados?",
     "take_over_all": "Asumir todos",
-    "success_message": "¡{count} chat asumido con éxito! | ¡{count} chats asumidos con éxito!",
-    "partial_success_message": "{success} chat asumido, {failed} falló. Intente nuevamente. | {success} chats asumidos, {failed} fallaron. Intente nuevamente.",
+    "success_message": "{count, plural, one {¡{count} chat asumido con éxito!} other {¡{count} chats asumidos con éxito!}}",
+    "partial_success_message": "{success, plural, one {{success} chat asumido, {failed} falló. Intente nuevamente.} other {{success} chats asumidos, {failed} fallaron. Intente nuevamente.}}",
     "error_message": "No fue posible asumir los chats, intente nuevamente"
   },
   "contact_info": {
@@ -685,7 +685,7 @@
     "protocol_copied": "¡Ticket ID copiado al portapapeles!"
   },
   "discussions": {
-    "title": "Discusión | Discusiones",
+    "title": "{count, plural, one {Discusión} other {Discusiones}}",
     "start_discussion": {
       "title": "Iniciar discusión",
       "form": {
@@ -789,9 +789,9 @@
   "send_media": "Enviar multimedia",
   "send_photo_or_video": "Enviar foto o vídeo",
   "photo_or_video": "Foto o vídeo",
-  "send_docs": "Enviar documento | Enviar documento | Enviar documentos",
+  "send_docs": "{count, plural, =0 {Enviar documento} one {Enviar documento} other {Enviar documentos}}",
   "doc": "Documento",
-  "send_images": "Enviar imagen | Enviar imagen | Enviar imágenes",
+  "send_images": "{count, plural, =0 {Enviar imagen} one {Enviar imagen} other {Enviar imágenes}}",
   "quick_message": "Mensajes rápidos",
   "flows": "Flujos",
   "flows_trigger": {
@@ -802,7 +802,7 @@
       "trigger_time": "Tiempo de activación"
     },
     "groups": "Grupos ({length})",
-    "group_contacts": "{n} contacto | {n} contactos",
+    "group_contacts": "{n, plural, one {{n} contacto} other {{n} contactos}}",
     "letter_group": "{letter} ({length})",
     "letter_group_unnamed": "Sin nombre ({length})",
     "unnamed_contact": "Contacto sin nombre",
