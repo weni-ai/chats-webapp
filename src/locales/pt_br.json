@@ -261,11 +261,15 @@
         "switch_label": "Usar assinatura"
       },
       "csat": {
-        "label": "Enviar automaticamente uma pesquisa de satisfação após o atendimento do Live desk ser encerrado",
+        "custom": {
+          "flow_disclaimer": "O fluxo selecionado deve usar uma classificação de satisfação de 1 a 5 para garantir os resultados corretos da pesquisa."
+        },
         "hint": "Se houver um fluxo ativo no módulo Flows configurado para disparar a pesquisa após o atendimento, esta configuração pode gerar conflito e impactar o envio da pesquisa.",
-        "confirm_modal": {
-          "content_1": "Se houver um fluxo ativo no módulo Flows configurado para disparar a pesquisa após o atendimento, esta configuração pode gerar conflito e impactar o envio da pesquisa.",
-          "content_2": "Deseja continuar mesmo assim?"
+        "label": "Enviar automaticamente uma pesquisa de satisfação após o atendimento do Live desk ser encerrado",
+        "section_title": "Pesquisa de satisfação",
+        "type": {
+          "custom": "Fluxos personalizados",
+          "default": "Pesquisa CSAT padrão (recomendado)"
         }
       },
       "automated_message": {
