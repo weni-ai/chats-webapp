@@ -4,7 +4,6 @@ import CountryHolidaysModal from '../CountryHolidaysModal.vue';
 import Sector from '@/services/api/resources/settings/sector';
 import unnnic from '@weni/unnnic-system';
 import moment from 'moment';
-import i18n from '@/plugins/i18n';
 
 vi.mock('@/services/api/resources/settings/sector', () => ({
   default: {
@@ -40,9 +39,6 @@ describe('CountryHolidaysModal', () => {
         ...props,
       },
       global: {
-        mocks: {
-          $t: (key, params) => i18n.global.t(key, params),
-        },
         stubs: {
           UnnnicSwitch: {
             template: `

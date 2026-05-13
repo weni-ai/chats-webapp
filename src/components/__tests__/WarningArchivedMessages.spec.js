@@ -1,7 +1,6 @@
 import { describe, it, expect, afterEach } from 'vitest';
 import { mount } from '@vue/test-utils';
 import WarningArchivedMessages from '../WarningArchivedMessages.vue';
-import i18n from '@/plugins/i18n';
 
 describe('WarningArchivedMessages', () => {
   let wrapper;
@@ -9,9 +8,6 @@ describe('WarningArchivedMessages', () => {
   const createWrapper = (options = {}) => {
     const defaultOptions = {
       global: {
-        mocks: {
-          $t: (key, params) => i18n.global.t(key, params),
-        },
         stubs: {
           UnnnicDisclaimer: {
             name: 'UnnnicDisclaimer',
@@ -126,9 +122,6 @@ describe('WarningArchivedMessages', () => {
     it('should render with UnnnicDisclaimer component structure', () => {
       wrapper = createWrapper({
         global: {
-          mocks: {
-            $t: (key, params) => i18n.global.t(key, params),
-          },
           stubs: {
             UnnnicDisclaimer: {
               name: 'UnnnicDisclaimer',

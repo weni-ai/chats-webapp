@@ -15,9 +15,6 @@ describe('ChatMessagesFeedbackMessage', () => {
     return mount(ChatMessagesFeedbackMessage, {
       props: defaultProps,
       global: {
-        mocks: {
-          $t: (key, params) => i18n.global.t(key, params),
-        },
         stubs: {
           ChatFeedback: true,
         },

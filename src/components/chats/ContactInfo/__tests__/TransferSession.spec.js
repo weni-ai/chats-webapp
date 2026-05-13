@@ -33,7 +33,7 @@ describe('TransferSession', () => {
 
   it('renders correctly with initial state', () => {
     expect(wrapper.find('[data-testid="transfer-session-title"]').text()).toBe(
-      wrapper.vm.$t('transfer_contact'),
+      wrapper.vm.$t('transfer_contact', { count: 1 }),
     );
 
     expect(

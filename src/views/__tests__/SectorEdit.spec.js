@@ -6,6 +6,7 @@ import { createTestingPinia } from '@pinia/testing';
 import SectorEdit from '@/views/Settings/Sectors/Edit/index.vue';
 import { useSettings } from '@/store/modules/settings';
 import { useCompositionI18nInThisSpecFile } from '@/utils/test/compositionI18nVitest';
+import i18n from '@/plugins/i18n';
 
 const mockSector1 = {
   id: 1,
@@ -161,7 +162,11 @@ describe('EditSector.vue', () => {
   });
 
   it('matches snapshot', async () => {
+    i18n.global.locale.value = 'en';
     const wrapper = await mountWithQuery({ tab: 'general' });
-    expect(wrapper.html()).toMatchSnapshot();
+    const html = wrapper
+      .html()
+      .replace(/\sstyle="animation-duration:\s*0s;"/g, ' style=""');
+    expect(html).toMatchSnapshot();
   });
 });

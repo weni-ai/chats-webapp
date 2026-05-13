@@ -18,7 +18,7 @@ exports[`EditSector.vue > matches snapshot 1`] = `
     <section data-v-c6575b33="" class="page-header__actions" data-testid="page-actions"><button data-v-fb18c550="" data-v-ac9ddd5b="" disabled="" class="unnnic-button unnnic-button--size-large unnnic-button--primary">
         <!---->
         <!---->
-        <!----><span data-v-fb18c550="" class="unnnic-button__label" style="visibility: visible;" data-testid="button-label"> save_changes</span>
+        <!----><span data-v-fb18c550="" class="unnnic-button__label" style="visibility: visible;" data-testid="button-label"> Save changes</span>
         <!---->
       </button>
       <!--v-if-->

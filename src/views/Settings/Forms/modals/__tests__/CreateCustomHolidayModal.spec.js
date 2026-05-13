@@ -3,7 +3,6 @@ import { mount } from '@vue/test-utils';
 import CreateCustomHolidayModal from '../CreateCustomHolidayModal.vue';
 import Sector from '@/services/api/resources/settings/sector';
 import unnnic from '@weni/unnnic-system';
-import i18n from '@/plugins/i18n';
 
 vi.mock('@/services/api/resources/settings/sector', () => ({
   default: {
@@ -28,9 +27,6 @@ describe('CreateCustomHolidayModal', () => {
         ...props,
       },
       global: {
-        mocks: {
-          $t: (key, params) => i18n.global.t(key, params),
-        },
         stubs: {
           UnnnicInputDatePicker: {
             template: `

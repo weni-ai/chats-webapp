@@ -16,11 +16,6 @@ function createWrapper(props = {}) {
       modelValue: '',
       ...props,
     },
-    global: {
-      mocks: {
-        $t: (key, params) => i18n.global.t(key, params),
-      },
-    },
     stubs: {
       UnnnicButton,
     },

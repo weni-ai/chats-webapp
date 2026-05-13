@@ -9,7 +9,6 @@ import RoomsTableFilters from '../RoomsTableFilters.vue';
 import RoomsTableFiltersLoading from '@/views/loadings/ClosedChats/RoomsTableFiltersLoading.vue';
 
 import Sector from '@/services/api/resources/settings/sector';
-import i18n from '@/plugins/i18n';
 
 vi.mock('is-mobile', () => ({
   default: vi.fn(),
@@ -61,7 +60,6 @@ describe('RoomsTableFilters.vue', () => {
     return mount(RoomsTableFilters, {
       global: {
         mocks: {
-          $t: (key, params) => i18n.global.t(key, params),
           $i18n: { locale: 'en' },
           $route: { query: currentRouteQuery },
         },
