@@ -269,7 +269,9 @@
         "section_title": "Pesquisa de satisfação",
         "type": {
           "custom": "Fluxos personalizados",
-          "default": "Pesquisa CSAT padrão (recomendado)"
+          "default": "Pesquisa CSAT padrão (recomendado)",
+          "label": "Tipo de pesquisa",
+          "tooltip": "Escolha entre a pesquisa CSAT padrão ou um fluxo personalizado já configurado no módulo Flows."
         }
       },
       "automated_message": {

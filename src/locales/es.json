@@ -269,7 +269,9 @@
         "section_title": "Encuesta de satisfacción",
         "type": {
           "custom": "Flujos personalizados",
-          "default": "Encuesta CSAT predeterminada (recomendado)"
+          "default": "Encuesta CSAT predeterminada (recomendado)",
+          "label": "Tipo de encuesta",
+          "tooltip": "Elige entre la encuesta CSAT predeterminada o un flujo personalizado ya configurado en el módulo de Flujos."
         }
       },
       "automated_message": {

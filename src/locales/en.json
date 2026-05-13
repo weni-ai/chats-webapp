@@ -269,7 +269,9 @@
         "section_title": "Satisfaction survey",
         "type": {
           "custom": "Custom flows",
-          "default": "Default CSAT survey (Recommended)"
+          "default": "Default CSAT survey (Recommended)",
+          "label": "Survey type",
+          "tooltip": "Choose between the default CSAT survey or a custom flow you've already configured in the Flows module."
         }
       },
       "automated_message": {
