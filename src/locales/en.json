@@ -274,11 +274,17 @@
         "switch_label": "Use signature"
       },
       "csat": {
-        "label": "Automatically send a satisfaction survey after Live desk support ends",
+        "custom": {
+          "flow_disclaimer": "The selected flow must use a 1 to 5 satisfaction rating to ensure correct survey results."
+        },
         "hint": "If there is an active flow in the Flows module set to trigger a survey after support ends, this setting may cause conflicts and affect survey delivery.",
-        "confirm_modal": {
-          "content_1": "If there is an active flow in the Flows module set to trigger a survey after support ends, this setting may cause conflicts and affect survey delivery.",
-          "content_2": "Do you want to continue anyway?"
+        "label": "Automatically send a satisfaction survey after Live desk support ends",
+        "section_title": "Satisfaction survey",
+        "type": {
+          "custom": "Custom flows",
+          "default": "Default CSAT survey (Recommended)",
+          "label": "Survey type",
+          "tooltip": "Choose between the default CSAT survey or a custom flow you've already configured in the Flows module."
         }
       },
       "automated_message": {

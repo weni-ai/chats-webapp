@@ -3,20 +3,22 @@
 exports[`SectorExtraOptions > Should match the snapshot 1`] = `
 "<section data-v-8e9664ba="" class="sector-extra-options-form">
   <section data-v-8e9664ba="" class="switchs">
-    <h2 data-v-8e9664ba="" class="switchs__title" data-testid="switchs-title">Extra options</h2>
-    <unnnic-switch-stub data-v-8e9664ba="" size="small" label="" option="" helper="" textleft="" textright="Triggering message templates" disabled="false" modelvalue="false" class="margin-y-space-1" data-testid="config-switch"></unnnic-switch-stub>
+    <h2 data-v-8e9664ba="" class="switchs__title" data-testid="switchs-title">sector.additional_options.title</h2>
+    <unnnic-switch-stub data-v-8e9664ba="" size="small" label="" option="" helper="" textleft="" textright="sector.additional_options.template_message.switch_label" disabled="false" modelvalue="false" class="margin-y-space-1" data-testid="config-switch"></unnnic-switch-stub>
     <section data-v-8e9664ba="" class="switchs__container">
-      <unnnic-switch-stub data-v-8e9664ba="" size="small" label="" option="" helper="Each message exchanged will have the name of the agent who is answering." textleft="" textright="Use signature" disabled="false" modelvalue="false" class="margin-y-space-1" data-testid="config-switch"></unnnic-switch-stub>
+      <unnnic-switch-stub data-v-8e9664ba="" size="small" label="" option="" helper="sector.additional_options.agents_signature.hint" textleft="" textright="sector.additional_options.agents_signature.switch_label" disabled="false" modelvalue="false" class="margin-y-space-1" data-testid="config-switch"></unnnic-switch-stub>
     </section>
-    <unnnic-switch-stub data-v-8e9664ba="" size="small" label="" option="" helper="When active, it allows representatives to edit the custom fields of the contact in the &quot;All Information&quot; section." textleft="" textright="Allow representatives to edit custom contact information" disabled="false" modelvalue="false" class="margin-y-space-1" data-testid="config-switch"></unnnic-switch-stub>
-    <!--v-if-->
+    <unnnic-switch-stub data-v-8e9664ba="" size="small" label="" option="" helper="sector.additional_options.edit_custom_fields.hint" textleft="" textright="sector.additional_options.edit_custom_fields.label" disabled="false" modelvalue="false" class="margin-y-space-1" data-testid="config-switch"></unnnic-switch-stub>
   </section>
   <section data-v-8e9664ba="" class="switchs">
-    <h2 data-v-8e9664ba="" class="switchs__title">Automated messages</h2>
+    <h2 data-v-8e9664ba="" class="switchs__title">sector.additional_options.automated_message.title</h2>
     <!--v-if-->
   </section>
+  <!--v-if-->
   <section data-v-8e9664ba="" class="tags">
-    <h2 data-v-8e9664ba="" class="tags__title" data-testid="tags-title">Tags <div data-v-03fa3548="" data-v-61269528="" class="unnnic-tooltip-trigger unnnic-tooltip" data-testid="tooltip-trigger" data-state="closed" data-grace-area-trigger=""><svg data-v-b593673c="" data-v-8e9664ba="" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" aria-hidden="true" role="img" width="1em" height="1em" viewBox="0 0 16 16" class="unnnic-icon unnnic-icon-scheme--fg-base unnnic-icon-size--sm" data-testid="iconify-icon"></svg></div>
+    <h2 data-v-8e9664ba="" class="tags__title" data-testid="tags-title">sector.tags <div data-v-03fa3548="" data-v-61269528="" class="unnnic-tooltip-trigger unnnic-tooltip" data-testid="tooltip-trigger" data-state="closed" data-grace-area-trigger=""><svg data-v-b593673c="" data-v-8e9664ba="" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" aria-hidden="true" role="img" width="1em" height="1em" viewBox="0 0 24 24" class="iconify iconify--ri unnnic-icon unnnic-icon-scheme--fg-base unnnic-icon-size--sm" data-testid="iconify-icon">
+          <path fill="currentColor" d="M12 22C6.477 22 2 17.523 2 12S6.477 2 12 2s10 4.477 10 10s-4.477 10-10 10m0-2a8 8 0 1 0 0-16a8 8 0 0 0 0 16m-1-5h2v2h-2zm2-1.645V14h-2v-1.5a1 1 0 0 1 1-1a1.5 1.5 0 1 0-1.471-1.794l-1.962-.393A3.501 3.501 0 1 1 13 13.355"></path>
+        </svg></div>
       <div data-v-61269528="" disabled="false" defer="false" forcemount="false">
         <!---->
       </div>
@@ -24,10 +26,10 @@ exports[`SectorExtraOptions > Should match the snapshot 1`] = `
     <section data-v-8e9664ba="" class="tags-form">
       <section data-v-a13fc64d="" data-v-2dd04313="" data-v-8e9664ba="" class="unnnic-form-element unnnic-form md tags-form__input" data-testid="tags-input-tag-name">
         <section data-v-b52fcb11="" data-v-a13fc64d="" class="unnnic-label unnnic-form-element__label">
-          <p data-v-b52fcb11="" class="unnnic-label__label">Tag name</p>
+          <p data-v-b52fcb11="" class="unnnic-label__label">tags.add.label</p>
           <!---->
         </section>
-        <div data-v-ff09e93b="" data-v-2dd04313="" class="text-input size--md tags-form__input unnnic-form-input" data-testid="tags-input-tag-name" hascloudycolor="false" mask=""><input data-v-043812be="" data-v-ff09e93b="" class="tags-form__input unnnic-form-input input-itself input size-md normal tags-form__input unnnic-form-input input-itself" data-testid="tags-input-tag-name" hascloudycolor="false" placeholder="Enter the name of a tag to search or to add it" iconleft="" iconright="" iconleftclickable="false" iconrightclickable="false" showclear="false" type="text" maxlength="120" value="">
+        <div data-v-ff09e93b="" data-v-2dd04313="" class="text-input size--md tags-form__input unnnic-form-input" data-testid="tags-input-tag-name" hascloudycolor="false" mask=""><input data-v-043812be="" data-v-ff09e93b="" class="tags-form__input unnnic-form-input input-itself input size-md normal tags-form__input unnnic-form-input input-itself" data-testid="tags-input-tag-name" hascloudycolor="false" placeholder="tags.add.placeholder" iconleft="" iconright="" iconleftclickable="false" iconrightclickable="false" showclear="false" type="text" maxlength="120" value="">
           <!---->
           <section data-v-ff09e93b="" class="icon-right-container">
             <!---->
@@ -38,13 +40,13 @@ exports[`SectorExtraOptions > Should match the snapshot 1`] = `
       </section><button data-v-d7396b6a="" data-v-8e9664ba="" data-testid="tags-add-tag-button" disabled="" class="unnnic-button unnnic-button--size-large unnnic-button--secondary">
         <!---->
         <!---->
-        <!----><span data-v-d7396b6a="" class="unnnic-button__label" style="visibility: visible;" data-testid="button-label"> Add</span>
+        <!----><span data-v-d7396b6a="" class="unnnic-button__label" style="visibility: visible;" data-testid="button-label"> add</span>
         <!---->
       </button>
     </section>
     <!--v-if-->
     <section data-v-8e9664ba="" class="switchs__container required-tags">
-      <unnnic-switch-stub data-v-8e9664ba="" size="small" label="" option="" helper="" textleft="" textright="Require tags at the end of human support" disabled="true" modelvalue="false" class="margin-y-space-1" data-testid="config-switch"></unnnic-switch-stub>
+      <unnnic-switch-stub data-v-8e9664ba="" size="small" label="" option="" helper="" textleft="" textright="sector.additional_options.required_tags.switch_label" disabled="true" modelvalue="false" class="margin-y-space-1" data-testid="config-switch"></unnnic-switch-stub>
     </section>
   </section>
 </section>"
