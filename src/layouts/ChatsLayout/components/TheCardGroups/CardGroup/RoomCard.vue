@@ -136,12 +136,26 @@ export default {
     isLastMessageFromContact() {
       return !!this.room.last_message?.contact && !this.room.last_message?.user;
     },
+    isLastMessageFromAnotherAgent() {
+      return (
+        !!this.room.last_message?.user &&
+        this.room.last_message?.user?.email !== this.me?.email
+      );
+    },
+    isLastMessageFromBot() {
+      return !this.room.last_message?.contact && !this.room.last_message?.user;
+    },
     showPendingResponse() {
       const isYouAgentForThisRoom = this.room.user?.email === this.me?.email;
+      const isLastMessageValid =
+        this.isLastMessageFromContact ||
+        this.isLastMessageFromAnotherAgent ||
+        this.isLastMessageFromBot;
+
       return (
         this.isPendingResponseFeatureEnabled &&
         this.isProgressRoom &&
-        this.isLastMessageFromContact &&
+        isLastMessageValid &&
         this.unreadMessages === 0 &&
         isYouAgentForThisRoom
       );
