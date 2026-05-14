@@ -146,7 +146,6 @@ export default {
       return !this.room.last_message?.contact && !this.room.last_message?.user;
     },
     showPendingResponse() {
-      const isYouAgentForThisRoom = this.room.user?.email === this.me?.email;
       const isLastMessageValid =
         this.isLastMessageFromContact ||
         this.isLastMessageFromAnotherAgent ||
@@ -156,8 +155,7 @@ export default {
         this.isPendingResponseFeatureEnabled &&
         this.isProgressRoom &&
         isLastMessageValid &&
-        this.unreadMessages === 0 &&
-        isYouAgentForThisRoom
+        this.unreadMessages === 0
       );
     },
     pendingResponseTooltipText() {
