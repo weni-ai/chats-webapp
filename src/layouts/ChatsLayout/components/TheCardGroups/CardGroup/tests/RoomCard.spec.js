@@ -788,7 +788,7 @@ describe('RoomCard.vue', () => {
       wrapper.unmount();
     });
 
-    it('flag on + contact + unread === 0 + room owned by current user: shows pendingResponse with tooltip', () => {
+    it('flag on + contact + unread === 0: shows pendingResponse with tooltip', () => {
       enableFlag();
 
       const wrapper = createWrapper({
@@ -803,7 +803,7 @@ describe('RoomCard.vue', () => {
       wrapper.unmount();
     });
 
-    it('flag on + contact + unread === 0 BUT room owned by another agent: does not show pendingResponse', () => {
+    it('flag on + contact + unread === 0 + room owned by another agent: shows pendingResponse (view-mode)', () => {
       enableFlag();
 
       const wrapper = createWrapper({
@@ -817,12 +817,12 @@ describe('RoomCard.vue', () => {
 
       expect(wrapper.vm.isLastMessageFromContact).toBe(true);
       expect(wrapper.vm.unreadMessages).toBe(0);
-      expect(wrapper.vm.showPendingResponse).toBe(false);
+      expect(wrapper.vm.showPendingResponse).toBe(true);
 
       wrapper.unmount();
     });
 
-    it('flag on + contact + unread === 0 BUT room without owner: does not show pendingResponse', () => {
+    it('flag on + contact + unread === 0 + room without owner: shows pendingResponse', () => {
       enableFlag();
 
       const wrapper = createWrapper({
@@ -834,12 +834,12 @@ describe('RoomCard.vue', () => {
         }),
       });
 
-      expect(wrapper.vm.showPendingResponse).toBe(false);
+      expect(wrapper.vm.showPendingResponse).toBe(true);
 
       wrapper.unmount();
     });
 
-    it('flag on + last message from another agent + unread === 0 + room owned by current user: shows pendingResponse', () => {
+    it('flag on + last message from another agent + unread === 0: shows pendingResponse', () => {
       enableFlag();
 
       const wrapper = createWrapper({
@@ -875,7 +875,7 @@ describe('RoomCard.vue', () => {
       wrapper.unmount();
     });
 
-    it('flag on + last message from bot + unread === 0 + room owned by current user: shows pendingResponse', () => {
+    it('flag on + last message from bot + unread === 0: shows pendingResponse', () => {
       enableFlag();
 
       const room = {
