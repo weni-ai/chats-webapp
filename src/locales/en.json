@@ -929,6 +929,10 @@
           "confirmation": "Do you want to continue anyway?"
         }
       },
+      "restrict_offline_agents": {
+        "switch_label": "Allow interactions only for online representatives",
+        "hint": "If this option is enabled, offline or paused representatives will not be able to respond to ongoing chats."
+      },
       "bulk_transfer": {
         "tooltip": "This function allows representatives to transfer various contacts at once to a queue or representative",
         "switch_active": "Transfer chats in bulk to another queue or representative",

@@ -934,6 +934,10 @@
           "confirmation": "Deseja continuar mesmo assim?"
         }
       },
+      "restrict_offline_agents": {
+        "switch_label": "Permitir interações apenas para atendentes online",
+        "hint": "Se essa opção estiver ativada, atendentes offline ou em pausa não poderão responder a chats em andamento."
+      },
       "bulk_transfer": {
         "tooltip": "Essa função permite que atendentes transfiram diversos contatos de uma vez para uma fila ou atendente",
         "switch_active": "Transferir chats em massa para outra fila ou atendente",

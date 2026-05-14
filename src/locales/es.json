@@ -932,6 +932,10 @@
           "confirmation": "¿Deseas continuar de todos modos?"
         }
       },
+      "restrict_offline_agents": {
+        "switch_label": "Permitir interacciones solo para representantes en línea",
+        "hint": "Si esta opción está activada, los representantes sin conexión o en pausa no podrán responder a chats en curso."
+      },
       "bulk_transfer": {
         "tooltip": "Esta función permite a los representantes transferir varios contactos a la vez a una fila o representante",
         "switch_active": "Transferir chats en masa a otra cola o representante",
