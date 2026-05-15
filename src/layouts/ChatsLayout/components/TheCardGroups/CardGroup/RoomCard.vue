@@ -164,7 +164,7 @@ export default {
     displayedLastMessage() {
       const { last_message: lastMessage } = this.room;
 
-      const shouldPrefix =
+      const isFromMe =
         this.isPendingResponseFeatureEnabled &&
         this.isProgressRoom &&
         this.isLastMessageFromAgent &&
@@ -172,13 +172,24 @@ export default {
         (lastMessage?.user === this.me?.email ||
           lastMessage?.user?.email === this.me?.email);
 
-      if (!shouldPrefix) return lastMessage;
+      if (!isFromMe) return lastMessage;
+
+      const hasMedia =
+        Array.isArray(lastMessage.media) && lastMessage.media.length > 0;
+
+      if (hasMedia) {
+        return {
+          ...lastMessage,
+          isFromUser: true,
+        };
+      }
 
       const youPrefix = this.$t('room_card.last_message.you_prefix');
       const originalText = lastMessage.text || '';
 
       return {
         ...lastMessage,
+        isFromUser: true,
         text: originalText ? `${youPrefix}: ${originalText}` : `${youPrefix}: `,
       };
     },
