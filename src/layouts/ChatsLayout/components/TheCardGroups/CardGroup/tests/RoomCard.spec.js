@@ -723,13 +723,15 @@ describe('RoomCard.vue', () => {
     });
   });
 
-  describe('pending response feature flag tests', () => {
-    const enableFlag = () => {
-      const featureFlagStore = useFeatureFlag();
-      featureFlagStore.featureFlags = {
-        active_features: ['weniChatsPendingResponse'],
-      };
+  const enablePendingResponseFlag = () => {
+    const featureFlagStore = useFeatureFlag();
+    featureFlagStore.featureFlags = {
+      active_features: ['weniChatsPendingResponse'],
     };
+  };
+
+  describe('pending response feature flag tests', () => {
+    const enableFlag = enablePendingResponseFlag;
 
     const resolveLastMessageUser = (fromAgent, lastMessageUser) => {
       if (lastMessageUser !== undefined) return lastMessageUser;
@@ -929,6 +931,7 @@ describe('RoomCard.vue', () => {
       expect(wrapper.vm.showPendingResponse).toBe(false);
       expect(wrapper.vm.displayedLastMessage.text).toMatch(/: Hello message$/);
       expect(wrapper.vm.displayedLastMessage.text).not.toBe('Hello message');
+      expect(wrapper.vm.displayedLastMessage.isFromUser).toBe(true);
 
       wrapper.unmount();
     });
@@ -951,6 +954,7 @@ describe('RoomCard.vue', () => {
 
       expect(wrapper.vm.isLastMessageFromAgent).toBe(true);
       expect(wrapper.vm.displayedLastMessage.text).toBe('Hello message');
+      expect(wrapper.vm.displayedLastMessage.isFromUser).toBeUndefined();
 
       wrapper.unmount();
     });
@@ -972,6 +976,7 @@ describe('RoomCard.vue', () => {
 
       expect(wrapper.vm.isLastMessageFromAgent).toBe(true);
       expect(wrapper.vm.displayedLastMessage.text).toBe('Hello message');
+      expect(wrapper.vm.displayedLastMessage.isFromUser).toBeUndefined();
 
       wrapper.unmount();
     });
@@ -992,6 +997,7 @@ describe('RoomCard.vue', () => {
       expect(wrapper.vm.showPendingResponse).toBe(true);
       expect(wrapper.vm.displayedLastMessage.text).toMatch(/: Hello message$/);
       expect(wrapper.vm.displayedLastMessage.text).not.toBe('Hello message');
+      expect(wrapper.vm.displayedLastMessage.isFromUser).toBe(true);
 
       wrapper.unmount();
     });
@@ -1048,6 +1054,7 @@ describe('RoomCard.vue', () => {
       const wrapper = createWrapper({ roomType: 'in_progress', room });
 
       expect(wrapper.vm.displayedLastMessage.text).toMatch(/: $/);
+      expect(wrapper.vm.displayedLastMessage.isFromUser).toBe(true);
 
       wrapper.unmount();
     });
@@ -1065,6 +1072,167 @@ describe('RoomCard.vue', () => {
       expect(wrapper.vm.displayedLastMessage).toBeNull();
       expect(wrapper.vm.isLastMessageFromBot).toBe(true);
       expect(wrapper.vm.showPendingResponse).toBe(true);
+
+      wrapper.unmount();
+    });
+  });
+
+  describe('media isFromUser tests', () => {
+    const enableFlag = enablePendingResponseFlag;
+
+    const buildMediaRoom = ({
+      lastMessageUser = null,
+      contact = mockRoom.last_message.contact,
+      unreadCount = 0,
+      text = '',
+      contentType = 'image/png',
+    } = {}) => ({
+      ...mockRoom,
+      unread_msgs: unreadCount,
+      last_message: {
+        ...mockRoom.last_message,
+        text,
+        user: lastMessageUser,
+        contact,
+        media: [
+          {
+            content_type: contentType,
+            url: 'https://example.com/file.png',
+          },
+        ],
+      },
+    });
+
+    it('flag on + media + last message from current user: sets isFromUser true and keeps text untouched', () => {
+      enableFlag();
+
+      const wrapper = createWrapper({
+        roomType: 'in_progress',
+        room: buildMediaRoom({
+          lastMessageUser: { email: 'agent@weni.ai' },
+          contact: null,
+        }),
+      });
+
+      expect(wrapper.vm.displayedLastMessage.isFromUser).toBe(true);
+      expect(wrapper.vm.displayedLastMessage.text).toBe('');
+      expect(wrapper.vm.displayedLastMessage.media).toHaveLength(1);
+
+      wrapper.unmount();
+    });
+
+    it('flag on + media + last message from current user (email as string): sets isFromUser true', () => {
+      enableFlag();
+
+      const wrapper = createWrapper({
+        roomType: 'in_progress',
+        room: buildMediaRoom({
+          lastMessageUser: 'agent@weni.ai',
+          contact: null,
+        }),
+      });
+
+      expect(wrapper.vm.displayedLastMessage.isFromUser).toBe(true);
+
+      wrapper.unmount();
+    });
+
+    it('flag on + media + last message from contact: does not set isFromUser', () => {
+      enableFlag();
+
+      const wrapper = createWrapper({
+        roomType: 'in_progress',
+        room: buildMediaRoom({ lastMessageUser: null }),
+      });
+
+      expect(wrapper.vm.isLastMessageFromContact).toBe(true);
+      expect(wrapper.vm.displayedLastMessage.isFromUser).toBeUndefined();
+
+      wrapper.unmount();
+    });
+
+    it('flag on + media + last message from another agent: does not set isFromUser', () => {
+      enableFlag();
+
+      const wrapper = createWrapper({
+        roomType: 'in_progress',
+        room: buildMediaRoom({
+          lastMessageUser: { email: 'other-agent@weni.ai' },
+          contact: null,
+        }),
+      });
+
+      expect(wrapper.vm.isLastMessageFromAnotherAgent).toBe(true);
+      expect(wrapper.vm.displayedLastMessage.isFromUser).toBeUndefined();
+
+      wrapper.unmount();
+    });
+
+    it('flag off + media + last message from current user: does not set isFromUser', () => {
+      const wrapper = createWrapper({
+        roomType: 'in_progress',
+        room: buildMediaRoom({
+          lastMessageUser: { email: 'agent@weni.ai' },
+          contact: null,
+        }),
+      });
+
+      expect(wrapper.vm.isPendingResponseFeatureEnabled).toBe(false);
+      expect(wrapper.vm.displayedLastMessage.isFromUser).toBeUndefined();
+
+      wrapper.unmount();
+    });
+
+    it('flag on but roomType !== in_progress + media from current user: does not set isFromUser', () => {
+      enableFlag();
+
+      const wrapper = createWrapper({
+        roomType: 'waiting',
+        room: buildMediaRoom({
+          lastMessageUser: { email: 'agent@weni.ai' },
+          contact: null,
+        }),
+      });
+
+      expect(wrapper.vm.displayedLastMessage.isFromUser).toBeUndefined();
+
+      wrapper.unmount();
+    });
+
+    it('flag on + media from current user + caption text: keeps caption untouched (no manual You: prefix)', () => {
+      enableFlag();
+
+      const wrapper = createWrapper({
+        roomType: 'in_progress',
+        room: buildMediaRoom({
+          lastMessageUser: { email: 'agent@weni.ai' },
+          contact: null,
+          text: 'Photo caption',
+        }),
+      });
+
+      expect(wrapper.vm.displayedLastMessage.isFromUser).toBe(true);
+      expect(wrapper.vm.displayedLastMessage.text).toBe('Photo caption');
+    });
+
+    it('flag on + empty media array + last message from current user: applies text prefix flow (no media branch)', () => {
+      enableFlag();
+
+      const room = {
+        ...mockRoom,
+        unread_msgs: 0,
+        last_message: {
+          ...mockRoom.last_message,
+          text: 'Hello message',
+          user: { email: 'agent@weni.ai' },
+          contact: null,
+          media: [],
+        },
+      };
+      const wrapper = createWrapper({ roomType: 'in_progress', room });
+
+      expect(wrapper.vm.displayedLastMessage.isFromUser).toBe(true);
+      expect(wrapper.vm.displayedLastMessage.text).toMatch(/: Hello message$/);
 
       wrapper.unmount();
     });
