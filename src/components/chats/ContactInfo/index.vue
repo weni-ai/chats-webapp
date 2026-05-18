@@ -833,7 +833,7 @@ export default {
       justify-content: space-between;
 
       &__title {
-        font: $unnnic-font-emphasis;
+        font: $unnnic-font-display-4;
         color: $unnnic-color-fg-emphasized;
       }
 
