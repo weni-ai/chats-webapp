@@ -62,7 +62,7 @@
       >
         <section class="switchs__container">
           <UnnnicSwitch
-            :modelValue="sector.automatic_message.is_active"
+            :modelValue="sector.automatic_message_queue.is_active"
             class="margin-y-space-1"
             :textRight="
               $t(
@@ -76,12 +76,12 @@
             "
             size="small"
             data-testid="config-switch"
-            @update:model-value="handleAutomaticMessageIsActive"
+            @update:model-value="handleAutomaticMessageQueueIsActive"
           />
         </section>
         <UnnnicInput
-          v-if="sector.automatic_message.is_active"
-          v-model="sector.automatic_message.text"
+          v-if="sector.automatic_message_queue.is_active"
+          v-model="sector.automatic_message_queue.text"
           :maxlength="160"
           showMaxlengthCounter
           :label="$t('sector.additional_options.automated_message.field.title')"
@@ -240,12 +240,16 @@ export default {
       },
     },
     validForm() {
-      const valid =
+      const validAutomaticMessage =
         !this.sector.automatic_message.is_active ||
         (this.sector.automatic_message.is_active &&
           this.sector.automatic_message.text?.length > 0);
+      const validAutomaticMessageQueue =
+        !this.sector.automatic_message_queue.is_active ||
+        (this.sector.automatic_message_queue.is_active &&
+          this.sector.automatic_message_queue.text?.length > 0);
 
-      return valid;
+      return validAutomaticMessage && validAutomaticMessageQueue;
     },
     translationTriggerFlows() {
       return this.$t('sector.additional_options.template_message.switch_label');
@@ -288,6 +292,10 @@ export default {
     handleAutomaticMessageIsActive(value) {
       this.sector.automatic_message.is_active = value;
       if (!value) this.sector.automatic_message.text = '';
+    },
+    handleAutomaticMessageQueueIsActive(value) {
+      this.sector.automatic_message_queue.is_active = value;
+      if (!value) this.sector.automatic_message_queue.text = '';
     },
     async getTags() {
       try {
@@ -352,6 +360,7 @@ export default {
         can_edit_custom_fields,
         sign_messages,
         automatic_message,
+        automatic_message_queue,
         is_csat_enabled,
         required_tags,
       } = this.sector;
@@ -361,6 +370,7 @@ export default {
         can_edit_custom_fields,
         sign_messages,
         automatic_message,
+        automatic_message_queue,
         is_csat_enabled,
         required_tags,
       };

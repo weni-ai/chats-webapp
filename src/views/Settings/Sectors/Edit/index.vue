@@ -168,6 +168,10 @@ const sector = ref<Sector>({
     is_active: false,
     text: '',
   },
+  automatic_message_queue: {
+    is_active: false,
+    text: '',
+  },
   sign_messages: false,
   rooms_limit: 0,
   required_tags: false,
@@ -240,6 +244,7 @@ const handlerSectorData = async () => {
     rooms_limit,
     uuid,
     automatic_message,
+    automatic_message_queue,
     required_tags,
     is_csat_enabled,
   } = currentSector.value;
@@ -253,6 +258,9 @@ const handlerSectorData = async () => {
     sign_messages,
     rooms_limit: rooms_limit.toString(),
     automatic_message,
+    automatic_message_queue: automatic_message_queue
+      ? automatic_message_queue
+      : { is_active: false, text: '' },
     required_tags,
     is_csat_enabled,
   };
