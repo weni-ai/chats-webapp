@@ -593,10 +593,23 @@ watch(
     font-weight: $unnnic-font-weight-bold;
     line-height: $unnnic-font-size-body-gt + $unnnic-line-height-md;
 
-    text-overflow: ellipsis;
-    overflow: hidden;
-    white-space: nowrap;
-    max-width: 100px;
+    &__set-status {
+      display: flex;
+      align-items: center;
+      gap: $unnnic-spacing-nano;
+      &__label {
+        color: $unnnic-color-fg-base;
+        font-family: $unnnic-font-family-secondary;
+        font-size: $unnnic-font-size-body-gt;
+        font-style: normal;
+        font-weight: $unnnic-font-weight-bold;
+        line-height: $unnnic-font-size-body-gt + $unnnic-line-height-md;
+      }
+      text-overflow: ellipsis;
+      overflow: hidden;
+      white-space: nowrap;
+      max-width: 100px;
+    }
   }
 
   &__list {
