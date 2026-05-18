@@ -6,6 +6,7 @@ exports[`NewGroupDrawer.vue > Snapshot > should match the snapshot 1`] = `
 >
   
   <div
+    closeicon="close"
     data-testid="drawer"
     data-v-7e258225=""
   >

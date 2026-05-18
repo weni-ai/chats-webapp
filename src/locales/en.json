@@ -129,8 +129,11 @@
     "info": "Define an automatic response for contacts waiting for support. Leave it blank if you don't want any message.",
     "placeholder": "You haven't set an automatic message yet. Add one for contacts waiting in the queue."
   },
-  "attention": "Warning",
-  "updates_saved": "Saved updates",
+  "step_of": "Step {step} of {total}",
+  "type_to_filter": "Type to filter",
+  "chats_count": "{count} chat | {count} chats",
+  "attention": "Attention",
+  "updates_saved": "Updates saved",
   "updated_info": "Updated information",
   "active_chats": "Active chats",
   "active_chats_tooltip": "Number of active chats",
@@ -140,6 +143,7 @@
   "number_chats": "Total chats",
   "language": "Language",
   "search": "Search",
+  "try_again": "Try again",
   "date_format_variable": "{month}/{day}/{year}",
   "undo": "Undo",
   "redo": "Redo",
@@ -172,8 +176,9 @@
   "justify": "Justify",
   "without_results": "No matching results",
   "without_chats": {
-    "in_progress": "All set! You'll be notified when new chats are assigned, and they'll appear in this list.",
-    "waiting": "Queue cleared! All contacts are now assigned to representatives."
+    "in_progress": "All wrapped up! You’ll be notified when new chats are assigned and they’ll appear in this list.",
+    "waiting": "Queue cleared! All contacts have been assigned to an agent.",
+    "filtered": "No chats {roomType} in the filtered queues. Remove the filter to see all chats."
   },
   "other": "Other",
   "select_smart": {
@@ -188,7 +193,7 @@
     "extra_options": "Additional options",
     "queues": "Queues",
     "tags": "Tags",
-    "add": "Department details",
+    "add_name_and_managers": "Define a name for the sector and its managers",
     "add_queue": "Add new queue",
     "name": "Department name",
     "placeholder": "Example: Financial",
@@ -207,13 +212,13 @@
         "placeholder": "Search for name or email"
       },
       "working_day": {
-        "title": "Workdays",
-        "copy_workday": "Copy the workday settings from an existing department",
-        "select_days": "Select the days of the week",
-        "set_hours": "Set working hours for each day",
-        "add_holidays": "Add holidays and specific non-working dates",
-        "add_non_working_dates": "Add specific non-working dates",
-        "select_date_or_period": "Select a date or period",
+        "title": "Definitions of the workday",
+        "copy_workday": "Copy the workday of an already configured sector",
+        "select_days": "Select the days of the working week:",
+        "set_hours": "Set the hours worked for each day:",
+        "add_holidays": "Add holidays and specific non-working dates:",
+        "add_non_working_dates": "Add Specific Non-working Dates",
+        "select_date_or_period": "Select date or period",
         "repeat_annually": "Repeat annually",
         "add_more_dates_or_periods": "Add more dates or periods",
         "see_all_holidays": "View all holidays",
@@ -228,7 +233,11 @@
           "label": "End time"
         },
         "limit_agents": {
-          "label": "Define the maximum number of simultaneous support chats per representative"
+          "title": "Define a limit on the number of simultaneous chats per representative",
+          "label": "Number of simultaneous chats",
+          "hint": "Set to 0 to have representatives pick up chats from the queue.",
+          "placeholder": "Example: 4",
+          "tooltip": "The limit may be exceeded when the representative manually takes over chats or receives transfers. If a specific limit is set for the representative, it will take precedence over the team limit."
         },
         "message": {
           "create_custom_holiday": {
@@ -239,16 +248,17 @@
       }
     },
     "additional_options": {
-      "title": "Additional options",
+      "title": "Extra options",
       "template_message": {
-        "switch_active": "Trigger message templates",
-        "switch_disabled": "Trigger message templates"
+        "switch_label": "Triggering message templates"
       },
-      "edit_custom_fields": "Allow representatives to edit custom fields",
+      "edit_custom_fields": {
+        "label": "Allow representatives to edit custom contact information",
+        "hint": "When active, it allows representatives to edit the custom fields of the contact in the \"All Information\" section."
+      },
       "agents_signature": {
-        "tooltip": "Each message will display the name of the representative who answered",
-        "switch_active": "Display the representative name in messages",
-        "switch_disabled": "Display the representative name in messages"
+        "hint": "Each message exchanged will have the name of the agent who is answering.",
+        "switch_label": "Use signature"
       },
       "csat": {
         "label": "Automatically send a satisfaction survey after Live Desk support ends",
@@ -258,19 +268,17 @@
           "content_2": "Do you want to continue anyway?"
         }
       },
-      "automatic_message": {
-        "switch_active": "Automatically open messages",
-        "switch_disabled": "Automatically open messages",
-        "tooltip": "Set up a message to be automatically sent when a new chat is assigned to a representative. The contact will see the message as if it were sent by the representative.",
+      "automated_message": {
+        "title": "Automated messages",
+        "switch_label": "Send automatic message when support starts",
+        "hint": "Automatically send a message when a chat is assigned to an representative. The message will appear as if sent by the assigned representative.",
         "field": {
           "title": "Automatic message",
           "placeholder": "Example: Hello! How can I help you today?"
         }
       },
       "required_tags": {
-        "switch_active": "Require tag at the end of the support chat",
-        "switch_disabled": "Require tag at the end of the support chat",
-        "tooltip": "Add at least one tag to activate"
+        "switch_label": "Require tags at the end of human support"
       }
     }
   },
@@ -281,7 +289,8 @@
     "queue_name_placeholder": "Example: Payments",
     "queue_title": "Queues in",
     "queue_table_name": "Name",
-    "quantity_agents": "Number of representatives"
+    "quantity_agents": "Number of agents",
+    "search": "Search a queue"
   },
   "export": {
     "metrics": "Export metrics as {filetype}",
@@ -408,9 +417,9 @@
     "tags": "Chat tags",
     "discussions": "Discussions",
     "waiting": "Waiting",
-    "waiting_tooltip": "Chats to handle",
-    "waiting_assistance": "Waiting for support",
-    "in_progress": "Active",
+    "waiting_tooltip": "Chats to be handled",
+    "waiting_assistance": "Waiting for assistance",
+    "in_progress": "In progress",
     "sent_flows": "Sent flows",
     "to_end_rate_the_chat": "To end, rate the chat",
     "to_end_required_tags": "To end this conversation, select at least one tag",
@@ -437,10 +446,12 @@
       "project_history": "Project history",
       "contact_history": "Contact history"
     },
+    "assigned_queues": "Assigned queues",
     "select_queues": "Select queues",
-    "select_services_queues": "Select service queues",
-    "select_at_least": "Select at least one queue to save changes",
-    "select_the_queues": "Select queues",
+    "select_services_queues": "Set queues to receive chats",
+    "select_at_least": "At least one queue must be selected to save the changes.",
+    "define_the_queues": "Define the queues",
+    "select_queues_priorization_hint": "You will only receive new chats from the selected queues.",
     "select_your_queues": "Select your queues",
     "no_queue_selected": "No queue selected",
     "success_update_queues": "Your service queues have been updated",
@@ -459,6 +470,7 @@
       "assume_chat_confirmation": "If you confirm, this chat will be transferred from {viewedAgent} to you"
     }
   },
+  "select": "Select",
   "history": "History",
   "close_view": "Close view",
   "logout": "Logout",
@@ -497,11 +509,13 @@
   "all": "All",
   "back_to_chats": "@:back to chats",
   "filter": {
+    "label": "Filter",
     "empty_tags": "No tags available",
     "by_tag": "Filter by tag",
     "by_tags": "Filter by tags",
     "by_agent": "Filter by representative",
     "by_date": "Filter by @.lower:date",
+    "by_queue": "Filter by queue",
     "clear_all": "Clear filters",
     "dates": {
       "today": "Today",
@@ -542,10 +556,9 @@
   "queue": "Queue",
   "agents": {
     "add": {
-      "title": "Add representatives",
       "select": {
-        "label": "Select representative",
-        "placeholder": "Search for name or email"
+        "label": "Add representative",
+        "placeholder": "Search for the name or email"
       },
       "button": "Select"
     }
@@ -729,6 +742,8 @@
   "shortcut": "Shortcut",
   "message": "Message",
   "save": "Save",
+  "save_changes": "Save changes",
+  "create": "Create",
   "use": "Use",
   "delete_sector": "Delete department",
   "delete_queue": "Delete queue",
@@ -736,7 +751,10 @@
     "text": "Delete the queue {queue}",
     "description": "The queue {queue} will be permanently deleted"
   },
-  "cant_revert": "This action can't be undone",
+  "delete_sector_modal": {
+    "text": "Type the name of the sector to delete"
+  },
+  "cant_revert": "This option cannot be reversed",
   "confirm_typing": "Confirm by typing",
   "sector_deleted_success": "Department deleted successfully",
   "sector_delete_error": "Error deleting department. Try again later.",
@@ -798,18 +816,19 @@
     "without_personal_messages": "No quick messages added yet. Click <i>+ Message</i> to add your first one.",
     "without_messages_shared": "No shared quick messages available",
     "example_message": "Example message",
-    "example_message_description": "Quick messages are predefined responses that help standardize customer service. All representatives in this department can use them, and you can add new ones below.",
+    "example_message_description": "Quick messages are ready-made texts that help standardize customer support. All representatives in this sector will be able to use these messages. You can create new messages or edit them whenever you want with the created sector.",
     "personal": "Your messages",
     "shared": "Shared messages",
     "delete": "Delete quick message",
     "delete_your_quick_message": "Delete your quick message",
     "delete_confirm": "Are you sure you want to delete the quick message?",
     "delete_or_edit": "Delete or edit",
-    "delete_description": "Are you sure you want to delete the quick message {shortcut}?",
+    "delete_description": "Type the shortcut of the quick message to delete",
     "shortcut_tooltip": "Type /{shortcut} to use",
     "new": "New quick message",
-    "add": "Add quick message",
-    "edit": "Edit quick message",
+    "description_new": "Quick message in the {sector} sector",
+    "add": "Add new quick message",
+    "edit": "Edit /{shortcut}",
     "available_shortcuts": "Available shortcuts",
     "copilot": "ChatGPT is now your copilot. Use AI-powered suggestions to respond faster.",
     "title_field_placeholder": "Example: Welcome",
@@ -817,9 +836,11 @@
     "message_field_placeholder": "Example: Hello! How are you? I'll be assisting you today.",
     "successfully_added": "Quick message added",
     "successfully_updated": "Quick message updated",
-    "error": "Error setting quick message",
-    "no_suggestions": "No results found for the entered shortcut",
-    "disclaimer": "Type / (slash) shortcut in the message field to view quick messages"
+    "successfully_deleted": "Quick message deleted successfully!",
+    "error_deleting": "Unable to delete the quick message.",
+    "error": "Failed to set quick message",
+    "no_suggestions": "No results found for the entered shortcut.",
+    "disclaimer": "Type the shortcut / (slash) in the chat message field to activate the display of quick messages."
   },
   "discard": "Delete",
   "on_boarding": {
@@ -865,17 +886,23 @@
     }
   },
   "config_chats": {
-    "title": "Settings",
-    "section_sectors_title": "Departments in {project}",
-    "section_sectors_subtitle": "Add, view, and manage departments, queues, managers, and representatives within your organization.",
+    "title": "Live Desk Preferences",
+    "section_sectors_title": "Sectors Management",
+    "section_groups_title": "Project Groups Management",
+    "filter_by_sector_name": "Filter by sector name",
+    "filter_by_group_name": "Filter by group name",
+    "section_sectors_subtitle": "Add, view and manage sectors, queues, managers and agents within your organization.",
     "tabs": {
-      "settings": "Settings",
-      "groups": "Project groups"
+      "general": "General",
+      "groups": "Projects groups",
+      "sectors": "Sectors",
+      "representatives": "Representatives"
     },
     "custom_breaks": {
       "title": "Custom breaks",
-      "description": "Add custom breaks. When representatives are on a break, they won't receive new contacts, as if they were offline.",
+      "description": "Custom breaks act as offline status. Representative will not receive new chat requests during these periods.",
       "fields": {
+        "hint": "Add up to 10 different statuses to be used as custom breaks.",
         "name": "New status",
         "placeholder": "Example: Lunch"
       },
@@ -883,21 +910,32 @@
       "status_duplicate_name": "This status already exists",
       "status_success": "Status added successfully",
       "status_remove_success": "Status {status} removed",
-      "status_error": "Error saving changes. Try again."
+      "status_error": "Oops, unfortunately the changes were not saved, please try again",
+      "delete_modal": {
+        "title": "Delete custom break",
+        "description_1": "Are you sure you want to delete the custom break “{name}”?",
+        "description_2": "Once deleted, its data will no longer appear in the Live Desk dashboard and can’t be recovered.",
+        "success": "Custom break deleted successfully",
+        "error": "Unable to delete the custom break."
+      }
     },
     "changes_saved": "Changes saved successfully",
     "changes_not_saved": "Error saving changes. Try again.",
     "project_configs": {
-      "title": "Project preferences",
+      "title": "Definitions",
       "ai_transfer": {
         "switch_active": "Allow AI agents to transfer conversations to human support",
         "switch_inactive": "Allow AI agents to transfer conversations to human support",
-        "modal_title": "Scenarios or criteria that require human support",
-        "textarea_label": "Define the scenarios or criteria that require human support",
-        "textarea_placeholder": "Describe the scenarios or criteria"
+        "modal_title": "Scenarios or criteria that require transfer to human support",
+        "textarea_label": "Define the scenarios or criteria that require transfer to human support",
+        "textarea_placeholder": "Describe the scenarios or criteria...",
+        "disable_modal": {
+          "description": "Turning off this option will permanently delete the scenarios and criteria prompt. You'll need to set it up again if you turn it back on.",
+          "confirmation": "Do you want to continue anyway?"
+        }
       },
       "bulk_transfer": {
-        "tooltip": "This function allows representatives to transfer different contacts at once",
+        "tooltip": "This function allows representatives to transfer various contacts at once to a queue or representative",
         "switch_active": "Transfer chats in bulk to another queue or representative",
         "switch_inactive": "Transfer chats in bulk to another queue or representative"
       },
@@ -918,19 +956,19 @@
         "switch_inactive": "Take over chats in bulk"
       },
       "queue_prioritization": {
-        "tooltip": "This setting allows agents to choose which of the department's selected queues will receive contacts",
-        "switch_active": "Allow representatives to choose their queues within the department",
-        "switch_inactive": "Allow representatives to choose their queues within the department"
+        "switch_label": "Allows agents to choose which queues they receive chats from",
+        "hint": "If active, the resource will be visible only to the representatives in the Live Desk module."
       },
       "show_agent_status_count_timer": {
-        "switch_active": "Show status timer for custom breaks",
-        "switch_inactive": "Show status timer for custom breaks"
+        "switch_active": "Show status timer for custom representative breaks",
+        "switch_inactive": "Show status timer for custom representative breaks"
       },
       "show_waiting_rooms_count": {
         "switch_label": "Show counter with the number of chats waiting for human support"
       },
       "use_name_sector_in_rooms": {
-        "switch_label": "Display the department name in the chat title"
+        "switch_label": "Show chat sector in the conversation list",
+        "hint": "When enabled, a tag with the chat’s sector will be displayed next to the contact’s name."
       }
     },
     "custom_sector": "Customize new department (recommended)",
@@ -944,7 +982,7 @@
       "invalid_hours": "Start time can't be greater than or equal to the end time",
       "invalid_start_second_hour": "The start time of the second period must be greater than or equal to the end time of the first period."
     },
-    "custom_queue": "Create a custom queue",
+    "custom_queue": "Create a custom queue (recommended)",
     "default_queue": {
       "title": "Create default queue (faster)",
       "name": "Default queue"
@@ -952,16 +990,23 @@
     "queues": {
       "in_sector": "Queue in department {sector}",
       "new": "New queue",
-      "info": "Queues are support groups within a department. You can route contacts from a flow to a specific queue.",
-      "hint": "Queues are support groups within a department. You can create or edit them at any time.",
-      "queue_definitions": "Queue settings",
+      "title": "Queues Management",
+      "hint": "Queues are support groups within the sector; you can create new queues or edit them whenever you want.",
+      "filter_by_name": "Filter by queue name",
+      "add_queue": "Add queue",
+      "delete_this_queue": "Type the name of the queue to delete",
+      "remove_tooltip": "Delete this queue",
+      "configure_queue": {
+        "title": "Configure queue",
+        "tooltip": "Queues are support groups within the sector. You can create new queues or edit them whenever you want with the created sector."
+      },
       "delete_or_edit": "Delete or edit",
       "limit_chats": {
         "title": "Limit of chats waiting for support",
         "switch": {
-          "label": "Limit chats",
-          "helper": "When the limit is reached, no new chats are created.",
-          "input_label": "Maximum number of chats waiting for support",
+          "label": "Limit the number of chats waiting for support",
+          "helper": "When the limit is reached, new chats won’t be created.",
+          "input_label": "Maximum waiting chats",
           "input_placeholder": "Example: 50"
         }
       },
@@ -973,6 +1018,20 @@
         "delete_error": "Error deleting queue",
         "add_new_queue": "This new queue will be added for all representatives. You can remove it in <b>Live Desk Settings > Groups > Representatives</b>.",
         "config_agents_group": "Add or remove representatives from this queue in <b>Chat settings > Project groups</b>"
+      }
+    },
+    "quick_messages": {
+      "add": "Add new quick message",
+      "create": "Create quick message",
+      "delete_this_quick_message": "Delete this quick message",
+      "empty": {
+        "description": "Create the first quick message",
+        "title": "There are no quick messages in this sector"
+      },
+      "new": "New quick message",
+      "title": {
+        "label": "Configure a quick message",
+        "tooltip": "Quick messages are ready-made texts that help standardize customer service. All agents in this sector will be able to use these messages, and you can register new messages below."
       }
     },
     "groups": {
@@ -1037,17 +1096,91 @@
     "copilot": {
       "hint": "Copilot is your intelligent assistant. You can activate it later."
     },
-    "new_sector": "New department",
+    "representatives": {
+      "title": "Representatives Management",
+      "description": "Define the representatives for the sectors and queues, as well as the maximum number of chats per representative. Changes made here will also be updated in the sector and queue settings.",
+      "select_all": "Select all representatives",
+      "select_count": "{count} selected",
+      "empty_list": "There are no members with permission for human support in this project yet. Invite a new member or update an existing member’s permissions in Member Management to see them here.",
+      "not_found_list": "No representative found. Try another filter.",
+      "save_success": "Changes saved successfully!",
+      "save_error": "Unable to save changes.",
+      "bulk_chats_limit_modal": {
+        "title": "Limit of simultaneous chats",
+        "disclaimer": "The limit will be applied to the {count} selected representatives.",
+        "input": {
+          "label": "Define the limit of simultaneous chats",
+          "tooltip": "A limit set for a specific representative overrides the sector-level limit.",
+          "helper": "Set to 0 to have representatives pick up chats from the queue.",
+          "placeholder": "Example: 4"
+        }
+      },
+      "queue_manager": {
+        "title": "Manage {representativeName}",
+        "bulk_title": "Change sectors and queues",
+        "bulk_disclaimer_description": "The change will be applied to the {count} selected representatives.",
+        "bulk_add_action": "Add to a sector/queue",
+        "bulk_remove_action": "Remove from a sector/queue",
+        "bulk_select_action_description": "Select the bulk action you want to take with the selected representatives:",
+        "chats_limit": {
+          "switch_label": "Define a limit on the number of simultaneous chats for this representative",
+          "switch_helper": "A limit set for a specific representative overrides the sector-level limit.",
+          "input_label": "Number of simultaneous chats",
+          "input_placeholder": "Example: 4",
+          "input_helper": "Set to 0 to have representatives pick up chats from the queue."
+        },
+        "sector_queues_checkbox": {
+          "title": "Sectors and queues",
+          "bulk_description": "Select the sectors and queues for the change:"
+        }
+      },
+      "chats_limit": {
+        "label": "{count} simultaneous chats"
+      },
+      "sectors": {
+        "empty": "Representative is not added to any sector"
+      },
+      "actions": {
+        "queue-management_tooltip": "Change selected representatives from sectors/queues.",
+        "chats-limit-management_tooltip": "Define the limit of simultaneous chats for the selected representatives."
+      },
+      "filter": {
+        "status": {
+          "label": "Filter by status"
+        },
+        "representatives": {
+          "label": "Filter by representatives"
+        },
+        "sectors": {
+          "label": "Filter by sectors",
+          "all": "All sectors"
+        },
+        "queues": {
+          "label": "Filter by queues"
+        }
+      }
+    },
+    "new_sector": "New sector",
     "new_group": "New group",
     "agent_title": "Representatives",
     "contacts": "Contacts",
-    "open": "Open"
+    "open": "Open",
+    "empty_sectors": {
+      "title": "There are no sectors in this project",
+      "subtitle": "Create the first sector to start using the Live Desk module",
+      "action": "Create sector"
+    },
+    "empty_groups": {
+      "title": "There are no project groups in {projectName}",
+      "subtitle": "Create the first group",
+      "action": "Create project group"
+    }
   },
   "new_sector": {
-    "sector_tip": "Create a department to manage your support operations, including roles, agents, and working hours",
-    "queues_tip": "Queues help organize service types within a department and allow you to create service groups. Create at least one queue to manage a team of representatives.",
-    "tags_tip": "Tags are used to classify chats and make them easier to search and filter. Define tags relevant to your context.",
-    "agent_tip": "Add members to your project to be able to set them as managers",
+    "sector_tip": "Create a sector to manage the fulfillment operation, including roles, agents and management hours",
+    "queues_tip": "The queues serve to organize the types of service within a sector, through the queues it is possible to create service groups, create at least one queue to manage a team of agents",
+    "tags_tip": "Tags are used to classify service characteristics and make it possible to search and filter chats from them, define tags that are relevant to your context.",
+    "agent_tip": "Add members to your project to be able to set as a manager",
     "alert": {
       "create_success": "New department {sectorName} created successfully",
       "create_error": "Failed to configure some steps in the department. Check the details and try again if you identify any missing configurations."
@@ -1141,6 +1274,9 @@
       "text_2": "In addition, <b>custom fields</b> can now be collapsed and expanded, so you can focus on what matters most without scrolling.",
       "text_3": "To make the interface cleaner, we've updated the <b>Start discussion</b> button's appearance."
     }
+  },
+  "modal_confirm_delete": {
+    "action_cannot_be_reversed": "This action cannot be reversed"
   },
   "delete_modal": {
     "title": "Delete {name}",

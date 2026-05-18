@@ -99,8 +99,15 @@ import { unnnicCallAlert } from '@weni/unnnic-system';
 import i18n from '@/plugins/i18n';
 
 import { useRooms } from '@/store/modules/chats/rooms';
+import { useRoomCounters } from '@/store/modules/chats/roomCounters';
+import { useFeatureFlag } from '@/store/modules/featureFlag';
 import Room from '@/services/api/resources/chats/room';
 import Queue from '@/services/api/resources/settings/queue';
+
+import {
+  markPendingClose,
+  unmarkPendingClose,
+} from '@/services/api/websocket/listeners/room/update';
 
 import ChatClassifier from '@/components/chats/ChatClassifier.vue';
 
@@ -349,6 +356,7 @@ const handleSecondaryClick = () => {
 };
 
 const ROOMS_REFETCH_LIMIT = 30;
+const RECONCILIATION_DELAY_MS = 1500;
 
 const refetchRoomsIfEmpty = async () => {
   const hasOngoingRooms = roomsStore.agentRooms.length > 0;
@@ -365,6 +373,32 @@ const refetchRoomsIfEmpty = async () => {
   });
 };
 
+const isNewRoomUpdateEnabled = () => {
+  const featureFlagStore = useFeatureFlag();
+  return !!featureFlagStore.featureFlags?.active_features?.includes(
+    'WeniChatsNewRoomUpdate',
+  );
+};
+
+const scheduleReconciliation = () => {
+  if (!isNewRoomUpdateEnabled()) return;
+  setTimeout(() => {
+    const tab = activeTab.value;
+    roomsStore
+      .getAll({
+        offset: 0,
+        concat: true,
+        limit: ROOMS_REFETCH_LIMIT,
+        order: roomsStore.orderBy[tab],
+        roomsType: tab,
+        cleanRoomType: tab,
+      })
+      .catch((error) => {
+        console.error('[bulk_close] Reconciliation failed', error);
+      });
+  }, RECONCILIATION_DELAY_MS);
+};
+
 const clearSelectionsAndClose = async () => {
   if (activeTab.value === 'ongoing') {
     roomsStore.setSelectedOngoingRooms([]);
@@ -376,34 +410,55 @@ const clearSelectionsAndClose = async () => {
 
   isLoadingBulkClose.value = false;
   emit('close');
+
+  scheduleReconciliation();
 };
 
-const executeBulkClose = async () => {
-  isLoadingBulkClose.value = true;
+const applyOptimisticClose = (uuids) => {
+  if (!isNewRoomUpdateEnabled()) return;
+  const counters = useRoomCounters();
+  for (const uuid of uuids) {
+    const roomType = roomsStore.applyClose(uuid);
+    if (roomType) {
+      counters.handleClose(roomType);
+      counters.clearTypeCache(uuid);
+    }
+  }
+};
 
+const collectRoomsToClose = () => {
   const roomsToClose = [];
-
   sectorsArray.value.forEach((sectorData) => {
     const sectorUuid = sectorData.uuid;
     const selectedTags = (sectorSelectedTags.value[sectorUuid] || []).map(
       (tag) => tag.uuid,
     );
-
     sectorData.rooms.forEach((roomUuid) => {
-      roomsToClose.push({
-        uuid: roomUuid,
-        tags: selectedTags,
-      });
+      roomsToClose.push({ uuid: roomUuid, tags: selectedTags });
     });
   });
+  return roomsToClose;
+};
 
+const chunkRoomsToClose = (roomsToClose) => {
   const chunks = [];
   for (let i = 0; i < roomsToClose.length; i += BULK_CLOSE_BATCH_SIZE) {
     chunks.push(roomsToClose.slice(i, i + BULK_CLOSE_BATCH_SIZE));
   }
+  return chunks;
+};
 
+const collectSuccessUuids = (chunk, data) => {
+  const chunkSuccess = data?.success_count || 0;
+  if (chunkSuccess <= 0) return [];
+  if (Array.isArray(data?.success_uuids)) return data.success_uuids;
+  return chunk.map((r) => r.uuid).slice(0, chunkSuccess);
+};
+
+const submitBulkCloseChunks = async (chunks) => {
   let totalSuccess = 0;
   let totalFailed = 0;
+  const successUuids = [];
 
   for (const chunk of chunks) {
     const response = await Room.bulkClose({
@@ -413,6 +468,39 @@ const executeBulkClose = async () => {
     const { data } = response;
     totalSuccess += data?.success_count || 0;
     totalFailed += data?.failed_count || 0;
+    successUuids.push(...collectSuccessUuids(chunk, data));
+  }
+
+  return { totalSuccess, totalFailed, successUuids };
+};
+
+const reconcilePendingMarks = (allUuids, successUuids) => {
+  const successSet = new Set(successUuids);
+  for (const uuid of allUuids) {
+    if (!successSet.has(uuid)) unmarkPendingClose(uuid);
+  }
+};
+
+const executeBulkClose = async () => {
+  isLoadingBulkClose.value = true;
+
+  const roomsToClose = collectRoomsToClose();
+  const useNewLogic = isNewRoomUpdateEnabled();
+
+  if (useNewLogic) {
+    for (const { uuid } of roomsToClose) markPendingClose(uuid);
+  }
+
+  const chunks = chunkRoomsToClose(roomsToClose);
+  const { totalSuccess, totalFailed, successUuids } =
+    await submitBulkCloseChunks(chunks);
+
+  if (useNewLogic) {
+    applyOptimisticClose(successUuids);
+    reconcilePendingMarks(
+      roomsToClose.map((r) => r.uuid),
+      successUuids,
+    );
   }
 
   if (totalFailed === 0 && totalSuccess > 0) {

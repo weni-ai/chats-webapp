@@ -52,6 +52,18 @@ export default {
     return response.data;
   },
 
+  async getRepresentatives({ offset, limit = 20 }) {
+    const response = await http.get(`/permission/project/`, {
+      params: {
+        project: getProject(),
+        offset,
+        limit,
+        role: 2, // Agent
+      },
+    });
+    return response.data;
+  },
+
   async getInfo() {
     const projectUuid = getProject();
     const response = await http.get(`/project/${projectUuid}/`);
