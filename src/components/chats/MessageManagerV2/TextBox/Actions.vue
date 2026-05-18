@@ -40,7 +40,7 @@
       :type="isInternalNote ? 'attention' : 'primary'"
       size="small"
       :text="isInternalNote ? $t('add') : $t('send')"
-      :disabled="disableSendButton || isAiLoading"
+      :disabled="isDisabledInput || disableSendButton || isAiLoading"
       @click="emit('send')"
     />
   </section>
@@ -81,6 +81,7 @@ const {
   audioMessage,
   mediaUploadFiles,
   isSuggestionBoxOpen,
+  isDisabledInput,
 } = storeToRefs(messageManager);
 
 const aiTextImprovementStore = useAiTextImprovement();
@@ -197,6 +198,10 @@ const enabledActions = computed(() => {
 });
 
 const checkDisabledAction = (action: string) => {
+  if (isDisabledInput.value) {
+    return true;
+  }
+
   const isValidInputMessage = isSuggestionBoxOpen.value
     ? !inputMessage.value.startsWith('/')
     : !!inputMessage.value.trim();

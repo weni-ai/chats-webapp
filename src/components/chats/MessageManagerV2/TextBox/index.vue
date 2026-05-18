@@ -6,6 +6,7 @@
         'text-box--focused': inputMessageFocused,
         'text-box--ai-improving': isAiImproving,
         'internal-note': isInternalNote,
+        'text-box--disabled': isDisabledInput,
       },
     ]"
   >
@@ -80,6 +81,7 @@ const {
   mediaUploadFiles,
   isEmojiPickerOpen,
   inputMessageFocused,
+  isDisabledInput,
 } = storeToRefs(messageManager);
 
 const aiTextImprovementStore = useAiTextImprovement();
@@ -165,6 +167,11 @@ defineExpose({
   display: flex;
   flex-direction: column;
   gap: $unnnic-space-3;
+
+  &--disabled {
+    border: none;
+    background: $unnnic-color-bg-muted;
+  }
 
   &--focused {
     border-color: $unnnic-color-border-active;
