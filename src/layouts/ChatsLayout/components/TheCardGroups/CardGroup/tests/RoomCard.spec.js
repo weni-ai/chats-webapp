@@ -1238,6 +1238,109 @@ describe('RoomCard.vue', () => {
     });
   });
 
+  describe('new chat received indicator tests', () => {
+    it('shows indicator when in_progress + isNewChatReceived true + unread === 0', () => {
+      const wrapper = createWrapper({
+        roomType: 'in_progress',
+        room: { ...mockRoom, unread_msgs: 0, isNewChatReceived: true },
+      });
+
+      expect(wrapper.vm.showNewChatReceivedIndicator).toBe(true);
+      expect(wrapper.vm.newChatReceivedTooltipText).toBeTruthy();
+
+      wrapper.unmount();
+    });
+
+    it('hides indicator when unread > 0 (priority to unread badge)', () => {
+      const wrapper = createWrapper({
+        roomType: 'in_progress',
+        room: { ...mockRoom, unread_msgs: 3, isNewChatReceived: true },
+      });
+
+      expect(wrapper.vm.showNewChatReceivedIndicator).toBe(false);
+
+      wrapper.unmount();
+    });
+
+    it('hides indicator when unread === 0 but there are new socket messages', () => {
+      const roomsStore = useRooms();
+      roomsStore.newMessagesByRoom = {
+        'room-uuid-123': { messages: [{ id: 1 }] },
+      };
+
+      const wrapper = createWrapper({
+        roomType: 'in_progress',
+        room: { ...mockRoom, unread_msgs: 0, isNewChatReceived: true },
+      });
+
+      expect(wrapper.vm.unreadMessages).toBe(1);
+      expect(wrapper.vm.showNewChatReceivedIndicator).toBe(false);
+
+      wrapper.unmount();
+    });
+
+    it('hides indicator outside the in_progress tab', () => {
+      const wrapper = createWrapper({
+        roomType: 'waiting',
+        room: { ...mockRoom, unread_msgs: 0, isNewChatReceived: true },
+      });
+
+      expect(wrapper.vm.showNewChatReceivedIndicator).toBe(false);
+
+      wrapper.unmount();
+    });
+
+    it('hides indicator when isNewChatReceived is false', () => {
+      const wrapper = createWrapper({
+        roomType: 'in_progress',
+        room: { ...mockRoom, unread_msgs: 0, isNewChatReceived: false },
+      });
+
+      expect(wrapper.vm.showNewChatReceivedIndicator).toBe(false);
+
+      wrapper.unmount();
+    });
+
+    it('hides indicator when isNewChatReceived is undefined', () => {
+      const wrapper = createWrapper({
+        roomType: 'in_progress',
+        room: { ...mockRoom, unread_msgs: 0 },
+      });
+
+      expect(wrapper.vm.showNewChatReceivedIndicator).toBe(false);
+
+      wrapper.unmount();
+    });
+
+    it('forwards newMessageIndicator and tooltip props to UnnnicChatsContact', () => {
+      const wrapper = createWrapper({
+        roomType: 'in_progress',
+        room: { ...mockRoom, unread_msgs: 0, isNewChatReceived: true },
+      });
+
+      const contact = wrapper.findComponent({ name: 'ChatsContact' });
+      expect(contact.exists()).toBe(true);
+      expect(contact.props('newMessageIndicator')).toBe(true);
+      expect(contact.props('newMessageIndicatorTooltip')).toBeTruthy();
+
+      wrapper.unmount();
+    });
+
+    it('clears tooltip text when indicator is hidden', () => {
+      const wrapper = createWrapper({
+        roomType: 'in_progress',
+        room: { ...mockRoom, unread_msgs: 5, isNewChatReceived: true },
+      });
+
+      const contact = wrapper.findComponent({ name: 'ChatsContact' });
+      expect(contact.exists()).toBe(true);
+      expect(contact.props('newMessageIndicator')).toBe(false);
+      expect(contact.props('newMessageIndicatorTooltip')).toBe('');
+
+      wrapper.unmount();
+    });
+  });
+
   describe('coverage completion tests', () => {
     it('covers timer increment callback', () => {
       const roomWithWaitingTime = { ...mockRoom, waitingTime: 10 };
