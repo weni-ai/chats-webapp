@@ -2,22 +2,23 @@
 <template>
   <AsideSlotTemplate>
     <template #header>
-      <UnnnicPageHeader
-        class="flows-trigger__page-header"
-        :title="$t('flows_trigger.title')"
-        data-testid="flows-trigger-header"
-      >
-        <template #actions>
-          <UnnnicButton
-            type="tertiary"
-            size="small"
-            iconCenter="close"
-            :ariaLabel="$t('close')"
-            data-testid="flows-trigger-close"
-            @click="$emit('close')"
-          />
-        </template>
-      </UnnnicPageHeader>
+      <section class="flows-trigger__page-header">
+        <UnnnicPageHeader
+          :title="$t('flows_trigger.title')"
+          data-testid="flows-trigger-header"
+        >
+          <template #actions>
+            <UnnnicButton
+              type="tertiary"
+              size="small"
+              iconCenter="close"
+              :ariaLabel="$t('close')"
+              data-testid="flows-trigger-close"
+              @click="$emit('close')"
+            />
+          </template>
+        </UnnnicPageHeader>
+      </section>
     </template>
     <AsideSlotTemplateSection
       v-if="showSendFlowStep && !isLoadingCheckProjectPrincipal"
@@ -702,11 +703,10 @@ export default {
 
 <style lang="scss" scoped>
 .flows-trigger__page-header {
-  padding: $unnnic-space-2 $unnnic-space-4;
-
+  min-height: var(--chats-column-header-height, 57px);
   :deep(.page-header) {
     margin-top: 0;
-    padding-bottom: $unnnic-space-2;
+    padding: $unnnic-space-2 $unnnic-space-4;
 
     grid-template-columns: 1fr auto;
     gap: $unnnic-space-2;
