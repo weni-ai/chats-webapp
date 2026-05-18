@@ -60,8 +60,6 @@ describe('ClosedChats.vue', () => {
   let setActiveRoomSpy;
   let getRoomMessagesSpy;
   let resetRoomMessagesSpy;
-  let roomsStore;
-  let roomMessagesStore;
 
   beforeEach(() => {
     vi.clearAllMocks();
@@ -207,9 +205,7 @@ describe('ClosedChats.vue', () => {
         wrapper.find('[data-testid="closed-chats-header-loading"]').exists(),
       ).toBe(false);
 
-      const header = wrapper.find(
-        '[data-testid="closed-chats-page-header"]',
-      );
+      const header = wrapper.find('[data-testid="closed-chats-page-header"]');
       expect(header.exists()).toBe(true);
       expect(header.find('[data-testid="page-title"]').text()).toBe(
         'General history',

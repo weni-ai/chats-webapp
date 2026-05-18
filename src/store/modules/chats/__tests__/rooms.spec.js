@@ -676,7 +676,11 @@ describe('State Rooms', () => {
     });
 
     it('clears the active room when the closed room was active', () => {
-      const room = { uuid: 'r-active', user: { email: 'a' }, is_waiting: false };
+      const room = {
+        uuid: 'r-active',
+        user: { email: 'a' },
+        is_waiting: false,
+      };
       roomsStore.$patch({ rooms: [room], activeRoom: room });
 
       roomsStore.applyClose('r-active');
@@ -700,7 +704,11 @@ describe('State Rooms', () => {
     });
 
     it('does not re-add a closed room when alreadyClosedThisBatch is true', () => {
-      const room = { uuid: 'r-closed', user: { email: userEmail }, is_waiting: false };
+      const room = {
+        uuid: 'r-closed',
+        user: { email: userEmail },
+        is_waiting: false,
+      };
 
       roomsStore.updateRoom({
         room,
