@@ -25,7 +25,7 @@
     <UnnnicIcon
       class="view-button__chevron"
       data-testid="header-chevron"
-      :icon="expandedMore ? 'keyboard_arrow_up' : 'keyboard_arrow_down'"
+      :icon="expandedMore ? 'keyboard_arrow_down' : 'keyboard_arrow_up'"
       size="ant"
       scheme="fg-base"
     />
