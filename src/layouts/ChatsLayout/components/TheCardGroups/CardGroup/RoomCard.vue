@@ -48,6 +48,10 @@
       :pendingResponseTooltip="
         showPendingResponse ? pendingResponseTooltipText : ''
       "
+      :newMessageIndicator="showNewChatReceivedIndicator"
+      :newMessageIndicatorTooltip="
+        showNewChatReceivedIndicator ? newChatReceivedTooltipText : ''
+      "
       data-testid="room-card-contact"
       @click="$emit('click')"
       @click-pin="$emit('clickPin', $event)"
@@ -160,6 +164,16 @@ export default {
     },
     pendingResponseTooltipText() {
       return this.$t('room_card.pending_response.tooltip');
+    },
+    showNewChatReceivedIndicator() {
+      return (
+        this.isProgressRoom &&
+        !!this.room?.isNewChatReceived &&
+        this.unreadMessages === 0
+      );
+    },
+    newChatReceivedTooltipText() {
+      return this.$t('room_card.new_chat_received.tooltip');
     },
     displayedLastMessage() {
       const { last_message: lastMessage } = this.room;
