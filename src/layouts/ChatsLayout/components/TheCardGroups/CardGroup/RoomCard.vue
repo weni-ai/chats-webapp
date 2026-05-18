@@ -49,6 +49,10 @@
       :pendingResponseTooltip="
         showPendingResponse ? pendingResponseTooltipText : ''
       "
+      :newMessageIndicator="showNewChatReceivedIndicator"
+      :newMessageIndicatorTooltip="
+        showNewChatReceivedIndicator ? newChatReceivedTooltipText : ''
+      "
       data-testid="room-card-contact"
       @click="$emit('click')"
       @click-pin="$emit('clickPin', $event)"
@@ -146,23 +150,45 @@ export default {
     isLastMessageFromContact() {
       return !!this.room.last_message?.contact && !this.room.last_message?.user;
     },
+    isLastMessageFromAnotherAgent() {
+      return (
+        !!this.room.last_message?.user &&
+        this.room.last_message?.user?.email !== this.me?.email
+      );
+    },
+    isLastMessageFromBot() {
+      return !this.room.last_message?.contact && !this.room.last_message?.user;
+    },
     showPendingResponse() {
-      const isYouAgentForThisRoom = this.room.user?.email === this.me?.email;
+      const isLastMessageValid =
+        this.isLastMessageFromContact ||
+        this.isLastMessageFromAnotherAgent ||
+        this.isLastMessageFromBot;
+
       return (
         this.isPendingResponseFeatureEnabled &&
         this.isProgressRoom &&
-        this.isLastMessageFromContact &&
-        this.unreadMessages === 0 &&
-        isYouAgentForThisRoom
+        isLastMessageValid &&
+        this.unreadMessages === 0
       );
     },
     pendingResponseTooltipText() {
       return this.$t('room_card.pending_response.tooltip');
     },
+    showNewChatReceivedIndicator() {
+      return (
+        this.isProgressRoom &&
+        !!this.room?.isNewChatReceived &&
+        this.unreadMessages === 0
+      );
+    },
+    newChatReceivedTooltipText() {
+      return this.$t('room_card.new_chat_received.tooltip');
+    },
     displayedLastMessage() {
       const { last_message: lastMessage } = this.room;
 
-      const shouldPrefix =
+      const isFromMe =
         this.isPendingResponseFeatureEnabled &&
         this.isProgressRoom &&
         this.isLastMessageFromAgent &&
@@ -170,13 +196,24 @@ export default {
         (lastMessage?.user === this.me?.email ||
           lastMessage?.user?.email === this.me?.email);
 
-      if (!shouldPrefix) return lastMessage;
+      if (!isFromMe) return lastMessage;
+
+      const hasMedia =
+        Array.isArray(lastMessage.media) && lastMessage.media.length > 0;
+
+      if (hasMedia) {
+        return {
+          ...lastMessage,
+          isFromUser: true,
+        };
+      }
 
       const youPrefix = this.$t('room_card.last_message.you_prefix');
       const originalText = lastMessage.text || '';
 
       return {
         ...lastMessage,
+        isFromUser: true,
         text: originalText ? `${youPrefix}: ${originalText}` : `${youPrefix}: `,
       };
     },

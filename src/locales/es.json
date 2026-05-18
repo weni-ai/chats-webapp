@@ -1323,6 +1323,9 @@
     "last_message": {
       "you_prefix": "Tú"
     },
+    "new_chat_received": {
+      "tooltip": "Nuevos chats recibidos"
+    },
     "pending_response": {
       "tooltip": "No respondiste a este contacto"
     }
