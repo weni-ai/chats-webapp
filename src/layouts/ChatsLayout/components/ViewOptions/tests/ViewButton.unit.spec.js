@@ -61,8 +61,8 @@ describe('ViewButton', () => {
     });
 
     it.each([
-      { expandedMore: true, expectedIcon: 'keyboard_arrow_up' },
-      { expandedMore: false, expectedIcon: 'keyboard_arrow_down' },
+      { expandedMore: true, expectedIcon: 'keyboard_arrow_down' },
+      { expandedMore: false, expectedIcon: 'keyboard_arrow_up' },
     ])(
       'should render chevron icon=$expectedIcon when expandedMore is $expandedMore',
       ({ expandedMore, expectedIcon }) => {

@@ -29,7 +29,7 @@ exports[`ViewButton > Snapshot > should match the snapshot 1`] = `
   </span>
   <i
     class="view-button__chevron"
-    data-icon="keyboard_arrow_up"
+    data-icon="keyboard_arrow_down"
     data-scheme="fg-base"
     data-size="ant"
     data-testid="header-chevron"
