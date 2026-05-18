@@ -65,15 +65,47 @@
             :modelValue="sector.automatic_message.is_active"
             class="margin-y-space-1"
             :textRight="
-              $t('sector.additional_options.automated_message.switch_label')
+              $t(
+                'sector.additional_options.automated_message.switch_when_waiting_label',
+              )
             "
-            :helper="$t('sector.additional_options.automated_message.hint')"
+            :helper="
+              $t(
+                'sector.additional_options.automated_message.hint_when_waiting',
+              )
+            "
             size="small"
             data-testid="config-switch"
             @update:model-value="handleAutomaticMessageIsActive"
           />
         </section>
-
+        <UnnnicInput
+          v-if="sector.automatic_message.is_active"
+          v-model="sector.automatic_message.text"
+          :maxlength="160"
+          showMaxlengthCounter
+          :label="$t('sector.additional_options.automated_message.field.title')"
+          :placeholder="
+            $t('sector.additional_options.automated_message.field.placeholder')
+          "
+        />
+        <section class="switchs__container">
+          <UnnnicSwitch
+            :modelValue="sector.automatic_message.is_active"
+            class="margin-y-space-1"
+            :textRight="
+              $t(
+                'sector.additional_options.automated_message.switch_when_start_label',
+              )
+            "
+            :helper="
+              $t('sector.additional_options.automated_message.hint_when_start')
+            "
+            size="small"
+            data-testid="config-switch"
+            @update:model-value="handleAutomaticMessageIsActive"
+          />
+        </section>
         <UnnnicInput
           v-if="sector.automatic_message.is_active"
           v-model="sector.automatic_message.text"

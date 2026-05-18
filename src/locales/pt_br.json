@@ -270,7 +270,10 @@
       },
       "automated_message": {
         "title": "Mensagens automatizadas",
-        "switch_label": "Enviar mensagem automática ao iniciar o atendimento",
+        "switch_when_waiting_label": "Enviar mensagem automática a contatos esperando",
+        "switch_when_start_label": "Enviar mensagem automática ao iniciar o atendimento",
+        "hint_when_waiting": "Envia automaticamente uma mensagem a contatos que estão esperando atendimento. A mensagem aparecerá como se enviada pelo atendente atribuído.",
+        "hint_when_start": "Envia automaticamente uma mensagem quando um chat é atribuído a um atendente. A mensagem aparecerá como se enviada pelo atendente atribuído.",
         "hint": "Envia automaticamente uma mensagem quando um chat é atribuído a um atendente. A mensagem aparecerá como se enviada pelo atendente atribuído.",
         "field": {
           "title": "Mensagem automática",
