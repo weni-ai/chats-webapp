@@ -1,4 +1,9 @@
 <template>
+  <UnnnicDisclaimer
+    v-if="isDisabledInput"
+    :description="$t('chats.message_manager.disabled_input_description')"
+    type="informational"
+  />
   <section class="message-manager-v2">
     <MessageManagerLoading v-if="isLoading" />
     <MessageManagerTextBox
@@ -42,10 +47,12 @@ defineOptions({
 });
 
 interface Props {
-  isLoading: boolean;
+  isLoading?: boolean;
 }
 
-const props = defineProps<Props>();
+const props = withDefaults(defineProps<Props>(), {
+  isLoading: false,
+});
 
 const profileStore = useProfile();
 const { me } = storeToRefs(profileStore);
@@ -65,6 +72,7 @@ const {
   isInternalNote,
   mediaUploadFiles,
   inputMessageFocused,
+  isDisabledInput,
 } = storeToRefs(messageManager);
 
 const keyboardEvent = ref<KeyboardEvent | null>(null);

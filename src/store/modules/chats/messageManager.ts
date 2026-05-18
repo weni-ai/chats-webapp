@@ -34,6 +34,11 @@ export const useMessageManager = defineStore('messageManager', () => {
   const { activeDiscussion } = storeToRefs(discussionsStore);
   const discussionMessagesStore = useDiscussionMessages();
 
+  const isDisabledInput = computed(() => {
+    // TODO: check config e return true if offline or paused
+    return true;
+  });
+
   watch(
     [() => activeRoom.value?.uuid, () => activeDiscussion.value?.uuid],
     () => {
@@ -197,6 +202,7 @@ export const useMessageManager = defineStore('messageManager', () => {
     isLoadingSend,
     disableSendButton,
     isAudioRecorderVisible,
+    isDisabledInput,
 
     sendRoomMessage,
     sendMediasMessage,
