@@ -1296,6 +1296,9 @@
     "last_message": {
       "you_prefix": "You"
     },
+    "new_chat_received": {
+      "tooltip": "New chats received"
+    },
     "pending_response": {
       "tooltip": "You did not respond to this contact"
     }
