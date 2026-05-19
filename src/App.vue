@@ -31,6 +31,9 @@ import { useQuickMessageShared } from './store/modules/chats/quickMessagesShared
 import { useRooms } from './store/modules/chats/rooms';
 import { useDashboard } from './store/modules/dashboard';
 import { useFeatureFlag } from './store/modules/featureFlag';
+import { useTheme } from '@weni/unnnic-system';
+
+import { applyRouteAwareTheme, notifyParentOfTheme } from '@/utils/theme';
 
 import initHotjar from '@/plugins/Hotjar';
 import {
@@ -56,6 +59,9 @@ export default {
     );
 
     if (projectUuid) setProjectLocalStorage(projectUuid);
+
+    const { resolvedTheme } = useTheme();
+    return { resolvedTheme };
   },
 
   data() {
@@ -107,6 +113,10 @@ export default {
 
     userWhoChangedStatus() {
       return this.disconnectedBy;
+    },
+
+    routeAwareTheme() {
+      return [this.resolvedTheme, this.$route.path];
     },
   },
 
@@ -160,6 +170,22 @@ export default {
         this.wsConnect();
       },
     },
+
+    resolvedTheme(theme) {
+      notifyParentOfTheme(theme);
+    },
+
+    // Reconcile the visual theme whenever the route or the resolved theme
+    // changes. Light-only routes (e.g. `/settings`) always render in light
+    // mode regardless of the persisted preference. Runs immediately so a
+    // deep-link straight into a light-only route still paints correctly
+    // even when the stored preference is dark.
+    routeAwareTheme: {
+      immediate: true,
+      handler([theme, path]) {
+        applyRouteAwareTheme(theme, path);
+      },
+    },
   },
 
   beforeCreate() {
@@ -177,6 +203,7 @@ export default {
 
   mounted() {
     notifications.requestPermission();
+    this.announceThemeToParent();
   },
 
   methods: {
@@ -286,6 +313,10 @@ export default {
 
         this.$i18n.locale = locale;
       });
+    },
+
+    announceThemeToParent() {
+      notifyParentOfTheme(this.resolvedTheme);
     },
 
     async onboarding() {
