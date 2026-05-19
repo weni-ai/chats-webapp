@@ -19,12 +19,12 @@
     <slot name="avatar">
       <UnnnicChatsUserAvatar
         v-if="discussionGoal"
-        scheme="purple-200"
+        scheme="bg-purple-plain"
       >
         <template #content>
           <UnnnicIcon
             icon="communication"
-            scheme="gray-900"
+            scheme="fg-base"
           />
         </template>
       </UnnnicChatsUserAvatar>
@@ -33,6 +33,8 @@
         :username="title"
         :photoUrl="userPhoto"
         :active="isHovered || selected"
+        scheme="bg-muted"
+        textColor="fg-emphasized"
       />
     </slot>
     <div class="chats-contact__infos">
@@ -64,6 +66,13 @@
         </p>
         <template v-else-if="lastMessageMedia.isMedia">
           <section class="chats-contact__infos__media">
+            <p
+              v-if="lastMessage.isFromUser"
+              class="chats-contact__infos__media__sender-prefix"
+              data-testid="media-sender-prefix"
+            >
+              {{ $t('you_message_prefix') }}
+            </p>
             <UnnnicIcon
               :icon="lastMessageMedia.mediaIcon"
               scheme="fg-base"
@@ -103,6 +112,20 @@
       <section
         class="chats-contact__infos__unread-messages-container__pin-container"
       >
+        <UnnnicTooltip
+          v-if="pendingResponse"
+          class="chats-contact__infos__pending-response"
+          :enabled="!!pendingResponseTooltip"
+          :text="pendingResponseTooltip"
+          side="top"
+        >
+          <UnnnicIcon
+            icon="reply"
+            size="sm"
+            scheme="fg-info"
+            data-testid="pending-response-icon"
+          />
+        </UnnnicTooltip>
         <button
           v-if="isRenderPin"
           data-testid="pin-button"
@@ -118,6 +141,18 @@
             :scheme="schemePin"
           />
         </button>
+        <UnnnicTooltip
+          v-else-if="newMessageIndicator"
+          class="chats-contact__infos__new-message-indicator-tooltip"
+          :enabled="!!newMessageIndicatorTooltip"
+          :text="newMessageIndicatorTooltip"
+          side="top"
+        >
+          <span
+            class="chats-contact__infos__new-message-indicator"
+            data-testid="new-message-indicator"
+          />
+        </UnnnicTooltip>
         <p
           v-else-if="(unreadMessages && !selected) || forceShowUnreadMessages"
           class="chats-contact__infos__unread-messages"
@@ -221,7 +256,23 @@ export default {
     },
     schemePin: {
       type: String,
-      default: ' fg-base',
+      default: 'fg-emphasized',
+    },
+    pendingResponse: {
+      type: Boolean,
+      default: false,
+    },
+    pendingResponseTooltip: {
+      type: String,
+      default: '',
+    },
+    newMessageIndicator: {
+      type: Boolean,
+      default: false,
+    },
+    newMessageIndicatorTooltip: {
+      type: String,
+      default: '',
     },
   },
 
@@ -280,6 +331,7 @@ export default {
 
   computed: {
     messageInfoAlign() {
+      if (this.newMessageIndicator) return 'space-between';
       return this.unreadMessages && this.selected ? 'center' : 'flex-start';
     },
     messageInfoMarginTop() {
@@ -420,9 +472,6 @@ export default {
 
 <style lang="scss" scoped>
 .chats-contact {
-  position: relative;
-  overflow: hidden;
-
   display: grid;
   grid-template-columns: max-content 1fr min-content;
   align-items: center;
@@ -543,19 +592,23 @@ export default {
     &__project-tag {
       display: block;
       flex-shrink: 1;
-      border: 1px solid $unnnic-color-border-emphasized;
+      background: $unnnic-color-bg-muted;
 
       font: $unnnic-font-caption-1;
       color: $unnnic-color-fg-emphasized;
 
-      border-radius: $unnnic-radius-4;
-      padding: 1px $unnnic-space-2;
+      border-radius: $unnnic-radius-full;
+      padding: $unnnic-space-05 $unnnic-space-3;
     }
 
     &__media {
       display: flex;
       align-items: center;
       gap: $unnnic-spacing-nano;
+
+      &__sender-prefix {
+        color: $unnnic-color-fg-base;
+      }
     }
 
     &__title,
@@ -572,7 +625,12 @@ export default {
     &__additional-information {
       width: 100%; // important to ellipsis work
 
-      color: $unnnic-color-fg-muted;
+      color: $unnnic-color-fg-base;
+    }
+
+    &__pending-response {
+      display: flex;
+      align-items: center;
     }
 
     &__unread-messages-container {
@@ -588,6 +646,7 @@ export default {
       &__pin-container {
         display: flex;
         align-items: center;
+        gap: $unnnic-space-1;
         position: relative;
         z-index: 10;
       }
@@ -622,7 +681,7 @@ export default {
       line-height: $unnnic-font-size-body-lg;
 
       &--active {
-        color: $unnnic-color-weni-700;
+        color: $unnnic-color-fg-info;
         font-weight: $unnnic-font-weight-bold;
       }
     }
@@ -633,7 +692,7 @@ export default {
       align-items: center;
 
       border-radius: 50%;
-      background: $unnnic-color-weni-50;
+      background: $unnnic-color-bg-info;
 
       width: 1.25rem;
       min-width: 1.25rem;
@@ -642,7 +701,28 @@ export default {
       font-size: $unnnic-font-size-body-md;
       font-weight: $unnnic-font-weight-bold;
       line-height: $unnnic-line-height-small;
-      color: $unnnic-color-weni-700;
+      color: $unnnic-color-fg-info;
+    }
+
+    &__new-message-indicator {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+
+      width: $unnnic-space-5;
+      min-width: $unnnic-space-5;
+      height: $unnnic-space-5;
+
+      &::before {
+        content: '';
+        display: block;
+
+        width: $unnnic-space-2;
+        height: $unnnic-space-2;
+
+        border-radius: 50%;
+        background-color: $unnnic-color-bg-blue-strong;
+      }
     }
 
     .ellipsis {

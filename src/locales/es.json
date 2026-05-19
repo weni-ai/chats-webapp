@@ -120,6 +120,7 @@
   "finance": "Financiero",
   "chats_in_the_period": "Chats en el período",
   "chats_per_agents": "Chats por agente",
+  "you_message_prefix": "Tú:",
   "new_messages_song": {
     "queue": "Sonido de nuevos mensajes de contactos que están esperando en la fila",
     "in_progress": "Sonido de nuevos mensajes en chats en curso",
@@ -532,7 +533,7 @@
   },
   "pagination": "{from} - {to} de {total}",
   "contact": "Contacto",
-  "unread_messages": "{unreadMessages} mensajes no leídos",
+  "unread_messages": "{count} mensaje no leído | {count} mensajes no leídos",
   "unnamed_contact": "Contacto sin nombre",
   "unnamed_agent": "Agente sin nombre",
   "no_agent_assigned": "No se ha asignado un agente",
