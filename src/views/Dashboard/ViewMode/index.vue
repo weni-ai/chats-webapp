@@ -100,7 +100,7 @@
         </template>
       </ContactHeader>
 
-      <UnnnicChatsHeader
+      <ChatsHeader
         v-show="!isRoomSkeletonActive"
         v-if="!!discussion"
         class="discussion-header"
@@ -197,6 +197,7 @@ import ButtonJoinDiscussion from '@/components/chats/chat/ButtonJoinDiscussion.v
 import ModalTransferRooms from '@/components/chats/chat/ModalTransferRooms.vue';
 import ViewModeHeader from './components/ViewModeHeader.vue';
 import ContactHeader from '@/components/chats/ContactHeader.vue';
+import ChatsHeader from '@/components/chats/ChatHeader.vue';
 
 import { buildHistorySearchTerm } from '@/utils/room';
 
@@ -213,7 +214,7 @@ export default {
     ViewModeHeader,
     ModalGetChat,
     ButtonJoinDiscussion,
-
+    ChatsHeader,
     ModalTransferRooms,
     ContactHeader,
   },

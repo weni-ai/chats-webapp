@@ -3,15 +3,15 @@
 exports[`SectorExtraOptions > Should match the snapshot 1`] = `
 "<section data-v-8e9664ba="" class="sector-extra-options-form">
   <section data-v-8e9664ba="" class="switchs">
-    <h2 data-v-8e9664ba="" class="switchs__title" data-testid="switchs-title">sector.additional_options.title</h2>
-    <unnnic-switch-stub data-v-8e9664ba="" size="small" label="" option="" helper="" textleft="" textright="sector.additional_options.template_message.switch_label" disabled="false" modelvalue="false" class="margin-y-space-1" data-testid="config-switch"></unnnic-switch-stub>
+    <h2 data-v-8e9664ba="" class="switchs__title" data-testid="switchs-title">Extra options</h2>
+    <unnnic-switch-stub data-v-8e9664ba="" size="small" label="" option="" helper="" textleft="" textright="Triggering message templates" disabled="false" modelvalue="false" class="margin-y-space-1" data-testid="config-switch"></unnnic-switch-stub>
     <section data-v-8e9664ba="" class="switchs__container">
-      <unnnic-switch-stub data-v-8e9664ba="" size="small" label="" option="" helper="sector.additional_options.agents_signature.hint" textleft="" textright="sector.additional_options.agents_signature.switch_label" disabled="false" modelvalue="false" class="margin-y-space-1" data-testid="config-switch"></unnnic-switch-stub>
+      <unnnic-switch-stub data-v-8e9664ba="" size="small" label="" option="" helper="Each message exchanged will have the name of the agent who is answering." textleft="" textright="Use signature" disabled="false" modelvalue="false" class="margin-y-space-1" data-testid="config-switch"></unnnic-switch-stub>
     </section>
-    <unnnic-switch-stub data-v-8e9664ba="" size="small" label="" option="" helper="sector.additional_options.edit_custom_fields.hint" textleft="" textright="sector.additional_options.edit_custom_fields.label" disabled="false" modelvalue="false" class="margin-y-space-1" data-testid="config-switch"></unnnic-switch-stub>
+    <unnnic-switch-stub data-v-8e9664ba="" size="small" label="" option="" helper="When active, it allows representatives to edit the custom fields of the contact in the &quot;All Information&quot; section." textleft="" textright="Allow representatives to edit custom contact information" disabled="false" modelvalue="false" class="margin-y-space-1" data-testid="config-switch"></unnnic-switch-stub>
   </section>
   <section data-v-8e9664ba="" class="switchs">
-    <h2 data-v-8e9664ba="" class="switchs__title">sector.additional_options.automated_message.title</h2>
+    <h2 data-v-8e9664ba="" class="switchs__title">Automated messages</h2>
     <!--v-if-->
   </section>
   <!--v-if-->
@@ -26,10 +26,10 @@ exports[`SectorExtraOptions > Should match the snapshot 1`] = `
     <section data-v-8e9664ba="" class="tags-form">
       <section data-v-a13fc64d="" data-v-2dd04313="" data-v-8e9664ba="" class="unnnic-form-element unnnic-form md tags-form__input" data-testid="tags-input-tag-name">
         <section data-v-b52fcb11="" data-v-a13fc64d="" class="unnnic-label unnnic-form-element__label">
-          <p data-v-b52fcb11="" class="unnnic-label__label">tags.add.label</p>
+          <p data-v-b52fcb11="" class="unnnic-label__label">Tag name</p>
           <!---->
         </section>
-        <div data-v-ff09e93b="" data-v-2dd04313="" class="text-input size--md tags-form__input unnnic-form-input" data-testid="tags-input-tag-name" hascloudycolor="false" mask=""><input data-v-043812be="" data-v-ff09e93b="" class="tags-form__input unnnic-form-input input-itself input size-md normal tags-form__input unnnic-form-input input-itself" data-testid="tags-input-tag-name" hascloudycolor="false" placeholder="tags.add.placeholder" iconleft="" iconright="" iconleftclickable="false" iconrightclickable="false" showclear="false" type="text" maxlength="120" value="">
+        <div data-v-ff09e93b="" data-v-2dd04313="" class="text-input size--md tags-form__input unnnic-form-input" data-testid="tags-input-tag-name" hascloudycolor="false" mask=""><input data-v-043812be="" data-v-ff09e93b="" class="tags-form__input unnnic-form-input input-itself input size-md normal tags-form__input unnnic-form-input input-itself" data-testid="tags-input-tag-name" hascloudycolor="false" placeholder="Enter the name of a tag to search or to add it" iconleft="" iconright="" iconleftclickable="false" iconrightclickable="false" showclear="false" type="text" maxlength="120" value="">
           <!---->
           <section data-v-ff09e93b="" class="icon-right-container">
             <!---->
@@ -40,13 +40,13 @@ exports[`SectorExtraOptions > Should match the snapshot 1`] = `
       </section><button data-v-d7396b6a="" data-v-8e9664ba="" data-testid="tags-add-tag-button" disabled="" class="unnnic-button unnnic-button--size-large unnnic-button--secondary">
         <!---->
         <!---->
-        <!----><span data-v-d7396b6a="" class="unnnic-button__label" style="visibility: visible;" data-testid="button-label"> add</span>
+        <!----><span data-v-d7396b6a="" class="unnnic-button__label" style="visibility: visible;" data-testid="button-label"> Add</span>
         <!---->
       </button>
     </section>
     <!--v-if-->
     <section data-v-8e9664ba="" class="switchs__container required-tags">
-      <unnnic-switch-stub data-v-8e9664ba="" size="small" label="" option="" helper="" textleft="" textright="sector.additional_options.required_tags.switch_label" disabled="true" modelvalue="false" class="margin-y-space-1" data-testid="config-switch"></unnnic-switch-stub>
+      <unnnic-switch-stub data-v-8e9664ba="" size="small" label="" option="" helper="" textleft="" textright="Require tags at the end of human support" disabled="true" modelvalue="false" class="margin-y-space-1" data-testid="config-switch"></unnnic-switch-stub>
     </section>
   </section>
 </section>"

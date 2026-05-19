@@ -82,6 +82,7 @@ describe('RoomCard.vue', () => {
       global: {
         plugins: [pinia],
         mocks: {
+          $tc: (key) => key,
           $t: (key, arg) => {
             if (key === 'waiting_for.minutes') {
               const n = typeof arg === 'number' ? arg : arg?.n;
@@ -607,7 +608,7 @@ describe('RoomCard.vue', () => {
   });
 
   describe('contact props passing tests', () => {
-    it('passes correct props to UnnnicChatsContact', () => {
+    it('passes correct props to ChatContact', () => {
       const roomsStore = useRooms();
       roomsStore.newMessagesByRoom = {
         'room-uuid-123': {

@@ -128,10 +128,12 @@
   "start": "Start",
   "submit": "Submit",
   "details": "Details",
+  "discussion_about": "Discussion about {discussionGoal}",
   "doubts": "Doubts",
   "finance": "Finance",
   "chats_in_the_period": "Chats in the period",
   "chats_per_agents": "Chats per agent",
+  "you_message_prefix": "You:",
   "new_messages_song": {
     "queue": "Sound for new messages from contacts waiting in the queue",
     "in_progress": "Sound for new messages in ongoing chats",
@@ -554,6 +556,7 @@
   },
   "pagination": "{from} - {to} of {total}",
   "contact": "Contact",
+  "unread_messages": "{count} unread message | {count} unread messages",
   "unnamed_contact": "Unnamed contact",
   "unnamed_agent": "Unnamed agent",
   "no_agent_assigned": "No agent assigned",
@@ -575,6 +578,7 @@
     "back_to_original_tooltip": "Go back to original version (Ctrl+Z)"
   },
   "manager": "Manager",
+  "yesterday": "Yesterday",
   "you": "You",
   "queue": "Queue",
   "agents": {

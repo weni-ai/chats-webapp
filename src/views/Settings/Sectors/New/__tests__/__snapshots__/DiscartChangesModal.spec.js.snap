@@ -12,12 +12,12 @@ exports[`DiscartChangesModal.vue > to match snapshot 1`] = `
     <div data-v-7a1d255d=""><button data-v-d7396b6a="" data-v-7a1d255d="" class="unnnic-button unnnic-button--size-large unnnic-button--tertiary">
         <!---->
         <!---->
-        <!----><span data-v-d7396b6a="" class="unnnic-button__label" style="visibility: visible;" data-testid="button-label"> back</span>
+        <!----><span data-v-d7396b6a="" class="unnnic-button__label" style="visibility: visible;" data-testid="button-label"> Back</span>
         <!---->
       </button><button data-v-d7396b6a="" data-v-7a1d255d="" class="unnnic-button unnnic-button--size-large unnnic-button--primary">
         <!---->
         <!---->
-        <!----><span data-v-d7396b6a="" class="unnnic-button__label" style="visibility: visible;" data-testid="button-label"> discart</span>
+        <!----><span data-v-d7396b6a="" class="unnnic-button__label" style="visibility: visible;" data-testid="button-label"> Discart</span>
         <!---->
       </button></div>
   </div>

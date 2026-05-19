@@ -83,6 +83,7 @@ describe('TheCardGroups.vue', () => {
           UnnnicToolTip: config.global.stubs.UnnnicToolTip,
         },
         mocks: {
+          $tc: (key) => key,
           $t: (key, params) => {
             const translations = {
               'chats.search_contact': 'Search contact',

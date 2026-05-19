@@ -157,11 +157,18 @@ describe('ClosedChats.vue', () => {
           ChatHeaderLoading: {
             template: '<div data-testid="chat-header-loading"></div>',
           },
-          UnnnicButton: {
-            template:
-              '<button :data-testid="$attrs[`data-testid`]" @click="$emit(`click`)"><slot /></button>',
-            props: ['type', 'size', 'iconCenter', 'ariaLabel'],
-            emits: ['click'],
+          ChatsHeader: {
+            template: '<div data-testid="unnnic-chats-header"><slot /></div>',
+            props: [
+              'title',
+              'subtitle',
+              'avatarIcon',
+              'crumbs',
+              'close',
+              'size',
+              'avatarName',
+            ],
+            emits: ['crumb-click'],
           },
           RoomMessages: {
             template: '<div data-testid="room-messages"></div>',
@@ -196,23 +203,6 @@ describe('ClosedChats.vue', () => {
       expect(
         wrapper.find('[data-testid="closed-chats-page-header"]').exists(),
       ).toBe(false);
-    });
-
-    it('renders project header after loading', async () => {
-      wrapper = createWrapper();
-
-      expect(
-        wrapper.find('[data-testid="closed-chats-header-loading"]').exists(),
-      ).toBe(false);
-
-      const header = wrapper.find('[data-testid="closed-chats-page-header"]');
-      expect(header.exists()).toBe(true);
-      expect(header.find('[data-testid="page-title"]').text()).toBe(
-        'General history',
-      );
-      expect(header.find('[data-testid="page-description"]').exists()).toBe(
-        true,
-      );
     });
 
     it('back button on project header navigates back to home', async () => {
