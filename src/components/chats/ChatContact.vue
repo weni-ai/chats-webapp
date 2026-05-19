@@ -1,4 +1,3 @@
-<!-- This component was migrated from UnnnicChatsContact to ChatContact -->
 <template>
   <div
     ref="rootEl"
@@ -282,50 +281,6 @@ export default {
     return {
       isHovered: false,
       ripples: [],
-
-      defaultTranslations: {
-        unnamed_contact: {
-          'pt-br': 'Contato sem nome',
-          en: 'Unnamed contact',
-          es: 'Contacto sin nombre',
-        },
-        yesterday: {
-          'pt-br': 'Ontem',
-          en: 'Yesterday',
-          es: 'Ayer',
-        },
-        waiting_for: {
-          'pt-br':
-            'Aguardando há 1 minuto | Aguardando há {waitingTime} minutos',
-          en: '1 minute waiting | {waitingTime} minutes waiting',
-          es: 'Esperando por un minuto | Esperando por {waitingTime} minutos',
-        },
-        unread_messages: {
-          'pt-br': '{unreadMessages} mensagens não lidas',
-          en: '{unreadMessages} unread messages',
-          es: '{unreadMessages} mensajes no leídos',
-        },
-        discussion_about: {
-          'pt-br': 'Discussão sobre {discussionGoal}',
-          en: 'Discussion about {discussionGoal}',
-          es: 'Discusión sobre {discussionGoal}',
-        },
-        audio_message: {
-          'pt-br': 'Mensagem de áudio',
-          en: 'Audio message',
-          es: 'Mensaje de audio',
-        },
-        image_message: {
-          'pt-br': 'Imagem',
-          en: 'Image',
-          es: 'Imagen',
-        },
-        video_message: {
-          'pt-br': 'Vídeo',
-          en: 'Video',
-          es: 'Video',
-        },
-      },
     };
   },
 
@@ -422,6 +377,7 @@ export default {
       if (this.disabled) return;
 
       const el = this.$refs.rootEl;
+
       if (!el || !(el instanceof Element)) return;
 
       const { left, top, width, height } = el.getBoundingClientRect();
@@ -472,6 +428,9 @@ export default {
 
 <style lang="scss" scoped>
 .chats-contact {
+  position: relative;
+  overflow: hidden;
+
   display: grid;
   grid-template-columns: max-content 1fr min-content;
   align-items: center;
