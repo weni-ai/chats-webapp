@@ -195,7 +195,7 @@ import ViewModeHeader from './components/ViewModeHeader.vue';
 import ContactHeader from '@/components/chats/ContactHeader.vue';
 import ChatsHeader from '@/components/chats/ChatHeader.vue';
 
-import { parseUrn } from '@/utils/room';
+import { buildHistorySearchTerm } from '@/utils/room';
 
 export default {
   name: 'ViewMode',
@@ -332,10 +332,10 @@ export default {
       this.isModalTransferRoomsOpened = false;
     },
     openHistory() {
-      const { plataform, contactNum } = parseUrn(this.room);
+      if (!this.room?.has_history) return;
+
+      const contactUrn = buildHistorySearchTerm(this.room);
       const protocol = this.room.protocol;
-      const contactUrn =
-        plataform === 'whatsapp' ? contactNum.replace('+', '') : contactNum;
 
       const A_YEAR_AGO = dateFnsFormat(
         dateFnsSubYears(new Date(), 1),
@@ -345,7 +345,7 @@ export default {
       this.$router.push({
         name: 'closed-rooms',
         query: {
-          contactUrn: contactUrn || this.room?.contact?.name,
+          contactUrn,
           protocol,
           startDate: A_YEAR_AGO,
           from: this.room.uuid,
