@@ -61,6 +61,26 @@
       }
     }
   },
+  "dark_mode_intro": {
+    "buttons": {
+      "not_now": "Agora não",
+      "switch": "Ativar modo escuro"
+    },
+    "description_1": "Trabalhe com mais conforto e foco durante todo o dia. O modo escuro reduz a fadiga visual, diminui o brilho da tela e facilita a leitura das conversas — ideal para longas jornadas de atendimento e ambientes com pouca luz.",
+    "description_2": "Com menos fadiga visual, você ganha clareza e agilidade ao responder aos clientes, mantendo um atendimento de alta qualidade mesmo nos horários de pico.",
+    "tagline": "Ative o modo escuro neste módulo e experimente uma nova forma de trabalhar!",
+    "title": "O modo escuro chegou",
+    "toast": {
+      "error": {
+        "action": "Tentar novamente",
+        "title": "Erro ao aplicar o modo escuro"
+      },
+      "success": {
+        "action": "Voltar ao modo claro",
+        "title": "Modo escuro aplicado com sucesso"
+      }
+    }
+  },
   "status": {
     "online": "Online",
     "offline": "Offline",
