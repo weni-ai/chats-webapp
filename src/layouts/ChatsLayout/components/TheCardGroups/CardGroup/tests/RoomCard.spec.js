@@ -1339,6 +1339,31 @@ describe('RoomCard.vue', () => {
 
       wrapper.unmount();
     });
+
+    it('takes precedence over pending response when both would be eligible', () => {
+      enablePendingResponseFlag();
+
+      const wrapper = createWrapper({
+        roomType: 'in_progress',
+        room: {
+          ...mockRoom,
+          unread_msgs: 0,
+          isNewChatReceived: true,
+          last_message: {
+            ...mockRoom.last_message,
+            text: 'Hello message',
+            user: null,
+          },
+        },
+      });
+
+      expect(wrapper.vm.isPendingResponseFeatureEnabled).toBe(true);
+      expect(wrapper.vm.isLastMessageFromContact).toBe(true);
+      expect(wrapper.vm.showNewChatReceivedIndicator).toBe(true);
+      expect(wrapper.vm.showPendingResponse).toBe(false);
+
+      wrapper.unmount();
+    });
   });
 
   describe('coverage completion tests', () => {
