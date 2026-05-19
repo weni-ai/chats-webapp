@@ -156,6 +156,7 @@ export default {
         this.isLastMessageFromBot;
 
       return (
+        !this.showNewChatReceivedIndicator &&
         this.isPendingResponseFeatureEnabled &&
         this.isProgressRoom &&
         isLastMessageValid &&
