@@ -842,7 +842,17 @@
     "successfully_triggered": "Fluxo disparado com sucesso",
     "error_triggering": "Erro ao disparar fluxo",
     "successfully_add_contact": "Contato adicionado com sucesso",
-    "contact_already_exists": "O número {contact} já está salvo em sua lista de contatos"
+    "contact_already_exists": "O número {contact} já está salvo em sua lista de contatos",
+    "variable_mapping": {
+      "title": "Mapeamento de variáveis",
+      "description": "As variáveis serão preenchidas na pré-visualização abaixo usando valores dos contatos selecionados sempre que fizerem referência a campos do contato",
+      "define_variables": "Definir as variáveis",
+      "variable_label": "Variável {index}",
+      "input_placeholder": "Digite o valor para esta variável",
+      "preview_title": "Pré-visualização do template",
+      "confirmation_helper": "Verifique se cada campo está mapeado corretamente; é assim que a mensagem será exibida para cada contato selecionado",
+      "confirmation_checkbox": "Verifiquei e estou pronto para enviar"
+    }
   },
   "quick_messages": {
     "title": "Mensagens rápidas",
