@@ -157,18 +157,11 @@ describe('ClosedChats.vue', () => {
           ChatHeaderLoading: {
             template: '<div data-testid="chat-header-loading"></div>',
           },
-          ChatsHeader: {
-            template: '<div data-testid="unnnic-chats-header"><slot /></div>',
-            props: [
-              'title',
-              'subtitle',
-              'avatarIcon',
-              'crumbs',
-              'close',
-              'size',
-              'avatarName',
-            ],
-            emits: ['crumb-click'],
+          UnnnicButton: {
+            template:
+              '<button :data-testid="$attrs[`data-testid`]" @click="$emit(`click`)"><slot /></button>',
+            props: ['type', 'size', 'iconCenter', 'ariaLabel'],
+            emits: ['click'],
           },
           RoomMessages: {
             template: '<div data-testid="room-messages"></div>',

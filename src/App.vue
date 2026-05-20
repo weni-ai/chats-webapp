@@ -6,6 +6,7 @@
       v-model="showModalOfflineAgent"
       :username="userWhoChangedStatus"
     />
+    <ModalDarkModeIntro v-model:open="showDarkModeIntroModal" />
   </div>
 </template>
 
@@ -14,6 +15,7 @@ import { mapActions, mapState } from 'pinia';
 
 import SocketAlertBanner from './layouts/ChatsLayout/components/SocketAlertBanner.vue';
 import ModalOfflineAgent from './components/ModalOfflineAgent.vue';
+import ModalDarkModeIntro from './components/chats/ModalDarkModeIntro.vue';
 
 import isMobile from 'is-mobile';
 
@@ -50,6 +52,7 @@ export default {
   components: {
     SocketAlertBanner,
     ModalOfflineAgent,
+    ModalDarkModeIntro,
   },
   setup() {
     const queryString = window.location.href.split('?')[1];
@@ -73,6 +76,7 @@ export default {
         'showModalRoomSummaryOnboarding',
         true,
       ),
+      showDarkModeIntroModal: false,
     };
   },
 
@@ -204,6 +208,7 @@ export default {
   mounted() {
     notifications.requestPermission();
     this.announceThemeToParent();
+    this.maybeShowDarkModeIntroModal();
   },
 
   methods: {
@@ -317,6 +322,15 @@ export default {
 
     announceThemeToParent() {
       notifyParentOfTheme(this.resolvedTheme);
+    },
+
+    // One-time dark mode intro modal. Storage flag is written immediately on
+    // first display so the modal never reappears, even if the user closes the
+    // tab before interacting.
+    maybeShowDarkModeIntroModal() {
+      if (moduleStorage.getItem('darkModeIntroSeen', false)) return;
+      moduleStorage.setItem('darkModeIntroSeen', true);
+      this.showDarkModeIntroModal = true;
     },
 
     async onboarding() {

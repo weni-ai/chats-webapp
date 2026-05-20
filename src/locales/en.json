@@ -61,6 +61,26 @@
       }
     }
   },
+  "dark_mode_intro": {
+    "buttons": {
+      "not_now": "Not now",
+      "switch": "Switch to dark mode"
+    },
+    "description_1": "Work with greater comfort and focus throughout the day. Dark mode reduces eye strain, lowers screen brightness, and makes conversations easier to read — ideal for long support shifts and low-light environments.",
+    "description_2": "With less visual fatigue, you gain clarity and speed when responding to customers, maintaining high-quality support even during peak times.",
+    "tagline": "Switch to dark mode in this module and experience a new way to work!",
+    "title": "Dark mode is here",
+    "toast": {
+      "error": {
+        "action": "Try again",
+        "title": "Error applying dark mode"
+      },
+      "success": {
+        "action": "Back to light mode",
+        "title": "Dark mode applied successfully"
+      }
+    }
+  },
   "status": {
     "online": "Online",
     "offline": "Offline",

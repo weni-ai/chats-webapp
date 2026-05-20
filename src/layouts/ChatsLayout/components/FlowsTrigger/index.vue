@@ -234,8 +234,6 @@ import SelectedContactsSection from '@/components/chats/FlowsTrigger/SelectedCon
 import SendFlow from '@/components/chats/FlowsTrigger/SendFlow.vue';
 import FlowsContactCard from '@/components/chats/FlowsTrigger/FlowsContactCard.vue';
 import ModalProgressBarFalse from '@/components/ModalProgressBarFalse.vue';
-import ChatsHeader from '@/components/chats/ChatHeader.vue';
-import ChatContact from '@/components/chats/ChatContact.vue';
 
 import callUnnnicAlert from '@/utils/callUnnnicAlert';
 
@@ -249,7 +247,6 @@ export default {
   name: 'FlowsTrigger',
 
   components: {
-    ChatsHeader,
     AsideSlotTemplate,
     AsideSlotTemplateSection,
     FlowsContactCard,
@@ -261,7 +258,6 @@ export default {
     SelectedContactsSection,
     SendFlow,
     ModalProgressBarFalse,
-    ChatContact,
   },
 
   props: {
