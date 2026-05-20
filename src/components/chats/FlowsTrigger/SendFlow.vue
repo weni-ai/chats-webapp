@@ -36,6 +36,8 @@
         :contacts="contacts"
         :selectedContact="selectedContact"
         :selectedFlow="selectedFlow"
+        :isProjectPrincipal="isProjectPrincipal"
+        :projectUuidFlow="projectUuidFlow"
         data-testid="send-flow-button"
         @back-to-contact-list="backToContactList"
         @send-flow-started="openModalProgress"
