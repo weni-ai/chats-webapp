@@ -162,8 +162,10 @@
   "automatic_message": {
     "title": "Mensaje automático",
     "info": "Define una respuesta automática para enviar al contacto mientras espera asistencia, déjalo en blanco si no deseas ningún mensaje.",
-    "placeholder": "Aún no has definido un mensaje automático. Por favor, define un mensaje para tus contactos que están esperando."
+    "placeholder": "Aún no has definido un mensaje automático. Por favor, define un mensaje para tus contactos que están esperando.",
+    "automatic_opening_message": "Mensaje de apertura automático"
   },
+  "reply": "Responder",
   "step_of": "Paso {step} de {total}",
   "type_to_filter": "Escribe para filtrar",
   "chats_count": "{count} chat | {count} chats",
