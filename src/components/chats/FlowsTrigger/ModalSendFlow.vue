@@ -22,6 +22,7 @@
           class="modal-send-flow__handler"
           :contacts="contacts"
           :selectedFlow="selectedFlow"
+          :isProjectPrincipal="isProjectPrincipal"
           data-testid="send-flow-button"
           @send-flow-finished="finishSendFlow"
         />
@@ -48,6 +49,10 @@ export default {
     contacts: {
       type: Array,
       required: true,
+    },
+    isProjectPrincipal: {
+      type: Boolean,
+      default: false,
     },
   },
   emits: ['close', 'send-flow-finished'],
