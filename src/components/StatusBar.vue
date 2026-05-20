@@ -37,7 +37,7 @@
           data-testid="header-icon-expand"
           size="md"
           :icon="isOpen ? 'expand_less' : 'expand_more'"
-          scheme="neutral-darkest"
+          scheme="fg-base"
         />
       </section>
       <section
@@ -519,6 +519,7 @@ watch(
   position: relative;
   display: flex;
   padding: $unnnic-spacing-sm;
+  min-height: var(--chats-column-header-height, 57px);
   justify-content: space-between;
   align-items: center;
   border-bottom: 1px solid $unnnic-color-border-soft;
@@ -563,7 +564,7 @@ watch(
   }
 
   &--gray {
-    background-color: $unnnic-color-bg-base-soft;
+    background-color: $unnnic-color-bg-muted;
   }
 
   &--brown {
@@ -595,10 +596,23 @@ watch(
     font-weight: $unnnic-font-weight-bold;
     line-height: $unnnic-font-size-body-gt + $unnnic-line-height-md;
 
-    text-overflow: ellipsis;
-    overflow: hidden;
-    white-space: nowrap;
-    max-width: 100px;
+    &__set-status {
+      display: flex;
+      align-items: center;
+      gap: $unnnic-spacing-nano;
+      &__label {
+        color: $unnnic-color-fg-base;
+        font-family: $unnnic-font-family-secondary;
+        font-size: $unnnic-font-size-body-gt;
+        font-style: normal;
+        font-weight: $unnnic-font-weight-bold;
+        line-height: $unnnic-font-size-body-gt + $unnnic-line-height-md;
+      }
+      text-overflow: ellipsis;
+      overflow: hidden;
+      white-space: nowrap;
+      max-width: 100px;
+    }
   }
 
   &__list {

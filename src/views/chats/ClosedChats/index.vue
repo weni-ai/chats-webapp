@@ -18,16 +18,17 @@
         {{ contactName || `[${$t('unnamed_contact')}]` }}
       </p>
     </section>
-    <UnnnicChatsHeader
+    <UnnnicPageHeader
       v-if="project && !selectedRoom"
-      class="closed-chats__table-header"
-      :title="project.name"
-      :subtitle="$t('chats.closed_chats.project_history')"
-      avatarIcon="history"
-      :crumbs="crumbs"
-      :close="backToHome"
-      :size="closedChatsHeaderSize"
-      @crumb-click="handlerCrumbClick"
+      hasBackButton
+      data-testid="closed-chats-page-header"
+      :title="$t('chats.closed_chats.general_history')"
+      :description="
+        $t('chats.closed_chats.history_description', {
+          projectName: project.name,
+        })
+      "
+      @back="backToHome"
     />
     <ChatHeaderLoading
       v-show="isLoadingSelectedRoom"
@@ -70,7 +71,7 @@
                 <UnnnicIcon
                   icon="search"
                   clickable
-                  scheme="gray-900"
+                  scheme="fg-emphasized"
                   size="ant"
                   @click="showSearchMessagesDrawer = !showSearchMessagesDrawer"
                 />
@@ -109,8 +110,6 @@
 </template>
 
 <script>
-import isMobile from 'is-mobile';
-
 import { mapActions, mapState, mapWritableState } from 'pinia';
 import { useRooms } from '@/store/modules/chats/rooms';
 import { useRoomMessages } from '@/store/modules/chats/roomMessages';
@@ -154,17 +153,8 @@ export default {
   },
 
   data: () => ({
-    isMobile: isMobile(),
-
     isLoadingHeader: true,
     isLoadingSelectedRoom: false,
-
-    crumbs: [
-      {
-        name: 'Live desk',
-        path: 'home',
-      },
-    ],
 
     selectedRoom: null,
     selectedRoomsUuids: null,
@@ -176,9 +166,6 @@ export default {
     ...mapState(useRoomMessages, ['roomMessagesNext']),
     ...mapWritableState(useRooms, ['activeRoomSummary']),
     ...mapState(useFeatureFlag, ['featureFlags']),
-    closedChatsHeaderSize() {
-      return this.isMobile ? 'small' : 'large';
-    },
     contactName() {
       return this.selectedRoom?.contact?.name?.trim() || '';
     },
@@ -235,13 +222,6 @@ export default {
     },
   },
 
-  async created() {
-    this.crumbs.push({
-      name: this.$t('chats.closed_chats.history'),
-      path: 'closed-rooms',
-    });
-  },
-
   methods: {
     ...mapActions(useRooms, ['setActiveRoom']),
     ...mapActions(useRoomMessages, ['getRoomMessages', 'resetRoomMessages']),
@@ -255,17 +235,6 @@ export default {
     backToClosedRooms() {
       this.selectedRoom = null;
       this.$router.push({ name: 'closed-rooms' });
-    },
-
-    handlerCrumbClick(crumb) {
-      if (crumb.name === this.selectedRoom?.contact.name) return;
-
-      this.selectedRoom = null;
-
-      const index = this.crumbs.findIndex((item) => item.path === crumb.path);
-      this.crumbs = this.crumbs.slice(0, index + 1);
-
-      this.$router.push({ name: crumb.path });
     },
 
     async chatScrollTop() {
@@ -292,7 +261,7 @@ export default {
     border-radius: $unnnic-radius-2;
 
     &--open {
-      background-color: rgba(136, 147, 168, 0.2);
+      background-color: $unnnic-color-bg-muted;
     }
   }
 }
@@ -307,21 +276,6 @@ export default {
   width: 100vw;
 
   overflow: hidden;
-
-  &__table-header {
-    :deep(.unnnic-chats-header__infos) {
-      > div > div.unnnic-avatar-icon {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        width: $unnnic-space-12;
-        height: $unnnic-space-12;
-        > .unnnic-icon {
-          font-size: $unnnic-space-8;
-        }
-      }
-    }
-  }
 
   &__rooms-table {
     height: 100%;
@@ -361,7 +315,7 @@ export default {
       flex-direction: column;
       height: 100%;
       overflow-y: hidden;
-      background: rgba(253, 245, 233, 0.25);
+      background-color: $unnnic-color-bg-base;
 
       :deep(.chat-messages) {
         padding: 0 $unnnic-space-4 0 $unnnic-space-4;

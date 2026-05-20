@@ -32,7 +32,7 @@
               <UnnnicIcon
                 icon="bi:stars"
                 clickable
-                scheme="gray-900"
+                scheme="fg-emphasized"
                 size="ant"
                 @click="openActiveRoomSummary = !openActiveRoomSummary"
               />
@@ -57,7 +57,7 @@
               <UnnnicIcon
                 icon="search"
                 clickable
-                scheme="gray-900"
+                scheme="fg-emphasized"
                 size="ant"
                 @click="showSearchMessagesDrawer = !showSearchMessagesDrawer"
               />
@@ -98,7 +98,7 @@
                 icon="sync_alt"
                 size="ant"
                 clickable
-                scheme="gray-900"
+                scheme="fg-emphasized"
                 @click="openTransferModal"
               />
             </section>
@@ -353,7 +353,7 @@ export default {
   }
   &__search-messages-icon {
     &--open {
-      background-color: rgba(136, 147, 168, 0.2);
+      background-color: $unnnic-color-bg-muted;
     }
   }
   &__summary-icon {
@@ -387,8 +387,7 @@ export default {
         background-color: $unnnic-color-bg-purple-strong;
 
         [class*='unnnic-icon'] {
-          // Semantic token not exists
-          color: $unnnic-color-teal-1;
+          color: $unnnic-color-fg-on-primary;
         }
       }
     }
