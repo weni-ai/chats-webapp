@@ -60,8 +60,6 @@ describe('ClosedChats.vue', () => {
   let setActiveRoomSpy;
   let getRoomMessagesSpy;
   let resetRoomMessagesSpy;
-  let roomsStore;
-  let roomMessagesStore;
 
   beforeEach(() => {
     vi.clearAllMocks();
@@ -159,18 +157,11 @@ describe('ClosedChats.vue', () => {
           ChatHeaderLoading: {
             template: '<div data-testid="chat-header-loading"></div>',
           },
-          ChatsHeader: {
-            template: '<div data-testid="unnnic-chats-header"><slot /></div>',
-            props: [
-              'title',
-              'subtitle',
-              'avatarIcon',
-              'crumbs',
-              'close',
-              'size',
-              'avatarName',
-            ],
-            emits: ['crumb-click'],
+          UnnnicButton: {
+            template:
+              '<button :data-testid="$attrs[`data-testid`]" @click="$emit(`click`)"><slot /></button>',
+            props: ['type', 'size', 'iconCenter', 'ariaLabel'],
+            emits: ['click'],
           },
           RoomMessages: {
             template: '<div data-testid="room-messages"></div>',
@@ -203,8 +194,8 @@ describe('ClosedChats.vue', () => {
         wrapper.find('[data-testid="closed-chats-header-loading"]').exists(),
       ).toBe(true);
       expect(
-        wrapper.findAll('[data-testid="unnnic-chats-header"]').length,
-      ).toBe(0);
+        wrapper.find('[data-testid="closed-chats-page-header"]').exists(),
+      ).toBe(false);
     });
 
     it('renders project header after loading', async () => {
@@ -213,9 +204,26 @@ describe('ClosedChats.vue', () => {
       expect(
         wrapper.find('[data-testid="closed-chats-header-loading"]').exists(),
       ).toBe(false);
-      expect(
-        wrapper.findAll('[data-testid="unnnic-chats-header"]').length,
-      ).toBeGreaterThan(0);
+
+      const header = wrapper.find('[data-testid="closed-chats-page-header"]');
+      expect(header.exists()).toBe(true);
+      expect(header.find('[data-testid="page-title"]').text()).toBe(
+        'General history',
+      );
+      expect(header.find('[data-testid="page-description"]').exists()).toBe(
+        true,
+      );
+    });
+
+    it('back button on project header navigates back to home', async () => {
+      wrapper = createWrapper();
+
+      await wrapper
+        .find('[data-testid="closed-chats-page-header"]')
+        .find('[data-testid="back-button"]')
+        .trigger('click');
+
+      expect(wrapper.vm.$router.push).toHaveBeenCalledWith({ name: 'home' });
     });
 
     it('renders rooms table when no roomId is provided', async () => {
@@ -407,55 +415,6 @@ describe('ClosedChats.vue', () => {
       await wrapper.vm.backToHome();
       expect(wrapper.vm.$router.push).toHaveBeenCalledWith({ name: 'home' });
     });
-
-    it('handles crumb click navigation', async () => {
-      wrapper = createWrapper();
-
-      const homeCrumb = { name: 'Live desk', path: 'home' };
-      await wrapper.vm.handlerCrumbClick(homeCrumb);
-
-      expect(wrapper.vm.$router.push).toHaveBeenCalledWith({
-        name: homeCrumb.path,
-      });
-    });
-
-    it('does not navigate if clicked crumb is the selected room', async () => {
-      wrapper = createWrapper({ roomId: '123' });
-
-      await wrapper.setData({
-        selectedRoom: mockRoom,
-        crumbs: [
-          { name: 'Live desk', path: 'home' },
-          { name: 'History', path: 'closed-rooms' },
-          { name: mockRoom.contact.name, path: 'closed-rooms/:roomId' },
-        ],
-      });
-
-      const contactCrumb = {
-        name: mockRoom.contact.name,
-        path: 'closed-rooms/:roomId',
-      };
-      const routerPushSpy = vi.spyOn(wrapper.vm.$router, 'push');
-
-      await wrapper.vm.handlerCrumbClick(contactCrumb);
-      expect(routerPushSpy).not.toHaveBeenCalled();
-    });
-  });
-
-  describe('Mobile Specific Behavior', () => {
-    it('sets header size to small on mobile', async () => {
-      isMobile.mockReturnValue(true);
-      wrapper = createWrapper();
-
-      expect(wrapper.vm.closedChatsHeaderSize).toBe('small');
-    });
-
-    it('sets header size to large on desktop', async () => {
-      isMobile.mockReturnValue(false);
-      wrapper = createWrapper();
-
-      expect(wrapper.vm.closedChatsHeaderSize).toBe('large');
-    });
   });
 
   describe('Component Methods', () => {
@@ -502,13 +461,6 @@ describe('ClosedChats.vue', () => {
       );
 
       expect(wrapper.vm.isLoadingHeader).toBe(false);
-    });
-
-    it('sets initial crumbs correctly', async () => {
-      wrapper = createWrapper();
-
-      expect(wrapper.vm.crumbs.length).toBeGreaterThan(0);
-      expect(wrapper.vm.crumbs[0].name).toBe('Live desk');
     });
   });
 });

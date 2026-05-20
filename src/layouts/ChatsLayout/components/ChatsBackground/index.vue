@@ -29,7 +29,7 @@ export default {
 .chats-background {
   position: relative;
   height: 100%;
-  background: rgba(246, 247, 249, 0.5);
+  background: $unnnic-color-bg-base-soft;
   display: flex;
   flex-direction: column;
   align-items: center;
