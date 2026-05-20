@@ -61,6 +61,26 @@
       }
     }
   },
+  "dark_mode_intro": {
+    "buttons": {
+      "not_now": "Not now",
+      "switch": "Switch to dark mode"
+    },
+    "description_1": "Work with greater comfort and focus throughout the day. Dark mode reduces eye strain, lowers screen brightness, and makes conversations easier to read — ideal for long support shifts and low-light environments.",
+    "description_2": "With less visual fatigue, you gain clarity and speed when responding to customers, maintaining high-quality support even during peak times.",
+    "tagline": "Switch to dark mode in this module and experience a new way to work!",
+    "title": "Dark mode is here",
+    "toast": {
+      "error": {
+        "action": "Try again",
+        "title": "Error applying dark mode"
+      },
+      "success": {
+        "action": "Back to light mode",
+        "title": "Dark mode applied successfully"
+      }
+    }
+  },
   "status": {
     "online": "Online",
     "offline": "Offline",
@@ -71,11 +91,24 @@
     "error": "Unable to update status, please try again."
   },
   "view-option": "View Options",
+  "view_options": {
+    "new_badge": "New"
+  },
   "preferences": {
     "title": "Preferences",
+    "appearance": {
+      "title": "Appearance",
+      "dark_mode": "Dark mode",
+      "live_desk_theme": "Live Desk theme",
+      "light": "Light",
+      "dark": "Dark"
+    },
     "notifications": {
       "title": "Notifications",
-      "sound": "Sound"
+      "sound": "Sound",
+      "sound_notifications": "Sound notifications",
+      "on": "On",
+      "off": "Off"
     },
     "help": {
       "label": "Help",
@@ -381,7 +414,7 @@
       "discussion_joined": "{agent} joined the discussion",
       "agent_took_chat": "Oops! The chat with the contact {contact} has already been taken over by another agent",
       "automatic_transfer_from_queue": "Room assigned to {agent}.",
-      "see_all_internal_notes": "<b style='color: white;'>See internal notes</b>"
+      "see_all_internal_notes": "<b class='fg-on-primary'>See internal notes</b>"
     },
     "room_list": {
       "order_by": "Order by:",
@@ -441,9 +474,11 @@
     "your_chat_assumed": "Chat with {contact} has been transferred",
     "your_chat_assumed_description": "Your chat with {contact} has been taken over by another agent",
     "closed_chats": {
+      "contact_history": "Contact history",
+      "general_history": "General history",
       "history": "History",
-      "project_history": "Project history",
-      "contact_history": "Contact history"
+      "history_description": "History of all support records for the {projectName} project",
+      "project_history": "Project history"
     },
     "assigned_queues": "Assigned queues",
     "select_queues": "Select queues",
@@ -776,7 +811,6 @@
   "flows": "Flows",
   "flows_trigger": {
     "title": "Flows trigger",
-    "subtitle": "Contacts of {project}",
     "triggered_flows": {
       "title": "Triggered flows",
       "single": "Triggered flow",

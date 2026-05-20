@@ -4,9 +4,9 @@ exports[`EditSector.vue > matches snapshot 1`] = `
 "<section data-v-ac9ddd5b="" class="sector-edit">
   <header data-v-c6575b33="" data-v-ac9ddd5b="" class="page-header 
       page-header--has-back-button 
-      page-header--no-divider"><button data-v-fb18c550="" data-v-c6575b33="" data-testid="back-button" class="page-header__back-button unnnic-button unnnic-button--size-large unnnic-button--tertiary unnnic-button--icon-on-center page-header__back-button">
+      page-header--no-divider"><button data-v-d7396b6a="" data-v-c6575b33="" data-testid="back-button" class="page-header__back-button unnnic-button unnnic-button--size-large unnnic-button--tertiary unnnic-button--icon-on-center page-header__back-button">
       <!---->
-      <!----><span data-v-b593673c="" data-v-fb18c550="" class="unnnic-icon material-symbols-rounded unnnic-icon-scheme--fg-emphasized unnnic-icon-size--ant unnnic-icon__size--ant unnnic--clickable" data-testid="icon-center" translate="no" style="visibility: visible;">arrow_back_ios_new</span><span data-v-fb18c550="" class="unnnic-button__label" style="visibility: visible;" data-testid="button-label"> </span>
+      <!----><span data-v-b593673c="" data-v-d7396b6a="" class="unnnic-icon material-symbols-rounded unnnic-icon-scheme--fg-emphasized unnnic-icon-size--ant unnnic-icon__size--ant unnnic--clickable" data-testid="icon-center" translate="no" style="visibility: visible;">arrow_back_ios_new</span><span data-v-d7396b6a="" class="unnnic-button__label" style="visibility: visible;" data-testid="button-label"> </span>
       <!---->
     </button>
     <section data-v-c6575b33="" class="page-header__infos">
@@ -15,10 +15,10 @@ exports[`EditSector.vue > matches snapshot 1`] = `
       </section>
       <!---->
     </section>
-    <section data-v-c6575b33="" class="page-header__actions" data-testid="page-actions"><button data-v-fb18c550="" data-v-ac9ddd5b="" disabled="" class="unnnic-button unnnic-button--size-large unnnic-button--primary">
+    <section data-v-c6575b33="" class="page-header__actions" data-testid="page-actions"><button data-v-d7396b6a="" data-v-ac9ddd5b="" disabled="" class="unnnic-button unnnic-button--size-large unnnic-button--primary">
         <!---->
         <!---->
-        <!----><span data-v-fb18c550="" class="unnnic-button__label" style="visibility: visible;" data-testid="button-label"> save_changes</span>
+        <!----><span data-v-d7396b6a="" class="unnnic-button__label" style="visibility: visible;" data-testid="button-label"> save_changes</span>
         <!---->
       </button>
       <!--v-if-->

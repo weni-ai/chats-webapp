@@ -9,15 +9,15 @@ exports[`DiscartChangesModal.vue > to match snapshot 1`] = `
     <section data-v-7a1d255d="" class="discart-changes-modal__content">
       <p data-v-7a1d255d="" class="discart-changes-modal__text">Text</p>
     </section>
-    <div data-v-7a1d255d=""><button data-v-fb18c550="" data-v-7a1d255d="" class="unnnic-button unnnic-button--size-large unnnic-button--tertiary">
+    <div data-v-7a1d255d=""><button data-v-d7396b6a="" data-v-7a1d255d="" class="unnnic-button unnnic-button--size-large unnnic-button--tertiary">
         <!---->
         <!---->
-        <!----><span data-v-fb18c550="" class="unnnic-button__label" style="visibility: visible;" data-testid="button-label"> back</span>
+        <!----><span data-v-d7396b6a="" class="unnnic-button__label" style="visibility: visible;" data-testid="button-label"> back</span>
         <!---->
-      </button><button data-v-fb18c550="" data-v-7a1d255d="" class="unnnic-button unnnic-button--size-large unnnic-button--primary">
+      </button><button data-v-d7396b6a="" data-v-7a1d255d="" class="unnnic-button unnnic-button--size-large unnnic-button--primary">
         <!---->
         <!---->
-        <!----><span data-v-fb18c550="" class="unnnic-button__label" style="visibility: visible;" data-testid="button-label"> discart</span>
+        <!----><span data-v-d7396b6a="" class="unnnic-button__label" style="visibility: visible;" data-testid="button-label"> discart</span>
         <!---->
       </button></div>
   </div>

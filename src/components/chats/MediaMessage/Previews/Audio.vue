@@ -90,7 +90,7 @@ export default {
   .scrollable {
     overflow-y: auto;
     height: 100%;
-    background-color: #ffff;
+    background-color: $unnnic-color-bg-base;
   }
 }
 </style>

@@ -755,10 +755,10 @@ export default {
     justify-content: space-between;
     align-items: center;
     padding: $unnnic-space-2;
-    font: $unnnic-font-display-3;
+    min-height: var(--chats-column-header-height, 57px);
+    font: $unnnic-font-display-4;
     color: $unnnic-color-fg-emphasized;
     border-bottom: 1px solid $unnnic-color-border-soft;
-    height: 55px;
   }
 
   &__about-support {
@@ -797,7 +797,7 @@ export default {
       }
     }
     &-title {
-      font: $unnnic-font-emphasis;
+      font: $unnnic-font-display-4;
       color: $unnnic-color-fg-emphasized;
       &-container {
         display: flex;
@@ -833,7 +833,7 @@ export default {
       justify-content: space-between;
 
       &__title {
-        font: $unnnic-font-emphasis;
+        font: $unnnic-font-display-4;
         color: $unnnic-color-fg-emphasized;
       }
 
