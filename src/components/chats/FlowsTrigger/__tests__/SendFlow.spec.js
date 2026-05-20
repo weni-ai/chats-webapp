@@ -33,9 +33,7 @@ describe('SendFlow', () => {
       true,
     );
     expect(wrapper.find('[data-testid="back-button"]').exists()).toBe(true);
-    expect(
-      wrapper.findComponent('[data-testid="send-flow-button"]').exists(),
-    ).toBe(true);
+    expect(wrapper.findComponent(SendFlowButton).exists()).toBe(true);
   });
 
   it('updates selectedFlow when a flow is selected', async () => {
@@ -45,17 +43,13 @@ describe('SendFlow', () => {
   });
 
   it('shows progress modal when send-flow-started is emitted', async () => {
-    const sendFlowButton = wrapper.findComponent(
-      '[data-testid="send-flow-button"]',
-    );
+    const sendFlowButton = wrapper.findComponent(SendFlowButton);
     await sendFlowButton.vm.$emit('send-flow-started');
     expect(wrapper.vm.showProgressBar).toBe(true);
   });
 
   it('hides progress modal and shows success alert when send-flow-finished is emitted without errors', async () => {
-    const sendFlowButton = wrapper.findComponent(
-      '[data-testid="send-flow-button"]',
-    );
+    const sendFlowButton = wrapper.findComponent(SendFlowButton);
     wrapper.vm.showProgressBar = true;
 
     await sendFlowButton.vm.$emit('send-flow-finished', { hasError: false });
@@ -72,9 +66,7 @@ describe('SendFlow', () => {
   });
 
   it('hides progress modal and shows error alert when send-flow-finished is emitted with errors', async () => {
-    const sendFlowButton = wrapper.findComponent(
-      '[data-testid="send-flow-button"]',
-    );
+    const sendFlowButton = wrapper.findComponent(SendFlowButton);
     wrapper.vm.showProgressBar = true;
 
     await sendFlowButton.vm.$emit('send-flow-finished', { hasError: true });
