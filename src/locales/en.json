@@ -512,7 +512,7 @@
       "close": "End visualization",
       "assume_chat": "Take over only this chat",
       "assume_chat_question": "Take over chat with {contact}?",
-      "assume_chat_question_description": "Are you sure you want to take over chat with {contact}?<br><br>When confirming you will remove the chat from representative and will be responsible for chat."
+      "assume_chat_question_description": "Are you sure you want to take over chat with {contact}?<br /> <br />When confirming you will remove the chat from representative and will be responsible for chat."
     }
   },
   "select": "Select",

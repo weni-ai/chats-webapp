@@ -515,7 +515,7 @@
       "close": "Encerrar visualização",
       "assume_chat": "Assumir apenas este chat",
       "assume_chat_question": "Assumir o chat com {contact}?",
-      "assume_chat_question_description": "Tem certeza de que deseja assumir o chat com {contact}?<br><br>Ao confirmar, você remove o chat do representante e fica responsável pelo chat."
+      "assume_chat_question_description": "Tem certeza de que deseja assumir o chat com {contact}?<br /> <br />Ao confirmar, você remove o chat do representante e fica responsável pelo chat."
     }
   },
   "select": "Selecionar",
