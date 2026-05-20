@@ -78,8 +78,7 @@ describe('ModalDarkModeIntro', () => {
       const wrapper = createWrapper();
       const title = wrapper.find('[data-testid="dark-mode-intro-title"]');
       expect(title.exists()).toBe(true);
-      expect(title.text()).toContain('🌙');
-      expect(title.text()).toContain('dark_mode_intro.title');
+      expect(title.text()).toContain('Dark mode is here 🌙');
     });
 
     it('renders both description paragraphs and the tagline', () => {

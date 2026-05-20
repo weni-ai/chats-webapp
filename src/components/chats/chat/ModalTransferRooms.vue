@@ -9,7 +9,7 @@
           {{
             bulkTransfer
               ? $t('transfer_all_selected_chats')
-              : $t('transfer_contact')
+              : $t('transfer_contact', { count: currentSelectedRooms.length })
           }}
         </UnnnicDialogTitle>
       </UnnnicDialogHeader>
