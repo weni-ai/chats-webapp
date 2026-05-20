@@ -143,7 +143,7 @@
       :title="$t('dashboard.view-mode.assume_chat_question')"
       :description="
         $t('dashboard.view-mode.assume_chat_confirmation', {
-          agent: viewedAgent.name,
+          viewedAgent: viewedAgent.name,
         })
       "
       :whenGetChat="whenGetChat"
