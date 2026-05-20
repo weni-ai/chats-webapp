@@ -2,10 +2,9 @@
   <UnnnicDialog
     v-model:open="isOpen"
     class="modal-variable-mapping"
-    size="lg"
     data-testid="modal-variable-mapping"
   >
-    <UnnnicDialogContent>
+    <UnnnicDialogContent size="large">
       <UnnnicDialogHeader>
         <UnnnicDialogTitle>
           {{ $t('flows_trigger.variable_mapping.title') }}
@@ -141,6 +140,10 @@ const onConfirm = () => {
     padding: $unnnic-spacing-md;
 
     text-align: start;
+
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow-y: auto;
   }
 
   &__description {
@@ -152,6 +155,7 @@ const onConfirm = () => {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: $unnnic-spacing-xs;
+    align-items: start;
   }
 
   &__form {
@@ -167,6 +171,8 @@ const onConfirm = () => {
 
   &__preview {
     align-self: stretch;
+    position: sticky;
+    top: 0;
   }
 
   &__confirmation {
