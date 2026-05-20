@@ -155,7 +155,7 @@
         <p
           v-else-if="(unreadMessages && !selected) || forceShowUnreadMessages"
           class="chats-contact__infos__unread-messages"
-          :title="$tc('unread_messages', unreadMessages, { unreadMessages })"
+          :title="$t('unread_messages', unreadMessages, { unreadMessages })"
         >
           {{ unreadMessages }}
         </p>
