@@ -2,6 +2,7 @@ import { mount } from '@vue/test-utils';
 import { expect, describe, it, beforeEach, vi } from 'vitest';
 
 import ModalSendFlow from '../ModalSendFlow.vue';
+import SendFlowButton from '../SendFlowButton.vue';
 
 import callUnnnicAlert from '@/utils/callUnnnicAlert';
 vi.mock('@/utils/callUnnnicAlert');
@@ -11,6 +12,10 @@ vi.mock('@/services/api/resources/chats/flowsTrigger', () => ({
     getFlows: vi.fn(() =>
       Promise.resolve([{ uuid: 'flow-1', name: 'Flow 1' }]),
     ),
+    getFlowTemplates: vi.fn(() =>
+      Promise.resolve({ total_template_qty: 0, templates: [] }),
+    ),
+    sendFlow: vi.fn(() => Promise.resolve()),
   },
 }));
 
@@ -59,9 +64,7 @@ describe('ModalSendFlow', () => {
 
     expect(wrapper.find('[data-testid="select-flow"]').exists()).toBe(true);
 
-    expect(wrapper.find('[data-testid="send-flow-button"]').exists()).toBe(
-      true,
-    );
+    expect(wrapper.findComponent(SendFlowButton).exists()).toBe(true);
   });
 
   it('emits close event when dialog closes (update:open false)', async () => {
@@ -79,9 +82,7 @@ describe('ModalSendFlow', () => {
   });
 
   it('shows success alert and emits send-flow-finished when no errors occur', async () => {
-    const sendFlowButton = wrapper.findComponent(
-      '[data-testid="send-flow-button"]',
-    );
+    const sendFlowButton = wrapper.findComponent(SendFlowButton);
     await sendFlowButton.vm.$emit('send-flow-finished', { hasError: false });
 
     expect(callUnnnicAlert).toHaveBeenCalledWith({
@@ -96,9 +97,7 @@ describe('ModalSendFlow', () => {
   });
 
   it('shows error alert and emits send-flow-finished when errors occur', async () => {
-    const sendFlowButton = wrapper.findComponent(
-      '[data-testid="send-flow-button"]',
-    );
+    const sendFlowButton = wrapper.findComponent(SendFlowButton);
     await sendFlowButton.vm.$emit('send-flow-finished', { hasError: true });
 
     expect(callUnnnicAlert).toHaveBeenCalledWith({
