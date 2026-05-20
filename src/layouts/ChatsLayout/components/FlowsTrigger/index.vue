@@ -200,8 +200,17 @@
       <ModalSendFlow
         v-if="showSendFlowModal"
         :contacts="selected"
+        :isProjectPrincipal="isProjectPrincipal"
         @close="closeSendFlow"
         @send-flow-finished="$emit('close')"
+      />
+      <ModalVariableMapping
+        v-if="showInlineVariableModal && inlineTemplate"
+        :template="inlineTemplate.data"
+        :variables="inlineTemplate.variables"
+        :isLoading="isLoadingSendFlow"
+        @close="closeInlineVariableModal"
+        @confirm="confirmInlineVariableMapping"
       />
       <ModalRemoveSelectedContacts
         v-if="showRemoveSelectedContactsModal"
@@ -229,6 +238,7 @@ import ModalListTriggeredFlows from '@/components/chats/FlowsTrigger/ModalListTr
 import ModalAddNewContact from '@/components/chats/FlowsTrigger/ModalAddNewContact.vue';
 import ModalSendFlow from '@/components/chats/FlowsTrigger/ModalSendFlow.vue';
 import ModalRemoveSelectedContacts from '@/components/chats/FlowsTrigger/ModalRemoveSelectedContacts.vue';
+import ModalVariableMapping from '@/components/chats/FlowsTrigger/ModalVariableMapping.vue';
 import SelectedContactsSection from '@/components/chats/FlowsTrigger/SelectedContactsSection.vue';
 import SendFlow from '@/components/chats/FlowsTrigger/SendFlow.vue';
 import FlowsContactCard from '@/components/chats/FlowsTrigger/FlowsContactCard.vue';
@@ -254,6 +264,7 @@ export default {
     ModalAddNewContact,
     ModalSendFlow,
     ModalRemoveSelectedContacts,
+    ModalVariableMapping,
     SelectedContactsSection,
     SendFlow,
     ModalProgressBarFalse,
@@ -298,6 +309,9 @@ export default {
     isSendFlowFinished: false,
     isLoadingSendFlow: false,
     isLoadingCheckProjectPrincipal: false,
+
+    showInlineVariableModal: false,
+    inlineTemplate: null,
   }),
 
   computed: {
@@ -654,6 +668,40 @@ export default {
     },
 
     async sendFlowToContacts() {
+      if (!this.isProjectPrincipal) {
+        try {
+          const response = await FlowsTrigger.getFlowTemplates(
+            this.selectedFlow,
+            this.projectUuidFlow,
+          );
+
+          const firstTemplate = response?.templates?.[0];
+          const variables = firstTemplate?.variables || [];
+
+          if (variables.length > 0) {
+            this.inlineTemplate = firstTemplate;
+            this.showInlineVariableModal = true;
+            return;
+          }
+        } catch (error) {
+          console.error('Error checking flow templates', error);
+        }
+      }
+
+      await this.doSendFlowToContacts();
+    },
+
+    closeInlineVariableModal() {
+      this.showInlineVariableModal = false;
+      this.inlineTemplate = null;
+    },
+
+    async confirmInlineVariableMapping(params) {
+      await this.doSendFlowToContacts(params);
+      this.closeInlineVariableModal();
+    },
+
+    async doSendFlowToContacts(params) {
       let hasError = false;
 
       this.isLoadingSendFlow = true;
@@ -667,6 +715,7 @@ export default {
           contacts: [contact.external_id || contact.uuid],
           room: this.room?.uuid || '',
           contact_name: contact.name,
+          ...(params ? { params } : {}),
         };
 
         try {
