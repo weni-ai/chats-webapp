@@ -300,7 +300,11 @@ describe('ModalCloseRooms.vue', () => {
     it('marks pending closes, applies optimistic close on success, and decrements the counter', async () => {
       const wrapper = createWrapperWithFeatureFlag({
         bulkCloseResponse: {
-          data: { success_count: 1, failed_count: 0, success_uuids: ['room-1'] },
+          data: {
+            success_count: 1,
+            failed_count: 0,
+            success_uuids: ['room-1'],
+          },
         },
       });
 
@@ -350,7 +354,11 @@ describe('ModalCloseRooms.vue', () => {
     it('skips optimistic close when feature flag is off (legacy path)', async () => {
       const wrapper = createWrapperWithFeatureFlag({
         bulkCloseResponse: {
-          data: { success_count: 1, failed_count: 0, success_uuids: ['room-1'] },
+          data: {
+            success_count: 1,
+            failed_count: 0,
+            success_uuids: ['room-1'],
+          },
         },
         featureFlags: [],
       });

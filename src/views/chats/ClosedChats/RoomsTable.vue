@@ -40,6 +40,8 @@
           <UnnnicChatsUserAvatar
             v-if="!isMobile"
             :username="item.contact.name"
+            scheme="bg-muted"
+            textColor="fg-emphasized"
             data-testid="room-item-avatar"
           />
           <p

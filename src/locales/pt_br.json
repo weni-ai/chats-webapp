@@ -61,6 +61,26 @@
       }
     }
   },
+  "dark_mode_intro": {
+    "buttons": {
+      "not_now": "Agora não",
+      "switch": "Ativar modo escuro"
+    },
+    "description_1": "Trabalhe com mais conforto e foco durante todo o dia. O modo escuro reduz a fadiga visual, diminui o brilho da tela e facilita a leitura das conversas — ideal para longas jornadas de atendimento e ambientes com pouca luz.",
+    "description_2": "Com menos fadiga visual, você ganha clareza e agilidade ao responder aos clientes, mantendo um atendimento de alta qualidade mesmo nos horários de pico.",
+    "tagline": "Ative o modo escuro neste módulo e experimente uma nova forma de trabalhar!",
+    "title": "O modo escuro chegou",
+    "toast": {
+      "error": {
+        "action": "Tentar novamente",
+        "title": "Erro ao aplicar o modo escuro"
+      },
+      "success": {
+        "action": "Voltar ao modo claro",
+        "title": "Modo escuro aplicado com sucesso"
+      }
+    }
+  },
   "status": {
     "online": "Online",
     "offline": "Offline",
@@ -71,11 +91,24 @@
     "error": "Não foi possível atualizar o seu status, por favor tente novamente"
   },
   "view-option": "Opções",
+  "view_options": {
+    "new_badge": "Novo"
+  },
   "preferences": {
     "title": "Preferências",
+    "appearance": {
+      "title": "Aparência",
+      "dark_mode": "Modo escuro",
+      "live_desk_theme": "Tema do Live Desk",
+      "light": "Claro",
+      "dark": "Escuro"
+    },
     "notifications": {
       "title": "Notificações",
-      "sound": "Som"
+      "sound": "Som",
+      "sound_notifications": "Notificações sonoras",
+      "on": "Ativado",
+      "off": "Desativado"
     },
     "help": {
       "label": "Ajuda",
@@ -382,7 +415,7 @@
       "discussion_joined": "{agent} entrou na discussão",
       "agent_took_chat": "Ops! O chat com contato {contact} foi assumido por outro agente",
       "automatic_transfer_from_queue": "Sala atribuída ao {agent}.",
-      "see_all_internal_notes": "<b style='color: white;'>Ver notas internas</b>"
+      "see_all_internal_notes": "<b class='fg-on-primary'>Ver notas internas</b>"
     },
     "room_list": {
       "order_by": "Ordenar por:",
@@ -442,14 +475,18 @@
     "your_chat_assumed": "O Chat com {contact} foi transferido",
     "your_chat_assumed_description": "Seu chat com {contact} foi assumido por outro agente",
     "closed_chats": {
+      "contact_history": "Histórico do contato",
+      "general_history": "Histórico geral",
       "history": "Histórico",
-      "project_history": "Histórico do projeto",
-      "contact_history": "Histórico do contato"
+      "history_description": "Histórico de todos os atendimentos do projeto {projectName}",
+      "project_history": "Histórico do projeto"
     },
+    "assigned_queues": "Filas atribuídas",
     "select_queues": "Selecionar filas",
-    "select_services_queues": "Selecionar filas de atendimento",
-    "select_at_least": "Selecione pelo menos uma fila para salvar alterações",
-    "select_the_queues": "Selecione as filas",
+    "select_services_queues": "Defina as filas para receber chats",
+    "select_at_least": "É necessário selecionar pelo menos uma fila para salvar as alterações.",
+    "define_the_queues": "Definir as filas",
+    "select_queues_priorization_hint": "Novos chats serão recebidos apenas das filas selecionadas.",
     "select_your_queues": "Selecione suas filas",
     "no_queue_selected": "Nenhuma fila selecionada",
     "success_update_queues": "Suas filas de atendimento foram atualizadas",
@@ -777,7 +814,6 @@
   "flows": "Fluxos",
   "flows_trigger": {
     "title": "Disparo de fluxos",
-    "subtitle": "Contatos de {project}",
     "triggered_flows": {
       "title": "Fluxos disparados",
       "single": "Fluxo disparado",

@@ -262,8 +262,7 @@ export default {
 
       color: $unnnic-color-fg-base;
       font-size: $unnnic-font-size-body-md;
-      // Semantic token not exists
-      background-color: $unnnic-color-teal-1;
+      background-color: $unnnic-color-bg-accent-plain;
 
       &:active {
         background-color: $unnnic-color-bg-accent-plain;

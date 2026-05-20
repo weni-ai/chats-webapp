@@ -12,7 +12,6 @@
       type="default"
       :text="contact.name"
       hasCloseIcon
-      scheme="bg-base"
       data-testid="contact-tag"
       @close="$emit('remove-contact', contact)"
     />
@@ -38,17 +37,17 @@ export default {
   gap: $unnnic-spacing-xs;
   overflow: hidden auto;
   flex-wrap: wrap;
-  max-height: $unnnic-spacing-xgiant;
+  max-height: $unnnic-space-20;
 
   scroll-snap-type: y proximity;
 
-  :deep(.unnnic-tag) {
-    background-color: $unnnic-color-bg-base;
-
+  :deep(.chip) {
+    height: $unnnic-space-8;
     max-width: 100%;
     scroll-snap-align: start;
 
-    .unnnic-tag__label {
+    .chip__text {
+      min-width: 0;
       overflow: hidden;
       text-overflow: ellipsis;
       white-space: nowrap;
