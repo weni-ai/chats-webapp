@@ -36,12 +36,19 @@
               v-for="(segment, index) in bodySegments"
               :key="index"
             >
-              <span
+              <UnnnicToolTip
                 v-if="segment.type === 'variable'"
-                class="meta-template-preview__variable"
-                data-testid="meta-template-preview-variable"
-                >{{ segment.text }}</span
+                enabled
+                :text="getVariableTooltip(segment)"
+                side="top"
+                maxWidth="20rem"
               >
+                <span
+                  class="meta-template-preview__variable"
+                  data-testid="meta-template-preview-variable"
+                  >{{ segment.text }}</span
+                >
+              </UnnnicToolTip>
               <span
                 v-else
                 class="meta-template-preview__text"
@@ -82,6 +89,8 @@
 
 <script setup lang="ts">
 import { computed } from 'vue';
+
+import i18n from '@/plugins/i18n';
 
 import type {
   MetaTemplate,
@@ -175,7 +184,8 @@ const bodySegments = computed<TemplateBodySegment[]>(() => {
       });
     }
 
-    const positionalIndex = Number(match[1]) - 1;
+    const positionalNumber = Number(match[1]);
+    const positionalIndex = positionalNumber - 1;
     const variableName = props.variables?.[positionalIndex];
     const filledValue =
       variableName && props.variableValues?.[variableName]
@@ -186,6 +196,8 @@ const bodySegments = computed<TemplateBodySegment[]>(() => {
       type: 'variable',
       text: filledValue || `{{${match[1]}}}`,
       filled: Boolean(filledValue),
+      positionalNumber,
+      value: filledValue,
     });
 
     lastIndex = regex.lastIndex;
@@ -201,6 +213,16 @@ const bodySegments = computed<TemplateBodySegment[]>(() => {
 
   return segments;
 });
+
+const getVariableTooltip = (segment: TemplateBodySegment) => {
+  const placeholder = `{{${segment.positionalNumber ?? ''}}}`;
+  const label = i18n.global.t(
+    'flows_trigger.variable_mapping.preview_variable_tooltip',
+    { placeholder },
+  );
+  const trimmedValue = segment.value?.trim();
+  return trimmedValue ? `${label} | ${trimmedValue}` : label;
+};
 </script>
 
 <style lang="scss" scoped>
