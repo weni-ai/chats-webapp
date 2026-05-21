@@ -14,7 +14,7 @@ afterAll(() => {
   config.global.mocks = savedGlobalMocks;
 });
 
-const dialogStubs = {
+const componentStubs = {
   UnnnicDialog: {
     name: 'UnnnicDialogStub',
     props: ['open'],
@@ -62,8 +62,14 @@ describe('ModalVariableMapping', () => {
         variables: ['contactName', 'orderNumber'],
         ...props,
       },
-      global: { stubs: dialogStubs },
+      global: { stubs: componentStubs },
     });
+
+  const fillAllVariables = async () => {
+    wrapper.vm.variableValues.contactName = 'Marcus';
+    wrapper.vm.variableValues.orderNumber = '12345';
+    await wrapper.vm.$nextTick();
+  };
 
   beforeEach(() => {
     wrapper = buildWrapper();
@@ -78,7 +84,7 @@ describe('ModalVariableMapping', () => {
     ).toBe(true);
   });
 
-  it('disables confirm button until checkbox is checked', async () => {
+  it('keeps confirm button disabled when checkbox is checked but variables are empty', async () => {
     const confirmButton = wrapper.find(
       '[data-testid="modal-variable-mapping-confirm"]',
     );
@@ -88,12 +94,43 @@ describe('ModalVariableMapping', () => {
     wrapper.vm.isConfirmed = true;
     await wrapper.vm.$nextTick();
 
+    expect(confirmButton.attributes('disabled')).toBeDefined();
+  });
+
+  it('keeps confirm button disabled when all variables are filled but checkbox is unchecked', async () => {
+    await fillAllVariables();
+
+    const confirmButton = wrapper.find(
+      '[data-testid="modal-variable-mapping-confirm"]',
+    );
+    expect(confirmButton.attributes('disabled')).toBeDefined();
+  });
+
+  it('keeps confirm button disabled when some variables only contain whitespace', async () => {
+    wrapper.vm.variableValues.contactName = 'Marcus';
+    wrapper.vm.variableValues.orderNumber = '   ';
+    wrapper.vm.isConfirmed = true;
+    await wrapper.vm.$nextTick();
+
+    const confirmButton = wrapper.find(
+      '[data-testid="modal-variable-mapping-confirm"]',
+    );
+    expect(confirmButton.attributes('disabled')).toBeDefined();
+  });
+
+  it('enables confirm button only when all variables are filled AND checkbox is checked', async () => {
+    await fillAllVariables();
+    wrapper.vm.isConfirmed = true;
+    await wrapper.vm.$nextTick();
+
+    const confirmButton = wrapper.find(
+      '[data-testid="modal-variable-mapping-confirm"]',
+    );
     expect(confirmButton.attributes('disabled')).toBeUndefined();
   });
 
   it('emits confirm with variable values when confirm button is clicked', async () => {
-    wrapper.vm.variableValues.contactName = 'Marcus';
-    wrapper.vm.variableValues.orderNumber = '12345';
+    await fillAllVariables();
     wrapper.vm.isConfirmed = true;
     await wrapper.vm.$nextTick();
 
