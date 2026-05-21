@@ -403,7 +403,6 @@
       "chat_ended_by": "Chat ended by {agent}",
       "discussion_created": "{agent} started discussion with queue {queue}",
       "discussion_joined": "{agent} joined the discussion",
-<<<<<<< HEAD
       "edit_custom_field": "edited custom field",
       "forwarded_to_agent": "Contact forwarded to agent {agent}",
       "forwarded_to_queue": "Chat forwarded to queue {queue}",
@@ -418,11 +417,6 @@
       "transfer_to_agent_by_other": "{requestedBy} transferred {agent1}'s chat to {agent2}",
       "transfer_to_queue": "{agent} transferred the chat to queue {queue}",
       "transfer_to_queue_by_other": "{requestedBy} transferred {agent}'s chat to queue {queue}"
-=======
-      "agent_took_chat": "Oops! The chat with the contact {contact} has already been taken over by another agent",
-      "automatic_transfer_from_queue": "Room assigned to {agent}.",
-      "see_all_internal_notes": "<b class='fg-on-primary'>See internal notes</b>"
->>>>>>> 773deb982389414c5f08cec7110e80af31699425
     },
     "room_list": {
       "order_by": "Order by:",
