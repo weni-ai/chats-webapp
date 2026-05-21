@@ -1,40 +1,30 @@
 <template>
   <UnnnicButton
     v-bind="$attrs"
-    :disabled="selectedFlow === ''"
-    :loading="isLoading"
+    :disabled="
+      selectedFlow === '' || isCheckingTemplate || hasTemplateVariables
+    "
+    :loading="isLoading || isCheckingTemplate"
     :text="noHasContacts ? $t('continue') : $t('send')"
     size="small"
     type="primary"
-    :iconLeft="noHasContacts ? '' : 'send'"
     data-testid="send-flow-button"
     @click="noHasContacts ? backToContactList() : startSendFlow()"
   />
-  <Teleport to="body">
-    <ModalVariableMapping
-      v-if="showVariableModal && templateForMapping"
-      :template="templateForMapping.data"
-      :variables="templateForMapping.variables"
-      :isLoading="isLoading"
-      @close="onCancelVariableMapping"
-      @confirm="onConfirmVariableMapping"
-    />
-  </Teleport>
 </template>
 <script>
 import { mapState } from 'pinia';
 import { useRooms } from '@/store/modules/chats/rooms';
+import { useFeatureFlag } from '@/store/modules/featureFlag';
+import { useProfile } from '@/store/modules/profile';
 
 import FlowsTrigger from '@/services/api/resources/chats/flowsTrigger';
 
-import ModalVariableMapping from './ModalVariableMapping.vue';
+import { FLOW_TRIGGER_VARIABLE_MAPPING_FLAG } from './types';
+import { resolveAllValues } from './localVariables';
 
 export default {
   name: 'SendFlowButton',
-
-  components: {
-    ModalVariableMapping,
-  },
 
   inheritAttrs: false,
 
@@ -59,14 +49,20 @@ export default {
       type: String,
       default: '',
     },
+    isCheckingTemplate: {
+      type: Boolean,
+      default: false,
+    },
+    cachedTemplate: {
+      type: Object,
+      default: null,
+    },
   },
   emits: ['send-flow-started', 'send-flow-finished', 'back-to-contact-list'],
 
   data() {
     return {
       isLoading: false,
-      showVariableModal: false,
-      templateForMapping: null,
     };
   },
 
@@ -74,8 +70,22 @@ export default {
     ...mapState(useRooms, {
       room: (store) => store.activeRoom,
     }),
+    ...mapState(useFeatureFlag, ['featureFlags']),
+    ...mapState(useProfile, ['me']),
     noHasContacts() {
       return !this.selectedContact && this.contacts.length === 0;
+    },
+    isVariableMappingEnabled() {
+      return !!this.featureFlags?.active_features?.includes(
+        FLOW_TRIGGER_VARIABLE_MAPPING_FLAG,
+      );
+    },
+    hasTemplateVariables() {
+      if (this.isProjectPrincipal || !this.isVariableMappingEnabled) {
+        return false;
+      }
+
+      return (this.cachedTemplate?.variables?.length ?? 0) > 0;
     },
   },
 
@@ -85,43 +95,14 @@ export default {
     },
 
     async startSendFlow() {
-      if (this.isProjectPrincipal) {
+      if (this.hasTemplateVariables) return;
+
+      if (this.isProjectPrincipal || !this.isVariableMappingEnabled) {
         await this.doSendFlow();
         return;
       }
 
-      this.isLoading = true;
-      try {
-        const response = await FlowsTrigger.getFlowTemplates(
-          this.selectedFlow,
-          this.projectUuidFlow,
-        );
-
-        const firstTemplate = response?.templates?.[0];
-        const variables = firstTemplate?.variables || [];
-
-        if (variables.length > 0) {
-          this.templateForMapping = firstTemplate;
-          this.showVariableModal = true;
-          this.isLoading = false;
-          return;
-        }
-      } catch (error) {
-        console.error('Error checking flow templates', error);
-      }
-
       await this.doSendFlow();
-    },
-
-    onCancelVariableMapping() {
-      this.showVariableModal = false;
-      this.templateForMapping = null;
-    },
-
-    async onConfirmVariableMapping(params) {
-      await this.doSendFlow(params);
-      this.showVariableModal = false;
-      this.templateForMapping = null;
     },
 
     async sendFlow() {
@@ -139,12 +120,20 @@ export default {
       let hasError = false;
 
       const sendFlowToContact = async (contact) => {
+        const resolvedParams = params
+          ? resolveAllValues(params, {
+              contact,
+              agent: this.me,
+              room: this.room,
+            })
+          : null;
+
         const prepareObj = {
           flow: this.selectedFlow,
           contacts: [contact.external_id || contact.uuid],
           room: this.room?.uuid,
           contact_name: contact.name,
-          ...(params ? { params } : {}),
+          ...(resolvedParams ? { params: resolvedParams } : {}),
         };
 
         try {
