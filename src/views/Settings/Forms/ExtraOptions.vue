@@ -261,9 +261,12 @@ import unnnic from '@weni/unnnic-system';
 import ConfirmCsatModal from './modals/ConfirmCsatModal.vue';
 import TagGroup from '@/components/TagGroup.vue';
 
+import { useFeatureFlag } from '@/store/modules/featureFlag';
+import { useConfig } from '@/store/modules/config';
+
 import Sector from '@/services/api/resources/settings/sector';
 
-import { useFeatureFlag } from '@/store/modules/featureFlag';
+import i18n from '@/plugins/i18n';
 
 export default {
   name: 'SectorExtraOptionsForm',
@@ -297,6 +300,7 @@ export default {
   },
   computed: {
     ...mapState(useFeatureFlag, ['featureFlags']),
+    ...mapState(useConfig, ['project']),
     sector: {
       get() {
         return this.modelValue;
@@ -306,12 +310,31 @@ export default {
       },
     },
     validForm() {
-      const valid =
+      const validAutomaticMessage =
         !this.sector.automatic_message.is_active ||
         (this.sector.automatic_message.is_active &&
           this.sector.automatic_message.text?.length > 0);
 
-      return valid;
+      const validInactivityTimeout =
+        !this.sector.inactivity_timeout.is_message_timeout_enabled ||
+        (this.sector.inactivity_timeout.is_message_timeout_enabled &&
+          this.sector.inactivity_timeout.message_timeout_time &&
+          this.sector.inactivity_timeout.message_timeout_time > 0 &&
+          this.sector.inactivity_timeout.message_timeout_text?.length > 0);
+
+      const validInactivityTimeoutCloseRoom =
+        !this.sector.inactivity_timeout.is_close_room_enabled ||
+        (this.sector.inactivity_timeout.is_close_room_enabled &&
+          this.sector.inactivity_timeout.close_room_time &&
+          this.sector.inactivity_timeout.close_room_time > 0 &&
+          this.sector.inactivity_timeout.close_room_message_text?.length > 0);
+
+      const allValid =
+        validAutomaticMessage &&
+        validInactivityTimeout &&
+        validInactivityTimeoutCloseRoom;
+
+      return allValid;
     },
     translationTriggerFlows() {
       return this.$t('sector.additional_options.template_message.switch_label');
@@ -335,6 +358,26 @@ export default {
       return this.featureFlags.active_features?.includes(
         'weniChatsInactivityTimeout',
       );
+    },
+    inactivityTimeoutDefaultMessage() {
+      const languageMap = {
+        'en-us': 'en',
+        'pt-br': 'pt-br',
+        es: 'es',
+      };
+      return i18n.global.messages[languageMap[this.project.language]].sector
+        .additional_options.inactivity_timeout.show.field
+        .default_warning_message;
+    },
+    inactivityTimeoutDefaultCloseRoomMessage() {
+      const languageMap = {
+        'en-us': 'en',
+        'pt-br': 'pt-br',
+        es: 'es',
+      };
+      return i18n.global.messages[languageMap[this.project.language]].sector
+        .additional_options.inactivity_timeout.close_room.field
+        .default_close_room_message;
     },
   },
   watch: {
@@ -361,9 +404,8 @@ export default {
 
       if (value) {
         this.sector.inactivity_timeout.message_timeout_time = '10';
-        this.sector.inactivity_timeout.message_timeout_text = this.$t(
-          'sector.additional_options.inactivity_timeout.show.field.default_warning_message',
-        );
+        this.sector.inactivity_timeout.message_timeout_text =
+          this.inactivityTimeoutDefaultMessage;
       } else {
         this.sector.inactivity_timeout.message_timeout_time = null;
         this.sector.inactivity_timeout.message_timeout_text = '';
@@ -377,9 +419,8 @@ export default {
       this.sector.inactivity_timeout.is_close_room_enabled = value;
       if (value) {
         this.sector.inactivity_timeout.close_room_time = '5';
-        this.sector.inactivity_timeout.close_room_message_text = this.$t(
-          'sector.additional_options.inactivity_timeout.close_room.field.default_close_room_message',
-        );
+        this.sector.inactivity_timeout.close_room_message_text =
+          this.inactivityTimeoutDefaultCloseRoomMessage;
       } else {
         this.sector.inactivity_timeout.close_room_message_text = '';
         this.sector.inactivity_timeout.close_room_time = null;
