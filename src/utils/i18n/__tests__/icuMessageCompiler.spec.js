@@ -61,6 +61,61 @@ describe('shouldUseIntlMessageFormat', () => {
   });
 });
 
+function compileMessage(message, values, locale = 'en') {
+  const compile = icuMessageCompiler(message, {
+    locale,
+    key: 'test',
+    onError: null,
+  });
+
+  return compile({ values });
+}
+
+describe('icuMessageCompiler plural messages', () => {
+  it('formats one and other branches from en.json', () => {
+    expect(compileMessage(en.chats_count, { count: 1 })).toBe('1 chat');
+    expect(compileMessage(en.chats_count, { count: 3 })).toBe('3 chats');
+  });
+
+  it('formats =0 branch for send_docs', () => {
+    expect(compileMessage(en.send_docs, { count: 0 })).toBe('Send doc');
+    expect(compileMessage(en.send_docs, { count: 2 })).toBe('Send docs');
+  });
+
+  it('formats plural with extra placeholders in the same message', () => {
+    expect(
+      compileMessage(en.bulk_take.partial_success_message, {
+        success: 1,
+        failed: 2,
+      }),
+    ).toBe('1 chat taken over, 2 failed. Please try again.');
+    expect(
+      compileMessage(en.bulk_take.partial_success_message, {
+        success: 3,
+        failed: 1,
+      }),
+    ).toBe('3 chats taken over, 1 failed. Please try again.');
+  });
+
+  it('formats plural with named variable n', () => {
+    expect(compileMessage(en.waiting_for.minutes, { n: 1 })).toBe(
+      '1 minute waiting',
+    );
+    expect(compileMessage(en.waiting_for.minutes, { n: 5 })).toBe(
+      '5 minutes waiting',
+    );
+  });
+
+  it('formats transfer_contact singular and plural labels', () => {
+    expect(compileMessage(en.transfer_contact, { count: 1 })).toBe(
+      'Transfer contact',
+    );
+    expect(compileMessage(en.transfer_contact, { count: 4 })).toBe(
+      'Transfer contacts',
+    );
+  });
+});
+
 describe('icuMessageCompiler', () => {
   it('keeps HTML literal on non-ICU messages', () => {
     const compile = icuMessageCompiler(
