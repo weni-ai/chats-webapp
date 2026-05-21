@@ -58,4 +58,16 @@ export interface TemplateBodySegment {
   type: 'text' | 'variable';
   text: string;
   filled?: boolean;
+  positionalNumber?: number;
+  value?: string;
 }
+
+export type {
+  LocalVariable,
+  LocalVariableToken,
+  LocalVariableContact,
+  LocalVariableAgent,
+  LocalVariableRoom,
+  ResolveContext,
+  AvailabilityContext,
+} from './localVariables';
