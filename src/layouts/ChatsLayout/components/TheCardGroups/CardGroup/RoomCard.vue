@@ -347,6 +347,13 @@ export default {
   ) {
     justify-content: center;
   }
+
+  :deep(
+    .chats-contact:has(.chats-contact__infos__new-message-indicator)
+      .chats-contact__infos__additional-information
+  ) {
+    font-weight: $unnnic-font-weight-bold;
+  }
 }
 
 .room-card {
