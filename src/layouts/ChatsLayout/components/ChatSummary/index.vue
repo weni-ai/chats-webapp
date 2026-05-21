@@ -62,7 +62,7 @@
           :filled="feedback.liked === true"
           size="ant"
           clickable
-          scheme="neutral-dark"
+          scheme="neutral-emphasized"
           @click="handleThumbUp"
         />
       </UnnnicToolTip>
@@ -76,7 +76,7 @@
           :filled="feedback.liked === false"
           size="ant"
           clickable
-          scheme="neutral-dark"
+          scheme="neutral-emphasized"
           @click="handleThumbDown"
         />
       </UnnnicToolTip>
@@ -351,9 +351,7 @@ export default {
     justify-content: space-between;
     text-align: justify;
     color: $unnnic-color-fg-base;
-    font-family: $unnnic-font-family-secondary;
-    font-size: $unnnic-font-size-body-gt;
-    line-height: $unnnic-font-size-body-gt + $unnnic-line-height-md;
+    font: $unnnic-text-body;
   }
 
   &__footer {
@@ -368,10 +366,7 @@ export default {
     gap: $unnnic-spacing-nano;
 
     color: $unnnic-color-fg-base;
-    font-family: $unnnic-font-family-secondary;
-    font-size: $unnnic-font-size-body-md;
-    line-height: $unnnic-font-size-body-md + $unnnic-line-height-md;
-    font-weight: $unnnic-font-weight-black;
+    font: $unnnic-text-action;
   }
 
   &__archived {

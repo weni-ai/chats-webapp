@@ -4,9 +4,9 @@ exports[`EditSector.vue > matches snapshot 1`] = `
 "<section data-v-ac9ddd5b="" class="sector-edit">
   <header data-v-c6575b33="" data-v-ac9ddd5b="" class="page-header 
       page-header--has-back-button 
-      page-header--no-divider"><button data-v-fb18c550="" data-v-c6575b33="" data-testid="back-button" class="page-header__back-button unnnic-button unnnic-button--size-large unnnic-button--tertiary unnnic-button--icon-on-center page-header__back-button">
+      page-header--no-divider"><button data-v-d7396b6a="" data-v-c6575b33="" data-testid="back-button" class="page-header__back-button unnnic-button unnnic-button--size-large unnnic-button--tertiary unnnic-button--icon-on-center page-header__back-button">
       <!---->
-      <!----><span data-v-b593673c="" data-v-fb18c550="" class="unnnic-icon material-symbols-rounded unnnic-icon-scheme--fg-emphasized unnnic-icon-size--ant unnnic-icon__size--ant unnnic--clickable" data-testid="icon-center" translate="no" style="visibility: visible;">arrow_back_ios_new</span><span data-v-fb18c550="" class="unnnic-button__label" style="visibility: visible;" data-testid="button-label"> </span>
+      <!----><span data-v-b593673c="" data-v-d7396b6a="" class="unnnic-icon material-symbols-rounded unnnic-icon-scheme--fg-emphasized unnnic-icon-size--ant unnnic-icon__size--ant unnnic--clickable" data-testid="icon-center" translate="no" style="visibility: visible;">arrow_back_ios_new</span><span data-v-d7396b6a="" class="unnnic-button__label" style="visibility: visible;" data-testid="button-label"> </span>
       <!---->
     </button>
     <section data-v-c6575b33="" class="page-header__infos">
@@ -15,10 +15,10 @@ exports[`EditSector.vue > matches snapshot 1`] = `
       </section>
       <!---->
     </section>
-    <section data-v-c6575b33="" class="page-header__actions" data-testid="page-actions"><button data-v-fb18c550="" data-v-ac9ddd5b="" disabled="" class="unnnic-button unnnic-button--size-large unnnic-button--primary">
+    <section data-v-c6575b33="" class="page-header__actions" data-testid="page-actions"><button data-v-d7396b6a="" data-v-ac9ddd5b="" disabled="" class="unnnic-button unnnic-button--size-large unnnic-button--primary">
         <!---->
         <!---->
-        <!----><span data-v-fb18c550="" class="unnnic-button__label" style="visibility: visible;" data-testid="button-label"> save_changes</span>
+        <!----><span data-v-d7396b6a="" class="unnnic-button__label" style="visibility: visible;" data-testid="button-label"> save_changes</span>
         <!---->
       </button>
       <!--v-if-->
@@ -29,7 +29,7 @@ exports[`EditSector.vue > matches snapshot 1`] = `
         <section data-v-c185b387="" data-v-ac9ddd5b="" class="unnnic-tabs-list">
           <div data-v-c185b387="" class="unnnic-tabs-list__list" tabindex="0" data-orientation="horizontal" dir="ltr" style="outline: none;" role="tablist" aria-orientation="horizontal"><button data-v-3f0b0d7f="" data-v-ac9ddd5b="" class="unnnic-tabs-trigger transition-all" data-reka-collection-item="" tabindex="-1" data-orientation="horizontal" data-active="" id="reka-tabs-v-0-trigger-general" role="tab" type="button" aria-selected="true" aria-controls="reka-tabs-v-0-content-general" data-state="active"><span data-v-3f0b0d7f="" class="unnnic-tabs-trigger__content truncate">General</span></button><button data-v-3f0b0d7f="" data-v-ac9ddd5b="" class="unnnic-tabs-trigger transition-all" data-reka-collection-item="" tabindex="-1" data-orientation="horizontal" id="reka-tabs-v-0-trigger-queues" role="tab" type="button" aria-selected="false" aria-controls="reka-tabs-v-0-content-queues" data-state="inactive"><span data-v-3f0b0d7f="" class="unnnic-tabs-trigger__content truncate">Queues</span></button><button data-v-3f0b0d7f="" data-v-ac9ddd5b="" class="unnnic-tabs-trigger transition-all" data-reka-collection-item="" tabindex="-1" data-orientation="horizontal" id="reka-tabs-v-0-trigger-extra_options" role="tab" type="button" aria-selected="false" aria-controls="reka-tabs-v-0-content-extra_options" data-state="inactive"><span data-v-3f0b0d7f="" class="unnnic-tabs-trigger__content truncate">Extra options</span></button><button data-v-3f0b0d7f="" data-v-ac9ddd5b="" class="unnnic-tabs-trigger transition-all" data-reka-collection-item="" tabindex="-1" data-orientation="horizontal" id="reka-tabs-v-0-trigger-quick_messages" role="tab" type="button" aria-selected="false" aria-controls="reka-tabs-v-0-content-quick_messages" data-state="inactive"><span data-v-3f0b0d7f="" class="unnnic-tabs-trigger__content truncate">Quick messages</span></button></div>
         </section>
-        <div data-v-ac9ddd5b="" id="reka-tabs-v-0-content-general" role="tabpanel" data-state="active" data-orientation="horizontal" aria-labelledby="reka-tabs-v-0-trigger-general" tabindex="0" style="animation-duration: 0s;" class="">
+        <div data-v-ac9ddd5b="" id="reka-tabs-v-0-content-general" role="tabpanel" data-state="active" data-orientation="horizontal" aria-labelledby="reka-tabs-v-0-trigger-general" tabindex="0" style="" class="">
           <section data-v-ac9ddd5b="" class="sector-edit__content">
             <div data-v-ac9ddd5b="" data-testid="general-form" isediting=""></div>
           </section>

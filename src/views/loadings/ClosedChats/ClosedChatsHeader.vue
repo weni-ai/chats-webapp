@@ -1,19 +1,18 @@
 <template>
   <header class="closed-chats-header-loading">
-    <section class="closed-chats-header-loading__topbar">
-      <div class="closed-chats-header-loading__topbar__breadcrumbs">
-        <UnnnicSkeletonLoading />
-        <UnnnicSkeletonLoading />
-        <UnnnicSkeletonLoading />
-      </div>
-      <UnnnicSkeletonLoading />
-    </section>
-    <section class="closed-chats-header-loading__infos">
-      <UnnnicSkeletonLoading tag="div" />
-      <section class="closed-chats-header-loading__infos__title">
-        <UnnnicSkeletonLoading tag="div" />
-        <UnnnicSkeletonLoading tag="div" />
-      </section>
+    <UnnnicSkeletonLoading
+      class="closed-chats-header-loading__back"
+      tag="div"
+    />
+    <section class="closed-chats-header-loading__content">
+      <UnnnicSkeletonLoading
+        class="closed-chats-header-loading__title"
+        tag="div"
+      />
+      <UnnnicSkeletonLoading
+        class="closed-chats-header-loading__description"
+        tag="div"
+      />
     </section>
   </header>
 </template>
@@ -27,56 +26,47 @@ export default {
 <style lang="scss" scoped>
 .closed-chats-header-loading {
   display: flex;
-  flex-direction: column;
-  gap: $unnnic-spacing-md;
+  align-items: center;
+  gap: $unnnic-space-4;
 
-  z-index: 10000;
+  padding-top: $unnnic-space-2;
+  padding-bottom: $unnnic-space-6;
 
-  padding: $unnnic-spacing-md;
+  border-bottom: 1px solid $unnnic-color-border-base;
 
-  box-shadow: inset 0 -1px 0 0 $unnnic-color-border-soft;
-
-  &__topbar {
-    display: grid;
-    grid-template-columns: auto $unnnic-spacing-md;
-    grid-template-rows: $unnnic-spacing-md;
-
-    span {
-      width: 100%;
-      height: $unnnic-font-size-title-md;
-    }
-
-    :deep(.unnnic-skeleton) {
-      width: 100%;
-      height: $unnnic-font-size-title-md;
-    }
-
-    &__breadcrumbs {
-      display: grid;
-      gap: $unnnic-spacing-xs;
-      grid-template-columns: 40px 12px 40px;
-    }
-  }
-
-  &__infos {
-    display: grid;
-    gap: $unnnic-spacing-ant;
-    grid-template-columns: $unnnic-font-size-h3 auto;
-    grid-template-rows: $unnnic-font-size-h3;
-
-    div {
-      display: flex;
-    }
+  &__back {
+    width: 45px;
+    height: 45px;
 
     :deep(.unnnic-skeleton) {
       width: 100%;
       height: 100%;
     }
+  }
 
-    &__title {
-      display: grid;
-      grid-template-rows: $unnnic-font-size-title-md $unnnic-font-size-title-sm;
-      gap: $unnnic-spacing-nano;
+  &__content {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    gap: $unnnic-space-2;
+    min-width: 0;
+  }
+
+  &__title {
+    height: $unnnic-font-size-title-md;
+
+    :deep(.unnnic-skeleton) {
+      width: 240px;
+      height: 100%;
+    }
+  }
+
+  &__description {
+    height: $unnnic-font-size-body-md;
+
+    :deep(.unnnic-skeleton) {
+      width: 100%;
+      height: 100%;
     }
   }
 }
