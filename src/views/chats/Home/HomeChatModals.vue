@@ -19,6 +19,8 @@
       v-model="showModalAssumedChat"
       :contactName="assumedChatContactName"
       :assumedByUser="assumedByUser"
+      :title="modalAssumedTitle"
+      :description="modalAssumedText"
       @close="closeModalTakeoverRoom"
     />
 
@@ -87,8 +89,8 @@ export default {
     ...mapState(useRooms, { room: (store) => store.activeRoom }),
     ...mapWritableState(useDashboard, [
       'showModalAssumedChat',
-      'assumedChatContactName',
-      'assumedByUser',
+      'modalAssumedText',
+      'modalAssumedTitle',
     ]),
     ...mapWritableState(useMessageManager, {
       modalFileUploaderFiles: 'mediaUploadFiles',

@@ -487,6 +487,20 @@
     "get_chat_confirmation": "Confirma si deseas realizar el servicio de {contact}",
     "get_chat_error": "Error al intentar obtener el chat",
     "you_got_chat": "Tienes el chat",
+    "chat_take_over": {
+      "by_another_representative": {
+        "title": "Chat asumido por otro representante",
+        "description": "Tu chat con {contact} ha sido asumido por {representative}."
+      },
+      "transfer_to_another_representative": {
+        "title": "Chat transferido a otro representante",
+        "description": "Tu chat con {contact} fue transferido por un moderador a {representative}."
+      },
+      "transfer_to_queue": {
+        "title": "Chat transferido a cola",
+        "description": "Tu chat con {contact} fue transferido por un moderador a la cola {queue}."
+      }
+    },
     "your_chat_assumed": "Chat asumido por otro representante",
     "your_chat_assumed_description": "Tu chat con {contact} ha sido asumido por {representative}",
     "closed_chats": {

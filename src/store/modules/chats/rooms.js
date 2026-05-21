@@ -7,8 +7,10 @@ import { useProfile } from '../profile';
 import { useRoomCounters } from './roomCounters';
 
 import Room from '@/services/api/resources/chats/room';
+
 import { removeDuplicatedItems } from '@/utils/array';
 import { getRoomType } from '@/utils/room';
+import i18n from '@/plugins/i18n';
 
 export const useRooms = defineStore('rooms', {
   state: () => ({
@@ -304,7 +306,6 @@ export const useRooms = defineStore('rooms', {
       const wasInArray = roomIndex !== -1;
       const oldType = wasInArray ? getRoomType(this.rooms[roomIndex]) : null;
       let oldRoom = null;
-
       if (roomIndex !== -1) {
         oldRoom = cloneDeep(this.rooms[roomIndex]);
         if (shouldBeVisible) {
@@ -356,9 +357,7 @@ export const useRooms = defineStore('rooms', {
       }
 
       const roomIndex = this.rooms.findIndex((r) => r.uuid === room.uuid);
-
       let oldRoom = null;
-
       if (roomIndex !== -1) {
         oldRoom = cloneDeep(this.rooms[roomIndex]);
       }
@@ -418,6 +417,11 @@ export const useRooms = defineStore('rooms', {
         oldRoom?.user &&
         oldRoom?.user?.email === userEmail;
 
+      const isTransferedToOtherQueue =
+        room.queue &&
+        room.queue.uuid !== oldRoom?.queue?.uuid &&
+        room.transfer_history?.to?.type === 'queue';
+
       const isTransferedByMe =
         room.transfer_history?.requested_by?.email === userEmail &&
         room.transfer_history?.action === 'transfer' &&
@@ -434,17 +438,103 @@ export const useRooms = defineStore('rooms', {
       const isActiveRoom =
         this.activeRoom && room.uuid === this.activeRoom.uuid;
 
-      if (!isTransferedByMe && isTransferedToOtherUser) {
-        if (!isTransferedFromAQueue && !room.is_waiting && !viewedAgentEmail) {
-          const dashboardStore = useDashboard();
-          dashboardStore.setAssumedChatContactName(room.contact.name);
-          const userName =
-            `${room.user.first_name} ${room.user.last_name}`.trim();
-          dashboardStore.setAssumedByUser(userName || room.user.email);
+      console.log({
+        userEmail,
+        oldRoom,
+        room,
+        isTransferedToOtherUser,
+        isTransferedByMe,
+        isTransferedByViewedAgent,
+        isTransferedFromAQueue,
+        isTransferedToOtherQueue,
+      });
+
+      if (!isTransferedByMe) {
+        const dashboardStore = useDashboard();
+
+        if (
+          isTransferedToOtherUser &&
+          !isTransferedFromAQueue &&
+          !room.is_waiting &&
+          !viewedAgentEmail
+        ) {
+          const representativeName =
+            `${room.user.first_name} ${room.user.last_name}`.trim() ||
+            room.user.email;
+          const modalTitle = i18n.global.t(
+            room.transfer_history?.action === 'pick'
+              ? 'chats.chat_take_over.by_another_representative.title'
+              : 'chats.chat_take_over.transfer_to_another_representative.title',
+          );
+          const modalTextKey =
+            room.transfer_history?.action === 'pick'
+              ? 'chats.chat_take_over.by_another_representative.description'
+              : 'chats.chat_take_over.transfer_to_another_representative.description';
+
+          dashboardStore.setModalAssumedTitle(modalTitle);
+          dashboardStore.setModalAssumedText(
+            i18n.global.t(modalTextKey, {
+              contact: room.contact.name || i18n.global.t('unnamed_contact'),
+              representative: representativeName,
+            }),
+          );
           dashboardStore.setShowModalAssumedChat(true);
         }
 
-        if (isActiveRoom && !viewedAgentEmail) {
+        if (
+          isTransferedToOtherUser &&
+          !isTransferedFromAQueue &&
+          !room.is_waiting &&
+          !viewedAgentEmail &&
+          room.transfer_history?.action === 'transfer'
+        ) {
+          const representativeName =
+            `${room.user.first_name} ${room.user.last_name}`.trim() ||
+            room.user.email;
+          dashboardStore.setModalAssumedTitle(
+            i18n.global.t(
+              'chats.chat_take_over.transfer_to_another_representative.title',
+            ),
+          );
+          dashboardStore.setModalAssumedText(
+            i18n.global.t(
+              'chats.chat_take_over.transfer_to_another_representative.description',
+              {
+                contact: room.contact.name || i18n.global.t('unnamed_contact'),
+                representative: representativeName,
+              },
+            ),
+          );
+          dashboardStore.setShowModalAssumedChat(true);
+        }
+
+        if (
+          isTransferedToOtherQueue &&
+          !isTransferedFromAQueue &&
+          !room.is_waiting &&
+          !viewedAgentEmail &&
+          oldRoom?.user?.email === userEmail
+        ) {
+          dashboardStore.setModalAssumedTitle(
+            i18n.global.t('chats.chat_take_over.transfer_to_queue.title'),
+          );
+          dashboardStore.setModalAssumedText(
+            i18n.global.t(
+              'chats.chat_take_over.transfer_to_queue.description',
+              {
+                contact: room.contact.name || i18n.global.t('unnamed_contact'),
+                queue: room.queue.name,
+              },
+            ),
+          );
+          dashboardStore.setShowModalAssumedChat(true);
+        }
+
+        if (
+          isActiveRoom &&
+          !viewedAgentEmail &&
+          room.user?.email !== userEmail
+        ) {
           this.setActiveRoom(null);
           routerReplace();
           return;
