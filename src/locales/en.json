@@ -294,11 +294,17 @@
         "switch_label": "Use signature"
       },
       "csat": {
-        "label": "Automatically send a satisfaction survey after Live desk support ends",
+        "custom": {
+          "flow_disclaimer": "The selected flow must use a 1 to 5 satisfaction rating to ensure correct survey results."
+        },
         "hint": "If there is an active flow in the Flows module set to trigger a survey after support ends, this setting may cause conflicts and affect survey delivery.",
-        "confirm_modal": {
-          "content_1": "If there is an active flow in the Flows module set to trigger a survey after support ends, this setting may cause conflicts and affect survey delivery.",
-          "content_2": "Do you want to continue anyway?"
+        "label": "Automatically send a satisfaction survey after Live desk support ends",
+        "section_title": "Satisfaction survey",
+        "type": {
+          "custom": "Custom flows",
+          "default": "Default CSAT survey (Recommended)",
+          "label": "Survey type",
+          "tooltip": "Choose between the default CSAT survey or a custom flow you've already configured in the Flows module."
         }
       },
       "automated_message": {
@@ -398,21 +404,25 @@
       }
     },
     "feedback": {
-      "forwarded_to_agent": "Contact forwarded to agent {agent}",
-      "forwarded_to_queue": "Contact forwarded to queue {queue}",
-      "transfer_to_agent": "{agent1} transferred the chat to {agent2}",
-      "transfer_to_agent_by_other": "{requestedBy} transferred {agent1}'s chat to {agent2}",
-      "transfer_to_queue": "{agent} transferred to queue {queue}",
-      "transfer_from_queue_to_queue": "Was transferred from queue {queue1} to queue {queue2}",
-      "transfer_from_queue_to_agent": "Was transferred from queue {queue} to {agent}",
-      "pick_of_queue": "{agent} got it from the queue {queue}",
-      "pick_of_agent": "{manager} has taken over {agent}'s chat",
-      "edit_custom_field": "edited custom field",
+      "agent_took_chat": "Oops! The chat with the contact {contact} has already been taken over by another agent",
+      "automatic_transfer_from_queue": "Chat assigned to {agent}",
+      "chat_ended_by": "Chat ended by {agent}",
       "discussion_created": "{agent} started discussion with queue {queue}",
       "discussion_joined": "{agent} joined the discussion",
-      "agent_took_chat": "Oops! The chat with the contact {contact} has already been taken over by another agent",
-      "automatic_transfer_from_queue": "Room assigned to {agent}.",
-      "see_all_internal_notes": "<b class='fg-on-primary'>See internal notes</b>"
+      "edit_custom_field": "edited custom field",
+      "forwarded_to_agent": "Contact forwarded to agent {agent}",
+      "forwarded_to_queue": "Chat forwarded to queue {queue}",
+      "pick_of_agent": "{manager} took over the chat that was with {agent}",
+      "pick_of_queue": "{agent} took over the chat from queue {queue}",
+      "see_all_internal_notes": "<b class='fg-on-primary'>See internal notes</b>",
+      "transfer_from_queue_to_agent": "Was transferred from queue {queue} to {agent}",
+      "transfer_from_queue_to_agent_by_other": "{requestedBy} transferred the chat from queue {queue} to {agent}",
+      "transfer_from_queue_to_queue": "Was transferred from queue {queue1} to queue {queue2}",
+      "transfer_from_queue_to_queue_by_other": "{requestedBy} transferred the chat from queue {queue1} to queue {queue2}",
+      "transfer_to_agent": "{agent1} transferred the chat to {agent2}",
+      "transfer_to_agent_by_other": "{requestedBy} transferred {agent1}'s chat to {agent2}",
+      "transfer_to_queue": "{agent} transferred the chat to queue {queue}",
+      "transfer_to_queue_by_other": "{requestedBy} transferred {agent}'s chat to queue {queue}"
     },
     "room_list": {
       "order_by": "Order by:",
@@ -618,7 +628,7 @@
   "view": "View",
   "see": "See",
   "chat_with": {
-    "bot": "Chat with bot"
+    "bot": "Automated Support"
   },
   "waiting_answer": {
     "send_template": "You sent a message template",

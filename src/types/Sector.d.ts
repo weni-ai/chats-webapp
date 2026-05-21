@@ -24,4 +24,5 @@ export interface Sector {
   rooms_limit: number;
   required_tags: boolean;
   is_csat_enabled: boolean;
+  custom_csat_flow_uuid: string | null;
 }
