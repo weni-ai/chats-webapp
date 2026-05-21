@@ -39,9 +39,6 @@
               <span
                 v-if="segment.type === 'variable'"
                 class="meta-template-preview__variable"
-                :class="{
-                  'meta-template-preview__variable--filled': segment.filled,
-                }"
                 data-testid="meta-template-preview-variable"
                 >{{ segment.text }}</span
               >
@@ -270,11 +267,6 @@ const bodySegments = computed<TemplateBodySegment[]>(() => {
   &__variable {
     color: $unnnic-color-aux-baby-blue;
     font-weight: $unnnic-font-weight-bold;
-
-    &--filled {
-      color: $unnnic-color-neutral-dark;
-      font-weight: $unnnic-font-weight-regular;
-    }
   }
 
   &__card-button {
