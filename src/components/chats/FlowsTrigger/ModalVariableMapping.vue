@@ -19,33 +19,35 @@
           {{ $t('flows_trigger.variable_mapping.description') }}
         </p>
 
-        <section class="modal-variable-mapping__columns">
-          <section class="modal-variable-mapping__form">
-            <p class="modal-variable-mapping__form-title">
-              {{ $t('flows_trigger.variable_mapping.define_variables') }}
-            </p>
-            <UnnnicInput
-              v-for="(variableName, index) in variables"
-              :key="variableName"
-              v-model="variableValues[variableName]"
-              :label="
-                $t('flows_trigger.variable_mapping.variable_label', {
-                  index: index + 1,
-                })
-              "
-              :placeholder="
-                $t('flows_trigger.variable_mapping.input_placeholder')
-              "
-              :data-testid="`modal-variable-mapping-input-${index}`"
+        <section class="modal-variable-mapping__scroll-area">
+          <section class="modal-variable-mapping__columns">
+            <section class="modal-variable-mapping__form">
+              <p class="modal-variable-mapping__form-title">
+                {{ $t('flows_trigger.variable_mapping.define_variables') }}
+              </p>
+              <UnnnicInput
+                v-for="(variableName, index) in variables"
+                :key="variableName"
+                v-model="variableValues[variableName]"
+                :label="
+                  $t('flows_trigger.variable_mapping.variable_label', {
+                    index: index + 1,
+                  })
+                "
+                :placeholder="
+                  $t('flows_trigger.variable_mapping.input_placeholder')
+                "
+                :data-testid="`modal-variable-mapping-input-${index}`"
+              />
+            </section>
+
+            <MetaTemplatePreview
+              class="modal-variable-mapping__preview"
+              :template="template"
+              :variables="variables"
+              :variableValues="variableValues"
             />
           </section>
-
-          <MetaTemplatePreview
-            class="modal-variable-mapping__preview"
-            :template="template"
-            :variables="variables"
-            :variableValues="variableValues"
-          />
         </section>
 
         <section class="modal-variable-mapping__confirmation">
@@ -72,7 +74,7 @@
         <UnnnicButton
           :text="$t('send')"
           type="primary"
-          :disabled="!isConfirmed"
+          :disabled="!canConfirm"
           :loading="isLoading"
           data-testid="modal-variable-mapping-confirm"
           @click="onConfirm"
@@ -83,7 +85,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch } from 'vue';
+import { ref, computed, watch } from 'vue';
 
 import MetaTemplatePreview from './MetaTemplatePreview.vue';
 
@@ -117,6 +119,16 @@ const variableValues = ref<Record<string, string>>(
   }, {}),
 );
 
+const areAllVariablesFilled = computed(() =>
+  props.variables.every(
+    (name) => (variableValues.value[name] ?? '').trim().length > 0,
+  ),
+);
+
+const canConfirm = computed(
+  () => isConfirmed.value && areAllVariablesFilled.value,
+);
+
 watch(isOpen, (value) => {
   if (!value) emit('close');
 });
@@ -126,6 +138,7 @@ const onCancel = () => {
 };
 
 const onConfirm = () => {
+  if (!canConfirm.value) return;
   emit('confirm', { ...variableValues.value });
 };
 </script>
@@ -143,12 +156,19 @@ const onConfirm = () => {
 
     flex: 1 1 auto;
     min-height: 0;
-    overflow-y: auto;
   }
 
   &__description {
+    flex: 0 0 auto;
+
     color: $unnnic-color-neutral-dark;
     font: $unnnic-font-body;
+  }
+
+  &__scroll-area {
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow-y: auto;
   }
 
   &__columns {
@@ -176,6 +196,8 @@ const onConfirm = () => {
   }
 
   &__confirmation {
+    flex: 0 0 auto;
+
     display: flex;
     flex-direction: column;
     gap: $unnnic-spacing-ant;
