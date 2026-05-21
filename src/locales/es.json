@@ -848,6 +848,7 @@
       "variable_label": "Variable {index}",
       "input_placeholder": "Escribe el valor para esta variable",
       "preview_title": "Vista previa del template",
+      "preview_variable_tooltip": "Variable {placeholder}",
       "confirmation_helper": "Verifica si cada campo está mapeado correctamente; así se mostrará el mensaje a cada contacto seleccionado",
       "confirmation_checkbox": "Lo verifiqué y estoy listo para enviar"
     }

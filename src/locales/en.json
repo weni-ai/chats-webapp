@@ -845,6 +845,7 @@
       "variable_label": "Variable {index}",
       "input_placeholder": "Type the value for this variable",
       "preview_title": "Template preview",
+      "preview_variable_tooltip": "Variable {placeholder}",
       "confirmation_helper": "Check if each field is correctly mapped, this is how your message will look to each selected contact",
       "confirmation_checkbox": "I've checked it and I'm ready to send it"
     }
