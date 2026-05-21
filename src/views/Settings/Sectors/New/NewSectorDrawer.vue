@@ -6,8 +6,7 @@
     :modelValue="modelValue"
     closeIcon="close"
     size="gt"
-    :title="$t('config_chats.new_sector')"
-    :primaryButtonText="activePageIndex === 3 ? $t('save') : $t('continue')"
+    :primaryButtonText="activePageIndex === 3 ? $t('create') : $t('continue')"
     :secondaryButtonText="activePageIndex === 0 ? $t('cancel') : $t('back')"
     :disabledPrimaryButton="!isValid[activePageKey]"
     :loadingPrimaryButton="isLoadingCreate"
@@ -22,11 +21,23 @@
     "
     @close="handleCloseNewSectorDrawer"
   >
+    <template #title>
+      <section class="new-sector-drawer__title-container">
+        <h1 class="new-sector-drawer__title">
+          {{ $t('config_chats.new_sector') }}
+        </h1>
+        <UnnnicTag
+          :text="
+            $t('step_of', {
+              step: activePageIndex + 1,
+              total: newSectorPages.length,
+            })
+          "
+          scheme="bg-muted"
+        />
+      </section>
+    </template>
     <template #content>
-      <UnnnicNavigator
-        :pages="newSectorPages"
-        :activePage="activePage"
-      />
       <section class="forms">
         <General
           v-show="activePage === $t('sector.general')"
@@ -36,6 +47,16 @@
           data-testid="general-form"
           @change-is-valid="updateIsValid($event, 'general')"
         />
+        <FormQueue
+          v-show="activePage === $t('sector.queues')"
+          ref="sectorQueue"
+          v-model="sectorQueues"
+          :sector="sector"
+          showHelpers
+          multiple
+          data-testid="queue-form"
+          @change-is-valid="updateIsValid($event, 'queue')"
+        />
         <ExtraOptions
           v-show="activePage === $t('sector.extra_options')"
           ref="sectorExtraOptions"
@@ -43,50 +64,12 @@
           data-testid="extra-options-form"
           @change-is-valid="updateIsValid($event, 'extraOptions')"
         />
-        <section class="forms__queue">
-          <FormQueue
-            v-show="activePage === $t('sector.queues')"
-            ref="sectorQueue"
-            v-model="sectorQueue"
-            :sector="sector"
-            showHelpers
-            data-testid="queue-form"
-            @change-is-valid="updateIsValid($event, 'queue')"
-          />
-        </section>
-        <section
+        <MessagesForm
           v-show="activePage === $t('quick_messages.title')"
-          class="forms__quick-message"
-        >
-          <section class="forms__quick-message__copilot">
-            <p class="forms__title">
-              {{ $t('copilot.name') }}
-            </p>
-            <UnnnicSwitch
-              :modelValue="false"
-              size="small"
-              :textRight="$t(`settings.messages.copilot.status.off`)"
-              data-testid="copilot-switch"
-              disabled
-            />
-            <p class="forms__hint">
-              {{ $t('config_chats.copilot.hint') }}
-            </p>
-          </section>
-          <section class="forms__quick-message__container">
-            <h1 class="forms__title">
-              {{ $t('quick_messages.title') }}
-            </h1>
-            <UnnnicSimpleCard
-              class="forms__quick-message__card"
-              :title="$t('quick_messages.example_message')"
-              :text="$t('quick_messages.example_message_description')"
-              clickable
-              data-testid="quick-message-card"
-            >
-            </UnnnicSimpleCard>
-          </section>
-        </section>
+          v-model="sector.quick_messages"
+          multiple
+          @change-is-valid="updateIsValid($event, 'quick_messages')"
+        />
       </section>
     </template>
   </UnnnicDrawer>
@@ -102,22 +85,27 @@
 </template>
 
 <script>
-import General from '@/components/settings/forms/General.vue';
-import ExtraOptions from '@/components/settings/forms/ExtraOptions.vue';
-import FormQueue from '@/components/settings/forms/Queue.vue';
+import { mapActions, mapState, mapWritableState } from 'pinia';
+
+import General from '@/views/Settings/Forms/General.vue';
+import ExtraOptions from '@/views/Settings/Forms/ExtraOptions.vue';
+import FormQueue from '@/views/Settings/Forms/Queue/index.vue';
+import MessagesForm from '@/views/Settings/Forms/Messages/index.vue';
 import DiscartChangesModal from '@/views/Settings/DiscartChangesModal.vue';
 
 import Sector from '@/services/api/resources/settings/sector';
 import Queue from '@/services/api/resources/settings/queue';
 
 import { useSettings } from '@/store/modules/settings';
+import { useConfig } from '@/store/modules/config';
+import { useFeatureFlag } from '@/store/modules/featureFlag';
+import { useQuickMessageShared } from '@/store/modules/chats/quickMessagesShared';
 
 import isMobile from 'is-mobile';
 
 import Unnnic from '@weni/unnnic-system';
-import { mapState, mapWritableState } from 'pinia';
-import { useConfig } from '@/store/modules/config';
-import { useFeatureFlag } from '@/store/modules/featureFlag';
+
+import { handleConnectOverlay } from '@/utils/overlay';
 
 export default {
   name: 'NewSectorDrawer',
@@ -126,11 +114,12 @@ export default {
     ExtraOptions,
     FormQueue,
     DiscartChangesModal,
+    MessagesForm,
   },
   props: {
     modelValue: {
       type: Boolean,
-      default: false,
+      required: true,
     },
   },
   emits: ['close'],
@@ -140,8 +129,8 @@ export default {
       activePageIndex: 0,
       newSectorPages: [
         this.$t('sector.general'),
-        this.$t('sector.extra_options'),
         this.$t('sector.queues'),
+        this.$t('sector.extra_options'),
         this.$t('quick_messages.title'),
       ],
       sector: {
@@ -159,15 +148,23 @@ export default {
           secondary_project: '',
         },
         managers: [],
-        maxSimultaneousChatsByAgent: '',
+        rooms_limit: '',
         required_tags: false,
+        quick_messages: [
+          {
+            shortcut: '',
+            text: '',
+          },
+        ],
       },
-      sectorQueue: {
-        name: '',
-        queue_limit: { is_active: false, limit: null },
-        currentAgents: [],
-        agents: 0,
-      },
+      sectorQueues: [
+        {
+          name: '',
+          queue_limit: { is_active: false, limit: null },
+          currentAgents: [],
+          agents: 0,
+        },
+      ],
       useDefaultSectorQueue: 0,
       isValid: {
         general: false,
@@ -184,19 +181,15 @@ export default {
     ...mapWritableState(useSettings, ['sectors']),
     ...mapState(useConfig, ['enableGroupsMode']),
     showDiscartQuestion() {
-      const { name, maxSimultaneousChatsByAgent, managers } = this.sector;
+      const { name, rooms_limit, managers } = this.sector;
 
-      return !!(
-        name ||
-        Number(maxSimultaneousChatsByAgent || 0) ||
-        managers.length
-      );
+      return !!(name || Number(rooms_limit || 0) || managers.length);
     },
     activePageKey() {
       const mapper = {
         0: 'general',
-        1: 'extraOptions',
-        2: 'queue',
+        1: 'queue',
+        2: 'extraOptions',
         3: 'quick_messages',
       };
       return mapper[this.activePageIndex];
@@ -212,9 +205,16 @@ export default {
     },
   },
   mounted() {
+    handleConnectOverlay(true);
     this.listenConnect();
   },
+  unmounted() {
+    handleConnectOverlay(false);
+  },
   methods: {
+    ...mapActions(useQuickMessageShared, {
+      createQuickMessage: 'create',
+    }),
     listenConnect() {
       window.addEventListener('message', (message) => {
         const { event } = message.data;
@@ -229,7 +229,7 @@ export default {
           can_trigger_flows,
           sign_messages,
           name,
-          maxSimultaneousChatsByAgent,
+          rooms_limit,
           managers,
           config,
           automatic_message,
@@ -241,9 +241,7 @@ export default {
           can_trigger_flows,
           sign_messages,
           name,
-          rooms_limit: this.enableGroupsMode
-            ? '0'
-            : maxSimultaneousChatsByAgent,
+          rooms_limit: this.enableGroupsMode ? '0' : rooms_limit,
           config: this.enableGroupsMode
             ? config
             : { ...config, secondary_project: undefined },
@@ -280,18 +278,29 @@ export default {
 
         await this.$refs.sectorExtraOptions.save(true);
 
-        const createdQueue = await Queue.create({
-          name: this.sectorQueue.name,
+        const createQueuesBody = this.sectorQueues.map((sectorQueue) => ({
+          name: sectorQueue.name,
           default_message: '',
-          sectorUuid: this.sector.uuid,
           queue_limit: this.enableQueueLimitFeature
-            ? this.sectorQueue.queue_limit
+            ? sectorQueue.queue_limit
             : { is_active: false, limit: null },
-        });
+          agents: sectorQueue.currentAgents.map((agent) => agent.user.email),
+        }));
+
+        await Queue.bulkCreate(this.sector.uuid, createQueuesBody);
+
+        const validQuickMessages = this.sector.quick_messages.filter(
+          (quickMessage) => quickMessage.shortcut && quickMessage.text,
+        );
 
         await Promise.all(
-          this.sectorQueue.currentAgents.map((agent) => {
-            Queue.addAgent(createdQueue.uuid, agent.uuid);
+          validQuickMessages.map((quickMessage) => {
+            return this.createQuickMessage({
+              sectorUuid: this.sector.uuid,
+              shortcut: quickMessage.shortcut,
+              title: '',
+              text: quickMessage.text,
+            });
           }),
         );
 
@@ -315,7 +324,7 @@ export default {
         console.log(error);
       } finally {
         this.isLoadingCreate = false;
-        window.parent.postMessage({ event: 'changeOverlay', data: false }, '*');
+        handleConnectOverlay(false);
         this.handleCloseNewSectorDrawer(true);
       }
     },
@@ -335,47 +344,14 @@ export default {
 
 <style lang="scss" scoped>
 .new-sector-drawer {
-  .forms {
-    margin-top: $unnnic-spacing-sm;
-
-    &__title {
-      font-weight: $unnnic-font-weight-bold;
-      color: $unnnic-color-fg-base;
-      font-size: $unnnic-font-size-body-lg;
-      line-height: $unnnic-line-height-large * 1.5;
-    }
-
-    &__hint {
-      font-size: $unnnic-font-size-body-gt;
-      line-height: $unnnic-font-size-body-gt + $unnnic-line-height-md;
-    }
-
-    &__quick-message {
-      display: grid;
-      gap: $unnnic-spacing-sm;
-
-      &__copilot {
-        border: 1px solid $unnnic-color-border-soft;
-        border-radius: $unnnic-border-radius-md;
-        padding: $unnnic-spacing-sm;
-        display: grid;
-        gap: $unnnic-spacing-sm;
-      }
-
-      &__container {
-        display: grid;
-        gap: $unnnic-spacing-sm;
-      }
-
-      :deep(.forms__quick-message__card) {
-        .unnnic-simple-card-header-container__title {
-          color: $unnnic-color-fg-emphasized;
-        }
-      }
-    }
+  &__title-container {
+    display: flex;
+    align-items: center;
+    gap: $unnnic-space-1;
   }
-  :deep(.unnnic-navigator-pages__page) {
-    max-width: 100%;
+  &__title {
+    font: $unnnic-font-display-2;
+    color: $unnnic-color-fg-emphasized;
   }
 }
 </style>

@@ -1,14 +1,16 @@
 <template>
   <section class="project-options__item">
     <UnnnicSwitch
-      :modelValue="modelValue"
-      :textRight="name"
-      @update:model-value="$emit('update:model-value', $event)"
+      :modelValue="props.modelValue"
+      :textRight="props.name"
+      :disabled="props.disabled"
+      :helper="props.hint"
+      @update:model-value="emit('update:model-value', $event)"
     />
     <UnnnicToolTip
-      v-if="tooltip"
+      v-if="props.tooltip"
       enabled
-      :text="tooltip"
+      :text="props.tooltip"
       side="right"
       maxWidth="20rem"
     >
@@ -22,33 +24,30 @@
   </section>
 </template>
 
-<script>
-export default {
-  name: 'SettingsProjectOptionsItem',
+<script setup lang="ts">
+interface Props {
+  modelValue: boolean;
+  name: string;
+  tooltip?: string;
+  disabled?: boolean;
+  hint?: string;
+}
 
-  props: {
-    modelValue: {
-      type: Boolean,
-      default: false,
-    },
-    name: {
-      type: String,
-      required: true,
-    },
-    tooltip: {
-      type: String,
-      default: '',
-    },
-  },
+const props = withDefaults(defineProps<Props>(), {
+  disabled: false,
+  tooltip: '',
+  hint: '',
+});
 
-  emits: ['update:model-value'],
-};
+const emit = defineEmits<{
+  'update:model-value': [boolean];
+}>();
 </script>
 
 <style lang="scss" scoped>
 .project-options__item {
   display: flex;
-  gap: $unnnic-spacing-nano;
+  gap: $unnnic-space-1;
   align-items: center;
 
   .unnnic-tooltip {

@@ -14,6 +14,14 @@ export default {
     return response.data;
   },
 
+  async bulkCreate(sector, queues) {
+    const response = await http.post('/queue/bulk_create/', {
+      sector,
+      queues,
+    });
+    return response.data;
+  },
+
   async list(sectorUuid, offset, limit) {
     const response = await http.get('/queue/', {
       params: {
@@ -22,6 +30,20 @@ export default {
         offset,
         limit,
       },
+    });
+    return response.data;
+  },
+
+  async listAllQueues({ limit, offset, filters }) {
+    const projectUuid = getProject();
+    const endpoint = `/project/${projectUuid}/sectors/queues/`;
+    const params = {
+      limit,
+      offset,
+      sectors: filters.sectors.join(',') || undefined,
+    };
+    const response = await http.get(endpoint, {
+      params,
     });
     return response.data;
   },
@@ -76,6 +98,7 @@ export default {
 
   async editQueue(queueInfo) {
     const response = await http.patch(`/queue/${queueInfo.uuid}/`, {
+      name: queueInfo.name,
       default_message: queueInfo.default_message,
       queue_limit: queueInfo.queue_limit,
     });

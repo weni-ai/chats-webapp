@@ -12,7 +12,6 @@ import DashboardManager from '../index.vue';
 
 import DashboardLayout from '@/layouts/DashboardLayout/index.vue';
 import HomeSidebarLoading from '@/views/loadings/HomeSidebar.vue';
-import ViewMode from '@/views/Dashboard/ViewMode/index.vue';
 
 import DashboardFilters from '@/components/dashboard/Filters.vue';
 
@@ -23,6 +22,11 @@ vi.mock('@/services/api/resources/settings/sector', () => ({
     list: vi.fn().mockResolvedValue({ results: [] }),
   },
 }));
+
+const ViewModeStub = {
+  name: 'ViewMode',
+  template: '<div class="view-mode-stub" />',
+};
 
 const createWrapper = (routeParams = {}, initialState = {}) => {
   return mount(DashboardManager, {
@@ -47,7 +51,7 @@ const createWrapper = (routeParams = {}, initialState = {}) => {
       components: {
         DashboardLayout,
         HomeSidebarLoading,
-        ViewMode,
+        ViewMode: ViewModeStub,
         DashboardFilters,
         HistoryMetricsBySector,
       },

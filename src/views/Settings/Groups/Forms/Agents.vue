@@ -41,7 +41,7 @@
 </template>
 
 <script>
-import SelectedMemberExpanded from '@/components/settings/forms/SelectedMemberExpanded.vue';
+import SelectedMemberExpanded from '@/views/Settings/Forms/SelectedMemberExpanded.vue';
 
 import Project from '@/services/api/resources/settings/project';
 
