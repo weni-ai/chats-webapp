@@ -421,7 +421,7 @@
       "forwarded_to_queue": "Chat encaminhado para a fila {queue}",
       "pick_of_agent": "{manager} assumiu o chat que estava com {agent}",
       "pick_of_queue": "{agent} assumiu o chat da fila {queue}",
-      "see_all_internal_notes": "<b style='color: white;'>Ver notas internas</b>",
+      "see_all_internal_notes": "<b class='fg-on-primary'>Ver notas internas</b>",
       "transfer_from_queue_to_agent": "Foi transferido da fila {queue} para {agent}",
       "transfer_from_queue_to_agent_by_other": "{requestedBy} transferiu o chat da fila {queue} para {agent}",
       "transfer_from_queue_to_queue": "Foi transferido da fila {queue1} para fila {queue2}",

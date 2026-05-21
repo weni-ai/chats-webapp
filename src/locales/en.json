@@ -418,7 +418,7 @@
       "forwarded_to_queue": "Chat forwarded to queue {queue}",
       "pick_of_agent": "{manager} took over the chat that was with {agent}",
       "pick_of_queue": "{agent} took over the chat from queue {queue}",
-      "see_all_internal_notes": "<b style='color: white;'>See internal notes</b>",
+      "see_all_internal_notes": "<b class='fg-on-primary'>See internal notes</b>",
       "transfer_from_queue_to_agent": "Was transferred from queue {queue} to {agent}",
       "transfer_from_queue_to_agent_by_other": "{requestedBy} transferred the chat from queue {queue} to {agent}",
       "transfer_from_queue_to_queue": "Was transferred from queue {queue1} to queue {queue2}",

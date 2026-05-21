@@ -233,19 +233,19 @@ const getVariableTooltip = (segment: TemplateBodySegment) => {
   display: flex;
   flex-direction: column;
 
-  background-color: $unnnic-color-background-grass;
-  border: 1px solid $unnnic-color-border-soft;
-  border-radius: $unnnic-border-radius-sm;
+  background-color: $unnnic-color-bg-base-soft;
+  border: 1px solid $unnnic-color-border-base;
+  border-radius: $unnnic-radius-1;
 
   overflow: hidden;
 
   &__header {
-    background-color: $unnnic-color-background-snow;
+    background-color: $unnnic-color-bg-base;
     padding: $unnnic-space-2;
   }
 
   &__header-title {
-    color: $unnnic-color-neutral-darkest;
+    color: $unnnic-color-fg-emphasized;
     font: $unnnic-font-emphasis;
   }
 
@@ -258,8 +258,8 @@ const getVariableTooltip = (segment: TemplateBodySegment) => {
   &__card {
     display: flex;
     flex-direction: column;
-    background-color: $unnnic-color-background-snow;
-    border-radius: $unnnic-border-radius-md;
+    background-color: $unnnic-color-bg-base;
+    border-radius: $unnnic-radius-2;
     box-shadow: $unnnic-shadow-level-near;
     overflow: hidden;
   }
@@ -273,24 +273,24 @@ const getVariableTooltip = (segment: TemplateBodySegment) => {
   }
 
   &__card-header {
-    color: $unnnic-color-neutral-darkest;
+    color: $unnnic-color-fg-emphasized;
     font: $unnnic-font-action;
   }
 
   &__card-body {
-    color: $unnnic-color-neutral-dark;
+    color: $unnnic-color-fg-base;
     font: $unnnic-font-body;
     white-space: pre-wrap;
     word-break: break-word;
   }
 
   &__card-footer {
-    color: $unnnic-color-neutral-cloudy;
+    color: $unnnic-color-fg-muted;
     font: $unnnic-font-caption-2;
   }
 
   &__variable {
-    color: $unnnic-color-aux-baby-blue;
+    color: $unnnic-color-fg-accent;
     font-weight: $unnnic-font-weight-bold;
   }
 
@@ -302,13 +302,13 @@ const getVariableTooltip = (segment: TemplateBodySegment) => {
 
     padding: $unnnic-space-3;
 
-    border-top: 1px solid $unnnic-color-border-soft;
+    border-top: 1px solid $unnnic-color-border-base;
 
-    color: $unnnic-color-aux-blue-500;
+    color: $unnnic-color-fg-info;
   }
 
   &__card-button-text {
-    color: $unnnic-color-aux-blue-500;
+    color: $unnnic-color-fg-info;
     font: $unnnic-font-action;
   }
 }

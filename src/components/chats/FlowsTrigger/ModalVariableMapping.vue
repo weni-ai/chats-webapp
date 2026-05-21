@@ -182,7 +182,7 @@ const onConfirm = () => {
   &__description {
     flex: 0 0 auto;
 
-    color: $unnnic-color-neutral-dark;
+    color: $unnnic-color-fg-base;
     font: $unnnic-font-body;
   }
 
@@ -206,7 +206,7 @@ const onConfirm = () => {
   }
 
   &__form-title {
-    color: $unnnic-color-neutral-darkest;
+    color: $unnnic-color-fg-emphasized;
     font: $unnnic-font-emphasis;
   }
 
@@ -225,7 +225,7 @@ const onConfirm = () => {
   }
 
   &__confirmation-helper {
-    color: $unnnic-color-neutral-dark;
+    color: $unnnic-color-fg-base;
     font: $unnnic-font-body;
   }
 
