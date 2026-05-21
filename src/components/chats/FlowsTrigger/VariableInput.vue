@@ -172,7 +172,7 @@ const selectOption = (lv: LocalVariable) => {
 
     &--active {
       background: $unnnic-color-bg-accent-strong;
-      color: $unnnic-color-fg-inverted;
+      color: $unnnic-color-fg-on-primary;
 
       font: $unnnic-font-action;
       letter-spacing: $unnnic-font-letter-spacing-action;
