@@ -191,12 +191,14 @@ const bodySegments = computed<TemplateBodySegment[]>(() => {
       variableName && props.variableValues?.[variableName]
         ? String(props.variableValues[variableName])
         : '';
+    const placeholder = variableName || `{{${match[1]}}}`;
 
     segments.push({
       type: 'variable',
-      text: filledValue || `{{${match[1]}}}`,
+      text: filledValue || placeholder,
       filled: Boolean(filledValue),
       positionalNumber,
+      placeholder,
       value: filledValue,
     });
 
@@ -215,7 +217,8 @@ const bodySegments = computed<TemplateBodySegment[]>(() => {
 });
 
 const getVariableTooltip = (segment: TemplateBodySegment) => {
-  const placeholder = `{{${segment.positionalNumber ?? ''}}}`;
+  const placeholder =
+    segment.placeholder || `{{${segment.positionalNumber ?? ''}}}`;
   const label = i18n.global.t(
     'flows_trigger.variable_mapping.preview_variable_tooltip',
     { placeholder },
