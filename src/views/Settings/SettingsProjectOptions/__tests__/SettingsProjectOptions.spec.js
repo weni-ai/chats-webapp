@@ -113,7 +113,9 @@ describe('SettingsProjectOptions.vue', () => {
     it('should render the header title', () => {
       const header = wrapper.find('.project-options__header');
       expect(header.exists()).toBe(true);
-      expect(header.find('.project-options__header__title').exists()).toBe(true);
+      expect(header.find('.project-options__header__title').exists()).toBe(
+        true,
+      );
     });
 
     it('should render toggle switches from optionsItems', () => {

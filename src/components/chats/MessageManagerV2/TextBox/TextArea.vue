@@ -200,8 +200,18 @@ defineExpose({
   outline: none;
   font: $unnnic-font-body;
   max-height: 104px;
+
+  background-color: transparent;
+  color: $unnnic-color-fg-emphasized;
+  caret-color: $unnnic-color-fg-emphasized;
+
   &::placeholder {
     color: $unnnic-color-fg-muted;
+  }
+
+  &.internal-note {
+    color: $unnnic-color-fg-base;
+    caret-color: $unnnic-color-fg-base;
   }
 }
 
@@ -246,9 +256,9 @@ defineExpose({
 }
 
 .internal-note {
-  background-color: $unnnic-color-bg-warning;
   &__prefix {
     font: $unnnic-font-body;
+    color: $unnnic-color-fg-base;
   }
   &__close-button {
     position: fixed;

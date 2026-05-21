@@ -22,7 +22,7 @@ exports[`FooterButton > Snapshot > should match snapshot 1`] = `
       data-state="closed"
       data-testid="tooltip-trigger"
       data-v-03fa3548=""
-      data-v-47313aed=""
+      data-v-61269528=""
     >
       
       
@@ -48,7 +48,7 @@ exports[`FooterButton > Snapshot > should match snapshot 1`] = `
       
     </div>
     <div
-      data-v-47313aed=""
+      data-v-61269528=""
       defer="false"
       disabled="false"
       forcemount="false"

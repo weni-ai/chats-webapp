@@ -96,10 +96,7 @@ describe('ListSectorMessages', () => {
 
     const openSpy = vi.spyOn(wrapper.vm, 'openConfigMessageDrawer');
     const card = wrapper.findComponent({ name: 'QuickMessageCard' });
-    await card.vm.$emit(
-      'edit',
-      quickMessageStore.quickMessagesShared[0],
-    );
+    await card.vm.$emit('edit', quickMessageStore.quickMessagesShared[0]);
 
     expect(openSpy).toHaveBeenCalledWith(
       quickMessageStore.quickMessagesShared[0],
