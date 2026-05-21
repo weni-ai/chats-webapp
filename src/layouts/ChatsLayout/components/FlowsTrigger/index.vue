@@ -31,6 +31,7 @@
         :isProjectPrincipal="isProjectPrincipal"
         @update:selected-flow="updateSelectedFlow"
         @update:project-uuid-flow="updateProjectUuidFlow"
+        @update:cached-template="updateCachedTemplate"
         @back="closeSendFlow"
         @close="$emit('close')"
       />
@@ -169,7 +170,10 @@
           @click="openNewContactModal"
         />
         <UnnnicButton
-          :disabled="listOfGroupAndContactsSelected.length === 0"
+          :disabled="
+            listOfGroupAndContactsSelected.length === 0 ||
+            hasCachedTemplateVariables
+          "
           :text="selectedFlow ? $t('send') : $t('continue')"
           type="primary"
           size="small"
@@ -200,8 +204,18 @@
       <ModalSendFlow
         v-if="showSendFlowModal"
         :contacts="selected"
+        :isProjectPrincipal="isProjectPrincipal"
         @close="closeSendFlow"
         @send-flow-finished="$emit('close')"
+      />
+      <ModalVariableMapping
+        v-if="showInlineVariableModal && inlineTemplate"
+        :template="inlineTemplate.data"
+        :variables="inlineTemplate.variables"
+        :localVariables="localVariables"
+        :isLoading="isLoadingSendFlow"
+        @close="closeInlineVariableModal"
+        @confirm="confirmInlineVariableMapping"
       />
       <ModalRemoveSelectedContacts
         v-if="showRemoveSelectedContactsModal"
@@ -223,6 +237,8 @@ import { mapState } from 'pinia';
 
 import { useRooms } from '@/store/modules/chats/rooms';
 import { useConfig } from '@/store/modules/config';
+import { useFeatureFlag } from '@/store/modules/featureFlag';
+import { useProfile } from '@/store/modules/profile';
 
 import AsideSlotTemplate from '@/components/layouts/chats/AsideSlotTemplate/index.vue';
 import AsideSlotTemplateSection from '@/components/layouts/chats/AsideSlotTemplate/Section.vue';
@@ -230,6 +246,12 @@ import ModalListTriggeredFlows from '@/components/chats/FlowsTrigger/ModalListTr
 import ModalAddNewContact from '@/components/chats/FlowsTrigger/ModalAddNewContact.vue';
 import ModalSendFlow from '@/components/chats/FlowsTrigger/ModalSendFlow.vue';
 import ModalRemoveSelectedContacts from '@/components/chats/FlowsTrigger/ModalRemoveSelectedContacts.vue';
+import ModalVariableMapping from '@/components/chats/FlowsTrigger/ModalVariableMapping.vue';
+import { FLOW_TRIGGER_VARIABLE_MAPPING_FLAG } from '@/components/chats/FlowsTrigger/types';
+import {
+  getAvailableLocalVariables,
+  resolveAllValues,
+} from '@/components/chats/FlowsTrigger/localVariables';
 import SelectedContactsSection from '@/components/chats/FlowsTrigger/SelectedContactsSection.vue';
 import SendFlow from '@/components/chats/FlowsTrigger/SendFlow.vue';
 import FlowsContactCard from '@/components/chats/FlowsTrigger/FlowsContactCard.vue';
@@ -255,6 +277,7 @@ export default {
     ModalAddNewContact,
     ModalSendFlow,
     ModalRemoveSelectedContacts,
+    ModalVariableMapping,
     SelectedContactsSection,
     SendFlow,
     ModalProgressBarFalse,
@@ -299,6 +322,10 @@ export default {
     isSendFlowFinished: false,
     isLoadingSendFlow: false,
     isLoadingCheckProjectPrincipal: false,
+
+    showInlineVariableModal: false,
+    inlineTemplate: null,
+    cachedTemplate: null,
   }),
 
   computed: {
@@ -308,6 +335,36 @@ export default {
     ...mapState(useRooms, {
       room: (store) => store.activeRoom,
     }),
+    ...mapState(useFeatureFlag, ['featureFlags']),
+    ...mapState(useProfile, ['me']),
+
+    isVariableMappingEnabled() {
+      return !!this.featureFlags?.active_features?.includes(
+        FLOW_TRIGGER_VARIABLE_MAPPING_FLAG,
+      );
+    },
+
+    hasCachedTemplateVariables() {
+      return (this.cachedTemplate?.variables?.length ?? 0) > 0;
+    },
+
+    contactsForResolution() {
+      if (
+        this.selectedContact &&
+        Object.keys(this.selectedContact).length > 0
+      ) {
+        return [this.selectedContact];
+      }
+      return this.selected;
+    },
+
+    localVariables() {
+      return getAvailableLocalVariables({
+        contacts: this.contactsForResolution,
+        agent: this.me,
+        room: this.room,
+      });
+    },
 
     lettersWithoutUnnamed() {
       return Object.keys(this.letters).reduce((acc, key) => {
@@ -442,6 +499,18 @@ export default {
 
     updateProjectUuidFlow(projectUuidFlow) {
       this.projectUuidFlow = projectUuidFlow;
+    },
+
+    updateCachedTemplate(cachedTemplate) {
+      this.cachedTemplate = cachedTemplate;
+
+      if (cachedTemplate?.variables?.length > 0) {
+        this.inlineTemplate = cachedTemplate;
+        this.showInlineVariableModal = true;
+        return;
+      }
+
+      this.closeInlineVariableModal();
     },
 
     setContacts(contact) {
@@ -655,6 +724,22 @@ export default {
     },
 
     async sendFlowToContacts() {
+      if (this.hasCachedTemplateVariables) return;
+
+      await this.doSendFlowToContacts();
+    },
+
+    closeInlineVariableModal() {
+      this.showInlineVariableModal = false;
+      this.inlineTemplate = null;
+    },
+
+    async confirmInlineVariableMapping(params) {
+      await this.doSendFlowToContacts(params);
+      this.closeInlineVariableModal();
+    },
+
+    async doSendFlowToContacts(params) {
       let hasError = false;
 
       this.isLoadingSendFlow = true;
@@ -663,11 +748,20 @@ export default {
         : this.selected;
 
       const sendFlowToContact = async (contact) => {
+        const resolvedParams = params
+          ? resolveAllValues(params, {
+              contact,
+              agent: this.me,
+              room: this.room,
+            })
+          : null;
+
         const prepareObj = {
           flow: this.selectedFlow,
           contacts: [contact.external_id || contact.uuid],
           room: this.room?.uuid || '',
           contact_name: contact.name,
+          ...(resolvedParams ? { params: resolvedParams } : {}),
         };
 
         try {

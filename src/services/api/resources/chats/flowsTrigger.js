@@ -113,4 +113,16 @@ export default {
     );
     return response.data;
   },
+
+  async getFlowTemplates(flowUuid, projectUuid) {
+    const response = await http.get(
+      `/project/${projectUuid || getProject()}/flow_templates/`,
+      {
+        params: {
+          flow: flowUuid,
+        },
+      },
+    );
+    return response.data;
+  },
 };
