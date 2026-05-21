@@ -17,8 +17,6 @@
     <HomeChatTakeoverRoom
       v-if="enableChatTakeoverFeedbackModal && showModalAssumedChat"
       v-model="showModalAssumedChat"
-      :contactName="assumedChatContactName"
-      :assumedByUser="assumedByUser"
       :title="modalAssumedTitle"
       :description="modalAssumedText"
       @close="closeModalTakeoverRoom"
@@ -142,8 +140,8 @@ export default {
 
     closeModalTakeoverRoom() {
       this.showModalAssumedChat = false;
-      this.assumedChatContactName = '';
-      this.assumedByUser = '';
+      this.modalAssumedText = '';
+      this.modalAssumedTitle = '';
     },
 
     emitGotChat() {
