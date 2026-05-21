@@ -1,5 +1,6 @@
 import { mount } from '@vue/test-utils';
 import { expect, describe, it, beforeEach, vi } from 'vitest';
+import { createTestingPinia } from '@pinia/testing';
 
 import ModalSendFlow from '../ModalSendFlow.vue';
 import SendFlowButton from '../SendFlowButton.vue';
@@ -54,7 +55,14 @@ describe('ModalSendFlow', () => {
   beforeEach(() => {
     wrapper = mount(ModalSendFlow, {
       props: { contacts: [{ uuid: '1', name: 'Contact 1' }] },
-      global: { stubs: dialogStubs },
+      global: {
+        plugins: [createTestingPinia()],
+        stubs: {
+          ...dialogStubs,
+          ModalVariableMapping: true,
+          Teleport: true,
+        },
+      },
     });
     vi.clearAllMocks();
   });

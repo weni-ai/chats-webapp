@@ -10,8 +10,12 @@ import {
 } from 'vitest';
 
 import SendFlowButton from '../SendFlowButton.vue';
-import { createTestingPinia } from '@pinia/testing';
 import FlowsTrigger from '@/services/api/resources/chats/flowsTrigger';
+
+import {
+  createFlowsTriggerPinia,
+  enableVariableMappingFlag,
+} from './testHelpers';
 
 let savedGlobalMocks;
 
@@ -31,6 +35,16 @@ vi.mock('@/services/api/resources/chats/flowsTrigger', () => ({
   },
 }));
 
+const createFlowsTriggerPiniaWithProfile = (profileState) => {
+  const pinia = createFlowsTriggerPinia({
+    initialState: {
+      profile: profileState,
+    },
+  });
+
+  return pinia;
+};
+
 const cachedTemplateWithVariables = {
   variables: ['nomecontato', 'nomeatendente'],
   data: {
@@ -49,9 +63,10 @@ describe('SendFlowButton', () => {
 
   beforeEach(() => {
     wrapper = mount(SendFlowButton, {
-      global: { plugins: [createTestingPinia()] },
+      global: { plugins: [createFlowsTriggerPinia()] },
       props: { selectedFlow: '' },
     });
+    enableVariableMappingFlag();
     vi.clearAllMocks();
   });
 
@@ -232,15 +247,11 @@ describe('SendFlowButton', () => {
   it('resolves local variable tokens per contact when sending', async () => {
     FlowsTrigger.sendFlow.mockResolvedValue({});
 
-    const pinia = createTestingPinia({
-      initialState: {
-        profile: {
-          me: {
-            first_name: 'Ada',
-            last_name: 'Lovelace',
-            email: 'ada@example.com',
-          },
-        },
+    const pinia = createFlowsTriggerPiniaWithProfile({
+      me: {
+        first_name: 'Ada',
+        last_name: 'Lovelace',
+        email: 'ada@example.com',
       },
     });
 
@@ -256,6 +267,7 @@ describe('SendFlowButton', () => {
         cachedTemplate: cachedTemplateWithVariables,
       },
     });
+    enableVariableMappingFlag();
 
     await wrapper.vm.doSendFlow({
       nomecontato: 'Hi {{contact.name}}',

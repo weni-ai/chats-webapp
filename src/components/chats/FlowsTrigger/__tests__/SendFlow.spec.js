@@ -9,15 +9,17 @@ import {
   beforeEach,
 } from 'vitest';
 
-import { createTestingPinia } from '@pinia/testing';
-
 import SendFlow from '../SendFlow.vue';
 import SelectFlow from '../SelectFlow.vue';
 import SendFlowButton from '../SendFlowButton.vue';
 import callUnnnicAlert from '@/utils/callUnnnicAlert';
 import FlowsTrigger from '@/services/api/resources/chats/flowsTrigger';
 
-import { flowTriggerVariableMappingMock } from '../__tempMock';
+import {
+  createFlowsTriggerPinia,
+  disableVariableMappingFlag,
+  enableVariableMappingFlag,
+} from './testHelpers';
 
 vi.mock('@/utils/callUnnnicAlert');
 
@@ -62,19 +64,25 @@ afterAll(() => {
   config.global.mocks = savedGlobalMocks;
 });
 
+const sendFlowStubs = {
+  ModalVariableMapping: true,
+  Teleport: true,
+};
+
 describe('SendFlow', () => {
   let wrapper;
 
   beforeEach(() => {
     vi.clearAllMocks();
-    flowTriggerVariableMappingMock.forceFeatureFlagEnabled = false;
     wrapper = mount(SendFlow, {
       global: {
         components: { SelectFlow, SendFlowButton },
-        plugins: [createTestingPinia()],
+        plugins: [createFlowsTriggerPinia()],
+        stubs: sendFlowStubs,
       },
       props: { contacts: [], selectedContact: {} },
     });
+    disableVariableMappingFlag();
   });
 
   it('renders correctly with initial state', async () => {
@@ -139,7 +147,7 @@ describe('SendFlow', () => {
 
   describe('template check on flow selection', () => {
     beforeEach(() => {
-      flowTriggerVariableMappingMock.forceFeatureFlagEnabled = true;
+      enableVariableMappingFlag();
     });
 
     it('does not check templates when isProjectPrincipal=true', async () => {
@@ -187,7 +195,7 @@ describe('SendFlow', () => {
     });
 
     it('forwards localVariables to the variable mapping modal', async () => {
-      const pinia = createTestingPinia({
+      const pinia = createFlowsTriggerPinia({
         initialState: {
           profile: {
             me: {
@@ -203,6 +211,7 @@ describe('SendFlow', () => {
         global: {
           components: { SelectFlow, SendFlowButton },
           plugins: [pinia],
+          stubs: sendFlowStubs,
         },
         props: {
           contacts: [
@@ -212,6 +221,7 @@ describe('SendFlow', () => {
           selectedContact: {},
         },
       });
+      enableVariableMappingFlag();
 
       FlowsTrigger.getFlowTemplates.mockResolvedValueOnce(
         templatesWithVariablesResponse,
