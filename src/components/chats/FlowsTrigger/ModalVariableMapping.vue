@@ -25,19 +25,20 @@
               <p class="modal-variable-mapping__form-title">
                 {{ $t('flows_trigger.variable_mapping.define_variables') }}
               </p>
-              <UnnnicInput
+              <VariableInput
                 v-for="(variableName, index) in variables"
                 :key="variableName"
                 v-model="variableValues[variableName]"
                 :label="
                   $t('flows_trigger.variable_mapping.variable_label', {
-                    index: index + 1,
+                    name: variableName,
                   })
                 "
                 :placeholder="
                   $t('flows_trigger.variable_mapping.input_placeholder')
                 "
-                :data-testid="`modal-variable-mapping-input-${index}`"
+                :localVariables="localVariables"
+                :dataTestid="`modal-variable-mapping-input-${index}`"
               />
             </section>
 
@@ -45,7 +46,7 @@
               class="modal-variable-mapping__preview"
               :template="template"
               :variables="variables"
-              :variableValues="variableValues"
+              :variableValues="previewValues"
             />
           </section>
         </section>
@@ -65,20 +66,22 @@
       </section>
 
       <UnnnicDialogFooter>
-        <UnnnicButton
-          :text="$t('cancel')"
-          type="tertiary"
-          data-testid="modal-variable-mapping-cancel"
-          @click="onCancel"
-        />
-        <UnnnicButton
-          :text="$t('send')"
-          type="primary"
-          :disabled="!canConfirm"
-          :loading="isLoading"
-          data-testid="modal-variable-mapping-confirm"
-          @click="onConfirm"
-        />
+        <section class="modal-variable-mapping__footer">
+          <UnnnicButton
+            :text="$t('cancel')"
+            type="tertiary"
+            data-testid="modal-variable-mapping-cancel"
+            @click="onCancel"
+          />
+          <UnnnicButton
+            :text="$t('send')"
+            type="primary"
+            :disabled="!canConfirm"
+            :loading="isLoading"
+            data-testid="modal-variable-mapping-confirm"
+            @click="onConfirm"
+          />
+        </section>
       </UnnnicDialogFooter>
     </UnnnicDialogContent>
   </UnnnicDialog>
@@ -88,8 +91,10 @@
 import { ref, computed, watch } from 'vue';
 
 import MetaTemplatePreview from './MetaTemplatePreview.vue';
+import VariableInput from './VariableInput.vue';
 
 import type { MetaTemplate } from './types';
+import type { LocalVariable } from './localVariables';
 
 defineOptions({
   name: 'ModalVariableMapping',
@@ -98,10 +103,12 @@ defineOptions({
 interface Props {
   template: MetaTemplate;
   variables: string[];
+  localVariables?: LocalVariable[];
   isLoading?: boolean;
 }
 
 const props = withDefaults(defineProps<Props>(), {
+  localVariables: () => [],
   isLoading: false,
 });
 
@@ -128,6 +135,20 @@ const areAllVariablesFilled = computed(() =>
 const canConfirm = computed(
   () => isConfirmed.value && areAllVariablesFilled.value,
 );
+
+const previewValues = computed<Record<string, string>>(() => {
+  const result: Record<string, string> = {};
+  Object.entries(variableValues.value).forEach(([key, value]) => {
+    let resolved = value ?? '';
+    props.localVariables.forEach((lv) => {
+      if (resolved.includes(lv.token)) {
+        resolved = resolved.split(lv.token).join(lv.previewValue);
+      }
+    });
+    result[key] = resolved;
+  });
+  return result;
+});
 
 watch(isOpen, (value) => {
   if (!value) emit('close');
@@ -206,6 +227,15 @@ const onConfirm = () => {
   &__confirmation-helper {
     color: $unnnic-color-neutral-dark;
     font: $unnnic-font-body;
+  }
+
+  &__footer {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: $unnnic-spacing-xs;
+
+    width: 100%;
   }
 }
 </style>
