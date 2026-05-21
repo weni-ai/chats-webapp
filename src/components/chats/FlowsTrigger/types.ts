@@ -59,6 +59,7 @@ export interface TemplateBodySegment {
   text: string;
   filled?: boolean;
   positionalNumber?: number;
+  placeholder?: string;
   value?: string;
 }
 
