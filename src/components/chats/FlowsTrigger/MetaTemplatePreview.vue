@@ -290,7 +290,7 @@ const getVariableTooltip = (segment: TemplateBodySegment) => {
   }
 
   &__variable {
-    color: $unnnic-color-aux-baby-blue;
+    color: $unnnic-color-fg-accent;
     font-weight: $unnnic-font-weight-bold;
   }
 
