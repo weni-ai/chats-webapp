@@ -847,7 +847,7 @@
       "title": "Mapeamento de variáveis",
       "description": "As variáveis serão preenchidas na pré-visualização abaixo usando valores dos contatos selecionados sempre que fizerem referência a campos do contato",
       "define_variables": "Definir as variáveis",
-      "variable_label": "Variável {index}",
+      "variable_label": "Variável {name}",
       "input_placeholder": "Digite o valor para esta variável",
       "preview_title": "Pré-visualização do template",
       "preview_variable_tooltip": "Variável {placeholder}",

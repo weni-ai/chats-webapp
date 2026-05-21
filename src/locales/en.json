@@ -842,7 +842,7 @@
       "title": "Variable mapping",
       "description": "Variables will be populated in the preview below using values from the selected contacts whenever they reference contact fields",
       "define_variables": "Define the variables",
-      "variable_label": "Variable {index}",
+      "variable_label": "Variable {name}",
       "input_placeholder": "Type the value for this variable",
       "preview_title": "Template preview",
       "preview_variable_tooltip": "Variable {placeholder}",
