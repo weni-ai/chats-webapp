@@ -166,4 +166,57 @@ describe('ModalVariableMapping', () => {
       orderNumber: '',
     });
   });
+
+  describe('local variables integration', () => {
+    const sampleLocalVariables = [
+      {
+        token: '{{contact.name}}',
+        labelKey: 'flows_trigger.variable_mapping.local_variables.contact_name',
+        previewValue: 'Joao',
+      },
+      {
+        token: '{{agent.name}}',
+        labelKey: 'flows_trigger.variable_mapping.local_variables.agent_name',
+        previewValue: 'Ada Lovelace',
+      },
+    ];
+
+    it('forwards localVariables prop to each VariableInput row', () => {
+      wrapper = buildWrapper({ localVariables: sampleLocalVariables });
+
+      const variableInputs = wrapper.findAllComponents({
+        name: 'VariableInput',
+      });
+      expect(variableInputs).toHaveLength(2);
+      expect(variableInputs[0].props('localVariables')).toEqual(
+        sampleLocalVariables,
+      );
+    });
+
+    it('resolves tokens in previewValues using the localVariables preview value', async () => {
+      wrapper = buildWrapper({ localVariables: sampleLocalVariables });
+      wrapper.vm.variableValues.contactName =
+        'Hello {{contact.name}}, from {{agent.name}}';
+      wrapper.vm.variableValues.orderNumber = 'static';
+      await wrapper.vm.$nextTick();
+
+      expect(wrapper.vm.previewValues).toEqual({
+        contactName: 'Hello Joao, from Ada Lovelace',
+        orderNumber: 'static',
+      });
+    });
+
+    it('treats a token as filled (token counts as non-empty value)', async () => {
+      wrapper = buildWrapper({ localVariables: sampleLocalVariables });
+      wrapper.vm.variableValues.contactName = '{{contact.name}}';
+      wrapper.vm.variableValues.orderNumber = '12345';
+      wrapper.vm.isConfirmed = true;
+      await wrapper.vm.$nextTick();
+
+      const confirmButton = wrapper.find(
+        '[data-testid="modal-variable-mapping-confirm"]',
+      );
+      expect(confirmButton.attributes('disabled')).toBeUndefined();
+    });
+  });
 });

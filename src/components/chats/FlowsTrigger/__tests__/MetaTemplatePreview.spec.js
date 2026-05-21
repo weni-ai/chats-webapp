@@ -77,11 +77,21 @@ describe('MetaTemplatePreview', () => {
     ).toBe('Weni by VTEX');
   });
 
-  it('renders unfilled variables as {{n}} placeholders', () => {
+  it('renders unfilled variables as their backend variable names', () => {
     const variables = wrapper.findAll(
       '[data-testid="meta-template-preview-variable"]',
     );
     expect(variables).toHaveLength(3);
+    expect(variables[0].text()).toBe('contactName');
+    expect(variables[1].text()).toBe('orderNumber');
+    expect(variables[2].text()).toBe('collection');
+  });
+
+  it('falls back to {{n}} when no matching variable name is provided', () => {
+    const wrapperWithoutNames = buildWrapper({ variables: [] });
+    const variables = wrapperWithoutNames.findAll(
+      '[data-testid="meta-template-preview-variable"]',
+    );
     expect(variables[0].text()).toBe('{{1}}');
     expect(variables[1].text()).toBe('{{2}}');
     expect(variables[2].text()).toBe('{{3}}');
@@ -96,15 +106,15 @@ describe('MetaTemplatePreview', () => {
     expect(buttons[1].text()).toContain('Shop now');
   });
 
-  it('wraps each variable with an UnnnicToolTip showing its label', () => {
+  it('wraps each variable with an UnnnicToolTip showing its name', () => {
     const tooltips = wrapper.findAllComponents({ name: 'UnnnicToolTipStub' });
     expect(tooltips).toHaveLength(3);
-    expect(tooltips[0].props('text')).toBe('Variable {{1}}');
-    expect(tooltips[1].props('text')).toBe('Variable {{2}}');
-    expect(tooltips[2].props('text')).toBe('Variable {{3}}');
+    expect(tooltips[0].props('text')).toBe('Variable contactName');
+    expect(tooltips[1].props('text')).toBe('Variable orderNumber');
+    expect(tooltips[2].props('text')).toBe('Variable collection');
   });
 
-  it('appends the typed value to the tooltip label when the variable is filled', async () => {
+  it('appends the typed value to the tooltip when the variable is filled', async () => {
     await wrapper.setProps({
       variableValues: {
         contactName: 'Marcus',
@@ -113,9 +123,9 @@ describe('MetaTemplatePreview', () => {
     });
 
     const tooltips = wrapper.findAllComponents({ name: 'UnnnicToolTipStub' });
-    expect(tooltips[0].props('text')).toBe('Variable {{1}} | Marcus');
-    expect(tooltips[1].props('text')).toBe('Variable {{2}} | 12345');
-    expect(tooltips[2].props('text')).toBe('Variable {{3}}');
+    expect(tooltips[0].props('text')).toBe('Variable contactName | Marcus');
+    expect(tooltips[1].props('text')).toBe('Variable orderNumber | 12345');
+    expect(tooltips[2].props('text')).toBe('Variable collection');
   });
 
   it('ignores whitespace-only values when composing the tooltip', async () => {
@@ -126,7 +136,7 @@ describe('MetaTemplatePreview', () => {
     });
 
     const tooltips = wrapper.findAllComponents({ name: 'UnnnicToolTipStub' });
-    expect(tooltips[0].props('text')).toBe('Variable {{1}}');
+    expect(tooltips[0].props('text')).toBe('Variable contactName');
   });
 
   it('strips html comments from body before parsing variables', () => {

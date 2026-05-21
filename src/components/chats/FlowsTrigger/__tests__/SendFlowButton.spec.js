@@ -31,29 +31,17 @@ vi.mock('@/services/api/resources/chats/flowsTrigger', () => ({
   },
 }));
 
-const emptyTemplatesResponse = {
-  flow_uuid: 'flow-uuid',
-  total_template_qty: 0,
-  templates: [],
-};
-
-const templatesWithVariablesResponse = {
-  flow_uuid: 'flow-uuid',
-  total_template_qty: 1,
-  templates: [
-    {
-      variables: ['nomecontato', 'nomeatendente'],
-      data: {
-        name: 'template_test',
-        components: [
-          {
-            type: 'BODY',
-            text: 'Olá {{1}}, falo {{2}}',
-          },
-        ],
+const cachedTemplateWithVariables = {
+  variables: ['nomecontato', 'nomeatendente'],
+  data: {
+    name: 'template_test',
+    components: [
+      {
+        type: 'BODY',
+        text: 'Olá {{1}}, falo {{2}}',
       },
-    },
-  ],
+    ],
+  },
 };
 
 describe('SendFlowButton', () => {
@@ -65,7 +53,6 @@ describe('SendFlowButton', () => {
       props: { selectedFlow: '' },
     });
     vi.clearAllMocks();
-    FlowsTrigger.getFlowTemplates.mockResolvedValue(emptyTemplatesResponse);
   });
 
   it('renders with the correct initial state', () => {
@@ -80,6 +67,44 @@ describe('SendFlowButton', () => {
 
     await wrapper.setProps({ selectedFlow: 'flow-uuid' });
     expect(button.attributes('disabled')).toBeUndefined();
+  });
+
+  it('disables the button while the parent is checking the template', async () => {
+    await wrapper.setProps({
+      selectedFlow: 'flow-uuid',
+      isCheckingTemplate: true,
+    });
+
+    const button = wrapper.find('[data-testid="send-flow-button"]');
+    expect(button.attributes('disabled')).toBeDefined();
+
+    await wrapper.setProps({ isCheckingTemplate: false });
+    expect(button.attributes('disabled')).toBeUndefined();
+  });
+
+  it('disables the button when the selected flow has template variables', async () => {
+    await wrapper.setProps({
+      selectedFlow: 'flow-uuid',
+      cachedTemplate: cachedTemplateWithVariables,
+    });
+
+    const button = wrapper.find('[data-testid="send-flow-button"]');
+    expect(button.attributes('disabled')).toBeDefined();
+  });
+
+  it('does not send when clicked while the flow has template variables', async () => {
+    FlowsTrigger.sendFlow.mockResolvedValue({});
+
+    await wrapper.setProps({
+      selectedFlow: 'flow-uuid',
+      contacts: [{ external_id: 'contact-1', name: 'Contact 1' }],
+      cachedTemplate: cachedTemplateWithVariables,
+    });
+
+    await wrapper.find('[data-testid="send-flow-button"]').trigger('click');
+    await new Promise((resolve) => setTimeout(resolve, 0));
+
+    expect(FlowsTrigger.sendFlow).not.toHaveBeenCalled();
   });
 
   it('emits events with hasError=false when sendFlow succeeds', async () => {
@@ -162,6 +187,7 @@ describe('SendFlowButton', () => {
       contacts: [{ external_id: 'contact-1', name: 'Contact 1' }],
       isProjectPrincipal: true,
       projectUuidFlow: 'project-uuid',
+      cachedTemplate: cachedTemplateWithVariables,
     });
 
     await wrapper.find('[data-testid="send-flow-button"]').trigger('click');
@@ -177,69 +203,17 @@ describe('SendFlowButton', () => {
     );
   });
 
-  it('sends without opening modal when templates response has no variables', async () => {
-    FlowsTrigger.getFlowTemplates.mockResolvedValueOnce(emptyTemplatesResponse);
+  it('sends with params when doSendFlow is called directly', async () => {
     FlowsTrigger.sendFlow.mockResolvedValue({});
 
     await wrapper.setProps({
       selectedFlow: 'flow-uuid',
       contacts: [{ external_id: 'contact-1', name: 'Contact 1' }],
       projectUuidFlow: 'project-uuid',
+      cachedTemplate: cachedTemplateWithVariables,
     });
 
-    await wrapper.find('[data-testid="send-flow-button"]').trigger('click');
-    await new Promise((resolve) => setTimeout(resolve, 0));
-
-    expect(FlowsTrigger.getFlowTemplates).toHaveBeenCalledWith(
-      'flow-uuid',
-      'project-uuid',
-    );
-    expect(FlowsTrigger.sendFlow).toHaveBeenCalled();
-    expect(wrapper.vm.showVariableModal).toBe(false);
-  });
-
-  it('opens variable mapping modal when template has variables', async () => {
-    FlowsTrigger.getFlowTemplates.mockResolvedValueOnce(
-      templatesWithVariablesResponse,
-    );
-
-    await wrapper.setProps({
-      selectedFlow: 'flow-uuid',
-      contacts: [{ external_id: 'contact-1', name: 'Contact 1' }],
-      projectUuidFlow: 'project-uuid',
-    });
-
-    await wrapper.find('[data-testid="send-flow-button"]').trigger('click');
-    await new Promise((resolve) => setTimeout(resolve, 0));
-
-    expect(FlowsTrigger.getFlowTemplates).toHaveBeenCalledWith(
-      'flow-uuid',
-      'project-uuid',
-    );
-    expect(FlowsTrigger.sendFlow).not.toHaveBeenCalled();
-    expect(wrapper.vm.showVariableModal).toBe(true);
-    expect(wrapper.vm.templateForMapping?.variables).toEqual([
-      'nomecontato',
-      'nomeatendente',
-    ]);
-  });
-
-  it('sends with params after variable mapping confirmation', async () => {
-    FlowsTrigger.getFlowTemplates.mockResolvedValueOnce(
-      templatesWithVariablesResponse,
-    );
-    FlowsTrigger.sendFlow.mockResolvedValue({});
-
-    await wrapper.setProps({
-      selectedFlow: 'flow-uuid',
-      contacts: [{ external_id: 'contact-1', name: 'Contact 1' }],
-      projectUuidFlow: 'project-uuid',
-    });
-
-    await wrapper.vm.startSendFlow();
-    await new Promise((resolve) => setTimeout(resolve, 0));
-
-    await wrapper.vm.onConfirmVariableMapping({
+    await wrapper.vm.doSendFlow({
       nomecontato: 'Marcus',
       nomeatendente: 'Kallil',
     });
@@ -253,25 +227,80 @@ describe('SendFlowButton', () => {
       }),
       'project-uuid',
     );
-    expect(wrapper.vm.showVariableModal).toBe(false);
   });
 
-  it('falls back to sending without params when template check fails', async () => {
-    FlowsTrigger.getFlowTemplates.mockRejectedValueOnce(
-      new Error('Network error'),
-    );
+  it('resolves local variable tokens per contact when sending', async () => {
     FlowsTrigger.sendFlow.mockResolvedValue({});
-    vi.spyOn(console, 'error');
+
+    const pinia = createTestingPinia({
+      initialState: {
+        profile: {
+          me: {
+            first_name: 'Ada',
+            last_name: 'Lovelace',
+            email: 'ada@example.com',
+          },
+        },
+      },
+    });
+
+    wrapper = mount(SendFlowButton, {
+      global: { plugins: [pinia] },
+      props: {
+        selectedFlow: 'flow-uuid',
+        projectUuidFlow: 'project-uuid',
+        contacts: [
+          { external_id: 'c1', name: 'Joao' },
+          { external_id: 'c2', name: 'Maria' },
+        ],
+        cachedTemplate: cachedTemplateWithVariables,
+      },
+    });
+
+    await wrapper.vm.doSendFlow({
+      nomecontato: 'Hi {{contact.name}}',
+      nomeatendente: '{{agent.name}}',
+    });
+
+    const calls = FlowsTrigger.sendFlow.mock.calls.map(([payload]) => ({
+      contact: payload.contacts[0],
+      params: payload.params,
+    }));
+
+    expect(calls).toContainEqual({
+      contact: 'c1',
+      params: { nomecontato: 'Hi Joao', nomeatendente: 'Ada Lovelace' },
+    });
+    expect(calls).toContainEqual({
+      contact: 'c2',
+      params: { nomecontato: 'Hi Maria', nomeatendente: 'Ada Lovelace' },
+    });
+  });
+
+  it('issues one POST /start_flow/ per selected contact', async () => {
+    FlowsTrigger.sendFlow.mockResolvedValue({});
 
     await wrapper.setProps({
       selectedFlow: 'flow-uuid',
-      contacts: [{ external_id: 'contact-1', name: 'Contact 1' }],
+      projectUuidFlow: 'project-uuid',
+      contacts: [
+        { external_id: 'c1', name: 'Joao' },
+        { external_id: 'c2', name: 'Maria' },
+        { external_id: 'c3', name: 'Marcus' },
+      ],
+      cachedTemplate: cachedTemplateWithVariables,
     });
 
-    await wrapper.find('[data-testid="send-flow-button"]').trigger('click');
-    await new Promise((resolve) => setTimeout(resolve, 0));
+    await wrapper.vm.doSendFlow({
+      nomecontato: 'static text',
+      nomeatendente: 'agent text',
+    });
 
-    expect(FlowsTrigger.sendFlow).toHaveBeenCalled();
-    expect(FlowsTrigger.sendFlow.mock.calls[0][0]).not.toHaveProperty('params');
+    expect(FlowsTrigger.sendFlow).toHaveBeenCalledTimes(3);
+
+    const contactsCalled = FlowsTrigger.sendFlow.mock.calls.map(
+      ([payload]) => payload.contacts,
+    );
+    expect(contactsCalled).toEqual([['c1'], ['c2'], ['c3']]);
   });
 });
