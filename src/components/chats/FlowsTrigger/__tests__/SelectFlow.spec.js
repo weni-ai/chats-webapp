@@ -38,6 +38,41 @@ describe('SelectFlow', () => {
     expect(selectOptions).toEqual([{ value: 'flow-1', label: 'Flow 1' }]);
   });
 
+  it('calls getFlows with verify_chats_tag=false by default', async () => {
+    await flushPromises();
+
+    expect(FlowsTrigger.getFlows).toHaveBeenCalledWith(undefined, {
+      verify_chats_tag: false,
+    });
+  });
+
+  it('calls getFlows with verify_chats_tag=true when disableGetChatsTag prop is true', async () => {
+    FlowsTrigger.getFlows.mockClear();
+
+    const customWrapper = mount(SelectFlow, {
+      props: { modelValue: '', disableGetChatsTag: true },
+    });
+    await flushPromises();
+
+    expect(FlowsTrigger.getFlows).toHaveBeenCalledWith(undefined, {
+      verify_chats_tag: true,
+    });
+
+    customWrapper.unmount();
+  });
+
+  it('refetches flows with the new projectUuidFlow when the prop changes', async () => {
+    await flushPromises();
+    FlowsTrigger.getFlows.mockClear();
+
+    await wrapper.setProps({ projectUuidFlow: 'project-uuid-1' });
+    await flushPromises();
+
+    expect(FlowsTrigger.getFlows).toHaveBeenCalledWith('project-uuid-1', {
+      verify_chats_tag: false,
+    });
+  });
+
   it('emits update:modelValue when a flow is selected', async () => {
     await flushPromises();
 
