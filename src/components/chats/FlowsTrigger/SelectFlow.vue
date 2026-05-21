@@ -116,7 +116,7 @@ export default {
 
       try {
         const response = await FlowsTrigger.getFlows(projectUuidFlow, {
-          verify_chats_tag: this.disableGetChatsTag,
+          verify_chats_tag: !this.disableGetChatsTag,
         });
 
         this.templates = response.map(({ name, uuid }) => ({
