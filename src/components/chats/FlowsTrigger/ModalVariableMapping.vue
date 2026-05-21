@@ -169,9 +169,9 @@ const onConfirm = () => {
   &__content {
     display: flex;
     flex-direction: column;
-    gap: $unnnic-spacing-sm;
+    gap: $unnnic-space-4;
 
-    padding: $unnnic-spacing-md;
+    padding: $unnnic-space-6;
 
     text-align: start;
 
@@ -195,14 +195,14 @@ const onConfirm = () => {
   &__columns {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: $unnnic-spacing-xs;
+    gap: $unnnic-space-2;
     align-items: start;
   }
 
   &__form {
     display: flex;
     flex-direction: column;
-    gap: $unnnic-spacing-xs;
+    gap: $unnnic-space-2;
   }
 
   &__form-title {
@@ -221,7 +221,7 @@ const onConfirm = () => {
 
     display: flex;
     flex-direction: column;
-    gap: $unnnic-spacing-ant;
+    gap: $unnnic-space-3;
   }
 
   &__confirmation-helper {
@@ -233,7 +233,7 @@ const onConfirm = () => {
     display: flex;
     justify-content: flex-end;
     align-items: center;
-    gap: $unnnic-spacing-xs;
+    gap: $unnnic-space-2;
 
     width: 100%;
   }

@@ -241,7 +241,7 @@ const getVariableTooltip = (segment: TemplateBodySegment) => {
 
   &__header {
     background-color: $unnnic-color-background-snow;
-    padding: $unnnic-spacing-xs;
+    padding: $unnnic-space-2;
   }
 
   &__header-title {
@@ -252,7 +252,7 @@ const getVariableTooltip = (segment: TemplateBodySegment) => {
   &__body {
     display: flex;
     flex-direction: column;
-    padding: $unnnic-spacing-xs;
+    padding: $unnnic-space-2;
   }
 
   &__card {
@@ -267,9 +267,9 @@ const getVariableTooltip = (segment: TemplateBodySegment) => {
   &__card-content {
     display: flex;
     flex-direction: column;
-    gap: $unnnic-spacing-ant;
+    gap: $unnnic-space-3;
 
-    padding: $unnnic-spacing-ant $unnnic-spacing-sm;
+    padding: $unnnic-space-3 $unnnic-space-4;
   }
 
   &__card-header {
@@ -296,11 +296,11 @@ const getVariableTooltip = (segment: TemplateBodySegment) => {
 
   &__card-button {
     display: flex;
-    gap: $unnnic-spacing-xs;
+    gap: $unnnic-space-2;
     align-items: center;
     justify-content: center;
 
-    padding: $unnnic-spacing-ant;
+    padding: $unnnic-space-3;
 
     border-top: 1px solid $unnnic-color-border-soft;
 
