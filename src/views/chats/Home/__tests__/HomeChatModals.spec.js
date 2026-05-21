@@ -35,7 +35,6 @@ describe('HomeChatModals.vue', () => {
         },
         dashboard: {
           showModalAssumedChat: false,
-          assumedChatContactName: 'Jane Doe',
         },
       },
     });
