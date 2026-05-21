@@ -190,4 +190,41 @@ describe('FlowsTringger service', () => {
     );
     expect(result).toEqual(mockResponse);
   });
+
+  it('should get flow templates with the current project when projectUuid is not provided', async () => {
+    const mockResponse = {
+      flow_uuid: 'mock-flow-uuid',
+      total_template_qty: 0,
+      templates: [],
+    };
+    http.get.mockResolvedValue({ data: mockResponse });
+
+    const result = await FlowsTringger.getFlowTemplates('mock-flow-uuid');
+
+    expect(http.get).toHaveBeenCalledWith(
+      `/project/mock-project-uuid/flow_templates/`,
+      { params: { flow: 'mock-flow-uuid' } },
+    );
+    expect(result).toEqual(mockResponse);
+  });
+
+  it('should get flow templates with the provided projectUuid', async () => {
+    const mockResponse = {
+      flow_uuid: 'mock-flow-uuid',
+      total_template_qty: 1,
+      templates: [{ variables: ['nomecontato'], data: {} }],
+    };
+    http.get.mockResolvedValue({ data: mockResponse });
+
+    const result = await FlowsTringger.getFlowTemplates(
+      'mock-flow-uuid',
+      'custom-project-uuid',
+    );
+
+    expect(http.get).toHaveBeenCalledWith(
+      `/project/custom-project-uuid/flow_templates/`,
+      { params: { flow: 'mock-flow-uuid' } },
+    );
+    expect(result).toEqual(mockResponse);
+  });
 });
