@@ -51,6 +51,11 @@ describe('MetaTemplatePreview', () => {
         variableValues: {},
         ...props,
       },
+      global: {
+        components: {
+          UnnnicToolTip: config.global.stubs.UnnnicToolTip,
+        },
+      },
     });
 
   beforeEach(() => {
@@ -89,6 +94,39 @@ describe('MetaTemplatePreview', () => {
     expect(buttons).toHaveLength(2);
     expect(buttons[0].text()).toContain('Unsubscribe');
     expect(buttons[1].text()).toContain('Shop now');
+  });
+
+  it('wraps each variable with an UnnnicToolTip showing its label', () => {
+    const tooltips = wrapper.findAllComponents({ name: 'UnnnicToolTipStub' });
+    expect(tooltips).toHaveLength(3);
+    expect(tooltips[0].props('text')).toBe('Variable {{1}}');
+    expect(tooltips[1].props('text')).toBe('Variable {{2}}');
+    expect(tooltips[2].props('text')).toBe('Variable {{3}}');
+  });
+
+  it('appends the typed value to the tooltip label when the variable is filled', async () => {
+    await wrapper.setProps({
+      variableValues: {
+        contactName: 'Marcus',
+        orderNumber: '12345',
+      },
+    });
+
+    const tooltips = wrapper.findAllComponents({ name: 'UnnnicToolTipStub' });
+    expect(tooltips[0].props('text')).toBe('Variable {{1}} | Marcus');
+    expect(tooltips[1].props('text')).toBe('Variable {{2}} | 12345');
+    expect(tooltips[2].props('text')).toBe('Variable {{3}}');
+  });
+
+  it('ignores whitespace-only values when composing the tooltip', async () => {
+    await wrapper.setProps({
+      variableValues: {
+        contactName: '   ',
+      },
+    });
+
+    const tooltips = wrapper.findAllComponents({ name: 'UnnnicToolTipStub' });
+    expect(tooltips[0].props('text')).toBe('Variable {{1}}');
   });
 
   it('strips html comments from body before parsing variables', () => {
