@@ -6,6 +6,8 @@ import { createTestingPinia } from '@pinia/testing';
 import SettingsProjectOptions from '@/views/Settings/SettingsProjectOptions/index.vue';
 import SettingsProjectOptionsItem from '@/views/Settings/SettingsProjectOptions/SettingsProjectOptionsItem.vue';
 import Project from '@/services/api/resources/settings/project';
+
+import { useCompositionI18nInThisSpecFile } from '@/utils/test/compositionI18nVitest';
 import agentBuilder from '@/services/api/resources/settings/agentBuilder';
 
 vi.mock('@/services/api/resources/settings/project', () => ({
@@ -32,8 +34,8 @@ const defaultConfig = {
   can_close_chats_in_queue: false,
   can_use_bulk_take: false,
   can_use_queue_prioritization: false,
-  can_see_timer: false,
   can_see_waiting_rooms_count: true,
+  can_use_name_sector_in_rooms: false,
 };
 
 const createWrapper = ({
@@ -71,12 +73,15 @@ const createWrapper = ({
       stubs: {
         CustomBreakOption: true,
         AiTransferModal: true,
+        AiTransferDisableModal: true,
       },
     },
   });
 };
 
 describe('SettingsProjectOptions.vue', () => {
+  useCompositionI18nInThisSpecFile();
+
   let wrapper;
 
   beforeEach(() => {
@@ -105,10 +110,10 @@ describe('SettingsProjectOptions.vue', () => {
       );
     });
 
-    it('should render the CustomBreakOption component inside the header', () => {
+    it('should render the header title', () => {
       const header = wrapper.find('.project-options__header');
       expect(header.exists()).toBe(true);
-      expect(header.findComponent({ name: 'CustomBreakOption' }).exists()).toBe(
+      expect(header.find('.project-options__header__title').exists()).toBe(
         true,
       );
     });
@@ -188,8 +193,8 @@ describe('SettingsProjectOptions.vue', () => {
         'filter_offline_agents',
         'can_close_chats_in_queue',
         'can_use_queue_prioritization',
-        'can_see_timer',
         'can_see_waiting_rooms_count',
+        'can_use_name_sector_in_rooms',
       ];
 
       alwaysVisibleKeys.forEach((key) => {
@@ -351,6 +356,105 @@ describe('SettingsProjectOptions.vue', () => {
       await wrapper.vm.$nextTick();
 
       expect(wrapper.vm.switchResetKey).toBe(0);
+    });
+  });
+
+  describe('AI Transfer disable confirmation', () => {
+    it('should open the disable modal when toggling OFF with a saved criteria', async () => {
+      agentBuilder.getAiTransferConfig.mockResolvedValueOnce({
+        enabled: true,
+        criteria: 'Saved criteria',
+      });
+
+      wrapper = createWrapper();
+      await flushPromises();
+
+      wrapper.vm.handleAiTransferToggle(false);
+
+      expect(wrapper.vm.showAiTransferDisableModal).toBe(true);
+      expect(wrapper.vm.aiTransferConfig.enabled).toBe(true);
+      expect(wrapper.vm.aiTransferConfig.criteria).toBe('Saved criteria');
+      expect(agentBuilder.updateAiTransferConfig).not.toHaveBeenCalled();
+    });
+
+    it('should not open the disable modal when toggling OFF without criteria', async () => {
+      await flushPromises();
+
+      wrapper.vm.aiTransferConfig.enabled = true;
+      wrapper.vm.aiTransferConfig.criteria = '';
+
+      wrapper.vm.handleAiTransferToggle(false);
+
+      expect(wrapper.vm.showAiTransferDisableModal).toBe(false);
+      expect(wrapper.vm.aiTransferConfig.enabled).toBe(false);
+      expect(agentBuilder.updateAiTransferConfig).toHaveBeenCalledWith({
+        enabled: false,
+        criteria: '',
+      });
+    });
+
+    it('should disable AI transfer and close modal on confirm', async () => {
+      agentBuilder.getAiTransferConfig.mockResolvedValueOnce({
+        enabled: true,
+        criteria: 'Saved criteria',
+      });
+
+      wrapper = createWrapper();
+      await flushPromises();
+
+      wrapper.vm.showAiTransferDisableModal = true;
+      wrapper.vm.handleAiTransferDisableConfirm();
+
+      expect(wrapper.vm.aiTransferConfig.enabled).toBe(false);
+      expect(wrapper.vm.aiTransferConfig.criteria).toBe('');
+      expect(wrapper.vm.showAiTransferDisableModal).toBe(false);
+      expect(agentBuilder.updateAiTransferConfig).toHaveBeenCalledWith({
+        enabled: false,
+        criteria: '',
+      });
+    });
+
+    it('should keep config and reset the switch when disable modal is dismissed', async () => {
+      agentBuilder.getAiTransferConfig.mockResolvedValueOnce({
+        enabled: true,
+        criteria: 'Saved criteria',
+      });
+
+      wrapper = createWrapper();
+      await flushPromises();
+
+      const initialResetKey = wrapper.vm.switchResetKey;
+
+      wrapper.vm.showAiTransferDisableModal = true;
+      await wrapper.vm.$nextTick();
+
+      wrapper.vm.showAiTransferDisableModal = false;
+      await wrapper.vm.$nextTick();
+
+      expect(wrapper.vm.switchResetKey).toBe(initialResetKey + 1);
+      expect(wrapper.vm.aiTransferConfig.enabled).toBe(true);
+      expect(wrapper.vm.aiTransferConfig.criteria).toBe('Saved criteria');
+      expect(agentBuilder.updateAiTransferConfig).not.toHaveBeenCalled();
+    });
+
+    it('should not increment switchResetKey when disable modal closes after confirm', async () => {
+      agentBuilder.getAiTransferConfig.mockResolvedValueOnce({
+        enabled: true,
+        criteria: 'Saved criteria',
+      });
+
+      wrapper = createWrapper();
+      await flushPromises();
+
+      const initialResetKey = wrapper.vm.switchResetKey;
+      wrapper.vm.showAiTransferDisableModal = true;
+      await wrapper.vm.$nextTick();
+
+      wrapper.vm.handleAiTransferDisableConfirm();
+      await wrapper.vm.$nextTick();
+
+      expect(wrapper.vm.switchResetKey).toBe(initialResetKey);
+      expect(wrapper.vm.aiTransferConfig.enabled).toBe(false);
     });
   });
 

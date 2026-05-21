@@ -172,7 +172,7 @@ export default {
 
     isAgentsFieldDisabled() {
       const queueValue = this.modelValue?.[0]?.value;
-      return !queueValue || this.agents?.length < 2;
+      return !queueValue || this.agents?.length === 0;
     },
 
     isSelectedAgentOffline() {
@@ -183,8 +183,9 @@ export default {
     haveSelectedQueue() {
       return !!this.modelValue?.[0]?.value;
     },
+
     isAgentsListEmpty() {
-      return this.haveSelectedQueue && this.agents?.length < 2;
+      return this.haveSelectedQueue && this.agents?.length === 0;
     },
 
     transferDisclaimerText() {

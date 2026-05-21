@@ -6,6 +6,7 @@
       v-model="showModalOfflineAgent"
       :username="userWhoChangedStatus"
     />
+    <ModalDarkModeIntro v-model:open="showDarkModeIntroModal" />
   </div>
 </template>
 
@@ -14,6 +15,7 @@ import { mapActions, mapState } from 'pinia';
 
 import SocketAlertBanner from './layouts/ChatsLayout/components/SocketAlertBanner.vue';
 import ModalOfflineAgent from './components/ModalOfflineAgent.vue';
+import ModalDarkModeIntro from './components/chats/ModalDarkModeIntro.vue';
 
 import isMobile from 'is-mobile';
 
@@ -31,6 +33,9 @@ import { useQuickMessageShared } from './store/modules/chats/quickMessagesShared
 import { useRooms } from './store/modules/chats/rooms';
 import { useDashboard } from './store/modules/dashboard';
 import { useFeatureFlag } from './store/modules/featureFlag';
+import { useTheme } from '@weni/unnnic-system';
+
+import { applyRouteAwareTheme, notifyParentOfTheme } from '@/utils/theme';
 
 import initHotjar from '@/plugins/Hotjar';
 import {
@@ -47,6 +52,7 @@ export default {
   components: {
     SocketAlertBanner,
     ModalOfflineAgent,
+    ModalDarkModeIntro,
   },
   setup() {
     const queryString = window.location.href.split('?')[1];
@@ -56,6 +62,9 @@ export default {
     );
 
     if (projectUuid) setProjectLocalStorage(projectUuid);
+
+    const { resolvedTheme } = useTheme();
+    return { resolvedTheme };
   },
 
   data() {
@@ -67,6 +76,7 @@ export default {
         'showModalRoomSummaryOnboarding',
         true,
       ),
+      showDarkModeIntroModal: false,
     };
   },
 
@@ -107,6 +117,10 @@ export default {
 
     userWhoChangedStatus() {
       return this.disconnectedBy;
+    },
+
+    routeAwareTheme() {
+      return [this.resolvedTheme, this.$route.path];
     },
   },
 
@@ -160,6 +174,22 @@ export default {
         this.wsConnect();
       },
     },
+
+    resolvedTheme(theme) {
+      notifyParentOfTheme(theme);
+    },
+
+    // Reconcile the visual theme whenever the route or the resolved theme
+    // changes. Light-only routes (e.g. `/settings`) always render in light
+    // mode regardless of the persisted preference. Runs immediately so a
+    // deep-link straight into a light-only route still paints correctly
+    // even when the stored preference is dark.
+    routeAwareTheme: {
+      immediate: true,
+      handler([theme, path]) {
+        applyRouteAwareTheme(theme, path);
+      },
+    },
   },
 
   beforeCreate() {
@@ -177,6 +207,8 @@ export default {
 
   mounted() {
     notifications.requestPermission();
+    this.announceThemeToParent();
+    this.maybeShowDarkModeIntroModal();
   },
 
   methods: {
@@ -286,6 +318,19 @@ export default {
 
         this.$i18n.locale = locale;
       });
+    },
+
+    announceThemeToParent() {
+      notifyParentOfTheme(this.resolvedTheme);
+    },
+
+    // One-time dark mode intro modal. Storage flag is written immediately on
+    // first display so the modal never reappears, even if the user closes the
+    // tab before interacting.
+    maybeShowDarkModeIntroModal() {
+      if (moduleStorage.getItem('darkModeIntroSeen', false)) return;
+      moduleStorage.setItem('darkModeIntroSeen', true);
+      this.showDarkModeIntroModal = true;
     },
 
     async onboarding() {

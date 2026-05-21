@@ -14,6 +14,7 @@
       v-if="withSelection"
       enabled
       :text="checkboxValue ? $t('deselect_this_chat') : $t('select_this_chat')"
+      class="room-card__checkbox-tooltip"
       side="right"
     >
       <UnnnicCheckbox
@@ -31,7 +32,7 @@
         'room-card__contact--hover': hover,
       }"
       :title="formattedContactName"
-      :lastMessage="room.last_message"
+      :lastMessage="displayedLastMessage"
       :waitingTime="waitingTimeComputed"
       :unreadMessages="unreadMessages"
       :forceShowUnreadMessages="forceShowUnreadMessages && !!unreadMessages"
@@ -44,11 +45,24 @@
       :lastInteractionTime="lastInteractionTime"
       :lastInteractionTimePrefix="lastInteractionTimePrefix"
       :projectName="handleProjectName"
+      :pendingResponse="showPendingResponse"
+      :pendingResponseTooltip="
+        showPendingResponse ? pendingResponseTooltipText : ''
+      "
       data-testid="room-card-contact"
       @click="$emit('click')"
       @click-pin="$emit('clickPin', $event)"
       @keypress.enter="$emit('click')"
-    />
+    >
+      <template #avatar>
+        <UnnnicChatsUserAvatar
+          :username="formattedContactName"
+          :active="hover || (room.uuid === activeRoomId && active)"
+          scheme="bg-muted"
+          textColor="fg-emphasized"
+        />
+      </template>
+    </UnnnicChatsContact>
   </section>
 </template>
 
@@ -57,6 +71,8 @@ import { mapState } from 'pinia';
 
 import { useRooms } from '@/store/modules/chats/rooms';
 import { useConfig } from '@/store/modules/config';
+import { useFeatureFlag } from '@/store/modules/featureFlag';
+import { useProfile } from '@/store/modules/profile';
 import { formatContactName } from '@/utils/chats';
 
 const ONE_MINUTE_IN_MILLISECONDS = 60000;
@@ -113,6 +129,57 @@ export default {
       enableAutomaticRoomRouting: 'enableAutomaticRoomRouting',
       project: 'project',
     }),
+    ...mapState(useFeatureFlag, {
+      featureFlags: 'featureFlags',
+    }),
+    ...mapState(useProfile, {
+      me: 'me',
+    }),
+    isPendingResponseFeatureEnabled() {
+      return !!this.featureFlags?.active_features?.includes(
+        'weniChatsPendingResponse',
+      );
+    },
+    isLastMessageFromAgent() {
+      return !!this.room.last_message?.user;
+    },
+    isLastMessageFromContact() {
+      return !!this.room.last_message?.contact && !this.room.last_message?.user;
+    },
+    showPendingResponse() {
+      const isYouAgentForThisRoom = this.room.user?.email === this.me?.email;
+      return (
+        this.isPendingResponseFeatureEnabled &&
+        this.isProgressRoom &&
+        this.isLastMessageFromContact &&
+        this.unreadMessages === 0 &&
+        isYouAgentForThisRoom
+      );
+    },
+    pendingResponseTooltipText() {
+      return this.$t('room_card.pending_response.tooltip');
+    },
+    displayedLastMessage() {
+      const { last_message: lastMessage } = this.room;
+
+      const shouldPrefix =
+        this.isPendingResponseFeatureEnabled &&
+        this.isProgressRoom &&
+        this.isLastMessageFromAgent &&
+        lastMessage &&
+        (lastMessage?.user === this.me?.email ||
+          lastMessage?.user?.email === this.me?.email);
+
+      if (!shouldPrefix) return lastMessage;
+
+      const youPrefix = this.$t('room_card.last_message.you_prefix');
+      const originalText = lastMessage.text || '';
+
+      return {
+        ...lastMessage,
+        text: originalText ? `${youPrefix}: ${originalText}` : `${youPrefix}: `,
+      };
+    },
     hideContactMessageInfo() {
       return this.roomType === 'waiting' && this.enableAutomaticRoomRouting;
     },
@@ -195,9 +262,17 @@ export default {
 .room-card__container {
   display: grid;
   align-items: center;
+  background-color: $unnnic-color-bg-base;
 
   :deep(.room-card__contact) {
     border: none;
+    background-color: transparent;
+  }
+
+  :deep(.room-card__contact:hover),
+  :deep(.room-card__contact.selected),
+  :deep(.room-card__contact.selected:hover) {
+    background-color: transparent;
   }
 
   :deep(.room-card__contact:active) {
@@ -209,15 +284,15 @@ export default {
   }
 
   &--hover {
-    background-color: $unnnic-color-bg-base-soft !important;
-
-    :deep(.room-card__contact) {
-      background-color: $unnnic-color-bg-base-soft !important;
-    }
+    background-color: $unnnic-color-bg-base-soft;
   }
 
   &--with-selection {
     grid-template-columns: auto 1fr;
+  }
+
+  &--selected {
+    background-color: $unnnic-color-bg-base-soft;
   }
 
   .room-card__contact--selected {

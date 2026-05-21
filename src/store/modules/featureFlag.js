@@ -3,7 +3,7 @@ import FeatureFlag from '@/services/api/resources/featureFlag/featureFlag';
 
 export const useFeatureFlag = defineStore('featureFlag', {
   state: () => ({
-    featureFlags: /** @type {{ active_features?: string[] }} */ ({}),
+    featureFlags: { active_features: [] },
     isLoadingFeatureFlags: false,
   }),
 

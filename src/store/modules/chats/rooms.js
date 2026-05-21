@@ -4,6 +4,7 @@ import { cloneDeep } from 'lodash';
 import { useDashboard } from '../dashboard';
 import { useFeatureFlag } from '../featureFlag';
 import { useProfile } from '../profile';
+import { useRoomCounters } from './roomCounters';
 
 import Room from '@/services/api/resources/chats/room';
 import { removeDuplicatedItems } from '@/utils/array';
@@ -41,6 +42,7 @@ export const useRooms = defineStore('rooms', {
       ongoing: 0,
       flow_start: 0,
     },
+    filterQueues: [],
   }),
 
   actions: {
@@ -141,6 +143,7 @@ export const useRooms = defineStore('rooms', {
       viewedAgent,
       roomsType,
       cleanRoomType,
+      filterQueues,
     }) {
       const response = await Room.getAll(
         offset,
@@ -149,6 +152,7 @@ export const useRooms = defineStore('rooms', {
         order,
         viewedAgent,
         roomsType,
+        filterQueues,
       );
 
       if (cleanRoomType) {
@@ -168,7 +172,19 @@ export const useRooms = defineStore('rooms', {
 
       if (roomsType) {
         this.hasNextRooms[roomsType] = listRoomHasNext;
-        this.roomsCount[roomsType] = response.count;
+
+        const localSizeByType = {
+          ongoing: this.agentRooms.length,
+          waiting: this.waitingQueue.length,
+          flow_start: this.waitingContactAnswer.length,
+        };
+        const counters = useRoomCounters();
+        counters.cacheRoomTypes(this.rooms, getRoomType);
+        counters.syncFromApi(
+          roomsType,
+          response.count,
+          localSizeByType[roomsType] ?? 0,
+        );
       }
 
       this.maxPinLimit = response.max_pin_limit || 0;
@@ -204,13 +220,19 @@ export const useRooms = defineStore('rooms', {
       return undefined;
     },
 
-    updateRoom({ room, userEmail, routerReplace, viewedAgentEmail }) {
+    updateRoom({
+      room,
+      userEmail,
+      routerReplace,
+      viewedAgentEmail,
+      alreadyClosedThisBatch = false,
+    }) {
       const featureFlagStore = useFeatureFlag();
-      const useLegacy =
+      const useNewRoomUpdate =
         featureFlagStore.featureFlags?.active_features?.includes(
-          'weniChatsLegacyRoomUpdate',
-        ) ?? true;
-      if (useLegacy) {
+          'WeniChatsNewRoomUpdate',
+        );
+      if (!useNewRoomUpdate) {
         return this._updateRoomLegacy({
           room,
           userEmail,
@@ -223,10 +245,31 @@ export const useRooms = defineStore('rooms', {
         userEmail,
         routerReplace,
         viewedAgentEmail,
+        alreadyClosedThisBatch,
       });
     },
 
-    _updateRoomSafe({ room, userEmail, routerReplace, viewedAgentEmail }) {
+    applyClose(uuid, fallbackRoom) {
+      if (!uuid) return null;
+      const existingRoom = this.rooms.find((r) => r.uuid === uuid);
+      let roomType = null;
+      if (existingRoom) {
+        roomType = getRoomType(existingRoom);
+      } else if (fallbackRoom) {
+        roomType = getRoomType(fallbackRoom);
+      }
+
+      this.removeRoom(uuid);
+      return roomType;
+    },
+
+    _updateRoomSafe({
+      room,
+      userEmail,
+      routerReplace,
+      viewedAgentEmail,
+      alreadyClosedThisBatch = false,
+    }) {
       const shouldBeVisible = this.checkUserSeenRoom({
         room,
         viewedAgentEmail,
@@ -234,8 +277,9 @@ export const useRooms = defineStore('rooms', {
       });
 
       const roomIndex = this.rooms.findIndex((r) => r.uuid === room.uuid);
+      const wasInArray = roomIndex !== -1;
+      const oldType = wasInArray ? getRoomType(this.rooms[roomIndex]) : null;
       let oldRoom = null;
-
       if (roomIndex !== -1) {
         oldRoom = cloneDeep(this.rooms[roomIndex]);
         if (shouldBeVisible) {
@@ -246,7 +290,7 @@ export const useRooms = defineStore('rooms', {
         } else {
           this.rooms.splice(roomIndex, 1);
         }
-      } else if (shouldBeVisible) {
+      } else if (shouldBeVisible && !alreadyClosedThisBatch) {
         this.rooms.unshift({ ...room });
       }
 
@@ -257,6 +301,9 @@ export const useRooms = defineStore('rooms', {
         return 0;
       });
 
+      const isNowInArray = this.rooms.some((r) => r.uuid === room.uuid);
+      const newType = getRoomType(room);
+
       this._handleTransferSideEffects({
         oldRoom,
         room,
@@ -264,10 +311,24 @@ export const useRooms = defineStore('rooms', {
         routerReplace,
         viewedAgentEmail,
       });
+
+      return {
+        wasInArray,
+        isNowInArray,
+        oldType,
+        newType,
+        roomUuid: room.uuid,
+      };
     },
 
     _updateRoomLegacy({ room, userEmail, routerReplace, viewedAgentEmail }) {
-      const rooms = this.rooms;
+      const existingRoom = this.rooms.find((r) => r.uuid === room.uuid);
+      const wasInArray = !!existingRoom;
+      const oldType = existingRoom ? getRoomType(existingRoom) : null;
+
+      if (!existingRoom) {
+        this.rooms.push({ ...room });
+      }
 
       const roomIndex = this.rooms.findIndex((r) => r.uuid === room.uuid);
       let oldRoom = null;
@@ -275,7 +336,7 @@ export const useRooms = defineStore('rooms', {
         oldRoom = cloneDeep(this.rooms[roomIndex]);
       }
 
-      const filteredRooms = rooms
+      const filteredRooms = this.rooms
         .map((mappedRoom) =>
           mappedRoom.uuid === room.uuid
             ? { is_pinned: mappedRoom?.is_pinned, ...room }
@@ -297,6 +358,9 @@ export const useRooms = defineStore('rooms', {
 
       this.rooms = filteredRooms;
 
+      const isNowInArray = this.rooms.some((r) => r.uuid === room.uuid);
+      const newType = getRoomType(room);
+
       this._handleTransferSideEffects({
         oldRoom,
         room,
@@ -304,6 +368,14 @@ export const useRooms = defineStore('rooms', {
         routerReplace,
         viewedAgentEmail,
       });
+
+      return {
+        wasInArray,
+        isNowInArray,
+        oldType,
+        newType,
+        roomUuid: room.uuid,
+      };
     },
 
     _handleTransferSideEffects({

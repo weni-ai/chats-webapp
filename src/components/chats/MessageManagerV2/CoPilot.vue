@@ -132,7 +132,7 @@ export default {
   position: absolute;
   bottom: calc(100% + $unnnic-spacing-xs);
 
-  background-color: $unnnic-color-background-snow;
+  background-color: $unnnic-color-bg-base-soft;
   border-radius: $unnnic-border-radius-md;
   box-shadow: $unnnic-shadow-level-near;
 
@@ -162,19 +162,19 @@ export default {
   }
 
   &.error {
-    background-color: $unnnic-color-neutral-lightest;
+    background-color: $unnnic-color-bg-base-soft;
 
     .co-pilot__header {
       &__title {
         h1 {
-          color: $unnnic-color-neutral-dark;
+          color: $unnnic-color-fg-base;
         }
         :deep(svg > path) {
           fill: $unnnic-color-fg-critical;
         }
       }
       &__close {
-        background-color: $unnnic-color-neutral-lightest;
+        background-color: $unnnic-color-bg-base-soft;
       }
     }
 
@@ -183,7 +183,7 @@ export default {
         padding: 0;
         padding-top: $unnnic-spacing-xs;
 
-        background-color: $unnnic-color-neutral-lightest;
+        background-color: $unnnic-color-bg-base-soft;
 
         text-align: center;
       }
@@ -210,7 +210,7 @@ export default {
     justify-content: space-between;
     align-items: center;
 
-    border-bottom: 1px solid $unnnic-color-neutral-soft;
+    border-bottom: 1px solid $unnnic-color-border-soft;
 
     &__title {
       display: flex;
@@ -236,7 +236,7 @@ export default {
       outline: none;
       border: none;
       padding: 0;
-      background-color: $unnnic-color-background-snow;
+      background-color: $unnnic-color-bg-base-soft;
     }
   }
 
@@ -262,10 +262,9 @@ export default {
       padding: $unnnic-spacing-ant $unnnic-spacing-sm;
       line-height: $unnnic-font-size-body-lg + $unnnic-spacing-nano;
 
-      color: $unnnic-color-neutral-dark;
+      color: $unnnic-color-fg-base;
       font-size: $unnnic-font-size-body-md;
-      // Semantic token not exists
-      background-color: $unnnic-color-teal-1;
+      background-color: $unnnic-color-bg-accent-plain;
 
       &:active {
         background-color: $unnnic-color-bg-accent-plain;

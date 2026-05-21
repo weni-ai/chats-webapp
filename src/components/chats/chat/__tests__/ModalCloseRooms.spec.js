@@ -14,7 +14,19 @@ import { setActivePinia } from 'pinia';
 import ModalCloseRooms from '../ModalCloseRooms.vue';
 
 import Queue from '@/services/api/resources/settings/queue';
+import Room from '@/services/api/resources/chats/room';
+import { useRooms } from '@/store/modules/chats/rooms';
+import { useRoomCounters } from '@/store/modules/chats/roomCounters';
+import {
+  markPendingClose,
+  unmarkPendingClose,
+} from '@/services/api/websocket/listeners/room/update';
 import i18n from '@/plugins/i18n';
+
+vi.mock('@/services/api/websocket/listeners/room/update', () => ({
+  markPendingClose: vi.fn(),
+  unmarkPendingClose: vi.fn(),
+}));
 
 beforeAll(() => {
   config.global.plugins = config.global.plugins.filter(
@@ -40,6 +52,7 @@ vi.mock('@/services/api/resources/chats/room', () => ({
     bulkClose: vi.fn(() => ({
       data: { success_count: 1, failed_count: 0 },
     })),
+    getAll: vi.fn(() => Promise.resolve({ results: [], next: null, count: 0 })),
   },
 }));
 
@@ -231,6 +244,139 @@ describe('ModalCloseRooms.vue', () => {
 
       const primaryButton = wrapper.find('[data-testid="primary-button"]');
       expect(primaryButton.element.disabled).toBe(false);
+    });
+  });
+
+  describe('optimistic close (new pipeline)', () => {
+    const createWrapperWithFeatureFlag = ({
+      bulkCloseResponse,
+      featureFlags = ['WeniChatsNewRoomUpdate'],
+      tags = emptyTagsResponse,
+    } = {}) => {
+      Queue.tags.mockReset();
+      Queue.tags.mockResolvedValue(tags);
+      Room.bulkClose.mockReset();
+      Room.bulkClose.mockResolvedValue(bulkCloseResponse);
+
+      const pinia = createTestingPinia({
+        createSpy: vi.fn,
+        stubActions: false,
+        initialState: {
+          rooms: {
+            activeTab: 'ongoing',
+            selectedOngoingRooms: ['room-1'],
+            selectedWaitingRooms: [],
+            rooms: [roomWithQueue],
+          },
+          featureFlag: {
+            featureFlags: { active_features: featureFlags },
+          },
+        },
+      });
+
+      setActivePinia(pinia);
+
+      return mount(ModalCloseRooms, {
+        global: {
+          plugins: [pinia],
+          mocks: {
+            $t: (key) => key,
+            $tc: (key) => key,
+          },
+          stubs: {
+            ...createDialogStubs(),
+            ChatClassifier: true,
+            UnnnicDisclaimer: true,
+            UnnnicInput: true,
+            UnnnicTag: true,
+          },
+        },
+      });
+    };
+
+    beforeEach(() => {
+      markPendingClose.mockClear();
+      unmarkPendingClose.mockClear();
+    });
+
+    it('marks pending closes, applies optimistic close on success, and decrements the counter', async () => {
+      const wrapper = createWrapperWithFeatureFlag({
+        bulkCloseResponse: {
+          data: {
+            success_count: 1,
+            failed_count: 0,
+            success_uuids: ['room-1'],
+          },
+        },
+      });
+
+      await flushPromises();
+      await wrapper.vm.$nextTick();
+
+      const roomsStore = useRooms();
+      const counters = useRoomCounters();
+      roomsStore.applyClose = vi.fn(() => 'ongoing');
+      counters.handleClose = vi.fn();
+      counters.clearTypeCache = vi.fn();
+      roomsStore.setSelectedOngoingRooms = vi.fn();
+      roomsStore.getAll = vi.fn().mockResolvedValue(undefined);
+
+      await wrapper.find('[data-testid="primary-button"]').trigger('click');
+      await flushPromises();
+
+      expect(markPendingClose).toHaveBeenCalledWith('room-1');
+      expect(Room.bulkClose).toHaveBeenCalled();
+      expect(roomsStore.applyClose).toHaveBeenCalledWith('room-1');
+      expect(counters.handleClose).toHaveBeenCalledWith('ongoing');
+      expect(counters.clearTypeCache).toHaveBeenCalledWith('room-1');
+    });
+
+    it('unmarks pending close for uuids that failed in the API response', async () => {
+      const wrapper = createWrapperWithFeatureFlag({
+        bulkCloseResponse: {
+          data: { success_count: 0, failed_count: 1, success_uuids: [] },
+        },
+      });
+
+      await flushPromises();
+      await wrapper.vm.$nextTick();
+
+      const roomsStore = useRooms();
+      roomsStore.applyClose = vi.fn();
+      roomsStore.setSelectedOngoingRooms = vi.fn();
+
+      await wrapper.find('[data-testid="primary-button"]').trigger('click');
+      await flushPromises();
+
+      expect(markPendingClose).toHaveBeenCalledWith('room-1');
+      expect(unmarkPendingClose).toHaveBeenCalledWith('room-1');
+      expect(roomsStore.applyClose).not.toHaveBeenCalled();
+    });
+
+    it('skips optimistic close when feature flag is off (legacy path)', async () => {
+      const wrapper = createWrapperWithFeatureFlag({
+        bulkCloseResponse: {
+          data: {
+            success_count: 1,
+            failed_count: 0,
+            success_uuids: ['room-1'],
+          },
+        },
+        featureFlags: [],
+      });
+
+      await flushPromises();
+      await wrapper.vm.$nextTick();
+
+      const roomsStore = useRooms();
+      roomsStore.applyClose = vi.fn();
+      roomsStore.setSelectedOngoingRooms = vi.fn();
+
+      await wrapper.find('[data-testid="primary-button"]').trigger('click');
+      await flushPromises();
+
+      expect(markPendingClose).not.toHaveBeenCalled();
+      expect(roomsStore.applyClose).not.toHaveBeenCalled();
     });
   });
 });

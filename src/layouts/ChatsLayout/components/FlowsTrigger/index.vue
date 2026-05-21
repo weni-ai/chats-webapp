@@ -2,12 +2,23 @@
 <template>
   <AsideSlotTemplate>
     <template #header>
-      <UnnnicChatsHeader
-        :title="$t('flows_trigger.title')"
-        :subtitle="$t('flows_trigger.subtitle', { project: projectName })"
-        avatarIcon="send"
-        :close="() => $emit('close')"
-      />
+      <section class="flows-trigger__page-header">
+        <UnnnicPageHeader
+          :title="$t('flows_trigger.title')"
+          data-testid="flows-trigger-header"
+        >
+          <template #actions>
+            <UnnnicButton
+              type="tertiary"
+              size="small"
+              iconCenter="close"
+              :ariaLabel="$t('close')"
+              data-testid="flows-trigger-close"
+              @click="$emit('close')"
+            />
+          </template>
+        </UnnnicPageHeader>
+      </section>
     </template>
     <AsideSlotTemplateSection
       v-if="showSendFlowStep && !isLoadingCheckProjectPrincipal"
@@ -71,38 +82,13 @@
           v-if="openedRoomsAlerts.length > 0"
           class="flows-trigger__contact-alerts"
         >
-          <strong
+          <UnnnicDisclaimer
             v-for="contact in openedRoomsAlerts"
-            :key="contact"
-            class="flows-trigger__contact-alerts__alert"
-          >
-            <UnnnicIcon
-              size="md"
-              icon="info"
-              filled
-              scheme="feedback-yellow"
-            />
-            {{
-              $t('flows_trigger.already_open_room.open', {
-                contact: contact.contactName,
-              })
-            }}
-            <template v-if="contact.agent">
-              {{
-                $t('flows_trigger.already_open_room.with_agent', {
-                  agent: contact.agent,
-                  queue: contact.queue,
-                })
-              }}
-            </template>
-            <template v-else>
-              {{
-                $t('flows_trigger.already_open_room.in_queue_awaiting', {
-                  queue: contact.queue,
-                })
-              }}
-            </template>
-          </strong>
+            :key="contact.contactName"
+            type="attention"
+            :description="alreadyOpenRoomMessage(contact)"
+            data-testid="flows-trigger-already-open"
+          />
         </section>
 
         <FlowsContactsLoading v-show="isContactsLoading" />
@@ -126,17 +112,14 @@
                 })
               "
             >
-              <UnnnicChatsContact
+              <FlowsContactCard
                 v-for="item in element"
                 :key="item.uuid"
                 class="flows-trigger__groups__group__contact"
-                :title="item.name"
-                :lastMessage="{ text: getContactUrn(item) }"
-                :tabindex="0"
-                checkboxWhenSelect
+                :name="item.name"
+                :subtitle="getContactUrn(item)"
                 :selected="selected.some((search) => search.uuid === item.uuid)"
-                @click="setContacts(item)"
-                @keypress.enter="setGroups(item)"
+                @toggle="setContacts(item)"
               />
             </UnnnicCollapse>
           </template>
@@ -150,17 +133,15 @@
                 })
               "
             >
-              <UnnnicChatsContact
+              <FlowsContactCard
                 v-for="item in letters['unnamed_contact']"
                 :key="item.uuid"
                 class="flows-trigger__groups__group__contact"
-                :title="`[${$t('flows_trigger.unnamed_contact')}]`"
-                :lastMessage="{ text: getContactUrn(item) }"
-                :tabindex="0"
-                checkboxWhenSelect
+                :name="`[${$t('flows_trigger.unnamed_contact')}]`"
+                :subtitle="getContactUrn(item)"
                 :selected="selected.some((search) => search.uuid === item.uuid)"
-                @click="setContacts(item)"
-                @keypress.enter="setContacts(item)"
+                unnamed
+                @toggle="setContacts(item)"
               />
             </UnnnicCollapse>
           </template>
@@ -250,6 +231,7 @@ import ModalSendFlow from '@/components/chats/FlowsTrigger/ModalSendFlow.vue';
 import ModalRemoveSelectedContacts from '@/components/chats/FlowsTrigger/ModalRemoveSelectedContacts.vue';
 import SelectedContactsSection from '@/components/chats/FlowsTrigger/SelectedContactsSection.vue';
 import SendFlow from '@/components/chats/FlowsTrigger/SendFlow.vue';
+import FlowsContactCard from '@/components/chats/FlowsTrigger/FlowsContactCard.vue';
 import ModalProgressBarFalse from '@/components/ModalProgressBarFalse.vue';
 import callUnnnicAlert from '@/utils/callUnnnicAlert';
 import Group from '@/services/api/resources/settings/group.js';
@@ -266,6 +248,7 @@ export default {
   components: {
     AsideSlotTemplate,
     AsideSlotTemplateSection,
+    FlowsContactCard,
     FlowsContactsLoading,
     ModalListTriggeredFlows,
     ModalAddNewContact,
@@ -319,7 +302,6 @@ export default {
 
   computed: {
     ...mapState(useConfig, {
-      projectName: (store) => store.project.name,
       project: (store) => store.project,
     }),
     ...mapState(useRooms, {
@@ -613,6 +595,23 @@ export default {
       return urn ? `${urn?.scheme}:${urn?.path}` : '';
     },
 
+    alreadyOpenRoomMessage(contact) {
+      const opening = this.$t('flows_trigger.already_open_room.open', {
+        contact: contact.contactName,
+      });
+
+      const detail = contact.agent
+        ? this.$t('flows_trigger.already_open_room.with_agent', {
+            agent: contact.agent,
+            queue: contact.queue,
+          })
+        : this.$t('flows_trigger.already_open_room.in_queue_awaiting', {
+            queue: contact.queue,
+          });
+
+      return `${opening} ${detail}`;
+    },
+
     async groupList() {
       try {
         const response = await FlowsTrigger.getListOfGroups(
@@ -703,21 +702,43 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.flows-trigger__page-header {
+  min-height: var(--chats-column-header-height, 57px);
+  :deep(.page-header) {
+    margin-top: 0;
+    padding: $unnnic-space-2 $unnnic-space-4;
+
+    grid-template-columns: 1fr auto;
+    gap: $unnnic-space-2;
+  }
+
+  :deep(.page-header__title) {
+    font: $unnnic-font-display-3;
+  }
+
+  :deep(.page-header__actions) {
+    > * {
+      width: auto;
+    }
+  }
+}
+
 .flows-trigger {
   display: flex;
   overflow: hidden;
   flex-direction: column;
-  gap: $unnnic-spacing-sm;
 
-  overflow: hidden;
-
-  background-color: $unnnic-color-bg-base-soft;
+  background-color: $unnnic-color-bg-base;
 
   padding: $unnnic-space-2;
 
+  > * + :not(.flows-trigger__handlers) {
+    margin-top: $unnnic-space-4;
+  }
+
   &__header {
     display: grid;
-    gap: $unnnic-spacing-nano;
+    gap: $unnnic-space-4;
   }
 
   &__groups {
@@ -747,21 +768,6 @@ export default {
     display: flex;
     flex-direction: column;
     gap: $unnnic-spacing-sm;
-
-    &__alert {
-      border: 1px solid $unnnic-color-border-soft;
-      border-radius: $unnnic-border-radius-sm;
-
-      padding: $unnnic-spacing-sm;
-
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: $unnnic-spacing-xs;
-
-      font-weight: $unnnic-font-weight-regular;
-      font-size: $unnnic-font-size-body-gt;
-    }
   }
 }
 .flows-trigger__mobile-send {
@@ -772,12 +778,17 @@ export default {
 
 .flows-trigger__handlers {
   margin-top: auto;
+  margin-right: -$unnnic-space-2;
+  margin-bottom: -$unnnic-space-2;
+  margin-left: -$unnnic-space-2;
+  padding: $unnnic-space-2;
 
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: $unnnic-spacing-xs;
-  align-items: end;
+  gap: $unnnic-space-2;
+  align-items: center;
 
-  background-color: $unnnic-color-bg-base-soft;
+  border-top: 1px solid $unnnic-color-border-base;
+  background-color: $unnnic-color-bg-base;
 }
 </style>

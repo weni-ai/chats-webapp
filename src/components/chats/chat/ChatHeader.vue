@@ -225,18 +225,18 @@ export default {
   justify-content: center;
   align-items: center;
   height: 2rem;
-  background: #fbf7c9;
+  background: $unnnic-color-bg-warning;
 
   margin-top: $unnnic-spacing-inline-sm;
 
   .message {
-    color: $unnnic-color-fg-base;
+    color: $unnnic-color-fg-warning;
     font-size: $unnnic-font-size-body-gt;
     font-weight: $unnnic-font-weight-regular;
     line-height: 22px;
   }
   .alert-text {
-    color: $unnnic-color-fg-base;
+    color: $unnnic-color-fg-warning;
     font-size: 0.87rem;
   }
 }

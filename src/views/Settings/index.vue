@@ -1,129 +1,205 @@
 <template>
   <section
     v-if="showSettings"
-    ref="settingsView"
-    data-testid="settings-view"
-    class="settings-view"
+    class="settings-page"
   >
-    <SettingsHeader />
-
-    <UnnnicTab
-      v-if="isPrimaryProject"
-      :tabs="tabsIds"
-      :activeTab="activeTab?.id"
-      @change="updateTab"
-    >
-      <template
-        v-for="tab in tabs"
-        #[`tab-head-${tab.id}`]
-        :key="`tab-head-${tab.id}`"
-      >
-        {{ tab.name }}
+    <UnnnicPageHeader :title="$t('config_chats.title')">
+      <template #actions>
+        <UnnnicButton
+          v-if="showNewSectorButton"
+          :text="$t('config_chats.new_sector')"
+          type="primary"
+          iconLeft="add"
+          @click="openNewSectorDrawer"
+        />
+        <UnnnicButton
+          v-if="showNewGroupButton"
+          :text="$t('config_chats.new_group')"
+          type="primary"
+          iconLeft="add"
+          @click="openNewGroupDrawer"
+        />
       </template>
-
-      <template #tab-panel-general>
-        <section class="tab-content-container">
-          <SettingsProjectOptions />
-
-          <SettingsSectors />
-        </section>
+      <template #tabs>
+        <UnnnicTabs
+          defaultValue="general"
+          :modelValue="activeTab"
+          class="settings-page__tabs"
+          @update:model-value="updateTab"
+        >
+          <UnnnicTabsList>
+            <UnnnicTabsTrigger
+              v-for="tab in settingsTabs"
+              :key="tab.value"
+              :value="tab.value"
+            >
+              {{ tab.label }}
+            </UnnnicTabsTrigger>
+          </UnnnicTabsList>
+          <UnnnicTabsContent value="general">
+            <section class="settings-page__content">
+              <SettingsProjectOptions />
+              <CustomBreaks />
+            </section>
+          </UnnnicTabsContent>
+          <UnnnicTabsContent value="sectors">
+            <section class="settings-page__content">
+              <SectorsList
+                v-if="activeTab === 'sectors'"
+                @open-new-sector-modal="openNewSectorDrawer"
+              />
+            </section>
+          </UnnnicTabsContent>
+          <UnnnicTabsContent value="groups">
+            <section class="settings-page__content">
+              <GroupsList @open-new-group-modal="openNewGroupDrawer" />
+            </section>
+          </UnnnicTabsContent>
+          <UnnnicTabsContent value="representatives">
+            <section class="settings-page__content">
+              <RepresentativesSettings />
+            </section>
+          </UnnnicTabsContent>
+        </UnnnicTabs>
       </template>
-      <template #tab-panel-groups>
-        <SettingsGroups />
-      </template>
-    </UnnnicTab>
-
-    <template v-else>
-      <SettingsProjectOptions />
-
-      <SettingsSectors />
-    </template>
+    </UnnnicPageHeader>
+    <NewSectorDrawer
+      v-if="showNewSectorDrawer"
+      v-model="showNewSectorDrawer"
+      @close="showNewSectorDrawer = false"
+    />
+    <NewGroupDrawer
+      v-if="showNewGroupDrawer"
+      v-model="showNewGroupDrawer"
+      @close="showNewGroupDrawer = false"
+    />
   </section>
 </template>
 
-<script>
-import { mapActions, mapState } from 'pinia';
+<script setup lang="ts">
+import { computed, onMounted, ref } from 'vue';
+import { storeToRefs } from 'pinia';
+import { useRouter, useRoute } from 'vue-router';
 
-import { useSettings } from '@/store/modules/settings';
 import { useConfig } from '@/store/modules/config';
+import { useSettings } from '@/store/modules/settings';
+import { useFeatureFlag } from '@/store/modules/featureFlag';
 
-import SettingsHeader from './SettingsHeader.vue';
-import SettingsProjectOptions from './SettingsProjectOptions/index.vue';
-import SettingsSectors from './SettingsSectors.vue';
-import SettingsGroups from './SettingsGroups.vue';
+import SettingsProjectOptions from '@/views/Settings/SettingsProjectOptions/index.vue';
+import CustomBreaks from '@/views/Settings/CustomBreaks/index.vue';
+import SectorsList from '@/views/Settings/Sectors/index.vue';
+import GroupsList from '@/views/Settings/Groups/index.vue';
+import RepresentativesSettings from '@/views/Settings/Representatives/index.vue';
+import NewSectorDrawer from '@/views/Settings/Sectors/New/NewSectorDrawer.vue';
+import NewGroupDrawer from '@/views/Settings/Groups/New.vue';
 
-export default {
-  name: 'SettingView',
+import i18n from '@/plugins/i18n';
 
-  components: {
-    SettingsHeader,
-    SettingsProjectOptions,
-    SettingsSectors,
-    SettingsGroups,
-  },
+defineOptions({
+  name: 'SettingsPage',
+});
 
-  data() {
-    return {
-      activeTab: { id: 'general' },
-    };
-  },
+const { t } = i18n.global;
 
-  computed: {
-    ...mapState(useConfig, ['enableGroupsMode', 'isPrimaryProject']),
+const router = useRouter();
+const route = useRoute();
 
-    showSettings() {
-      return !this.enableGroupsMode || this.isPrimaryProject;
-    },
+const configStore = useConfig();
+const { isPrimaryProject, enableGroupsMode } = storeToRefs(configStore);
 
-    tabs() {
-      return [
-        { name: this.$t('config_chats.tabs.settings'), id: 'general' },
-        { name: this.$t('config_chats.tabs.groups'), id: 'groups' },
-      ];
-    },
+const settingsStore = useSettings();
+const { sectors, groups } = storeToRefs(settingsStore);
 
-    tabsIds() {
-      return this.tabs.map((tab) => tab.id);
-    },
-  },
+const featureFlagStore = useFeatureFlag();
+const { featureFlags } = storeToRefs(featureFlagStore);
 
-  mounted() {
-    if (this.showSettings) {
-      this.getSectors(true);
-      this.getGroups(true);
-    }
-  },
+const enableRepresentativesManagement = computed(() => {
+  return featureFlags.value.active_features?.includes(
+    'weniChatsRepresentativesManagement',
+  );
+});
 
-  methods: {
-    ...mapActions(useSettings, {
-      getSectors: 'getSectors',
-      getGroups: 'getGroups',
-    }),
+const showSettings = computed(() => {
+  return !enableGroupsMode.value || isPrimaryProject.value;
+});
 
-    updateTab(newTab) {
-      const newActiveTab = this.tabs.find((tab) =>
-        [tab.name, tab.id].includes(newTab),
-      );
+const activeTab = ref('');
+const settingsTabs = computed(() => {
+  const tabs = [
+    { label: t('config_chats.tabs.general'), value: 'general' },
+    { label: t('config_chats.tabs.sectors'), value: 'sectors' },
+  ];
 
-      if (!newActiveTab) return;
+  if (enableGroupsMode.value) {
+    tabs.push({ label: t('config_chats.tabs.groups'), value: 'groups' });
+  }
 
-      this.activeTab = newActiveTab;
-    },
-  },
+  if (enableRepresentativesManagement.value && !enableGroupsMode.value) {
+    tabs.push({
+      label: t('config_chats.tabs.representatives'),
+      value: 'representatives',
+    });
+  }
+
+  return tabs;
+});
+
+const updateTab = (newTab: string) => {
+  const newActiveTab = settingsTabs.value.find((tab) =>
+    [tab.label, tab.value].includes(newTab),
+  );
+
+  if (!newActiveTab) return;
+
+  activeTab.value = newActiveTab.value;
+
+  if (activeTab.value) {
+    router.replace({
+      name: route.name,
+      query: {
+        tab: activeTab.value,
+      },
+    });
+  }
 };
+
+const showNewSectorButton = computed(() => {
+  return activeTab.value === 'sectors' && sectors.value.length > 0;
+});
+const showNewGroupButton = computed(() => {
+  return activeTab.value === 'groups' && groups.value.length > 0;
+});
+
+const showNewSectorDrawer = ref(false);
+const showNewGroupDrawer = ref(false);
+
+const openNewSectorDrawer = () => {
+  showNewSectorDrawer.value = true;
+};
+
+const openNewGroupDrawer = () => {
+  showNewGroupDrawer.value = true;
+};
+
+onMounted(() => {
+  updateTab((route.query.tab as string) || 'general');
+});
 </script>
 
 <style lang="scss" scoped>
-.settings-view {
-  overflow-y: auto;
+.settings-page {
+  display: flex;
+  flex-direction: column;
+  padding: $unnnic-space-4;
+  gap: $unnnic-space-6;
 
-  display: grid;
-  gap: $unnnic-spacing-sm;
-  padding: $unnnic-spacing-sm;
-
-  .tab-content-container {
-    display: grid;
-    gap: $unnnic-spacing-sm;
+  &__content {
+    margin-top: $unnnic-space-6;
+    display: flex;
+    flex-direction: column;
+    gap: $unnnic-space-6;
+    width: 100%;
+    overflow-y: auto;
   }
 }
 </style>

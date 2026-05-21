@@ -61,7 +61,13 @@
     class="no-results"
     data-testid="no-results-message"
   >
-    {{ $t(`without_chats.${roomsType}`) }}
+    {{
+      enabledQueuesFilter && hasFilteringQueues
+        ? $t('without_chats.filtered', {
+            roomType: $t(roomsType).toLowerCase(),
+          })
+        : $t(`without_chats.${roomsType}`)
+    }}
   </p>
 </template>
 
@@ -73,6 +79,7 @@ import { useDiscussions } from '@/store/modules/chats/discussions';
 import { useRoomMessages } from '@/store/modules/chats/roomMessages';
 
 import RoomCard from './RoomCard.vue';
+import { useDashboard } from '@/store/modules/dashboard';
 
 export default {
   name: 'CardGroup',
@@ -119,11 +126,13 @@ export default {
       'selectedWaitingRooms',
       'activeRoom',
       'activeTab',
+      'filterQueues',
     ]),
     ...mapState(useDiscussions, {
       newMessagesByDiscussion: 'newMessagesByDiscussion',
       activeDiscussionId: (store) => store.activeDiscussion?.uuid,
     }),
+    ...mapState(useDashboard, ['viewedAgent']),
 
     currentSelectedRooms() {
       if (this.roomsType === 'in_progress') {
@@ -133,6 +142,23 @@ export default {
         return this.selectedWaitingRooms || [];
       }
       return [];
+    },
+    hasFilteringQueues() {
+      return this.filterQueues.length > 0;
+    },
+    isViewMode() {
+      return this.viewedAgent?.email !== '';
+    },
+    enabledQueuesFilter() {
+      const isWaitingRooms = this.roomsType === 'waiting';
+      if (
+        isWaitingRooms ||
+        (this.isViewMode && ['ongoing', 'waiting'].includes(this.activeTab))
+      ) {
+        return true;
+      }
+
+      return false;
     },
   },
 
