@@ -850,7 +850,13 @@
       "preview_title": "Vista previa del template",
       "preview_variable_tooltip": "Variable {placeholder}",
       "confirmation_helper": "Verifica si cada campo está mapeado correctamente; así se mostrará el mensaje a cada contacto seleccionado",
-      "confirmation_checkbox": "Lo verifiqué y estoy listo para enviar"
+      "confirmation_checkbox": "Lo verifiqué y estoy listo para enviar",
+      "local_variables": {
+        "contact_name": "Nombre del contacto",
+        "contact_urn": "Teléfono del contacto",
+        "agent_name": "Nombre del representante",
+        "agent_email": "Correo del representante"
+      }
     }
   },
   "quick_messages": {
