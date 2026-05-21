@@ -79,6 +79,24 @@ describe('FlowsTringger service', () => {
     expect(result).toEqual([{ id: 'flow-1' }, { id: 'flow-2' }]);
   });
 
+  it('should forward extra params when getting flows', async () => {
+    const mockResponse = { results: [{ id: 'flow-1' }], next: null };
+    http.get.mockResolvedValue({ data: mockResponse });
+
+    const projectUuid = 'custom-project-uuid';
+    const extraParams = { verify_chats_tag: true };
+
+    const result = await FlowsTringger.getFlows(projectUuid, extraParams);
+
+    expect(http.get).toHaveBeenCalledWith(
+      `/project/${projectUuid}/list_flows/`,
+      {
+        params: { cursor: undefined, verify_chats_tag: true },
+      },
+    );
+    expect(result).toEqual([{ id: 'flow-1' }]);
+  });
+
   it('should get flow trigger details', async () => {
     const mockFlowUuid = 'mock-flow-uuid';
     const mockResponse = { trigger: 'mock-trigger' };

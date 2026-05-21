@@ -143,6 +143,22 @@ describe('SatisfactionSurveySection', () => {
     ).toBe(true);
   });
 
+  it('should forward disableGetChatsTag=true to the flow select when csat type is custom', () => {
+    const wrapper = createWrapper({
+      modelValue: {
+        ...sectorMock,
+        is_csat_enabled: true,
+        custom_csat_flow_uuid: 'existing-flow',
+      },
+    });
+
+    const flowSelect = wrapper.findComponent(
+      '[data-testid="csat-flow-select"]',
+    );
+    expect(flowSelect.exists()).toBe(true);
+    expect(flowSelect.props('disableGetChatsTag')).toBe(true);
+  });
+
   it('should set is_csat_enabled to true and reset uuid on enabling switch', async () => {
     const wrapper = createWrapper();
     wrapper.vm.handleEnabledChange(true);

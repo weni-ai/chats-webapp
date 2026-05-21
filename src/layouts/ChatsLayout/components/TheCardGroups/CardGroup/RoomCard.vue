@@ -151,10 +151,13 @@ export default {
       return !!this.room.last_message?.contact && !this.room.last_message?.user;
     },
     isLastMessageFromAnotherAgent() {
-      return (
-        !!this.room.last_message?.user &&
-        this.room.last_message?.user?.email !== this.me?.email
-      );
+      const isUserHaveEmail = this.room.last_message?.user?.email;
+
+      const verifyEmail = isUserHaveEmail
+        ? this.room.last_message?.user?.email !== this.me?.email
+        : this.room.last_message?.user !== this.me?.email;
+
+      return !!this.room.last_message?.user && verifyEmail;
     },
     isLastMessageFromBot() {
       return !this.room.last_message?.contact && !this.room.last_message?.user;

@@ -21,7 +21,7 @@ export default {
     return response.data;
   },
 
-  async getFlows(projectUuidFlow) {
+  async getFlows(projectUuidFlow, params = {}) {
     let nextCursor;
     let flows = [];
     let loopCount = 0;
@@ -31,7 +31,7 @@ export default {
       const response = await http.get(
         `/project/${projectUuidFlow || getProject()}/list_flows/`,
         {
-          params: { cursor },
+          params: { cursor, ...params },
         },
       );
       return response.data;
