@@ -9,6 +9,10 @@ export const useDashboard = defineStore('dashboard', {
       name: '',
     },
     showModalAssumedChat: false,
+
+    modalAssumedText: '',
+    modalAssumedTitle: '',
+
     assumedChatContactName: '',
     assumedByUser: '',
     isLoadingViewedAgent: false,
@@ -19,6 +23,12 @@ export const useDashboard = defineStore('dashboard', {
     },
     setShowModalAssumedChat(isAssumedChat) {
       this.showModalAssumedChat = isAssumedChat;
+    },
+    setModalAssumedText(text) {
+      this.modalAssumedText = text;
+    },
+    setModalAssumedTitle(title) {
+      this.modalAssumedTitle = title;
     },
     setAssumedChatContactName(contactName) {
       this.assumedChatContactName = contactName;

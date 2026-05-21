@@ -469,6 +469,20 @@
     "get_chat_confirmation": "Confirm if you want to do the service of {contact}",
     "get_chat_error": "Error when trying to get the room",
     "you_got_chat": "You got the chat",
+    "chat_take_over": {
+      "by_another_representative": {
+        "title": "Chat taken over by another representative",
+        "description": "Your chat with {contact} has been taken over by {representative}."
+      },
+      "transfer_to_another_representative": {
+        "title": "Chat transferred to another representative",
+        "description": "Your chat with {contact} was transferred by a moderator to {representative}."
+      },
+      "transfer_to_queue": {
+        "title": "Chat transferred to queue",
+        "description": "Your chat with {contact} was transferred by a moderator to the {queue} queue."
+      }
+    },
     "your_chat_assumed": "Chat taken over by another representative",
     "your_chat_assumed_description": "Your chat with {contact} has been taken over by {representative}",
     "closed_chats": {

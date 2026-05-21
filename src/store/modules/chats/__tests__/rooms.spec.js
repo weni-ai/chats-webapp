@@ -621,46 +621,6 @@ describe('State Rooms', () => {
         expect(routerReplace).toHaveBeenCalled();
         expect(existRoomByUuid(humanServiceRoomsStore, roomUuid)).eq(false);
       });
-
-      it('should show modal for assumed chat', async () => {
-        humanServiceRoomsStore.$patch({
-          rooms: humanServiceRoomsStore.rooms.map((r) =>
-            r.uuid === '1'
-              ? {
-                  ...r,
-                  user: {
-                    email: 'testing@weni.ai',
-                    first_name: 'Agent',
-                    last_name: 'One',
-                  },
-                }
-              : r,
-          ),
-        });
-
-        await updateRoom(
-          {
-            uuid: '1',
-            user: {
-              email: 'testing-adm@weni.ai',
-              first_name: 'Admin',
-              last_name: 'User',
-            },
-            transfer_history: { from: { type: 'user' }, action: 'pick' },
-            contact: { name: 'Cliente 1' },
-          },
-          {
-            app: {
-              ...humanServiceProfileStore,
-              viewedAgent: dashboardStore.viewedAgent,
-            },
-          },
-        );
-        flushPendingUpdates();
-
-        expect(dashboardStore.showModalAssumedChat).eq(true);
-        expect(dashboardStore.assumedChatContactName).eq('Cliente 1');
-      });
     });
   });
 

@@ -472,6 +472,20 @@
     "get_chat_confirmation": "Confirme se deseja realizar o atendimento de {contact}",
     "get_chat_error": "Erro ao tentar pegar o chat",
     "you_got_chat": "Você pegou o chat",
+    "chat_take_over": {
+      "by_another_representative": {
+        "title": "Chat assumido por outro atendente",
+        "description": "Seu chat com {contact} foi assumido por {representative}."
+      },
+      "transfer_to_another_representative": {
+        "title": "Chat transferido para outro atendente",
+        "description": "Seu chat com {contact} foi transferido por um moderador para {representative}."
+      },
+      "transfer_to_queue": {
+        "title": "Chat transferido para fila",
+        "description": "Seu chat com {contact} foi transferido por um moderador para a fila {queue}."
+      }
+    },
     "your_chat_assumed": "Chat assumido por outro atendente",
     "your_chat_assumed_description": "Seu chat com {contact} foi assumido por {representative}",
     "closed_chats": {
