@@ -346,6 +346,14 @@ export default {
       margin-top: $unnnic-spacing-nano;
     }
   }
+
+  :deep(
+    .chats-contact__infos__unread-messages-container:has(
+        .chats-contact__infos__new-message-indicator
+      ):not(:has(.chats-contact__infos__message-time))
+  ) {
+    justify-content: center;
+  }
 }
 
 .room-card {
