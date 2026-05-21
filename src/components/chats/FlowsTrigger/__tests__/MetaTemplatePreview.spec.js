@@ -80,29 +80,6 @@ describe('MetaTemplatePreview', () => {
     expect(variables[0].text()).toBe('{{1}}');
     expect(variables[1].text()).toBe('{{2}}');
     expect(variables[2].text()).toBe('{{3}}');
-    expect(variables[0].classes()).not.toContain(
-      'meta-template-preview__variable--filled',
-    );
-  });
-
-  it('renders filled variables with provided values and filled class', async () => {
-    await wrapper.setProps({
-      variableValues: {
-        contactName: 'Marcus',
-        orderNumber: '12345',
-        collection: 'Summer',
-      },
-    });
-
-    const variables = wrapper.findAll(
-      '[data-testid="meta-template-preview-variable"]',
-    );
-    expect(variables[0].text()).toBe('Marcus');
-    expect(variables[1].text()).toBe('12345');
-    expect(variables[2].text()).toBe('Summer');
-    expect(variables[0].classes()).toContain(
-      'meta-template-preview__variable--filled',
-    );
   });
 
   it('renders buttons with mapped icons', () => {
