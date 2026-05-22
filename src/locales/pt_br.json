@@ -1,9 +1,9 @@
 {
   "home": {
     "title": "Olá!",
-    "description": "Selecione um chat para realizar seus atendimentos!"
+    "description": "Selecione um chat para iniciar"
   },
-  "news_and_updates": "Notícias e atualizações no Live desk",
+  "news_and_updates": "Novidades e atualizações no Live Desk",
   "custom": "Personalizado",
   "country": {
     "label": "País",
@@ -14,23 +14,23 @@
   },
   "week_days": {
     "monday": {
-      "full": "Segunda",
+      "full": "Segunda-feira",
       "short": "Seg"
     },
     "tuesday": {
-      "full": "Terça",
+      "full": "Terça-feira",
       "short": "Ter"
     },
     "wednesday": {
-      "full": "Quarta",
+      "full": "Quarta-feira",
       "short": "Qua"
     },
     "thursday": {
-      "full": "Quinta",
+      "full": "Quinta-feira",
       "short": "Qui"
     },
     "friday": {
-      "full": "Sexta",
+      "full": "Sexta-feira",
       "short": "Sex"
     },
     "saturday": {
@@ -43,21 +43,21 @@
     }
   },
   "country_holidays": {
-    "title": "Feriados em {country}",
-    "description": "Se necessário, você pode desabilitar cada um dos feriados e eles serão considerados como dia útil.",
+    "title": "Feriados nacionais ({country})",
+    "description": "Se necessário, você pode desativar feriados específicos para considerá-los dias de funcionamento.",
     "message": {
-      "error": "Não foi possível atualizar os feriados do país, por favor, tente novamente.",
-      "success": "Feriados do país atualizados com sucesso."
+      "error": "Erro ao atualizar os feriados nacionais. Tente novamente.",
+      "success": "Feriados nacionais atualizados com sucesso"
     }
   },
   "custom_holidays": {
-    "title": "Datas Específicas Não Trabalhadas",
-    "description": "Se necessário, você pode excluir cada uma das datas ou períodos e eles serão considerados como dia útil.",
-    "disclaimer": "Excluir datas ou períodos não pode ser desfeito. Clique no botão 'Salvar' para confirmar a ação.",
+    "title": "Datas personalizadas sem atendimento",
+    "description": "Se necessário, você pode excluir datas ou períodos para considerá-los dias de funcionamento.",
+    "disclaimer": "A exclusão de datas ou períodos não pode ser desfeita. Clique em 'Salvar' para confirmar.",
     "message": {
       "save": {
-        "error": "Não foi possível excluir algumas datas específicas não trabalhadas, por favor, verifique e tente novamente.",
-        "success": "Datas específicas não trabalhadas excluídas com sucesso."
+        "error": "Erro ao excluir datas sem atendimento. Tente novamente.",
+        "success": "Datas sem atendimento excluídas com sucesso"
       }
     }
   },
@@ -88,9 +88,9 @@
   },
   "status-bar": {
     "success": "Status atualizado para {status}",
-    "error": "Não foi possível atualizar o seu status, por favor tente novamente"
+    "error": "Não foi possível atualizar o status. Tente novamente."
   },
-  "view-option": "Opções",
+  "view-option": "Ver opções",
   "view_options": {
     "new_badge": "Novo"
   },
@@ -105,37 +105,37 @@
     },
     "notifications": {
       "title": "Notificações",
-      "sound": "Som",
+      "sound": "Som de notificação",
       "sound_notifications": "Notificações sonoras",
       "on": "Ativado",
       "off": "Desativado"
     },
     "help": {
       "label": "Ajuda",
-      "title": "Menu ajuda",
+      "title": "Menu de ajuda",
       "nilo": {
-        "active": "Nilo ativo",
-        "disabled": "Nilo desativado"
+        "active": "Nile ativo",
+        "disabled": "Nile desativado"
       }
     }
   },
   "upload_area": {
     "title": {
-      "text": "Arraste seu arquivo aqui, ou",
-      "highlight": "procure-o"
+      "text": "Arraste e solte seu arquivo aqui, ou",
+      "highlight": "busque por ele"
     },
     "invalid": {
-      "text": ", tente novamente",
+      "text": "Tentar novamente",
       "highlight": "Arquivo inválido",
-      "subtitle": "O arquivo não é suportado."
+      "subtitle": "Este formato de arquivo não é suportado"
     },
     "subtitle": "Formatos suportados: {exampleExtensions} e outros"
   },
   "dropzone": {
-    "description": "Solte aqui seu arquivo para enviar"
+    "description": "Solte seu arquivo aqui para enviar"
   },
   "waiting_for": {
-    "minutes": "Aguardando há 1 minuto | Aguardando há {n} minutos"
+    "minutes": "1 minuto aguardando | {n} minutos aguardando"
   },
   "chat_message": {
     "reply_message": {
@@ -145,22 +145,22 @@
       "audio": "Mensagem de áudio"
     }
   },
-  "start": "Iniciar",
+  "start": "Início",
   "submit": "Enviar",
   "details": "Detalhes",
-  "doubts": "Dúvidas",
+  "doubts": "Perguntas",
   "finance": "Financeiro",
   "chats_in_the_period": "Chats no período",
-  "chats_per_agents": "Chats por agente",
+  "chats_per_agents": "Chats por atendente",
   "new_messages_song": {
-    "queue": "Som de novas mensagens de contatos que estão aguardando na fila",
-    "in_progress": "Som de novas mensagens de chats em andamento",
-    "actions": "Som de confirmação de ações"
+    "queue": "Som de notificação para novas mensagens na fila",
+    "in_progress": "Som de notificação para novas mensagens em chats ativos",
+    "actions": "Som de confirmação da ação"
   },
   "automatic_message": {
     "title": "Mensagem automática",
-    "info": "Defina uma resposta automática para ser enviada ao contato enquanto está aguardando atendimento, deixe em branco caso não queira nenhuma mensagem.",
-    "placeholder": "Por enquanto você não definiu uma mensagem automática, defina uma mensagem para seus contatos que estão aguardando"
+    "info": "Defina uma resposta automática para contatos aguardando atendimento. Deixe em branco se não quiser enviar nenhuma mensagem.",
+    "placeholder": "Você ainda não configurou uma mensagem automática. Adicione uma para contatos aguardando na fila."
   },
   "step_of": "Etapa {step} de {total}",
   "type_to_filter": "Digite para filtrar",
@@ -169,11 +169,11 @@
   "updates_saved": "Atualizações salvas",
   "updated_info": "Informações atualizadas",
   "active_chats": "Chats ativos",
-  "active_chats_tooltip": "Quantidade de chats em andamento",
+  "active_chats_tooltip": "Número de chats ativos",
   "since": "Desde",
   "date_format": "DD/MM/YYYY",
-  "live": "Ao Vivo",
-  "number_chats": "Quantidade de chats",
+  "live": "Ao vivo",
+  "number_chats": "Total de chats",
   "language": "Idioma",
   "search": "Pesquisar",
   "try_again": "Tentar novamente",
@@ -184,7 +184,7 @@
   "select_all": "Selecionar todos os chats",
   "deselect_all": "Desselecionar todos os chats",
   "select_this_chat": "Selecionar este chat",
-  "deselect_this_chat": "Desmarcar este chat",
+  "deselect_this_chat": "Desselecionar este chat",
   "transfer_all_selected_chats": "Transferir todos os chats selecionados",
   "take_over_all_selected_chats_tooltip": "Assumir todos os chats selecionados",
   "end_all_selected_chats_tooltip": "Encerrar todos os chats selecionados",
@@ -195,16 +195,16 @@
   "audio_recorder": {
     "discard_button": "Descartar"
   },
-  "attachment": "Anexo",
-  "internal_note": "Nota interna",
+  "attachment": "Anexar",
+  "internal_note": "Observação interna",
   "close_internal_note": "Fechar nota interna (Esc)",
-  "notes": "Notas",
+  "notes": "Observações",
   "bold": "Negrito",
   "italic": "Itálico",
   "underline": "Sublinhado",
   "list": "Lista",
-  "left": "Esquerda",
-  "right": "Direita",
+  "left": "À esquerda",
+  "right": "À direita",
   "center": "Centralizar",
   "justify": "Justificar",
   "without_results": "Nenhum resultado correspondente",
@@ -218,12 +218,12 @@
     "without_results": "Nenhum resultado encontrado",
     "without_multiple_selected": "Nenhuma opção selecionada"
   },
-  "agents_online": "Agentes online",
+  "agents_online": "Atendentes online",
   "sectors": "Setores",
   "sector": {
     "title": "Setor",
     "general": "Geral",
-    "extra_options": "Opções extras",
+    "extra_options": "Opções adicionais",
     "queues": "Filas",
     "tags": "Etiquetas",
     "add_name_and_managers": "Defina um nome para o setor e seus gerentes",
@@ -232,17 +232,17 @@
     "placeholder": "Exemplo: Financeiro",
     "save_and_continue": "Salvar e continuar",
     "link": {
-      "title": "Vínculo",
-      "label": "Vincular a um projeto existente",
-      "editing_disclaimer": "Não é possível editar o projeto vinculado, caso deseje editar o vínculo é necessário criar um novo setor e selecionar o projeto desejado.",
-      "has_linked_project": "O projeto selecionado já está associado a outro setor, selecione outro projeto para continuar.",
-      "project_placeholder": "Procure pelo nome do projeto"
+      "title": "Associar",
+      "label": "Associar a um projeto cadastrado",
+      "editing_disclaimer": "É possível editar o projeto associado. Para editar a associação, crie um novo setor e selecione o projeto desejado.",
+      "has_linked_project": "O projeto selecionado já está associado a outro setor. Selecione outro projeto para continuar.",
+      "project_placeholder": "Buscar pelo nome do projeto"
     },
     "managers": {
-      "title": "Gerentes de atendimento",
+      "title": "Gerentes de serviço",
       "add": {
         "label": "Adicionar gerente",
-        "placeholder": "Pesquise pelo nome ou email"
+        "placeholder": "Buscar por nome ou email"
       },
       "working_day": {
         "title": "Definições da jornada de trabalho",
@@ -254,7 +254,7 @@
         "select_date_or_period": "Selecionar data ou período",
         "repeat_annually": "Repetir anualmente",
         "add_more_dates_or_periods": "Adicionar mais datas ou períodos",
-        "see_all_holidays": "Ver todos os feriados",
+        "see_all_holidays": "Visualizar todos os feriados",
         "add_specific_dates": "Adicionar datas específicas",
         "see_all_specific_dates": "Ver todas as datas específicas",
         "select_sector_to_copy": "Selecione o setor a copiar",
@@ -263,7 +263,7 @@
           "label": "Horário de início"
         },
         "end": {
-          "label": "Horário de encerramento"
+          "label": "Horário de término"
         },
         "limit_agents": {
           "title": "Defina um limite na quantidade de chats simultâneos por atendente",
@@ -281,7 +281,7 @@
       }
     },
     "additional_options": {
-      "title": "Opções extras",
+      "title": "Opções adicionais",
       "template_message": {
         "switch_label": "Disparo de modelos de mensagens"
       },
@@ -297,14 +297,18 @@
         "custom": {
           "flow_disclaimer": "O fluxo selecionado deve usar uma classificação de satisfação de 1 a 5 para garantir os resultados corretos da pesquisa."
         },
-        "hint": "Se houver um fluxo ativo no módulo Flows configurado para disparar a pesquisa após o atendimento, esta configuração pode gerar conflito e impactar o envio da pesquisa.",
-        "label": "Enviar automaticamente uma pesquisa de satisfação após o atendimento do Live desk ser encerrado",
+        "hint": "Se um fluxo ativo no módulo Fluxos estiver configurado para disparar uma pesquisa após o fim do suporte, esta configuração pode conflitar com o fluxo e afetar a entrega da pesquisa.",
+        "label": "Enviar automaticamente uma pesquisa de satisfação após o fim do suporte no Live Desk",
         "section_title": "Pesquisa de satisfação",
         "type": {
           "custom": "Fluxos personalizados",
           "default": "Pesquisa CSAT padrão (recomendado)",
           "label": "Tipo de pesquisa",
           "tooltip": "Escolha entre a pesquisa CSAT padrão ou um fluxo personalizado já configurado no módulo Flows."
+        },
+        "confirm_modal": {
+          "content_1": "Se um fluxo ativo no módulo Fluxos estiver configurado para disparar uma pesquisa após o fim do suporte, esta configuração pode conflitar com o fluxo e afetar a entrega da pesquisa.",
+          "content_2": "Deseja continuar mesmo assim?"
         }
       },
       "automated_message": {
@@ -332,119 +336,119 @@
     "search": "Buscar uma fila"
   },
   "export": {
-    "metrics": "Exportar métricas em {filetype}",
-    "all": "Exportar tudo em {filetype}"
+    "metrics": "Exportar métricas como {filetype}",
+    "all": "Exportar tudo como {filetype}"
   },
   "name": "Nome",
-  "addition_date": "Data de Adição",
-  "in_queues": "em filas",
+  "addition_date": "Data de cadastro",
+  "in_queues": "nas filas",
   "in_progress": "Em andamento",
   "waiting": "Aguardando",
   "sent_flows": "Fluxos enviados",
   "discussion": "Discussões",
-  "in_progress_tooltip": "Quantidade de chats que já estão sendo atendidos por um agente",
-  "in_progress_tooltip_filtered": "Quantidade de chats que foram atendidos por um agente",
+  "in_progress_tooltip": "Número de chats sendo atendidos por um atendente",
+  "in_progress_tooltip_filtered": "Número de chats sendo atendidos por um atendente",
   "closed": "Encerrados",
-  "qtd_closed_tooltip": "Quantidade de chats encerrados",
+  "qtd_closed_tooltip": "Número de chats encerrados",
   "wait_time": "Tempo de espera",
-  "wait_time_tooltip": "É tempo médio que o contato aguarda para ser atendido",
-  "wait_assistance_tooltip": "Quantidade de contatos aguardando o início do atendimento",
-  "average_time_to_assistance_tooltip": "Média de tempo que os contatos aguardam até serem atendidos",
-  "average_time_to_response_tooltip": "Média de tempo que o contato aguarda para ser respondido",
-  "average_time_to_complete_assistence_tooltip": "Média de tempo que um atendimento completo demora",
+  "wait_time_tooltip": "O tempo médio que um contato espera até ser atendido",
+  "wait_assistance_tooltip": "Número de contatos aguardando atendimento",
+  "average_time_to_assistance_tooltip": "O tempo médio que um contato espera até ser atendido",
+  "average_time_to_response_tooltip": "O tempo médio que os contatos aguardam para receber uma resposta",
+  "average_time_to_complete_assistence_tooltip": "Tempo médio de atendimento",
   "response_time": "Tempo de resposta",
-  "average_response_time": "É o tempo médio de resposta ao contato",
+  "average_response_time": "O tempo médio de resposta para um contato",
   "interaction_time": "Tempo de interação",
-  "average_interaction_time": "É o tempo médio de duração de um chat",
+  "average_interaction_time": "A duração média do chat",
   "chats": {
     "transcription": {
-      "unavailable_closed_chat": "Não é possível ver transcrições que não foram habilitadas durante o suporte.",
-      "unavailable_exceeding_duration": "Transcrição indisponível para áudios com mais de {duration} minutos.",
-      "error": "Não foi possível carregar a transcrição. Por favor, tente novamente!",
+      "unavailable_closed_chat": "Você não pode visualizar transcrições que não foram ativadas durante a interação",
+      "unavailable_exceeding_duration": "A transcrição não está disponível para áudios com mais de {duration} minutos",
+      "error": "Erro ao carregar a transcrição. Tente novamente.",
       "feedback": {
         "question": "A transcrição foi útil?",
         "positive": "Útil",
-        "negative": "Precisa de melhorias",
-        "error": "Não foi possível enviar o feedback. Por favor, tente novamente!",
-        "sended": "Seu feedback foi enviado!",
+        "negative": "Precisa melhorar",
+        "error": "Erro ao enviar feedback da transcrição. Tente novamente.",
+        "sended": "Seu feedback foi enviado.",
         "modal": {
-          "title": "O que não funcionou?",
+          "title": "O que deu errado?",
           "input_placeholder": "Compartilhe seu feedback aqui"
         }
       }
     },
     "search_messages": {
-      "title": "Pesquisar na conversa",
-      "input_placeholder": "Digite uma palavra ou frase para pesquisar",
+      "title": "Buscar na conversa",
+      "input_placeholder": "Informe uma palavra ou frase para buscar",
       "no_results": "Nenhum resultado encontrado para \"{searchTerm}\"",
-      "results_found": "{count} resultados encontrados para \"{searchTerm}\"",
-      "automated_support": "Suporte Automatizado",
+      "results_found": "{count} resultados para \"{searchTerm}\"",
+      "automated_support": "Suporte automatizado",
       "loading": "Carregando mais mensagens"
     },
     "summary": {
-      "reading_and_summarizing": "Lendo e fazendo resumo",
-      "by_ai": "Resumo feito por IA",
-      "error": "Falha ao gerar resumo.",
-      "unavailable": "Não há resumo disponível",
-      "open_summary_tooltip": "Abrir o resumo do chat",
-      "close_summary_tooltip": "Fechar o resumo do chat",
+      "reading_and_summarizing": "Lendo e resumindo",
+      "by_ai": "Resumo por IA",
+      "error": "Erro ao gerar resumo",
+      "unavailable": "Nenhum resumo disponível",
+      "open_summary_tooltip": "Clique para ver o resumo",
+      "close_summary_tooltip": "Clique para ocultar o resumo",
       "archived": {
         "download_button": "Baixar mensagens",
-        "download_error": "Erro ao fazer download das mensagens. Tente novamente.",
+        "download_error": "Erro ao baixar mensagens. Tente novamente.",
         "disclaimer": {
           "title": "Mensagens arquivadas",
-          "description": "Este suporte foi encerrado há mais de um ano, portanto, as mensagens foram movidas para os arquivos. Para visualizá-las, clique no botão “Baixar mensagens”."
+          "description": "Esta solicitação de suporte foi encerrada há mais de um ano, por isso, suas mensagens foram arquivadas. Para visualizá-las, clique em Baixar mensagens."
         }
       },
       "feedback": {
-        "title": "O que não funcionou?",
-        "needs_improvement_text": "Ajude a melhorar os resumos. Sua opinião sobre esse resumo nos ajuda a torná-lo mais claro e útil.",
-        "empty_rating": "Esse resumo foi útil para você?",
+        "title": "O que deu errado?",
+        "needs_improvement_text": "Ajude-nos a melhorar os resumos. Seu feedback é muito importante para torná-los mais claros e úteis.",
+        "empty_rating": "Este resumo foi útil para você?",
         "positive": "Útil",
-        "negative": "Precisa de melhorias",
+        "negative": "Precisa melhorar",
         "placeholder": "Compartilhe seu feedback aqui",
-        "sended": "Seu feedback foi enviado!"
+        "sended": "Seu feedback foi enviado."
       }
     },
     "feedback": {
-      "agent_took_chat": "Ops! O chat com contato {contact} foi assumido por outro agente",
-      "automatic_transfer_from_queue": "Chat atribuído a {agent}",
+      "agent_took_chat": "O chat com o contato {contact} já foi assumido por outro atendente",
+      "automatic_transfer_from_queue": "Sala atribuída a {agent}",
       "chat_ended_by": "Chat encerrado por {agent}",
-      "discussion_created": "{agent} iniciou a discussão com fila {queue}",
-      "discussion_joined": "{agent} entrou na discussão",
-      "edit_custom_field": "editou o custom field",
-      "forwarded_to_agent": "Contato encaminhado para agente {agent}",
-      "forwarded_to_queue": "Chat encaminhado para a fila {queue}",
-      "pick_of_agent": "{manager} assumiu o chat que estava com {agent}",
+      "discussion_created": "{agent} iniciou uma conversa na fila {queue}",
+      "discussion_joined": "{agent} entrou na conversa",
+      "edit_custom_field": "Campo customizável editado",
+      "forwarded_to_agent": "Contato transferido para o atendente {agent}",
+      "forwarded_to_queue": "Contato transferido para a fila {queue}",
+      "pick_of_agent": "{manager} assumiu o chat de {agent}",
       "pick_of_queue": "{agent} assumiu o chat da fila {queue}",
-      "see_all_internal_notes": "<b class='fg-on-primary'>Ver notas internas</b>",
-      "transfer_from_queue_to_agent": "Foi transferido da fila {queue} para {agent}",
+      "see_all_internal_notes": "<b style=\\\"color: white;\\\">Ver observações internas</b>",
+      "transfer_from_queue_to_agent": "Transferido da fila {queue} para {agent}",
       "transfer_from_queue_to_agent_by_other": "{requestedBy} transferiu o chat da fila {queue} para {agent}",
-      "transfer_from_queue_to_queue": "Foi transferido da fila {queue1} para fila {queue2}",
+      "transfer_from_queue_to_queue": "Transferido da fila {queue1} para a fila {queue2}",
       "transfer_from_queue_to_queue_by_other": "{requestedBy} transferiu o chat da fila {queue1} para a fila {queue2}",
-      "transfer_to_agent": "{agent1} transferiu o chat para {agent2}",
+      "transfer_to_agent": "{agent1} transferido para {agent2}",
       "transfer_to_agent_by_other": "{requestedBy} transferiu o chat de {agent1} para {agent2}",
-      "transfer_to_queue": "{agent} transferiu o chat para a fila {queue}",
+      "transfer_to_queue": "{agent} transferido para a fila {queue}",
       "transfer_to_queue_by_other": "{requestedBy} transferiu o chat de {agent} para a fila {queue}"
     },
     "room_list": {
       "order_by": "Ordenar por:",
       "most_recent": {
         "label": "Mais recentes",
-        "ongoing_tooltip": "Mais recente: última mensagem trocada no menor tempo",
-        "waiting_tooltip": "Mais recente: salas que foram abertas há menos tempo"
+        "ongoing_tooltip": "Mais recentes: chats ativos mais recentemente primeiro",
+        "waiting_tooltip": "Mais recentes: salas abertas mais recentemente primeiro"
       },
       "oldest": {
         "label": "Mais antigos",
-        "ongoing_tooltip": "Mais antigo: última mensagem trocada no maior tempo",
-        "default_tooltip": "Mais antigo: salas que foram abertas na fila há mais tempo"
+        "ongoing_tooltip": "Mais antigos: chats com a mensagem mais antiga primeiro",
+        "default_tooltip": "Mais antigos: salas abertas há mais tempo"
       }
     },
     "room_pin": {
       "success_pin": "Chat fixado com sucesso",
-      "success_unpin": "Chat desfixado",
+      "success_unpin": "Chat desafixado",
       "error_pin_limit": "Você pode fixar até {max_pin_limit} chats",
-      "error_404": "A sala não existe",
+      "error_404": "Esta sala não existe",
       "error_403": "Não é um usuário da sala"
     },
     "room_contact_info": {
@@ -452,42 +456,42 @@
     },
     "errors": {
       "401": "Erro de autenticação",
-      "default": "Ocorreu um erro, por favor, tente novamente mais tarde"
+      "default": "Ocorreu um erro. Tente novamente mais tarde."
     },
     "message_input_placeholder": "Digite sua mensagem aqui ou / para ativar mensagens rápidas",
-    "search_contact": "Pesquisar contato",
-    "search_contact_placeholder": "Pesquisar contato (nome, telefone ou protocolo)",
+    "search_contact": "Buscar contato",
+    "search_contact_placeholder": "Buscar contato por nome, telefone ou ID do ticket",
     "tags": "Tags do chat",
-    "discussions": "Discussões",
+    "discussions": "Conversas",
     "waiting": "Aguardando",
-    "waiting_tooltip": "Chats que devem ser atendidos",
+    "waiting_tooltip": "Chats para atender",
     "waiting_assistance": "Aguardando atendimento",
-    "in_progress": "Em andamento",
+    "in_progress": "Ativos",
     "sent_flows": "Fluxos enviados",
-    "to_end_rate_the_chat": "Para encerrar, classifique o chat",
-    "to_end_required_tags": "Para encerrar, adicione pelo menos uma tag",
-    "tags_help": "As tags ajudam a localizar os chats e também gerar bons relatórios",
-    "chat_with_contact_ended": "Chat com {contact} encerrado",
+    "to_end_rate_the_chat": "Para encerrar, avalie o chat",
+    "to_end_required_tags": "Para encerrar esta conversa, selecione pelo menos uma tag",
+    "tags_help": "As tags ajudam a encontrar chats e gerar relatórios melhores",
+    "chat_with_contact_ended": "O chat com {contact} foi encerrado",
     "see_history": "Histórico geral",
-    "tag_request": "@:please classifique o atendimento",
+    "tag_request": "@:adicione uma tag ao chat",
     "closed_in": "Chat encerrado em",
     "closed": "Chat encerrado",
     "transfer": {
       "title": "Transferir chat",
-      "does_not_have_permission": "Você não possui permissão para transferir este chat"
+      "does_not_have_permission": "Você não tem permissão para transferir este chat"
     },
     "open_chat": "Abrir chat",
-    "get_chat": "Pegar somente este chat",
-    "get_chat_question": "Pegar chat?",
-    "get_chat_confirmation": "Confirme se deseja realizar o atendimento de {contact}",
-    "get_chat_error": "Erro ao tentar pegar o chat",
-    "you_got_chat": "Você pegou o chat",
-    "your_chat_assumed": "O Chat com {contact} foi transferido",
-    "your_chat_assumed_description": "Seu chat com {contact} foi assumido por outro agente",
+    "get_chat": "Assumir apenas este chat",
+    "get_chat_question": "Assumir o chat?",
+    "get_chat_confirmation": "Confirme se deseja assumir este chat com {contact}",
+    "get_chat_error": "Erro ao tentar acessar a sala",
+    "you_got_chat": "Você assumiu o chat",
+    "your_chat_assumed": "O chat com {contact} foi transferido",
+    "your_chat_assumed_description": "Seu chat com {contact} foi assumido por outro atendente",
     "closed_chats": {
       "contact_history": "Histórico do contato",
       "general_history": "Histórico geral",
-      "history": "Histórico",
+      "history": "Histórico ",
       "history_description": "Histórico de todos os atendimentos do projeto {projectName}",
       "project_history": "Histórico do projeto"
     },
@@ -499,20 +503,20 @@
     "select_queues_priorization_hint": "Novos chats serão recebidos apenas das filas selecionadas.",
     "select_your_queues": "Selecione suas filas",
     "no_queue_selected": "Nenhuma fila selecionada",
-    "success_update_queues": "Suas filas de atendimento foram atualizadas",
-    "error_update_queues": "Não foi possível atualizar suas filas de atendimento"
+    "success_update_queues": "Suas filas de serviço foram atualizadas",
+    "error_update_queues": "Erro ao atualizar suas filas de serviço"
   },
   "chats_notifications": {
-    "title": "Notificações do Weni Live Desk",
-    "label": "Para seu conforto, habilite e desabilite as notificações sonoras do Weni Live Desk"
+    "title": "Notificações do VTEX Agentic CX Platform Live Desk",
+    "label": "Para sua conveniência, ative ou desative as notificações de som do VTEX Agentic CX Platform Live Desk."
   },
   "dashboard": {
     "view-mode": {
-      "title": "Modo de visualização ao vivo do agente {viewedAgent}",
-      "close": "Encerrar visualização",
+      "title": "Modo de visualização ao vivo de {viewedAgent}",
+      "close": "Fechar visualização",
       "assume_chat": "Assumir apenas este chat",
-      "assume_chat_question": "Assumir Chat?",
-      "assume_chat_confirmation": "Ao confirmar você removerá o Chat do agente {viewedAgent} e será o responsável pelo Chat"
+      "assume_chat_question": "Assumir o chat?",
+      "assume_chat_confirmation": "Se confirmar, este chat será transferido de {viewedAgent} para você"
     }
   },
   "select": "Selecionar",
@@ -523,7 +527,7 @@
   "sent": "enviado",
   "from": "de",
   "to": "para",
-  "to_the": "às",
+  "to_the": "para",
   "about": "sobre",
   "today": "Hoje",
   "transfer": "Transferir",
@@ -531,34 +535,34 @@
   "suggested_answers": "Respostas sugeridas",
   "attach": "Anexar",
   "send": "Enviar",
-  "confirm_send": "Confirmar envio",
+  "confirm_send": "Confirmar",
   "update": "Atualizar",
   "click_to_resend": "Clique para reenviar",
-  "action_cannot_be_reversed": "Essa ação não poderá ser revertida",
+  "action_cannot_be_reversed": "Essa ação não poderá ser desfeita",
   "end": "Encerrar",
-  "end_chat": "Finalizar",
-  "end_discussion": "Finalizar discussão",
+  "end_chat": "Encerrar chat",
+  "end_discussion": "Encerrar conversa",
   "cancel": "Cancelar",
   "add": "Adicionar",
-  "proceed": "Prosseguir",
+  "proceed": "Continuar",
   "continue": "Continuar",
-  "please": "Por favor",
+  "please": " ",
   "confirm": "Confirmar",
   "back": "Voltar",
-  "back_to_home_page": "Voltar para o início",
+  "back_to_home_page": "Voltar para a página inicial",
   "clear": "Limpar",
   "none": "Nenhum",
-  "access_history_to_see_closed_chats": "Acesse o histórico para visualizar chats encerrados",
+  "access_history_to_see_closed_chats": "Acesse o histórico de chats para ver chats encerrados",
   "close": "Fechar",
-  "ended_by": "Finalizado por",
-  "all": "Todos",
-  "back_to_chats": "@:back para chats",
+  "ended_by": "Encerrado por",
+  "all": "Todas",
+  "back_to_chats": "@:voltar para chats",
   "filter": {
     "label": "Filtro",
     "empty_tags": "Nenhuma tag disponível",
     "by_tag": "Filtrar por tag",
     "by_tags": "Filtrar por tags",
-    "by_agent": "Filtrar por agente",
+    "by_agent": "Filtrar por atendente",
     "by_date": "Filtrar por @.lower:date",
     "by_queue": "Filtrar por fila",
     "clear_all": "Limpar filtros",
@@ -574,13 +578,13 @@
       "last_12_months": "Últimos 12 meses"
     }
   },
-  "pagination": "{from} - {to} de {total}",
+  "pagination": "{from} – {to} de {total}",
   "contact": "Contato",
   "unnamed_contact": "Contato sem nome",
   "unnamed_agent": "Atendente sem nome",
-  "no_agent_assigned": "Nenhum agente atribuído",
+  "no_agent_assigned": "Nenhum atendente atribuído",
   "no_tags_assigned": "Nenhuma tag atribuída",
-  "contact_await_for_you": "Um contato está esperando por você!",
+  "contact_await_for_you": "Um contato está aguardando suporte",
   "agent": "Atendente",
   "ai_text_improvement": {
     "tooltip_disabled": "Escreva uma resposta no campo de texto para habilitar respostas aprimoradas com IA",
@@ -609,42 +613,42 @@
     }
   },
   "sector_update_success": "Alterações salvas com sucesso",
-  "sector_update_error": "Não foi possível salvar as alterações, tente novamente mais tarde.",
-  "sector_invalid_work_hour": "Horário de início não pode ser maior que horário final",
+  "sector_update_error": "Erro ao salvar alterações. Tente novamente mais tarde.",
+  "sector_invalid_work_hour": "O horário de início não pode ser posterior ao horário de término",
   "name_or_phone": "Nome ou telefone",
-  "name_or_phone_or_protocol": "Nome, telefone ou protocolo",
+  "name_or_phone_or_protocol": "Nome, telefone ou ID do ticket",
   "service": "Serviço",
   "tags": {
     "title": "Tags",
-    "search": "Pesquisar uma tag",
-    "description": "As tags são usadas para classificar características do atendimento e possibilitar a pesquisa e filtragem dos chats a partir delas, defina tags que sejam relevantes para seu contexto.",
+    "search": "Buscar tag",
+    "description": "As tags ajudam a classificar os chats, facilitando o uso da busca e dos filtros. Defina tags relevantes para o seu fluxo de trabalho.",
     "add": {
       "title": "Adicionar tags",
       "label": "Nome da tag",
-      "placeholder": "Digite o nome de uma tag para pesquisar ou adicionar"
+      "placeholder": "Informe o nome de uma tag para buscar ou adicioná-la"
     },
     "already_added": "Tags adicionadas"
   },
   "tag": "Tag",
   "date": "Data",
-  "fullscreen_view": "Ver em tela cheia ",
-  "view": "Visualizar",
-  "see": "Ver",
+  "fullscreen_view": "Visualizar em tela cheia",
+  "view": "Visualização",
+  "see": "Visualizar",
   "chat_with": {
-    "bot": "Atendimento automatizado"
+    "bot": "Chat com bot"
   },
   "waiting_answer": {
     "send_template": "Você enviou um modelo de mensagem",
-    "waiting_cliente_answer": "Aguardando resposta do Contato"
+    "waiting_cliente_answer": "Aguardando resposta do contato"
   },
   "contact_transferred_with_success": "Contato transferido com sucesso",
-  "contact_transferred_to_queue": "Contato transferido para fila {queue}",
-  "contact_transferred_error": "Falha ao transferir contato(s)",
-  "contact_transferred_to_agent": "Contato transferido para agente {agent}",
-  "agent_took_from_queue": "{agent} pegou da fila {queue}",
+  "contact_transferred_to_queue": "Contato transferido para a fila {queue}",
+  "contact_transferred_error": "Erro ao transferir contato(s)",
+  "contact_transferred_to_agent": "Contato transferido para atendente {agent}",
+  "agent_took_from_queue": "{agent} atendeu da fila {queue}",
   "contact_in_queue": "Contato na fila",
   "chat_closed_by": {
-    "agent": "Chat encerrado pelo agente"
+    "agent": "Chat encerrado pelo atendente"
   },
   "transfer_contact": "Transferir contato | Transferir contatos",
   "bulk_transfer": {
@@ -654,135 +658,135 @@
     "success_message": "{count} chat transferido com sucesso! | {count} chats transferidos com sucesso!",
     "partial_success_message": "{success} chat transferido, {failed} falhou. Tente novamente. | {success} chats transferidos, {failed} falharam. Tente novamente.",
     "error_message": "Não foi possível transferir os chats, tente novamente",
-    "agent_transfer_success": "Contato transferido com sucesso para agente {agent} | Contatos transferidos com sucesso para agente {agent}",
-    "queue_transfer_success": "Contato transferido com sucesso para fila {queue} | Contatos transferidos com sucesso para fila {queue}",
-    "error": "Não foi possível transferir os contatos, tente novamente",
+    "agent_transfer_success": "Contato transferido para atendente {agent} com sucesso | Contatos transferidos para atendente {agent} com sucesso",
+    "queue_transfer_success": "Contato transferido para a fila {queue} com sucesso | Contatos transferidos para a fila {queue} com sucesso",
+    "error": "Erro ao transferir contatos. Tente novamente.",
     "disclaimer": {
-      "transfer_to_other_sector": "Ao transferir o chat para uma fila em outro setor, as etiquetas adicionadas serão removidas.",
-      "selected_agent_offline": "O agente selecionado está offline no momento",
-      "without_online_agents": "Nenhum agente online no momento"
+      "transfer_to_other_sector": "Ao transferir o chat para uma fila de outro setor, as tags serão removidas",
+      "selected_agent_offline": "O atendente selecionado está offline no momento",
+      "without_online_agents": "Nenhum atendente está online no momento"
     }
   },
   "bulk_close": {
-    "close_selected_contacts": "Encerrar contatos selecionados",
-    "confirm_close_selected": "Tem certeza que deseja encerrar os contatos selecionados?",
-    "success_message": "{count} chat encerrado com sucesso! | {count} chats encerrados com sucesso!",
+    "close_selected_contacts": "Fechar contatos selecionados",
+    "confirm_close_selected": "Tem certeza de que deseja fechar os contatos selecionados?",
+    "success_message": "{count} chat encerrado com sucesso | {count} chats encerrados com sucesso",
     "partial_success_message": "{success} chat encerrado, {failed} falhou. Tente novamente. | {success} chats encerrados, {failed} falharam. Tente novamente.",
-    "error_message": "Não foi possível encerrar os chats, tente novamente",
+    "error_message": "Erro ao fechar chats. Tente novamente.",
     "end_all_selected_chats": "Encerrar todos os chats selecionados",
     "sector_tag": "Setor {current} de {total}",
     "chats_count_sector": "{count} chat · setor {sector} | {count} chats · setor {sector}",
-    "required_tags_title": "Tags são obrigatórias para finalizar chats no setor {sector}",
-    "required_tags_description": "Se você selecionar alguma tag abaixo, ela será aplicada ao {count} chat e substituirá quaisquer tags existentes. | Se você selecionar alguma tag abaixo, ela será aplicada aos {count} chats e substituirá quaisquer tags existentes.",
+    "required_tags_title": "As tags são obrigatórias para encerrar chats no setor {sector}",
+    "required_tags_description": "Se você selecionar uma ou mais tags abaixo, elas serão aplicadas a {count} chat e substituirão as tags existentes. | Se você selecionar uma ou mais tags abaixo, elas serão aplicadas a {count} chats e substituirão as tags existentes.",
     "next_sector": "Próximo setor",
     "end_all_chats": "Encerrar todos ({count} chats)",
     "back": "Voltar",
-    "optional_tags_title": "Tags não são obrigatórias para finalizar chats no setor {sector}",
-    "optional_tags_description": "Se você selecionar alguma tag abaixo, ela será aplicada ao {count} chat e substituirá quaisquer tags existentes. | Se você selecionar alguma tag abaixo, ela será aplicada aos {count} chats e substituirá quaisquer tags existentes.",
-    "no_tags_in_sector": "Não há tags cadastradas neste setor para serem selecionadas."
+    "optional_tags_title": "As tags não são obrigatórias para encerrar chats no setor {sector}",
+    "optional_tags_description": "Se você selecionar uma ou mais tags abaixo, elas serão aplicadas a {count} chat e substituirão as tags existentes. | Se você selecionar uma ou mais tags abaixo, elas serão aplicadas a {count} chats e substituirão as tags existentes.",
+    "no_tags_in_sector": "Nenhuma tag para selecionar neste setor"
   },
   "close_chat": {
-    "confirm_end": "Tem certeza que deseja encerrar este chat?"
+    "confirm_end": "Tem certeza de que deseja encerrar este chat?"
   },
   "bulk_take": {
     "title": "Assumir todos os chats selecionados",
-    "selected_chats_count": "{count} chat está selecionado para assumir. | {count} chats estão selecionados para assumir.",
-    "confirm_take_over_selected": "Tem certeza que deseja assumir todos os chats selecionados?",
+    "selected_chats_count": "{count} chat selecionado para assumir. | {count} chats selecionados para assumir.",
+    "confirm_take_over_selected": "Tem certeza de que deseja assumir todos os chats selecionados?",
     "take_over_all": "Assumir todos",
-    "success_message": "{count} chat assumido com sucesso! | {count} chats assumidos com sucesso!",
+    "success_message": "{count} chat assumido com sucesso | {count} chats assumidos com sucesso",
     "partial_success_message": "{success} chat assumido, {failed} falhou. Tente novamente. | {success} chats assumidos, {failed} falharam. Tente novamente.",
-    "error_message": "Não foi possível assumir os chats, tente novamente"
+    "error_message": "Erro ao assumir chats. Tente novamente."
   },
   "close_contact": "Encerrar contato",
   "close_contact_confirmation": "Tem certeza que deseja encerrar este contato?",
   "contact_info": {
     "title": "Sobre o contato",
-    "about_support": "Sobre o suporte",
+    "about_support": "Sobre o atendimento",
     "switch_associate_contact": "Contato desvinculado",
     "switch_disassociate_contact": "Contato vinculado",
-    "switch_tooltip": "Ative se deseja que o contato seja sempre atribuído diretamente a você",
-    "alert_linked": "Contato vinculado ",
+    "switch_tooltip": "Ative se quiser que o contato seja sempre atribuído diretamente a você",
+    "alert_linked": "Contato vinculado",
     "alert_detached": "Contato desvinculado",
-    "linked_contact": "Contato vinculado ao agente {name}",
+    "linked_contact": "Contato vinculado ao atendente {name}",
     "see_contact_history": "Ver histórico",
-    "no_contact_history": "Nenhum histórico",
+    "no_contact_history": "Sem histórico",
     "audio_tooltip": "{agent} {date} às {time}",
-    "transfering_chat": "Transferindo o chat ​📬",
-    "ticket": "Protocolo",
-    "copy_protocol": "Clique para copiar o protocolo",
-    "protocol_copied": "Protocolo copiado para a área de transferência!"
+    "transfering_chat": "Transferindo chat",
+    "ticket": "ID do ticket",
+    "copy_protocol": "Clique para copiar o ID do ticket",
+    "protocol_copied": "ID do ticket copiado para a área de transferência"
   },
   "discussions": {
-    "title": "Discussão | Discussões",
+    "title": "Conversa | Conversas",
     "start_discussion": {
-      "title": "Iniciar discussão",
+      "title": "Iniciar conversa",
       "form": {
         "select_sector": "Selecionar setor",
         "select_queue": "Selecionar fila",
-        "search_sector": "Pesquisar setor",
-        "search_queue": "Pesquisar fila",
+        "search_sector": "Buscar setor",
+        "search_queue": "Buscar fila",
         "subject": "Assunto",
-        "discussion_reason": "Motivo da discussão",
-        "explain_situation": "Explique a situação"
+        "discussion_reason": "Assunto da conversa",
+        "explain_situation": "Descreva a situação"
       }
     },
     "about": {
-      "title": "Sobre a discussão",
+      "title": "Sobre a conversa",
       "started_in": "Iniciada em",
-      "agents_involved": "Agentes envolvidos",
-      "add_agent": "Adicionar agente"
+      "agents_involved": "Atendentes que participaram",
+      "add_agent": "Adicionar atendente"
     },
     "close": {
-      "title": "Encerrar discussão",
-      "question": "Tem certeza que deseja encerrar a discussão sobre {contact}?",
-      "description": "Uma vez finalizada, não será possível enviar mais mensagens."
+      "title": "Encerrar conversa",
+      "question": "Tem certeza de que deseja encerrar a conversa sobre {contact}?",
+      "description": "Uma vez encerrada, não será mais possível enviar mensagens."
     },
     "add_agents": {
-      "title": "Adicionar agentes",
-      "description": "Ao adicionar um agente na discussão não será possível remover depois",
-      "select_agent": "Selecionar agente",
-      "search_agent": "Pesquisar agente"
+      "title": "Adicionar atendentes",
+      "description": "Se você adicionar um atendente à conversa, não será possível removê-lo depois.",
+      "select_agent": "Selecionar um atendente",
+      "search_agent": "Buscar atendente"
     },
-    "history": "Histórico da discussão",
-    "started_by": "Discussão iniciada por {name}",
-    "notification_new": "Nova discussão recebida",
-    "join": "Entrar na discussão",
+    "history": "Histórico da conversa",
+    "started_by": "Conversa iniciada por {name}",
+    "notification_new": "Nova conversa recebida",
+    "join": "Entrar na conversa",
     "errors": {
-      "already_open": "Erro ao iniciar discussão, verifique se já existe outra discussão aberta",
-      "permission": "Erro ao iniciar discussão, verifique sua permissão",
-      "generic": "Erro ao iniciar discussão"
+      "already_open": "Erro ao iniciar conversa. Verifique se outra conversa já está aberta.",
+      "permission": "Erro ao iniciar conversa. Verifique sua permissão.",
+      "generic": "Erro ao iniciar conversa"
     }
   },
   "last_online_time": {
     "minutes": "Online há {minutes} minutos",
     "hours": "Online há {hours} horas",
-    "date": "Última vez online em {time} {date}"
+    "date": "Última vez online: {time}, {date}"
   },
   "last_message_time": {
-    "minutes": "Último contato há {minutes} minutos",
-    "hours": "Último contato há {hours} horas",
-    "date": "Último contato {date}"
+    "minutes": "Última mensagem: {minutes} minutos atrás",
+    "hours": "Última mensagem: {hours} horas atrás",
+    "date": "Última mensagem: {date}"
   },
   "alert_last_message_date": {
-    "message": "Sem resposta do contato há mais 24 horas, para retomar a conversa",
+    "message": "O contato não respondeu por mais de 24 horas. Para retomar a conversa,",
     "message_send_flow": "envie um fluxo",
-    "tip": "A política de privacidade do WhatsApp não permite que seja enviada uma mensagem com um contato que não responde há mais de 24hrs."
+    "tip": "A política de privacidade do WhatsApp não permite enviar mensagens para um contato após 24 horas de inatividade."
   },
   "alert_no_internet_connection": {
     "message": "Aguardando conexão...",
-    "verify_connection": "verifique sua internet",
+    "verify_connection": "Verifique sua conexão com a internet",
     "reconnect": "Reconectar"
   },
   "video_player": {
     "speed": "Velocidade"
   },
   "media": "Mídia",
-  "medias": "Mídias",
+  "medias": "Mídia",
   "audio": "Áudio",
   "audios": "Áudios",
   "docs": "Documentos",
   "download": "Baixar",
-  "text_editor_placeholder": "Digite uma mensagem ou use um /atalho",
+  "text_editor_placeholder": "Digite uma nova mensagem ou use um /atalho",
   "title": "Título",
   "shortcut": "Atalho",
   "message": "Mensagem",
@@ -790,36 +794,36 @@
   "save_changes": "Salvar alterações",
   "create": "Criar",
   "use": "Usar",
-  "delete_sector": "Deletar setor",
+  "delete_sector": "Excluir setor",
   "delete_queue": "Excluir fila",
   "delete_queue_modal": {
     "text": "Excluir a fila {queue}",
-    "description": "A fila {queue} será permanentemente excluída"
+    "description": "A fila {queue} será excluída permanentemente"
   },
   "delete_sector_modal": {
     "text": "Digite o nome do setor a excluir"
   },
   "cant_revert": "Essa opção não poderá ser revertida",
   "confirm_typing": "Confirme digitando",
-  "sector_deleted_success": "Setor deletado com sucesso!",
-  "sector_delete_error": "Não foi possível deletar o setor, tente novamente mais tarde.",
+  "sector_deleted_success": "Setor excluído com sucesso",
+  "sector_delete_error": "Erro ao excluir setor. Tente novamente mais tarde.",
   "edit": "Editar",
   "exclude": "Excluir",
   "delete": "Excluir",
-  "search_or_select": "Pesquise ou selecione",
-  "successfully_transferred_chat": "Conversa transferida com sucesso!",
+  "search_or_select": "Buscar ou selecionar",
+  "successfully_transferred_chat": "Chat transferido com sucesso",
   "successfully_transferred_contact_to": {
     "line": "O contato foi encaminhado para a fila {name}"
   },
-  "select_agent": "Selecionar agente",
+  "select_agent": "Selecionar atendente",
   "select_queue": "Selecionar fila",
-  "select_sector": "Selecione setor",
+  "select_sector": "Selecionar setor",
   "send_media": "Enviar mídia",
   "send_photo_or_video": "Enviar foto ou vídeo",
   "photo_or_video": "Foto ou vídeo",
   "send_docs": "Enviar documento | Enviar documento | Enviar documentos",
   "doc": "Documento",
-  "send_images": "Enviar imagem | Enviar imagens",
+  "send_images": "Enviar documento | Enviar documento | Enviar documentos",
   "quick_message": "Mensagens rápidas",
   "flows": "Fluxos",
   "flows_trigger": {
@@ -827,7 +831,7 @@
     "triggered_flows": {
       "title": "Fluxos disparados",
       "single": "Fluxo disparado",
-      "trigger_time": "Hora do disparo"
+      "trigger_time": "Tempo para o disparo"
     },
     "groups": "Grupos ({length})",
     "group_contacts": "{n} contato | {n} contatos",
@@ -841,9 +845,9 @@
       "contact_name": "Nome do contato"
     },
     "already_open_room": {
-      "open": "{contact} já possui um chat",
-      "with_agent": "em andamento com agente {agent} na fila {queue}",
-      "in_queue_awaiting": "aguardando na fila {queue}"
+      "open": "{contact} já tem um chat",
+      "with_agent": "Já está em atendimento com {agent} na fila {queue}",
+      "in_queue_awaiting": "Na fila {queue}"
     },
     "send": "Enviar fluxo",
     "select": "Selecionar fluxo",
@@ -852,7 +856,7 @@
     "successfully_triggered": "Fluxo disparado com sucesso",
     "error_triggering": "Erro ao disparar fluxo",
     "successfully_add_contact": "Contato adicionado com sucesso",
-    "contact_already_exists": "O número {contact} já está salvo em sua lista de contatos",
+    "contact_already_exists": "O número {contact} já está salvo na sua lista de contatos",
     "variable_mapping": {
       "title": "Mapeamento de variáveis",
       "description": "As variáveis serão preenchidas na pré-visualização abaixo usando valores dos contatos selecionados sempre que fizerem referência a campos do contato",
@@ -869,20 +873,21 @@
         "agent_name": "Nome do atendente",
         "agent_email": "E-mail do atendente"
       }
-    }
+    },
+    "subtitle": "Contatos de {project}"
   },
   "quick_messages": {
     "title": "Mensagens rápidas",
-    "title_by_sector": "Mensagens rápidas em {sector}",
-    "without_personal_messages": "Você ainda não adicionou nenhuma mensagem rápida. Clique no botão <i>+ Mensagem</i> e adicione sua primeira mensagem.",
-    "without_messages_shared": "Não há mensagens rápidas compartilhadas para você usar.",
+    "title_by_sector": "Mensagens rápidas para {sector}",
+    "without_personal_messages": "Nenhuma mensagem rápida adicionada ainda. Clique em <i>+ Mensagem</i> para adicionar uma.",
+    "without_messages_shared": "Nenhuma mensagem rápida compartilhada disponível",
     "example_message": "Mensagem de exemplo",
     "example_message_description": "As mensagens rápidas são textos prontos que ajudam a padronizar o atendimento. Todos os atendentes deste setor poderão usar essas mensagens. Crie novas mensagens ou edite-as quando quiser com o setor criado.",
     "personal": "Suas mensagens",
     "shared": "Mensagens compartilhadas",
-    "delete": "Deletar mensagem rápida",
-    "delete_your_quick_message": "Deletar sua mensagem rápida",
-    "delete_confirm": "Você tem certeza que deseja excluir resposta rápida?",
+    "delete": "Excluir mensagem rápida",
+    "delete_your_quick_message": "Excluir sua mensagem rápida",
+    "delete_confirm": "Tem certeza de que deseja excluir a mensagem rápida?",
     "delete_or_edit": "Excluir ou editar",
     "delete_description": "Digite o atalho da mensagem rápida a excluir",
     "shortcut_tooltip": "Digite /{shortcut} para usar",
@@ -891,10 +896,10 @@
     "add": "Adicionar nova mensagem rápida",
     "edit": "Editar /{shortcut}",
     "available_shortcuts": "Atalhos disponíveis",
-    "copilot": "Agora o ChatGPT é seu CoPiloto! Utilize as respostas sugeridas pela Inteligência artificial para agilizar seus atendimentos!",
-    "title_field_placeholder": "Ex: Boas vindas",
-    "shortcut_field_placeholder": "Ex: Oi",
-    "message_field_placeholder": "Exemplo: Olá, como posso ajudar você hoje? Continuarei ajudando você hoje.",
+    "copilot": "O ChatGPT agora é seu copiloto. Use sugestões de IA para responder mais rápido.",
+    "title_field_placeholder": "Exemplo: Boas-vindas",
+    "shortcut_field_placeholder": "Exemplo: Oi!",
+    "message_field_placeholder": "Exemplo: Oi, tudo bem? No que posso te ajudar hoje?",
     "successfully_added": "Mensagem rápida adicionada",
     "successfully_updated": "Mensagem rápida atualizada",
     "successfully_deleted": "Mensagem rápida excluída com sucesso",
@@ -903,24 +908,24 @@
     "no_suggestions": "Nenhum resultado encontrado para o atalho digitado.",
     "disclaimer": "Digite o atalho / (barra) no campo de mensagem do chat para ativar a exibição de mensagens rápidas."
   },
-  "discard": "Descartar",
+  "discard": "Excluir",
   "on_boarding": {
-    "title": "Começando a usar o Live desk",
-    "title_sector": "Configure sua equipe de atendimento!",
-    "description_sector": "Crie um setor para gerenciar uma equipe de atendimento, é possível criar quantos setores você quiser, assim consegue gerenciar seus grupos de atendimentos por departamentos, produtos ou serviços.",
+    "title": "Primeiros passos com Live Desk",
+    "title_sector": "Configure sua equipe de suporte",
+    "description_sector": "Crie um setor para gerenciar uma equipe de suporte. Crie quantos setores forem necessários para gerenciar grupos de suporte por área, produto ou serviço.",
     "title_queues": "Filas",
-    "description_queues": "Utilize filas para segmentar seus atendimentos por assuntos ou produtos, caso não desejar, basta criar somente uma fila.",
+    "description_queues": "Use filas para segmentar chats por assunto ou produto. Se não for preciso, crie apenas uma fila.",
     "title_tags": "Tags",
-    "description_tags": "Crie tags para classificar os chats, as tags podem ser utilizadas para gerar relatórios, filtrar atendimentos no histórico e muito mais!",
-    "tooltip": "O Live desk é o módulo de atendimento humano da Weni, confira o passo a passo para começar a usar"
+    "description_tags": "Crie tags para classificar os chats. Você pode usá-las para gerar relatórios, filtrar histórico de chamadas, entre outros.",
+    "tooltip": "Live Desk é o módulo de atendimento humano da plataforma VTEX CX Platform. Veja o passo a passo para começar."
   },
   "status_agent": "Você está",
   "copilot": {
-    "name": "CoPiloto",
-    "loading": "O CoPiloto está digitando",
-    "error": "O CoPiloto não está respondendo",
-    "try_again": "Tente novamente em alguns instantes, caso persista avise ao administrador do projeto.",
-    "suggestion": "Resposta sugerida pelo CoPiloto"
+    "name": "Copilot",
+    "loading": "Copilot está digitando",
+    "error": "Copilot não está respondendo",
+    "try_again": "Tente novamente em alguns instantes. Se o problema persistir, notifique o administrador do projeto.",
+    "suggestion": "Resposta sugerida pelo Copilot"
   },
   "settings": {
     "messages": {
@@ -931,17 +936,17 @@
           "off": "Inativo"
         },
         "custom_rules": {
-          "title": "Regras do CoPiloto",
+          "title": "Regras do Copilot",
           "status": {
-            "on": "Utilizar regras personalizadas",
-            "off": "Não utilizar regras personalizadas"
+            "on": "Usar regras personalizadas",
+            "off": "Não usar regras personalizadas"
           },
-          "explanation": "Escreva aqui instruções para o CoPiloto como por exemplo “utilize um emoji em resposta”"
+          "explanation": "Escreva aqui o passo a passo do Copilot. Exemplo: \"Peça esclarecimentos quando necessário\"."
         },
         "integration": {
-          "start": "Para usar, faça integração com o ChatGPT ",
-          "middle": "clicando aqui, ",
-          "end": "o CoPiloto oferece respostas prontas baseadas no histórico de atendimento do contato."
+          "start": "Para usar, faça a integração com o ChatGPT ",
+          "middle": "clicando aqui. ",
+          "end": "O Copilot sugere respostas rápidas com base no histórico de atendimento do contato."
         }
       }
     }
@@ -967,8 +972,8 @@
         "name": "Novo status",
         "placeholder": "Exemplo: Almoço"
       },
-      "status_exceeded_limit": "Limite de status atingido, excluir para adicionar novo status",
-      "status_duplicate_name": "Status já informado",
+      "status_exceeded_limit": "Limite de status atingido. Exclua um status existente para adicionar um novo.",
+      "status_duplicate_name": "Este status já existe",
       "status_success": "Status adicionado com sucesso",
       "status_remove_success": "Status {status} removido",
       "status_error": "Ops, infelizmente as alterações não foram salvas, tente novamente",
@@ -980,8 +985,8 @@
         "title": "Excluir pausa personalizada"
       }
     },
-    "changes_saved": "Alterações salvas com sucesso!",
-    "changes_not_saved": "Não foi possível salvar as alterações. Tente novamente.",
+    "changes_saved": "Alterações salvas com sucesso",
+    "changes_not_saved": "Erro ao salvar alterações. Tente novamente.",
     "project_configs": {
       "title": "Definições",
       "ai_transfer": {
@@ -1005,12 +1010,12 @@
         "switch_inactive": "Bloquear transferência de chats para atendentes offline"
       },
       "bulk_close": {
-        "switch_active": "Finalizar chats em massa",
-        "switch_inactive": "Finalizar chats em massa"
+        "switch_active": "Encerrar chats em massa",
+        "switch_inactive": "Encerrar chats em massa"
       },
       "block_close_chats_in_queue": {
-        "switch_active": "Bloquear a finalização de chats que estão na fila",
-        "switch_inactive": "Bloquear a finalização de chats que estão na fila"
+        "switch_active": "Bloquear encerramento de chats na fila",
+        "switch_inactive": "Bloquear encerramento de chats na fila"
       },
       "bulk_take": {
         "switch_active": "Assumir chats em massa",
@@ -1021,11 +1026,11 @@
         "hint": "Se ativa, o recurso fica visível apenas para atendentes no módulo Live Desk"
       },
       "show_agent_status_count_timer": {
-        "switch_active": "Exibir temporizador de status em pausas personalizadas do atendente",
-        "switch_inactive": "Exibir temporizador de status em pausas personalizadas do atendente"
+        "switch_active": "Mostrar temporizador de status para intervalos personalizados",
+        "switch_inactive": "Mostrar temporizador de status para intervalos personalizados"
       },
       "show_waiting_rooms_count": {
-        "switch_label": "Exibir o contador com o número de chats esperando atendimento humano"
+        "switch_label": "Mostrar contador com o número de chats aguardando atendimento humano"
       },
       "use_name_sector_in_rooms": {
         "switch_label": "Mostrar setor do chat na lista de conversas",
@@ -1034,13 +1039,13 @@
     },
     "custom_sector": "Personalizar novo setor (recomendado)",
     "default_sector": {
-      "title": "Criar setor padrão (mais rápido)",
+      "title": "Criar um setor padrão (mais rápido)",
       "name": "Setor padrão"
     },
     "edit_sector": {
-      "description": "Determine configurações gerais da equipe e jornada de trabalho",
-      "tag_already_exists": "Já existe uma tag com esse nome",
-      "invalid_hours": "Horário de início não pode ser maior/igual que horário final",
+      "description": "Definir configurações gerais da equipe e dias úteis",
+      "tag_already_exists": "Este nome de tag já existe",
+      "invalid_hours": "O horário de início não pode ser maior ou igual ao horário de término",
       "invalid_start_second_hour": "O horário de início do segundo período deve ser maior ou igual ao horário de término do primeiro período."
     },
     "custom_queue": "Criar uma fila personalizada (recomendado)",
@@ -1074,11 +1079,11 @@
       "message": {
         "create": "Fila criada com sucesso",
         "update": "Fila atualizada com sucesso",
-        "error": "Falha ao definir configurações da fila",
+        "error": "Erro ao configurar as configurações da fila",
         "delete_success": "Fila excluída com sucesso",
-        "delete_error": "Falha ao excluir a fila",
-        "add_new_queue": "Esta nova fila será adicionada para todos os agentes. Você poderá removê-la acessando <b>Configurações do Chat > Grupos > Agentes</b>",
-        "config_agents_group": "Adicione ou remova atendentes a esta fila através dos grupos de projetos acessando <b>Configurações do Chat > Grupos de projetos</b>"
+        "delete_error": "Erro ao excluir fila",
+        "add_new_queue": "Esta nova fila será adicionada para todos os atendentes. Você pode removê-la em <b>Configurações do Live Desk > Grupos > Atendentes</b>.",
+        "config_agents_group": "Adicione ou remova representantes desta fila em <b>Configurações do chat > Grupos do projeto</b>"
       }
     },
     "quick_messages": {
@@ -1097,19 +1102,19 @@
     },
     "groups": {
       "new": {
-        "title": "Novo grupo de projetos"
+        "title": "Novo grupo de projeto"
       },
       "general_form": {
-        "title": "Definições gerais",
-        "service_managers": "Gerentes",
+        "title": "Configurações gerais",
+        "service_managers": "Gerentes de serviço",
         "field": {
           "name": {
             "label": "Nome do grupo",
-            "placeholder": "Exemplo: Vendas"
+            "placeholder": "Ex.: Vendas"
           },
           "manager": {
             "label": "Adicionar gerentes",
-            "placeholder": "Buscar pelo nome ou e-mail"
+            "placeholder": "Buscar por nome ou email"
           }
         }
       },
@@ -1118,44 +1123,44 @@
         "field": {
           "project": {
             "label": "Adicionar projeto",
-            "placeholder": "Buscar pelo nome do projeto"
+            "placeholder": "Buscar por nome do projeto"
           }
         },
         "message": {
-          "has_group_sector": "Não é possível adicionar o projeto {sectorName}. Este projeto já está sendo utilizado em outro grupo."
+          "has_group_sector": "Erro ao adicionar projeto {sectorName}. Este projeto já está sendo usado em outro grupo."
         }
       },
       "agents_form": {
-        "title": "Adicionar agentes",
+        "title": "Adicionar atendentes",
         "field": {
           "agents": {
-            "label": "Adicionar agente",
-            "placeholder": "Buscar pelo nome ou e-mail"
+            "label": "Adicionar atendente",
+            "placeholder": "Buscar por nome ou email"
           }
         },
-        "define_queues": "Defina quais filas {agentName} atenderá."
+        "define_queues": "Defina quais filas {agentName} irá atender"
       },
       "general": "Geral",
       "projects": "Projetos",
-      "agents": "Agentes",
+      "agents": "Atendentes",
       "delete_or_edit": "Excluir ou editar",
       "discart": {
         "title": "Descartar alterações",
-        "text": "A criação do novo grupo será descartada ao confirmar essa ação, deseja descartar as alterações feitas até agora?"
+        "text": "Se você continuar, o novo grupo será descartado. Deseja descartar suas alterações?"
       },
-      "create_success": "Novo grupo {groupName} criado!",
-      "create_error": "Falha ao configurar algumas etapas do grupo! Verifique os detalhes e tente novamente caso identifique alguma configuração faltante.",
-      "update_success": "Grupo atualizado com sucesso!",
-      "update_error": "Tivemos problemas em atualizar alguns dados. Verifique as informações e tente novamente caso falte alguma.",
+      "create_success": "Novo grupo {groupName} criado com sucesso",
+      "create_error": "Não foi possível configurar algumas etapas no grupo. Verifique os detalhes e tente novamente se identificar que está faltando alguma configuração.",
+      "update_success": "Grupo atualizado com sucesso",
+      "update_error": "Erro ao atualizar dados. Verifique as informações e tente novamente.",
       "delete": {
-        "title": "Deletar {groupName}",
-        "notice": "Esta ação será irreversível. Para confirmar a ação, digite o nome do grupo",
-        "success": "Grupo {groupName} excluído com sucesso!",
-        "error": "Falha ao excluir o grupo. Por favor, tente novamente."
+        "title": "Excluir {groupName}",
+        "notice": "Esta ação não poderá ser desfeita. Para confirmar a ação, informe o nome do grupo.",
+        "success": "Grupo {groupName} excluído com sucesso",
+        "error": "Erro ao excluir grupo. Tente novamente."
       }
     },
     "copilot": {
-      "hint": "O Co-pilot é o assistente inteligente do seu agente, ele poderá ser ativo mais tarde."
+      "hint": "O Copilot é o seu assistente inteligente. Você pode ativá-lo mais tarde."
     },
     "representatives": {
       "title": "Gestão de Atendentes",
@@ -1223,7 +1228,7 @@
     },
     "new_sector": "Novo setor",
     "new_group": "Novo grupo",
-    "agent_title": "Agentes",
+    "agent_title": "Atendentes",
     "contacts": "Contatos",
     "open": "Abrir",
     "empty_sectors": {
@@ -1243,97 +1248,97 @@
     "tags_tip": "As tags são usadas para classificar características do atendimento e possibilitar a pesquisa de filtragem dos chats a partir delas, defina tags que sejam relevantes para o seu contexto.",
     "agent_tip": "Adicione membros no seu projeto para poder definir como gerente",
     "alert": {
-      "create_success": "Novo setor {sectorName} criado!",
-      "create_error": "Falha ao configurar algumas etapas do setor! Verifique os detalhes e tente novamente caso identifique alguma configuração faltante"
+      "create_success": "Novo setor {sectorName} criado com sucesso",
+      "create_error": "Não foi possível configurar algumas etapas no setor. Verifique os detalhes e tente novamente se identificar que está faltando alguma configuração."
     },
     "discart": {
       "title": "Descartar alterações",
-      "hint": "A criação do novo setor será descartada ao confirmar essa ação, deseja descartar as alterações feitas até agora?"
+      "hint": "Se continuar, o novo setor será descartado. Deseja descartar suas alterações?"
     }
   },
   "your_orgs": "Suas organizações",
   "your_projects": "Seus projetos",
   "inteligences": "Inteligências",
-  "enter": "Entrar",
-  "no_matches_for_the_search": "Não há correspondências para a pesquisa",
+  "enter": "Inserir",
+  "no_matches_for_the_search": "Nenhum resultado para a busca",
   "select_org": {
-    "choose_one": "Escolha uma para acessar o Weni Live Desk"
+    "choose_one": "Escolha uma para acessar o VTEX Agentic CX Platform Live Desk"
   },
   "select_project": {
-    "choose_one": "Escolha um para acessar o Weni Live Desk"
+    "choose_one": "Escolha um para acessar o VTEX Agentic CX Platform Live Desk"
   },
   "discart": "Descartar",
   "confirmation": "Confirmação",
   "order_by": {
     "label": "Ordenar por",
     "option": {
-      "alphabetical": "Alfabética",
-      "newer": "Mais recente",
-      "older": "Mais antigo"
+      "alphabetical": "Ordem alfabética",
+      "newer": "Mais recentes",
+      "older": "Mais antigos"
     }
   },
   "socket_alert_banner": {
     "closed": {
-      "title": "Você está desconectado. Por favor, ",
-      "refresh": "atualize",
-      "to_continue": " para continuar atendendo."
+      "title": "Você está desconectado. ",
+      "refresh": "Atualize",
+      "to_continue": " para continuar com o suporte."
     },
     "connecting": "Carregando...",
-    "connected": "Atualização concluída com sucesso! Você pode continuar seu atendimento."
+    "connected": "Atualização concluída com sucesso. Agora você pode continuar com o suporte."
   },
   "offline_agent_modal": {
-    "title": "Você está offline!",
-    "description": "Seu status foi alterado para offline por {username}. Para voltar a atender, altere seu status para online."
+    "title": "Você está offline",
+    "description": "Seu status foi alterado para offline por {username}. Para voltar ao suporte, mude seu status para online."
   },
   "feedback_modal": {
-    "title": "Ajude-nos a melhorar!",
-    "feedback_question": "Com está sendo usar o Weni Live Desk?",
-    "problem_question": "O que atrapalha ou dificulta o uso do Weni Live Desk?",
-    "improvement_question": "O que poderíamos melhorar para que o uso do Weni Live Desk seja ainda melhor para você?",
+    "title": "Ajude-nos a melhorar sua experiência",
+    "feedback_question": "Como está sendo sua experiência com o VTEX Agentic CX Platform Live Desk?",
+    "problem_question": "Quais foram os principais desafios ou dificuldades que você encontrou ao usar o VTEX Agentic CX Platform Live Desk?",
+    "improvement_question": "O que poderíamos melhorar para tornar sua experiência com a VTEX Agentic CX Platform Live Desk ainda melhor?",
     "submit": "Enviar",
     "cancel": "Agora não",
     "feedback_options": {
-      "positive": "Bom",
+      "positive": "Boa",
       "negative": "Ruim",
-      "neutral": "Neutro"
+      "neutral": "Neutra"
     },
-    "placeholder_feedback": "Compartilhe sua experiência aqui",
-    "default_error_message": "Ocorreu um erro ao enviar o feedback, tente novamente mais tarde!"
+    "placeholder_feedback": "Deixe um comentário sobre sua experiência",
+    "default_error_message": "Ocorreu um erro ao enviar o feedback. Tente novamente mais tarde."
   },
   "delete_internal_note": {
-    "title": "Deletar nota interna",
-    "description": "Tem certeza que deseja deletar a nota interna?",
+    "title": "Excluir observação interna",
+    "description": "Tem certeza de que deseja excluir a observação interna?",
     "message": {
       "delete": {
-        "success": "Nota interna deletada com sucesso",
-        "error": "Falha ao deletar a nota interna"
+        "success": "Observação interna excluída com sucesso",
+        "error": "Erro ao excluir observação interna"
       }
     }
   },
   "new_feature_internal_note": {
-    "title": "Nova funcionalidade: Notas internas",
-    "description": "Temos uma nova funcionalidade disponível para você testar. Deseja testar agora?",
+    "title": "Nova funcionalidade: observações internas",
+    "description": "Temos uma nova funcionalidade disponível para você experimentar. Gostaria de testá-la agora?",
     "steps": {
       "title": "Como funciona?",
-      "step_1": "<b>Adicionar uma nota:</b> clique no [+] ao lado do campo de texto (quando estiver vazio) e selecione 'Nota interna'.",
-      "step_2": "<b>Escreva e envie:</b> com o campo de nota interna ativo, escreva sua anotação. Quando você clicar em Enviar, a nota aparecerá no timeline com destaque e data.",
-      "step_3": "<b>Onde encontrar:</b> as notas serão visíveis no histórico de conversa e informações do contato, dentro da nova aba 'Nota'. Não se preocupe, elas nunca são enviadas para o cliente!",
-      "step_4": "<b>Deletar notas:</b> você pode deletar suas notas enquanto o suporte ainda está atribuído a você.",
-      "step_5": "<b>Transferência de room:</b> se outro agente assumir o room, eles serão informados sobre a existência de notas internas."
+      "step_1": "<b>Adicione uma nota:</b> clique no [+] ao lado do campo de texto (quando vazio) e selecione \"Observação interna\".",
+      "step_2": "<b>Escreva e envie:</b> com o campo de nota interna ativo, escreva sua observação. Ao clicar em Enviar, a observação será destacada na linha do tempo com indicação de data e hora.",
+      "step_3": "<b>Onde encontrar:</b> as observações ficarão visíveis no histórico da conversa e nas informações do contato, dentro da nova aba \"Nota\". Não se preocupe, elas nunca são enviadas ao cliente.",
+      "step_4": "<b>Excluir notas:</b> você pode excluir suas observações enquanto a sala de suporte ainda estiver atribuída a você.",
+      "step_5": "<b>Transferência da sala:</b> se outro atendente assumir a sala, ele será informado sobre as observações internas."
     }
   },
   "new_contact_info_visual": {
     "content_1": {
-      "text_1": "Fizemos alguns ajustes para ajudar você a navegar mais rápido! Confira:",
-      "text_2": "As opções <b>Ver histórico</b> foram movidas do drawer lateral para o menu superior da conversa."
+      "text_1": "Fizemos algumas mudanças para ajudar você a navegar mais rápido. Confira:",
+      "text_2": "As opções de <b>Ver histórico</b> agora estão no menu superior do chat"
     },
     "content_2": {
-      "text_1": "As opções <b>Transferir contato</b> foram movidas do drawer lateral para o menu superior da conversa."
+      "text_1": "As opções de <b>Ver histórico</b> agora estão no menu superior do chat"
     },
     "content_3": {
-      "text_1": "Para tornar o drawer de informações mais organizado e fácil de usar, fizemos algumas melhorias. A informação agora está dividida em <b>Sobre o contato</b> e <b>Sobre o serviço</b>.",
-      "text_2": "Além disso, os <b>campos personalizados</b> agora podem ser expandidos e recolhidos, para que você possa ver o que realmente importa sem ter que rolar.",
-      "text_3": "E para tornar a interface mais limpa, mudamos o visual do botão <b>Iniciar discussão</b>."
+      "text_1": "Para tornar o painel de informações mais organizado e fácil de usar, as informações agora estão divididas em <b>Sobre o contato</b> e <b>Sobre o serviço</b>.",
+      "text_2": "Além disso, os <b>campos customizáveis</b> agora podem ser vistos de forma agrupada ou expandida, para que você possa focar no que mais importa sem precisar rolar a página.",
+      "text_3": "Para deixar a interface mais limpa, atualizamos a aparência do botão <b>Iniciar conversa</b>."
     }
   },
   "modal_confirm_delete": {

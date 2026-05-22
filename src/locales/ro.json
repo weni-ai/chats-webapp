@@ -16,6 +16,10 @@
   "chats": {
     "assigned_queues": "Cozi atribuite",
     "define_the_queues": "Definește cozile",
+    "disable_modal": {
+      "description": "Dezactivarea acestei opțiuni va șterge definitiv scenariile și mesajele pentru criterii. Va trebui să o configurezi din nou dacă reactivezi mesajele.",
+      "confirmation": "Vrei să continui oricum?"
+    },
     "error_update_queues": "Nu s-au putut actualiza cozile de serviciu",
     "feedback": {
       "transfer_to_agent": "{agent1} a transferat conversația către {agent2}",
@@ -28,5 +32,400 @@
     "select_services_queues": "Setează cozile pentru a primi chat-uri",
     "select_your_queues": "Selectează cozile tale",
     "success_update_queues": "Cozile tale de serviciu au fost actualizate"
-  }
+  },
+  "chats_count": "{count} chat | {count} chaturi",
+  "filter": {
+    "label": "Filtrare",
+    "by_queue": "Filtrează după coadă",
+    "empty_tags": "Nu există etichete disponibile",
+    "by_tag": "Filtrează după etichetă",
+    "by_tags": "Filtrează după etichete",
+    "by_agent": "Filtrează după reprezentant",
+    "by_date": "Filtrează după @.lower:dată",
+    "clear_all": "Elimină filtrele",
+    "dates": {
+      "today": "Astăzi",
+      "yesterday": "Ieri",
+      "last_7_days": "Ultimele 7 zile",
+      "last_14_days": "Ultimele 14 zile",
+      "last_30_days": "Ultimele 30 zile",
+      "last_45_days": "Ultimele 45 de zile",
+      "last_90_days": "Ultimele 90 de zile",
+      "current_month": "Luna curentă",
+      "last_12_months": "Ultimele 12 luni"
+    }
+  },
+  "queues": {
+    "search": "Caută în coadă",
+    "title": "Cozi",
+    "create_queue": "Creează o coadă nouă",
+    "queue_name": "Denumire coadă",
+    "queue_name_placeholder": "Exemplu: Plăți",
+    "queue_title": "Cozi în",
+    "queue_table_name": "Denumire",
+    "quantity_agents": "Numărul de reprezentanți"
+  },
+  "room_card": {
+    "last_message": {
+      "you_prefix": "Tu"
+    },
+    "pending_response": {
+      "tooltip": "Nu ai răspuns acestui contact"
+    }
+  },
+  "without_chats": {
+    "filtered": "Niciun chat {roomType} găsit în cozile filtrate. Elimină filtrul pentru a vedea toate chaturile.",
+    "in_progress": "Gata! Vei fi notificat când sunt atribuite noi chaturi, care vor apărea în această listă.",
+    "waiting": "Coada a fost golită! Toate contactele sunt acum atribuite reprezentanților."
+  },
+  "home": {
+    "title": "Salut!",
+    "description": "Selectează un chat pentru a începe"
+  },
+  "news_and_updates": "Știri și actualizări în Live Desk",
+  "custom": "Personalizare",
+  "country": {
+    "label": "Țară",
+    "BR": "Brazilia",
+    "US": "Statele Unite ale Americii",
+    "AR": "Argentina",
+    "ES": "Spania"
+  },
+  "week_days": {
+    "monday": {
+      "full": "Luni",
+      "short": "Lun"
+    },
+    "tuesday": {
+      "full": "Marți",
+      "short": "Mar"
+    },
+    "wednesday": {
+      "full": "Miercuri",
+      "short": "Mie"
+    },
+    "thursday": {
+      "full": "Joi",
+      "short": "Joi"
+    },
+    "friday": {
+      "full": "Vineri",
+      "short": "Vin"
+    },
+    "saturday": {
+      "full": "Sâmbătă",
+      "short": "Sâm"
+    },
+    "sunday": {
+      "full": "Duminică",
+      "short": "Dum"
+    }
+  },
+  "country_holidays": {
+    "title": "Sărbători legale în {country}",
+    "description": "Dacă este necesar, poți dezactiva sărbătorile legale individuale pentru a le trata ca zile lucrătoare.",
+    "message": {
+      "error": "Eroare la actualizarea sărbătorilor legale ale țării. Încearcă din nou.",
+      "success": "Sărbători legale din țară actualizate cu succes"
+    }
+  },
+  "custom_holidays": {
+    "title": "Date personalizate nelucrătoare",
+    "description": "Dacă este necesar, poți șterge datele sau perioadele pentru a le trata ca zile lucrătoare.",
+    "disclaimer": "Ștergerea datelor sau a perioadelor nu poate fi anulată. Fă click pe „Salvare” pentru a confirma.",
+    "message": {
+      "save": {
+        "error": "Eroare la ștergerea datelor nelucrătoare. Încearcă din nou.",
+        "success": "Datele nelucrătoare au fost șterse cu succes"
+      }
+    }
+  },
+  "status": {
+    "online": "Online",
+    "offline": "Offline",
+    "set_status": "Setează starea"
+  },
+  "status-bar": {
+    "success": "Starea a fost actualizată la {status}",
+    "error": "Actualizarea stării nu a reușit. Încearcă din nou."
+  },
+  "view-option": "Vizualizare opțiuni",
+  "preferences": {
+    "title": "Preferințe",
+    "notifications": {
+      "title": "Notificări",
+      "sound": "Sunet"
+    },
+    "help": {
+      "label": "Ajutor",
+      "title": "Meniu Ajutor",
+      "nilo": {
+        "active": "Nile activ",
+        "disabled": "Nile dezactivat"
+      }
+    }
+  },
+  "upload_area": {
+    "title": {
+      "text": "Pune aici fișierul tău sau",
+      "highlight": "caută-l"
+    },
+    "invalid": {
+      "text": "Încearcă din nou",
+      "highlight": "Fișier nevalid",
+      "subtitle": "Acest tip de fișier nu este acceptat"
+    },
+    "subtitle": "Formate acceptate: {exampleExtensions} și altele"
+  },
+  "dropzone": {
+    "description": "Trage fișierul aici pentru a-l trimite"
+  },
+  "waiting_for": {
+    "minutes": "1 minut de așteptare | {n} minute de așteptare"
+  },
+  "chat_message": {
+    "reply_message": {
+      "you": "Tu",
+      "video": "Video",
+      "image": "Imagine",
+      "audio": "Mesaj audio"
+    }
+  },
+  "start": "Inițiere",
+  "submit": "Trimite",
+  "details": "Detalii",
+  "doubts": "Întrebări",
+  "finance": "Finanțe",
+  "chats_in_the_period": "Chaturi în perioada",
+  "chats_per_agents": "Chaturi per reprezentant",
+  "new_messages_song": {
+    "queue": "Sunet de notificare pentru mesajele noi din coadă",
+    "in_progress": "Sunet de notificare pentru mesaje noi în chaturi active",
+    "actions": "Sunet de confirmare a acțiunii"
+  },
+  "automatic_message": {
+    "title": "Mesaj automat",
+    "info": "Definește un răspuns automat pentru contactele care așteaptă asistență. Lasă câmpul necompletat dacă nu vrei niciun mesaj.",
+    "placeholder": "Nu ai setat încă un mesaj automat. Adaugă unul pentru contactele care așteaptă în coadă."
+  },
+  "attention": "Avertisment",
+  "updates_saved": "Actualizări salvate",
+  "updated_info": "Informații actualizate",
+  "active_chats": "Chaturi active",
+  "active_chats_tooltip": "Numărul de chaturi active",
+  "since": "De la",
+  "date_format": "DD/MM/YYYY",
+  "live": "Live",
+  "number_chats": "Total chaturi",
+  "language": "Limbă",
+  "search": "Căutare",
+  "date_format_variable": "{day}/{month}/{year}",
+  "undo": "Anulare",
+  "redo": "Refacere",
+  "record_audio": "Înregistrează audio",
+  "select_all": "Selectează toate chaturile",
+  "deselect_all": "Deselectează toate chaturile",
+  "select_this_chat": "Selectează acest chat",
+  "deselect_this_chat": "Deselectează acest chat",
+  "transfer_all_selected_chats": "Transferă toate chaturile selectate",
+  "take_over_all_selected_chats_tooltip": "Preia toate chaturile selectate",
+  "end_all_selected_chats_tooltip": "Închide toate chaturile selectate",
+  "number_of_chats_selected": "{count} chat selectat | {count} chaturi selectate",
+  "image": "Imagine",
+  "video": "Video",
+  "audio_message": "Mesaj audio",
+  "audio_recorder": {
+    "discard_button": "Elimină"
+  },
+  "attachment": "Atașează",
+  "internal_note": "Notă internă",
+  "notes": "Notițe",
+  "bold": "Bold",
+  "italic": "Italic",
+  "underline": "Underline",
+  "list": "Listează",
+  "left": "Stânga",
+  "right": "Dreapta",
+  "center": "Centru",
+  "justify": "Aliniere stânga-dreapta",
+  "without_results": "Fără rezultate potrivite",
+  "other": "Altele",
+  "select_smart": {
+    "without_results": "Nu s-a găsit niciun rezultat",
+    "without_multiple_selected": "Nu s-au selectat opțiuni"
+  },
+  "agents_online": "Reprezentanți online",
+  "sectors": "Departamente",
+  "sector": {
+    "title": "Departament",
+    "general": "General",
+    "extra_options": "Opțiuni suplimentare",
+    "queues": "Cozi",
+    "tags": "Etichete",
+    "add": "Detalii despre departament",
+    "add_queue": "Adaugă coadă nouă",
+    "name": "Denumire departamentului",
+    "placeholder": "Exemplu: Financiar",
+    "save_and_continue": "Salvare și continuare",
+    "link": {
+      "title": "Link",
+      "label": "Link către proiectul existent",
+      "editing_disclaimer": "Poți edita proiectul asociat. Pentru a edita linkul, trebuie să creezi un departament nou și să selectezi proiectul dorit.",
+      "has_linked_project": "Proiectul selectat este deja asociat cu un alt departament. Selectează un alt proiect pentru a continua.",
+      "project_placeholder": "Căutare după numele proiectului"
+    },
+    "managers": {
+      "title": "Manageri de servicii",
+      "add": {
+        "label": "Adaugă manager",
+        "placeholder": "Caută după nume sau e-mail"
+      },
+      "working_day": {
+        "title": "Zile lucrătoare",
+        "copy_workday": "Copiază setările zilei lucrătoare dintr-un departament existent",
+        "select_days": "Selectează zilele săptămânii",
+        "set_hours": "Setează orele de lucru pentru fiecare zi",
+        "add_holidays": "Adaugă sărbători legale și date specifice nelucrătoare",
+        "add_non_working_dates": "Adaugă date specifice nelucrătoare",
+        "select_date_or_period": "Alege o dată sau o perioadă",
+        "repeat_annually": "Se repetă anual",
+        "add_more_dates_or_periods": "Adaugă mai multe date sau perioade",
+        "see_all_holidays": "Vezi toate sărbătorile legale",
+        "add_specific_dates": "Adaugă date specifice",
+        "see_all_specific_dates": "Vezi toate datele specifice",
+        "select_sector_to_copy": "Selectează departamentul de copiat",
+        "copy_to_all": "Copiază la toate",
+        "start": {
+          "label": "Ora de începere"
+        },
+        "end": {
+          "label": "Ora de finalizare"
+        },
+        "limit_agents": {
+          "label": "Definește numărul maxim de apeluri simultane per reprezentant"
+        },
+        "message": {
+          "create_custom_holiday": {
+            "error": "Nu s-au putut adăuga unele date nelucrătoare. Revizuiește-le şi încearcă din nou.",
+            "success": "Date nelucrătoare adăugate cu succes"
+          }
+        }
+      }
+    },
+    "additional_options": {
+      "title": "Opțiuni suplimentare",
+      "template_message": {
+        "switch_active": "Declanșare șabloane mesaj",
+        "switch_disabled": "Declanșare șabloane mesaj"
+      },
+      "edit_custom_fields": "Permite reprezentanților să editeze câmpurile personalizate",
+      "agents_signature": {
+        "tooltip": "Fiecare mesaj va afișa numele reprezentantului care a răspuns",
+        "switch_active": "Afișează numele reprezentativ în mesaje",
+        "switch_disabled": "Afișează numele reprezentativ în mesaje"
+      },
+      "csat": {
+        "label": "Trimite automat un sondaj de satisfacție după încheierea asistenței Live Desk",
+        "hint": "Dacă un flux activ din modulul Fluxuri este configurat să declanșeze un sondaj după încheierea asistenței, această setare poate intra în conflict cu acel flux și poate afecta livrarea sondajului.",
+        "confirm_modal": {
+          "content_1": "Dacă un flux activ din modulul Fluxuri este configurat să declanșeze un sondaj după încheierea asistenței, această setare poate intra în conflict cu acel flux și poate afecta livrarea sondajului.",
+          "content_2": "Vrei să continui oricum?"
+        }
+      },
+      "automatic_message": {
+        "switch_active": "Deschide automat mesajele",
+        "switch_disabled": "Deschide automat mesajele",
+        "tooltip": "Configurează un mesaj care să fie trimis automat atunci când un nou chat este atribuit unui reprezentant. Contactul va vedea mesajul ca și cum ar fi fost trimis de reprezentant.",
+        "field": {
+          "title": "Mesaj automat",
+          "placeholder": "Exemplu: Salut! Cum te pot ajuta astăzi?"
+        }
+      },
+      "required_tags": {
+        "switch_active": "Solicită etichetă la sfârșitul chatului de asistență",
+        "switch_disabled": "Solicită etichetă la sfârșitul chatului de asistență",
+        "tooltip": "Adaugă cel puțin o etichetă pentru a activa"
+      }
+    }
+  },
+  "export": {
+    "metrics": "Exportă metrici ca {filetype}",
+    "all": "Exportă toate ca {filetype}"
+  },
+  "name": "Denumire",
+  "addition_date": "Dată adăugată",
+  "in_queues": "în așteptare",
+  "in_progress": "În curs",
+  "in_progress_tooltip": "Numărul de chaturi gestionate în prezent de un reprezentant",
+  "in_progress_tooltip_filtered": "Numărul de chaturi gestionate de un reprezentant",
+  "closed": "Închise",
+  "qtd_closed_tooltip": "Număr de chaturi închise",
+  "wait_time": "Timp de așteptare",
+  "wait_time_tooltip": "Timpul mediu pe care un contact îl așteaptă înainte de a fi asistat",
+  "wait_assistance_tooltip": "Numărul de contacte care așteaptă asistență",
+  "average_time_to_assistance_tooltip": "Timpul mediu pe care un contact îl așteaptă înainte de a fi asistat",
+  "average_time_to_response_tooltip": "Timpul mediu în care contactele așteaptă înainte de a primi un răspuns",
+  "average_time_to_complete_assistence_tooltip": "Timpul mediu de asistență",
+  "response_time": "Timp de răspuns",
+  "average_response_time": "Timpul mediu de răspuns pentru un contact",
+  "interaction_time": "Timp interacțiune",
+  "average_interaction_time": "Durata medie a conversației în chat",
+  "chats_notifications": {
+    "title": "Notificări VTEX Agentic CX Platform Live Desk",
+    "label": "Pentru confortul tău, activează sau dezactivează notificările cu sunet ale VTEX Agentic CX Platform Live Desk."
+  },
+  "dashboard": {
+    "view-mode": {
+      "title": "modul vizualizare live {viewedAgent}",
+      "close": "Închide vizualizarea",
+      "assume_chat": "Preia doar acest chat",
+      "assume_chat_question": "Preiei chatul?",
+      "assume_chat_confirmation": "Dacă confirmi, acest chat va fi transferat de la {viewedAgent} către tine"
+    }
+  },
+  "history": "Istoric",
+  "close_view": "Închide vizualizarea",
+  "logout": "Deconectează-te",
+  "flow": "Flux",
+  "sent": "trimis",
+  "from": "de la",
+  "to": "în",
+  "to_the": "în",
+  "about": "despre",
+  "today": "Astăzi",
+  "transfer": "Transferă",
+  "take_over": "Preia",
+  "suggested_answers": "Răspunsuri sugerate",
+  "attach": "Atașează",
+  "send": "Trimite",
+  "confirm_send": "Confirmare",
+  "update": "Actualizare",
+  "click_to_resend": "Fă click pentru a retrimite",
+  "action_cannot_be_reversed": "Această acțiune nu poate fi refăcută",
+  "end": "Sfârșit",
+  "end_chat": "Închide chatul",
+  "end_discussion": "Închide discuția",
+  "cancel": "Anulare",
+  "add": "Adăugare",
+  "proceed": "Continuă",
+  "continue": "Continuă",
+  "please": " ",
+  "confirm": "Confirmare",
+  "back": "Înapoi",
+  "back_to_home_page": "Înapoi la pagina de pornire",
+  "clear": "Ștergere",
+  "none": "Niciunul",
+  "access_history_to_see_closed_chats": "Accesează istoricul chatului pentru a vizualiza chaturile închise",
+  "close": "Închidere",
+  "ended_by": "Închis de",
+  "all": "Toate",
+  "back_to_chats": "@:înapoi la chaturi",
+  "pagination": "{from} – {to} din {total}",
+  "contact": "Contact",
+  "unnamed_contact": "Contact fără nume",
+  "unnamed_agent": "Reprezentant fără nume",
+  "no_agent_assigned": "Niciun reprezentant atribuit",
+  "no_tags_assigned": "Nicio etichetă atribuită",
+  "contact_await_for_you": "Un contact așteaptă asistență",
+  "agent": "Reprezentant"
 }
