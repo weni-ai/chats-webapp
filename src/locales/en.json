@@ -61,6 +61,26 @@
       }
     }
   },
+  "dark_mode_intro": {
+    "buttons": {
+      "not_now": "Not now",
+      "switch": "Switch to dark mode"
+    },
+    "description_1": "Work with greater comfort and focus throughout the day. Dark mode reduces eye strain, lowers screen brightness, and makes conversations easier to read — ideal for long support shifts and low-light environments.",
+    "description_2": "With less visual fatigue, you gain clarity and speed when responding to customers, maintaining high-quality support even during peak times.",
+    "tagline": "Switch to dark mode in this module and experience a new way to work!",
+    "title": "Dark mode is here",
+    "toast": {
+      "error": {
+        "action": "Try again",
+        "title": "Error applying dark mode"
+      },
+      "success": {
+        "action": "Back to light mode",
+        "title": "Dark mode applied successfully"
+      }
+    }
+  },
   "status": {
     "online": "Online",
     "offline": "Offline",
@@ -71,11 +91,24 @@
     "error": "Failed to update the status. Try again."
   },
   "view-option": "View options",
+  "view_options": {
+    "new_badge": "New"
+  },
   "preferences": {
     "title": "Preferences",
+    "appearance": {
+      "title": "Appearance",
+      "dark_mode": "Dark mode",
+      "live_desk_theme": "Live Desk theme",
+      "light": "Light",
+      "dark": "Dark"
+    },
     "notifications": {
       "title": "Notifications",
-      "sound": "Sound"
+      "sound": "Sound",
+      "sound_notifications": "Sound notifications",
+      "on": "On",
+      "off": "Off"
     },
     "help": {
       "label": "Help",
@@ -261,11 +294,17 @@
         "switch_label": "Use signature"
       },
       "csat": {
-        "label": "Automatically send a satisfaction survey after Live Desk support ends",
+        "custom": {
+          "flow_disclaimer": "The selected flow must use a 1 to 5 satisfaction rating to ensure correct survey results."
+        },
         "hint": "If an active flow in the Flows module is configured to trigger a survey after support ends, this setting may conflict with that flow and affect survey delivery.",
-        "confirm_modal": {
-          "content_1": "If an active flow in the Flows module is configured to trigger a survey after support ends, this setting may conflict with that flow and affect survey delivery.",
-          "content_2": "Do you want to continue anyway?"
+        "label": "Automatically send a satisfaction survey after Live Desk support ends",
+        "section_title": "Satisfaction survey",
+        "type": {
+          "custom": "Custom flows",
+          "default": "Default CSAT survey (Recommended)",
+          "label": "Survey type",
+          "tooltip": "Choose between the default CSAT survey or a custom flow you've already configured in the Flows module."
         }
       },
       "automated_message": {
@@ -368,21 +407,25 @@
       }
     },
     "feedback": {
+      "agent_took_chat": "The chat with contact {contact} has already been taken over by another agent",
+      "automatic_transfer_from_queue": "Room assigned to {agent}",
+      "chat_ended_by": "Chat ended by {agent}",
+      "discussion_created": "{agent} started discussion with queue {queue}",
+      "discussion_joined": "{agent} joined the discussion",
+      "edit_custom_field": "Edited custom field",
       "forwarded_to_agent": "Contact transferred to representative {agent}",
       "forwarded_to_queue": "Contact transferred to queue {queue}",
+      "pick_of_agent": "{manager} has taken over {agent}'s chat",
+      "pick_of_queue": "{agent} got it from the queue {queue}",
+      "see_all_internal_notes": "<b style='color: white;'>View internal notes</b>",
+      "transfer_from_queue_to_agent": "Transferred from queue {queue} to {agent}",
+      "transfer_from_queue_to_agent_by_other": "{requestedBy} transferred the chat from queue {queue} to {agent}",
+      "transfer_from_queue_to_queue": "Transferred from queue {queue1} to queue {queue2}",
+      "transfer_from_queue_to_queue_by_other": "{requestedBy} transferred the chat from queue {queue1} to queue {queue2}",
       "transfer_to_agent": "{agent1} transferred to {agent2}",
       "transfer_to_agent_by_other": "{requestedBy} transferred {agent1}'s chat to {agent2}",
       "transfer_to_queue": "{agent} transferred to queue {queue}",
-      "transfer_from_queue_to_queue": "Transferred from queue {queue1} to queue {queue2}",
-      "transfer_from_queue_to_agent": "Transferred from queue {queue} to {agent}",
-      "pick_of_queue": "{agent} got it from the queue {queue}",
-      "pick_of_agent": "{manager} has taken over {agent}'s chat",
-      "edit_custom_field": "Edited custom field",
-      "discussion_created": "{agent} started discussion with queue {queue}",
-      "discussion_joined": "{agent} joined the discussion",
-      "agent_took_chat": "The chat with contact {contact} has already been taken over by another agent",
-      "automatic_transfer_from_queue": "Room assigned to {agent}",
-      "see_all_internal_notes": "<b style='color: white;'>View internal notes</b>"
+      "transfer_to_queue_by_other": "{requestedBy} transferred {agent}'s chat to queue {queue}"
     },
     "room_list": {
       "order_by": "Sort by:",
@@ -442,9 +485,11 @@
     "your_chat_assumed": "Chat with {contact} has been transferred",
     "your_chat_assumed_description": "Your chat with {contact} has been taken over by another representative",
     "closed_chats": {
+      "contact_history": "Contact history",
+      "general_history": "General history",
       "history": "History",
-      "project_history": "Project history",
-      "contact_history": "Contact history"
+      "history_description": "History of all support records for the {projectName} project",
+      "project_history": "Project history"
     },
     "assigned_queues": "Assigned queues",
     "select_queues": "Select queues",
@@ -779,7 +824,6 @@
   "flows": "Flows",
   "flows_trigger": {
     "title": "Flows trigger",
-    "subtitle": "Contacts of {project}",
     "triggered_flows": {
       "title": "Triggered flows",
       "single": "Triggered flow",
@@ -808,7 +852,24 @@
     "successfully_triggered": "Flow triggered successfully",
     "error_triggering": "Error triggering flow",
     "successfully_add_contact": "Contact added successfully",
-    "contact_already_exists": "The number {contact} is already saved in your contact list"
+    "contact_already_exists": "The number {contact} is already saved in your contact list",
+    "variable_mapping": {
+      "title": "Variable mapping",
+      "description": "Variables will be populated in the preview below using values from the selected contacts whenever they reference contact fields",
+      "define_variables": "Define the variables",
+      "variable_label": "Variable {name}",
+      "input_placeholder": "Type the value for this variable",
+      "preview_title": "Template preview",
+      "preview_variable_tooltip": "Variable {placeholder}",
+      "confirmation_helper": "Check if each field is correctly mapped, this is how your message will look to each selected contact",
+      "confirmation_checkbox": "I've checked it and I'm ready to send it",
+      "local_variables": {
+        "contact_name": "Contact name",
+        "contact_urn": "Contact phone",
+        "agent_name": "Representative name",
+        "agent_email": "Representative email"
+      }
+    }
   },
   "quick_messages": {
     "title": "Quick messages",
@@ -1300,6 +1361,9 @@
   "room_card": {
     "last_message": {
       "you_prefix": "You"
+    },
+    "new_chat_received": {
+      "tooltip": "New chats received"
     },
     "pending_response": {
       "tooltip": "You did not respond to this contact"

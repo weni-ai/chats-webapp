@@ -530,21 +530,5 @@
     "new": "New",
     "back_to_original": "Original",
     "back_to_original_tooltip": "Revenire la versiunea originală (Ctrl+Z)"
-  },
-  "chats": {
-    "assigned_queues": "Cozi atribuite",
-    "define_the_queues": "Definește cozile",
-    "error_update_queues": "Nu s-au putut actualiza cozile de serviciu",
-    "feedback": {
-      "transfer_to_agent": "{agent1} a transferat conversația către {agent2}",
-      "transfer_to_agent_by_other": "{requestedBy} a transferat conversația lui {agent1} către {agent2}"
-    },
-    "no_queue_selected": "Nicio coadă selectată",
-    "select_at_least": "Trebuie selectată cel puțin o coadă pentru a salva modificările.",
-    "select_queues": "Selectează cozi",
-    "select_queues_priorization_hint": "Vei primi doar chat-uri noi din cozile selectate.",
-    "select_services_queues": "Setează cozile pentru a primi chat-uri",
-    "select_your_queues": "Selectează cozile tale",
-    "success_update_queues": "Cozile tale de serviciu au fost actualizate"
   }
 }

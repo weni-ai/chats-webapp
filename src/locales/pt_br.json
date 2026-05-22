@@ -61,6 +61,26 @@
       }
     }
   },
+  "dark_mode_intro": {
+    "buttons": {
+      "not_now": "Agora não",
+      "switch": "Ativar modo escuro"
+    },
+    "description_1": "Trabalhe com mais conforto e foco durante todo o dia. O modo escuro reduz a fadiga visual, diminui o brilho da tela e facilita a leitura das conversas — ideal para longas jornadas de atendimento e ambientes com pouca luz.",
+    "description_2": "Com menos fadiga visual, você ganha clareza e agilidade ao responder aos clientes, mantendo um atendimento de alta qualidade mesmo nos horários de pico.",
+    "tagline": "Ative o modo escuro neste módulo e experimente uma nova forma de trabalhar!",
+    "title": "O modo escuro chegou",
+    "toast": {
+      "error": {
+        "action": "Tentar novamente",
+        "title": "Erro ao aplicar o modo escuro"
+      },
+      "success": {
+        "action": "Voltar ao modo claro",
+        "title": "Modo escuro aplicado com sucesso"
+      }
+    }
+  },
   "status": {
     "online": "Online",
     "offline": "Offline",
@@ -71,11 +91,24 @@
     "error": "Não foi possível atualizar o status. Tente novamente."
   },
   "view-option": "Ver opções",
+  "view_options": {
+    "new_badge": "Novo"
+  },
   "preferences": {
     "title": "Preferências",
+    "appearance": {
+      "title": "Aparência",
+      "dark_mode": "Modo escuro",
+      "live_desk_theme": "Tema do Live Desk",
+      "light": "Claro",
+      "dark": "Escuro"
+    },
     "notifications": {
       "title": "Notificações",
-      "sound": "Som de notificação"
+      "sound": "Som de notificação",
+      "sound_notifications": "Notificações sonoras",
+      "on": "Ativado",
+      "off": "Desativado"
     },
     "help": {
       "label": "Ajuda",
@@ -261,11 +294,17 @@
         "switch_label": "Usar assinatura"
       },
       "csat": {
-        "label": "Enviar automaticamente uma pesquisa de satisfação após o fim do suporte no Live Desk",
+        "custom": {
+          "flow_disclaimer": "O fluxo selecionado deve usar uma classificação de satisfação de 1 a 5 para garantir os resultados corretos da pesquisa."
+        },
         "hint": "Se um fluxo ativo no módulo Fluxos estiver configurado para disparar uma pesquisa após o fim do suporte, esta configuração pode conflitar com o fluxo e afetar a entrega da pesquisa.",
-        "confirm_modal": {
-          "content_1": "Se um fluxo ativo no módulo Fluxos estiver configurado para disparar uma pesquisa após o fim do suporte, esta configuração pode conflitar com o fluxo e afetar a entrega da pesquisa.",
-          "content_2": "Deseja continuar mesmo assim?"
+        "label": "Enviar automaticamente uma pesquisa de satisfação após o fim do suporte no Live Desk",
+        "section_title": "Pesquisa de satisfação",
+        "type": {
+          "custom": "Fluxos personalizados",
+          "default": "Pesquisa CSAT padrão (recomendado)",
+          "label": "Tipo de pesquisa",
+          "tooltip": "Escolha entre a pesquisa CSAT padrão ou um fluxo personalizado já configurado no módulo Flows."
         }
       },
       "automated_message": {
@@ -368,21 +407,25 @@
       }
     },
     "feedback": {
+      "agent_took_chat": "O chat com o contato {contact} já foi assumido por outro atendente",
+      "automatic_transfer_from_queue": "Sala atribuída a {agent}",
+      "chat_ended_by": "Chat encerrado por {agent}",
+      "discussion_created": "{agent} iniciou uma conversa na fila {queue}",
+      "discussion_joined": "{agent} entrou na conversa",
+      "edit_custom_field": "Campo customizável editado",
       "forwarded_to_agent": "Contato transferido para o atendente {agent}",
       "forwarded_to_queue": "Contato transferido para a fila {queue}",
+      "pick_of_agent": "{manager} assumiu o chat de {agent}",
+      "pick_of_queue": "{agent} assumiu o chat da fila {queue}",
+      "see_all_internal_notes": "<b style=\\\"color: white;\\\">Ver observações internas</b>",
+      "transfer_from_queue_to_agent": "Transferido da fila {queue} para {agent}",
+      "transfer_from_queue_to_agent_by_other": "{requestedBy} transferiu o chat da fila {queue} para {agent}",
+      "transfer_from_queue_to_queue": "Transferido da fila {queue1} para a fila {queue2}",
+      "transfer_from_queue_to_queue_by_other": "{requestedBy} transferiu o chat da fila {queue1} para a fila {queue2}",
       "transfer_to_agent": "{agent1} transferido para {agent2}",
       "transfer_to_agent_by_other": "{requestedBy} transferiu o chat de {agent1} para {agent2}",
       "transfer_to_queue": "{agent} transferido para a fila {queue}",
-      "transfer_from_queue_to_queue": "Transferido da fila {queue1} para a fila {queue2}",
-      "transfer_from_queue_to_agent": "Transferido da fila {queue} para {agent}",
-      "pick_of_queue": "{agent} assumiu o chat da fila {queue}",
-      "pick_of_agent": "{manager} assumiu o chat de {agent}",
-      "edit_custom_field": "Campo customizável editado",
-      "discussion_created": "{agent} iniciou uma conversa na fila {queue}",
-      "discussion_joined": "{agent} entrou na conversa",
-      "agent_took_chat": "O chat com o contato {contact} já foi assumido por outro atendente",
-      "automatic_transfer_from_queue": "Sala atribuída a {agent}",
-      "see_all_internal_notes": "<b style=\\\"color: white;\\\">Ver observações internas</b>"
+      "transfer_to_queue_by_other": "{requestedBy} transferiu o chat de {agent} para a fila {queue}"
     },
     "room_list": {
       "order_by": "Ordenar por:",
@@ -442,9 +485,11 @@
     "your_chat_assumed": "O chat com {contact} foi transferido",
     "your_chat_assumed_description": "Seu chat com {contact} foi assumido por outro atendente",
     "closed_chats": {
+      "contact_history": "Histórico do contato",
+      "general_history": "Histórico geral",
       "history": "Histórico ",
-      "project_history": "Histórico do projeto",
-      "contact_history": "Histórico do contato"
+      "history_description": "Histórico de todos os atendimentos do projeto {projectName}",
+      "project_history": "Histórico do projeto"
     },
     "assigned_queues": "Filas atribuídas",
     "select_queues": "Selecionar filas",
@@ -779,7 +824,6 @@
   "flows": "Fluxos",
   "flows_trigger": {
     "title": "Disparo de fluxos",
-    "subtitle": "Contatos de {project}",
     "triggered_flows": {
       "title": "Fluxos disparados",
       "single": "Fluxo disparado",
@@ -808,7 +852,24 @@
     "successfully_triggered": "Fluxo disparado com sucesso",
     "error_triggering": "Erro ao disparar fluxo",
     "successfully_add_contact": "Contato adicionado com sucesso",
-    "contact_already_exists": "O número {contact} já está salvo na sua lista de contatos"
+    "contact_already_exists": "O número {contact} já está salvo na sua lista de contatos",
+    "variable_mapping": {
+      "title": "Mapeamento de variáveis",
+      "description": "As variáveis serão preenchidas na pré-visualização abaixo usando valores dos contatos selecionados sempre que fizerem referência a campos do contato",
+      "define_variables": "Definir as variáveis",
+      "variable_label": "Variável {name}",
+      "input_placeholder": "Digite o valor para esta variável",
+      "preview_title": "Pré-visualização do template",
+      "preview_variable_tooltip": "Variável {placeholder}",
+      "confirmation_helper": "Verifique se cada campo está mapeado corretamente; é assim que a mensagem será exibida para cada contato selecionado",
+      "confirmation_checkbox": "Verifiquei e estou pronto para enviar",
+      "local_variables": {
+        "contact_name": "Nome do contato",
+        "contact_urn": "Telefone do contato",
+        "agent_name": "Nome do atendente",
+        "agent_email": "E-mail do atendente"
+      }
+    }
   },
   "quick_messages": {
     "title": "Mensagens rápidas",
@@ -1300,6 +1361,9 @@
   "room_card": {
     "last_message": {
       "you_prefix": "Você"
+    },
+    "new_chat_received": {
+      "tooltip": "Novos chats recebidos"
     },
     "pending_response": {
       "tooltip": "Você não respondeu a este contato"
