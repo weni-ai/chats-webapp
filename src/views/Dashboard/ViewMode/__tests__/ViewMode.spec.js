@@ -214,9 +214,7 @@ describe('ViewMode', () => {
     });
 
     it('should handle openHistory correctly with URN only', () => {
-      vi.mocked(roomUtils.buildHistorySearchTerm).mockReturnValue(
-        '1234567890',
-      );
+      vi.mocked(roomUtils.buildHistorySearchTerm).mockReturnValue('1234567890');
 
       const wrapper = createWrapper({
         dashboard: { viewedAgent: mockAgent },
