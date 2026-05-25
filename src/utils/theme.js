@@ -12,7 +12,14 @@ export function isLightOnlyRoute(path) {
 export function applyRouteAwareTheme(theme, routePath) {
   if (typeof document === 'undefined') return;
   const wantsDark = theme === 'dark' && !isLightOnlyRoute(routePath);
-  document.documentElement.classList.toggle(DARK_CLASS, wantsDark);
+  // Toggle on the `.chats-webapp` mount container (not `<html>`) so the
+  // unnnic dark-mode overrides — which postcss-prefixwrap rewrites as
+  // `.chats-webapp .dark` / `.chats-webapp.dark` — actually match. The host
+  // owns `<html>` in federation mode, so we shouldn't be touching it
+  // either way.
+  const target =
+    document.querySelector('.chats-webapp') ?? document.documentElement;
+  target.classList.toggle(DARK_CLASS, wantsDark);
 }
 
 /**
