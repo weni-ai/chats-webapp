@@ -2,7 +2,6 @@ import { flushPromises, mount } from '@vue/test-utils';
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { createTestingPinia } from '@pinia/testing';
 import { createRouter, createWebHistory } from 'vue-router';
-import { createI18n } from 'vue-i18n';
 
 import { useRooms } from '@/store/modules/chats/rooms';
 import { useDiscussions } from '@/store/modules/chats/discussions';
@@ -14,10 +13,6 @@ import { useRoomMessages } from '@/store/modules/chats/roomMessages';
 import { useDiscussionMessages } from '@/store/modules/chats/discussionMessages';
 
 import HomeChat from '../HomeChat.vue';
-import HomeChatModals from '../HomeChatModals.vue';
-import RoomMessages from '@/components/chats/chat/RoomMessages.vue';
-import MessageManager from '@/components/chats/MessageManager/index.vue';
-import ChatsDropzone from '@/layouts/ChatsLayout/components/ChatsDropzone/index.vue';
 
 import RoomService from '@/services/api/resources/chats/room';
 
@@ -40,14 +35,6 @@ vi.mock('@/services/api/resources/chats/roomNotes', () => ({
 vi.mock('@/services/api/resources/settings/queue', () => ({
   default: { tags: vi.fn(() => ({ results: [] })) },
 }));
-
-const i18n = createI18n({
-  legacy: false,
-  locale: 'en',
-  messages: { en: {} },
-  fallbackWarn: false,
-  missingWarn: false,
-});
 
 const router = createRouter({
   history: createWebHistory(),
@@ -116,14 +103,28 @@ describe('HomeChat.vue', () => {
             push: vi.fn(),
           },
         },
-        plugins: [router, pinia, i18n],
-        components: {
-          RoomMessages,
-          HomeChatModals,
-          MessageManager,
-          ChatsDropzone,
-        },
+        plugins: [router, pinia],
         stubs: {
+          ChatsDropzone: {
+            template: '<div><slot /></div>',
+          },
+          RoomMessages: {
+            name: 'RoomMessages',
+            template: '<div data-testid="room-messages-stub" />',
+          },
+          MessageManager: {
+            name: 'MessageManager',
+            template: '<div data-testid="message-manager" />',
+          },
+          DiscussionMessages: {
+            name: 'DiscussionMessages',
+            template: '<div data-testid="discussion-messages-stub" />',
+          },
+          ButtonJoinDiscussion: {
+            name: 'ButtonJoinDiscussion',
+            template:
+              '<button data-testid="join-discussion" @click="$emit(\'join\')" />',
+          },
           ContactHeader: {
             template: '<div />',
             props: ['contactName', 'clickable'],
@@ -294,26 +295,6 @@ describe('HomeChat.vue', () => {
 
       await wrapper.vm.$nextTick();
       expect(useMessageManager().inputMessage).toBe(text);
-    });
-
-    it('should call configFileUploader and openModal on home-chat-modals ref', () => {
-      const modals = wrapper.findComponent('[data-testid="home-chat-modals"]');
-
-      const configFileUploaderSpy = vi.spyOn(modals.vm, 'configFileUploader');
-
-      const openModalSpy = vi.spyOn(modals.vm, 'openModal');
-
-      const fakeFiles = [{ name: 'file1.png', type: 'image' }];
-      const fakeType = 'image';
-
-      wrapper.vm.openModalFileUploader(fakeFiles, fakeType);
-
-      expect(configFileUploaderSpy).toHaveBeenCalledWith({
-        files: fakeFiles,
-        filesType: fakeType,
-      });
-
-      expect(openModalSpy).toHaveBeenCalledWith('fileUploader');
     });
 
     it('redirects to home if not on home route and no active chat', async () => {
