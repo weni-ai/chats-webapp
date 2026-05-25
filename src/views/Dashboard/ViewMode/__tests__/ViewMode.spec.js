@@ -77,7 +77,7 @@ describe('ViewMode', () => {
           ViewModeHeader: { template: '<div />', props: ['viewedAgent'] },
           ChatsBackground: { template: '<div />' },
           ChatHeaderLoading: { template: '<div />' },
-          UnnnicChatsHeader: {
+          ChatsHeader: {
             template: '<div />',
             props: [
               'title',

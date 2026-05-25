@@ -60,7 +60,7 @@
             />
 
             <template v-else>
-              <UnnnicChatsMessage
+              <ChatsMessage
                 v-if="message.text || isGeolocation(message.media?.[0])"
                 :key="message.uuid"
                 :ref="`message-${message.uuid}`"
@@ -94,9 +94,9 @@
                     ? message.media?.[0]?.url
                     : message.text
                 }}
-              </UnnnicChatsMessage>
+              </ChatsMessage>
               <template v-for="media in message.media">
-                <UnnnicChatsMessage
+                <ChatsMessage
                   v-if="isMedia(media) && !isGeolocation(media)"
                   :key="media.message"
                   :ref="`message-${message.uuid}`"
@@ -156,8 +156,8 @@
                     :isClosedChat="isClosedChat"
                     @failed-click="resendMedia({ message, media })"
                   />
-                </UnnnicChatsMessage>
-                <UnnnicChatsMessage
+                </ChatsMessage>
+                <ChatsMessage
                   v-else-if="!isGeolocation(media)"
                   :key="media.created_on"
                   :ref="`message-${message.uuid}`"
@@ -266,6 +266,7 @@ import ChatMessagesLoading from '@/views/loadings/chat/ChatMessages.vue';
 import VideoPlayer from '@/components/chats/MediaMessage/Previews/Video.vue';
 import FullscreenPreview from '@/components/chats/MediaMessage/Previews/Fullscreen.vue';
 
+import ChatsMessage from '@/components/chats/Message/index.vue';
 import ChatFeedback from '../ChatFeedback.vue';
 import ChatMessagesStartFeedbacks from './ChatMessagesStartFeedbacks.vue';
 import ChatMessagesFeedbackMessage from './ChatMessagesFeedbackMessage.vue';
@@ -282,6 +283,7 @@ export default {
   name: 'ChatMessages',
 
   components: {
+    ChatsMessage,
     ChatMessagesLoading,
     ChatFeedback,
     ChatMessagesStartFeedbacks,
