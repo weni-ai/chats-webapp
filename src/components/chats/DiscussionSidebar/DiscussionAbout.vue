@@ -222,7 +222,6 @@ export default {
             this.agentsInvolved,
             'email',
           );
-          this.agentsInvolvedPage = 0;
         }
 
         this.agentsToSelect = [];
