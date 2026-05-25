@@ -90,10 +90,18 @@ describe('discussionService', () => {
 
     const result = await discussionService.getDiscussionAgents({
       discussionUuid: mockDiscussionUuid,
+      limit: 20,
+      offset: 0,
     });
 
     expect(http.get).toHaveBeenCalledWith(
       `discussion/${mockDiscussionUuid}/list_agents/`,
+      {
+        params: {
+          limit: 20,
+          offset: 0,
+        },
+      },
     );
     expect(result).toEqual(mockResponse);
   });
