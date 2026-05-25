@@ -11,10 +11,8 @@ import { mount, config, flushPromises } from '@vue/test-utils';
 import { createTestingPinia } from '@pinia/testing';
 import AudiosContent from '../AudiosContent.vue';
 import i18n from '@/plugins/i18n';
-import moment from 'moment';
-
 vi.mock('moment', () => ({
-  default: vi.fn((date) => ({
+  default: vi.fn((_date) => ({
     format: vi.fn((format) => (format === 'L' ? '01/01/2024' : '10:30 AM')),
   })),
 }));
@@ -110,27 +108,40 @@ describe('AudiosContent', () => {
     it('should show loading skeleton when isLoadingAudios is true', async () => {
       wrapper = createWrapper();
       wrapper.vm.contactInfosStore.isLoadingAudios = true;
+      wrapper.vm.contactInfosStore.hasAudios = false;
       await wrapper.vm.$nextTick();
 
-      expect(
-        wrapper.find('[data-testid="audios-content-loading"]').exists(),
-      ).toBe(true);
+      expect(wrapper.find('[data-testid="audios-container"]').exists()).toBe(
+        true,
+      );
       expect(wrapper.find('[data-testid="audios-content"]').exists()).toBe(
-        false,
+        true,
       );
     });
 
     it('should show content when not loading', async () => {
       wrapper = createWrapper();
       wrapper.vm.contactInfosStore.isLoadingAudios = false;
+      wrapper.vm.contactInfosStore.audios = mockAudios;
       await wrapper.vm.$nextTick();
 
       expect(wrapper.find('[data-testid="audios-content"]').exists()).toBe(
         true,
       );
-      expect(
-        wrapper.find('[data-testid="audios-content-loading"]').exists(),
-      ).toBe(false);
+      expect(wrapper.find('[data-testid="audios-empty"]').exists()).toBe(false);
+    });
+
+    it('should show empty state when no audios and not loading', async () => {
+      wrapper = createWrapper();
+      wrapper.vm.contactInfosStore.isLoadingAudios = false;
+      wrapper.vm.contactInfosStore.audios = [];
+      wrapper.vm.contactInfosStore.hasAudios = false;
+      await wrapper.vm.$nextTick();
+
+      expect(wrapper.find('[data-testid="audios-empty"]').exists()).toBe(true);
+      expect(wrapper.find('[data-testid="audios-content"]').exists()).toBe(
+        false,
+      );
     });
   });
 
@@ -147,7 +158,7 @@ describe('AudiosContent', () => {
 
     it('should render scrollable container', () => {
       wrapper = createWrapper();
-      expect(wrapper.find('[data-testid="audios-scrollable"]').exists()).toBe(
+      expect(wrapper.find('[data-testid="audios-container"]').exists()).toBe(
         true,
       );
     });
@@ -157,7 +168,7 @@ describe('AudiosContent', () => {
     it('should format tooltip text correctly with sender', () => {
       wrapper = createWrapper();
 
-      const tooltipText = wrapper.vm.audioTooltipText(mockAudios[0]);
+      wrapper.vm.audioTooltipText(mockAudios[0]);
 
       expect(i18n.global.t).toHaveBeenCalledWith('contact_info.audio_tooltip', {
         agent: 'Agent Name',

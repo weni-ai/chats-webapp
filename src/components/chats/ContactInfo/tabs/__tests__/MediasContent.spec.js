@@ -96,27 +96,42 @@ describe('MediasContent', () => {
     it('should show loading skeleton when isLoadingMedias is true', async () => {
       wrapper = createWrapper();
       wrapper.vm.contactInfosStore.isLoadingMedias = true;
+      wrapper.vm.contactInfosStore.hasMedias = false;
       await wrapper.vm.$nextTick();
 
-      expect(
-        wrapper.find('[data-testid="medias-content-loading"]').exists(),
-      ).toBe(true);
+      expect(wrapper.find('[data-testid="medias-container"]').exists()).toBe(
+        true,
+      );
       expect(wrapper.find('[data-testid="medias-content"]').exists()).toBe(
-        false,
+        true,
       );
     });
 
     it('should show content when not loading', async () => {
       wrapper = createWrapper();
       wrapper.vm.contactInfosStore.isLoadingMedias = false;
+      wrapper.vm.contactInfosStore.medias = mockImages;
       await wrapper.vm.$nextTick();
 
       expect(wrapper.find('[data-testid="medias-content"]').exists()).toBe(
         true,
       );
-      expect(
-        wrapper.find('[data-testid="medias-content-loading"]').exists(),
-      ).toBe(false);
+      expect(wrapper.find('[data-testid="medias-empty"]').exists()).toBe(
+        false,
+      );
+    });
+
+    it('should show empty state when no medias and not loading', async () => {
+      wrapper = createWrapper();
+      wrapper.vm.contactInfosStore.isLoadingMedias = false;
+      wrapper.vm.contactInfosStore.medias = [];
+      wrapper.vm.contactInfosStore.hasMedias = false;
+      await wrapper.vm.$nextTick();
+
+      expect(wrapper.find('[data-testid="medias-empty"]').exists()).toBe(true);
+      expect(wrapper.find('[data-testid="medias-content"]').exists()).toBe(
+        false,
+      );
     });
   });
 
