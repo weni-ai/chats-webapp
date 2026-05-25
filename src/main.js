@@ -46,5 +46,6 @@ getJwtToken().then(() => {
     });
   }
 
+  document.getElementById('app')?.classList.add('chats-webapp');
   app.mount('#app');
 });
