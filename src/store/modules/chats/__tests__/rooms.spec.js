@@ -705,4 +705,79 @@ describe('State Rooms', () => {
       expect(existRoomByUuid(roomsStore, 'r-closed')).toBe(false);
     });
   });
+
+  describe('isNewChatReceived flag', () => {
+    let roomsStore;
+
+    beforeEach(() => {
+      mocks.useProfile.mockReturnValue(mockProfileAdminState);
+      roomsStore = useRooms();
+      roomsStore.$patch({
+        rooms: [
+          { uuid: 'r1', user: { email: 'a' }, is_waiting: false },
+          { uuid: 'r2', user: { email: 'b' }, is_waiting: false },
+        ],
+        activeRoom: null,
+      });
+    });
+
+    it('markNewChatReceived sets isNewChatReceived to true on the target room', () => {
+      roomsStore.markNewChatReceived('r1');
+
+      const room = roomsStore.rooms.find((r) => r.uuid === 'r1');
+      expect(room.isNewChatReceived).toBe(true);
+
+      const untouched = roomsStore.rooms.find((r) => r.uuid === 'r2');
+      expect(untouched.isNewChatReceived).toBeUndefined();
+    });
+
+    it('markNewChatReceived is a no-op when uuid is missing or unknown', () => {
+      roomsStore.markNewChatReceived(undefined);
+      roomsStore.markNewChatReceived(null);
+      roomsStore.markNewChatReceived('does-not-exist');
+
+      expect(
+        roomsStore.rooms.every((r) => r.isNewChatReceived === undefined),
+      ).toBe(true);
+    });
+
+    it('clearNewChatReceived sets isNewChatReceived to false on the target room', () => {
+      roomsStore.markNewChatReceived('r1');
+      roomsStore.clearNewChatReceived('r1');
+
+      const room = roomsStore.rooms.find((r) => r.uuid === 'r1');
+      expect(room.isNewChatReceived).toBe(false);
+    });
+
+    it('clearNewChatReceived is a no-op when uuid is missing or already cleared', () => {
+      const originalRooms = JSON.parse(JSON.stringify(roomsStore.rooms));
+
+      roomsStore.clearNewChatReceived(undefined);
+      roomsStore.clearNewChatReceived(null);
+      roomsStore.clearNewChatReceived('does-not-exist');
+      roomsStore.clearNewChatReceived('r1');
+
+      expect(roomsStore.rooms).toEqual(originalRooms);
+    });
+
+    it('setActiveRoom clears isNewChatReceived on the activated room', () => {
+      roomsStore.markNewChatReceived('r1');
+
+      roomsStore.setActiveRoom({ uuid: 'r1' });
+
+      const room = roomsStore.rooms.find((r) => r.uuid === 'r1');
+      expect(room.isNewChatReceived).toBe(false);
+      expect(roomsStore.activeRoom).toEqual({ uuid: 'r1' });
+    });
+
+    it('setActiveRoom does not throw when the room is null', () => {
+      expect(() => roomsStore.setActiveRoom(null)).not.toThrow();
+      expect(roomsStore.activeRoom).toBeNull();
+    });
+
+    it('setActiveRoom does not throw when the room has no uuid', () => {
+      expect(() => roomsStore.setActiveRoom({})).not.toThrow();
+      expect(roomsStore.activeRoom).toEqual({});
+    });
+  });
 });

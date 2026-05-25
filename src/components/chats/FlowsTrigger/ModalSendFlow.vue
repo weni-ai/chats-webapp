@@ -15,26 +15,54 @@
         <SelectFlow
           v-model="selectedFlow"
           data-testid="select-flow"
+          :isDisabled="isCheckingTemplate"
         />
       </section>
       <UnnnicDialogFooter>
         <SendFlowButton
+          ref="sendFlowButton"
           class="modal-send-flow__handler"
           :contacts="contacts"
           :selectedFlow="selectedFlow"
+          :isProjectPrincipal="isProjectPrincipal"
+          :isCheckingTemplate="isCheckingTemplate"
+          :cachedTemplate="cachedTemplate"
           data-testid="send-flow-button"
           @send-flow-finished="finishSendFlow"
         />
       </UnnnicDialogFooter>
     </UnnnicDialogContent>
   </UnnnicDialog>
+  <Teleport to="body">
+    <ModalVariableMapping
+      v-if="showVariableModal && cachedTemplate"
+      :template="cachedTemplate.data"
+      :variables="cachedTemplate.variables"
+      :localVariables="localVariables"
+      :isLoading="isSendingFlow"
+      data-testid="modal-send-flow-variable-mapping"
+      @close="onCancelVariableMapping"
+      @confirm="onConfirmVariableMapping"
+    />
+  </Teleport>
 </template>
 
 <script>
+import { mapState } from 'pinia';
+
+import { useFeatureFlag } from '@/store/modules/featureFlag';
+import { useProfile } from '@/store/modules/profile';
+import { useRooms } from '@/store/modules/chats/rooms';
+
 import callUnnnicAlert from '@/utils/callUnnnicAlert';
+
+import FlowsTriggerAPI from '@/services/api/resources/chats/flowsTrigger';
 
 import SelectFlow from './SelectFlow.vue';
 import SendFlowButton from './SendFlowButton.vue';
+import ModalVariableMapping from './ModalVariableMapping.vue';
+import { FLOW_TRIGGER_VARIABLE_MAPPING_FLAG } from './types';
+import { getAvailableLocalVariables } from './localVariables';
 
 export default {
   name: 'ModalSendFlow',
@@ -42,12 +70,17 @@ export default {
   components: {
     SelectFlow,
     SendFlowButton,
+    ModalVariableMapping,
   },
 
   props: {
     contacts: {
       type: Array,
       required: true,
+    },
+    isProjectPrincipal: {
+      type: Boolean,
+      default: false,
     },
   },
   emits: ['close', 'send-flow-finished'],
@@ -56,12 +89,41 @@ export default {
     return {
       isOpen: true,
       selectedFlow: '',
+      isCheckingTemplate: false,
+      cachedTemplate: null,
+      showVariableModal: false,
+      isSendingFlow: false,
     };
+  },
+
+  computed: {
+    ...mapState(useFeatureFlag, ['featureFlags']),
+    ...mapState(useProfile, ['me']),
+    ...mapState(useRooms, {
+      activeRoom: (store) => store.activeRoom,
+    }),
+
+    isVariableMappingEnabled() {
+      return !!this.featureFlags?.active_features?.includes(
+        FLOW_TRIGGER_VARIABLE_MAPPING_FLAG,
+      );
+    },
+
+    localVariables() {
+      return getAvailableLocalVariables({
+        contacts: this.contacts,
+        agent: this.me,
+        room: this.activeRoom,
+      });
+    },
   },
 
   watch: {
     isOpen(value) {
       if (!value) this.$emit('close');
+    },
+    selectedFlow(newSelectedFlow) {
+      this.checkFlowTemplate(newSelectedFlow);
     },
   },
 
@@ -78,6 +140,49 @@ export default {
       });
 
       this.$emit('send-flow-finished');
+    },
+
+    setCachedTemplate(template) {
+      this.cachedTemplate = template;
+      this.showVariableModal = Boolean(template?.variables?.length);
+    },
+
+    onCancelVariableMapping() {
+      this.showVariableModal = false;
+    },
+
+    async onConfirmVariableMapping(params) {
+      this.isSendingFlow = true;
+      try {
+        await this.$refs.sendFlowButton.doSendFlow(params);
+        this.showVariableModal = false;
+      } finally {
+        this.isSendingFlow = false;
+      }
+    },
+
+    async checkFlowTemplate(flowUuid) {
+      this.setCachedTemplate(null);
+
+      if (!flowUuid) return;
+      if (this.isProjectPrincipal || !this.isVariableMappingEnabled) return;
+
+      this.isCheckingTemplate = true;
+      try {
+        const response = await FlowsTriggerAPI.getFlowTemplates(flowUuid);
+
+        if (this.selectedFlow !== flowUuid) return;
+
+        const firstTemplate = response?.templates?.[0];
+        const variables = firstTemplate?.variables || [];
+        this.setCachedTemplate(variables.length > 0 ? firstTemplate : null);
+      } catch (error) {
+        console.error('Error checking flow templates', error);
+      } finally {
+        if (this.selectedFlow === flowUuid) {
+          this.isCheckingTemplate = false;
+        }
+      }
     },
   },
 };

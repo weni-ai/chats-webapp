@@ -79,6 +79,24 @@ describe('FlowsTringger service', () => {
     expect(result).toEqual([{ id: 'flow-1' }, { id: 'flow-2' }]);
   });
 
+  it('should forward extra params when getting flows', async () => {
+    const mockResponse = { results: [{ id: 'flow-1' }], next: null };
+    http.get.mockResolvedValue({ data: mockResponse });
+
+    const projectUuid = 'custom-project-uuid';
+    const extraParams = { verify_chats_tag: true };
+
+    const result = await FlowsTringger.getFlows(projectUuid, extraParams);
+
+    expect(http.get).toHaveBeenCalledWith(
+      `/project/${projectUuid}/list_flows/`,
+      {
+        params: { cursor: undefined, verify_chats_tag: true },
+      },
+    );
+    expect(result).toEqual([{ id: 'flow-1' }]);
+  });
+
   it('should get flow trigger details', async () => {
     const mockFlowUuid = 'mock-flow-uuid';
     const mockResponse = { trigger: 'mock-trigger' };
@@ -169,6 +187,43 @@ describe('FlowsTringger service', () => {
     expect(http.post).toHaveBeenCalledWith(
       `/project/mock-project-uuid/start_flow/`,
       mockPayload,
+    );
+    expect(result).toEqual(mockResponse);
+  });
+
+  it('should get flow templates with the current project when projectUuid is not provided', async () => {
+    const mockResponse = {
+      flow_uuid: 'mock-flow-uuid',
+      total_template_qty: 0,
+      templates: [],
+    };
+    http.get.mockResolvedValue({ data: mockResponse });
+
+    const result = await FlowsTringger.getFlowTemplates('mock-flow-uuid');
+
+    expect(http.get).toHaveBeenCalledWith(
+      `/project/mock-project-uuid/flow_templates/`,
+      { params: { flow: 'mock-flow-uuid' } },
+    );
+    expect(result).toEqual(mockResponse);
+  });
+
+  it('should get flow templates with the provided projectUuid', async () => {
+    const mockResponse = {
+      flow_uuid: 'mock-flow-uuid',
+      total_template_qty: 1,
+      templates: [{ variables: ['nomecontato'], data: {} }],
+    };
+    http.get.mockResolvedValue({ data: mockResponse });
+
+    const result = await FlowsTringger.getFlowTemplates(
+      'mock-flow-uuid',
+      'custom-project-uuid',
+    );
+
+    expect(http.get).toHaveBeenCalledWith(
+      `/project/custom-project-uuid/flow_templates/`,
+      { params: { flow: 'mock-flow-uuid' } },
     );
     expect(result).toEqual(mockResponse);
   });

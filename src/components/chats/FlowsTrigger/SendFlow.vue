@@ -11,7 +11,9 @@
       <SelectFlow
         v-model="selectedFlow"
         data-testid="select-flow"
-        :isDisabled="isProjectPrincipal && !projectUuidFlow"
+        :isDisabled="
+          isCheckingTemplate || (isProjectPrincipal && !projectUuidFlow)
+        "
         :projectUuidFlow="projectUuidFlow"
       />
     </section>
@@ -22,6 +24,18 @@
         @close="closeModalProgress"
       />
     </div>
+    <Teleport to="body">
+      <ModalVariableMapping
+        v-if="showVariableModal && cachedTemplate"
+        :template="cachedTemplate.data"
+        :variables="cachedTemplate.variables"
+        :localVariables="localVariables"
+        :isLoading="isSendingFlow"
+        data-testid="send-flow-variable-mapping"
+        @close="onCancelVariableMapping"
+        @confirm="onConfirmVariableMapping"
+      />
+    </Teleport>
     <footer class="send-flow__handlers">
       <UnnnicButton
         class="send-flow__handlers__button"
@@ -32,10 +46,15 @@
         @click="noHasContacts ? $emit('close') : $emit('back')"
       />
       <SendFlowButton
+        ref="sendFlowButton"
         class="send-flow__handlers__button"
         :contacts="contacts"
         :selectedContact="selectedContact"
         :selectedFlow="selectedFlow"
+        :isProjectPrincipal="isProjectPrincipal"
+        :projectUuidFlow="projectUuidFlow"
+        :isCheckingTemplate="isCheckingTemplate"
+        :cachedTemplate="cachedTemplate"
         data-testid="send-flow-button"
         @back-to-contact-list="backToContactList"
         @send-flow-started="openModalProgress"
@@ -46,13 +65,24 @@
 </template>
 
 <script>
+import { mapState } from 'pinia';
+
+import { useFeatureFlag } from '@/store/modules/featureFlag';
+import { useProfile } from '@/store/modules/profile';
+import { useRooms } from '@/store/modules/chats/rooms';
+
 import callUnnnicAlert from '@/utils/callUnnnicAlert';
 
 import ModalProgressBarFalse from '@/components/ModalProgressBarFalse.vue';
 
+import FlowsTriggerAPI from '@/services/api/resources/chats/flowsTrigger';
+
 import SelectFlow from './SelectFlow.vue';
 import SendFlowButton from './SendFlowButton.vue';
 import SelectProjects from './SelectProjects.vue';
+import ModalVariableMapping from './ModalVariableMapping.vue';
+import { FLOW_TRIGGER_VARIABLE_MAPPING_FLAG } from './types';
+import { getAvailableLocalVariables } from './localVariables';
 
 export default {
   name: 'SendFlow',
@@ -62,6 +92,7 @@ export default {
     SendFlowButton,
     ModalProgressBarFalse,
     SelectProjects,
+    ModalVariableMapping,
   },
 
   props: {
@@ -78,7 +109,13 @@ export default {
       default: false,
     },
   },
-  emits: ['back', 'close', 'update:projectUuidFlow', 'update:selectedFlow'],
+  emits: [
+    'back',
+    'close',
+    'update:projectUuidFlow',
+    'update:selectedFlow',
+    'update:cachedTemplate',
+  ],
 
   data() {
     return {
@@ -86,18 +123,54 @@ export default {
 
       selectedFlow: '',
       projectUuidFlow: '',
+
+      isCheckingTemplate: false,
+      cachedTemplate: null,
+      showVariableModal: false,
+      isSendingFlow: false,
     };
   },
 
   computed: {
+    ...mapState(useFeatureFlag, ['featureFlags']),
+    ...mapState(useProfile, ['me']),
+    ...mapState(useRooms, {
+      activeRoom: (store) => store.activeRoom,
+    }),
+
     noHasContacts() {
       return !this.selectedContact && this.contacts.length === 0;
+    },
+
+    isVariableMappingEnabled() {
+      return !!this.featureFlags?.active_features?.includes(
+        FLOW_TRIGGER_VARIABLE_MAPPING_FLAG,
+      );
+    },
+
+    contactsForResolution() {
+      if (
+        this.selectedContact &&
+        Object.keys(this.selectedContact).length > 0
+      ) {
+        return [this.selectedContact];
+      }
+      return this.contacts;
+    },
+
+    localVariables() {
+      return getAvailableLocalVariables({
+        contacts: this.contactsForResolution,
+        agent: this.me,
+        room: this.activeRoom,
+      });
     },
   },
 
   watch: {
     selectedFlow(newSelectedFlow) {
       this.$emit('update:selectedFlow', newSelectedFlow);
+      this.checkFlowTemplate(newSelectedFlow);
     },
     projectUuidFlow(newProjectUuidFlow) {
       this.$emit('update:projectUuidFlow', newProjectUuidFlow);
@@ -134,6 +207,53 @@ export default {
     backToContactList() {
       this.$emit('back');
     },
+
+    setCachedTemplate(template) {
+      this.cachedTemplate = template;
+      this.$emit('update:cachedTemplate', template);
+      this.showVariableModal = Boolean(template?.variables?.length);
+    },
+
+    onCancelVariableMapping() {
+      this.showVariableModal = false;
+    },
+
+    async onConfirmVariableMapping(params) {
+      this.isSendingFlow = true;
+      try {
+        await this.$refs.sendFlowButton.doSendFlow(params);
+        this.showVariableModal = false;
+      } finally {
+        this.isSendingFlow = false;
+      }
+    },
+
+    async checkFlowTemplate(flowUuid) {
+      this.setCachedTemplate(null);
+
+      if (!flowUuid) return;
+      if (this.isProjectPrincipal || !this.isVariableMappingEnabled) return;
+
+      this.isCheckingTemplate = true;
+      try {
+        const response = await FlowsTriggerAPI.getFlowTemplates(
+          flowUuid,
+          this.projectUuidFlow,
+        );
+
+        if (this.selectedFlow !== flowUuid) return;
+
+        const firstTemplate = response?.templates?.[0];
+        const variables = firstTemplate?.variables || [];
+        this.setCachedTemplate(variables.length > 0 ? firstTemplate : null);
+      } catch (error) {
+        console.error('Error checking flow templates', error);
+      } finally {
+        if (this.selectedFlow === flowUuid) {
+          this.isCheckingTemplate = false;
+        }
+      }
+    },
   },
 };
 </script>
@@ -147,11 +267,12 @@ export default {
   height: 100%;
 
   &__handlers {
-    display: flex;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
     gap: $unnnic-spacing-xs;
 
     &__button {
-      flex: 1;
+      width: 100%;
     }
   }
 }
