@@ -20,6 +20,7 @@ const i18n = createI18n({
   legacy: false,
   locale: 'en',
   fallbackLocale: 'en',
+  warnHtmlInMessage: 'off',
   messages,
   messageCompiler: icuMessageCompiler,
   globalInjection: true, // Enable $t in templates

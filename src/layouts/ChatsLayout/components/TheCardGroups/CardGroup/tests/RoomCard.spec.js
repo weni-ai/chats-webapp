@@ -215,7 +215,7 @@ describe('RoomCard.vue', () => {
       wrapper.vm.waitingTime = 50;
 
       expect(wrapper.vm.waitingTime).toBe(50);
-      expect(wrapper.vm.waitingTimeComputed).toContain('minute waiting');
+      expect(wrapper.vm.waitingTimeComputed).toMatch(/minutes? waiting/);
 
       wrapper.unmount();
     });
