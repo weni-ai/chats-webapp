@@ -55,7 +55,12 @@
       </section>
       <div
         class="chats-contact__infos__additional-information"
-        :class="{ bold: unreadMessages || (checkboxWhenSelect && selected) }"
+        :class="{
+          bold:
+            unreadMessages ||
+            (checkboxWhenSelect && selected) ||
+            newMessageIndicator,
+        }"
       >
         <p
           v-if="waitingTime !== 0 && !discussionGoal"
@@ -97,6 +102,10 @@
     <section
       v-if="!checkboxWhenSelect"
       class="chats-contact__infos__unread-messages-container"
+      :class="{
+        'chats-contact__infos__unread-messages-container--new-message-centered':
+          isNewMessageIndicatorCentered,
+      }"
     >
       <p
         v-if="lastInteractionTime"
@@ -111,7 +120,7 @@
       <section
         class="chats-contact__infos__unread-messages-container__pin-container"
       >
-        <UnnnicTooltip
+        <UnnnicToolTip
           v-if="pendingResponse"
           class="chats-contact__infos__pending-response"
           :enabled="!!pendingResponseTooltip"
@@ -124,7 +133,7 @@
             scheme="fg-info"
             data-testid="pending-response-icon"
           />
-        </UnnnicTooltip>
+        </UnnnicToolTip>
         <button
           v-if="isRenderPin"
           data-testid="pin-button"
@@ -155,7 +164,7 @@
         <p
           v-else-if="(unreadMessages && !selected) || forceShowUnreadMessages"
           class="chats-contact__infos__unread-messages"
-          :title="$tc('unread_messages', unreadMessages, { unreadMessages })"
+          :title="$t('unread_messages', unreadMessages, { unreadMessages })"
         >
           {{ unreadMessages }}
         </p>
@@ -285,7 +294,11 @@ export default {
   },
 
   computed: {
+    isNewMessageIndicatorCentered() {
+      return this.newMessageIndicator && !this.lastInteractionTime;
+    },
     messageInfoAlign() {
+      if (this.isNewMessageIndicatorCentered) return 'center';
       if (this.newMessageIndicator) return 'space-between';
       return this.unreadMessages && this.selected ? 'center' : 'flex-start';
     },
@@ -601,6 +614,10 @@ export default {
       justify-content: v-bind(messageInfoAlign);
       gap: $unnnic-spacing-nano;
       margin-top: v-bind(messageInfoMarginTop);
+
+      &--new-message-centered {
+        justify-content: center;
+      }
 
       &__pin-container {
         display: flex;
