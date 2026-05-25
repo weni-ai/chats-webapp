@@ -235,6 +235,7 @@
 import isMobile from 'is-mobile';
 import { mapState } from 'pinia';
 
+import { useRooms } from '@/store/modules/chats/rooms';
 import { useConfig } from '@/store/modules/config';
 import { useFeatureFlag } from '@/store/modules/featureFlag';
 import { useProfile } from '@/store/modules/profile';
@@ -255,14 +256,14 @@ import SelectedContactsSection from '@/components/chats/FlowsTrigger/SelectedCon
 import SendFlow from '@/components/chats/FlowsTrigger/SendFlow.vue';
 import FlowsContactCard from '@/components/chats/FlowsTrigger/FlowsContactCard.vue';
 import ModalProgressBarFalse from '@/components/ModalProgressBarFalse.vue';
+
 import callUnnnicAlert from '@/utils/callUnnnicAlert';
-import Group from '@/services/api/resources/settings/group.js';
 
 import FlowsContactsLoading from '@/views/loadings/FlowsTrigger/FlowsContactsLoading.vue';
 
 import FlowsTrigger from '@/services/api/resources/chats/flowsTrigger.js';
 import FlowsAPI from '@/services/api/resources/flows/flowsTrigger.js';
-import { useRooms } from '@/store/modules/chats/rooms';
+import Group from '@/services/api/resources/settings/group.js';
 
 export default {
   name: 'FlowsTrigger',
