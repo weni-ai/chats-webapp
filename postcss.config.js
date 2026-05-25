@@ -9,16 +9,14 @@ const postcssPrefixwrap = require('postcss-prefixwrap');
  * we wrap every CSS rule under `.chats-webapp` (the class added to the mount
  * container in `src/main.js`).
  *
- * NOTE on `:root`, `html`, `body`:
- * With no `prefixRootTags`, the plugin REPLACES `:root` / `html` / `body`
- * with the prefix selector, so `:root { --vars }` becomes
- * `.chats-webapp { --vars }` — exactly what we want for federation, where the
- * host already owns `<html>` / `<body>`. We deliberately do NOT use
- * `prefixRootTags: true`: in v1.58.0 it emits `prefix + " ." + selector`,
- * producing the invalid CSS `.chats-webapp .:root { ... }` and dropping the
- * entire unnnic theme block. The baseline `html, body { height: 100% }` for
- * standalone mode is provided directly in `index.html` (the host owns the
- * document in federation mode, so it doesn't need that fallback).
+ * We deliberately do NOT enable `prefixRootTags`: in v1.58.0 it emits
+ * `prefix + " ." + selector`, producing invalid CSS like `.chats-webapp .:root`
+ * which the browser drops — including the entire unnnic theme block. Without
+ * that flag `:root` is REPLACED with the prefix, which is what we want.
+ *
+ * `html`, `body`, and the universal `*` selectors are left alone via
+ * `ignoredSelectors` so the baseline rules in `src/styles/{global,reset}.scss`
+ * keep working at the document level (see comment on the option below).
  */
 module.exports = {
   plugins: [
@@ -31,6 +29,13 @@ module.exports = {
       },
     }),
 
-    postcssPrefixwrap('.chats-webapp'),
+    postcssPrefixwrap('.chats-webapp', {
+      prefixTransform: (selector, prefix) => {
+        if (selector.startsWith('.dark')) {
+          return `${prefix} ${selector}, ${prefix}${selector}`;
+        }
+        return `${prefix} ${selector}`;
+      },
+    }),
   ],
 };
