@@ -66,6 +66,7 @@
       <template v-if="csatType === 'custom'">
         <SelectFlow
           :modelValue="sector.custom_csat_flow_uuid || ''"
+          :disableGetChatsTag="true"
           data-testid="csat-flow-select"
           @update:model-value="handleFlowChange"
         />

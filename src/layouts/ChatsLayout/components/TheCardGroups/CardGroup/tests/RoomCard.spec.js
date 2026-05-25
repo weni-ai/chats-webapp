@@ -363,6 +363,38 @@ describe('RoomCard.vue', () => {
       wrapper.unmount();
     });
 
+    it('calculates isLastMessageFromAnotherAgent as true when last message user is an email string from another agent', () => {
+      const room = {
+        ...mockRoom,
+        last_message: {
+          ...mockRoom.last_message,
+          user: 'other-agent@weni.ai',
+          contact: null,
+        },
+      };
+      const wrapper = createWrapper({ room });
+
+      expect(wrapper.vm.isLastMessageFromAnotherAgent).toBe(true);
+
+      wrapper.unmount();
+    });
+
+    it('calculates isLastMessageFromAnotherAgent as false when last message user is an email string matching current user', () => {
+      const room = {
+        ...mockRoom,
+        last_message: {
+          ...mockRoom.last_message,
+          user: 'agent@weni.ai',
+          contact: null,
+        },
+      };
+      const wrapper = createWrapper({ room });
+
+      expect(wrapper.vm.isLastMessageFromAnotherAgent).toBe(false);
+
+      wrapper.unmount();
+    });
+
     it('calculates isLastMessageFromBot as true when last message has no contact and no user', () => {
       const room = {
         ...mockRoom,
@@ -996,7 +1028,8 @@ describe('RoomCard.vue', () => {
       });
 
       expect(wrapper.vm.isLastMessageFromAgent).toBe(true);
-      expect(wrapper.vm.showPendingResponse).toBe(true);
+      expect(wrapper.vm.isLastMessageFromAnotherAgent).toBe(false);
+      expect(wrapper.vm.showPendingResponse).toBe(false);
       expect(wrapper.vm.displayedLastMessage.text).toMatch(/: Hello message$/);
       expect(wrapper.vm.displayedLastMessage.text).not.toBe('Hello message');
       expect(wrapper.vm.displayedLastMessage.isFromUser).toBe(true);

@@ -158,10 +158,13 @@ export default {
       return !!this.room.last_message?.contact && !this.room.last_message?.user;
     },
     isLastMessageFromAnotherAgent() {
-      return (
-        !!this.room.last_message?.user &&
-        this.room.last_message?.user?.email !== this.me?.email
-      );
+      const isUserHaveEmail = this.room.last_message?.user?.email;
+
+      const verifyEmail = isUserHaveEmail
+        ? this.room.last_message?.user?.email !== this.me?.email
+        : this.room.last_message?.user !== this.me?.email;
+
+      return !!this.room.last_message?.user && verifyEmail;
     },
     isLastMessageFromBot() {
       return !this.room.last_message?.contact && !this.room.last_message?.user;
@@ -353,6 +356,13 @@ export default {
       ):not(:has(.chats-contact__infos__message-time))
   ) {
     justify-content: center;
+  }
+
+  :deep(
+    .chats-contact:has(.chats-contact__infos__new-message-indicator)
+      .chats-contact__infos__additional-information
+  ) {
+    font-weight: $unnnic-font-weight-bold;
   }
 }
 
