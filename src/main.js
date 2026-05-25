@@ -25,7 +25,7 @@ getJwtToken().then(() => {
 
   app.config.productionTip = false;
 
-  app.use(UnnnicSystem);
+  app.use(UnnnicSystem, { teleportTarget: '#app' });
 
   app.use(pinia);
   app.use(router);
