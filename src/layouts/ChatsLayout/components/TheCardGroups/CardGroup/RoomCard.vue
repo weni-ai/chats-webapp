@@ -344,25 +344,14 @@ export default {
   }
 
   .room-card__contact--selected {
-    :deep(.chats-contact__infos__unread-messages-container) {
+    :deep(
+      .chats-contact__infos__unread-messages-container:not(
+          .chats-contact__infos__unread-messages-container--new-message-centered
+        )
+    ) {
       justify-content: flex-start;
       margin-top: $unnnic-spacing-nano;
     }
-  }
-
-  :deep(
-    .chats-contact__infos__unread-messages-container:has(
-        .chats-contact__infos__new-message-indicator
-      ):not(:has(.chats-contact__infos__message-time))
-  ) {
-    justify-content: center;
-  }
-
-  :deep(
-    .chats-contact:has(.chats-contact__infos__new-message-indicator)
-      .chats-contact__infos__additional-information
-  ) {
-    font-weight: $unnnic-font-weight-bold;
   }
 }
 
