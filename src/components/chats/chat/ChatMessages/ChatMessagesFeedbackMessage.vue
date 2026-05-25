@@ -74,14 +74,15 @@ export default {
         return '';
       }
 
-      const getTransferUserToUserLabel = (from, to, requestedBy) => {
-        const isTransferByOther =
-          requestedBy?.type === 'user' &&
-          requestedBy?.id &&
-          from?.id &&
-          String(requestedBy.id) !== String(from.id);
+      const isTransferByOther = (from, requestedBy) => {
+        if (requestedBy?.type !== 'user' || !requestedBy?.name) return false;
+        if (from?.type !== 'user') return true;
+        if (!requestedBy?.id || !from?.id) return false;
+        return String(requestedBy.id) !== String(from.id);
+      };
 
-        if (isTransferByOther) {
+      const getTransferUserToUserLabel = (from, to, requestedBy) => {
+        if (isTransferByOther(from, requestedBy)) {
           return t('chats.feedback.transfer_to_agent_by_other', {
             requestedBy: requestedBy.name,
             agent1: from.name,
@@ -99,18 +100,39 @@ export default {
         if (action !== 'transfer') return '';
 
         if (from?.type === 'user' && to?.type === 'queue') {
+          if (isTransferByOther(from, requestedBy)) {
+            return t('chats.feedback.transfer_to_queue_by_other', {
+              requestedBy: requestedBy.name,
+              agent: from.name,
+              queue: to.name,
+            });
+          }
           return t('chats.feedback.transfer_to_queue', {
             agent: from.name,
             queue: to.name,
           });
         }
         if (from?.type === 'queue' && to?.type === 'queue') {
+          if (isTransferByOther(from, requestedBy)) {
+            return t('chats.feedback.transfer_from_queue_to_queue_by_other', {
+              requestedBy: requestedBy.name,
+              queue1: from.name,
+              queue2: to.name,
+            });
+          }
           return t('chats.feedback.transfer_from_queue_to_queue', {
             queue1: from.name,
             queue2: to.name,
           });
         }
         if (from?.type === 'queue' && to?.type === 'user') {
+          if (isTransferByOther(from, requestedBy)) {
+            return t('chats.feedback.transfer_from_queue_to_agent_by_other', {
+              requestedBy: requestedBy.name,
+              queue: from.name,
+              agent: to.name,
+            });
+          }
           return t('chats.feedback.transfer_from_queue_to_agent', {
             queue: from.name,
             agent: to.name,

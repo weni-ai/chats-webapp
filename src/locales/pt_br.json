@@ -298,11 +298,17 @@
         "switch_label": "Usar assinatura"
       },
       "csat": {
-        "label": "Enviar automaticamente uma pesquisa de satisfação após o atendimento do Live desk ser encerrado",
+        "custom": {
+          "flow_disclaimer": "O fluxo selecionado deve usar uma classificação de satisfação de 1 a 5 para garantir os resultados corretos da pesquisa."
+        },
         "hint": "Se houver um fluxo ativo no módulo Flows configurado para disparar a pesquisa após o atendimento, esta configuração pode gerar conflito e impactar o envio da pesquisa.",
-        "confirm_modal": {
-          "content_1": "Se houver um fluxo ativo no módulo Flows configurado para disparar a pesquisa após o atendimento, esta configuração pode gerar conflito e impactar o envio da pesquisa.",
-          "content_2": "Deseja continuar mesmo assim?"
+        "label": "Enviar automaticamente uma pesquisa de satisfação após o atendimento do Live desk ser encerrado",
+        "section_title": "Pesquisa de satisfação",
+        "type": {
+          "custom": "Fluxos personalizados",
+          "default": "Pesquisa CSAT padrão (recomendado)",
+          "label": "Tipo de pesquisa",
+          "tooltip": "Escolha entre a pesquisa CSAT padrão ou um fluxo personalizado já configurado no módulo Flows."
         }
       },
       "automated_message": {
@@ -405,21 +411,25 @@
       }
     },
     "feedback": {
-      "forwarded_to_agent": "Contato encaminhado para agente {agent}",
-      "forwarded_to_queue": "Contato encaminhado para fila {queue}",
-      "transfer_to_agent": "{agent1} transferiu o chat para {agent2}",
-      "transfer_to_agent_by_other": "{requestedBy} transferiu o chat de {agent1} para {agent2}",
-      "transfer_to_queue": "{agent} transferiu para fila {queue}",
-      "transfer_from_queue_to_queue": "Foi transferido da fila {queue1} para fila {queue2}",
-      "transfer_from_queue_to_agent": "Foi transferido da fila {queue} para {agent}",
-      "pick_of_queue": "{agent} pegou da fila {queue}",
-      "pick_of_agent": "{manager} assumiu o chat de {agent}",
-      "edit_custom_field": "editou o custom field",
+      "agent_took_chat": "Ops! O chat com contato {contact} foi assumido por outro agente",
+      "automatic_transfer_from_queue": "Chat atribuído a {agent}",
+      "chat_ended_by": "Chat encerrado por {agent}",
       "discussion_created": "{agent} iniciou a discussão com fila {queue}",
       "discussion_joined": "{agent} entrou na discussão",
-      "agent_took_chat": "Ops! O chat com contato {contact} foi assumido por outro agente",
-      "automatic_transfer_from_queue": "Sala atribuída ao {agent}.",
-      "see_all_internal_notes": "<b class='fg-on-primary'>Ver notas internas</b>"
+      "edit_custom_field": "editou o custom field",
+      "forwarded_to_agent": "Contato encaminhado para agente {agent}",
+      "forwarded_to_queue": "Chat encaminhado para a fila {queue}",
+      "pick_of_agent": "{manager} assumiu o chat que estava com {agent}",
+      "pick_of_queue": "{agent} assumiu o chat da fila {queue}",
+      "see_all_internal_notes": "<b class='fg-on-primary'>Ver notas internas</b>",
+      "transfer_from_queue_to_agent": "Foi transferido da fila {queue} para {agent}",
+      "transfer_from_queue_to_agent_by_other": "{requestedBy} transferiu o chat da fila {queue} para {agent}",
+      "transfer_from_queue_to_queue": "Foi transferido da fila {queue1} para fila {queue2}",
+      "transfer_from_queue_to_queue_by_other": "{requestedBy} transferiu o chat da fila {queue1} para a fila {queue2}",
+      "transfer_to_agent": "{agent1} transferiu o chat para {agent2}",
+      "transfer_to_agent_by_other": "{requestedBy} transferiu o chat de {agent1} para {agent2}",
+      "transfer_to_queue": "{agent} transferiu o chat para a fila {queue}",
+      "transfer_to_queue_by_other": "{requestedBy} transferiu o chat de {agent} para a fila {queue}"
     },
     "room_list": {
       "order_by": "Ordenar por:",
@@ -627,7 +637,7 @@
   "view": "Visualizar",
   "see": "Ver",
   "chat_with": {
-    "bot": "Chat com bot"
+    "bot": "Atendimento automatizado"
   },
   "waiting_answer": {
     "send_template": "Você enviou um modelo de mensagem",
@@ -848,7 +858,24 @@
     "successfully_triggered": "Fluxo disparado com sucesso",
     "error_triggering": "Erro ao disparar fluxo",
     "successfully_add_contact": "Contato adicionado com sucesso",
-    "contact_already_exists": "O número {contact} já está salvo em sua lista de contatos"
+    "contact_already_exists": "O número {contact} já está salvo em sua lista de contatos",
+    "variable_mapping": {
+      "title": "Mapeamento de variáveis",
+      "description": "As variáveis serão preenchidas na pré-visualização abaixo usando valores dos contatos selecionados sempre que fizerem referência a campos do contato",
+      "define_variables": "Definir as variáveis",
+      "variable_label": "Variável {name}",
+      "input_placeholder": "Digite o valor para esta variável",
+      "preview_title": "Pré-visualização do template",
+      "preview_variable_tooltip": "Variável {placeholder}",
+      "confirmation_helper": "Verifique se cada campo está mapeado corretamente; é assim que a mensagem será exibida para cada contato selecionado",
+      "confirmation_checkbox": "Verifiquei e estou pronto para enviar",
+      "local_variables": {
+        "contact_name": "Nome do contato",
+        "contact_urn": "Telefone do contato",
+        "agent_name": "Nome do atendente",
+        "agent_email": "E-mail do atendente"
+      }
+    }
   },
   "quick_messages": {
     "title": "Mensagens rápidas",
@@ -1340,6 +1367,9 @@
   "room_card": {
     "last_message": {
       "you_prefix": "Você"
+    },
+    "new_chat_received": {
+      "tooltip": "Novos chats recebidos"
     },
     "pending_response": {
       "tooltip": "Você não respondeu a este contato"

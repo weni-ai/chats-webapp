@@ -172,6 +172,7 @@ const sector = ref<Sector>({
   rooms_limit: 0,
   required_tags: false,
   is_csat_enabled: false,
+  custom_csat_flow_uuid: null,
   managers: [],
 });
 
@@ -242,6 +243,7 @@ const handlerSectorData = async () => {
     automatic_message,
     required_tags,
     is_csat_enabled,
+    custom_csat_flow_uuid,
   } = currentSector.value;
   sector.value = {
     ...sector.value,
@@ -255,6 +257,7 @@ const handlerSectorData = async () => {
     automatic_message,
     required_tags,
     is_csat_enabled,
+    custom_csat_flow_uuid: custom_csat_flow_uuid ?? null,
   };
   setCopilotActive(sector.value.config?.can_use_chat_completion);
   setCopilotCustomRulesActive(sector.value.config?.can_input_context);
