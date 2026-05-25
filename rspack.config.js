@@ -63,11 +63,21 @@ module.exports = defineConfig({
       },
       {
         test: /\.(scss|sass)$/,
-        loader: 'sass-loader',
+        use: [
+          'postcss-loader',
+          {
+            loader: 'sass-loader',
+            options: {
+              additionalData: `@import '@weni/unnnic-system/src/assets/scss/unnnic.scss';`,
+            },
+          },
+        ],
         type: 'css',
-        options: {
-          additionalData: `@import '@weni/unnnic-system/src/assets/scss/unnnic.scss';`,
-        },
+      },
+      {
+        test: /\.css$/,
+        use: ['postcss-loader'],
+        type: 'css',
       },
       {
         test: /\.(png|jpe?g|gif|svg|webp|avif)$/i,
