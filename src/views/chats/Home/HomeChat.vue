@@ -11,7 +11,7 @@
 
     <ChatsDropzone
       :show="isRenderChatsDropzoneVisible"
-      @open-file-uploader="openModalFileUploader"
+      @open-file-uploader="addFiles"
     >
       <RoomMessages
         v-if="!!room && !discussion"
@@ -21,23 +21,10 @@
 
       <DiscussionMessages v-if="!!discussion" />
 
-      <MessageManagerV2
-        v-if="
-          isMessageManagerV2Enabled &&
-          (isMessageManagerRoomVisible || isMessageManagerDiscussionVisible)
-        "
+      <MessageManager
+        v-if="isMessageManagerRoomVisible || isMessageManagerDiscussionVisible"
         data-testid="message-manager"
         :isLoading="isChatSkeletonActive"
-        @show-quick-messages="handleShowQuickMessages"
-        @open-file-uploader="openModalFileUploader"
-      />
-      <MessageManager
-        v-else-if="
-          isMessageManagerRoomVisible || isMessageManagerDiscussionVisible
-        "
-        :loadingFileValue="uploadFilesProgress"
-        :showSkeletonLoading="isChatSkeletonActive"
-        data-testid="message-manager"
         @show-quick-messages="handleShowQuickMessages"
         @open-file-uploader="openModalFileUploader"
       />
@@ -83,7 +70,6 @@ import ChatsDropzone from '@/layouts/ChatsLayout/components/ChatsDropzone/index.
 import RoomMessages from '@/components/chats/chat/RoomMessages.vue';
 import DiscussionMessages from '@/components/chats/chat/DiscussionMessages.vue';
 import MessageManager from '@/components/chats/MessageManager/index.vue';
-import MessageManagerV2 from '@/components/chats/MessageManagerV2/index.vue';
 import ButtonJoinDiscussion from '@/components/chats/chat/ButtonJoinDiscussion.vue';
 
 import Room from '@/services/api/resources/chats/room';
@@ -106,7 +92,6 @@ export default {
     MessageManager,
     ButtonJoinDiscussion,
     HomeChatModals,
-    MessageManagerV2,
   },
   emits: [
     'open-room-contact-info',
@@ -309,6 +294,7 @@ export default {
   },
 
   methods: {
+    ...mapActions(useMessageManager, ['addMediaUploadFiles']),
     ...mapActions(useRooms, [
       'setActiveRoom',
       'getCanUseCopilot',
@@ -323,10 +309,10 @@ export default {
     openModal(modalName) {
       this.$refs['home-chat-modals'].openModal(modalName);
     },
-    openModalFileUploader(files, filesType) {
-      const homeChatModals = this.$refs['home-chat-modals'];
-      homeChatModals.configFileUploader({ files, filesType });
-      homeChatModals.openModal('fileUploader');
+    addFiles(files) {
+      if (files) {
+        this.addMediaUploadFiles(files);
+      }
     },
     emitOpenRoomContactInfo() {
       this.$emit('open-room-contact-info');
