@@ -41,6 +41,11 @@ export default {
       required: false,
       default: '',
     },
+    disableGetChatsTag: {
+      type: Boolean,
+      required: false,
+      default: false,
+    },
   },
   emits: ['update:modelValue'],
 
@@ -110,7 +115,9 @@ export default {
       this.flowSelection = null;
 
       try {
-        const response = await FlowsTrigger.getFlows(projectUuidFlow);
+        const response = await FlowsTrigger.getFlows(projectUuidFlow, {
+          verify_chats_tag: !this.disableGetChatsTag,
+        });
 
         this.templates = response.map(({ name, uuid }) => ({
           value: uuid,
