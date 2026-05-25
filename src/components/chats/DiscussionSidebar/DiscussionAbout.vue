@@ -32,6 +32,7 @@
         :text="$t('discussions.about.add_agent')"
         iconLeft="add-1"
         type="secondary"
+        :disabled="agentsInvolved?.length >= 5"
         data-testid="add-agent-button"
         @click="handleAddAgentModal"
       />
