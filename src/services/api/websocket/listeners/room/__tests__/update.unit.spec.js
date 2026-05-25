@@ -63,7 +63,6 @@ const buildRoomsStoreMock = () => ({
   resetNewMessagesByRoom: vi.fn(),
   markNewChatReceived: vi.fn(),
   getAll: vi.fn().mockResolvedValue(undefined),
-  filterQueues: [],
 });
 
 const buildCountersMock = () => ({
