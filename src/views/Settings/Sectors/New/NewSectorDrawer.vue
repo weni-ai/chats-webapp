@@ -148,6 +148,7 @@ export default {
           close_room_message_text: '',
           close_room_time: null,
         },
+        custom_csat_flow_uuid: null,
         automatic_message: {
           is_active: false,
           text: '',
@@ -242,7 +243,12 @@ export default {
           config,
           automatic_message,
           is_csat_enabled,
+          custom_csat_flow_uuid,
         } = this.sector;
+
+        const csatEnabled = this.enableAutomaticCsatFeature
+          ? is_csat_enabled
+          : false;
 
         const createSectorBody = {
           can_edit_custom_fields,
@@ -254,9 +260,8 @@ export default {
             ? config
             : { ...config, secondary_project: undefined },
           automatic_message,
-          is_csat_enabled: this.enableAutomaticCsatFeature
-            ? is_csat_enabled
-            : false,
+          is_csat_enabled: csatEnabled,
+          custom_csat_flow_uuid: csatEnabled ? custom_csat_flow_uuid : null,
         };
 
         const createdSector = await Sector.create(createSectorBody);

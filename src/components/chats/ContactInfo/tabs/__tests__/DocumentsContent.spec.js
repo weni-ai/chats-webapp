@@ -62,7 +62,7 @@ const createWrapper = (props = {}, storeOverrides = {}) => {
       ],
       mocks: { $t: (key) => key },
       stubs: {
-        UnnnicChatsMessage: {
+        ChatsMessage: {
           template:
             '<div data-testid="document-message" @click="$emit(\'click\')"></div>',
         },
