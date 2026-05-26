@@ -148,10 +148,12 @@
   "start": "Start",
   "submit": "Submit",
   "details": "Details",
+  "discussion_about": "Discussion about {discussionGoal}",
   "doubts": "Doubts",
   "finance": "Finance",
   "chats_in_the_period": "Chats in the period",
   "chats_per_agents": "Chats per agent",
+  "you_message_prefix": "You:",
   "new_messages_song": {
     "queue": "Sound for new messages from contacts waiting in the queue",
     "in_progress": "Sound for new messages in ongoing chats",
@@ -160,8 +162,10 @@
   "automatic_message": {
     "title": "Automatic message",
     "info": "Define an automatic response to be sent to the contact while they are waiting for assistance, leave it blank if you don’t want any message.",
-    "placeholder": "You haven't set an automatic message yet. Please define a message for your contacts who are waiting."
+    "placeholder": "You haven't set an automatic message yet. Please define a message for your contacts who are waiting.",
+    "automatic_opening_message": "Automatic Opening Message"
   },
+  "reply": "Reply",
   "step_of": "Step {step} of {total}",
   "type_to_filter": "Type to filter",
   "chats_count": "{count} chat | {count} chats",
@@ -587,6 +591,7 @@
   },
   "pagination": "{from} - {to} of {total}",
   "contact": "Contact",
+  "unread_messages": "{count} unread message | {count} unread messages",
   "unnamed_contact": "Unnamed contact",
   "unnamed_agent": "Unnamed agent",
   "no_agent_assigned": "No agent assigned",
@@ -608,6 +613,7 @@
     "back_to_original_tooltip": "Go back to original version (Ctrl+Z)"
   },
   "manager": "Manager",
+  "yesterday": "Yesterday",
   "you": "You",
   "queue": "Queue",
   "agents": {

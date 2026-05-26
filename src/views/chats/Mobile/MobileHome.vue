@@ -1,3 +1,4 @@
+<!-- This component was migrated from unnnic. -->
 <template>
   <MobileChat
     v-if="showActiveChat"
@@ -20,7 +21,7 @@
         @close="openTabChats"
       />
 
-      <UnnnicChatsHeader
+      <ChatsHeader
         v-else-if="showChats"
         title="Live desk"
         :subtitle="projectName"
@@ -49,7 +50,7 @@
       />
     </main>
 
-    <UnnnicChatsNavbar
+    <ChatsNavbar
       v-model="currentTab"
       :links="navs"
     />
@@ -62,6 +63,8 @@ import { useConfig } from '@/store/modules/config';
 import { useDiscussions } from '@/store/modules/chats/discussions';
 import { useRooms } from '@/store/modules/chats/rooms';
 
+import ChatsHeader from '@/components/chats/ChatHeader.vue';
+
 import TheCardGroups from '@/layouts/ChatsLayout/components/TheCardGroups/index.vue';
 import FlowsTrigger from '@/layouts/ChatsLayout/components/FlowsTrigger/index.vue';
 
@@ -71,6 +74,8 @@ import MobileClosedChats from '@/views/chats/Mobile/MobileClosedChats.vue';
 import ModalPreferences from '@/components/chats/Mobile/ModalPreferences.vue';
 import QuickMessages from '@/components/chats/QuickMessages/index.vue';
 
+import ChatsNavbar from '@/components/chats/ChatsNavbar.vue';
+
 import callUnnnicAlert from '@/utils/callUnnnicAlert';
 import { resetChats } from '@/utils/chats';
 
@@ -78,12 +83,14 @@ export default {
   name: 'MobileHome',
 
   components: {
+    ChatsNavbar,
     TheCardGroups,
     FlowsTrigger,
     MobileClosedChats,
     ModalPreferences,
     QuickMessages,
     MobileChat,
+    ChatsHeader,
   },
 
   data() {

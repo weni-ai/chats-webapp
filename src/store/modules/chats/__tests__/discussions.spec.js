@@ -151,10 +151,15 @@ describe('useDiscussions Store', () => {
 
     Discussion.getDiscussionAgents.mockResolvedValue({ data: 'agents' });
 
-    const result = await discussions.getDiscussionAgents();
+    const result = await discussions.getDiscussionAgents({
+      limit: 20,
+      offset: 0,
+    });
 
     expect(Discussion.getDiscussionAgents).toHaveBeenCalledWith({
       discussionUuid: '123',
+      limit: 20,
+      offset: 0,
     });
     expect(result).toEqual({ data: 'agents' });
   });

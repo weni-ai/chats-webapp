@@ -148,10 +148,12 @@
   "start": "Iniciar",
   "submit": "Enviar",
   "details": "Details",
+  "discussion_about": "Discusión sobre {discussionGoal}",
   "doubts": "Dudas",
   "finance": "Financiero",
   "chats_in_the_period": "Chats en el período",
   "chats_per_agents": "Chats por agente",
+  "you_message_prefix": "Tú:",
   "new_messages_song": {
     "queue": "Sonido de nuevos mensajes de contactos que están esperando en la fila",
     "in_progress": "Sonido de nuevos mensajes en chats en curso",
@@ -160,8 +162,10 @@
   "automatic_message": {
     "title": "Mensaje automático",
     "info": "Define una respuesta automática para enviar al contacto mientras espera asistencia, déjalo en blanco si no deseas ningún mensaje.",
-    "placeholder": "Aún no has definido un mensaje automático. Por favor, define un mensaje para tus contactos que están esperando."
+    "placeholder": "Aún no has definido un mensaje automático. Por favor, define un mensaje para tus contactos que están esperando.",
+    "automatic_opening_message": "Mensaje de apertura automático"
   },
+  "reply": "Responder",
   "step_of": "Paso {step} de {total}",
   "type_to_filter": "Escribe para filtrar",
   "chats_count": "{count} chat | {count} chats",
@@ -590,6 +594,7 @@
   },
   "pagination": "{from} - {to} de {total}",
   "contact": "Contacto",
+  "unread_messages": "{count} mensaje no leído | {count} mensajes no leídos",
   "unnamed_contact": "Contacto sin nombre",
   "unnamed_agent": "Agente sin nombre",
   "no_agent_assigned": "No se ha asignado un agente",
@@ -611,6 +616,7 @@
     "back_to_original_tooltip": "Volver a la versión original (Ctrl+Z)"
   },
   "manager": "Gerente",
+  "yesterday": "Ayer",
   "you": "Tú",
   "queue": "Cola",
   "agents": {

@@ -83,7 +83,7 @@ describe('CardGroup.vue', () => {
             template: '<div data-testid="unnnic-disclaimer">{{ text }}</div>',
             props: ['text', 'iconColor'],
           },
-          UnnnicChatsContact: {
+          ChatContact: {
             template:
               '<div data-testid="unnnic-chats-contact">{{ title }}</div>',
             props: [

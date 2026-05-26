@@ -4,7 +4,7 @@
     class="documents__content"
     data-testid="documents-content"
   >
-    <UnnnicChatsMessage
+    <ChatsMessage
       v-for="document in documents"
       :key="document.url"
       :time="new Date(document.created_on)"
@@ -28,7 +28,11 @@
 <script setup>
 import { onMounted } from 'vue';
 import { storeToRefs } from 'pinia';
+
+import ChatsMessage from '@/components/chats/Message/index.vue';
+
 import Media from '@/services/api/resources/chats/media';
+
 import { useContactInfos } from '@/store/modules/chats/contactInfos';
 import { treatedMediaName } from '@/utils/medias';
 

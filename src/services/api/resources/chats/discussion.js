@@ -33,9 +33,15 @@ export default {
     const response = await http.get(`discussion/${discussionUuid}/`);
     return response.data;
   },
-  async getDiscussionAgents({ discussionUuid }) {
+  async getDiscussionAgents({ discussionUuid, limit = 20, offset = 0 }) {
     const response = await http.get(
       `discussion/${discussionUuid}/list_agents/`,
+      {
+        params: {
+          limit,
+          offset,
+        },
+      },
     );
     return response.data;
   },
