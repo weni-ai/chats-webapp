@@ -290,7 +290,7 @@ export default {
     },
     isInactive: {
       type: Boolean,
-      default: true,
+      default: false,
     },
   },
 

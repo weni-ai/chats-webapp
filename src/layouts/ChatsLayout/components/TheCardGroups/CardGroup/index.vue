@@ -21,7 +21,6 @@
           'room-card--selected': activeRoom?.uuid === room?.uuid,
         }"
         :data-testid="`room-card-${index}`"
-        :isInactive="getRoomType(room) === 'ongoing' && room.is_inactive"
         @click="open(room)"
         @click-pin="handlePin(room, $event)"
         @update-selected="updateIsRoomSelected(room.uuid, $event)"
@@ -82,8 +81,6 @@ import { useDashboard } from '@/store/modules/dashboard';
 
 import ChatContact from '@/components/chats/ChatContact.vue';
 import RoomCard from './RoomCard.vue';
-
-import { getRoomType } from '@/utils/room.js';
 
 export default {
   name: 'CardGroup',

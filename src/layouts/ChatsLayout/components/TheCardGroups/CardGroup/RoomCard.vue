@@ -53,6 +53,7 @@
       :newMessageIndicatorTooltip="
         showNewChatReceivedIndicator ? newChatReceivedTooltipText : ''
       "
+      :isInactive="isInactive"
       data-testid="room-card-contact"
       @click="$emit('click')"
       @click-pin="$emit('clickPin', $event)"
@@ -81,6 +82,7 @@ import { useProfile } from '@/store/modules/profile';
 import ChatContact from '@/components/chats/ChatContact.vue';
 
 import { formatContactName } from '@/utils/chats';
+import { getRoomType } from '@/utils/room.js';
 
 const ONE_MINUTE_IN_MILLISECONDS = 60000;
 
@@ -146,6 +148,9 @@ export default {
     ...mapState(useProfile, {
       me: 'me',
     }),
+    isInactive() {
+      return !!(getRoomType(this.room) === 'ongoing' && this.room.is_inactiv);
+    },
     isPendingResponseFeatureEnabled() {
       return !!this.featureFlags?.active_features?.includes(
         'weniChatsPendingResponse',
