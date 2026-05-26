@@ -163,7 +163,9 @@
     "title": "Mensagem automática",
     "info": "Defina uma resposta automática para ser enviada ao contato enquanto está aguardando atendimento, deixe em branco caso não queira nenhuma mensagem.",
     "placeholder": "Por enquanto você não definiu uma mensagem automática, defina uma mensagem para seus contatos que estão aguardando",
-    "automatic_opening_message": "Mensagem de abertura automática"
+    "automatic_opening_message": "Mensagem de abertura automática",
+    "inactive_warning_message": "Mensagem de aviso",
+    "inactive_close_message": "Mensagem de encerramento"
   },
   "reply": "Responder",
   "step_of": "Etapa {step} de {total}",
