@@ -148,10 +148,12 @@
   "start": "Inicio",
   "submit": "Enviar",
   "details": "Detalles",
+  "discussion_about": "Discusión sobre {discussionGoal}",
   "doubts": "Preguntas",
   "finance": "Financiero",
   "chats_in_the_period": "Chats en el periodo",
   "chats_per_agents": "Chats por representante",
+  "you_message_prefix": "Tú:",
   "new_messages_song": {
     "queue": "Sonido de notificación para nuevos mensajes en la cola",
     "in_progress": "Sonido de notificación para nuevos mensajes en chats activos",
@@ -160,8 +162,10 @@
   "automatic_message": {
     "title": "Mensaje automático",
     "info": "Define una respuesta automática para contactos que están en espera para ser atendidos. Déjalo en blanco si no deseas enviar ningún mensaje.",
-    "placeholder": "Aún no has configurado un mensaje automático. Agrega uno para los contactos que esperan en la cola."
+    "placeholder": "Aún no has configurado un mensaje automático. Agrega uno para los contactos que esperan en la cola.",
+    "automatic_opening_message": "Mensaje de apertura automático"
   },
+  "reply": "Responder",
   "step_of": "Paso {step} de {total}",
   "type_to_filter": "Escribe para filtrar",
   "chats_count": "{count} chat | {count} chats",
@@ -546,7 +550,7 @@
   "add": "Agregar",
   "proceed": "Continuar",
   "continue": "Continuar",
-  "please": " ",
+  "please": "Por favor",
   "confirm": "Confirmar",
   "back": "Atrás",
   "back_to_home_page": "Volver a la página de inicio",
@@ -580,6 +584,7 @@
   },
   "pagination": "{from} – {to} de {total}",
   "contact": "Contacto",
+  "unread_messages": "{count} mensaje no leído | {count} mensajes no leídos",
   "unnamed_contact": "Contacto sin nombre",
   "unnamed_agent": "Representante sin nombre",
   "no_agent_assigned": "Ningún representante asignado",
@@ -601,6 +606,7 @@
     "back_to_original_tooltip": "Volver a la versión original (Ctrl+Z)"
   },
   "manager": "Manager",
+  "yesterday": "Ayer",
   "you": "Tú",
   "queue": "Cola",
   "agents": {
@@ -697,6 +703,8 @@
     "partial_success_message": "{success} chat asignado, {failed} fallidos. Vuelve a intentarlo. | {success} chats asignados, {failed} fallidos. Vuelve a intentarlo.",
     "error_message": "Error al asignarte chats. Vuelve a intentarlo."
   },
+  "close_contact": "Cerrar contacto",
+  "close_contact_confirmation": "¿Realmente deseas cerrar este contacto?",
   "contact_info": {
     "title": "Acerca del contacto",
     "about_support": "Acerca del soporte",
@@ -1371,7 +1379,5 @@
     "pending_response": {
       "tooltip": "No respondiste a este contacto"
     }
-  },
-  "close_contact": "Cerrar contacto",
-  "close_contact_confirmation": "¿Realmente deseas cerrar este contacto?"
+  }
 }

@@ -148,10 +148,12 @@
   "start": "Início",
   "submit": "Enviar",
   "details": "Detalhes",
+  "discussion_about": "Discussão sobre {discussionGoal}",
   "doubts": "Perguntas",
   "finance": "Financeiro",
   "chats_in_the_period": "Chats no período",
   "chats_per_agents": "Chats por atendente",
+  "you_message_prefix": "Você:",
   "new_messages_song": {
     "queue": "Som de notificação para novas mensagens na fila",
     "in_progress": "Som de notificação para novas mensagens em chats ativos",
@@ -160,8 +162,10 @@
   "automatic_message": {
     "title": "Mensagem automática",
     "info": "Defina uma resposta automática para contatos aguardando atendimento. Deixe em branco se não quiser enviar nenhuma mensagem.",
-    "placeholder": "Você ainda não configurou uma mensagem automática. Adicione uma para contatos aguardando na fila."
+    "placeholder": "Você ainda não configurou uma mensagem automática. Adicione uma para contatos aguardando na fila.",
+    "automatic_opening_message": "Mensagem de abertura automática"
   },
+  "reply": "Responder",
   "step_of": "Etapa {step} de {total}",
   "type_to_filter": "Digite para filtrar",
   "chats_count": "{count} chat | {count} chats",
@@ -546,7 +550,7 @@
   "add": "Adicionar",
   "proceed": "Continuar",
   "continue": "Continuar",
-  "please": " ",
+  "please": "Por favor",
   "confirm": "Confirmar",
   "back": "Voltar",
   "back_to_home_page": "Voltar para a página inicial",
@@ -580,6 +584,7 @@
   },
   "pagination": "{from} – {to} de {total}",
   "contact": "Contato",
+  "unread_messages": "{count} mensagem não lida | {count} mensagens não lidas",
   "unnamed_contact": "Contato sem nome",
   "unnamed_agent": "Atendente sem nome",
   "no_agent_assigned": "Nenhum atendente atribuído",
@@ -601,6 +606,7 @@
     "back_to_original_tooltip": "Voltar para a versão original (Ctrl+Z)"
   },
   "manager": "Gerente",
+  "yesterday": "Ontem",
   "you": "Você",
   "queue": "Fila",
   "agents": {

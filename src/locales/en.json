@@ -148,10 +148,12 @@
   "start": "Start",
   "submit": "Submit",
   "details": "Details",
+  "discussion_about": "Discussion about {discussionGoal}",
   "doubts": "Questions",
   "finance": "Finance",
   "chats_in_the_period": "Chats in the period",
   "chats_per_agents": "Chats per representative",
+  "you_message_prefix": "You:",
   "new_messages_song": {
     "queue": "Notification sound for new messages in the queue",
     "in_progress": "Notification sound for new messages in active chats",
@@ -160,8 +162,10 @@
   "automatic_message": {
     "title": "Automatic message",
     "info": "Define an automatic response for contacts waiting for support. Leave it blank if you don't want any message.",
-    "placeholder": "You haven't set an automatic message yet. Add one for contacts waiting in the queue."
+    "placeholder": "You haven't set an automatic message yet. Add one for contacts waiting in the queue.",
+    "automatic_opening_message": "Automatic Opening Message"
   },
+  "reply": "Reply",
   "step_of": "Step {step} of {total}",
   "type_to_filter": "Type to filter",
   "chats_count": "{count} chat | {count} chats",
@@ -343,6 +347,9 @@
   "addition_date": "Date added",
   "in_queues": "in queues",
   "in_progress": "In progress",
+  "waiting": "Waiting",
+  "sent_flows": "Sent flows",
+  "discussion": "Discussions",
   "in_progress_tooltip": "Number of chats currently handled by a representative",
   "in_progress_tooltip_filtered": "Number of chats handled by a representative",
   "closed": "Closed",
@@ -543,7 +550,7 @@
   "add": "Add",
   "proceed": "Proceed",
   "continue": "Continue",
-  "please": " ",
+  "please": "Please",
   "confirm": "Confirm",
   "back": "Back",
   "back_to_home_page": "Back to homepage",
@@ -577,6 +584,7 @@
   },
   "pagination": "{from} – {to} of {total}",
   "contact": "Contact",
+  "unread_messages": "{count} unread message | {count} unread messages",
   "unnamed_contact": "Unnamed contact",
   "unnamed_agent": "Unnamed representative",
   "no_agent_assigned": "No representative assigned",
@@ -598,6 +606,7 @@
     "back_to_original_tooltip": "Go back to original version (Ctrl+Z)"
   },
   "manager": "Manager",
+  "yesterday": "Yesterday",
   "you": "You",
   "queue": "Queue",
   "agents": {
@@ -694,6 +703,8 @@
     "partial_success_message": "{success} chat taken over, {failed} failed. Try again. | {success} chats taken over, {failed} failed. Try again.",
     "error_message": "Error taking over chats. Try again."
   },
+  "close_contact": "Close contact",
+  "close_contact_confirmation": "Are you sure you want to close this contact?",
   "contact_info": {
     "title": "About the contact",
     "about_support": "About the support",
@@ -1368,10 +1379,5 @@
     "pending_response": {
       "tooltip": "You did not respond to this contact"
     }
-  },
-  "waiting": "Waiting",
-  "sent_flows": "Sent flows",
-  "discussion": "Discussions",
-  "close_contact": "Close contact",
-  "close_contact_confirmation": "Are you sure you want to close this contact?"
+  }
 }

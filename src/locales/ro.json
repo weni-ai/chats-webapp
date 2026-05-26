@@ -343,6 +343,9 @@
   "addition_date": "Dată adăugată",
   "in_queues": "în așteptare",
   "in_progress": "În curs",
+  "waiting": "În așteptare",
+  "sent_flows": "Fluxuri trimise",
+  "discussion": "Discuții",
   "in_progress_tooltip": "Numărul de chaturi gestionate în prezent de un reprezentant",
   "in_progress_tooltip_filtered": "Numărul de chaturi gestionate de un reprezentant",
   "closed": "Închise",
@@ -543,7 +546,7 @@
   "add": "Adăugare",
   "proceed": "Continuă",
   "continue": "Continuă",
-  "please": " ",
+  "please": "Te rugăm",
   "confirm": "Confirmare",
   "back": "Înapoi",
   "back_to_home_page": "Înapoi la pagina de pornire",
@@ -694,6 +697,8 @@
     "partial_success_message": "{success} chat preluat, {failed} eșuat. Încearcă din nou. | {success} chat-uri preluate, {failed} eșuate. Încearcă din nou.",
     "error_message": "Eroare la preluarea chat-urilor. Încearcă din nou."
   },
+  "close_contact": "Închide contactul",
+  "close_contact_confirmation": "Ești sigur că vrei să închizi acest contact?",
   "contact_info": {
     "title": "Despre contact",
     "about_support": "Despre asistență",
@@ -1368,10 +1373,5 @@
     "pending_response": {
       "tooltip": "Nu ai răspuns acestui contact"
     }
-  },
-  "waiting": "În așteptare",
-  "sent_flows": "Fluxuri trimise",
-  "discussion": "Discuții",
-  "close_contact": "Închide contactul",
-  "close_contact_confirmation": "Ești sigur că vrei să închizi acest contact?"
+  }
 }
