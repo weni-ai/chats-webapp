@@ -15,7 +15,8 @@
       <h2 class="discussion-about__section__title">
         {{ $t('discussions.about.agents_involved') }}
       </h2>
-      <ul>
+
+      <ul class="discussion-about__section__agents-list">
         <li
           v-for="user in agentsInvolved"
           :key="getUserFullName(user)"
@@ -100,8 +101,9 @@ import SelectedMember from '@/views/Settings/Forms/SelectedMember.vue';
 
 import { mapActions, mapState } from 'pinia';
 import { useDiscussions } from '@/store/modules/chats/discussions';
-
 import { useProfile } from '@/store/modules/profile';
+
+import { removeDuplicatedItems } from '@/utils/array';
 export default {
   name: 'DiscussionAbout',
 
@@ -119,7 +121,11 @@ export default {
 
   data() {
     return {
-      agentsInvolved: null,
+      agentsInvolved: [],
+
+      agentsInvolvedPage: 0,
+      agentsInvolvedLimitPerPage: 100,
+      agentsInvolvedHasNext: false,
 
       isAddAgentModalOpen: false,
       addAgentLoading: false,
@@ -130,6 +136,7 @@ export default {
   },
 
   computed: {
+    ...mapState(useDiscussions, ['activeDiscussion']),
     ...mapState(useProfile, ['me']),
     discussionStartDate() {
       const { created_on } = this.details;
@@ -140,6 +147,17 @@ export default {
   },
 
   watch: {
+    'activeDiscussion.uuid': {
+      immediate: true,
+      handler(activeDiscussionUuid) {
+        this.agentsInvolved = [];
+        this.agentsInvolvedPage = 0;
+        this.agentsInvolvedHasNext = false;
+        if (activeDiscussionUuid) {
+          this.listAllInvolvedAgents();
+        }
+      },
+    },
     async isAddAgentModalOpen(newIsAddAgentModalOpen) {
       if (!newIsAddAgentModalOpen) {
         this.agentSelected = null;
@@ -167,16 +185,6 @@ export default {
       );
       this.agentsToSelect = newAgents;
     },
-    details: {
-      immediate: true,
-      async handler() {
-        const responseAgents = await this.getDiscussionAgents();
-        if (responseAgents.results) {
-          this.agentsInvolved = responseAgents.results;
-        }
-        this.agentsToSelect = [];
-      },
-    },
   },
 
   unmounted() {
@@ -185,6 +193,45 @@ export default {
 
   methods: {
     ...mapActions(useDiscussions, ['addAgent', 'getDiscussionAgents']),
+    async listAllInvolvedAgents() {
+      try {
+        const offset =
+          this.agentsInvolvedPage * this.agentsInvolvedLimitPerPage;
+
+        const responseAgents = await this.getDiscussionAgents({
+          limit: this.agentsInvolvedLimitPerPage,
+          offset,
+        });
+
+        this.agentsInvolvedHasNext = !!responseAgents.next;
+
+        if (responseAgents.results && responseAgents.results.length > 0) {
+          const concatenatedAgents = [
+            ...this.agentsInvolved,
+            ...responseAgents.results,
+          ];
+
+          this.agentsInvolved = concatenatedAgents;
+        }
+
+        if (this.agentsInvolvedHasNext) {
+          this.agentsInvolvedPage += 1;
+          await this.listAllInvolvedAgents();
+        } else {
+          this.agentsInvolved = removeDuplicatedItems(
+            this.agentsInvolved,
+            'email',
+          );
+        }
+
+        this.agentsToSelect = [];
+      } catch (error) {
+        console.error(
+          'An error occurred when trying to get discussion agents:',
+          error,
+        );
+      }
+    },
     handlingRemoveAgent() {
       this.agentSelected = null;
     },
@@ -246,6 +293,14 @@ export default {
     color: $unnnic-color-fg-emphasized;
     font-size: $unnnic-font-size-body-gt;
     font-weight: $unnnic-font-weight-regular;
+
+    display: flex;
+    flex-direction: column;
+
+    &__agents-list {
+      max-height: 78vh;
+      overflow-y: auto;
+    }
 
     &__title {
       font-size: $unnnic-font-size-body-gt;

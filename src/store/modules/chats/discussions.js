@@ -132,9 +132,11 @@ export const useDiscussions = defineStore('discussions', {
       });
     },
 
-    getDiscussionAgents() {
+    getDiscussionAgents({ limit, offset } = {}) {
       return Discussion.getDiscussionAgents({
         discussionUuid: this.activeDiscussion.uuid,
+        limit,
+        offset,
       });
     },
 

@@ -638,7 +638,7 @@ describe('RoomCard.vue', () => {
   });
 
   describe('contact props passing tests', () => {
-    it('passes correct props to UnnnicChatsContact', () => {
+    it('passes correct props to ChatContact', () => {
       const roomsStore = useRooms();
       roomsStore.newMessagesByRoom = {
         'room-uuid-123': {
