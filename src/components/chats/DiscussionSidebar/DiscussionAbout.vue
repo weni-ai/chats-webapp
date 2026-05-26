@@ -16,10 +16,7 @@
         {{ $t('discussions.about.agents_involved') }}
       </h2>
 
-      <ul
-        class="discussion-about__section__agents-list"
-        style="max-height: 75vh; overflow-y: auto"
-      >
+      <ul class="discussion-about__section__agents-list">
         <li
           v-for="user in agentsInvolved"
           :key="getUserFullName(user)"
@@ -225,7 +222,6 @@ export default {
             this.agentsInvolved,
             'email',
           );
-          this.agentsInvolvedPage = 0;
         }
 
         this.agentsToSelect = [];
@@ -302,7 +298,7 @@ export default {
     flex-direction: column;
 
     &__agents-list {
-      max-height: 70vh;
+      max-height: 78vh;
       overflow-y: auto;
     }
 

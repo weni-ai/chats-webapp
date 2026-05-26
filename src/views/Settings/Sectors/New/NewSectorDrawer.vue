@@ -140,6 +140,10 @@ export default {
         can_edit_custom_fields: true,
         sign_messages: true,
         is_csat_enabled: false,
+        automatic_message_queue: {
+          is_active: false,
+          text: '',
+        },
         custom_csat_flow_uuid: null,
         automatic_message: {
           is_active: false,
@@ -234,6 +238,7 @@ export default {
           managers,
           config,
           automatic_message,
+          automatic_message_queue,
           is_csat_enabled,
           custom_csat_flow_uuid,
         } = this.sector;
@@ -252,7 +257,10 @@ export default {
             ? config
             : { ...config, secondary_project: undefined },
           automatic_message,
-          is_csat_enabled: csatEnabled,
+          automatic_message_queue,
+          is_csat_enabled: this.enableAutomaticCsatFeature
+            ? is_csat_enabled
+            : false,
           custom_csat_flow_uuid: csatEnabled ? custom_csat_flow_uuid : null,
         };
 
