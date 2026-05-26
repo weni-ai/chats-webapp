@@ -452,7 +452,8 @@
       "transfer_to_agent": "{agent1} transferred the chat to {agent2}",
       "transfer_to_agent_by_other": "{requestedBy} transferred {agent1}'s chat to {agent2}",
       "transfer_to_queue": "{agent} transferred the chat to queue {queue}",
-      "transfer_to_queue_by_other": "{requestedBy} transferred {agent}'s chat to queue {queue}"
+      "transfer_to_queue_by_other": "{requestedBy} transferred {agent}'s chat to queue {queue}",
+      "automatic_close_room": "Automatically ended due to lack of interaction from the contact"
     },
     "room_list": {
       "order_by": "Order by:",
