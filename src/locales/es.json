@@ -608,6 +608,7 @@
   "pagination": "{from} - {to} de {total}",
   "contact": "Contacto",
   "unread_messages": "{count} mensaje no leído | {count} mensajes no leídos",
+  "automatically_ended": "Finalizado automáticamente",
   "unnamed_contact": "Contacto sin nombre",
   "unnamed_agent": "Agente sin nombre",
   "no_agent_assigned": "No se ha asignado un agente",

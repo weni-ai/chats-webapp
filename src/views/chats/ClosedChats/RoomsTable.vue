@@ -78,7 +78,13 @@
       </template>
       <template #body-closedBy="{ item }">
         <span
-          v-if="
+          v-if="item.closed_by?.automatic_close"
+          data-testid="room-item-closed-by"
+        >
+          {{ $t('automatically_ended') }}
+        </span>
+        <span
+          v-else-if="
             item.closed_by?.first_name ||
             item.closed_by?.last_name ||
             item.closed_by?.email

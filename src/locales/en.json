@@ -605,6 +605,7 @@
   "pagination": "{from} - {to} of {total}",
   "contact": "Contact",
   "unread_messages": "{count} unread message | {count} unread messages",
+  "automatically_ended": "Automatically ended",
   "unnamed_contact": "Unnamed contact",
   "unnamed_agent": "Unnamed agent",
   "no_agent_assigned": "No agent assigned",
