@@ -144,6 +144,7 @@ export default {
           is_active: false,
           text: '',
         },
+        custom_csat_flow_uuid: null,
         automatic_message: {
           is_active: false,
           text: '',
@@ -239,7 +240,12 @@ export default {
           automatic_message,
           automatic_message_queue,
           is_csat_enabled,
+          custom_csat_flow_uuid,
         } = this.sector;
+
+        const csatEnabled = this.enableAutomaticCsatFeature
+          ? is_csat_enabled
+          : false;
 
         const createSectorBody = {
           can_edit_custom_fields,
@@ -255,6 +261,7 @@ export default {
           is_csat_enabled: this.enableAutomaticCsatFeature
             ? is_csat_enabled
             : false,
+          custom_csat_flow_uuid: csatEnabled ? custom_csat_flow_uuid : null,
         };
 
         const createdSector = await Sector.create(createSectorBody);

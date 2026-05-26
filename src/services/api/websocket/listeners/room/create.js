@@ -29,6 +29,10 @@ export default async (room, { app }) => {
     const addAfter = !roomsStore.orderBy[roomType].includes('-');
     roomsStore.addRoom(room, { after: addAfter });
 
+    if (roomType === 'ongoing') {
+      roomsStore.markNewChatReceived(room.uuid);
+    }
+
     const counters = useRoomCounters();
     counters.handleCreate(roomType);
 

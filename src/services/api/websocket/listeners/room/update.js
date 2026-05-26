@@ -148,6 +148,14 @@ function processSingleUpdate(evt, app, roomsStore, counters, touchedTypes) {
     counters.handleRoomUpdate(result);
     if (result.oldType) touchedTypes.add(result.oldType);
     if (result.newType) touchedTypes.add(result.newType);
+
+    if (
+      result.newType === 'ongoing' &&
+      result.oldType !== 'ongoing' &&
+      room.user?.email === app.me.email
+    ) {
+      roomsStore.markNewChatReceived(room.uuid);
+    }
   }
 
   if (room.unread_msgs === 0) {
@@ -344,6 +352,14 @@ function handleUpdateLegacy(room, app, roomsStore) {
   if (result) {
     const counters = useRoomCounters();
     counters.handleRoomUpdate(result);
+
+    if (
+      result.newType === 'ongoing' &&
+      result.oldType !== 'ongoing' &&
+      room.user?.email === app.me.email
+    ) {
+      roomsStore.markNewChatReceived(room.uuid);
+    }
   }
 
   if (room.unread_msgs === 0) {

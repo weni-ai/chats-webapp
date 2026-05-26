@@ -148,10 +148,12 @@
   "start": "Iniciar",
   "submit": "Enviar",
   "details": "Details",
+  "discussion_about": "Discusión sobre {discussionGoal}",
   "doubts": "Dudas",
   "finance": "Financiero",
   "chats_in_the_period": "Chats en el período",
   "chats_per_agents": "Chats por agente",
+  "you_message_prefix": "Tú:",
   "new_messages_song": {
     "queue": "Sonido de nuevos mensajes de contactos que están esperando en la fila",
     "in_progress": "Sonido de nuevos mensajes en chats en curso",
@@ -160,8 +162,10 @@
   "automatic_message": {
     "title": "Mensaje automático",
     "info": "Define una respuesta automática para enviar al contacto mientras espera asistencia, déjalo en blanco si no deseas ningún mensaje.",
-    "placeholder": "Aún no has definido un mensaje automático. Por favor, define un mensaje para tus contactos que están esperando."
+    "placeholder": "Aún no has definido un mensaje automático. Por favor, define un mensaje para tus contactos que están esperando.",
+    "automatic_opening_message": "Mensaje de apertura automático"
   },
+  "reply": "Responder",
   "step_of": "Paso {step} de {total}",
   "type_to_filter": "Escribe para filtrar",
   "chats_count": "{count} chat | {count} chats",
@@ -294,11 +298,17 @@
         "switch_label": "Usar firma"
       },
       "csat": {
-        "label": "Enviar automáticamente una encuesta de satisfacción después de que el soporte del Live desk termine",
+        "custom": {
+          "flow_disclaimer": "El flujo seleccionado debe usar una clasificación de satisfacción de 1 a 5 para garantizar los resultados correctos de la encuesta."
+        },
         "hint": "Si hay un flujo activo en el módulo de Flujos configurado para enviar una encuesta después de que el soporte termine, esta configuración puede causar conflictos y afectar el envío de la encuesta.",
-        "confirm_modal": {
-          "content_1": "Si hay un flujo activo en el módulo de Flujos configurado para enviar una encuesta después de que el soporte termine, esta configuración puede causar conflictos y afectar el envío de la encuesta.",
-          "content_2": "¿Deseas continuar de todas formas?"
+        "label": "Enviar automáticamente una encuesta de satisfacción después de que el soporte del Live desk termine",
+        "section_title": "Encuesta de satisfacción",
+        "type": {
+          "custom": "Flujos personalizados",
+          "default": "Encuesta CSAT predeterminada (recomendado)",
+          "label": "Tipo de encuesta",
+          "tooltip": "Elige entre la encuesta CSAT predeterminada o un flujo personalizado ya configurado en el módulo de Flujos."
         }
       },
       "automated_message": {
@@ -404,21 +414,25 @@
       }
     },
     "feedback": {
-      "forwarded_to_agent": "Contacto reenviado al agente {agent}",
-      "forwarded_to_queue": "Contacto reenviado a la cola {queue}",
-      "transfer_to_agent": "{agent1} transfirió el chat a {agent2}",
-      "transfer_to_agent_by_other": "{requestedBy} transfirió el chat de {agent1} a {agent2}",
-      "transfer_to_queue": "{agent} transferido a la cola {queue}",
-      "transfer_from_queue_to_queue": "Fue transferido de la cola {queue1} a la cola {queue2}",
-      "transfer_from_queue_to_agent": "Fue transferido de la cola {queue} a {agent}",
-      "pick_of_queue": "{agent} lo obtuvo de la cola {queue}",
-      "pick_of_agent": "{manager} se ha hecho cargo del chat de {agent}",
-      "edit_custom_field": "editado el custom field",
+      "agent_took_chat": "¡Ups! El chat con el contacto {contact} ha sido asumido por otro agente",
+      "automatic_transfer_from_queue": "Chat asignado a {agent}",
+      "chat_ended_by": "Chat cerrado por {agent}",
       "discussion_created": "{agent} inició la discusión con la cola {queue}",
       "discussion_joined": "{agent} se unió a la discusión",
-      "agent_took_chat": "¡Ups! El chat con el contacto {contact} ha sido asumido por otro agente",
-      "automatic_transfer_from_queue": "Sala asignada a {agent}.",
-      "see_all_internal_notes": "<b class='fg-on-primary'>Ver notas internas</b>"
+      "edit_custom_field": "editado el custom field",
+      "forwarded_to_agent": "Contacto reenviado al agente {agent}",
+      "forwarded_to_queue": "Chat reenviado a la cola {queue}",
+      "pick_of_agent": "{manager} se hizo cargo del chat que estaba con {agent}",
+      "pick_of_queue": "{agent} se hizo cargo del chat de la cola {queue}",
+      "see_all_internal_notes": "<b class='fg-on-primary'>Ver notas internas</b>",
+      "transfer_from_queue_to_agent": "Fue transferido de la cola {queue} a {agent}",
+      "transfer_from_queue_to_agent_by_other": "{requestedBy} transfirió el chat de la cola {queue} a {agent}",
+      "transfer_from_queue_to_queue": "Fue transferido de la cola {queue1} a la cola {queue2}",
+      "transfer_from_queue_to_queue_by_other": "{requestedBy} transfirió el chat de la cola {queue1} a la cola {queue2}",
+      "transfer_to_agent": "{agent1} transfirió el chat a {agent2}",
+      "transfer_to_agent_by_other": "{requestedBy} transfirió el chat de {agent1} a {agent2}",
+      "transfer_to_queue": "{agent} transfirió el chat a la cola {queue}",
+      "transfer_to_queue_by_other": "{requestedBy} transfirió el chat de {agent} a la cola {queue}"
     },
     "room_list": {
       "order_by": "Ordenar por:",
@@ -569,6 +583,7 @@
   },
   "pagination": "{from} - {to} de {total}",
   "contact": "Contacto",
+  "unread_messages": "{count} mensaje no leído | {count} mensajes no leídos",
   "unnamed_contact": "Contacto sin nombre",
   "unnamed_agent": "Agente sin nombre",
   "no_agent_assigned": "No se ha asignado un agente",
@@ -582,7 +597,7 @@
     "fix_grammar_and_spelling": "Corregir gramática y ortografía",
     "make_more_empathetic": "Hacerla más empática",
     "rewrite_for_clarity": "Reescribir con claridad",
-    "improving_response": "Mejorando respuesta",
+    "improving_response": "Mejorando tu respuesta",
     "improvement": "Respuesta mejorada",
     "error": "Error al mejorar respuesta con IA. Vuelve a intentarlo.",
     "new": "Nueva",
@@ -590,6 +605,7 @@
     "back_to_original_tooltip": "Volver a la versión original (Ctrl+Z)"
   },
   "manager": "Gerente",
+  "yesterday": "Ayer",
   "you": "Tú",
   "queue": "Cola",
   "agents": {
@@ -624,7 +640,7 @@
   "view": "Ver",
   "see": "Ver",
   "chat_with": {
-    "bot": "Chat con bot"
+    "bot": "Atención automatizada"
   },
   "waiting_answer": {
     "send_template": "Enviaste una plantilla de mensaje",
@@ -843,7 +859,24 @@
     "successfully_triggered": "Flujo disparado exitosamente",
     "error_triggering": "Error al disparar el flujo",
     "successfully_add_contact": "Contacto agregado exitosamente",
-    "contact_already_exists": "El número {contact} ya está guardado en tu lista de contactos"
+    "contact_already_exists": "El número {contact} ya está guardado en tu lista de contactos",
+    "variable_mapping": {
+      "title": "Mapeo de variables",
+      "description": "Las variables se completarán en la vista previa siguiente con valores de los contactos seleccionados cuando hagan referencia a campos del contacto",
+      "define_variables": "Definir las variables",
+      "variable_label": "Variable {name}",
+      "input_placeholder": "Escribe el valor para esta variable",
+      "preview_title": "Vista previa del template",
+      "preview_variable_tooltip": "Variable {placeholder}",
+      "confirmation_helper": "Verifica si cada campo está mapeado correctamente; así se mostrará el mensaje a cada contacto seleccionado",
+      "confirmation_checkbox": "Lo verifiqué y estoy listo para enviar",
+      "local_variables": {
+        "contact_name": "Nombre del contacto",
+        "contact_urn": "Teléfono del contacto",
+        "agent_name": "Nombre del representante",
+        "agent_email": "Correo del representante"
+      }
+    }
   },
   "quick_messages": {
     "title": "Mensajes rápidos",
@@ -1335,6 +1368,9 @@
   "room_card": {
     "last_message": {
       "you_prefix": "Tú"
+    },
+    "new_chat_received": {
+      "tooltip": "Nuevos chats recibidos"
     },
     "pending_response": {
       "tooltip": "No respondiste a este contacto"

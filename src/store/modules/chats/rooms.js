@@ -74,6 +74,30 @@ export const useRooms = defineStore('rooms', {
 
     setActiveRoom(room) {
       this.activeRoom = room;
+      if (room?.uuid) {
+        this.clearNewChatReceived(room.uuid);
+      }
+    },
+
+    markNewChatReceived(uuid) {
+      if (!uuid) return;
+      const index = this.rooms.findIndex((room) => room.uuid === uuid);
+      if (index === -1) return;
+      this.rooms[index] = {
+        ...this.rooms[index],
+        isNewChatReceived: true,
+      };
+    },
+
+    clearNewChatReceived(uuid) {
+      if (!uuid) return;
+      const index = this.rooms.findIndex((room) => room.uuid === uuid);
+      if (index === -1) return;
+      if (!this.rooms[index].isNewChatReceived) return;
+      this.rooms[index] = {
+        ...this.rooms[index],
+        isNewChatReceived: false,
+      };
     },
 
     setIsLoadingCanSendMessageStatus(isLoading) {

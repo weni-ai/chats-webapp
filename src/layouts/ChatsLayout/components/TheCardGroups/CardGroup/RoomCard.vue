@@ -25,7 +25,7 @@
         @change="checkboxValue = $event"
       />
     </UnnnicToolTip>
-    <UnnnicChatsContact
+    <ChatContact
       :class="{
         'room-card__contact': true,
         'room-card__contact--selected': room.uuid === activeRoomId && active,
@@ -49,6 +49,10 @@
       :pendingResponseTooltip="
         showPendingResponse ? pendingResponseTooltipText : ''
       "
+      :newMessageIndicator="showNewChatReceivedIndicator"
+      :newMessageIndicatorTooltip="
+        showNewChatReceivedIndicator ? newChatReceivedTooltipText : ''
+      "
       data-testid="room-card-contact"
       @click="$emit('click')"
       @click-pin="$emit('clickPin', $event)"
@@ -62,7 +66,7 @@
           textColor="fg-emphasized"
         />
       </template>
-    </UnnnicChatsContact>
+    </ChatContact>
   </section>
 </template>
 
@@ -73,12 +77,19 @@ import { useRooms } from '@/store/modules/chats/rooms';
 import { useConfig } from '@/store/modules/config';
 import { useFeatureFlag } from '@/store/modules/featureFlag';
 import { useProfile } from '@/store/modules/profile';
+
+import ChatContact from '@/components/chats/ChatContact.vue';
+
 import { formatContactName } from '@/utils/chats';
 
 const ONE_MINUTE_IN_MILLISECONDS = 60000;
 
 export default {
   name: 'RoomCard',
+
+  components: {
+    ChatContact,
+  },
 
   props: {
     room: {
@@ -146,23 +157,49 @@ export default {
     isLastMessageFromContact() {
       return !!this.room.last_message?.contact && !this.room.last_message?.user;
     },
+    isLastMessageFromAnotherAgent() {
+      const isUserHaveEmail = this.room.last_message?.user?.email;
+
+      const verifyEmail = isUserHaveEmail
+        ? this.room.last_message?.user?.email !== this.me?.email
+        : this.room.last_message?.user !== this.me?.email;
+
+      return !!this.room.last_message?.user && verifyEmail;
+    },
+    isLastMessageFromBot() {
+      return !this.room.last_message?.contact && !this.room.last_message?.user;
+    },
     showPendingResponse() {
-      const isYouAgentForThisRoom = this.room.user?.email === this.me?.email;
+      const isLastMessageValid =
+        this.isLastMessageFromContact ||
+        this.isLastMessageFromAnotherAgent ||
+        this.isLastMessageFromBot;
+
       return (
+        !this.showNewChatReceivedIndicator &&
         this.isPendingResponseFeatureEnabled &&
         this.isProgressRoom &&
-        this.isLastMessageFromContact &&
-        this.unreadMessages === 0 &&
-        isYouAgentForThisRoom
+        isLastMessageValid &&
+        this.unreadMessages === 0
       );
     },
     pendingResponseTooltipText() {
       return this.$t('room_card.pending_response.tooltip');
     },
+    showNewChatReceivedIndicator() {
+      return (
+        this.isProgressRoom &&
+        !!this.room?.isNewChatReceived &&
+        this.unreadMessages === 0
+      );
+    },
+    newChatReceivedTooltipText() {
+      return this.$t('room_card.new_chat_received.tooltip');
+    },
     displayedLastMessage() {
       const { last_message: lastMessage } = this.room;
 
-      const shouldPrefix =
+      const isFromMe =
         this.isPendingResponseFeatureEnabled &&
         this.isProgressRoom &&
         this.isLastMessageFromAgent &&
@@ -170,13 +207,24 @@ export default {
         (lastMessage?.user === this.me?.email ||
           lastMessage?.user?.email === this.me?.email);
 
-      if (!shouldPrefix) return lastMessage;
+      if (!isFromMe) return lastMessage;
+
+      const hasMedia =
+        Array.isArray(lastMessage.media) && lastMessage.media.length > 0;
+
+      if (hasMedia) {
+        return {
+          ...lastMessage,
+          isFromUser: true,
+        };
+      }
 
       const youPrefix = this.$t('room_card.last_message.you_prefix');
       const originalText = lastMessage.text || '';
 
       return {
         ...lastMessage,
+        isFromUser: true,
         text: originalText ? `${youPrefix}: ${originalText}` : `${youPrefix}: `,
       };
     },
@@ -296,7 +344,11 @@ export default {
   }
 
   .room-card__contact--selected {
-    :deep(.chats-contact__infos__unread-messages-container) {
+    :deep(
+      .chats-contact__infos__unread-messages-container:not(
+          .chats-contact__infos__unread-messages-container--new-message-centered
+        )
+    ) {
       justify-content: flex-start;
       margin-top: $unnnic-spacing-nano;
     }

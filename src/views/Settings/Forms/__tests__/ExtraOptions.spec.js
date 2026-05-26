@@ -4,6 +4,8 @@ import { createTestingPinia } from '@pinia/testing';
 
 import { createMemoryHistory, createRouter } from 'vue-router';
 
+import { useCompositionI18nInThisSpecFile } from '@/utils/test/compositionI18nVitest';
+
 import FormSectorExtraOptions from '../ExtraOptions.vue';
 
 import unnnic from '@weni/unnnic-system';
@@ -36,6 +38,8 @@ const sectorExtraOptionsMock = {
     is_active: false,
     text: '',
   },
+  is_csat_enabled: false,
+  custom_csat_flow_uuid: null,
 };
 
 const routes = [{ path: '/settings', name: 'settings' }];
@@ -61,6 +65,8 @@ function createWrapper(props = {}) {
 }
 
 describe('SectorExtraOptions', () => {
+  useCompositionI18nInThisSpecFile();
+
   let wrapper;
 
   beforeEach(async () => {
@@ -188,6 +194,77 @@ describe('SectorExtraOptions', () => {
       },
       seconds: 5,
     });
+  });
+
+  describe('validForm with CSAT', () => {
+    it('should be valid when SatisfactionSurveySection emits true', async () => {
+      await wrapper.setData({ csatValid: true });
+      expect(wrapper.vm.validForm).toBe(true);
+    });
+
+    it('should be invalid when SatisfactionSurveySection emits false', async () => {
+      await wrapper.setData({ csatValid: false });
+      expect(wrapper.vm.validForm).toBe(false);
+    });
+
+    it('should sync csatValid from change-is-valid event', async () => {
+      const section = wrapper.findComponent({
+        name: 'SatisfactionSurveySection',
+      });
+      section.vm.$emit('change-is-valid', false);
+      await flushPromises();
+      expect(wrapper.vm.csatValid).toBe(false);
+    });
+  });
+
+  it('should send custom_csat_flow_uuid in update payload', async () => {
+    const sectorService = (
+      await import('@/services/api/resources/settings/sector')
+    ).default;
+    const updateSpy = vi.spyOn(sectorService, 'update');
+
+    await wrapper.setProps({
+      modelValue: {
+        ...sectorExtraOptionsMock,
+        is_csat_enabled: true,
+        custom_csat_flow_uuid: 'flow-uuid',
+      },
+    });
+
+    await wrapper.vm.updateSectorExtraConfigs();
+
+    expect(updateSpy).toHaveBeenCalledWith(
+      '1',
+      expect.objectContaining({
+        is_csat_enabled: true,
+        custom_csat_flow_uuid: 'flow-uuid',
+      }),
+    );
+  });
+
+  it('should null custom_csat_flow_uuid in payload when csat is disabled', async () => {
+    const sectorService = (
+      await import('@/services/api/resources/settings/sector')
+    ).default;
+    const updateSpy = vi.spyOn(sectorService, 'update');
+
+    await wrapper.setProps({
+      modelValue: {
+        ...sectorExtraOptionsMock,
+        is_csat_enabled: false,
+        custom_csat_flow_uuid: 'flow-uuid',
+      },
+    });
+
+    await wrapper.vm.updateSectorExtraConfigs();
+
+    expect(updateSpy).toHaveBeenCalledWith(
+      '1',
+      expect.objectContaining({
+        is_csat_enabled: false,
+        custom_csat_flow_uuid: null,
+      }),
+    );
   });
 
   it('Should match the snapshot', () => {

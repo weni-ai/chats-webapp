@@ -32,24 +32,6 @@
         data-testid="config-switch"
         size="small"
       />
-      <section
-        v-if="enableAutomaticCsatFeature"
-        class="switchs__container"
-      >
-        <UnnnicSwitch
-          v-model="sector.is_csat_enabled"
-          :textRight="$t('sector.additional_options.csat.label')"
-          :helper="$t('sector.additional_options.csat.hint')"
-          size="small"
-        />
-        <ConfirmCsatModal
-          v-if="showConfirmCsatModal"
-          :modelValue="showConfirmCsatModal"
-          @update:model-value="handleCancelCsat"
-          @confirm="handleConfirmCsat"
-          @cancel="handleCancelCsat"
-        />
-      </section>
     </section>
     <section class="switchs">
       <h2 class="switchs__title">
@@ -118,6 +100,12 @@
         />
       </template>
     </section>
+
+    <SatisfactionSurveySection
+      v-model="sector"
+      data-testid="satisfaction-survey-section"
+      @change-is-valid="csatValid = $event"
+    />
 
     <section class="tags">
       <h2
@@ -192,7 +180,7 @@ import { mapState } from 'pinia';
 
 import unnnic from '@weni/unnnic-system';
 
-import ConfirmCsatModal from './modals/ConfirmCsatModal.vue';
+import SatisfactionSurveySection from './SatisfactionSurveySection.vue';
 import TagGroup from '@/components/TagGroup.vue';
 
 import Sector from '@/services/api/resources/settings/sector';
@@ -203,7 +191,7 @@ export default {
   name: 'SectorExtraOptionsForm',
   components: {
     TagGroup,
-    ConfirmCsatModal,
+    SatisfactionSurveySection,
   },
   props: {
     modelValue: {
@@ -226,7 +214,7 @@ export default {
       tagsNext: null,
       tagsPrevious: null,
       isLoadingTags: false,
-      showConfirmCsatModal: false,
+      csatValid: true,
     };
   },
   computed: {
@@ -249,7 +237,9 @@ export default {
         (this.sector.automatic_message_queue.is_active &&
           this.sector.automatic_message_queue.text?.length > 0);
 
-      return validAutomaticMessage && validAutomaticMessageQueue;
+      return (
+        validAutomaticMessage && validAutomaticMessageQueue && this.csatValid
+      );
     },
     translationTriggerFlows() {
       return this.$t('sector.additional_options.template_message.switch_label');
@@ -266,22 +256,12 @@ export default {
         this.tags.some((tag) => tag.name === this.tagName.trim())
       );
     },
-    enableAutomaticCsatFeature() {
-      return this.featureFlags.active_features?.includes('weniChatsCSAT');
-    },
   },
   watch: {
     validForm: {
       immediate: true,
       handler(value) {
         this.$emit('changeIsValid', value);
-      },
-    },
-    'sector.is_csat_enabled': {
-      handler(enabled) {
-        if (enabled) {
-          this.showConfirmCsatModal = true;
-        }
       },
     },
   },
@@ -362,6 +342,7 @@ export default {
         automatic_message,
         automatic_message_queue,
         is_csat_enabled,
+        custom_csat_flow_uuid,
         required_tags,
       } = this.sector;
 
@@ -372,6 +353,7 @@ export default {
         automatic_message,
         automatic_message_queue,
         is_csat_enabled,
+        custom_csat_flow_uuid: is_csat_enabled ? custom_csat_flow_uuid : null,
         required_tags,
       };
 
@@ -410,13 +392,6 @@ export default {
       } finally {
         this.isLoading = false;
       }
-    },
-    handleConfirmCsat() {
-      this.showConfirmCsatModal = false;
-    },
-    handleCancelCsat() {
-      this.sector.is_csat_enabled = false;
-      this.showConfirmCsatModal = false;
     },
   },
 };
