@@ -60,6 +60,7 @@ const buildRoomsStoreMock = () => ({
     roomUuid: 'room1',
   })),
   resetNewMessagesByRoom: vi.fn(),
+  markNewChatReceived: vi.fn(),
   getAll: vi.fn().mockResolvedValue(undefined),
   filterQueues: [],
 });
@@ -143,6 +144,63 @@ describe('Room update (legacy path)', () => {
     expect(roomsStoreMock.resetNewMessagesByRoom).toHaveBeenCalledWith({
       room: room.uuid,
     });
+  });
+
+  it('marks isNewChatReceived when the room transitions to ongoing for the current agent', async () => {
+    roomsStoreMock.updateRoom.mockReturnValueOnce({
+      wasInArray: false,
+      isNowInArray: true,
+      oldType: null,
+      newType: 'ongoing',
+      roomUuid: 'room1',
+    });
+    const room = {
+      uuid: 'room1',
+      user: { email: 'user@example.com' },
+      unread_msgs: 0,
+    };
+
+    await wsRoomUpdate(room, { app: appMock });
+
+    expect(roomsStoreMock.markNewChatReceived).toHaveBeenCalledWith('room1');
+  });
+
+  it('does not mark isNewChatReceived when the room was already ongoing', async () => {
+    roomsStoreMock.updateRoom.mockReturnValueOnce({
+      wasInArray: true,
+      isNowInArray: true,
+      oldType: 'ongoing',
+      newType: 'ongoing',
+      roomUuid: 'room1',
+    });
+    const room = {
+      uuid: 'room1',
+      user: { email: 'user@example.com' },
+      unread_msgs: 0,
+    };
+
+    await wsRoomUpdate(room, { app: appMock });
+
+    expect(roomsStoreMock.markNewChatReceived).not.toHaveBeenCalled();
+  });
+
+  it('does not mark isNewChatReceived when the room is not for the current agent', async () => {
+    roomsStoreMock.updateRoom.mockReturnValueOnce({
+      wasInArray: false,
+      isNowInArray: true,
+      oldType: null,
+      newType: 'ongoing',
+      roomUuid: 'room1',
+    });
+    const room = {
+      uuid: 'room1',
+      user: { email: 'other@example.com' },
+      unread_msgs: 0,
+    };
+
+    await wsRoomUpdate(room, { app: appMock });
+
+    expect(roomsStoreMock.markNewChatReceived).not.toHaveBeenCalled();
   });
 });
 
@@ -329,5 +387,90 @@ describe('Room update (new unified pipeline)', () => {
     flushPendingUpdates();
 
     expect(countersMock.handleClose).toHaveBeenCalledWith('ongoing');
+  });
+
+  it('marks isNewChatReceived after flush when a room transitions to ongoing for the current agent', async () => {
+    roomsStoreMock.updateRoom.mockReturnValue({
+      wasInArray: false,
+      isNowInArray: true,
+      oldType: null,
+      newType: 'ongoing',
+      roomUuid: 'transferred-room',
+    });
+    const room = {
+      uuid: 'transferred-room',
+      user: { email: appMock.me.email },
+      transfer_history: { action: 'transfer' },
+      unread_msgs: 0,
+    };
+
+    await wsRoomUpdate(room, { app: appMock });
+    flushPendingUpdates();
+
+    expect(roomsStoreMock.markNewChatReceived).toHaveBeenCalledWith(
+      'transferred-room',
+    );
+  });
+
+  it('marks isNewChatReceived on a waiting -> ongoing transition (manual take)', async () => {
+    roomsStoreMock.updateRoom.mockReturnValue({
+      wasInArray: true,
+      isNowInArray: true,
+      oldType: 'waiting',
+      newType: 'ongoing',
+      roomUuid: 'taken-room',
+    });
+    const room = {
+      uuid: 'taken-room',
+      user: { email: appMock.me.email },
+      unread_msgs: 0,
+    };
+
+    await wsRoomUpdate(room, { app: appMock });
+    flushPendingUpdates();
+
+    expect(roomsStoreMock.markNewChatReceived).toHaveBeenCalledWith(
+      'taken-room',
+    );
+  });
+
+  it('does not mark isNewChatReceived when the room was already ongoing', async () => {
+    roomsStoreMock.updateRoom.mockReturnValue({
+      wasInArray: true,
+      isNowInArray: true,
+      oldType: 'ongoing',
+      newType: 'ongoing',
+      roomUuid: 'kept-room',
+    });
+    const room = {
+      uuid: 'kept-room',
+      user: { email: appMock.me.email },
+      unread_msgs: 0,
+    };
+
+    await wsRoomUpdate(room, { app: appMock });
+    flushPendingUpdates();
+
+    expect(roomsStoreMock.markNewChatReceived).not.toHaveBeenCalled();
+  });
+
+  it('does not mark isNewChatReceived when the room is not for the current agent', async () => {
+    roomsStoreMock.updateRoom.mockReturnValue({
+      wasInArray: false,
+      isNowInArray: true,
+      oldType: null,
+      newType: 'ongoing',
+      roomUuid: 'other-agent-room',
+    });
+    const room = {
+      uuid: 'other-agent-room',
+      user: { email: 'other@example.com' },
+      unread_msgs: 0,
+    };
+
+    await wsRoomUpdate(room, { app: appMock });
+    flushPendingUpdates();
+
+    expect(roomsStoreMock.markNewChatReceived).not.toHaveBeenCalled();
   });
 });

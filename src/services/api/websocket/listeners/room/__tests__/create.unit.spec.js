@@ -49,6 +49,7 @@ describe('Room create', () => {
         flow_start: '-last_interaction',
       },
       addRoom: vi.fn(),
+      markNewChatReceived: vi.fn(),
       filterQueues: [],
     };
 
@@ -89,5 +90,30 @@ describe('Room create', () => {
 
     expect(roomsStoreMock.addRoom).not.toHaveBeenCalled();
     expect(soundNotificationMock.notify).not.toHaveBeenCalled();
+  });
+
+  it('should mark isNewChatReceived when a new ongoing room arrives for the current agent', () => {
+    const room = { user: { email: 'user@example.com' }, uuid: 'room1' };
+
+    wsRoomCreate(room, { app: appMock });
+
+    expect(roomsStoreMock.markNewChatReceived).toHaveBeenCalledWith('room1');
+  });
+
+  it('should not mark isNewChatReceived for a waiting room', () => {
+    const room = { user: null, uuid: 'room1', is_waiting: false };
+
+    wsRoomCreate(room, { app: appMock });
+
+    expect(roomsStoreMock.markNewChatReceived).not.toHaveBeenCalled();
+  });
+
+  it('should not mark isNewChatReceived when the room already exists', () => {
+    const room = { user: { email: 'user@example.com' }, uuid: 'room1' };
+    roomsStoreMock.rooms = [{ uuid: 'room1' }];
+
+    wsRoomCreate(room, { app: appMock });
+
+    expect(roomsStoreMock.markNewChatReceived).not.toHaveBeenCalled();
   });
 });

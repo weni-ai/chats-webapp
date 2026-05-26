@@ -1,6 +1,6 @@
 <template>
   <section class="mobile-closed-chats">
-    <UnnnicChatsHeader
+    <ChatsHeader
       v-if="!showRoomInfos"
       :back="roomBack"
       :title="$t('chats.closed_chats.history')"
@@ -44,6 +44,7 @@ import History from '@/services/api/resources/chats/history';
 import ClosedChatsRoomsTable from '@/views/chats/ClosedChats/RoomsTable.vue';
 import RoomMessages from '@/components/chats/chat/RoomMessages.vue';
 import ContactInfo from '@/components/chats/ContactInfo/index.vue';
+import ChatsHeader from '@/components/chats/ChatHeader.vue';
 
 export default {
   name: 'MobileClosedChats',
@@ -52,6 +53,7 @@ export default {
     ClosedChatsRoomsTable,
     RoomMessages,
     ContactInfo,
+    ChatsHeader,
   },
   emits: ['close'],
 

@@ -94,15 +94,14 @@ $scheme-colors:
 
   .chat-feedback {
     margin: 0 auto;
-    border-radius: $unnnic-border-radius-lg;
+    border-radius: $unnnic-border-radius-pill;
 
     overflow: hidden;
 
-    padding: $unnnic-spacing-nano $unnnic-spacing-sm;
+    padding: $unnnic-space-05 $unnnic-space-3;
 
-    font-size: $unnnic-font-size-body-md;
+    font: $unnnic-font-caption-1;
     color: $unnnic-color-fg-emphasized;
-    font-weight: $unnnic-font-weight-regular;
     white-space: nowrap;
     text-overflow: ellipsis;
 

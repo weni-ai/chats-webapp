@@ -21,7 +21,7 @@ export default {
     return response.data;
   },
 
-  async getFlows(projectUuidFlow) {
+  async getFlows(projectUuidFlow, params = {}) {
     let nextCursor;
     let flows = [];
     let loopCount = 0;
@@ -31,7 +31,7 @@ export default {
       const response = await http.get(
         `/project/${projectUuidFlow || getProject()}/list_flows/`,
         {
-          params: { cursor },
+          params: { cursor, ...params },
         },
       );
       return response.data;
@@ -110,6 +110,18 @@ export default {
     const response = await http.post(
       `/project/${projectUuid || getProject()}/start_flow/`,
       object,
+    );
+    return response.data;
+  },
+
+  async getFlowTemplates(flowUuid, projectUuid) {
+    const response = await http.get(
+      `/project/${projectUuid || getProject()}/flow_templates/`,
+      {
+        params: {
+          flow: flowUuid,
+        },
+      },
     );
     return response.data;
   },
