@@ -8,16 +8,30 @@
       v-if="selectedRoom && !isLoadingHeader"
       class="closed-chats__header"
     >
-      <UnnnicIcon
-        icon="arrow-left-1-1"
-        size="ant"
-        clickable
-        @click="backToClosedRooms"
+      <section class="closed-chats__header__left">
+        <UnnnicIcon
+          icon="arrow-left-1-1"
+          size="ant"
+          clickable
+          @click="backToClosedRooms"
+        />
+        <p class="closed-chats__header__title">
+          {{ contactName || `[${$t('unnamed_contact')}]` }}
+        </p>
+      </section>
+      <UnnnicButton
+        :text="$t('export_conversation.button')"
+        type="primary"
+        size="large"
+        data-testid="export-conversation-button"
+        @click="showExportModal = true"
       />
-      <p class="closed-chats__header__title">
-        {{ contactName || `[${$t('unnamed_contact')}]` }}
-      </p>
     </section>
+
+    <ModalExportConversation
+      v-model="showExportModal"
+      :roomId="roomId"
+    />
     <UnnnicPageHeader
       v-if="project && !selectedRoom"
       hasBackButton
@@ -124,6 +138,7 @@ import ClosedChatsRoomsTable from './RoomsTable.vue';
 import ContactHeader from '@/components/chats/ContactHeader.vue';
 import SearchMessages from '@/components/chats/SearchMessages/index.vue';
 import WarningArchivedMessages from '@/components/WarningArchivedMessages.vue';
+import ModalExportConversation from '@/components/chats/ClosedChats/ModalExportConversation.vue';
 
 import { useFeatureFlag } from '@/store/modules/featureFlag';
 
@@ -139,6 +154,7 @@ export default {
     ContactHeader,
     SearchMessages,
     WarningArchivedMessages,
+    ModalExportConversation,
   },
 
   props: {
@@ -159,6 +175,7 @@ export default {
     selectedRoom: null,
     selectedRoomsUuids: null,
     showSearchMessagesDrawer: false,
+    showExportModal: false,
   }),
 
   computed: {
@@ -285,10 +302,17 @@ export default {
   &__header {
     display: flex;
     align-items: center;
+    justify-content: space-between;
     gap: $unnnic-space-4;
     padding: $unnnic-space-2 0 $unnnic-space-6 0;
 
     border-bottom: 1px solid $unnnic-color-border-soft;
+
+    &__left {
+      display: flex;
+      align-items: center;
+      gap: $unnnic-space-4;
+    }
 
     &__title {
       font: $unnnic-font-display-1;
