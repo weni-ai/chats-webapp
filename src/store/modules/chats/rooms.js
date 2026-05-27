@@ -1,7 +1,6 @@
 import { defineStore } from 'pinia';
 
 import { useDashboard } from '../dashboard';
-import { useFeatureFlag } from '../featureFlag';
 import { useProfile } from '../profile';
 import { useRoomCounters } from './roomCounters';
 
@@ -250,49 +249,6 @@ export const useRooms = defineStore('rooms', {
       viewedAgentEmail,
       alreadyClosedThisBatch = false,
     }) {
-      const featureFlagStore = useFeatureFlag();
-      const useNewRoomUpdate =
-        featureFlagStore.featureFlags?.active_features?.includes(
-          'WeniChatsNewRoomUpdate',
-        );
-      if (!useNewRoomUpdate) {
-        return this._updateRoomLegacy({
-          room,
-          userEmail,
-          routerReplace,
-          viewedAgentEmail,
-        });
-      }
-      return this._updateRoomSafe({
-        room,
-        userEmail,
-        routerReplace,
-        viewedAgentEmail,
-        alreadyClosedThisBatch,
-      });
-    },
-
-    applyClose(uuid, fallbackRoom) {
-      if (!uuid) return null;
-      const existingRoom = this.rooms.find((r) => r.uuid === uuid);
-      let roomType = null;
-      if (existingRoom) {
-        roomType = getRoomType(existingRoom);
-      } else if (fallbackRoom) {
-        roomType = getRoomType(fallbackRoom);
-      }
-
-      this.removeRoom(uuid);
-      return roomType;
-    },
-
-    _updateRoomSafe({
-      room,
-      userEmail,
-      routerReplace,
-      viewedAgentEmail,
-      alreadyClosedThisBatch = false,
-    }) {
       const shouldBeVisible = this.checkUserSeenRoom({
         room,
         viewedAgentEmail,
@@ -305,8 +261,14 @@ export const useRooms = defineStore('rooms', {
 
       if (roomIndex !== -1) {
         if (shouldBeVisible) {
+          const existing = this.rooms[roomIndex];
+          // Preserve client-side flags (is_pinned, isNewChatReceived) that the
+          // websocket payload does not include. Without this, a follow-up
+          // rooms.update for the same room would clear isNewChatReceived
+          // before the user has a chance to see the indicator.
           this.rooms[roomIndex] = {
-            is_pinned: this.rooms[roomIndex]?.is_pinned,
+            is_pinned: existing?.is_pinned,
+            isNewChatReceived: existing?.isNewChatReceived,
             ...room,
           };
         } else {
@@ -342,54 +304,18 @@ export const useRooms = defineStore('rooms', {
       };
     },
 
-    _updateRoomLegacy({ room, userEmail, routerReplace, viewedAgentEmail }) {
-      const existingRoom = this.rooms.find((r) => r.uuid === room.uuid);
-      const wasInArray = !!existingRoom;
-      const oldType = existingRoom ? getRoomType(existingRoom) : null;
-
-      if (!existingRoom) {
-        this.rooms.push({ ...room });
+    applyClose(uuid, fallbackRoom) {
+      if (!uuid) return null;
+      const existingRoom = this.rooms.find((r) => r.uuid === uuid);
+      let roomType = null;
+      if (existingRoom) {
+        roomType = getRoomType(existingRoom);
+      } else if (fallbackRoom) {
+        roomType = getRoomType(fallbackRoom);
       }
 
-      const filteredRooms = this.rooms
-        .map((mappedRoom) =>
-          mappedRoom.uuid === room.uuid
-            ? { is_pinned: mappedRoom?.is_pinned, ...room }
-            : mappedRoom,
-        )
-        .filter((filteredRoom) => {
-          return this.checkUserSeenRoom({
-            room: filteredRoom,
-            viewedAgentEmail,
-            userEmail,
-          });
-        })
-        .sort((a, b) => {
-          if (a.is_pinned !== undefined && b.is_pinned !== undefined) {
-            return b.is_pinned - a.is_pinned;
-          }
-          return 0;
-        });
-
-      this.rooms = filteredRooms;
-
-      const isNowInArray = this.rooms.some((r) => r.uuid === room.uuid);
-      const newType = getRoomType(room);
-
-      this._handleTransferSideEffects({
-        room,
-        userEmail,
-        routerReplace,
-        viewedAgentEmail,
-      });
-
-      return {
-        wasInArray,
-        isNowInArray,
-        oldType,
-        newType,
-        roomUuid: room.uuid,
-      };
+      this.removeRoom(uuid);
+      return roomType;
     },
 
     _handleTransferSideEffects({
