@@ -8,7 +8,6 @@ import wsRoomUpdate, {
 import wsDeleteRoom from '@/services/api/websocket/listeners/room/delete';
 import { useRooms } from '@/store/modules/chats/rooms';
 import { useRoomCounters } from '@/store/modules/chats/roomCounters';
-import { useFeatureFlag } from '@/store/modules/featureFlag';
 import SoundNotification from '@/services/api/websocket/soundNotification';
 
 vi.mock('@/store/modules/dashboard', () => ({
@@ -23,10 +22,6 @@ vi.mock('@/store/modules/chats/rooms', () => ({
 
 vi.mock('@/store/modules/chats/roomCounters', () => ({
   useRoomCounters: vi.fn(),
-}));
-
-vi.mock('@/store/modules/featureFlag', () => ({
-  useFeatureFlag: vi.fn(),
 }));
 
 vi.mock('@/services/api/websocket/soundNotification', () => ({
@@ -71,17 +66,7 @@ const buildCountersMock = () => ({
   clearTypeCache: vi.fn(),
 });
 
-const enableNewLogic = () =>
-  useFeatureFlag.mockReturnValue({
-    featureFlags: { active_features: ['WeniChatsNewRoomUpdate'] },
-  });
-
-const disableNewLogic = () =>
-  useFeatureFlag.mockReturnValue({
-    featureFlags: { active_features: [] },
-  });
-
-describe('Room update (legacy path)', () => {
+describe('Room update', () => {
   let appMock;
   let roomsStoreMock;
   let countersMock;
@@ -94,130 +79,6 @@ describe('Room update (legacy path)', () => {
     countersMock = buildCountersMock();
     useRooms.mockReturnValue(roomsStoreMock);
     useRoomCounters.mockReturnValue(countersMock);
-    disableNewLogic();
-    soundNotificationMock = new SoundNotification('achievement-confirmation');
-    SoundNotification.mockReturnValue(soundNotificationMock);
-  });
-
-  afterEach(() => {
-    resetBatchState();
-  });
-
-  it('updates the room synchronously when the feature flag is off', async () => {
-    const room = {
-      uuid: 'room1',
-      transfer_history: { action: 'forward' },
-      unread_msgs: 1,
-    };
-
-    await wsRoomUpdate(room, { app: appMock });
-
-    expect(roomsStoreMock.updateRoom).toHaveBeenCalledWith({
-      room,
-      userEmail: appMock.me.email,
-      routerReplace: expect.any(Function),
-      viewedAgentEmail: appMock.viewedAgent.email,
-    });
-  });
-
-  it('plays the achievement sound when transfer action is "transfer"', async () => {
-    const room = {
-      uuid: 'room1',
-      transfer_history: { action: 'transfer' },
-      unread_msgs: 1,
-    };
-
-    await wsRoomUpdate(room, { app: appMock });
-
-    expect(soundNotificationMock.notify).toHaveBeenCalledWith();
-  });
-
-  it('resets new messages when unread_msgs is 0', async () => {
-    const room = {
-      uuid: 'room1',
-      unread_msgs: 0,
-      transfer_history: { action: 'forward' },
-    };
-
-    await wsRoomUpdate(room, { app: appMock });
-
-    expect(roomsStoreMock.resetNewMessagesByRoom).toHaveBeenCalledWith({
-      room: room.uuid,
-    });
-  });
-
-  it('marks isNewChatReceived when the room transitions to ongoing for the current agent', async () => {
-    roomsStoreMock.updateRoom.mockReturnValueOnce({
-      wasInArray: false,
-      isNowInArray: true,
-      oldType: null,
-      newType: 'ongoing',
-      roomUuid: 'room1',
-    });
-    const room = {
-      uuid: 'room1',
-      user: { email: 'user@example.com' },
-      unread_msgs: 0,
-    };
-
-    await wsRoomUpdate(room, { app: appMock });
-
-    expect(roomsStoreMock.markNewChatReceived).toHaveBeenCalledWith('room1');
-  });
-
-  it('does not mark isNewChatReceived when the room was already ongoing', async () => {
-    roomsStoreMock.updateRoom.mockReturnValueOnce({
-      wasInArray: true,
-      isNowInArray: true,
-      oldType: 'ongoing',
-      newType: 'ongoing',
-      roomUuid: 'room1',
-    });
-    const room = {
-      uuid: 'room1',
-      user: { email: 'user@example.com' },
-      unread_msgs: 0,
-    };
-
-    await wsRoomUpdate(room, { app: appMock });
-
-    expect(roomsStoreMock.markNewChatReceived).not.toHaveBeenCalled();
-  });
-
-  it('does not mark isNewChatReceived when the room is not for the current agent', async () => {
-    roomsStoreMock.updateRoom.mockReturnValueOnce({
-      wasInArray: false,
-      isNowInArray: true,
-      oldType: null,
-      newType: 'ongoing',
-      roomUuid: 'room1',
-    });
-    const room = {
-      uuid: 'room1',
-      user: { email: 'other@example.com' },
-      unread_msgs: 0,
-    };
-
-    await wsRoomUpdate(room, { app: appMock });
-
-    expect(roomsStoreMock.markNewChatReceived).not.toHaveBeenCalled();
-  });
-});
-
-describe('Room update (new unified pipeline)', () => {
-  let appMock;
-  let roomsStoreMock;
-  let countersMock;
-  let soundNotificationMock;
-
-  beforeEach(() => {
-    resetBatchState();
-    appMock = buildAppMock();
-    roomsStoreMock = buildRoomsStoreMock();
-    countersMock = buildCountersMock();
-    useRooms.mockReturnValue(roomsStoreMock);
-    useRoomCounters.mockReturnValue(countersMock);
-    enableNewLogic();
     soundNotificationMock = new SoundNotification('achievement-confirmation');
     SoundNotification.mockReturnValue(soundNotificationMock);
   });
@@ -242,6 +103,45 @@ describe('Room update (new unified pipeline)', () => {
     expect(roomsStoreMock.updateRoom).toHaveBeenCalledWith(
       expect.objectContaining({ room }),
     );
+    expect(roomsStoreMock.resetNewMessagesByRoom).toHaveBeenCalledWith({
+      room: room.uuid,
+    });
+  });
+
+  it('plays the achievement sound when transfer action is "transfer"', async () => {
+    const room = {
+      uuid: 'room1',
+      transfer_history: { action: 'transfer' },
+      unread_msgs: 1,
+    };
+
+    await wsRoomUpdate(room, { app: appMock });
+
+    expect(soundNotificationMock.notify).toHaveBeenCalledWith();
+  });
+
+  it('plays the select sound when transfer action is "forward"', async () => {
+    const room = {
+      uuid: 'room1',
+      transfer_history: { action: 'forward' },
+      unread_msgs: 1,
+    };
+
+    await wsRoomUpdate(room, { app: appMock });
+
+    expect(SoundNotification).toHaveBeenCalledWith('select-sound');
+  });
+
+  it('resets new messages when unread_msgs is 0', async () => {
+    const room = {
+      uuid: 'room1',
+      unread_msgs: 0,
+      transfer_history: { action: 'forward' },
+    };
+
+    await wsRoomUpdate(room, { app: appMock });
+    flushPendingUpdates();
+
     expect(roomsStoreMock.resetNewMessagesByRoom).toHaveBeenCalledWith({
       room: room.uuid,
     });
