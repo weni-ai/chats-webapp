@@ -202,7 +202,7 @@ const onConfirm = () => {
   &__form {
     display: flex;
     flex-direction: column;
-    gap: $unnnic-space-2;
+    gap: $unnnic-space-3;
   }
 
   &__form-title {

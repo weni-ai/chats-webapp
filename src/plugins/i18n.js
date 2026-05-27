@@ -15,8 +15,11 @@ const messages = {
 };
 
 const i18n = createI18n({
+  legacy: true,
+  globalInjection: true,
   locale: 'en',
   fallbackLocale: 'en',
+  warnHtmlInMessage: 'off',
   messages,
   dateTimeFormats: {
     'pt-br': {
