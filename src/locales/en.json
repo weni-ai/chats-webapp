@@ -485,8 +485,22 @@
     "get_chat_confirmation": "Confirm if you want to do the service of {contact}",
     "get_chat_error": "Error when trying to get the room",
     "you_got_chat": "You got the chat",
-    "your_chat_assumed": "Chat with {contact} has been transferred",
-    "your_chat_assumed_description": "Your chat with {contact} has been taken over by another agent",
+    "chat_take_over": {
+      "by_another_representative": {
+        "title": "Chat taken over by another representative",
+        "description": "Your chat with {contact} has been taken over by {representative}."
+      },
+      "transfer_to_another_representative": {
+        "title": "Chat transferred to another representative",
+        "description": "Your chat with {contact} was transferred by a moderator to {representative}."
+      },
+      "transfer_to_queue": {
+        "title": "Chat transferred to queue",
+        "description": "Your chat with {contact} was transferred by a moderator to the {queue} queue."
+      }
+    },
+    "your_chat_assumed": "Chat taken over by another representative",
+    "your_chat_assumed_description": "Your chat with {contact} has been taken over by {representative}",
     "closed_chats": {
       "contact_history": "Contact history",
       "general_history": "General history",
@@ -514,8 +528,8 @@
       "title": "Agent {viewedAgent} live view mode",
       "close": "End visualization",
       "assume_chat": "Take over only this chat",
-      "assume_chat_question": "Take Chat?",
-      "assume_chat_confirmation": "When confirming you will remove the Chat from agent {viewedAgent} and will be responsible for Chat"
+      "assume_chat_question": "Take over chat with {contact}?",
+      "assume_chat_question_description": "Are you sure you want to take over chat with {contact}?<br><br>When confirming you will remove the chat from representative and will be responsible for chat."
     }
   },
   "select": "Select",

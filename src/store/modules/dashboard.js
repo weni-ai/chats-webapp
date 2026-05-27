@@ -9,7 +9,10 @@ export const useDashboard = defineStore('dashboard', {
       name: '',
     },
     showModalAssumedChat: false,
-    assumedChatContactName: '',
+
+    modalAssumedText: '',
+    modalAssumedTitle: '',
+
     isLoadingViewedAgent: false,
   }),
   actions: {
@@ -19,8 +22,11 @@ export const useDashboard = defineStore('dashboard', {
     setShowModalAssumedChat(isAssumedChat) {
       this.showModalAssumedChat = isAssumedChat;
     },
-    setAssumedChatContactName(contactName) {
-      this.assumedChatContactName = contactName;
+    setModalAssumedText(text) {
+      this.modalAssumedText = text;
+    },
+    setModalAssumedTitle(title) {
+      this.modalAssumedTitle = title;
     },
 
     async getViewedAgentData(agentEmail) {
@@ -48,7 +54,5 @@ export const useDashboard = defineStore('dashboard', {
   getters: {
     getViewedAgent: ({ viewedAgent }) => viewedAgent,
     getShowModalAssumedChat: ({ showModalAssumedChat }) => showModalAssumedChat,
-    getAssumedChatContactName: ({ assumedChatContactName }) =>
-      assumedChatContactName,
   },
 });

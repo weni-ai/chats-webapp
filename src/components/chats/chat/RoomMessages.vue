@@ -237,7 +237,7 @@ export default {
 
         const hasInternalNotes = results.length > 0;
 
-        if (hasInternalNotes && !this.room.ended_at && this.room.user) {
+        if (hasInternalNotes && !this.room?.ended_at && this.room?.user) {
           const chipNote = {
             uuid: new Date().toString(),
             created_on: lastSystemMessage.created_on,

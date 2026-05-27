@@ -489,8 +489,22 @@
     "get_chat_confirmation": "Confirma si deseas realizar el servicio de {contact}",
     "get_chat_error": "Error al intentar obtener el chat",
     "you_got_chat": "Tienes el chat",
-    "your_chat_assumed": "El chat con {contact} ha sido transferido",
-    "your_chat_assumed_description": "Otro agente se ha hecho cargo de su chat con {contacto}",
+    "chat_take_over": {
+      "by_another_representative": {
+        "title": "Chat asumido por otro representante",
+        "description": "Tu chat con {contact} ha sido asumido por {representative}."
+      },
+      "transfer_to_another_representative": {
+        "title": "Chat transferido a otro representante",
+        "description": "Tu chat con {contact} fue transferido por un moderador a {representative}."
+      },
+      "transfer_to_queue": {
+        "title": "Chat transferido a cola",
+        "description": "Tu chat con {contact} fue transferido por un moderador a la cola {queue}."
+      }
+    },
+    "your_chat_assumed": "Chat asumido por otro representante",
+    "your_chat_assumed_description": "Tu chat con {contact} ha sido asumido por {representative}",
     "closed_chats": {
       "contact_history": "Historial del contacto",
       "general_history": "Historial general",
@@ -518,8 +532,8 @@
       "title": "Modo de vista en vivo del agente {viewedAgent}",
       "close": "Visualización final",
       "assume_chat": "Asumir solo este chat",
-      "assume_chat_question": "¿Asumir Chat?",
-      "assume_chat_confirmation": "Al confirmar que eliminará el Chat del agente {viewedAgent} y será responsable del Chat"
+      "assume_chat_question": "¿Asumir el chat con {contact}?",
+      "assume_chat_question_description": "¿Seguro de que deseas asumir el chat con {contact}?<br><br>Al confirmar, quitarás el chat del representante y serás responsable del chat."
     }
   },
   "select": "Seleccionar",

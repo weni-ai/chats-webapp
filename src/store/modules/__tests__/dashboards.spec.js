@@ -17,7 +17,8 @@ describe('useDashboard Store', () => {
 
     expect(dashboard.viewedAgent).toEqual({ email: '', name: '' });
     expect(dashboard.showModalAssumedChat).toBe(false);
-    expect(dashboard.assumedChatContactName).toBe('');
+    expect(dashboard.modalAssumedText).toBe('');
+    expect(dashboard.modalAssumedTitle).toBe('');
     expect(dashboard.isLoadingViewedAgent).toBe(false);
   });
 
@@ -36,14 +37,6 @@ describe('useDashboard Store', () => {
     dashboard.setShowModalAssumedChat(true);
 
     expect(dashboard.showModalAssumedChat).toBe(true);
-  });
-
-  it('should set assumedChatContactName', () => {
-    const dashboard = useDashboard();
-
-    dashboard.setAssumedChatContactName('John Doe');
-
-    expect(dashboard.assumedChatContactName).toBe('John Doe');
   });
 
   it('should fetch viewed agent data and update state', async () => {
@@ -83,13 +76,6 @@ describe('useDashboard Store', () => {
     dashboard.showModalAssumedChat = true;
 
     expect(dashboard.getShowModalAssumedChat).toBe(true);
-  });
-
-  it('should return assumedChatContactName from getter', () => {
-    const dashboard = useDashboard();
-    dashboard.assumedChatContactName = 'Alice';
-
-    expect(dashboard.getAssumedChatContactName).toBe('Alice');
   });
 
   describe('isLoadingViewedAgent', () => {

@@ -591,8 +591,13 @@ describe('State Rooms', () => {
 
       it('should handle room transfers', async () => {
         const routerReplace = vi.fn();
+        const roomWithAssignee = {
+          ...humanServiceRoomsStore.rooms[0],
+          user: { email: 'testing@weni.ai' },
+        };
         humanServiceRoomsStore.$patch({
-          activeRoom: { ...humanServiceRoomsStore.rooms[0] },
+          rooms: [roomWithAssignee, ...humanServiceRoomsStore.rooms.slice(1)],
+          activeRoom: roomWithAssignee,
         });
         const roomUuid = humanServiceRoomsStore.activeRoom.uuid;
 
@@ -614,28 +619,6 @@ describe('State Rooms', () => {
         expect(humanServiceRoomsStore.activeRoom).eq(null);
         expect(routerReplace).toHaveBeenCalled();
         expect(existRoomByUuid(humanServiceRoomsStore, roomUuid)).eq(false);
-      });
-
-      it('should show modal for assumed chat', async () => {
-        await updateRoom(
-          {
-            uuid: '5',
-            user: { email: 'testing-adm@weni.ai' },
-            transfer_history: { from: { type: 'user' } },
-            contact: { name: 'Cliente 1' },
-            queue: { uuid: '1' },
-          },
-          {
-            app: {
-              ...humanServiceProfileStore,
-              viewedAgent: dashboardStore.viewedAgent,
-            },
-          },
-        );
-        flushPendingUpdates();
-
-        expect(dashboardStore.showModalAssumedChat).eq(true);
-        expect(dashboardStore.assumedChatContactName).eq('Cliente 1');
       });
     });
   });
