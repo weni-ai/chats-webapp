@@ -856,13 +856,13 @@
     "contact_already_exists": "The number {contact} is already saved in your contact list",
     "variable_mapping": {
       "title": "Variable mapping",
-      "description": "Variables will be populated in the preview below using values from the selected contacts whenever they reference contact fields",
+      "description": "Variables will be populated in the preview below using values from the selected contacts whenever they reference contact fields.",
       "define_variables": "Define the variables",
       "variable_label": "Variable {name}",
       "input_placeholder": "Type the value for this variable",
       "preview_title": "Template preview",
       "preview_variable_tooltip": "Variable {placeholder}",
-      "confirmation_helper": "Check if each field is correctly mapped, this is how your message will look to each selected contact",
+      "confirmation_helper": "Check if each field is correctly mapped, this is how your message will look to each selected contact.",
       "confirmation_checkbox": "I've checked it and I'm ready to send it",
       "local_variables": {
         "contact_name": "Contact name",
