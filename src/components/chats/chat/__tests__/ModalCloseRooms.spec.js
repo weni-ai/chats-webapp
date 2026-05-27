@@ -246,10 +246,9 @@ describe('ModalCloseRooms.vue', () => {
     });
   });
 
-  describe('optimistic close (new pipeline)', () => {
-    const createWrapperWithFeatureFlag = ({
+  describe('optimistic close', () => {
+    const createWrapperForOptimisticClose = ({
       bulkCloseResponse,
-      featureFlags = ['WeniChatsNewRoomUpdate'],
       tags = emptyTagsResponse,
     } = {}) => {
       Queue.tags.mockReset();
@@ -266,9 +265,6 @@ describe('ModalCloseRooms.vue', () => {
             selectedOngoingRooms: ['room-1'],
             selectedWaitingRooms: [],
             rooms: [roomWithQueue],
-          },
-          featureFlag: {
-            featureFlags: { active_features: featureFlags },
           },
         },
       });
@@ -298,7 +294,7 @@ describe('ModalCloseRooms.vue', () => {
     });
 
     it('marks pending closes, applies optimistic close on success, and decrements the counter', async () => {
-      const wrapper = createWrapperWithFeatureFlag({
+      const wrapper = createWrapperForOptimisticClose({
         bulkCloseResponse: {
           data: {
             success_count: 1,
@@ -330,7 +326,7 @@ describe('ModalCloseRooms.vue', () => {
     });
 
     it('unmarks pending close for uuids that failed in the API response', async () => {
-      const wrapper = createWrapperWithFeatureFlag({
+      const wrapper = createWrapperForOptimisticClose({
         bulkCloseResponse: {
           data: { success_count: 0, failed_count: 1, success_uuids: [] },
         },
@@ -348,32 +344,6 @@ describe('ModalCloseRooms.vue', () => {
 
       expect(markPendingClose).toHaveBeenCalledWith('room-1');
       expect(unmarkPendingClose).toHaveBeenCalledWith('room-1');
-      expect(roomsStore.applyClose).not.toHaveBeenCalled();
-    });
-
-    it('skips optimistic close when feature flag is off (legacy path)', async () => {
-      const wrapper = createWrapperWithFeatureFlag({
-        bulkCloseResponse: {
-          data: {
-            success_count: 1,
-            failed_count: 0,
-            success_uuids: ['room-1'],
-          },
-        },
-        featureFlags: [],
-      });
-
-      await flushPromises();
-      await wrapper.vm.$nextTick();
-
-      const roomsStore = useRooms();
-      roomsStore.applyClose = vi.fn();
-      roomsStore.setSelectedOngoingRooms = vi.fn();
-
-      await wrapper.find('[data-testid="primary-button"]').trigger('click');
-      await flushPromises();
-
-      expect(markPendingClose).not.toHaveBeenCalled();
       expect(roomsStore.applyClose).not.toHaveBeenCalled();
     });
   });
