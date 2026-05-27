@@ -19,6 +19,10 @@ export interface Sector {
     is_active: boolean;
     text: string;
   };
+  automatic_message_queue: {
+    is_active: boolean;
+    text: string;
+  };
   managers?: SectorManager[];
   sign_messages: boolean;
   rooms_limit: number;

@@ -313,8 +313,10 @@
       },
       "automated_message": {
         "title": "Automated messages",
-        "switch_label": "Send automatic message when support starts",
-        "hint": "Automatically send a message when a chat is assigned to an representative. The message will appear as if sent by the assigned representative.",
+        "switch_when_waiting_label": "Send automatic message to waiting contacts",
+        "switch_when_start_label": "Send automatic message when support starts",
+        "hint_when_waiting": "Automatically send a message to contacts while they wait for human support in the queue.",
+        "hint_when_start": "Automatically send a message when a chat is assigned to an representative. The message will appear as if sent by the assigned representative.",
         "field": {
           "title": "Automatic message",
           "placeholder": "Example: Hello! How can I help you today?"
