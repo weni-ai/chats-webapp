@@ -50,4 +50,9 @@ export default {
 
     return response;
   },
+
+  async exportRoom({ room, types }) {
+    const response = await http.post('/chats/report/room/', { room, types });
+    return response.data;
+  },
 };

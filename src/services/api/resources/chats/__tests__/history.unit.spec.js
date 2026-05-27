@@ -96,4 +96,51 @@ describe('History Chat Service', () => {
       expect(result).toEqual(mockError.response);
     });
   });
+
+  describe('exportRoom', () => {
+    it('should make a POST request to /chats/report/room/ with room and types', async () => {
+      const mockResponse = { data: { status: 'processing' } };
+      http.post.mockResolvedValue(mockResponse);
+
+      const params = {
+        room: 'room-uuid-123',
+        types: ['PDF'],
+      };
+
+      const result = await apiService.exportRoom(params);
+
+      expect(http.post).toHaveBeenCalledWith('/chats/report/room/', {
+        room: 'room-uuid-123',
+        types: ['PDF'],
+      });
+      expect(result).toEqual(mockResponse.data);
+    });
+
+    it('should send multiple types when both are selected', async () => {
+      const mockResponse = { data: { status: 'processing' } };
+      http.post.mockResolvedValue(mockResponse);
+
+      const params = {
+        room: 'room-uuid-456',
+        types: ['PDF', 'HTML'],
+      };
+
+      const result = await apiService.exportRoom(params);
+
+      expect(http.post).toHaveBeenCalledWith('/chats/report/room/', {
+        room: 'room-uuid-456',
+        types: ['PDF', 'HTML'],
+      });
+      expect(result).toEqual(mockResponse.data);
+    });
+
+    it('should throw on API failure', async () => {
+      const mockError = new Error('Network error');
+      http.post.mockRejectedValue(mockError);
+
+      await expect(
+        apiService.exportRoom({ room: 'room-uuid', types: ['PDF'] }),
+      ).rejects.toThrow('Network error');
+    });
+  });
 });
