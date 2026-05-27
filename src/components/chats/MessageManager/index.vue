@@ -1,5 +1,11 @@
 <template>
   <section class="message-manager-v2">
+    <UnnnicDisclaimer
+      v-if="!isLoading && isDisabledInput"
+      class="message-manager-v2__disabled-input"
+      :description="$t('chats.message_input_disabled_description')"
+      type="informational"
+    />
     <MessageManagerLoading v-if="isLoading" />
     <MessageManagerTextBox
       v-else
@@ -42,10 +48,12 @@ defineOptions({
 });
 
 interface Props {
-  isLoading: boolean;
+  isLoading?: boolean;
 }
 
-const props = defineProps<Props>();
+const props = withDefaults(defineProps<Props>(), {
+  isLoading: false,
+});
 
 const profileStore = useProfile();
 const { me } = storeToRefs(profileStore);
@@ -65,6 +73,7 @@ const {
   isInternalNote,
   mediaUploadFiles,
   inputMessageFocused,
+  isDisabledInput,
 } = storeToRefs(messageManager);
 
 const keyboardEvent = ref<KeyboardEvent | null>(null);
@@ -146,8 +155,10 @@ onMounted(() => {
   position: relative;
 
   display: grid;
-  grid-template-columns: 1fr auto;
+  grid-template-columns: 1fr;
+  grid-template-rows: auto auto;
   gap: $unnnic-space-2;
+  margin-right: $unnnic-space-2;
   align-items: end;
 }
 </style>
