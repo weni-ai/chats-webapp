@@ -20,6 +20,7 @@
         </p>
       </section>
       <UnnnicButton
+        v-if="canExportConversation"
         :text="$t('export_conversation.button')"
         type="primary"
         size="large"
@@ -141,6 +142,8 @@ import WarningArchivedMessages from '@/components/WarningArchivedMessages.vue';
 import ModalExportConversation from '@/components/chats/ClosedChats/ModalExportConversation.vue';
 
 import { useFeatureFlag } from '@/store/modules/featureFlag';
+import { useProfile } from '@/store/modules/profile';
+import { isUserAdmin } from '@/utils/permissions';
 
 export default {
   name: 'ClosedChats',
@@ -183,8 +186,12 @@ export default {
     ...mapState(useRoomMessages, ['roomMessagesNext']),
     ...mapWritableState(useRooms, ['activeRoomSummary']),
     ...mapState(useFeatureFlag, ['featureFlags']),
+    ...mapState(useProfile, ['me']),
     contactName() {
       return this.selectedRoom?.contact?.name?.trim() || '';
+    },
+    canExportConversation() {
+      return isUserAdmin(this.me?.project_permission_role);
     },
   },
 
