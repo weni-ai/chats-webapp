@@ -46,6 +46,7 @@
               :ref="`internal-note-${message.internal_note.uuid}`"
               :key="message.uuid"
               :message="message"
+              isRoomMessage
               @click-note="$emit('open-room-contact-info')"
             />
 

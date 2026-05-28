@@ -5,15 +5,29 @@
         class="chat-messages__internal-note"
         @click="$emit('clickNote')"
       >
-        <p
-          v-if="showAgentName"
-          class="chat-messages__internal-note-agent-name"
-        >
-          {{ agentName }}
-        </p>
+        <section class="chat-messages__internal-note-title-container">
+          <p
+            v-if="showAgentName"
+            class="chat-messages__internal-note-agent-name"
+          >
+            {{ agentName }}
+          </p>
+          <UnnnicToolTip
+            v-if="!isRoomMessage"
+            enabled
+            :text="$t('internal_note_with_attachment_tooltip')"
+          >
+            <UnnnicIcon
+              icon="attach_file"
+              size="ant"
+              scheme="fg-base"
+            />
+          </UnnnicToolTip>
+        </section>
         <p
           v-if="formattedText"
           class="chat-messages__internal-note-text"
+          :class="{ 'is-room-message': isRoomMessage }"
           v-html="formattedText"
         />
       </section>
@@ -51,6 +65,10 @@ export default {
     ModalDeleteInternalNote,
   },
   props: {
+    isRoomMessage: {
+      type: Boolean,
+      default: false,
+    },
     showAgentName: {
       type: Boolean,
       default: false,
@@ -116,6 +134,12 @@ export default {
   box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.1);
   cursor: pointer;
 
+  &-title-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
   &-container {
     margin-top: $unnnic-spacing-ant;
     display: flex;
@@ -127,6 +151,17 @@ export default {
     color: $unnnic-color-fg-base;
     font: $unnnic-font-body;
     word-break: break-word;
+
+    &:not(.is-room-message) {
+      max-height: 80px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+
+      display: -webkit-box;
+      -webkit-box-orient: vertical;
+      -webkit-line-clamp: 4;
+      // white-space: normal;
+    }
   }
 
   &-delete {
