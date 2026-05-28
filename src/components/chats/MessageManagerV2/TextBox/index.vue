@@ -53,7 +53,7 @@ import { vOnClickOutside } from '@vueuse/components';
 
 import MessageManagerTextBoxMedias from './Medias.vue';
 import MessageManagerTextBoxAudioRecorder from './AudioRecorder.vue';
-import MessageManagerTextBoxActions from './Actions.vue';
+import MessageManagerTextBoxActions from './Actions/index.vue';
 import MessageManagerTextBoxUploadField from './UploadField.vue';
 import MessageManagerTextBoxTextArea from './TextArea.vue';
 import BackToOriginal from './BackToOriginal.vue';

@@ -11,7 +11,7 @@ import { mount, config } from '@vue/test-utils';
 import { createTestingPinia } from '@pinia/testing';
 import { setActivePinia } from 'pinia';
 
-import Actions from '../Actions.vue';
+import Actions from '../Actions/index.vue';
 import i18n from '@/plugins/i18n';
 
 vi.mock('@/services/api/resources/chats/aiTextImprovement', () => ({
