@@ -12,6 +12,7 @@
           {{ agentName }}
         </p>
         <p
+          v-if="formattedText"
           class="chat-messages__internal-note-text"
           v-html="formattedText"
         />

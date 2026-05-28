@@ -58,7 +58,12 @@ export const useMessageManager = defineStore('messageManager', () => {
   }
 
   const isLoadingSend = ref(false);
+
   const disableSendButton = computed(() => {
+    if (isInternalNote.value) {
+      return !inputMessage.value.trim() && mediaUploadFiles.value.length === 0;
+    }
+
     const isValidInputMessage = isSuggestionBoxOpen.value
       ? !inputMessage.value.startsWith('/')
       : !!inputMessage.value.trim();
