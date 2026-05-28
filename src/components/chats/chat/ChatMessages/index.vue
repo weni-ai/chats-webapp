@@ -270,7 +270,7 @@ import ChatsMessage from '@/components/chats/Message/index.vue';
 import ChatFeedback from '../ChatFeedback.vue';
 import ChatMessagesStartFeedbacks from './ChatMessagesStartFeedbacks.vue';
 import ChatMessagesFeedbackMessage from './ChatMessagesFeedbackMessage.vue';
-import ChatMessagesInternalNote from './ChatMessagesInternalNote.vue';
+import ChatMessagesInternalNote from './ChatMessageInternalNote/index.vue';
 import ChatMessageAudio from './ChatMessageAudio/ChatMessageAudio.vue';
 
 import { isString } from '@/utils/string';

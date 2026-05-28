@@ -11,9 +11,10 @@
         >
           {{ agentName }}
         </p>
-        <p class="chat-messages__internal-note-text">
-          {{ text }}
-        </p>
+        <p
+          class="chat-messages__internal-note-text"
+          v-html="formattedText"
+        />
       </section>
       <UnnnicIcon
         v-if="canDelete"
@@ -40,6 +41,8 @@ import { useProfile } from '@/store/modules/profile';
 import { useRooms } from '@/store/modules/chats/rooms';
 
 import ModalDeleteInternalNote from './ModalDeleteInternalNote.vue';
+
+import { formatMessageText } from '@/utils/string';
 
 export default {
   name: 'ChatMessagesInternalNote',
@@ -78,6 +81,9 @@ export default {
     },
     text() {
       return this.note.text;
+    },
+    formattedText() {
+      return formatMessageText(this.text);
     },
     noteUuid() {
       return this.note.uuid;
