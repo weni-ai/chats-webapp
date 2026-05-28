@@ -9,9 +9,6 @@
       },
     ]"
   >
-    <MessageManagerTextBoxUploadField ref="uploadField" />
-    <MessageManagerTextBoxMedias v-if="mediaUploadFiles.length > 0" />
-    <MessageManagerTextBoxAudioRecorder ref="audioRecorder" />
     <section
       v-if="showBackToOriginal"
       class="text-box__textarea-row"
@@ -27,6 +24,9 @@
       ref="textArea"
       @keydown="handleKeyDown"
     />
+    <MessageManagerTextBoxUploadField ref="uploadField" />
+    <MessageManagerTextBoxAudioRecorder ref="audioRecorder" />
+    <MessageManagerTextBoxMedias v-if="mediaUploadFiles.length > 0" />
     <hr class="text-box__divider" />
     <MessageManagerTextBoxActions
       ref="messageManagerActions"
@@ -175,6 +175,7 @@ defineExpose({
   &.internal-note {
     background-color: $unnnic-color-bg-warning;
     border-color: $unnnic-color-border-warning;
+    overflow-x: hidden;
   }
   &__textarea-row {
     display: flex;

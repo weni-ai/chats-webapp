@@ -9,7 +9,7 @@
       size="sm"
       scheme="neutral-white"
       clickable
-      @click="isInternalNote = false"
+      @click="closeInternalNote"
     />
   </button>
   <section
@@ -75,6 +75,7 @@ const {
   isAudioRecorderVisible,
   inputMessageFocused,
 } = storeToRefs(messageManager);
+const { clearInputs } = messageManager;
 
 const aiTextImprovementStore = useAiTextImprovement();
 const { isLoading: isAiImproving } = storeToRefs(aiTextImprovementStore);
@@ -155,6 +156,11 @@ const adjustTextareaHeight = () => {
   const nextHeight = Math.min(maxHeight, Math.max(lineHeight, scrollH));
   el.style.height = `${nextHeight}px`;
   el.style.overflowY = scrollH > maxHeight ? 'scroll' : 'hidden';
+};
+
+const closeInternalNote = () => {
+  isInternalNote.value = false;
+  clearInputs();
 };
 
 watch(inputMessage, adjustTextareaHeight, { flush: 'post' });

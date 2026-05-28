@@ -40,6 +40,7 @@ const {
   audioRecorderStatus,
   audioMessage,
   mediaUploadFiles,
+  uploadFilesLimit,
 } = storeToRefs(messageManager);
 
 const { activeDiscussion } = storeToRefs(useDiscussions());
@@ -53,17 +54,25 @@ const isValidInputMessage = computed(() =>
     : !!inputMessage.value.trim(),
 );
 
-const isDisabled = computed(
-  () =>
-    isValidInputMessage.value ||
-    mediaUploadFiles.value.length >= 5 ||
+const isDisabled = computed(() => {
+  const hasBlockingInput = !isInternalNote.value && isValidInputMessage.value;
+
+  return (
+    hasBlockingInput ||
+    mediaUploadFiles.value.length >= uploadFilesLimit.value ||
     audioRecorderStatus.value !== 'idle' ||
-    !!audioMessage.value ||
-    isInternalNote.value,
-);
+    !!audioMessage.value
+  );
+});
 
 function handleClick() {
-  clearInputs();
+  if (isInternalNote.value) {
+    audioMessage.value = null;
+    audioRecorderStatus.value = 'idle';
+  } else {
+    clearInputs();
+  }
+
   emit('openUploadFiles');
 }
 </script>

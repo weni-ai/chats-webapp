@@ -11,6 +11,7 @@ import i18n from '@/plugins/i18n';
 
 export const useMessageManager = defineStore('messageManager', () => {
   const LIMIT_UPLOAD_FILES = 5;
+  const LIMIT_UPLOAD_FILES_INTERNAL_NOTE = 10;
 
   const inputMessageFocused = ref(false);
   const inputMessage = ref('');
@@ -73,6 +74,12 @@ export const useMessageManager = defineStore('messageManager', () => {
       audioRecorderStatus.value,
     );
   });
+
+  const uploadFilesLimit = computed(() =>
+    isInternalNote.value
+      ? LIMIT_UPLOAD_FILES_INTERNAL_NOTE
+      : LIMIT_UPLOAD_FILES,
+  );
 
   async function sendInternalNote() {
     const inputMessageTrimmed = inputMessage.value.trim();
@@ -153,7 +160,7 @@ export const useMessageManager = defineStore('messageManager', () => {
 
   function addMediaUploadFiles(files: File[] | FileList) {
     const size = mediaUploadFiles.value.length + files.length;
-    if (size > LIMIT_UPLOAD_FILES) {
+    if (size > uploadFilesLimit.value) {
       return;
     }
     mediaUploadFiles.value = [...mediaUploadFiles.value, ...files];
@@ -197,6 +204,7 @@ export const useMessageManager = defineStore('messageManager', () => {
     isLoadingSend,
     disableSendButton,
     isAudioRecorderVisible,
+    uploadFilesLimit,
 
     sendRoomMessage,
     sendMediasMessage,
