@@ -342,6 +342,16 @@
     "metrics": "Exportar métricas em {filetype}",
     "all": "Exportar tudo em {filetype}"
   },
+  "export_conversation": {
+    "button": "Exportar conversa",
+    "title": "Exportar conversa",
+    "select_format": "Selecione o formato para exportar a conversa",
+    "disclaimer": "Enquanto esta exportação está sendo processada, novas exportações ficarão temporariamente bloqueadas para esta conversa",
+    "accept_terms": "Aceito os termos e entendo as limitações da exportação.",
+    "success_title": "Processando exportação!",
+    "success_description": "O resultado será enviado por email em breve. Verifique também a pasta de spam.",
+    "error": "Não foi possível processar a exportação. Tente novamente"
+  },
   "name": "Nome",
   "addition_date": "Data de Adição",
   "in_queues": "em filas",
