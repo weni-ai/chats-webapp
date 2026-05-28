@@ -44,18 +44,50 @@
       >
         <section class="switchs__container">
           <UnnnicSwitch
+            :modelValue="sector.automatic_message_queue.is_active"
+            class="margin-y-space-1"
+            :textRight="
+              $t(
+                'sector.additional_options.automated_message.switch_when_waiting_label',
+              )
+            "
+            :helper="
+              $t(
+                'sector.additional_options.automated_message.hint_when_waiting',
+              )
+            "
+            size="small"
+            data-testid="config-switch"
+            @update:model-value="handleAutomaticMessageQueueIsActive"
+          />
+        </section>
+        <UnnnicInput
+          v-if="sector.automatic_message_queue.is_active"
+          v-model="sector.automatic_message_queue.text"
+          :maxlength="160"
+          showMaxlengthCounter
+          :label="$t('sector.additional_options.automated_message.field.title')"
+          :placeholder="
+            $t('sector.additional_options.automated_message.field.placeholder')
+          "
+        />
+        <section class="switchs__container">
+          <UnnnicSwitch
             :modelValue="sector.automatic_message.is_active"
             class="margin-y-space-1"
             :textRight="
-              $t('sector.additional_options.automated_message.switch_label')
+              $t(
+                'sector.additional_options.automated_message.switch_when_start_label',
+              )
             "
-            :helper="$t('sector.additional_options.automated_message.hint')"
+            :helper="
+              $t('sector.additional_options.automated_message.hint_when_start')
+            "
             size="small"
             data-testid="config-switch"
             @update:model-value="handleAutomaticMessageIsActive"
           />
         </section>
-
         <UnnnicInput
           v-if="sector.automatic_message.is_active"
           v-model="sector.automatic_message.text"
@@ -303,6 +335,10 @@ export default {
         !this.sector.automatic_message.is_active ||
         (this.sector.automatic_message.is_active &&
           this.sector.automatic_message.text?.length > 0);
+      const validAutomaticMessageQueue =
+        !this.sector.automatic_message_queue.is_active ||
+        (this.sector.automatic_message_queue.is_active &&
+          this.sector.automatic_message_queue.text?.length > 0);
 
       const validInactivityTimeout =
         !this.sector.inactivity_timeout.is_message_timeout_enabled ||
@@ -322,6 +358,7 @@ export default {
         validAutomaticMessage &&
         validInactivityTimeout &&
         validInactivityTimeoutCloseRoom &&
+        validAutomaticMessageQueue &&
         this.csatValid;
 
       return allValid;
@@ -413,6 +450,10 @@ export default {
       this.sector.automatic_message.is_active = value;
       if (!value) this.sector.automatic_message.text = '';
     },
+    handleAutomaticMessageQueueIsActive(value) {
+      this.sector.automatic_message_queue.is_active = value;
+      if (!value) this.sector.automatic_message_queue.text = '';
+    },
     async getTags() {
       try {
         this.isLoadingTags = true;
@@ -476,6 +517,7 @@ export default {
         can_edit_custom_fields,
         sign_messages,
         automatic_message,
+        automatic_message_queue,
         is_csat_enabled,
         custom_csat_flow_uuid,
         required_tags,
@@ -487,6 +529,7 @@ export default {
         can_edit_custom_fields,
         sign_messages,
         automatic_message,
+        automatic_message_queue,
         is_csat_enabled,
         custom_csat_flow_uuid: is_csat_enabled ? custom_csat_flow_uuid : null,
         required_tags,

@@ -78,6 +78,7 @@ import { useRooms } from '@/store/modules/chats/rooms';
 import { useConfig } from '@/store/modules/config';
 import { useFeatureFlag } from '@/store/modules/featureFlag';
 import { useProfile } from '@/store/modules/profile';
+import { useDashboard } from '@/store/modules/dashboard';
 
 import ChatContact from '@/components/chats/ChatContact.vue';
 
@@ -130,6 +131,7 @@ export default {
   }),
 
   computed: {
+    ...mapState(useDashboard, ['viewedAgent']),
     ...mapState(useRooms, {
       newMessages(store) {
         return store.newMessagesByRoom[this.room.uuid]?.messages;
@@ -151,6 +153,9 @@ export default {
     isInactive() {
       return !!(getRoomType(this.room) === 'ongoing' && this.room.is_inactiv);
     },
+    isViewMode() {
+      return this.viewedAgent?.email !== '';
+    },
     isPendingResponseFeatureEnabled() {
       return !!this.featureFlags?.active_features?.includes(
         'weniChatsPendingResponse',
@@ -163,6 +168,8 @@ export default {
       return !!this.room.last_message?.contact && !this.room.last_message?.user;
     },
     isLastMessageFromAnotherAgent() {
+      if (this.isViewMode) return false;
+
       const isUserHaveEmail = this.room.last_message?.user?.email;
 
       const verifyEmail = isUserHaveEmail
@@ -172,6 +179,8 @@ export default {
       return !!this.room.last_message?.user && verifyEmail;
     },
     isLastMessageFromBot() {
+      if (this.isViewMode) return false;
+
       return !this.room.last_message?.contact && !this.room.last_message?.user;
     },
     showPendingResponse() {
