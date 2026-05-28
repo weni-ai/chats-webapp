@@ -357,17 +357,6 @@ export const useRooms = defineStore('rooms', {
       const isActiveRoom =
         this.activeRoom && room.uuid === this.activeRoom.uuid;
 
-      console.log({
-        userEmail,
-        oldRoom,
-        room,
-        isTransferedToOtherUser,
-        isTransferedByMe,
-        isTransferedByViewedAgent,
-        isTransferedFromAQueue,
-        isTransferedToOtherQueue,
-      });
-
       if (!isTransferedByMe) {
         const dashboardStore = useDashboard();
 
