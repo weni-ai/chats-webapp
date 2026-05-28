@@ -101,6 +101,105 @@
       </template>
     </section>
 
+    <section class="switchs">
+      <h2 class="switchs__title">
+        {{ $t('sector.additional_options.inactivity_timeout.title') }}
+      </h2>
+      <template v-if="enableInactivityTimeoutFeature">
+        <section class="switchs__container">
+          <UnnnicSwitch
+            :modelValue="sector.inactivity_timeout.is_message_timeout_enabled"
+            class="margin-y-space-1"
+            :textRight="
+              $t(
+                'sector.additional_options.inactivity_timeout.show.switch_label',
+              )
+            "
+            :helper="
+              $t('sector.additional_options.inactivity_timeout.show.hint')
+            "
+            size="small"
+            data-testid="config-switch"
+            @update:model-value="handleInactivityTimeoutIsMessageTimeoutEnabled"
+          />
+        </section>
+        <UnnnicInput
+          v-if="sector.inactivity_timeout.is_message_timeout_enabled"
+          v-model="sector.inactivity_timeout.message_timeout_time"
+          :label="
+            $t(
+              'sector.additional_options.inactivity_timeout.show.field.timeout_time_label',
+            )
+          "
+          :tooltip="{
+            side: 'top',
+            text: $t(
+              'sector.additional_options.inactivity_timeout.show.field.timeout_time_tooltip',
+            ),
+          }"
+        />
+        <UnnnicInput
+          v-if="sector.inactivity_timeout.is_message_timeout_enabled"
+          v-model="sector.inactivity_timeout.message_timeout_text"
+          :label="
+            $t(
+              'sector.additional_options.inactivity_timeout.show.field.warning_message_label',
+            )
+          "
+          maxlength="160"
+          showMaxlengthCounter
+          :tooltip="{
+            side: 'top',
+            text: $t(
+              'sector.additional_options.inactivity_timeout.show.field.warning_message_tooltip',
+            ),
+          }"
+        />
+        <section class="switchs__container">
+          <UnnnicSwitch
+            :modelValue="sector.inactivity_timeout.is_close_room_enabled"
+            :disabled="!sector.inactivity_timeout.is_message_timeout_enabled"
+            class="margin-y-space-1"
+            :textRight="
+              $t(
+                'sector.additional_options.inactivity_timeout.close_room.switch_label',
+              )
+            "
+            :helper="
+              $t('sector.additional_options.inactivity_timeout.close_room.hint')
+            "
+            @update:model-value="handleInactivityTimeoutIsCloseRoomEnabled"
+          />
+        </section>
+        <UnnnicInput
+          v-if="sector.inactivity_timeout.is_close_room_enabled"
+          v-model="sector.inactivity_timeout.close_room_time"
+          :label="
+            $t(
+              'sector.additional_options.inactivity_timeout.close_room.field.close_room_time_label',
+            )
+          "
+        />
+        <UnnnicInput
+          v-if="sector.inactivity_timeout.is_close_room_enabled"
+          v-model="sector.inactivity_timeout.close_room_message_text"
+          :label="
+            $t(
+              'sector.additional_options.inactivity_timeout.close_room.field.close_room_message_label',
+            )
+          "
+          maxlength="160"
+          showMaxlengthCounter
+          :tooltip="{
+            side: 'top',
+            text: $t(
+              'sector.additional_options.inactivity_timeout.close_room.field.close_room_message_tooltip',
+            ),
+          }"
+        />
+      </template>
+    </section>
+
     <SatisfactionSurveySection
       v-model="sector"
       data-testid="satisfaction-survey-section"
@@ -183,9 +282,12 @@ import unnnic from '@weni/unnnic-system';
 import SatisfactionSurveySection from './SatisfactionSurveySection.vue';
 import TagGroup from '@/components/TagGroup.vue';
 
+import { useFeatureFlag } from '@/store/modules/featureFlag';
+import { useConfig } from '@/store/modules/config';
+
 import Sector from '@/services/api/resources/settings/sector';
 
-import { useFeatureFlag } from '@/store/modules/featureFlag';
+import i18n from '@/plugins/i18n';
 
 export default {
   name: 'SectorExtraOptionsForm',
@@ -219,6 +321,7 @@ export default {
   },
   computed: {
     ...mapState(useFeatureFlag, ['featureFlags']),
+    ...mapState(useConfig, ['project']),
     sector: {
       get() {
         return this.modelValue;
@@ -237,9 +340,28 @@ export default {
         (this.sector.automatic_message_queue.is_active &&
           this.sector.automatic_message_queue.text?.length > 0);
 
-      return (
-        validAutomaticMessage && validAutomaticMessageQueue && this.csatValid
-      );
+      const validInactivityTimeout =
+        !this.sector.inactivity_timeout.is_message_timeout_enabled ||
+        (this.sector.inactivity_timeout.is_message_timeout_enabled &&
+          this.sector.inactivity_timeout.message_timeout_time &&
+          this.sector.inactivity_timeout.message_timeout_time > 0 &&
+          this.sector.inactivity_timeout.message_timeout_text?.length > 0);
+
+      const validInactivityTimeoutCloseRoom =
+        !this.sector.inactivity_timeout.is_close_room_enabled ||
+        (this.sector.inactivity_timeout.is_close_room_enabled &&
+          this.sector.inactivity_timeout.close_room_time &&
+          this.sector.inactivity_timeout.close_room_time > 0 &&
+          this.sector.inactivity_timeout.close_room_message_text?.length > 0);
+
+      const allValid =
+        validAutomaticMessage &&
+        validInactivityTimeout &&
+        validInactivityTimeoutCloseRoom &&
+        validAutomaticMessageQueue &&
+        this.csatValid;
+
+      return allValid;
     },
     translationTriggerFlows() {
       return this.$t('sector.additional_options.template_message.switch_label');
@@ -256,6 +378,34 @@ export default {
         this.tags.some((tag) => tag.name === this.tagName.trim())
       );
     },
+    enableAutomaticCsatFeature() {
+      return this.featureFlags.active_features?.includes('weniChatsCSAT');
+    },
+    enableInactivityTimeoutFeature() {
+      return this.featureFlags.active_features?.includes(
+        'weniChatsInactivityTimeout',
+      );
+    },
+    inactivityTimeoutDefaultMessage() {
+      const languageMap = {
+        'en-us': 'en',
+        'pt-br': 'pt-br',
+        es: 'es',
+      };
+      return i18n.global.messages[languageMap[this.project.language]].sector
+        .additional_options.inactivity_timeout.show.field
+        .default_warning_message;
+    },
+    inactivityTimeoutDefaultCloseRoomMessage() {
+      const languageMap = {
+        'en-us': 'en',
+        'pt-br': 'pt-br',
+        es: 'es',
+      };
+      return i18n.global.messages[languageMap[this.project.language]].sector
+        .additional_options.inactivity_timeout.close_room.field
+        .default_close_room_message;
+    },
   },
   watch: {
     validForm: {
@@ -269,6 +419,33 @@ export default {
     if (this.isEditing) this.getTags();
   },
   methods: {
+    handleInactivityTimeoutIsMessageTimeoutEnabled(value) {
+      this.sector.inactivity_timeout.is_message_timeout_enabled = value;
+
+      if (value) {
+        this.sector.inactivity_timeout.message_timeout_time = '10';
+        this.sector.inactivity_timeout.message_timeout_text =
+          this.inactivityTimeoutDefaultMessage;
+      } else {
+        this.sector.inactivity_timeout.message_timeout_time = null;
+        this.sector.inactivity_timeout.message_timeout_text = '';
+
+        this.sector.inactivity_timeout.is_close_room_enabled = false;
+        this.sector.inactivity_timeout.close_room_message_text = '';
+        this.sector.inactivity_timeout.close_room_time = null;
+      }
+    },
+    handleInactivityTimeoutIsCloseRoomEnabled(value) {
+      this.sector.inactivity_timeout.is_close_room_enabled = value;
+      if (value) {
+        this.sector.inactivity_timeout.close_room_time = '5';
+        this.sector.inactivity_timeout.close_room_message_text =
+          this.inactivityTimeoutDefaultCloseRoomMessage;
+      } else {
+        this.sector.inactivity_timeout.close_room_message_text = '';
+        this.sector.inactivity_timeout.close_room_time = null;
+      }
+    },
     handleAutomaticMessageIsActive(value) {
       this.sector.automatic_message.is_active = value;
       if (!value) this.sector.automatic_message.text = '';
@@ -344,6 +521,7 @@ export default {
         is_csat_enabled,
         custom_csat_flow_uuid,
         required_tags,
+        inactivity_timeout,
       } = this.sector;
 
       const fieldsToUpdate = {
@@ -355,6 +533,16 @@ export default {
         is_csat_enabled,
         custom_csat_flow_uuid: is_csat_enabled ? custom_csat_flow_uuid : null,
         required_tags,
+        // TODO: feature flag
+        inactivity_timeout: {
+          ...inactivity_timeout,
+          message_timeout_time: inactivity_timeout.is_message_timeout_enabled
+            ? Number(inactivity_timeout.message_timeout_time) * 60
+            : null,
+          close_room_time: inactivity_timeout.is_close_room_enabled
+            ? Number(inactivity_timeout.close_room_time) * 60
+            : null,
+        },
       };
 
       return await Sector.update(this.sector.uuid, fieldsToUpdate);

@@ -1,5 +1,18 @@
+import axios from 'axios';
 import http from '@/services/api/http';
-import { getProject } from '@/utils/config';
+
+import env from '@/utils/env';
+import { getProject, getToken } from '@/utils/config';
+
+const weniApiV1 = axios.create({
+  baseURL: `${env('WENI_API_URL')}/v1`,
+});
+
+weniApiV1.interceptors.request.use((config) => {
+  // eslint-disable-next-line no-param-reassign
+  config.headers.Authorization = `Bearer ${getToken()}`;
+  return config;
+});
 
 export const Permissions = Object.freeze({
   Admin: 1,
@@ -68,6 +81,13 @@ export default {
     const projectUuid = getProject();
     const response = await http.get(`/project/${projectUuid}/`);
     return response;
+  },
+
+  async getProjectLanguage() {
+    const projectUuid = getProject();
+    const endpoint = `/organization/project/${projectUuid}/`;
+    const response = await weniApiV1.get(endpoint);
+    return response.data?.language || 'en-us';
   },
 
   async update(data) {

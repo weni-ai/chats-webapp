@@ -15,6 +15,14 @@ export interface Sector {
   config: Record<string, any>;
   can_trigger_flows: boolean;
   can_edit_custom_fields: boolean;
+  inactivity_timeout: {
+    is_message_timeout_enabled: boolean;
+    message_timeout_text: string;
+    message_timeout_time: number | null;
+    is_close_room_enabled: boolean;
+    close_room_message_text: string;
+    close_room_time: number | null;
+  };
   automatic_message: {
     is_active: boolean;
     text: string;

@@ -53,6 +53,7 @@
       :newMessageIndicatorTooltip="
         showNewChatReceivedIndicator ? newChatReceivedTooltipText : ''
       "
+      :isInactive="isInactive"
       data-testid="room-card-contact"
       @click="$emit('click')"
       @click-pin="$emit('clickPin', $event)"
@@ -82,6 +83,7 @@ import { useDashboard } from '@/store/modules/dashboard';
 import ChatContact from '@/components/chats/ChatContact.vue';
 
 import { formatContactName } from '@/utils/chats';
+import { getRoomType } from '@/utils/room.js';
 
 const ONE_MINUTE_IN_MILLISECONDS = 60000;
 
@@ -129,6 +131,7 @@ export default {
   }),
 
   computed: {
+    ...mapState(useDashboard, ['viewedAgent']),
     ...mapState(useRooms, {
       newMessages(store) {
         return store.newMessagesByRoom[this.room.uuid]?.messages;
@@ -147,7 +150,9 @@ export default {
     ...mapState(useProfile, {
       me: 'me',
     }),
-    ...mapState(useDashboard, ['viewedAgent']),
+    isInactive() {
+      return !!(getRoomType(this.room) === 'ongoing' && this.room.is_inactiv);
+    },
     isViewMode() {
       return this.viewedAgent?.email !== '';
     },

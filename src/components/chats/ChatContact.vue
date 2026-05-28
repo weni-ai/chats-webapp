@@ -97,6 +97,12 @@
         >
           {{ subtitle }}
         </p>
+        <p
+          v-if="isInactive"
+          class="inactive-indicator"
+        >
+          {{ $t('inactive') }}
+        </p>
       </div>
     </div>
     <section
@@ -281,6 +287,10 @@ export default {
     newMessageIndicatorTooltip: {
       type: String,
       default: '',
+    },
+    isInactive: {
+      type: Boolean,
+      default: false,
     },
   },
 
@@ -699,6 +709,11 @@ export default {
         border-radius: 50%;
         background-color: $unnnic-color-bg-blue-strong;
       }
+    }
+
+    .inactive-indicator {
+      color: $unnnic-color-fg-warning;
+      font: $unnnic-font-caption-2;
     }
 
     .ellipsis {

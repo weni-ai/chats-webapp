@@ -134,7 +134,9 @@ export default {
           if (this.appProject) this.initializeAppData(this.appProject);
         } else {
           this.getUser();
-          this.getProject();
+          this.getProject().then(() => {
+            this.getProjectLanguage();
+          });
           this.getFeatureFlags();
         }
       },
@@ -275,6 +277,11 @@ export default {
         ...project,
         uuid: this.appProject || getProject(),
       });
+    },
+
+    async getProjectLanguage() {
+      const language = await Project.getProjectLanguage();
+      this.setProject({ ...this.project, language });
     },
 
     async loadQuickMessages() {

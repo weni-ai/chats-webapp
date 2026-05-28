@@ -163,7 +163,9 @@
     "title": "Mensagem automática",
     "info": "Defina uma resposta automática para ser enviada ao contato enquanto está aguardando atendimento, deixe em branco caso não queira nenhuma mensagem.",
     "placeholder": "Por enquanto você não definiu uma mensagem automática, defina uma mensagem para seus contatos que estão aguardando",
-    "automatic_opening_message": "Mensagem de abertura automática"
+    "automatic_opening_message": "Mensagem de abertura automática",
+    "inactive_warning_message": "Mensagem de aviso",
+    "inactive_close_message": "Mensagem de encerramento"
   },
   "reply": "Responder",
   "step_of": "Etapa {step} de {total}",
@@ -286,6 +288,30 @@
     },
     "additional_options": {
       "title": "Opções extras",
+      "inactivity_timeout": {
+        "title": "Conversa inativa",
+        "show": {
+          "switch_label": "Exibir alerta de inatividade ao atendente e notificar o contato",
+          "hint": "O alerta é exibido apenas em chats em andamento e considera o tempo desde a última mensagem do atendente.",
+          "field": {
+            "timeout_time_label": "Definir após quantos minutos sem resposta do contato o sistema deve enviar a mensagem de aviso",
+            "timeout_time_tooltip": "Nesse momento, o atendente também verá a conversa marcada com um alerta de inatividade.",
+            "warning_message_label": "Mensagem de aviso",
+            "warning_message_tooltip": "A mensagem aparecerá como se enviada pelo atendente atribuído.",
+            "default_warning_message": "Você ainda está aí? Se não houver resposta, este atendimento será encerrado em breve."
+          }
+        },
+        "close_room": {
+          "switch_label": "Encerrar chats inativos automaticamente",
+          "hint": "Os chats são encerrados automaticamente se o contato não enviar mensagens no período após o envio do alerta.",
+          "field": {
+            "close_room_time_label": "Definir quantos minutos após o envio da mensagem de aviso o sistema deve encerrar o chat",
+            "close_room_message_label": "Mensagem de encerramento",
+            "close_room_message_tooltip": "A mensagem aparecerá como se enviada pelo atendente atribuído.",
+            "default_close_room_message": "Este atendimento foi encerrado por inatividade. Inicie um novo chat quando quiser."
+          }
+        }
+      },
       "template_message": {
         "switch_label": "Disparo de modelos de mensagens"
       },
@@ -442,7 +468,8 @@
       "transfer_to_agent": "{agent1} transferiu o chat para {agent2}",
       "transfer_to_agent_by_other": "{requestedBy} transferiu o chat de {agent1} para {agent2}",
       "transfer_to_queue": "{agent} transferiu o chat para a fila {queue}",
-      "transfer_to_queue_by_other": "{requestedBy} transferiu o chat de {agent} para a fila {queue}"
+      "transfer_to_queue_by_other": "{requestedBy} transferiu o chat de {agent} para a fila {queue}",
+      "automatic_close_room": "Encerrado automaticamente por falta de interação do contato"
     },
     "room_list": {
       "order_by": "Ordenar por:",
@@ -609,6 +636,7 @@
   "pagination": "{from} - {to} de {total}",
   "contact": "Contato",
   "unread_messages": "{count} mensagem não lida | {count} mensagens não lidas",
+  "automatically_ended": "Encerrado automaticamente",
   "unnamed_contact": "Contato sem nome",
   "unnamed_agent": "Atendente sem nome",
   "no_agent_assigned": "Nenhum agente atribuído",
