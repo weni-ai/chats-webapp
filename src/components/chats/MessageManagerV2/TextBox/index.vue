@@ -26,7 +26,9 @@
     />
     <MessageManagerTextBoxUploadField ref="uploadField" />
     <MessageManagerTextBoxAudioRecorder ref="audioRecorder" />
-    <MessageManagerTextBoxMedias v-if="mediaUploadFiles.length > 0" />
+    <MessageManagerTextBoxMedias
+      v-if="mediaUploadFiles.length > 0 && !isInternalNote"
+    />
     <hr class="text-box__divider" />
     <MessageManagerTextBoxActions
       ref="messageManagerActions"

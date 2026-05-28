@@ -26,36 +26,45 @@
     </span>
   </section>
   <section
-    v-else-if="!isAudioRecorderVisible && mediaUploadFiles.length === 0"
-    class="text-box__textarea-container"
+    v-else-if="showTextareaInput"
+    class="text-box__input-block"
   >
-    <p
-      v-if="isInternalNote"
-      class="internal-note__prefix"
-    >
-      {{ `${$t('internal_note')}: ` }}
-    </p>
-    <textarea
-      ref="textInput"
-      :value="inputMessage"
-      :placeholder="isInternalNote ? '' : $t('chats.message_input_placeholder')"
-      rows="1"
-      :class="['text-box__textarea', { 'internal-note': isInternalNote }]"
-      data-testid="text-area"
-      spellcheck="true"
-      @input="handleTextarea"
-      @keydown="handleKeyDown"
-      @focus="inputMessageFocused = true"
-      @blur="inputMessageFocused = false"
-      @paste="handlePaste"
+    <section class="text-box__textarea-container">
+      <p
+        v-if="isInternalNote"
+        class="internal-note__prefix"
+      >
+        {{ `${$t('internal_note')}: ` }}
+      </p>
+      <textarea
+        ref="textInput"
+        :value="inputMessage"
+        :placeholder="
+          isInternalNote ? '' : $t('chats.message_input_placeholder')
+        "
+        rows="1"
+        :class="['text-box__textarea', { 'internal-note': isInternalNote }]"
+        data-testid="text-area"
+        spellcheck="true"
+        @input="handleTextarea"
+        @keydown="handleKeyDown"
+        @focus="inputMessageFocused = true"
+        @blur="inputMessageFocused = false"
+        @paste="handlePaste"
+      />
+    </section>
+    <MessageManagerTextBoxMedias
+      v-if="isInternalNote && mediaUploadFiles.length > 0"
+      class="text-box__internal-note-medias"
     />
   </section>
 </template>
 
 <script setup lang="ts">
-import { onMounted, useTemplateRef, watch, nextTick } from 'vue';
+import { computed, onMounted, useTemplateRef, watch, nextTick } from 'vue';
 import { storeToRefs } from 'pinia';
 
+import MessageManagerTextBoxMedias from './Medias.vue';
 import { useMessageManager } from '@/store/modules/chats/messageManager';
 import { useAiTextImprovement } from '@/store/modules/chats/aiTextImprovement';
 
@@ -75,7 +84,7 @@ const {
   isAudioRecorderVisible,
   inputMessageFocused,
 } = storeToRefs(messageManager);
-const { clearInputs } = messageManager;
+const { addMediaUploadFiles, clearInputs } = messageManager;
 
 const aiTextImprovementStore = useAiTextImprovement();
 const { isLoading: isAiImproving } = storeToRefs(aiTextImprovementStore);
@@ -83,6 +92,18 @@ const { isLoading: isAiImproving } = storeToRefs(aiTextImprovementStore);
 const MAX_TEXTAREA_ROWS = 5;
 
 const textInputRef = useTemplateRef<HTMLTextAreaElement>('textInput');
+
+const showTextareaInput = computed(() => {
+  if (isAudioRecorderVisible.value) {
+    return false;
+  }
+
+  if (mediaUploadFiles.value.length > 0 && !isInternalNote.value) {
+    return false;
+  }
+
+  return true;
+});
 
 function getLineHeightPx(el: HTMLTextAreaElement): number {
   const computed = getComputedStyle(el);
@@ -138,7 +159,7 @@ const handlePaste = (event: ClipboardEvent) => {
   });
 
   if (fileList.length) {
-    mediaUploadFiles.value = [...mediaUploadFiles.value, ...fileList];
+    addMediaUploadFiles(fileList);
   }
 };
 
@@ -165,13 +186,14 @@ const closeInternalNote = () => {
 
 watch(inputMessage, adjustTextareaHeight, { flush: 'post' });
 
-const isTextareaVisible = () =>
-  !isAudioRecorderVisible.value && mediaUploadFiles.value.length === 0;
-
 watch(
-  () => [isAudioRecorderVisible.value, mediaUploadFiles.value.length],
+  () => [
+    isAudioRecorderVisible.value,
+    mediaUploadFiles.value.length,
+    isInternalNote.value,
+  ],
   () => {
-    if (isTextareaVisible()) {
+    if (showTextareaInput.value) {
       nextTick(adjustTextareaHeight);
     }
   },
@@ -192,10 +214,21 @@ defineExpose({
 </script>
 
 <style scoped lang="scss">
+.text-box__input-block {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: $unnnic-space-2;
+}
+
 .text-box__textarea-container {
   width: 100%;
   display: flex;
   gap: $unnnic-space-1;
+}
+
+.text-box__internal-note-medias {
+  width: 100%;
 }
 
 .text-box__textarea {
