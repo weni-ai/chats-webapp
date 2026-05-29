@@ -30,6 +30,10 @@
           :class="{ 'is-room-message': isRoomMessage }"
           v-html="formattedText"
         />
+        <Medias
+          v-if="medias.length > 0 && isRoomMessage"
+          :medias="medias"
+        />
       </section>
       <UnnnicIcon
         v-if="canDelete"
@@ -55,6 +59,7 @@ import { mapState } from 'pinia';
 import { useProfile } from '@/store/modules/profile';
 import { useRooms } from '@/store/modules/chats/rooms';
 
+import Medias from './Medias.vue';
 import ModalDeleteInternalNote from './ModalDeleteInternalNote.vue';
 
 import { formatMessageText } from '@/utils/string';
@@ -63,6 +68,7 @@ export default {
   name: 'ChatMessagesInternalNote',
   components: {
     ModalDeleteInternalNote,
+    Medias,
   },
   props: {
     isRoomMessage: {
@@ -103,6 +109,9 @@ export default {
     },
     formattedText() {
       return formatMessageText(this.text);
+    },
+    medias() {
+      return this.note.media || [];
     },
     noteUuid() {
       return this.note.uuid;
