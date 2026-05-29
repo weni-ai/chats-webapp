@@ -28,5 +28,24 @@
     "select_services_queues": "Setează cozile pentru a primi chat-uri",
     "select_your_queues": "Selectează cozile tale",
     "success_update_queues": "Cozile tale de serviciu au fost actualizate"
+  },
+  "delete_modal": {
+    "title": "Șterge {name}",
+    "description_sector": "Sistemul a detectat {count} conversații în departamentul {name} care sunt în curs de desfășurare sau așteaptă să fie gestionate. Alege ce dorești să faci cu ele.",
+    "description_queue": "Sistemul a detectat {count} conversații în coada {name} care sunt în curs de desfășurare sau în așteptare pentru a fi preluate. Alege ce dorești să faci cu ele.",
+    "transfer_chats": "Transferă conversațiile către un alt departament/coadă",
+    "end_all_chats": "Încheie toate conversațiile",
+    "select_sector": "Selectează un departament",
+    "select_queue": "Selectează o coadă",
+    "type_name_sector": "Introdu numele departamentului care urmează să fie șters",
+    "type_name_queue": "Introdu numele cozii care urmează să fie ștersă",
+    "cannot_be_reversed": "Această acțiune nu poate fi refăcută",
+    "delete_button": "Șterge",
+    "sector_success": "Departamentul a fost șters cu succes",
+    "sector_error": "Nu s-a putut șterge departamentul",
+    "queue_success": "Coada a fost ștearsă cu succes",
+    "queue_error": "Nu s-a putut șterge coada",
+    "transfer_error_sector": "Nu s-au putut transfera chaturile. Ștergerea departamentului a fost anulată.",
+    "transfer_error_queue": "Nu s-au putut transfera conversațiile. Ștergerea cozii a fost anulată."
   }
 }
