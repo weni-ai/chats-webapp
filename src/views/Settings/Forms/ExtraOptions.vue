@@ -543,24 +543,25 @@ export default {
       } = this.sector;
 
       const inactivityTimeoutFields = {
-        message_timeout_text: this.enableInactivityTimeoutFeature
-          ? inactivity_timeout.message_timeout_text
-          : '',
-        close_room_message_text: this.enableInactivityTimeoutFeature
-          ? inactivity_timeout.close_room_message_text
-          : '',
-        is_close_room_enabled: this.enableInactivityTimeoutFeature
-          ? inactivity_timeout.is_close_room_enabled
-          : false,
         is_message_timeout_enabled: this.enableInactivityTimeoutFeature
           ? inactivity_timeout.is_message_timeout_enabled
           : false,
+        message_timeout_text: this.enableInactivityTimeoutFeature
+          ? inactivity_timeout.message_timeout_text
+          : '',
         message_timeout_time:
           this.enableInactivityTimeoutFeature &&
           inactivity_timeout.is_message_timeout_enabled
             ? parseMinutesToSeconds(inactivity_timeout.message_timeout_time)
             : null,
-        close_room_time:
+
+        is_close_room_enabled: this.enableInactivityTimeoutFeature
+          ? inactivity_timeout.is_close_room_enabled
+          : false,
+        close_room_message_text: this.enableInactivityTimeoutFeature
+          ? inactivity_timeout.close_room_message_text
+          : '',
+        close_room_timeout_time:
           this.enableInactivityTimeoutFeature &&
           inactivity_timeout.is_close_room_enabled
             ? parseMinutesToSeconds(inactivity_timeout.close_room_time)
