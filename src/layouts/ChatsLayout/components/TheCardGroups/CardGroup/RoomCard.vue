@@ -151,7 +151,7 @@ export default {
       me: 'me',
     }),
     isInactive() {
-      return !!(getRoomType(this.room) === 'ongoing' && this.room.is_inactiv);
+      return !!(getRoomType(this.room) === 'ongoing' && this.room.is_inactive);
     },
     isViewMode() {
       return this.viewedAgent?.email !== '';

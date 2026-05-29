@@ -7,5 +7,5 @@ export default (data, _ctx) => {
 
   if (!existingRoom) return;
 
-  existingRoom.is_active = data.is_inactive;
+  existingRoom.is_inactive = data.is_inactive;
 };
