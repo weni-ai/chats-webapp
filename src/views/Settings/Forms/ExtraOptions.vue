@@ -289,6 +289,8 @@ import Sector from '@/services/api/resources/settings/sector';
 
 import i18n from '@/plugins/i18n';
 
+import { parseSecondsToMinutes, parseMinutesToSeconds } from '@/utils/time';
+
 export default {
   name: 'SectorExtraOptionsForm',
   components: {
@@ -416,9 +418,27 @@ export default {
     },
   },
   mounted() {
-    if (this.isEditing) this.getTags();
+    if (this.isEditing) {
+      this.parseInactivityTimeoutTimesFromSeconds();
+      this.getTags();
+    }
   },
   methods: {
+    parseInactivityTimeoutTimesFromSeconds() {
+      const { inactivity_timeout: timeout } = this.sector;
+
+      if (timeout.is_message_timeout_enabled) {
+        timeout.message_timeout_time = String(
+          parseSecondsToMinutes(timeout.message_timeout_time),
+        );
+      }
+
+      if (timeout.is_close_room_enabled) {
+        timeout.close_room_time = String(
+          parseSecondsToMinutes(timeout.close_room_time),
+        );
+      }
+    },
     handleInactivityTimeoutIsMessageTimeoutEnabled(value) {
       this.sector.inactivity_timeout.is_message_timeout_enabled = value;
 
@@ -524,6 +544,31 @@ export default {
         inactivity_timeout,
       } = this.sector;
 
+      const inactivityTimeoutFields = {
+        message_timeout_text: this.enableInactivityTimeoutFeature
+          ? inactivity_timeout.message_timeout_text
+          : '',
+        close_room_message_text: this.enableInactivityTimeoutFeature
+          ? inactivity_timeout.close_room_message_text
+          : '',
+        is_close_room_enabled: this.enableInactivityTimeoutFeature
+          ? inactivity_timeout.is_close_room_enabled
+          : false,
+        is_message_timeout_enabled: this.enableInactivityTimeoutFeature
+          ? inactivity_timeout.is_message_timeout_enabled
+          : false,
+        message_timeout_time:
+          this.enableInactivityTimeoutFeature &&
+          inactivity_timeout.is_message_timeout_enabled
+            ? parseMinutesToSeconds(inactivity_timeout.message_timeout_time)
+            : null,
+        close_room_time:
+          this.enableInactivityTimeoutFeature &&
+          inactivity_timeout.is_close_room_enabled
+            ? parseMinutesToSeconds(inactivity_timeout.close_room_time)
+            : null,
+      };
+
       const fieldsToUpdate = {
         can_trigger_flows,
         can_edit_custom_fields,
@@ -533,16 +578,7 @@ export default {
         is_csat_enabled,
         custom_csat_flow_uuid: is_csat_enabled ? custom_csat_flow_uuid : null,
         required_tags,
-        // TODO: feature flag
-        inactivity_timeout: {
-          ...inactivity_timeout,
-          message_timeout_time: inactivity_timeout.is_message_timeout_enabled
-            ? Number(inactivity_timeout.message_timeout_time) * 60
-            : null,
-          close_room_time: inactivity_timeout.is_close_room_enabled
-            ? Number(inactivity_timeout.close_room_time) * 60
-            : null,
-        },
+        inactivity_timeout: inactivityTimeoutFields,
       };
 
       return await Sector.update(this.sector.uuid, fieldsToUpdate);
