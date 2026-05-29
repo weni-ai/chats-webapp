@@ -1376,7 +1376,7 @@
     "sector_error": "No se pudo eliminar el departamento",
     "queue_success": "Cola eliminada con éxito",
     "queue_error": "No se pudo eliminar la cola",
-    "transfer_error_sector": "No se pudieron transferir los chats. Eliminación del departamento cancelada.",
+    "transfer_error_sector": "No se pudieron transferir los conversaciones. Eliminación del departamento cancelada.",
     "transfer_error_queue": "No se pudieron transferir las conversaciones. Eliminación de la cola cancelada."
   },
   "room_card": {
