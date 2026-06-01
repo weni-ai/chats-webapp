@@ -350,7 +350,7 @@ export default {
       const validInactivityTimeoutCloseRoom =
         !this.sector.inactivity_timeout.is_close_room_enabled ||
         (this.sector.inactivity_timeout.is_close_room_enabled &&
-          this.sector.inactivity_timeout.close_room_time &&
+          this.sector.inactivity_timeout.close_room_timeout_time &&
           this.sector.inactivity_timeout.close_room_time > 0 &&
           this.sector.inactivity_timeout.close_room_message_text?.length > 0);
 
@@ -450,18 +450,18 @@ export default {
 
         this.sector.inactivity_timeout.is_close_room_enabled = false;
         this.sector.inactivity_timeout.close_room_message_text = '';
-        this.sector.inactivity_timeout.close_room_time = null;
+        this.sector.inactivity_timeout.close_room_timeout_time = null;
       }
     },
     handleInactivityTimeoutIsCloseRoomEnabled(value) {
       this.sector.inactivity_timeout.is_close_room_enabled = value;
       if (value) {
-        this.sector.inactivity_timeout.close_room_time = '5';
+        this.sector.inactivity_timeout.close_room_timeout_time = '5';
         this.sector.inactivity_timeout.close_room_message_text =
           this.inactivityTimeoutDefaultCloseRoomMessage;
       } else {
         this.sector.inactivity_timeout.close_room_message_text = '';
-        this.sector.inactivity_timeout.close_room_time = null;
+        this.sector.inactivity_timeout.close_room_timeout_time = null;
       }
     },
     handleAutomaticMessageIsActive(value) {

@@ -167,6 +167,8 @@
     "inactive_warning_message": "Warning message",
     "inactive_close_message": "Closing message"
   },
+  "inactive": "Inactive",
+  "inactive_room_tooltip": "The conversation has reached the {minutes}-minute inactivity limit. | The conversation has reached the {minutes}-minutes inactivity limit.",
   "reply": "Reply",
   "step_of": "Step {step} of {total}",
   "type_to_filter": "Type to filter",
@@ -289,13 +291,13 @@
     "additional_options": {
       "title": "Extra options",
       "inactivity_timeout": {
-        "title": "Inactive conversation",
+        "title": "Inactivity in conversation",
         "show": {
           "switch_label": "Show inactivity alert to the representative and notify the contact",
           "hint": "The alert is shown only for ongoing chats and considers the time since the representative's last message.",
           "field": {
             "timeout_time_label": "Define after how many minutes without a response from the contact the system should send the warning message",
-            "timeout_time_tooltip": "At this moment, the representative will also see the conversation marked with an inactivity alert.",
+            "timeout_time_tooltip": "At this moment, the representative will also see the chat marked with an inactivity alert.",
             "warning_message_label": "Warning message",
             "warning_message_tooltip": "The message will appear as if sent by the assigned representative.",
             "default_warning_message": "Are you still there? If there's no response, this session will be closed soon."
