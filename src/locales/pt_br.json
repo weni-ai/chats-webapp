@@ -168,7 +168,7 @@
     "inactive_close_message": "Mensagem de encerramento"
   },
   "inactive": "Inativo",
-  "inactive_room_tooltip": "A conversa atingiu o limite de inatividade de {minutes} minuto. | A conversa atingiu o limite de inatividade de {minutes} minutos.",
+  "inactive_room_tooltip": "{minutes, plural, one {A conversa atingiu o limite de inatividade de {minutes} minuto.} other {A conversa atingiu o limite de inatividade de {minutes} minutos.}}",
   "reply": "Responder",
   "step_of": "Etapa {step} de {total}",
   "type_to_filter": "Digite para filtrar",

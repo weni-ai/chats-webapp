@@ -392,8 +392,8 @@ export default {
         'pt-br': 'pt-br',
         es: 'es',
       };
-      return i18n.global.messages[languageMap[this.project.language]].sector
-        .additional_options.inactivity_timeout.show.field
+      return i18n.global.messages.value[languageMap[this.project.language]]
+        .sector.additional_options.inactivity_timeout.show.field
         .default_warning_message;
     },
     inactivityTimeoutDefaultCloseRoomMessage() {
@@ -402,9 +402,12 @@ export default {
         'pt-br': 'pt-br',
         es: 'es',
       };
-      return i18n.global.messages[languageMap[this.project.language]].sector
-        .additional_options.inactivity_timeout.close_room.field
+      return i18n.global.messages.value[languageMap[this.project.language]]
+        .sector.additional_options.inactivity_timeout.close_room.field
         .default_close_room_message;
+    },
+    testT() {
+      return i18n.global.messages.value;
     },
   },
   watch: {

@@ -168,7 +168,7 @@
     "inactive_close_message": "Closing message"
   },
   "inactive": "Inactive",
-  "inactive_room_tooltip": "The conversation has reached the {minutes}-minute inactivity limit. | The conversation has reached the {minutes}-minutes inactivity limit.",
+  "inactive_room_tooltip": "{minutes, plural, one {The conversation has reached the {minutes}-minute inactivity limit.} other {The conversation has reached the {minutes}-minutes inactivity limit.}}",
   "reply": "Reply",
   "step_of": "Step {step} of {total}",
   "type_to_filter": "Type to filter",
