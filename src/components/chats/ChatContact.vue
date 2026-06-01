@@ -97,12 +97,20 @@
         >
           {{ subtitle }}
         </p>
-        <p
+        <UnnnicToolTip
           v-if="isInactive"
-          class="inactive-indicator"
+          enabled
+          :text="
+            $tc('inactive_room_tooltip', inactivity_timeout_time, {
+              minutes: inactivity_timeout_time,
+            })
+          "
+          side="right"
         >
-          {{ $t('inactive') }}
-        </p>
+          <p class="inactive-indicator">
+            {{ $t('inactivity') }}
+          </p>
+        </UnnnicToolTip>
       </div>
     </div>
     <section
@@ -291,6 +299,10 @@ export default {
     isInactive: {
       type: Boolean,
       default: false,
+    },
+    inactivity_timeout_time: {
+      type: Number,
+      default: 0,
     },
   },
 

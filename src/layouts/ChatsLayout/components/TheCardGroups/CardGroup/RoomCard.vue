@@ -54,6 +54,9 @@
         showNewChatReceivedIndicator ? newChatReceivedTooltipText : ''
       "
       :isInactive="isInactive"
+      :inactivity_timeout_time="
+        parseSecondsToMinutes(room?.inactivity_timeout_time || 0)
+      "
       data-testid="room-card-contact"
       @click="$emit('click')"
       @click-pin="$emit('clickPin', $event)"
@@ -84,6 +87,8 @@ import ChatContact from '@/components/chats/ChatContact.vue';
 
 import { formatContactName } from '@/utils/chats';
 import { getRoomType } from '@/utils/room.js';
+
+import { parseSecondsToMinutes } from '@/utils/time';
 
 const ONE_MINUTE_IN_MILLISECONDS = 60000;
 
@@ -124,6 +129,7 @@ export default {
 
   data: () => ({
     formatContactName,
+    parseSecondsToMinutes,
     waitingTime: 0,
     timer: null,
     checkboxValue: false,
