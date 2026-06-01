@@ -43,6 +43,7 @@
       :class="['text-box__textarea', { 'internal-note': isInternalNote }]"
       data-testid="text-area"
       spellcheck="true"
+      :disabled="isDisabledInput"
       @input="handleTextarea"
       @keydown="handleKeyDown"
       @focus="inputMessageFocused = true"
@@ -74,6 +75,7 @@ const {
   mediaUploadFiles,
   isAudioRecorderVisible,
   inputMessageFocused,
+  isDisabledInput,
 } = storeToRefs(messageManager);
 
 const aiTextImprovementStore = useAiTextImprovement();
