@@ -459,7 +459,7 @@ export default {
     handleInactivityTimeoutIsCloseRoomEnabled(value) {
       this.sector.inactivity_timeout.is_close_room_enabled = value;
       if (value) {
-        this.sector.inactivity_timeout.close_room_timeout_time = '5';
+        this.sector.inactivity_timeout.close_room_timeout_time = '1';
         this.sector.inactivity_timeout.close_room_message_text =
           this.inactivityTimeoutDefaultCloseRoomMessage;
       } else {
