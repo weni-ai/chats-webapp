@@ -7,6 +7,20 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" href="/favicon.png" type="image/x-icon" />
     <title>Live desk</title>
+    <style>
+        /*
+         * Standalone-mode baseline. In federation mode the host owns the
+         * document and these rules don't apply (this file isn't loaded).
+         *
+         * Required because postcss-prefixwrap rewrites the original
+         * `html, body { height: 100%; margin: 0 }` and the universal `* {
+         * box-sizing: border-box }` from `src/styles/{global,reset}.scss`
+         * into `.chats-webapp`-scoped rules, which no longer match the
+         * `<html>` / `<body>` tags or `#app` itself.
+         */
+        html, body { height: 100%; margin: 0; }
+        *, *::before, *::after { box-sizing: border-box; }
+    </style>
 </head>
 
 <body>

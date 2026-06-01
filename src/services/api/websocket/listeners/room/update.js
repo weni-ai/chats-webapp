@@ -1,6 +1,5 @@
 import SoundNotification from '@/services/api/websocket/soundNotification';
 
-import { useFeatureFlag } from '@/store/modules/featureFlag';
 import { useRooms } from '@/store/modules/chats/rooms';
 import { useRoomCounters } from '@/store/modules/chats/roomCounters';
 import { useDashboard } from '@/store/modules/dashboard';
@@ -265,14 +264,8 @@ export function setAppRef(app) {
 export default async (room, { app }) => {
   const roomsStore = useRooms();
   const dashboardStore = useDashboard();
-  const featureFlagStore = useFeatureFlag();
 
   lastAppRef = app;
-
-  const useNewRoomUpdate =
-    featureFlagStore.featureFlags?.active_features?.includes(
-      'WeniChatsNewRoomUpdate',
-    );
 
   const isViewMode = dashboardStore.viewedAgent.email !== '';
 
@@ -291,10 +284,6 @@ export default async (room, { app }) => {
 
   if (!isValidRoomFilterQueue && (isWaitingRoom || isViewMode)) {
     return;
-  }
-
-  if (!useNewRoomUpdate) {
-    return handleUpdateLegacy(room, app, roomsStore);
   }
 
   if (!isKnown && !notifiedRoomUuids.has(room.uuid)) {
@@ -317,52 +306,3 @@ export default async (room, { app }) => {
 
   enqueueRoomEvent({ kind: 'update', room });
 };
-
-function handleUpdateLegacy(room, app, roomsStore) {
-  const isExistingRoom = roomsStore.rooms.find(
-    (mappedRoom) => mappedRoom.uuid === room.uuid,
-  );
-
-  const roomType = getRoomType(room);
-  const isOngoingTab = roomsStore.activeTab === 'ongoing';
-  const isRoomForMe = room.user?.email === app.me.email;
-
-  if (!isExistingRoom) {
-    roomsStore.addRoom(room);
-
-    if (room.transfer_history?.action === 'transfer') {
-      new SoundNotification('achievement-confirmation').notify();
-    }
-    if (room.transfer_history?.action === 'forward') {
-      new SoundNotification('select-sound').notify();
-    }
-  }
-
-  if (roomType === 'ongoing' && !isOngoingTab && isRoomForMe) {
-    roomsStore.showOngoingDot = true;
-  }
-
-  const result = roomsStore.updateRoom({
-    room,
-    userEmail: app.me.email,
-    routerReplace: () => app.$router.replace({ name: 'home' }),
-    viewedAgentEmail: app.viewedAgent.email,
-  });
-
-  if (result) {
-    const counters = useRoomCounters();
-    counters.handleRoomUpdate(result);
-
-    if (
-      result.newType === 'ongoing' &&
-      result.oldType !== 'ongoing' &&
-      room.user?.email === app.me.email
-    ) {
-      roomsStore.markNewChatReceived(room.uuid);
-    }
-  }
-
-  if (room.unread_msgs === 0) {
-    roomsStore.resetNewMessagesByRoom({ room: room.uuid });
-  }
-}

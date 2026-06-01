@@ -7,7 +7,6 @@ import {
 } from '@/services/api/websocket/listeners/room/update';
 import { useRooms } from '@/store/modules/chats/rooms';
 import { useRoomCounters } from '@/store/modules/chats/roomCounters';
-import { useFeatureFlag } from '@/store/modules/featureFlag';
 
 vi.mock('@/store/modules/chats/rooms', () => ({
   useRooms: vi.fn(),
@@ -15,10 +14,6 @@ vi.mock('@/store/modules/chats/rooms', () => ({
 
 vi.mock('@/store/modules/chats/roomCounters', () => ({
   useRoomCounters: vi.fn(),
-}));
-
-vi.mock('@/store/modules/featureFlag', () => ({
-  useFeatureFlag: vi.fn(),
 }));
 
 const buildAppMock = () => ({
@@ -37,7 +32,7 @@ const buildRoomsStoreMock = () => ({
   activeTab: 'ongoing',
 });
 
-describe('Room delete (legacy path)', () => {
+describe('Room delete', () => {
   let roomsStoreMock;
   let countersMock;
 
@@ -51,47 +46,6 @@ describe('Room delete (legacy path)', () => {
     };
     useRooms.mockReturnValue(roomsStoreMock);
     useRoomCounters.mockReturnValue(countersMock);
-    useFeatureFlag.mockReturnValue({
-      featureFlags: { active_features: [] },
-    });
-  });
-
-  afterEach(() => {
-    resetBatchState();
-  });
-
-  it('calls removeRoom synchronously and decrements counter when feature flag is off', async () => {
-    const room = {
-      uuid: 'room1',
-      user: { email: 'agent@example.com' },
-      is_waiting: false,
-    };
-    roomsStoreMock.rooms = [room];
-
-    await wsDeleteRoom(room, { app: buildAppMock() });
-
-    expect(roomsStoreMock.removeRoom).toHaveBeenCalledWith('room1');
-    expect(countersMock.handleClose).toHaveBeenCalledWith('ongoing');
-  });
-});
-
-describe('Room delete (new unified pipeline)', () => {
-  let roomsStoreMock;
-  let countersMock;
-
-  beforeEach(() => {
-    resetBatchState();
-    roomsStoreMock = buildRoomsStoreMock();
-    countersMock = {
-      handleClose: vi.fn(),
-      handleRoomUpdate: vi.fn(),
-      clearTypeCache: vi.fn(),
-    };
-    useRooms.mockReturnValue(roomsStoreMock);
-    useRoomCounters.mockReturnValue(countersMock);
-    useFeatureFlag.mockReturnValue({
-      featureFlags: { active_features: ['WeniChatsNewRoomUpdate'] },
-    });
   });
 
   afterEach(() => {

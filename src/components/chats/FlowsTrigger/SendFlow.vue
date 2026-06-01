@@ -24,7 +24,7 @@
         @close="closeModalProgress"
       />
     </div>
-    <Teleport to="body">
+    <Teleport to="#app">
       <ModalVariableMapping
         v-if="showVariableModal && cachedTemplate"
         :template="cachedTemplate.data"
