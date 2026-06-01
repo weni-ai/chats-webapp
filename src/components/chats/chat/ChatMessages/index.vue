@@ -948,8 +948,16 @@ export default {
       }
     }
 
+    &.is-video {
+      max-width: 250px;
+      max-height: 200px;
+    }
+
     .image {
       cursor: pointer;
+      max-width: 200px;
+      max-height: 200px;
+      object-fit: cover;
     }
 
     .audio {
