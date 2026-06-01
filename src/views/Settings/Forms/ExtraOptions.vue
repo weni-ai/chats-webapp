@@ -172,7 +172,7 @@
       </section>
       <UnnnicInput
         v-if="sector.inactivity_timeout.is_close_room_enabled"
-        v-model="sector.inactivity_timeout.close_room_time"
+        v-model="sector.inactivity_timeout.close_room_timeout_time"
         :label="
           $t(
             'sector.additional_options.inactivity_timeout.close_room.field.close_room_time_label',
@@ -432,8 +432,8 @@ export default {
       }
 
       if (timeout.is_close_room_enabled) {
-        timeout.close_room_time = String(
-          parseSecondsToMinutes(timeout.close_room_time),
+        timeout.close_room_timeout_time = String(
+          parseSecondsToMinutes(timeout.close_room_timeout_time),
         );
       }
     },
@@ -564,7 +564,7 @@ export default {
         close_room_timeout_time:
           this.enableInactivityTimeoutFeature &&
           inactivity_timeout.is_close_room_enabled
-            ? parseMinutesToSeconds(inactivity_timeout.close_room_time)
+            ? parseMinutesToSeconds(inactivity_timeout.close_room_timeout_time)
             : null,
       };
 
