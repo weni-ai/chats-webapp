@@ -26,16 +26,20 @@ export function createTemporaryMessage({
   repliedMessage = null,
   internalNote = null,
 }) {
+  const internalNoteMedia = internalNote?.media || [];
+
   return {
     uuid: Date.now().toString(),
     text: internalNote ? '' : message,
     created_on: new Date().toISOString(),
-    media: medias || [],
+    media: internalNote ? [] : medias || [],
     [itemType]: itemUuid,
     seen: true,
     user: itemUser,
     replied_message: repliedMessage,
-    internal_note: internalNote,
+    internal_note: internalNote
+      ? { ...internalNote, media: internalNoteMedia }
+      : null,
   };
 }
 
@@ -446,6 +450,47 @@ export function updateMessageStatusInGroupedMessages(
           ...obj,
           is_read: message.is_read,
           is_delivered: message.is_delivered,
+        }
+      : obj,
+  );
+}
+
+export function updateInternalNoteMessage(messagesReference, { message }) {
+  const messageTimestamp = moment(message.created_on);
+  const messageDate = messageTimestamp.format('L');
+  const messageMinute = messageTimestamp.format('LT');
+
+  const dateIndex = messagesReference.findIndex(
+    (obj) => obj.date === messageDate,
+  );
+
+  if (dateIndex === -1) {
+    return;
+  }
+
+  const currentDateEntry = messagesReference[dateIndex];
+
+  const minuteIndex = currentDateEntry.minutes.findIndex(
+    (obj) => obj.minute === messageMinute,
+  );
+
+  if (minuteIndex === -1) {
+    return;
+  }
+
+  const currentMinuteEntry = currentDateEntry.minutes[minuteIndex];
+
+  currentMinuteEntry.messages = currentMinuteEntry.messages.map((obj) =>
+    obj.uuid === message.uuid ||
+    obj.internal_note?.uuid === message.internal_note?.uuid
+      ? {
+          ...obj,
+          ...message,
+          internal_note: {
+            ...obj.internal_note,
+            ...message.internal_note,
+          },
+          media: message.media ?? (obj.internal_note ? [] : obj.media),
         }
       : obj,
   );

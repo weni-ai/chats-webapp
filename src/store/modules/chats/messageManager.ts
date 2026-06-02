@@ -12,6 +12,7 @@ import i18n from '@/plugins/i18n';
 
 export const useMessageManager = defineStore('messageManager', () => {
   const LIMIT_UPLOAD_FILES = 5;
+  const LIMIT_UPLOAD_FILES_INTERNAL_NOTE = 10;
 
   const inputMessageFocused = ref(false);
   const inputMessage = ref('');
@@ -68,7 +69,12 @@ export const useMessageManager = defineStore('messageManager', () => {
   }
 
   const isLoadingSend = ref(false);
+
   const disableSendButton = computed(() => {
+    if (isInternalNote.value) {
+      return !inputMessage.value.trim() && mediaUploadFiles.value.length === 0;
+    }
+
     const isValidInputMessage = isSuggestionBoxOpen.value
       ? !inputMessage.value.startsWith('/')
       : !!inputMessage.value.trim();
@@ -85,11 +91,20 @@ export const useMessageManager = defineStore('messageManager', () => {
     );
   });
 
+  const uploadFilesLimit = computed(() =>
+    isInternalNote.value
+      ? LIMIT_UPLOAD_FILES_INTERNAL_NOTE
+      : LIMIT_UPLOAD_FILES,
+  );
+
   async function sendInternalNote() {
     const inputMessageTrimmed = inputMessage.value.trim();
-    if (!inputMessageTrimmed) return;
-    const text = `${t('internal_note')}: ${inputMessageTrimmed}`;
-    await roomMessagesStore.sendRoomInternalNote({ text });
+    if (!inputMessageTrimmed && mediaUploadFiles.value.length === 0) return;
+    const text = `${t('internal_note')}: ${inputMessageTrimmed}`.trim();
+    await roomMessagesStore.sendRoomInternalNote({
+      text,
+      medias: mediaUploadFiles.value,
+    });
     clearInputs();
   }
 
@@ -164,7 +179,7 @@ export const useMessageManager = defineStore('messageManager', () => {
 
   function addMediaUploadFiles(files: File[] | FileList) {
     const size = mediaUploadFiles.value.length + files.length;
-    if (size > LIMIT_UPLOAD_FILES) {
+    if (size > uploadFilesLimit.value) {
       return;
     }
     mediaUploadFiles.value = [...mediaUploadFiles.value, ...files];
@@ -208,6 +223,7 @@ export const useMessageManager = defineStore('messageManager', () => {
     isLoadingSend,
     disableSendButton,
     isAudioRecorderVisible,
+    uploadFilesLimit,
     isDisabledInput,
 
     sendRoomMessage,

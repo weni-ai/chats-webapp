@@ -201,6 +201,7 @@
   },
   "attachment": "Attach",
   "internal_note": "Internal note",
+  "internal_note_with_attachment_tooltip": "Internal note with attachment",
   "close_internal_note": "Close internal note (Esc)",
   "notes": "Notes",
   "bold": "Bold",
