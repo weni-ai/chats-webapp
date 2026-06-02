@@ -5,31 +5,64 @@
     class="chat-messages__internal-note-medias"
     @click.stop
   >
-    <template
+    <section
       v-for="media in previewableMedias"
-      :key="media.message || media.url"
+      :key="getMediaKey(media)"
+      class="chat-messages__internal-note-medias__slot"
+      :class="{
+        'chat-messages__internal-note-medias__slot--interactive':
+          !showMediaLoading(media) && isImage(media),
+      }"
     >
+      <Transition name="internal-note-media-loading">
+        <div
+          v-if="showMediaLoading(media)"
+          class="chat-messages__internal-note-medias__loading"
+        >
+          <UnnnicIconLoading
+            scheme="fg-base"
+            size="lg"
+          />
+        </div>
+      </Transition>
+
       <button
         v-if="isImage(media)"
         type="button"
-        class="chat-messages__internal-note-medias__item"
+        class="chat-messages__internal-note-medias__preview-button"
+        :disabled="!media.url"
         @click="openFullscreen(media)"
       >
         <img
+          v-if="media.url"
+          :ref="(element) => registerImage(element, media)"
           class="chat-messages__internal-note-medias__preview"
-          :src="media.url || media.preview"
+          :class="{
+            'chat-messages__internal-note-medias__preview--visible':
+              isMediaRendered(media),
+          }"
+          :src="media.url"
+          @load="handleMediaLoad(media)"
         />
       </button>
-      <VideoPlayer
-        v-else-if="isVideo(media)"
-        class="chat-messages__internal-note-medias__video media"
-        :src="media.url || media.preview"
-      />
-      <MediaDocumentCard
-        v-else-if="isDocument(media)"
-        :media="media"
-      />
-    </template>
+
+      <div
+        v-else-if="isVideo(media) && !isLoading(media)"
+        class="chat-messages__internal-note-medias__content"
+      >
+        <VideoPlayer
+          class="chat-messages__internal-note-medias__video media"
+          :src="media.url || media.preview"
+        />
+      </div>
+
+      <div
+        v-else-if="isDocument(media) && !isLoading(media)"
+        class="chat-messages__internal-note-medias__content"
+      >
+        <MediaDocumentCard :media="media" />
+      </div>
+    </section>
 
     <FullscreenPreview
       v-if="isFullscreen && currentMedia"
@@ -57,10 +90,12 @@ import MediaDocumentCard from './MediaDocumentCard.vue';
 
 interface InternalNoteMedia {
   content_type: string;
-  url: string;
+  url?: string;
   message?: string;
   preview?: string;
-  file?: { name?: string };
+  tempId?: string;
+  isLoading?: boolean;
+  file?: File | { name?: string };
 }
 
 interface Props {
@@ -75,6 +110,49 @@ defineOptions({
 
 const isFullscreen = ref(false);
 const currentMedia = ref<InternalNoteMedia | null>(null);
+const renderedMediaKeys = ref<Record<string, boolean>>({});
+
+const getMediaKey = (media: InternalNoteMedia) =>
+  media.tempId || media.message || media.url || media.preview;
+
+const isLoading = (media: InternalNoteMedia) =>
+  !!media.isLoading || (!media.url && !media.preview && !!media.file);
+
+const isMediaRendered = (media: InternalNoteMedia) =>
+  !!renderedMediaKeys.value[getMediaKey(media)];
+
+const showMediaLoading = (media: InternalNoteMedia) => {
+  if (isLoading(media)) {
+    return true;
+  }
+
+  if (isImage(media) && media.url && !isMediaRendered(media)) {
+    return true;
+  }
+
+  return false;
+};
+
+const handleMediaLoad = (media: InternalNoteMedia) => {
+  const key = getMediaKey(media);
+
+  if (renderedMediaKeys.value[key]) {
+    return;
+  }
+
+  renderedMediaKeys.value = {
+    ...renderedMediaKeys.value,
+    [key]: true,
+  };
+};
+
+const registerImage = (element: unknown, media: InternalNoteMedia) => {
+  if (!(element instanceof HTMLImageElement) || !element.complete) {
+    return;
+  }
+
+  handleMediaLoad(media);
+};
 
 const isMediaOfType = (media: InternalNoteMedia, type: string) =>
   media?.content_type?.includes(type);
@@ -96,15 +174,20 @@ const isDocument = (media: InternalNoteMedia) =>
 
 const previewableMedias = computed(() =>
   props.medias.filter(
-    (media) => isImage(media) || isVideo(media) || isDocument(media),
+    (media) =>
+      isLoading(media) || isImage(media) || isVideo(media) || isDocument(media),
   ),
 );
 
 const imageMedias = computed(() =>
-  props.medias.filter((media) => isImage(media)),
+  props.medias.filter((media) => isImage(media) && media.url),
 );
 
 const openFullscreen = (media: InternalNoteMedia) => {
+  if (!media.url) {
+    return;
+  }
+
   currentMedia.value = media;
   isFullscreen.value = true;
 };
@@ -146,29 +229,79 @@ const previousMedia = () => {
   gap: $unnnic-space-2;
   flex-wrap: wrap;
 
-  &__item {
+  &__slot {
     position: relative;
     width: 200px;
     height: 200px;
-    padding: 0;
-    border: none;
+    min-width: 200px;
+    min-height: 200px;
+    flex-shrink: 0;
     border-radius: $unnnic-radius-2;
     overflow: hidden;
-    cursor: pointer;
+    background-color: $unnnic-color-bg-soft;
+
+    &--interactive {
+      cursor: pointer;
+    }
+  }
+
+  &__content {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+
+    :deep(.chat-messages__internal-note-media-document-card) {
+      width: 100%;
+      height: 100%;
+    }
+  }
+
+  &__loading {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     background-color: $unnnic-color-bg-soft;
   }
 
+  &__preview-button {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    padding: 0;
+    border: none;
+    background: transparent;
+    cursor: inherit;
+
+    &:disabled {
+      cursor: default;
+      pointer-events: none;
+    }
+  }
+
   &__preview {
+    position: absolute;
+    inset: 0;
     width: 100%;
     height: 100%;
     object-fit: cover;
     display: block;
+    opacity: 0;
+    transition: opacity 0.25s ease;
     pointer-events: none;
+
+    &--visible {
+      opacity: 1;
+    }
   }
 
   &__video {
-    width: 200px;
-    height: 200px;
+    width: 100%;
+    height: 100%;
     border-radius: $unnnic-radius-2;
     overflow: hidden;
 
@@ -182,5 +315,13 @@ const previousMedia = () => {
       height: 100%;
     }
   }
+}
+
+.internal-note-media-loading-leave-active {
+  transition: opacity 0.2s ease;
+}
+
+.internal-note-media-loading-leave-to {
+  opacity: 0;
 }
 </style>

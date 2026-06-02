@@ -179,11 +179,9 @@ export const useMessageManager = defineStore('messageManager', () => {
 
   function addMediaUploadFiles(files: File[] | FileList) {
     const size = mediaUploadFiles.value.length + files.length;
-    console.log({ size, uploadFilesLimit: uploadFilesLimit.value });
     if (size > uploadFilesLimit.value) {
       return;
     }
-    console.log('addMediaUploadFiles', { files });
     mediaUploadFiles.value = [...mediaUploadFiles.value, ...files];
   }
 
