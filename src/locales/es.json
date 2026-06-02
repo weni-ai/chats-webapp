@@ -491,6 +491,7 @@
       "default": "Ocurrió un error, por favor, inténtelo de nuevo más tarde"
     },
     "message_input_placeholder": "Escribe tu mensaje o / para activar mensajes rápidos",
+    "message_input_disabled_description": "Cambia tu estado a en línea para continuar esta conversación.",
     "search_contact": "Buscar contacto",
     "search_contact_placeholder": "Buscar contacto (nombre, teléfono o ticket ID)",
     "tags": "Etiquetas de chat",
@@ -1045,6 +1046,10 @@
           "description": "Desactivar esta opción eliminará permanentemente el prompt de escenarios y criterios. Será necesario configurarlo nuevamente al reactivarla.",
           "confirmation": "¿Deseas continuar de todos modos?"
         }
+      },
+      "restrict_offline_agents": {
+        "switch_label": "Permitir interacciones solo para representantes en línea",
+        "hint": "Si esta opción está activada, los representantes sin conexión o en pausa no podrán responder a chats en curso."
       },
       "bulk_transfer": {
         "tooltip": "Esta función permite a los representantes transferir varios contactos a la vez a una fila o representante",

@@ -222,6 +222,8 @@ const updateActiveStatus = async ({
       });
     }
 
+    configStore.setStatus(statusAgent);
+
     const status = statuses.value.find(
       (s) =>
         s.value === (connection_status === 'online' ? 'active' : 'inactive'),
@@ -280,6 +282,7 @@ const selectStatus = async (newStatus: Status) => {
         moduleStorage.setItem(statusAgentKey, 'OFFLINE', {
           useSession: true,
         });
+        configStore.setStatus('OFFLINE');
       }
       startTimer();
     } else if (!isOldStatusActiveOrInactive && isCustomStatus) {
