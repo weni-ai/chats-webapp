@@ -529,3 +529,40 @@ export function removeFromGroupedMessages(messagesReference, { message }) {
     currentDateEntry.minutes.splice(minuteIndex, 1);
   }
 }
+
+export function removeInternalNoteMessage(messagesReference, { message }) {
+  const messageUuid = message.uuid;
+  const internalNoteUuid = message.internal_note?.uuid;
+
+  const shouldRemove = (obj) =>
+    obj.uuid === messageUuid ||
+    (internalNoteUuid && obj.internal_note?.uuid === internalNoteUuid);
+
+  for (
+    let dateIndex = messagesReference.length - 1;
+    dateIndex >= 0;
+    dateIndex--
+  ) {
+    const currentDateEntry = messagesReference[dateIndex];
+
+    for (
+      let minuteIndex = currentDateEntry.minutes.length - 1;
+      minuteIndex >= 0;
+      minuteIndex--
+    ) {
+      const currentMinuteEntry = currentDateEntry.minutes[minuteIndex];
+
+      currentMinuteEntry.messages = currentMinuteEntry.messages.filter(
+        (obj) => !shouldRemove(obj),
+      );
+
+      if (!currentMinuteEntry.messages.length) {
+        currentDateEntry.minutes.splice(minuteIndex, 1);
+      }
+    }
+
+    if (!currentDateEntry.minutes.length) {
+      messagesReference.splice(dateIndex, 1);
+    }
+  }
+}

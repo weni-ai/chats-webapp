@@ -1,14 +1,14 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import deleteInternalNote from '@/services/api/websocket/listeners/room/internalNote/delete';
 import { useRoomMessages } from '@/store/modules/chats/roomMessages';
-import { removeFromGroupedMessages } from '@/utils/messages';
+import { removeInternalNoteMessage } from '@/utils/messages';
 
 vi.mock('@/store/modules/chats/roomMessages', () => ({
   useRoomMessages: vi.fn(),
 }));
 
 vi.mock('@/utils/messages', () => ({
-  removeFromGroupedMessages: vi.fn(),
+  removeInternalNoteMessage: vi.fn(),
 }));
 
 describe('Internal note delete', () => {
@@ -101,10 +101,10 @@ describe('Internal note delete', () => {
     ]);
   });
 
-  it('should call removeFromGroupedMessages when a message with matching internal_note exists', () => {
+  it('should call removeInternalNoteMessage when a message with matching internal_note exists', () => {
     deleteInternalNote(note);
 
-    expect(removeFromGroupedMessages).toHaveBeenCalledWith(
+    expect(removeInternalNoteMessage).toHaveBeenCalledWith(
       roomMessagesStoreMock.roomMessagesSorted,
       {
         message: {
@@ -119,7 +119,7 @@ describe('Internal note delete', () => {
     );
   });
 
-  it('should not call removeFromGroupedMessages when no message with matching internal_note exists', () => {
+  it('should not call removeInternalNoteMessage when no message with matching internal_note exists', () => {
     const noteWithoutMessage = {
       uuid: 'note-999',
       text: 'Note without message',
@@ -127,7 +127,7 @@ describe('Internal note delete', () => {
 
     deleteInternalNote(noteWithoutMessage);
 
-    expect(removeFromGroupedMessages).not.toHaveBeenCalled();
+    expect(removeInternalNoteMessage).not.toHaveBeenCalled();
   });
 
   it('should not modify roomMessages when no message with matching internal_note exists', () => {
@@ -171,7 +171,7 @@ describe('Internal note delete', () => {
 
     deleteInternalNote(note);
 
-    expect(removeFromGroupedMessages).not.toHaveBeenCalled();
+    expect(removeInternalNoteMessage).not.toHaveBeenCalled();
     expect(roomMessagesStoreMock.roomMessages).toEqual([]);
   });
 });
