@@ -8,7 +8,7 @@
       <UnnnicButton
         :iconCenter="icon"
         :tooltip="tooltip"
-        :disabled="disabled || disableFromParent"
+        :disabled="isDisabled"
         type="tertiary"
         size="small"
         :pressed="pressed"
@@ -19,11 +19,15 @@
 </template>
 
 <script setup lang="ts">
+import { storeToRefs } from 'pinia';
+import { useMessageManager } from '@/store/modules/chats/messageManager';
+import { computed } from 'vue';
+
 defineOptions({
   name: 'TextBoxActionItem',
 });
 
-defineProps<{
+const props = defineProps<{
   icon: string;
   tooltip?: string;
   disabled?: boolean;
@@ -35,4 +39,11 @@ defineProps<{
 const emit = defineEmits<{
   click: [void];
 }>();
+
+const messageManager = useMessageManager();
+const { isDisabledInput } = storeToRefs(messageManager);
+
+const isDisabled = computed(() => {
+  return isDisabledInput.value || props.disabled || props.disableFromParent;
+});
 </script>

@@ -6,6 +6,7 @@ import { useDiscussions } from './discussions';
 import { useRoomMessages } from './roomMessages';
 import { useDiscussionMessages } from './discussionMessages';
 import { useAiTextImprovement } from './aiTextImprovement';
+import { useConfig } from '../config';
 
 import i18n from '@/plugins/i18n';
 
@@ -23,6 +24,7 @@ export const useMessageManager = defineStore('messageManager', () => {
   const isSuggestionBoxOpen = ref(false);
   const isCopilotOpen = ref(false);
   const isEmojiPickerOpen = ref(false);
+
   // This could be implemented in the future; the code addresses the scenario, but the feature is currently disabled.
   const replyMessage = ref(null);
 
@@ -34,6 +36,15 @@ export const useMessageManager = defineStore('messageManager', () => {
   const discussionsStore = useDiscussions();
   const { activeDiscussion } = storeToRefs(discussionsStore);
   const discussionMessagesStore = useDiscussionMessages();
+  const configStore = useConfig();
+  const { project, status: agentStatus } = storeToRefs(configStore);
+
+  const isDisabledInput = computed(() => {
+    return (
+      project.value.config?.restrict_offline_agents &&
+      agentStatus.value !== 'ONLINE'
+    );
+  });
 
   watch(
     [() => activeRoom.value?.uuid, () => activeDiscussion.value?.uuid],
@@ -210,6 +221,7 @@ export const useMessageManager = defineStore('messageManager', () => {
     disableSendButton,
     isAudioRecorderVisible,
     uploadFilesLimit,
+    isDisabledInput,
 
     sendRoomMessage,
     sendMediasMessage,

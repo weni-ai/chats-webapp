@@ -77,6 +77,7 @@ import { useRooms } from '@/store/modules/chats/rooms';
 import { useConfig } from '@/store/modules/config';
 import { useFeatureFlag } from '@/store/modules/featureFlag';
 import { useProfile } from '@/store/modules/profile';
+import { useDashboard } from '@/store/modules/dashboard';
 
 import ChatContact from '@/components/chats/ChatContact.vue';
 
@@ -146,6 +147,10 @@ export default {
     ...mapState(useProfile, {
       me: 'me',
     }),
+    ...mapState(useDashboard, ['viewedAgent']),
+    isViewMode() {
+      return this.viewedAgent?.email !== '';
+    },
     isPendingResponseFeatureEnabled() {
       return !!this.featureFlags?.active_features?.includes(
         'weniChatsPendingResponse',
@@ -158,6 +163,8 @@ export default {
       return !!this.room.last_message?.contact && !this.room.last_message?.user;
     },
     isLastMessageFromAnotherAgent() {
+      if (this.isViewMode) return false;
+
       const isUserHaveEmail = this.room.last_message?.user?.email;
 
       const verifyEmail = isUserHaveEmail
@@ -167,6 +174,8 @@ export default {
       return !!this.room.last_message?.user && verifyEmail;
     },
     isLastMessageFromBot() {
+      if (this.isViewMode) return false;
+
       return !this.room.last_message?.contact && !this.room.last_message?.user;
     },
     showPendingResponse() {

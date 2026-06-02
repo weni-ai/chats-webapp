@@ -5,7 +5,7 @@
     :type="isInternalNote ? 'attention' : 'primary'"
     size="small"
     :text="isInternalNote ? t('add') : t('send')"
-    :disabled="disableSendButton || isAiLoading"
+    :disabled="isDisabledInput || disableSendButton || isAiLoading"
     @click="emit('send')"
   />
 </template>
@@ -28,6 +28,7 @@ const emit = defineEmits<{
   send: [void];
 }>();
 
-const { isInternalNote, disableSendButton } = storeToRefs(useMessageManager());
+const { isInternalNote, disableSendButton, isDisabledInput } =
+  storeToRefs(useMessageManager());
 const { isLoading: isAiLoading } = storeToRefs(useAiTextImprovement());
 </script>

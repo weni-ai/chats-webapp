@@ -106,6 +106,7 @@ export default {
         can_see_timer: false,
         can_see_waiting_rooms_count: true,
         can_use_name_sector_in_rooms: false,
+        restrict_offline_agents: false,
       },
       hasAgentBuilder: false,
       aiTransferConfig: {
@@ -213,6 +214,17 @@ export default {
           },
           onToggle: this.handleAiTransferToggle,
           onEdit: this.openAiTransferModal,
+        },
+        {
+          key: 'restrict_offline_agents',
+          type: 'flag',
+          visible: true,
+          name: this.$t(
+            'config_chats.project_configs.restrict_offline_agents.switch_label',
+          ),
+          hint: this.$t(
+            'config_chats.project_configs.restrict_offline_agents.hint',
+          ),
         },
         {
           key: 'can_use_bulk_transfer',
@@ -375,6 +387,7 @@ export default {
         can_see_timer,
         can_see_waiting_rooms_count,
         can_use_name_sector_in_rooms,
+        restrict_offline_agents,
       } = this.projectConfig;
 
       Project.update({
@@ -387,6 +400,7 @@ export default {
         can_see_timer,
         can_see_waiting_rooms_count,
         can_use_name_sector_in_rooms,
+        restrict_offline_agents,
       });
     },
   },
