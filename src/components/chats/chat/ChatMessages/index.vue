@@ -79,6 +79,7 @@
                 :enableReply="enableReply"
                 :replyMessage="message.replied_message"
                 :automatic="message.is_automatic_message"
+                :automaticType="message.automatic_message_type"
                 :locale="$i18n.locale"
                 data-testid="chat-message"
                 :highlighted="message.uuid === toScrollMessage?.uuid"

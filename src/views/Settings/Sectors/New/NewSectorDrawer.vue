@@ -140,6 +140,14 @@ export default {
         can_edit_custom_fields: true,
         sign_messages: true,
         is_csat_enabled: false,
+        inactivity_timeout: {
+          is_message_timeout_enabled: false,
+          message_timeout_text: '',
+          message_timeout_time: null,
+          is_close_room_enabled: false,
+          close_room_message_text: '',
+          close_room_time: null,
+        },
         automatic_message_queue: {
           is_active: false,
           text: '',

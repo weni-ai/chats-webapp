@@ -36,6 +36,7 @@ vi.mock('@/services/api/resources/profile', () => ({
 vi.mock('@/services/api/resources/settings/project', () => ({
   default: {
     getInfo: vi.fn(),
+    getProjectLanguage: vi.fn(() => 'en-us'),
   },
 }));
 

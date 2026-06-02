@@ -9,7 +9,7 @@
       v-if="isAutomatic"
       class="unnnic-chats-message__text--automatic"
     >
-      {{ $t('automatic_message.automatic_opening_message') }}
+      {{ automaticMessageLabel }}
     </p>
   </section>
 </template>
@@ -27,8 +27,20 @@ export default {
       type: Boolean,
       default: false,
     },
+    automaticType: {
+      type: String,
+      default: 'automatic_open',
+    },
   },
   computed: {
+    automaticMessageLabel() {
+      const labelsByType = {
+        automatic_open: this.$t('automatic_message.automatic_opening_message'),
+        inactive_warning: this.$t('automatic_message.inactive_warning_message'),
+        inactive_close: this.$t('automatic_message.inactive_close_message'),
+      };
+      return labelsByType[this.automaticType];
+    },
     formattedText() {
       function treatTextUrl(text) {
         const urlRegex = /(https?:\/\/[^\s]+)/g;
