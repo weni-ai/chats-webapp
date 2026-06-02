@@ -115,10 +115,11 @@ const onKeyDown = (event: KeyboardEvent) => {
 
   if (event.key === 'Enter') {
     if (event.shiftKey) return;
+    const activeRoomUuid = activeRoom.value?.uuid;
     if (mediaUploadFiles.value.length > 0 && !isInternalNote.value) {
-      sendMediasMessage();
+      sendMediasMessage(activeRoomUuid);
     } else {
-      sendRoomMessage();
+      sendRoomMessage(activeRoomUuid);
     }
     event.preventDefault();
   }

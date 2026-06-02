@@ -63,6 +63,7 @@ import BackToOriginal from './BackToOriginal.vue';
 
 import { useMessageManager } from '@/store/modules/chats/messageManager';
 import { useAiTextImprovement } from '@/store/modules/chats/aiTextImprovement';
+import { useRooms } from '@/store/modules/chats/rooms';
 
 defineOptions({
   name: 'MessageManagerTextBox',
@@ -72,6 +73,9 @@ const emit = defineEmits<{
   keydown: [KeyboardEvent];
   send: [void];
 }>();
+
+const roomsStore = useRooms();
+const { activeRoom } = storeToRefs(roomsStore);
 
 const messageManager = useMessageManager();
 const { sendRoomMessage, sendMediasMessage } = messageManager;
@@ -124,10 +128,11 @@ const handleEmojiSelected = (emoji: string) => {
 };
 
 const handleSend = async () => {
+  const activeRoomUuid = activeRoom.value?.uuid;
   if (mediaUploadFiles.value.length > 0 && !isInternalNote.value) {
-    await sendMediasMessage();
+    await sendMediasMessage(activeRoomUuid);
   } else {
-    await sendRoomMessage();
+    await sendRoomMessage(activeRoomUuid);
   }
 };
 

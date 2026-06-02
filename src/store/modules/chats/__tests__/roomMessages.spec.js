@@ -3,6 +3,7 @@ import { setActivePinia, createPinia } from 'pinia';
 import { useRoomMessages } from '../roomMessages';
 import { useRooms } from '../rooms';
 import Message from '@/services/api/resources/chats/message';
+import RoomNotes from '@/services/api/resources/chats/roomNotes';
 
 vi.mock('../rooms');
 vi.mock('@/store/modules/profile', () => ({
@@ -13,6 +14,11 @@ vi.mock('@/services/api/resources/chats/message', () => ({
     getByRoom: vi.fn(),
     sendRoomMessage: vi.fn(),
     sendRoomMedia: vi.fn(),
+  },
+}));
+vi.mock('@/services/api/resources/chats/roomNotes', () => ({
+  default: {
+    createInternalNote: vi.fn(),
   },
 }));
 
@@ -84,7 +90,12 @@ describe('useRoomMessages Store', () => {
   it('should send a room message', async () => {
     const roomStore = useRooms();
     Message.sendRoomMessage.mockResolvedValue({ uuid: '123', text: 'Hello' });
-    await roomMessagesStore.sendRoomMessage('Hello');
+    await roomMessagesStore.sendRoomMessage(
+      'Hello',
+      undefined,
+      null,
+      'room-123',
+    );
     expect(Message.sendRoomMessage).toHaveBeenCalledWith(
       roomStore.activeRoom.uuid,
       {
@@ -97,12 +108,18 @@ describe('useRoomMessages Store', () => {
     );
   });
 
+  it('should not send a room message when roomUuid is missing', async () => {
+    await roomMessagesStore.sendRoomMessage('Hello');
+    expect(Message.sendRoomMessage).not.toHaveBeenCalled();
+  });
+
   it('should resend a room message', async () => {
     const roomStore = useRooms();
     Message.sendRoomMessage.mockResolvedValue({ uuid: '123', text: 'Hello' });
 
     await roomMessagesStore.resendRoomMessage({
       message: { uuid: '123', text: 'Resend' },
+      roomUuid: 'room-123',
     });
     expect(Message.sendRoomMessage).toHaveBeenCalledWith(
       roomStore.activeRoom.uuid,
@@ -112,6 +129,70 @@ describe('useRoomMessages Store', () => {
         user_email: roomStore.activeRoom.user.email,
       },
     );
+  });
+
+  it('should not resend a room message when roomUuid is missing', async () => {
+    await roomMessagesStore.resendRoomMessage({
+      message: { uuid: '123', text: 'Resend' },
+    });
+    expect(Message.sendRoomMessage).not.toHaveBeenCalled();
+  });
+
+  it('should send room medias with roomUuid', async () => {
+    globalThis.URL.createObjectURL = vi.fn(() => 'blob:preview');
+    Message.sendRoomMedia.mockResolvedValue({
+      media_response: { content_type: 'image/png' },
+      message_response: { uuid: 'm-1', media: [] },
+    });
+    const file = new File(['x'], 'image.png', { type: 'image/png' });
+
+    await roomMessagesStore.sendRoomMedias({
+      files: [file],
+      updateLoadingFiles: vi.fn(),
+      repliedMessage: null,
+      roomUuid: 'room-123',
+    });
+
+    expect(Message.sendRoomMedia).toHaveBeenCalledWith(
+      'room-123',
+      expect.objectContaining({
+        user_email: 'test@test.com',
+        media: file,
+        repliedMessageId: undefined,
+      }),
+    );
+  });
+
+  it('should not send room medias when roomUuid is missing', async () => {
+    const file = new File(['x'], 'image.png', { type: 'image/png' });
+
+    await roomMessagesStore.sendRoomMedias({
+      files: [file],
+      updateLoadingFiles: vi.fn(),
+      repliedMessage: null,
+    });
+
+    expect(Message.sendRoomMedia).not.toHaveBeenCalled();
+  });
+
+  it('should send a room internal note with roomUuid', async () => {
+    RoomNotes.createInternalNote.mockResolvedValue({ uuid: 'note-1' });
+
+    await roomMessagesStore.sendRoomInternalNote({
+      text: 'My note',
+      roomUuid: 'room-123',
+    });
+
+    expect(RoomNotes.createInternalNote).toHaveBeenCalledWith({
+      text: 'My note',
+      room: 'room-123',
+    });
+  });
+
+  it('should not send a room internal note when roomUuid is missing', async () => {
+    await roomMessagesStore.sendRoomInternalNote({ text: 'My note' });
+
+    expect(RoomNotes.createInternalNote).not.toHaveBeenCalled();
   });
 
   it('should remove message from sendings', () => {
@@ -186,12 +267,12 @@ describe('useRoomMessages Store', () => {
     expect(roomMessagesStore.roomMessagesPrevious).toBe('prev-url');
   });
 
-  it('should resend all failed messages in order', async () => {
+  it('should resend all failed messages in order forwarding each message room', async () => {
     roomMessagesStore.roomMessagesSendingUuids = ['msg-1', 'msg-2', 'msg-3'];
     roomMessagesStore.roomMessages = [
-      { uuid: 'msg-1', text: 'Hello' },
-      { uuid: 'msg-2', text: 'World' },
-      { uuid: 'msg-3', text: 'Test' },
+      { uuid: 'msg-1', text: 'Hello', room: 'room-123' },
+      { uuid: 'msg-2', text: 'World', room: 'room-123' },
+      { uuid: 'msg-3', text: 'Test', room: 'room-456' },
     ];
 
     roomMessagesStore.resendRoomMessage = vi.fn();
@@ -200,13 +281,16 @@ describe('useRoomMessages Store', () => {
 
     expect(roomMessagesStore.resendRoomMessage).toHaveBeenCalledTimes(3);
     expect(roomMessagesStore.resendRoomMessage).toHaveBeenNthCalledWith(1, {
-      message: { uuid: 'msg-1', text: 'Hello' },
+      message: { uuid: 'msg-1', text: 'Hello', room: 'room-123' },
+      roomUuid: 'room-123',
     });
     expect(roomMessagesStore.resendRoomMessage).toHaveBeenNthCalledWith(2, {
-      message: { uuid: 'msg-2', text: 'World' },
+      message: { uuid: 'msg-2', text: 'World', room: 'room-123' },
+      roomUuid: 'room-123',
     });
     expect(roomMessagesStore.resendRoomMessage).toHaveBeenNthCalledWith(3, {
-      message: { uuid: 'msg-3', text: 'Test' },
+      message: { uuid: 'msg-3', text: 'Test', room: 'room-456' },
+      roomUuid: 'room-456',
     });
   });
 });
