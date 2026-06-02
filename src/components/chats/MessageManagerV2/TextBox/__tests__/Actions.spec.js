@@ -45,7 +45,12 @@ vi.spyOn(i18n.global, 't').mockImplementation((key) => key);
 
 const createWrapper = (options = {}) => {
   const {
-    featureFlags = { active_features: ['weniChatsAITextImprovement'] },
+    featureFlags = {
+      active_features: [
+        'weniChatsAITextImprovement',
+        'weniChatsEnableInternalNoteMedias',
+      ],
+    },
     activeDiscussion = null,
     inputMessage = '',
     isInternalNote = false,
