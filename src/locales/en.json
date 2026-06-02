@@ -370,6 +370,16 @@
     "metrics": "Export metrics as {filetype}",
     "all": "Export everything as {filetype}"
   },
+  "export_conversation": {
+    "button": "Export conversation",
+    "title": "Export conversation",
+    "select_format": "Select the format to export the conversation",
+    "disclaimer": "While this export is being processed, new exports will be temporarily blocked for this conversation",
+    "accept_terms": "I accept the terms and understand the export limitations.",
+    "success_title": "Processing export!",
+    "success_description": "You will receive it by email shortly. Remember to check your spam folder.",
+    "error": "The export could not be processed. Try again"
+  },
   "name": "Name",
   "addition_date": "Date of addition",
   "in_queues": "in queues",
