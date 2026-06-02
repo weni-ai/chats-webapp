@@ -267,12 +267,12 @@ describe('useRoomMessages Store', () => {
     expect(roomMessagesStore.roomMessagesPrevious).toBe('prev-url');
   });
 
-  it('should resend all failed messages in order', async () => {
+  it('should resend all failed messages in order forwarding each message room', async () => {
     roomMessagesStore.roomMessagesSendingUuids = ['msg-1', 'msg-2', 'msg-3'];
     roomMessagesStore.roomMessages = [
-      { uuid: 'msg-1', text: 'Hello' },
-      { uuid: 'msg-2', text: 'World' },
-      { uuid: 'msg-3', text: 'Test' },
+      { uuid: 'msg-1', text: 'Hello', room: 'room-123' },
+      { uuid: 'msg-2', text: 'World', room: 'room-123' },
+      { uuid: 'msg-3', text: 'Test', room: 'room-456' },
     ];
 
     roomMessagesStore.resendRoomMessage = vi.fn();
@@ -281,13 +281,16 @@ describe('useRoomMessages Store', () => {
 
     expect(roomMessagesStore.resendRoomMessage).toHaveBeenCalledTimes(3);
     expect(roomMessagesStore.resendRoomMessage).toHaveBeenNthCalledWith(1, {
-      message: { uuid: 'msg-1', text: 'Hello' },
+      message: { uuid: 'msg-1', text: 'Hello', room: 'room-123' },
+      roomUuid: 'room-123',
     });
     expect(roomMessagesStore.resendRoomMessage).toHaveBeenNthCalledWith(2, {
-      message: { uuid: 'msg-2', text: 'World' },
+      message: { uuid: 'msg-2', text: 'World', room: 'room-123' },
+      roomUuid: 'room-123',
     });
     expect(roomMessagesStore.resendRoomMessage).toHaveBeenNthCalledWith(3, {
-      message: { uuid: 'msg-3', text: 'Test' },
+      message: { uuid: 'msg-3', text: 'Test', room: 'room-456' },
+      roomUuid: 'room-456',
     });
   });
 });

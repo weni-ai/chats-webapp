@@ -392,7 +392,9 @@ export const useRoomMessages = defineStore('roomMessages', {
             (mappedMessage) => mappedMessage.uuid === messageUuid,
           );
 
-          await this.resendRoomMessage({ message: roomMessages[messageIndex] });
+          const message = roomMessages[messageIndex];
+
+          await this.resendRoomMessage({ message, roomUuid: message?.room });
         }
       }
     },
