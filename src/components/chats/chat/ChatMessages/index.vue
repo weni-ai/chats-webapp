@@ -135,7 +135,9 @@
                           : 'audio',
                     })
                   "
-                  @click="resendMedia({ message, media })"
+                  @click="
+                    resendMedia({ message, media, roomUuid: message.room })
+                  "
                 >
                   <img
                     v-if="isImage(media)"
@@ -154,7 +156,9 @@
                     :message="message"
                     :messageStatus="messageStatus({ message, media })"
                     :isClosedChat="isClosedChat"
-                    @failed-click="resendMedia({ message, media })"
+                    @failed-click="
+                      resendMedia({ message, media, roomUuid: message.room })
+                    "
                   />
                 </ChatsMessage>
                 <ChatsMessage
@@ -550,7 +554,7 @@ export default {
         const status = this.messageStatus({ message, media });
 
         if (status === 'failed') {
-          this.resendMedia({ message, media });
+          this.resendMedia({ message, media, roomUuid: message.room });
         } else {
           try {
             const mediaToDownload = media.url || media.preview;
