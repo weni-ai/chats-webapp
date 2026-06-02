@@ -115,7 +115,7 @@ const onKeyDown = (event: KeyboardEvent) => {
 
   if (event.key === 'Enter') {
     if (event.shiftKey) return;
-    if (mediaUploadFiles.value.length > 0) {
+    if (mediaUploadFiles.value.length > 0 && !isInternalNote.value) {
       sendMediasMessage();
     } else {
       sendRoomMessage();

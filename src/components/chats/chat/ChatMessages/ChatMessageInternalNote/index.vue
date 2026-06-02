@@ -13,7 +13,7 @@
             {{ agentName }}
           </p>
           <UnnnicToolTip
-            v-if="!isRoomMessage"
+            v-if="!isRoomMessage && medias.length > 0"
             enabled
             :text="$t('internal_note_with_attachment_tooltip')"
           >
@@ -169,7 +169,6 @@ export default {
       display: -webkit-box;
       -webkit-box-orient: vertical;
       -webkit-line-clamp: 4;
-      // white-space: normal;
     }
   }
 

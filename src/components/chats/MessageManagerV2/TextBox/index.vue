@@ -124,7 +124,7 @@ const handleEmojiSelected = (emoji: string) => {
 };
 
 const handleSend = async () => {
-  if (mediaUploadFiles.value.length > 0) {
+  if (mediaUploadFiles.value.length > 0 && !isInternalNote.value) {
     await sendMediasMessage();
   } else {
     await sendRoomMessage();

@@ -292,7 +292,7 @@ export const useRoomMessages = defineStore('roomMessages', {
       });
     },
 
-    async sendRoomInternalNote({ text }) {
+    async sendRoomInternalNote({ text, medias }) {
       const roomsStore = useRooms();
 
       if (!roomsStore.activeRoom) return;
@@ -303,17 +303,44 @@ export const useRoomMessages = defineStore('roomMessages', {
       });
 
       // add internal note in the room messages
-      sendMessage({
+      await sendMessage({
         itemType: 'room',
         itemUuid: roomsStore.activeRoom.uuid,
         itemUser: roomsStore.activeRoom.user,
         message: text,
         internalNote: createdNote,
-        sendItemMessage: () => createdNote,
+        sendItemMessage: () => ({
+          internal_note: createdNote,
+          uuid: `internal-note-${createdNote.uuid}`,
+          text: '',
+        }),
         addMessage: (message) => this.handlingAddMessage({ message }),
         addSortedMessage: (message) => this.addRoomMessageSorted({ message }),
-        updateMessage: () => {},
+        updateMessage: ({ message, toUpdateMessageUuid }) => {
+          this.updateMessage({
+            message,
+            toUpdateMessageUuid,
+          });
+        },
       });
+
+      // add internal note medias
+
+      const mediasPromises = medias.map(async (media) => {
+        RoomNotes.sendInternalNoteMedia({
+          note: createdNote.uuid,
+          media,
+        }).then((internalNoteMedia) => {
+          const note = this.roomInternalNotes.find(
+            (note) => note.uuid === createdNote.uuid,
+          );
+          if (note) {
+            note.media.push(internalNoteMedia);
+          }
+        });
+      });
+
+      await Promise.all(mediasPromises);
     },
 
     async resendRoomMessage({ message }) {

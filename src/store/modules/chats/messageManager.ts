@@ -99,9 +99,12 @@ export const useMessageManager = defineStore('messageManager', () => {
 
   async function sendInternalNote() {
     const inputMessageTrimmed = inputMessage.value.trim();
-    if (!inputMessageTrimmed) return;
-    const text = `${t('internal_note')}: ${inputMessageTrimmed}`;
-    await roomMessagesStore.sendRoomInternalNote({ text });
+    if (!inputMessageTrimmed && mediaUploadFiles.value.length === 0) return;
+    const text = `${t('internal_note')}: ${inputMessageTrimmed}`.trim();
+    await roomMessagesStore.sendRoomInternalNote({
+      text,
+      medias: mediaUploadFiles.value,
+    });
     clearInputs();
   }
 
@@ -176,9 +179,11 @@ export const useMessageManager = defineStore('messageManager', () => {
 
   function addMediaUploadFiles(files: File[] | FileList) {
     const size = mediaUploadFiles.value.length + files.length;
+    console.log({ size, uploadFilesLimit: uploadFilesLimit.value });
     if (size > uploadFilesLimit.value) {
       return;
     }
+    console.log('addMediaUploadFiles', { files });
     mediaUploadFiles.value = [...mediaUploadFiles.value, ...files];
   }
 
