@@ -10,9 +10,6 @@
       },
     ]"
   >
-    <MessageManagerTextBoxUploadField ref="uploadField" />
-    <MessageManagerTextBoxMedias v-if="mediaUploadFiles.length > 0" />
-    <MessageManagerTextBoxAudioRecorder ref="audioRecorder" />
     <section
       v-if="showBackToOriginal"
       class="text-box__textarea-row"
@@ -27,6 +24,11 @@
       v-else
       ref="textArea"
       @keydown="handleKeyDown"
+    />
+    <MessageManagerTextBoxUploadField ref="uploadField" />
+    <MessageManagerTextBoxAudioRecorder ref="audioRecorder" />
+    <MessageManagerTextBoxMedias
+      v-if="mediaUploadFiles.length > 0 && !isInternalNote"
     />
     <hr class="text-box__divider" />
     <MessageManagerTextBoxActions
@@ -54,7 +56,7 @@ import { vOnClickOutside } from '@vueuse/components';
 
 import MessageManagerTextBoxMedias from './Medias.vue';
 import MessageManagerTextBoxAudioRecorder from './AudioRecorder.vue';
-import MessageManagerTextBoxActions from './Actions.vue';
+import MessageManagerTextBoxActions from './Actions/index.vue';
 import MessageManagerTextBoxUploadField from './UploadField.vue';
 import MessageManagerTextBoxTextArea from './TextArea.vue';
 import BackToOriginal from './BackToOriginal.vue';
@@ -122,7 +124,7 @@ const handleEmojiSelected = (emoji: string) => {
 };
 
 const handleSend = async () => {
-  if (mediaUploadFiles.value.length > 0) {
+  if (mediaUploadFiles.value.length > 0 && !isInternalNote.value) {
     await sendMediasMessage();
   } else {
     await sendRoomMessage();
@@ -182,6 +184,7 @@ defineExpose({
   &.internal-note {
     background-color: $unnnic-color-bg-warning;
     border-color: $unnnic-color-border-warning;
+    overflow-x: hidden;
   }
   &__textarea-row {
     display: flex;

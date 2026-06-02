@@ -11,7 +11,7 @@ import { mount, config } from '@vue/test-utils';
 import { createTestingPinia } from '@pinia/testing';
 import { setActivePinia } from 'pinia';
 
-import Actions from '../Actions.vue';
+import Actions from '../Actions/index.vue';
 import i18n from '@/plugins/i18n';
 
 vi.mock('@/services/api/resources/chats/aiTextImprovement', () => ({
@@ -48,6 +48,7 @@ const createWrapper = (options = {}) => {
     featureFlags = { active_features: ['weniChatsAITextImprovement'] },
     activeDiscussion = null,
     inputMessage = '',
+    isInternalNote = false,
     isAiLoading = false,
     audioRecorderStatus = 'idle',
   } = options;
@@ -58,7 +59,7 @@ const createWrapper = (options = {}) => {
     initialState: {
       messageManager: {
         inputMessage,
-        isInternalNote: false,
+        isInternalNote,
         isEmojiPickerOpen: false,
         audioRecorderStatus,
         audioMessage: null,
@@ -161,6 +162,27 @@ describe('Actions', () => {
       const allButtons = wrapper.findAll('.text-box__actions > button');
       const sendButton = allButtons[allButtons.length - 1];
       expect(sendButton.attributes('data-disabled')).toBe('true');
+    });
+  });
+
+  describe('attach action', () => {
+    it('should disable attach when there is text in normal mode', () => {
+      const wrapper = createWrapper({ inputMessage: 'hello' });
+      const attachButton = wrapper.findAll(
+        '.text-box__actions__item button',
+      )[3];
+      expect(attachButton.attributes('data-disabled')).toBe('true');
+    });
+
+    it('should enable attach when there is text in internal note mode', () => {
+      const wrapper = createWrapper({
+        inputMessage: 'hello',
+        isInternalNote: true,
+      });
+      const attachButton = wrapper.findAll(
+        '.text-box__actions__item button',
+      )[3];
+      expect(attachButton.attributes('data-disabled')).toBe('false');
     });
   });
 });

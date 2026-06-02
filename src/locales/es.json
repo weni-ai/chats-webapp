@@ -205,6 +205,7 @@
   },
   "attachment": "Adjuntar",
   "internal_note": "Nota interna",
+  "internal_note_with_attachment_tooltip": "Nota interna con archivo adjunto",
   "close_internal_note": "Cerrar nota interna (Esc)",
   "notes": "Notas",
   "bold": "Negrita",
