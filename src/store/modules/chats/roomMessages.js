@@ -222,20 +222,25 @@ export const useRoomMessages = defineStore('roomMessages', {
       }
     },
 
-    async sendRoomMessage(text, repliedMessage, aiTextImprovement = null) {
+    async sendRoomMessage(
+      text,
+      repliedMessage,
+      aiTextImprovement = null,
+      roomUuid = '',
+    ) {
       const roomsStore = useRooms();
       const { activeRoom } = roomsStore;
 
-      if (!activeRoom) return;
+      if (!activeRoom || !roomUuid) return;
 
       await sendMessage({
         itemType: 'room',
-        itemUuid: activeRoom.uuid,
+        itemUuid: roomUuid,
         itemUser: activeRoom.user,
         message: text,
         repliedMessage: repliedMessage,
         sendItemMessage: () =>
-          Message.sendRoomMessage(activeRoom.uuid, {
+          Message.sendRoomMessage(roomUuid, {
             text,
             user_email: activeRoom.user.email,
             seen: true,
@@ -253,19 +258,20 @@ export const useRoomMessages = defineStore('roomMessages', {
       files: medias,
       updateLoadingFiles,
       repliedMessage,
+      roomUuid,
     }) {
       const roomsStore = useRooms();
       const { activeRoom } = roomsStore;
-      if (!activeRoom) return;
+      if (!activeRoom || !roomUuid) return;
 
       await sendMedias({
         itemType: 'room',
-        itemUuid: activeRoom.uuid,
+        itemUuid: roomUuid,
         itemUser: activeRoom.user,
         medias,
         repliedMessage: repliedMessage,
         sendItemMedia: (media) =>
-          Message.sendRoomMedia(activeRoom.uuid, {
+          Message.sendRoomMedia(roomUuid, {
             user_email: activeRoom.user.email,
             media,
             updateLoadingFiles,
@@ -292,20 +298,20 @@ export const useRoomMessages = defineStore('roomMessages', {
       });
     },
 
-    async sendRoomInternalNote({ text }) {
+    async sendRoomInternalNote({ text, roomUuid }) {
       const roomsStore = useRooms();
 
-      if (!roomsStore.activeRoom) return;
+      if (!roomsStore.activeRoom || !roomUuid) return;
 
       const createdNote = await RoomNotes.createInternalNote({
         text,
-        room: roomsStore.activeRoom.uuid,
+        room: roomUuid,
       });
 
       // add internal note in the room messages
       sendMessage({
         itemType: 'room',
-        itemUuid: roomsStore.activeRoom.uuid,
+        itemUuid: roomUuid,
         itemUser: roomsStore.activeRoom.user,
         message: text,
         internalNote: createdNote,
@@ -316,16 +322,16 @@ export const useRoomMessages = defineStore('roomMessages', {
       });
     },
 
-    async resendRoomMessage({ message }) {
+    async resendRoomMessage({ message, roomUuid }) {
       const roomsStore = useRooms();
       const { activeRoom } = roomsStore;
-      if (!activeRoom) return;
+      if (!activeRoom || !roomUuid) return;
 
       await resendMessage({
-        itemUuid: activeRoom.uuid,
+        itemUuid: roomUuid,
         message,
         sendItemMessage: () =>
-          Message.sendRoomMessage(activeRoom.uuid, {
+          Message.sendRoomMessage(roomUuid, {
             text: message.text,
             user_email: activeRoom.user.email,
             seen: true,
@@ -338,17 +344,17 @@ export const useRoomMessages = defineStore('roomMessages', {
       });
     },
 
-    async resendRoomMedia({ message, media }) {
+    async resendRoomMedia({ message, media, roomUuid }) {
       const roomsStore = useRooms();
       const { activeRoom } = roomsStore;
-      if (!activeRoom) return;
+      if (!activeRoom || !roomUuid) return;
 
       await resendMedia({
-        itemUuid: activeRoom.uuid,
+        itemUuid: roomUuid,
         message,
         media,
         sendItemMedia: (media) =>
-          Message.sendRoomMedia(activeRoom.uuid, {
+          Message.sendRoomMedia(roomUuid, {
             user_email: activeRoom.user.email,
             media: media.file,
           }),
