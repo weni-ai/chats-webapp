@@ -445,7 +445,7 @@ describe('MessageManager', () => {
         'Hello room',
         null,
         null,
-        { intendedRoomUuid: 'room-1' },
+        'room-1',
       );
       expect(wrapper.vm.replyMessage).toBeNull();
     });
