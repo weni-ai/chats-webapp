@@ -60,7 +60,7 @@
               @click="handleClickChatFeedback(message)"
             />
 
-            <template v-else>
+            <template v-else-if="!isInternalNoteMessage(message)">
               <ChatsMessage
                 v-if="message.text || isGeolocation(message.media?.[0])"
                 :key="message.uuid"

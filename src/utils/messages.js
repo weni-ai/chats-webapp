@@ -26,16 +26,20 @@ export function createTemporaryMessage({
   repliedMessage = null,
   internalNote = null,
 }) {
+  const internalNoteMedia = internalNote?.media || [];
+
   return {
     uuid: Date.now().toString(),
     text: internalNote ? '' : message,
     created_on: new Date().toISOString(),
-    media: medias || [],
+    media: internalNote ? [] : medias || [],
     [itemType]: itemUuid,
     seen: true,
     user: itemUser,
     replied_message: repliedMessage,
-    internal_note: internalNote,
+    internal_note: internalNote
+      ? { ...internalNote, media: internalNoteMedia }
+      : null,
   };
 }
 
@@ -477,10 +481,16 @@ export function updateInternalNoteMessage(messagesReference, { message }) {
   const currentMinuteEntry = currentDateEntry.minutes[minuteIndex];
 
   currentMinuteEntry.messages = currentMinuteEntry.messages.map((obj) =>
-    obj.uuid === message.uuid
+    obj.uuid === message.uuid ||
+    obj.internal_note?.uuid === message.internal_note?.uuid
       ? {
           ...obj,
-          internal_note: message.internal_note,
+          ...message,
+          internal_note: {
+            ...obj.internal_note,
+            ...message.internal_note,
+          },
+          media: message.media ?? (obj.internal_note ? [] : obj.media),
         }
       : obj,
   );

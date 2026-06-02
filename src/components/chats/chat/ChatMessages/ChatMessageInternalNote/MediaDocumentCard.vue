@@ -31,10 +31,12 @@ import { treatedMediaName } from '@/utils/medias';
 
 interface InternalNoteMedia {
   content_type: string;
-  url: string;
+  url?: string;
   message?: string;
   preview?: string;
-  file?: { name?: string };
+  tempId?: string;
+  isLoading?: boolean;
+  file?: File | { name?: string };
 }
 
 interface Props {
@@ -78,8 +80,10 @@ const downloadMedia = async () => {
 .chat-messages__internal-note-media-document-card {
   display: flex;
   flex-direction: column;
-  width: 200px;
-  height: 200px;
+  width: 100%;
+  height: 100%;
+  min-width: 200px;
+  min-height: 200px;
   padding: 0;
   border: 1px solid $unnnic-color-border-soft;
   border-radius: $unnnic-radius-2;
