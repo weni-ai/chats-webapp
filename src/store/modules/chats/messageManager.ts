@@ -97,18 +97,19 @@ export const useMessageManager = defineStore('messageManager', () => {
       : LIMIT_UPLOAD_FILES,
   );
 
-  async function sendInternalNote() {
+  async function sendInternalNote(activeRoomUuid: string) {
     const inputMessageTrimmed = inputMessage.value.trim();
     if (!inputMessageTrimmed && mediaUploadFiles.value.length === 0) return;
     const text = `${t('internal_note')}: ${inputMessageTrimmed}`.trim();
     await roomMessagesStore.sendRoomInternalNote({
       text,
+      roomUuid: activeRoomUuid,
       medias: mediaUploadFiles.value,
     });
     clearInputs();
   }
 
-  async function sendTextMessage(repliedMessage) {
+  async function sendTextMessage(repliedMessage, activeRoomUuid: string) {
     const message = inputMessage.value.trim();
     if (message) {
       const aiTextImprovementStore = useAiTextImprovement();
@@ -125,12 +126,13 @@ export const useMessageManager = defineStore('messageManager', () => {
           message,
           repliedMessage,
           aiTextImprovementPayload,
+          activeRoomUuid,
         );
       }
     }
   }
 
-  async function sendAudioMessage(repliedMessage) {
+  async function sendAudioMessage(repliedMessage, activeRoomUuid: string) {
     if (!audioMessage.value || isLoadingSendAudioMessage.value) return;
 
     isLoadingSendAudioMessage.value = true;
@@ -157,23 +159,26 @@ export const useMessageManager = defineStore('messageManager', () => {
     if (discussionsStore.activeDiscussion?.uuid) {
       await discussionMessagesStore.sendDiscussionMedias(sendPayload);
     } else {
-      await roomMessagesStore.sendRoomMedias(sendPayload);
+      await roomMessagesStore.sendRoomMedias({
+        ...sendPayload,
+        roomUuid: activeRoomUuid,
+      });
     }
 
     isLoadingSendAudioMessage.value = false;
   }
 
-  async function sendRoomMessage() {
+  async function sendRoomMessage(activeRoomUuid: string) {
     if (isInternalNote.value) {
-      await sendInternalNote();
+      await sendInternalNote(activeRoomUuid);
     } else {
       let repliedMessage = null;
       if (replyMessage.value) {
         repliedMessage = { ...replyMessage.value };
         replyMessage.value = null;
       }
-      await sendTextMessage(repliedMessage);
-      await sendAudioMessage(repliedMessage);
+      await sendTextMessage(repliedMessage, activeRoomUuid);
+      await sendAudioMessage(repliedMessage, activeRoomUuid);
     }
   }
 
@@ -185,7 +190,7 @@ export const useMessageManager = defineStore('messageManager', () => {
     mediaUploadFiles.value = [...mediaUploadFiles.value, ...files];
   }
 
-  function sendMediasMessage() {
+  function sendMediasMessage(activeRoomUuid: string) {
     try {
       isLoadingSend.value = true;
       if (discussionsStore.activeDiscussion?.uuid) {
@@ -198,6 +203,7 @@ export const useMessageManager = defineStore('messageManager', () => {
           files: [...mediaUploadFiles.value],
           updateLoadingFiles: () => {},
           repliedMessage: replyMessage.value,
+          roomUuid: activeRoomUuid,
         });
       }
     } catch (error) {
