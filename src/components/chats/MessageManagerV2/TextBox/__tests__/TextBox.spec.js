@@ -38,7 +38,7 @@ vi.mock('../AudioRecorder.vue', () => ({
   },
 }));
 
-vi.mock('../Actions.vue', () => ({
+vi.mock('../Actions/index.vue', () => ({
   default: {
     name: 'MessageManagerTextBoxActions',
     template: `<div data-testid="actions">

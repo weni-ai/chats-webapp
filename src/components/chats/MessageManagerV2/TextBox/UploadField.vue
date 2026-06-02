@@ -29,6 +29,7 @@ const clickInput = () => {
 const handleChange = (event: Event) => {
   const files = (event.target as HTMLInputElement).files;
   addMediaUploadFiles(files);
+  inputRef.value.value = null;
 };
 
 defineExpose({

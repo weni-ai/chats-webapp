@@ -201,6 +201,7 @@
   },
   "attachment": "Attach",
   "internal_note": "Internal note",
+  "internal_note_with_attachment_tooltip": "Internal note with attachment",
   "close_internal_note": "Close internal note (Esc)",
   "notes": "Notes",
   "bold": "Bold",
@@ -458,6 +459,7 @@
       "default": "An error occurred, please try again later"
     },
     "message_input_placeholder": "Type your message or / to activate quick messages",
+    "message_input_disabled_description": "Change your status to online to continue this conversation.",
     "search_contact": "Search contact",
     "search_contact_placeholder": "Search contact (name, phone or ticket ID)",
     "tags": "Chat tags",
@@ -1011,6 +1013,10 @@
           "description": "Turning off this option will permanently delete the scenarios and criteria prompt. You'll need to set it up again if you turn it back on.",
           "confirmation": "Do you want to continue anyway?"
         }
+      },
+      "restrict_offline_agents": {
+        "switch_label": "Allow interactions only for online representatives",
+        "hint": "If this option is enabled, offline or paused representatives will not be able to respond to ongoing chats."
       },
       "bulk_transfer": {
         "tooltip": "This function allows representatives to transfer various contacts at once to a queue or representative",

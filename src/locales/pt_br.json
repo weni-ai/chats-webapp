@@ -201,6 +201,7 @@
   },
   "attachment": "Anexo",
   "internal_note": "Nota interna",
+  "internal_note_with_attachment_tooltip": "Nota interna com anexo",
   "close_internal_note": "Fechar nota interna (Esc)",
   "notes": "Notas",
   "bold": "Negrito",
@@ -462,6 +463,7 @@
       "default": "Ocorreu um erro, por favor, tente novamente mais tarde"
     },
     "message_input_placeholder": "Digite sua mensagem aqui ou / para ativar mensagens rápidas",
+    "message_input_disabled_description": "Altere seu status para online para continuar esta conversa.",
     "search_contact": "Pesquisar contato",
     "search_contact_placeholder": "Pesquisar contato (nome, telefone ou protocolo)",
     "tags": "Tags do chat",
@@ -1017,6 +1019,10 @@
           "description": "Desativar essa opção excluirá permanentemente o prompt de cenários e critérios. Será necessário configurá-lo novamente ao reativar.",
           "confirmation": "Deseja continuar mesmo assim?"
         }
+      },
+      "restrict_offline_agents": {
+        "switch_label": "Permitir interações apenas para atendentes online",
+        "hint": "Se essa opção estiver ativada, atendentes offline ou em pausa não poderão responder a chats em andamento."
       },
       "bulk_transfer": {
         "tooltip": "Essa função permite que atendentes transfiram diversos contatos de uma vez para uma fila ou atendente",

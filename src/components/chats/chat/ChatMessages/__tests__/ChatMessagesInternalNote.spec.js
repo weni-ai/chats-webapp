@@ -2,11 +2,12 @@ import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { mount } from '@vue/test-utils';
 import { createPinia, setActivePinia } from 'pinia';
 
-import ChatMessagesInternalNote from '../ChatMessagesInternalNote.vue';
+import ChatMessagesInternalNote from '../ChatMessageInternalNote/index.vue';
+
 import { useProfile } from '@/store/modules/profile';
 import { useRooms } from '@/store/modules/chats/rooms';
 
-vi.mock('../ModalDeleteInternalNote.vue', () => ({
+vi.mock('../ChatMessageInternalNote/ModalDeleteInternalNote.vue', () => ({
   default: {
     name: 'ModalDeleteInternalNote',
     template:
@@ -264,6 +265,7 @@ describe('ChatMessagesInternalNote', () => {
 
       const messageWithInternalNote = {
         internal_note: {
+          text: 'Internal note text',
           user: { email: 'internal@test.com' },
         },
         user: { email: 'fallback@test.com' },

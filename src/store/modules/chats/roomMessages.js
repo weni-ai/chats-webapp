@@ -5,6 +5,8 @@ import { useRooms } from './rooms';
 import Message from '@/services/api/resources/chats/message';
 import RoomNotes from '@/services/api/resources/chats/roomNotes';
 
+import { useMessageManager } from './messageManager';
+
 import {
   isMessageFromCurrentUser,
   groupMessages,
@@ -15,6 +17,7 @@ import {
   resendMedia,
   resendMessage,
   removeFromGroupedMessages,
+  updateInternalNoteMessage,
   updateMessageStatusInGroupedMessages,
 } from '@/utils/messages';
 
@@ -298,7 +301,7 @@ export const useRoomMessages = defineStore('roomMessages', {
       });
     },
 
-    async sendRoomInternalNote({ text, roomUuid }) {
+    async sendRoomInternalNote({ text, roomUuid, medias = [] }) {
       const roomsStore = useRooms();
 
       if (!roomsStore.activeRoom || !roomUuid) return;
@@ -308,17 +311,112 @@ export const useRoomMessages = defineStore('roomMessages', {
         room: roomUuid,
       });
 
-      // add internal note in the room messages
-      sendMessage({
+      const temporaryMedias = medias.map((media, index) => ({
+        tempId: `${createdNote.uuid}-${index}`,
+        file: media,
+        content_type: media.type,
+        isLoading: true,
+      }));
+
+      const internalNoteWithMedias = {
+        ...createdNote,
+        media: [...temporaryMedias],
+      };
+
+      useMessageManager().clearInputs();
+
+      const internalNoteMessageUuid = `internal-note-${createdNote.uuid}`;
+
+      await sendMessage({
         itemType: 'room',
         itemUuid: roomUuid,
         itemUser: roomsStore.activeRoom.user,
         message: text,
-        internalNote: createdNote,
-        sendItemMessage: () => createdNote,
+        internalNote: internalNoteWithMedias,
+        sendItemMessage: () => ({
+          internal_note: internalNoteWithMedias,
+          uuid: internalNoteMessageUuid,
+          text: '',
+          media: [],
+        }),
         addMessage: (message) => this.handlingAddMessage({ message }),
         addSortedMessage: (message) => this.addRoomMessageSorted({ message }),
-        updateMessage: () => {},
+        updateMessage: ({ message, toUpdateMessageUuid }) => {
+          this.updateMessage({
+            message,
+            toUpdateMessageUuid,
+          });
+        },
+      });
+
+      for (const temporaryMedia of temporaryMedias) {
+        try {
+          const uploadedMedia = await RoomNotes.sendInternalNoteMedia({
+            note: createdNote.uuid,
+            media: temporaryMedia.file,
+          });
+
+          this.updateInternalNoteMedia({
+            noteUuid: createdNote.uuid,
+            messageUuid: internalNoteMessageUuid,
+            temporaryMedia: temporaryMedia,
+            uploadedMedia,
+          });
+        } catch (error) {
+          console.error(
+            'An error occurred while sending internal note media:',
+            error,
+          );
+        }
+      }
+    },
+
+    updateInternalNoteMedia({
+      noteUuid,
+      messageUuid,
+      temporaryMedia,
+      uploadedMedia,
+    }) {
+      const replaceTemporaryMedia = (mediaList = []) =>
+        mediaList.map((media) =>
+          media.tempId === temporaryMedia.tempId
+            ? { ...uploadedMedia, tempId: temporaryMedia.tempId }
+            : media,
+        );
+
+      const noteInList = this.roomInternalNotes.find(
+        (note) => note.uuid === noteUuid,
+      );
+
+      if (noteInList?.media) {
+        noteInList.media = replaceTemporaryMedia(noteInList.media);
+      }
+
+      const messageIndex = this.roomMessages.findIndex(
+        (message) => message.uuid === messageUuid,
+      );
+
+      if (messageIndex === -1) {
+        return;
+      }
+
+      const currentMessage = this.roomMessages[messageIndex];
+      const updatedInternalNoteMedia = replaceTemporaryMedia(
+        currentMessage.internal_note?.media,
+      );
+      const updatedMessage = parseMessageToMessageWithSenderProp({
+        ...currentMessage,
+        media: [],
+        internal_note: {
+          ...currentMessage.internal_note,
+          media: updatedInternalNoteMedia,
+        },
+      });
+
+      this.roomMessages[messageIndex] = updatedMessage;
+
+      updateInternalNoteMessage(this.roomMessagesSorted, {
+        message: updatedMessage,
       });
     },
 
