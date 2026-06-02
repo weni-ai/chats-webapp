@@ -189,7 +189,6 @@ defineExpose({
   &.internal-note {
     background-color: $unnnic-color-bg-warning;
     border-color: $unnnic-color-border-warning;
-    overflow-x: hidden;
   }
   &__textarea-row {
     display: flex;
