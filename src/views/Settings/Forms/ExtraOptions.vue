@@ -335,6 +335,7 @@ export default {
         !this.sector.automatic_message.is_active ||
         (this.sector.automatic_message.is_active &&
           this.sector.automatic_message.text?.length > 0);
+
       const validAutomaticMessageQueue =
         !this.sector.automatic_message_queue.is_active ||
         (this.sector.automatic_message_queue.is_active &&
@@ -351,7 +352,7 @@ export default {
         !this.sector.inactivity_timeout.is_close_room_enabled ||
         (this.sector.inactivity_timeout.is_close_room_enabled &&
           this.sector.inactivity_timeout.close_room_timeout_time &&
-          this.sector.inactivity_timeout.close_room_time > 0 &&
+          this.sector.inactivity_timeout.close_room_timeout_time > 0 &&
           this.sector.inactivity_timeout.close_room_message_text?.length > 0);
 
       const allValid =
