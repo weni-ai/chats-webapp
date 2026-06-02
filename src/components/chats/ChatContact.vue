@@ -108,7 +108,7 @@
           side="right"
         >
           <p class="inactive-indicator">
-            {{ $t('inactivity') }}
+            {{ $t('inactive') }}
           </p>
         </UnnnicToolTip>
       </div>
