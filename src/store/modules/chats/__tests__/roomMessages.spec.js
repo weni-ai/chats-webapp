@@ -9,6 +9,11 @@ vi.mock('../rooms');
 vi.mock('@/store/modules/profile', () => ({
   useProfile: vi.fn(() => ({ me: { email: 'test@test.com' } })),
 }));
+vi.mock('../messageManager', () => ({
+  useMessageManager: vi.fn(() => ({
+    clearInputs: vi.fn(),
+  })),
+}));
 vi.mock('@/services/api/resources/chats/message', () => ({
   default: {
     getByRoom: vi.fn(),
