@@ -271,11 +271,12 @@ describe('RoomsTransferField', () => {
       );
     });
 
-    it('should localize online/offline labels and capitalize custom statuses', () => {
+    it('should capitalize the raw backend status as the tag label', () => {
       expect(wrapper.vm.getAgentStatusLabel('online')).toBe('Online');
       expect(wrapper.vm.getAgentStatusLabel('offline')).toBe('Offline');
       expect(wrapper.vm.getAgentStatusLabel('launch')).toBe('Launch');
       expect(wrapper.vm.getAgentStatusLabel('lunch_break')).toBe('Lunch_break');
+      expect(wrapper.vm.getAgentStatusLabel('')).toBe('');
     });
 
     it('should exclude the current user from the agent list', async () => {

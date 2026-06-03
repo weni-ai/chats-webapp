@@ -25,28 +25,39 @@
         :size="size"
         :disabled="isAgentsFieldDisabled"
         :options="sortedAgents"
-        :label="size !== 'sm' ? $t('agent') : undefined"
-        :placeholder="$t('select_agent')"
+        :label="size !== 'sm' ? $t('representative') : undefined"
+        :placeholder="$t('select_representative')"
         returnObject
         clearable
         enableSearch
         :search="searchAgent"
         @update:search="searchAgent = $event"
       >
-        <template #option="{ option }">
+        <template #option="{ label, option }">
           <span
-            class="select-destination__agent-option-label"
+            class="select-destination__agent-label"
             data-testid="agent-option"
           >
-            {{ option.label }}
+            {{ label }}
           </span>
           <UnnnicTag
             data-testid="agent-status-tag"
             type="default"
+            size="small"
             :data-status="option.status"
             :text="getAgentStatusLabel(option.status)"
             :scheme="getAgentStatusScheme(option.status)"
+          />
+        </template>
+        <template #selected="{ label, option }">
+          <span class="select-destination__agent-label">
+            {{ label }}
+          </span>
+          <UnnnicTag
+            type="default"
             size="small"
+            :text="getAgentStatusLabel(option.status)"
+            :scheme="getAgentStatusScheme(option.status)"
           />
         </template>
       </UnnnicSelect>
@@ -494,7 +505,18 @@ defineExpose({
           margin-top: $unnnic-space-2;
         }
       }
+
+      &__agent-label {
+        flex: 1 1 auto;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
     }
+  }
+
+  :deep(.unnnic-select__trigger-content) {
+    justify-content: space-between;
   }
 }
 </style>
