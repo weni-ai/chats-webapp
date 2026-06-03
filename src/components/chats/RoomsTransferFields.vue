@@ -34,21 +34,20 @@
         @update:search="searchAgent = $event"
       >
         <template #option="{ option }">
-          <section
-            class="select-destination__agent-option"
+          <span
+            class="select-destination__agent-option-label"
             data-testid="agent-option"
           >
-            <span class="select-destination__agent-option__label">
-              {{ option.label }}
-            </span>
-            <UnnnicTag
-              data-testid="agent-status-tag"
-              :data-status="option.status"
-              :text="getAgentStatusLabel(option.status)"
-              :scheme="getAgentStatusScheme(option.status)"
-              size="small"
-            />
-          </section>
+            {{ option.label }}
+          </span>
+          <UnnnicTag
+            data-testid="agent-status-tag"
+            type="default"
+            :data-status="option.status"
+            :text="getAgentStatusLabel(option.status)"
+            :scheme="getAgentStatusScheme(option.status)"
+            size="small"
+          />
         </template>
       </UnnnicSelect>
     </section>
@@ -493,22 +492,6 @@ defineExpose({
 
         &--small {
           margin-top: $unnnic-space-2;
-        }
-      }
-
-      &__agent-option {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        gap: $unnnic-space-2;
-        width: 100%;
-
-        &__label {
-          flex: 1 1 0;
-          min-width: 0;
-          overflow: hidden;
-          text-overflow: ellipsis;
-          white-space: nowrap;
         }
       }
     }
