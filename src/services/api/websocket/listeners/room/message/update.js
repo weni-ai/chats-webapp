@@ -1,5 +1,6 @@
 import { useRoomMessages } from '@/store/modules/chats/roomMessages';
 import { useRooms } from '@/store/modules/chats/rooms';
+import { updateInternalNoteMessage } from '@/utils/messages';
 
 const checkAndUpdateLastMessage = (room, message) => {
   if (room.last_message?.uuid === message.uuid) {
@@ -16,6 +17,15 @@ export default async (message, { app }) => {
   );
 
   if (findedRoom) checkAndUpdateLastMessage(findedRoom, message);
+
+  const isInternalNote = !!message.internal_note;
+
+  if (isInternalNote) {
+    const uuidInternalNoteMessage = `internal-note-${message.internal_note.uuid}`;
+    updateInternalNoteMessage(roomMessagesStore.roomMessagesSorted, {
+      message: { ...message, uuid: uuidInternalNoteMessage },
+    });
+  }
 
   if (app.me.email === message.user?.email) {
     return;

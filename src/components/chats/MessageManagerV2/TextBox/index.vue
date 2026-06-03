@@ -10,9 +10,6 @@
       },
     ]"
   >
-    <MessageManagerTextBoxUploadField ref="uploadField" />
-    <MessageManagerTextBoxMedias v-if="mediaUploadFiles.length > 0" />
-    <MessageManagerTextBoxAudioRecorder ref="audioRecorder" />
     <section
       v-if="showBackToOriginal"
       class="text-box__textarea-row"
@@ -27,6 +24,11 @@
       v-else
       ref="textArea"
       @keydown="handleKeyDown"
+    />
+    <MessageManagerTextBoxUploadField ref="uploadField" />
+    <MessageManagerTextBoxAudioRecorder ref="audioRecorder" />
+    <MessageManagerTextBoxMedias
+      v-if="mediaUploadFiles.length > 0 && !isInternalNote"
     />
     <hr class="text-box__divider" />
     <MessageManagerTextBoxActions
@@ -54,13 +56,14 @@ import { vOnClickOutside } from '@vueuse/components';
 
 import MessageManagerTextBoxMedias from './Medias.vue';
 import MessageManagerTextBoxAudioRecorder from './AudioRecorder.vue';
-import MessageManagerTextBoxActions from './Actions.vue';
+import MessageManagerTextBoxActions from './Actions/index.vue';
 import MessageManagerTextBoxUploadField from './UploadField.vue';
 import MessageManagerTextBoxTextArea from './TextArea.vue';
 import BackToOriginal from './BackToOriginal.vue';
 
 import { useMessageManager } from '@/store/modules/chats/messageManager';
 import { useAiTextImprovement } from '@/store/modules/chats/aiTextImprovement';
+import { useRooms } from '@/store/modules/chats/rooms';
 
 defineOptions({
   name: 'MessageManagerTextBox',
@@ -70,6 +73,9 @@ const emit = defineEmits<{
   keydown: [KeyboardEvent];
   send: [void];
 }>();
+
+const roomsStore = useRooms();
+const { activeRoom } = storeToRefs(roomsStore);
 
 const messageManager = useMessageManager();
 const { sendRoomMessage, sendMediasMessage } = messageManager;
@@ -122,10 +128,11 @@ const handleEmojiSelected = (emoji: string) => {
 };
 
 const handleSend = async () => {
-  if (mediaUploadFiles.value.length > 0) {
-    await sendMediasMessage();
+  const activeRoomUuid = activeRoom.value?.uuid;
+  if (mediaUploadFiles.value.length > 0 && !isInternalNote.value) {
+    await sendMediasMessage(activeRoomUuid);
   } else {
-    await sendRoomMessage();
+    await sendRoomMessage(activeRoomUuid);
   }
 };
 

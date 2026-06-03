@@ -13,7 +13,8 @@ import { setActivePinia } from 'pinia';
 
 import TextBox from '../index.vue';
 import { useMessageManager } from '@/store/modules/chats/messageManager';
-import { useAiTextImprovement } from '@/store/modules/chats/aiTextImprovement';
+import { useRoomMessages } from '@/store/modules/chats/roomMessages';
+import { useDiscussionMessages } from '@/store/modules/chats/discussionMessages';
 import i18n from '@/plugins/i18n';
 
 vi.mock('@/services/api/resources/chats/aiTextImprovement', () => ({
@@ -37,7 +38,7 @@ vi.mock('../AudioRecorder.vue', () => ({
   },
 }));
 
-vi.mock('../Actions.vue', () => ({
+vi.mock('../Actions/index.vue', () => ({
   default: {
     name: 'MessageManagerTextBoxActions',
     template: `<div data-testid="actions">
@@ -102,6 +103,7 @@ const createWrapper = (options = {}) => {
     originalText = '',
     isInternalNote = false,
     mediaUploadFiles = [],
+    activeRoomUuid = 'room-1',
   } = options;
 
   const pinia = createTestingPinia({
@@ -125,6 +127,9 @@ const createWrapper = (options = {}) => {
         improvedText,
         originalText,
         feedbackStatus: improvedText ? 'USED' : null,
+      },
+      rooms: {
+        activeRoom: activeRoomUuid ? { uuid: activeRoomUuid } : null,
       },
     },
   });
@@ -240,6 +245,64 @@ describe('TextBox (index.vue)', () => {
     it('should always render TextArea component', () => {
       const wrapper = createWrapper();
       expect(wrapper.find('[data-testid="text-area"]').exists()).toBe(true);
+    });
+  });
+
+  describe('handleSend', () => {
+    const stubNestedSends = () => {
+      const roomMessagesStore = useRoomMessages();
+      const discussionMessagesStore = useDiscussionMessages();
+      roomMessagesStore.sendRoomMessage = vi.fn(() => Promise.resolve());
+      roomMessagesStore.sendRoomMedias = vi.fn(() => Promise.resolve());
+      roomMessagesStore.sendRoomInternalNote = vi.fn(() => Promise.resolve());
+      discussionMessagesStore.sendDiscussionMessage = vi.fn(() =>
+        Promise.resolve(),
+      );
+      discussionMessagesStore.sendDiscussionMedias = vi.fn(() =>
+        Promise.resolve(),
+      );
+    };
+
+    it('should send room message with active room uuid when there are no media files', async () => {
+      const wrapper = createWrapper({
+        inputMessage: 'Hello',
+        activeRoomUuid: 'room-1',
+      });
+      stubNestedSends();
+      const store = useMessageManager();
+
+      await wrapper.find('[data-testid="send-btn"]').trigger('click');
+
+      expect(store.sendMediasMessage).not.toHaveBeenCalled();
+      expect(store.sendRoomMessage).toHaveBeenCalledWith('room-1');
+    });
+
+    it('should send medias message with active room uuid when there are media files', async () => {
+      const file = new File(['x'], 'image.png', { type: 'image/png' });
+      const wrapper = createWrapper({
+        mediaUploadFiles: [file],
+        activeRoomUuid: 'room-1',
+      });
+      stubNestedSends();
+      const store = useMessageManager();
+
+      await wrapper.find('[data-testid="send-btn"]').trigger('click');
+
+      expect(store.sendRoomMessage).not.toHaveBeenCalled();
+      expect(store.sendMediasMessage).toHaveBeenCalledWith('room-1');
+    });
+
+    it('should pass undefined room uuid when there is no active room', async () => {
+      const wrapper = createWrapper({
+        inputMessage: 'Hello',
+        activeRoomUuid: null,
+      });
+      stubNestedSends();
+      const store = useMessageManager();
+
+      await wrapper.find('[data-testid="send-btn"]').trigger('click');
+
+      expect(store.sendRoomMessage).toHaveBeenCalledWith(undefined);
     });
   });
 });
