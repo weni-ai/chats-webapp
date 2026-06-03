@@ -1,4 +1,4 @@
-import { removeFromGroupedMessages } from '@/utils/messages';
+import { removeInternalNoteMessage } from '@/utils/messages';
 import { useRoomMessages } from '@/store/modules/chats/roomMessages';
 
 export default (note) => {
@@ -14,7 +14,7 @@ export default (note) => {
   );
 
   if (internalNoteMessage) {
-    removeFromGroupedMessages(roomMessagesStore.roomMessagesSorted, {
+    removeInternalNoteMessage(roomMessagesStore.roomMessagesSorted, {
       message: internalNoteMessage,
     });
 
