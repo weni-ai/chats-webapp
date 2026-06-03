@@ -606,6 +606,7 @@
   "no_tags_assigned": "Nenhuma tag atribuída",
   "contact_await_for_you": "Um contato está esperando por você!",
   "agent": "Atendente",
+  "representative": "Representante",
   "ai_text_improvement": {
     "tooltip_disabled": "Escreva uma resposta no campo de texto para habilitar respostas aprimoradas com IA",
     "tooltip_enabled": "Melhorar resposta com IA",
@@ -838,6 +839,7 @@
   },
   "select_agent": "Selecionar agente",
   "select_queue": "Selecionar fila",
+  "select_representative": "Selecionar um representante",
   "select_sector": "Selecione setor",
   "send_media": "Enviar mídia",
   "send_photo_or_video": "Enviar foto ou vídeo",

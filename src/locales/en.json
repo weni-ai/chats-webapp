@@ -602,6 +602,7 @@
   "no_tags_assigned": "No tags assigned",
   "contact_await_for_you": "A contact is waiting for you!",
   "agent": "Agent",
+  "representative": "Representative",
   "ai_text_improvement": {
     "tooltip_disabled": "Write a response in the text field to enable improved responses with AI",
     "tooltip_enabled": "Improve response with AI",
@@ -832,6 +833,7 @@
   },
   "select_agent": "Select agent",
   "select_queue": "Select queue",
+  "select_representative": "Select a representative",
   "select_sector": "Select sector",
   "send_media": "Send media",
   "send_photo_or_video": "Send photo or video",
