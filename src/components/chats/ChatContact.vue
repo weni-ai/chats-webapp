@@ -101,8 +101,8 @@
           v-if="isInactive"
           enabled
           :text="
-            $tc('inactive_room_tooltip', inactivity_timeout_time, {
-              minutes: inactivity_timeout_time,
+            $tc('inactive_room_tooltip', inactivityTimeoutTime, {
+              minutes: inactivityTimeoutTime,
             })
           "
           side="right"
@@ -300,7 +300,7 @@ export default {
       type: Boolean,
       default: false,
     },
-    inactivity_timeout_time: {
+    inactivityTimeoutTime: {
       type: Number,
       default: 0,
     },

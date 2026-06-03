@@ -54,7 +54,7 @@
         showNewChatReceivedIndicator ? newChatReceivedTooltipText : ''
       "
       :isInactive="isInactive"
-      :inactivity_timeout_time="
+      :inactivityTimeoutTime="
         parseSecondsToMinutes(room?.inactivity_timeout_time || 0)
       "
       data-testid="room-card-contact"
