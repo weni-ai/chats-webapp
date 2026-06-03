@@ -1,5 +1,13 @@
-import { describe, expect, it, vi } from 'vitest';
-import { mount, flushPromises } from '@vue/test-utils';
+import {
+  describe,
+  expect,
+  it,
+  vi,
+  beforeAll,
+  afterAll,
+  beforeEach,
+} from 'vitest';
+import { mount, flushPromises, config } from '@vue/test-utils';
 import { createTestingPinia } from '@pinia/testing';
 
 import QueueService from '@/services/api/resources/settings/queue';
@@ -12,13 +20,37 @@ vi.mock('@/services/api/resources/settings/queue', () => ({
   default: {
     listByProject: vi.fn(() => ({
       results: [
-        { name: 'Queue 1', sector_name: 'Sector 1', uuid: '1' },
-        { name: 'Queue 2', sector_name: 'Sector 2', uuid: '2' },
+        {
+          name: 'Queue 1',
+          sector_name: 'Sector 1',
+          uuid: '1',
+          sector_uuid: 's1',
+        },
+        {
+          name: 'Queue 2',
+          sector_name: 'Sector 2',
+          uuid: '2',
+          sector_uuid: 's2',
+        },
       ],
     })),
     agentsToTransfer: vi.fn(() => [
-      { first_name: 'John', last_name: 'Doe', email: 'john@doe.com' },
-      { first_name: 'Jane', last_name: 'Doe', email: 'jane@doe.com' },
+      {
+        first_name: 'John',
+        last_name: 'Doe',
+        email: 'john@doe.com',
+        status: 'online',
+        photo_url: null,
+        language: 'pt-br',
+      },
+      {
+        first_name: 'Jane',
+        last_name: 'Doe',
+        email: 'jane@doe.com',
+        status: 'online',
+        photo_url: null,
+        language: 'pt-br',
+      },
     ]),
   },
 }));
@@ -34,6 +66,17 @@ vi.mock('@/utils/callUnnnicAlert', () => ({
   default: vi.fn(),
 }));
 
+let savedGlobalMocks;
+
+beforeAll(() => {
+  savedGlobalMocks = { ...config.global.mocks };
+  config.global.mocks = {};
+});
+
+afterAll(() => {
+  config.global.mocks = savedGlobalMocks;
+});
+
 const mockRooms = [
   { uuid: '1', queue: { sector: 's1' } },
   { uuid: '2', queue: { sector: 's1' } },
@@ -46,6 +89,9 @@ function createStore(overrides = {}) {
     selectedWaitingRooms: [],
     activeTab: 'ongoing',
     rooms: mockRooms,
+    contactToTransfer: '',
+    activeRoom: null,
+    activeRoomTags: [],
   };
 
   return createTestingPinia({
@@ -90,6 +136,7 @@ describe('RoomsTransferField', () => {
 
   describe('Data Loading', () => {
     it('should load queues when created', async () => {
+      await flushPromises();
       expect(wrapper.vm.queues.length).toBeGreaterThan(1);
     });
   });
@@ -100,33 +147,15 @@ describe('RoomsTransferField', () => {
       await wrapper.setProps({
         modelValue: [{ value: 'queue_id', label: 'Queue' }],
       });
-      await wrapper.setData({
-        agents: [
-          { value: 'agent1_id', label: 'Agent1' },
-          { value: 'agent2_id', label: 'Agent2' },
-        ],
-      });
-
-      await wrapper.vm.$nextTick();
+      await flushPromises();
 
       expect(agentSelect.props('disabled')).toBe(false);
-
-      await wrapper.setData({
-        agents: [{ value: 'agent1_id', label: 'Agent1' }],
-      });
-      await wrapper.vm.$nextTick();
 
       await wrapper.setProps({
         modelValue: [],
       });
-      await wrapper.setData({
-        agents: [
-          { value: 'agent1_id', label: 'Agent1' },
-          { value: 'agent2_id', label: 'Agent2' },
-        ],
-      });
 
-      await wrapper.vm.$nextTick();
+      await flushPromises();
       expect(agentSelect.props('disabled')).toBe(true);
     });
 
@@ -153,25 +182,131 @@ describe('RoomsTransferField', () => {
           last_name: 'Doe',
           email: 'john@doe.com',
           status: 'offline',
+          photo_url: null,
+          language: 'pt-br',
         },
       ]);
 
       await wrapper.setProps({
         modelValue: [{ value: 'queue_id', label: 'Queue' }],
       });
-      await wrapper.setData({
-        selectedAgent: {
-          label: 'John Doe',
-          value: 'john@doe.com',
-          status: 'offline',
-        },
-      });
+      await flushPromises();
+
+      wrapper.vm.selectedAgent = {
+        label: 'John Doe',
+        value: 'john@doe.com',
+        status: 'offline',
+      };
+
+      await flushPromises();
 
       const transferDisclaimer = wrapper.findComponent(
         '[data-testid="transfer-disclaimer"]',
       );
 
       expect(transferDisclaimer.exists()).toBe(true);
+    });
+  });
+
+  describe('Agent Sorting and Status Tags', () => {
+    it('should sort agents by status priority then alphabetically by label', async () => {
+      vi.mocked(QueueService.agentsToTransfer).mockImplementationOnce(() => [
+        {
+          first_name: 'Ricardo',
+          last_name: '',
+          email: 'ricardo@doe.com',
+          status: 'offline',
+          photo_url: null,
+          language: 'pt-br',
+        },
+        {
+          first_name: 'Davi',
+          last_name: '',
+          email: 'davi@doe.com',
+          status: 'launch',
+          photo_url: null,
+          language: 'pt-br',
+        },
+        {
+          first_name: 'Anna',
+          last_name: '',
+          email: 'anna@doe.com',
+          status: 'online',
+          photo_url: null,
+          language: 'pt-br',
+        },
+        {
+          first_name: 'João',
+          last_name: '',
+          email: 'joao@doe.com',
+          status: 'offline',
+          photo_url: null,
+          language: 'pt-br',
+        },
+        {
+          first_name: 'Ana',
+          last_name: '',
+          email: 'ana@doe.com',
+          status: 'online',
+          photo_url: null,
+          language: 'pt-br',
+        },
+      ]);
+
+      await wrapper.setProps({
+        modelValue: [{ value: 'queue_id', label: 'Queue' }],
+      });
+      await flushPromises();
+
+      const sortedLabels = wrapper.vm.sortedAgents.map((a) => a.label);
+      expect(sortedLabels).toEqual(['Ana', 'Anna', 'Davi', 'João', 'Ricardo']);
+    });
+
+    it('should map status to the expected tag scheme', () => {
+      expect(wrapper.vm.getAgentStatusScheme('online')).toBe('aux-green');
+      expect(wrapper.vm.getAgentStatusScheme('offline')).toBe('aux-gray');
+      expect(wrapper.vm.getAgentStatusScheme('launch')).toBe('aux-orange');
+      expect(wrapper.vm.getAgentStatusScheme('any_custom_break')).toBe(
+        'aux-orange',
+      );
+    });
+
+    it('should capitalize the raw backend status as the tag label', () => {
+      expect(wrapper.vm.getAgentStatusLabel('online')).toBe('Online');
+      expect(wrapper.vm.getAgentStatusLabel('offline')).toBe('Offline');
+      expect(wrapper.vm.getAgentStatusLabel('launch')).toBe('Launch');
+      expect(wrapper.vm.getAgentStatusLabel('lunch_break')).toBe('Lunch_break');
+      expect(wrapper.vm.getAgentStatusLabel('')).toBe('');
+    });
+
+    it('should exclude the current user from the agent list', async () => {
+      vi.mocked(QueueService.agentsToTransfer).mockImplementationOnce(() => [
+        {
+          first_name: 'Me',
+          last_name: '',
+          email: 'mock@email.com',
+          status: 'online',
+          photo_url: null,
+          language: 'pt-br',
+        },
+        {
+          first_name: 'Other',
+          last_name: '',
+          email: 'other@email.com',
+          status: 'online',
+          photo_url: null,
+          language: 'pt-br',
+        },
+      ]);
+
+      await wrapper.setProps({
+        modelValue: [{ value: 'queue_id', label: 'Queue' }],
+      });
+      await flushPromises();
+
+      const emails = wrapper.vm.agents.map((a) => a.value);
+      expect(emails).not.toContain('mock@email.com');
+      expect(emails).toContain('other@email.com');
     });
   });
 
