@@ -431,7 +431,7 @@ export default {
 
 <style lang="scss" scoped>
 #app {
-  height: 100vh;
+  height: 100%;
 }
 </style>
 
