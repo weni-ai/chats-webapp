@@ -24,7 +24,7 @@
         @close="closeModalProgress"
       />
     </div>
-    <Teleport to="#app">
+    <Teleport to=".chats-webapp">
       <ModalVariableMapping
         v-if="showVariableModal && cachedTemplate"
         :template="cachedTemplate.data"
