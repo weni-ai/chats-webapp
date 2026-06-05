@@ -1,4 +1,3 @@
-const postcssPresetEnv = require('postcss-preset-env');
 const postcssPrefixwrap = require('postcss-prefixwrap');
 
 /**
@@ -20,15 +19,6 @@ const postcssPrefixwrap = require('postcss-prefixwrap');
  */
 module.exports = {
   plugins: [
-    postcssPresetEnv({
-      stage: 2,
-      features: {
-        'nesting-rules': true,
-        'custom-properties': true,
-        'color-function': true,
-      },
-    }),
-
     postcssPrefixwrap('.chats-webapp', {
       prefixTransform: (selector, prefix) => {
         if (selector.startsWith('.dark')) {
