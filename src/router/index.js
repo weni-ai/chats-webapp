@@ -1,4 +1,8 @@
-import { createRouter, createWebHistory } from 'vue-router';
+import {
+  createRouter,
+  createWebHistory,
+  createMemoryHistory,
+} from 'vue-router';
 import isMobile from 'is-mobile';
 
 import {
@@ -10,13 +14,19 @@ import Keycloak from '@/services/keycloak';
 import routes from './routes';
 import afterEachMiddlewares from './middlewares/afterEach';
 import env from '@/utils/env';
+import { isFederatedModule } from '@/utils/moduleFederation';
 
 import { useConfig } from '@/store/modules/config';
 
+// Federated: isolate chats routing from the host. The connect host router is
+// the single source of truth for the address bar; chats navigations are
+// mirrored back to it via `useFederatedModule`'s `setupRouterSync`.
+const history = isFederatedModule
+  ? createMemoryHistory()
+  : createWebHistory(import.meta.env.BASE_URL);
+
 const router = createRouter({
-  history: createWebHistory(import.meta.env.BASE_URL),
-  mode: 'history',
-  base: env('BASE_URL'),
+  history,
   routes,
 });
 
