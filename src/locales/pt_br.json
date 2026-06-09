@@ -201,6 +201,7 @@
   },
   "attachment": "Anexo",
   "internal_note": "Nota interna",
+  "internal_note_with_attachment_tooltip": "Nota interna com anexo",
   "close_internal_note": "Fechar nota interna (Esc)",
   "notes": "Notas",
   "bold": "Negrito",
@@ -313,7 +314,10 @@
       },
       "automated_message": {
         "title": "Mensagens automatizadas",
-        "switch_label": "Enviar mensagem automática ao iniciar o atendimento",
+        "switch_when_waiting_label": "Enviar mensagem automática a contatos esperando",
+        "switch_when_start_label": "Enviar mensagem automática ao iniciar o atendimento",
+        "hint_when_waiting": "Envia automaticamente uma mensagem a contatos que estão esperando atendimento. A mensagem aparecerá como se enviada pelo atendente atribuído.",
+        "hint_when_start": "Envia automaticamente uma mensagem quando um chat é atribuído a um atendente. A mensagem aparecerá como se enviada pelo atendente atribuído.",
         "hint": "Envia automaticamente uma mensagem quando um chat é atribuído a um atendente. A mensagem aparecerá como se enviada pelo atendente atribuído.",
         "field": {
           "title": "Mensagem automática",
@@ -469,6 +473,7 @@
       "default": "Ocorreu um erro, por favor, tente novamente mais tarde"
     },
     "message_input_placeholder": "Digite sua mensagem aqui ou / para ativar mensagens rápidas",
+    "message_input_disabled_description": "Altere seu status para online para continuar esta conversa.",
     "search_contact": "Pesquisar contato",
     "search_contact_placeholder": "Pesquisar contato (nome, telefone ou protocolo)",
     "tags": "Tags do chat",
@@ -496,8 +501,22 @@
     "get_chat_confirmation": "Confirme se deseja realizar o atendimento de {contact}",
     "get_chat_error": "Erro ao tentar pegar o chat",
     "you_got_chat": "Você pegou o chat",
-    "your_chat_assumed": "O Chat com {contact} foi transferido",
-    "your_chat_assumed_description": "Seu chat com {contact} foi assumido por outro agente",
+    "chat_take_over": {
+      "by_another_representative": {
+        "title": "Chat assumido por outro atendente",
+        "description": "Seu chat com {contact} foi assumido por {representative}."
+      },
+      "transfer_to_another_representative": {
+        "title": "Chat transferido para outro atendente",
+        "description": "Seu chat com {contact} foi transferido por um moderador para {representative}."
+      },
+      "transfer_to_queue": {
+        "title": "Chat transferido para fila",
+        "description": "Seu chat com {contact} foi transferido por um moderador para a fila {queue}."
+      }
+    },
+    "your_chat_assumed": "Chat assumido por outro atendente",
+    "your_chat_assumed_description": "Seu chat com {contact} foi assumido por {representative}",
     "closed_chats": {
       "contact_history": "Histórico do contato",
       "general_history": "Histórico geral",
@@ -525,8 +544,8 @@
       "title": "Modo de visualização ao vivo do agente {viewedAgent}",
       "close": "Encerrar visualização",
       "assume_chat": "Assumir apenas este chat",
-      "assume_chat_question": "Assumir Chat?",
-      "assume_chat_confirmation": "Ao confirmar você removerá o Chat do agente {viewedAgent} e será o responsável pelo Chat"
+      "assume_chat_question": "Assumir o chat com {contact}?",
+      "assume_chat_question_description": "Tem certeza de que deseja assumir o chat com {contact}?<br><br>Ao confirmar, você remove o chat do representante e fica responsável pelo chat."
     }
   },
   "select": "Selecionar",
@@ -597,6 +616,7 @@
   "no_tags_assigned": "Nenhuma tag atribuída",
   "contact_await_for_you": "Um contato está esperando por você!",
   "agent": "Atendente",
+  "representative": "Representante",
   "ai_text_improvement": {
     "tooltip_disabled": "Escreva uma resposta no campo de texto para habilitar respostas aprimoradas com IA",
     "tooltip_enabled": "Melhorar resposta com IA",
@@ -829,6 +849,7 @@
   },
   "select_agent": "Selecionar agente",
   "select_queue": "Selecionar fila",
+  "select_representative": "Selecionar um representante",
   "select_sector": "Selecione setor",
   "send_media": "Enviar mídia",
   "send_photo_or_video": "Enviar foto ou vídeo",
@@ -871,13 +892,13 @@
     "contact_already_exists": "O número {contact} já está salvo em sua lista de contatos",
     "variable_mapping": {
       "title": "Mapeamento de variáveis",
-      "description": "As variáveis serão preenchidas na pré-visualização abaixo usando valores dos contatos selecionados sempre que fizerem referência a campos do contato",
+      "description": "As variáveis serão preenchidas na pré-visualização abaixo usando valores dos contatos selecionados sempre que fizerem referência a campos do contato.",
       "define_variables": "Definir as variáveis",
       "variable_label": "Variável {name}",
       "input_placeholder": "Digite o valor para esta variável",
       "preview_title": "Pré-visualização do template",
       "preview_variable_tooltip": "Variável {placeholder}",
-      "confirmation_helper": "Verifique se cada campo está mapeado corretamente; é assim que a mensagem será exibida para cada contato selecionado",
+      "confirmation_helper": "Verifique se cada campo está mapeado corretamente; é assim que a mensagem será exibida para cada contato selecionado.",
       "confirmation_checkbox": "Verifiquei e estou pronto para enviar",
       "local_variables": {
         "contact_name": "Nome do contato",
@@ -1010,6 +1031,10 @@
           "description": "Desativar essa opção excluirá permanentemente o prompt de cenários e critérios. Será necessário configurá-lo novamente ao reativar.",
           "confirmation": "Deseja continuar mesmo assim?"
         }
+      },
+      "restrict_offline_agents": {
+        "switch_label": "Permitir interações apenas para atendentes online",
+        "hint": "Se essa opção estiver ativada, atendentes offline ou em pausa não poderão responder a chats em andamento."
       },
       "bulk_transfer": {
         "tooltip": "Essa função permite que atendentes transfiram diversos contatos de uma vez para uma fila ou atendente",

@@ -201,6 +201,7 @@
   },
   "attachment": "Adjuntar",
   "internal_note": "Nota interna",
+  "internal_note_with_attachment_tooltip": "Nota interna con archivo adjunto",
   "close_internal_note": "Cerrar nota interna (Esc)",
   "notes": "Notas",
   "bold": "Negrita",
@@ -313,7 +314,10 @@
       },
       "automated_message": {
         "title": "Mensajes automatizados",
-        "switch_label": "Enviar mensaje automático al iniciar el soporte",
+        "switch_when_waiting_label": "Enviar mensaje automático a contactos esperando",
+        "switch_when_start_label": "Enviar mensaje automático cuando el soporte comience",
+        "hint_when_waiting": "Envía automáticamente un mensaje a contactos que están esperando asistencia en la cola.",
+        "hint_when_start": "Envía automáticamente un mensaje cuando un chat se asigna a un representante. El mensaje aparecerá como si lo hubiera enviado el representante asignado.",
         "hint": "Envía automáticamente un mensaje cuando un chat se asigna a un representante. El mensaje aparecerá como si lo hubiera enviado el representante asignado.",
         "field": {
           "title": "Mensaje automático",
@@ -469,6 +473,7 @@
       "default": "Ocurrió un error, por favor, inténtelo de nuevo más tarde"
     },
     "message_input_placeholder": "Escribe tu mensaje o / para activar mensajes rápidos",
+    "message_input_disabled_description": "Cambia tu estado a en línea para continuar esta conversación.",
     "search_contact": "Buscar contacto",
     "search_contact_placeholder": "Buscar contacto (nombre, teléfono o ticket ID)",
     "tags": "Etiquetas de chat",
@@ -496,8 +501,22 @@
     "get_chat_confirmation": "Confirma si deseas realizar el servicio de {contact}",
     "get_chat_error": "Error al intentar obtener el chat",
     "you_got_chat": "Tienes el chat",
-    "your_chat_assumed": "El chat con {contact} ha sido transferido",
-    "your_chat_assumed_description": "Otro agente se ha hecho cargo de su chat con {contacto}",
+    "chat_take_over": {
+      "by_another_representative": {
+        "title": "Chat asumido por otro representante",
+        "description": "Tu chat con {contact} ha sido asumido por {representative}."
+      },
+      "transfer_to_another_representative": {
+        "title": "Chat transferido a otro representante",
+        "description": "Tu chat con {contact} fue transferido por un moderador a {representative}."
+      },
+      "transfer_to_queue": {
+        "title": "Chat transferido a cola",
+        "description": "Tu chat con {contact} fue transferido por un moderador a la cola {queue}."
+      }
+    },
+    "your_chat_assumed": "Chat asumido por otro representante",
+    "your_chat_assumed_description": "Tu chat con {contact} ha sido asumido por {representative}",
     "closed_chats": {
       "contact_history": "Historial del contacto",
       "general_history": "Historial general",
@@ -525,8 +544,8 @@
       "title": "Modo de vista en vivo del agente {viewedAgent}",
       "close": "Visualización final",
       "assume_chat": "Asumir solo este chat",
-      "assume_chat_question": "¿Asumir Chat?",
-      "assume_chat_confirmation": "Al confirmar que eliminará el Chat del agente {viewedAgent} y será responsable del Chat"
+      "assume_chat_question": "¿Asumir el chat con {contact}?",
+      "assume_chat_question_description": "¿Seguro de que deseas asumir el chat con {contact}?<br><br>Al confirmar, quitarás el chat del representante y serás responsable del chat."
     }
   },
   "select": "Seleccionar",
@@ -597,6 +616,7 @@
   "no_tags_assigned": "No se han asignado etiquetas",
   "contact_await_for_you": "¡Un contacto está esperando por ti!",
   "agent": "Agente",
+  "representative": "Representante",
   "ai_text_improvement": {
     "tooltip_disabled": "Escribe una respuesta en el campo de texto para activar respuestas mejoradas con IA",
     "tooltip_enabled": "Mejorar respuesta con IA",
@@ -827,6 +847,7 @@
   },
   "select_agent": "Seleccionar agente",
   "select_queue": "Seleccionar cola",
+  "select_representative": "Seleccionar un representante",
   "select_sector": "Seleccionar sector",
   "send_media": "Enviar multimedia",
   "send_photo_or_video": "Enviar foto o vídeo",
@@ -869,13 +890,13 @@
     "contact_already_exists": "El número {contact} ya está guardado en tu lista de contactos",
     "variable_mapping": {
       "title": "Mapeo de variables",
-      "description": "Las variables se completarán en la vista previa siguiente con valores de los contactos seleccionados cuando hagan referencia a campos del contacto",
+      "description": "Las variables se completarán en la vista previa siguiente con valores de los contactos seleccionados cuando hagan referencia a campos del contacto.",
       "define_variables": "Definir las variables",
       "variable_label": "Variable {name}",
       "input_placeholder": "Escribe el valor para esta variable",
       "preview_title": "Vista previa del template",
       "preview_variable_tooltip": "Variable {placeholder}",
-      "confirmation_helper": "Verifica si cada campo está mapeado correctamente; así se mostrará el mensaje a cada contacto seleccionado",
+      "confirmation_helper": "Verifica si cada campo está mapeado correctamente; así se mostrará el mensaje a cada contacto seleccionado.",
       "confirmation_checkbox": "Lo verifiqué y estoy listo para enviar",
       "local_variables": {
         "contact_name": "Nombre del contacto",
@@ -1008,6 +1029,10 @@
           "description": "Desactivar esta opción eliminará permanentemente el prompt de escenarios y criterios. Será necesario configurarlo nuevamente al reactivarla.",
           "confirmation": "¿Deseas continuar de todos modos?"
         }
+      },
+      "restrict_offline_agents": {
+        "switch_label": "Permitir interacciones solo para representantes en línea",
+        "hint": "Si esta opción está activada, los representantes sin conexión o en pausa no podrán responder a chats en curso."
       },
       "bulk_transfer": {
         "tooltip": "Esta función permite a los representantes transferir varios contactos a la vez a una fila o representante",

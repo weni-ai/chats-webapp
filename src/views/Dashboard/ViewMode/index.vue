@@ -140,10 +140,14 @@
 
     <ModalGetChat
       :showModal="isAssumeChatConfirmationOpened"
-      :title="$t('dashboard.view-mode.assume_chat_question')"
+      :title="
+        $t('dashboard.view-mode.assume_chat_question', {
+          contact: room?.contact?.name || `[${$t('without_name')}]`,
+        })
+      "
       :description="
-        $t('dashboard.view-mode.assume_chat_confirmation', {
-          agent: viewedAgent.name,
+        $t('dashboard.view-mode.assume_chat_question_description', {
+          contact: room?.contact?.name || `[${$t('without_name')}]`,
         })
       "
       :whenGetChat="whenGetChat"

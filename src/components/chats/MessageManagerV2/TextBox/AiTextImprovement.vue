@@ -5,7 +5,7 @@
   >
     <UnnnicToolTip
       v-if="!isLoading"
-      :enabled="true"
+      enabled
       :text="tooltipText"
       side="top"
     >
@@ -25,7 +25,7 @@
               iconCenter="wand_shine"
               type="tertiary"
               size="small"
-              :disabled="isDisabled"
+              :disabled="isDisabledInput || isDisabled"
               @click.stop="handleButtonClick"
             />
           </section>
@@ -53,7 +53,7 @@
 
     <UnnnicToolTip
       v-else
-      :enabled="true"
+      enabled
       :text="$t('ai_text_improvement.tooltip_cancel')"
       side="top"
     >
@@ -94,7 +94,7 @@ const aiTextImprovement = useAiTextImprovement();
 const { isLoading, isPopoverOpen, showNewTag } = storeToRefs(aiTextImprovement);
 
 const messageManager = useMessageManager();
-const { inputMessage } = storeToRefs(messageManager);
+const { inputMessage, isDisabledInput } = storeToRefs(messageManager);
 
 const isDisabled = computed(() => !inputMessage.value.trim());
 
