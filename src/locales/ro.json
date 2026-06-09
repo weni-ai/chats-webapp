@@ -28,5 +28,15 @@
     "select_services_queues": "Setează cozile pentru a primi chat-uri",
     "select_your_queues": "Selectează cozile tale",
     "success_update_queues": "Cozile tale de serviciu au fost actualizate"
+  },
+  "export_conversation": {
+    "accept_terms": "Accept termenii și înțeleg limitările exportului.",
+    "button": "Exportă conversația",
+    "disclaimer": "În timp ce acest export este procesat, noile exporturi vor fi temporar blocate pentru această conversație",
+    "error": "Exportul nu a putut fi procesat. Încearcă din nou",
+    "select_format": "Selectează formatul pentru exportarea conversației",
+    "success_description": "Îl vei primi prin email în curând. Verifică și folderul de spam.",
+    "success_title": "Se procesează exportul!",
+    "title": "Exportă conversația"
   }
 }
