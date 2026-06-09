@@ -6,6 +6,7 @@ useCompositionI18nInThisSpecFile();
 
 import ModalExportConversation from '../ModalExportConversation.vue';
 import History from '@/services/api/resources/chats/history';
+import i18n from '@/plugins/i18n';
 
 vi.mock('@/services/api/resources/chats/history', () => ({
   default: {
@@ -13,12 +14,15 @@ vi.mock('@/services/api/resources/chats/history', () => ({
   },
 }));
 
-const unnnicCallAlertMock = vi.fn();
 vi.mock('@weni/unnnic-system', async (importOriginal) => {
-  const actual = await importOriginal();
+  const mod = await importOriginal();
   return {
-    ...actual,
-    unnnicCallAlert: (...args) => unnnicCallAlertMock(...args),
+    ...mod,
+    UnnnicToastManager: {
+      ...mod.UnnnicToastManager,
+      success: vi.fn(),
+      error: vi.fn(),
+    },
   };
 });
 
@@ -225,6 +229,7 @@ describe('ModalExportConversation', () => {
     });
 
     it('shows success toast and closes modal on successful export', async () => {
+      const { UnnnicToastManager } = await import('@weni/unnnic-system');
       History.exportRoom.mockResolvedValue({});
       wrapper = createWrapper();
 
@@ -239,12 +244,9 @@ describe('ModalExportConversation', () => {
       await submitBtn.trigger('click');
 
       await vi.waitFor(() => {
-        expect(unnnicCallAlertMock).toHaveBeenCalledWith(
-          expect.objectContaining({
-            props: expect.objectContaining({
-              type: 'success',
-            }),
-          }),
+        expect(UnnnicToastManager.success).toHaveBeenCalledWith(
+          i18n.global.t('export_conversation.success_title'),
+          i18n.global.t('export_conversation.success_description'),
         );
       });
 
@@ -254,6 +256,7 @@ describe('ModalExportConversation', () => {
     });
 
     it('shows error toast on failed export', async () => {
+      const { UnnnicToastManager } = await import('@weni/unnnic-system');
       History.exportRoom.mockRejectedValue(new Error('Network error'));
       wrapper = createWrapper();
 
@@ -268,12 +271,8 @@ describe('ModalExportConversation', () => {
       await submitBtn.trigger('click');
 
       await vi.waitFor(() => {
-        expect(unnnicCallAlertMock).toHaveBeenCalledWith(
-          expect.objectContaining({
-            props: expect.objectContaining({
-              type: 'error',
-            }),
-          }),
+        expect(UnnnicToastManager.error).toHaveBeenCalledWith(
+          i18n.global.t('export_conversation.error'),
         );
       });
     });
