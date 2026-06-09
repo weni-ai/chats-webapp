@@ -96,7 +96,7 @@ const { isLoading: isAiImproving, hasImprovedText } = storeToRefs(
 );
 
 const showBackToOriginal = computed(
-  () => hasImprovedText.value && !isAiImproving.value,
+  () => hasImprovedText.value && !isAiImproving.value && !isInternalNote.value,
 );
 
 const textareaRef = useTemplateRef('textArea');
@@ -155,8 +155,12 @@ const clearTextarea = () => {
   audioRecorderStatus.value = 'idle';
 };
 
-watch(isInternalNote, () => {
+watch(isInternalNote, (active) => {
   clearTextarea();
+
+  if (active) {
+    aiTextImprovementStore.reset();
+  }
 });
 
 defineExpose({

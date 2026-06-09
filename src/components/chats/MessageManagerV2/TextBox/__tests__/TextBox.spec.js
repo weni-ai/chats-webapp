@@ -13,6 +13,7 @@ import { setActivePinia } from 'pinia';
 
 import TextBox from '../index.vue';
 import { useMessageManager } from '@/store/modules/chats/messageManager';
+import { useAiTextImprovement } from '@/store/modules/chats/aiTextImprovement';
 import { useRoomMessages } from '@/store/modules/chats/roomMessages';
 import { useDiscussionMessages } from '@/store/modules/chats/discussionMessages';
 import i18n from '@/plugins/i18n';
@@ -303,6 +304,36 @@ describe('TextBox (index.vue)', () => {
       await wrapper.find('[data-testid="send-btn"]').trigger('click');
 
       expect(store.sendRoomMessage).toHaveBeenCalledWith(undefined);
+    });
+  });
+
+  describe('internal note mode', () => {
+    it('should reset AI store when isInternalNote becomes true', async () => {
+      const wrapper = createWrapper({
+        improvedText: 'improved',
+        originalText: 'original',
+        isAiLoading: true,
+      });
+      const messageManagerStore = useMessageManager();
+      const aiStore = useAiTextImprovement();
+
+      messageManagerStore.isInternalNote = true;
+      await wrapper.vm.$nextTick();
+
+      expect(aiStore.improvedText).toBe('');
+      expect(aiStore.isLoading).toBe(false);
+    });
+
+    it('should hide BackToOriginal when isInternalNote is true with improved text', () => {
+      const wrapper = createWrapper({
+        improvedText: 'improved',
+        originalText: 'original',
+        isInternalNote: true,
+      });
+
+      expect(wrapper.find('[data-testid="back-to-original"]').exists()).toBe(
+        false,
+      );
     });
   });
 });
