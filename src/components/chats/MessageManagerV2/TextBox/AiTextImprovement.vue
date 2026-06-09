@@ -129,11 +129,13 @@ function handleMouseEnter() {
 }
 
 function handleButtonClick() {
-  if (isInternalNote.value || !inputMessage.value.trim()) {
+
+  if (isDisabled.value) {
     return;
   }
 
   isPopoverOpen.value = !isPopoverOpen.value;
+
 }
 
 async function selectOption(type: AiTextImprovementType) {
