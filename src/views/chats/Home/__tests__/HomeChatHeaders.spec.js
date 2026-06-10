@@ -124,6 +124,38 @@ describe('HomeChatHeaders.vue', () => {
     expect(wrapper.emitted('openRoomContactInfo')).toBeTruthy();
   });
 
+  it('calls setOpenActiveRoomSummary with the toggled value and active room uuid when the summary icon is clicked', async () => {
+    store = createTestingPinia({
+      initialState: {
+        rooms: {
+          activeRoom: {
+            uuid: 'room-42',
+            contact: { name: 'John Doe' },
+            is_24h_valid: true,
+          },
+          openActiveRoomSummary: false,
+        },
+        discussions: { activeDiscussion: null },
+        config: { project: { config: { has_chats_summary: true } } },
+      },
+    });
+    wrapper = createWrapper({ store });
+    roomStore = useRooms();
+    roomStore.setOpenActiveRoomSummary = vi.fn();
+
+    await wrapper.vm.$nextTick();
+
+    wrapper.vm.setOpenActiveRoomSummary(
+      !wrapper.vm.openActiveRoomSummary,
+      wrapper.vm.room?.uuid,
+    );
+
+    expect(roomStore.setOpenActiveRoomSummary).toHaveBeenCalledWith(
+      true,
+      'room-42',
+    );
+  });
+
   it('emits openModalCloseChat event when close button is clicked', async () => {
     roomStore.activeRoom = { contact: { name: 'John Doe' } };
     await wrapper.vm.$nextTick();
