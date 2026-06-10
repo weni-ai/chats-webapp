@@ -4,7 +4,7 @@
     :data-testid="dataTestid"
   >
     <UnnnicPopover
-      v-if="hasLocalVariables"
+      v-if="hasLocalVariables && !disabled"
       v-model:open="isPopoverOpen"
     >
       <UnnnicPopoverTrigger :asChild="true">
@@ -58,6 +58,8 @@
       :modelValue="displayValue"
       :label="label"
       :placeholder="placeholder"
+      :disabled="disabled"
+      :readonly="disabled"
       :data-testid="`${dataTestid}-input`"
       @update:model-value="handleInput"
     />
@@ -80,6 +82,7 @@ interface Props {
   label?: string;
   placeholder?: string;
   localVariables?: LocalVariable[];
+  disabled?: boolean;
   dataTestid?: string;
 }
 
@@ -87,6 +90,7 @@ const props = withDefaults(defineProps<Props>(), {
   label: '',
   placeholder: '',
   localVariables: () => [],
+  disabled: false,
   dataTestid: 'variable-input',
 });
 
@@ -115,7 +119,7 @@ const openPopover = () => {
 };
 
 const handleInput = (value: string) => {
-  if (isTokenMode.value) return;
+  if (props.disabled || isTokenMode.value) return;
   emit('update:modelValue', value);
 };
 
