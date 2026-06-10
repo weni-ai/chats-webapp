@@ -62,5 +62,22 @@
     "success_description": "Îl vei primi prin email în curând. Verifică și folderul de spam.",
     "success_title": "Se procesează exportul!",
     "title": "Exportă conversația"
+  },
+  "sector": {
+    "additional_options": {
+      "csat": {
+        "custom": {
+          "flow_disclaimer": "Fluxul selectat trebuie să utilizeze o evaluare a satisfacției de la 1 la 5 pentru a asigura rezultate corecte ale sondajului."
+        },
+        "label": "Trimite automat un sondaj de satisfacție după încheierea asistenței Live Desk",
+        "section_title": "Sondaj de satisfacție",
+        "type": {
+          "custom": "Fluxuri personalizate",
+          "default": "Sondaj CSAT implicit (recomandat)",
+          "label": "Tip de sondaj",
+          "tooltip": "Alege între sondajul CSAT implicit și un flux personalizat deja configurat în modulul Fluxuri."
+        }
+      }
+    }
   }
 }
