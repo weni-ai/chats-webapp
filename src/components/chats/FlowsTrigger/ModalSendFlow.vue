@@ -36,8 +36,8 @@
   <Teleport to="#app">
     <ModalVariableMapping
       v-if="showVariableModal && cachedTemplate"
-      :template="cachedTemplate.data"
-      :variables="cachedTemplate.variables"
+      :templates="cachedTemplate.templates"
+      :totalTemplateQty="cachedTemplate.total_template_qty"
       :localVariables="localVariables"
       :isLoading="isSendingFlow"
       data-testid="modal-send-flow-variable-mapping"
@@ -62,7 +62,7 @@ import SelectFlow from './SelectFlow.vue';
 import SendFlowButton from './SendFlowButton.vue';
 import ModalVariableMapping from './ModalVariableMapping.vue';
 import { FLOW_TRIGGER_VARIABLE_MAPPING_FLAG } from './types';
-import { getAvailableLocalVariables } from './localVariables';
+import { getAvailableLocalVariables } from '@/utils/localVariables';
 
 export default {
   name: 'ModalSendFlow',
@@ -144,7 +144,7 @@ export default {
 
     setCachedTemplate(template) {
       this.cachedTemplate = template;
-      this.showVariableModal = Boolean(template?.variables?.length);
+      this.showVariableModal = Boolean(template?.templates?.length);
     },
 
     onCancelVariableMapping() {
@@ -173,9 +173,20 @@ export default {
 
         if (this.selectedFlow !== flowUuid) return;
 
-        const firstTemplate = response?.templates?.[0];
-        const variables = firstTemplate?.variables || [];
-        this.setCachedTemplate(variables.length > 0 ? firstTemplate : null);
+        const templates = response?.templates || [];
+        const hasVariables = templates.some(
+          (template) => (template?.variables?.length ?? 0) > 0,
+        );
+
+        this.setCachedTemplate(
+          hasVariables
+            ? {
+                templates,
+                total_template_qty:
+                  response?.total_template_qty ?? templates.length,
+              }
+            : null,
+        );
       } catch (error) {
         console.error('Error checking flow templates', error);
       } finally {
