@@ -145,15 +145,14 @@ describe('HomeChatHeaders.vue', () => {
 
     await wrapper.vm.$nextTick();
 
-    wrapper.vm.setOpenActiveRoomSummary(
-      !wrapper.vm.openActiveRoomSummary,
-      wrapper.vm.room?.uuid,
-    );
+
+    await wrapper.find('[data-testid="summary-icon"]').trigger('click');
 
     expect(roomStore.setOpenActiveRoomSummary).toHaveBeenCalledWith(
       true,
       'room-42',
     );
+
   });
 
   it('emits openModalCloseChat event when close button is clicked', async () => {
