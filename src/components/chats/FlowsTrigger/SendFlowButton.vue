@@ -22,6 +22,7 @@ import FlowsTrigger from '@/services/api/resources/chats/flowsTrigger';
 
 import { FLOW_TRIGGER_VARIABLE_MAPPING_FLAG } from './types';
 import { resolveAllValues } from '@/utils/localVariables';
+import { hasTemplateVariables } from '@/utils/flowTemplates';
 
 export default {
   name: 'SendFlowButton',
@@ -85,10 +86,7 @@ export default {
         return false;
       }
 
-      const templates = this.cachedTemplate?.templates ?? [];
-      return templates.some(
-        (template) => (template?.variables?.length ?? 0) > 0,
-      );
+      return hasTemplateVariables(this.cachedTemplate?.templates ?? []);
     },
   },
 
