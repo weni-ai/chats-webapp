@@ -300,16 +300,16 @@
       },
       "csat": {
         "custom": {
-          "flow_disclaimer": "El flujo seleccionado debe usar una clasificación de satisfacción de 1 a 5 para garantizar los resultados correctos de la encuesta."
+          "flow_disclaimer": "El flujo seleccionado debe usar una calificación de satisfacción de 1 a 5 para garantizar resultados correctos en la encuesta."
         },
         "hint": "Si hay un flujo activo en el módulo de Flujos configurado para enviar una encuesta después de que el soporte termine, esta configuración puede causar conflictos y afectar el envío de la encuesta.",
-        "label": "Enviar automáticamente una encuesta de satisfacción después de que el soporte del Live desk termine",
+        "label": "Enviar automáticamente una encuesta de satisfacción después de finalizar el chat de soporte en Live Desk",
         "section_title": "Encuesta de satisfacción",
         "type": {
           "custom": "Flujos personalizados",
           "default": "Encuesta CSAT predeterminada (recomendado)",
           "label": "Tipo de encuesta",
-          "tooltip": "Elige entre la encuesta CSAT predeterminada o un flujo personalizado ya configurado en el módulo de Flujos."
+          "tooltip": "Elige entre la encuesta CSAT predeterminada o un flujo personalizado ya configurado en el módulo Flujos."
         }
       },
       "automated_message": {

@@ -303,13 +303,13 @@
           "flow_disclaimer": "The selected flow must use a 1 to 5 satisfaction rating to ensure correct survey results."
         },
         "hint": "If there is an active flow in the Flows module set to trigger a survey after support ends, this setting may cause conflicts and affect survey delivery.",
-        "label": "Automatically send a satisfaction survey after Live desk support ends",
+        "label": "Automatically send a satisfaction survey after Live Desk support ends",
         "section_title": "Satisfaction survey",
         "type": {
           "custom": "Custom flows",
-          "default": "Default CSAT survey (Recommended)",
+          "default": "Default CSAT survey (recommended)",
           "label": "Survey type",
-          "tooltip": "Choose between the default CSAT survey or a custom flow you've already configured in the Flows module."
+          "tooltip": "Choose between the default CSAT survey and a custom flow already configured in the Flows module."
         }
       },
       "automated_message": {
