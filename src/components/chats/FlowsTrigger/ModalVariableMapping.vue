@@ -12,7 +12,7 @@
             <UnnnicTag
               scheme="blue"
               type="default"
-              size="small"
+              size="medium"
               :text="tagText"
               data-testid="modal-variable-mapping-tag"
             />
