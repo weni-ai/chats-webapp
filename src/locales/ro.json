@@ -38,5 +38,13 @@
     "success_description": "Îl vei primi prin email în curând. Verifică și folderul de spam.",
     "success_title": "Se procesează exportul!",
     "title": "Exportă conversația"
-  }
+  },
+  "discussion_about": "Discuție despre {discussionGoal}",
+  "you_message_prefix": "Tu:",
+  "automatic_message": {
+    "automatic_opening_message": "Mesaj de deschidere automat"
+  },
+  "reply": "Răspuns",
+  "unread_messages": "{count} mesaj necitit | {count} mesaje necitite",
+  "yesterday": "Ieri"
 }
