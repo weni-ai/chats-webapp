@@ -63,6 +63,14 @@
     "success_title": "Se procesează exportul!",
     "title": "Exportă conversația"
   },
+  "discussion_about": "Discuție despre {discussionGoal}",
+  "you_message_prefix": "Tu:",
+  "automatic_message": {
+    "automatic_opening_message": "Mesaj de deschidere automat"
+  },
+  "reply": "Răspuns",
+  "unread_messages": "{count} mesaj necitit | {count} mesaje necitite",
+  "yesterday": "Ieri",
   "sector": {
     "additional_options": {
       "csat": {
