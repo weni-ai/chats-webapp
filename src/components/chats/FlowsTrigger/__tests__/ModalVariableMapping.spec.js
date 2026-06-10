@@ -53,6 +53,23 @@ const multiTemplates = [
   },
 ];
 
+const sharedTemplates = [
+  {
+    variables: ['nome', 'endereco'],
+    data: {
+      name: 'first_template',
+      components: [{ type: 'BODY', text: 'Oi {{1}}, voce mora em {{2}}' }],
+    },
+  },
+  {
+    variables: ['nome', 'idade'],
+    data: {
+      name: 'second_template',
+      components: [{ type: 'BODY', text: '{{1}} tem {{2}} anos' }],
+    },
+  },
+];
+
 describe('ModalVariableMapping', () => {
   const buildWrapper = (props = {}) =>
     mount(ModalVariableMapping, {
@@ -63,10 +80,15 @@ describe('ModalVariableMapping', () => {
       },
     });
 
-  const setValue = async (wrapper, index, name, value) => {
-    wrapper.vm.valuesByTemplate[index][name] = value;
+  const setValue = async (wrapper, name, value) => {
+    wrapper.vm.values[name] = value;
     await wrapper.vm.$nextTick();
   };
+
+  const clickNext = (wrapper) =>
+    wrapper
+      .find('[data-testid="modal-variable-mapping-next"]')
+      .trigger('click');
 
   describe('single template', () => {
     let wrapper;
@@ -89,9 +111,10 @@ describe('ModalVariableMapping', () => {
     });
 
     it('initializes all variables as empty strings', () => {
-      expect(wrapper.vm.valuesByTemplate).toEqual([
-        { contactName: '', orderNumber: '' },
-      ]);
+      expect(wrapper.vm.values).toEqual({
+        contactName: '',
+        orderNumber: '',
+      });
     });
 
     it('keeps confirm disabled when checkbox checked but variables empty', async () => {
@@ -105,8 +128,8 @@ describe('ModalVariableMapping', () => {
     });
 
     it('keeps confirm disabled when variables filled but checkbox unchecked', async () => {
-      await setValue(wrapper, 0, 'contactName', 'Marcus');
-      await setValue(wrapper, 0, 'orderNumber', '12345');
+      await setValue(wrapper, 'contactName', 'Marcus');
+      await setValue(wrapper, 'orderNumber', '12345');
 
       const confirmButton = wrapper.find(
         '[data-testid="modal-variable-mapping-confirm"]',
@@ -115,8 +138,8 @@ describe('ModalVariableMapping', () => {
     });
 
     it('enables confirm and emits confirm with merged values', async () => {
-      await setValue(wrapper, 0, 'contactName', 'Marcus');
-      await setValue(wrapper, 0, 'orderNumber', '12345');
+      await setValue(wrapper, 'contactName', 'Marcus');
+      await setValue(wrapper, 'orderNumber', '12345');
       wrapper.vm.isConfirmed = true;
       await wrapper.vm.$nextTick();
 
@@ -186,25 +209,21 @@ describe('ModalVariableMapping', () => {
       const next = wrapper.find('[data-testid="modal-variable-mapping-next"]');
       expect(next.attributes('disabled')).toBeDefined();
 
-      await setValue(wrapper, 0, 'contactName', 'Marcus');
+      await setValue(wrapper, 'contactName', 'Marcus');
       expect(next.attributes('disabled')).toBeUndefined();
     });
 
     it('advances to the next template and updates the counter', async () => {
-      await setValue(wrapper, 0, 'contactName', 'Marcus');
-      await wrapper
-        .find('[data-testid="modal-variable-mapping-next"]')
-        .trigger('click');
+      await setValue(wrapper, 'contactName', 'Marcus');
+      await clickNext(wrapper);
 
       expect(wrapper.vm.currentIndex).toBe(1);
       expect(wrapper.text()).toContain('Template 2 of 3');
     });
 
     it('shows the first button as Back after the first step', async () => {
-      await setValue(wrapper, 0, 'contactName', 'Marcus');
-      await wrapper
-        .find('[data-testid="modal-variable-mapping-next"]')
-        .trigger('click');
+      await setValue(wrapper, 'contactName', 'Marcus');
+      await clickNext(wrapper);
 
       expect(
         wrapper.find('[data-testid="modal-variable-mapping-back"]').exists(),
@@ -215,30 +234,24 @@ describe('ModalVariableMapping', () => {
     });
 
     it('returns to the previous template preserving filled values', async () => {
-      await setValue(wrapper, 0, 'contactName', 'Marcus');
-      await wrapper
-        .find('[data-testid="modal-variable-mapping-next"]')
-        .trigger('click');
-      await setValue(wrapper, 1, 'city', 'Recife');
+      await setValue(wrapper, 'contactName', 'Marcus');
+      await clickNext(wrapper);
+      await setValue(wrapper, 'city', 'Recife');
 
       await wrapper
         .find('[data-testid="modal-variable-mapping-back"]')
         .trigger('click');
 
       expect(wrapper.vm.currentIndex).toBe(0);
-      expect(wrapper.vm.valuesByTemplate[0].contactName).toBe('Marcus');
-      expect(wrapper.vm.valuesByTemplate[1].city).toBe('Recife');
+      expect(wrapper.vm.values.contactName).toBe('Marcus');
+      expect(wrapper.vm.values.city).toBe('Recife');
     });
 
     it('shows the confirmation checkbox and send count only on the last step', async () => {
-      await setValue(wrapper, 0, 'contactName', 'Marcus');
-      await wrapper
-        .find('[data-testid="modal-variable-mapping-next"]')
-        .trigger('click');
-      await setValue(wrapper, 1, 'city', 'Recife');
-      await wrapper
-        .find('[data-testid="modal-variable-mapping-next"]')
-        .trigger('click');
+      await setValue(wrapper, 'contactName', 'Marcus');
+      await clickNext(wrapper);
+      await setValue(wrapper, 'city', 'Recife');
+      await clickNext(wrapper);
 
       expect(
         wrapper
@@ -249,15 +262,11 @@ describe('ModalVariableMapping', () => {
     });
 
     it('emits confirm with merged params from every template', async () => {
-      await setValue(wrapper, 0, 'contactName', 'Marcus');
-      await wrapper
-        .find('[data-testid="modal-variable-mapping-next"]')
-        .trigger('click');
-      await setValue(wrapper, 1, 'city', 'Recife');
-      await wrapper
-        .find('[data-testid="modal-variable-mapping-next"]')
-        .trigger('click');
-      await setValue(wrapper, 2, 'orderNumber', '12345');
+      await setValue(wrapper, 'contactName', 'Marcus');
+      await clickNext(wrapper);
+      await setValue(wrapper, 'city', 'Recife');
+      await clickNext(wrapper);
+      await setValue(wrapper, 'orderNumber', '12345');
       wrapper.vm.isConfirmed = true;
       await wrapper.vm.$nextTick();
 
@@ -270,6 +279,61 @@ describe('ModalVariableMapping', () => {
         contactName: 'Marcus',
         city: 'Recife',
         orderNumber: '12345',
+      });
+    });
+  });
+
+  describe('shared variables across templates', () => {
+    let wrapper;
+
+    beforeEach(() => {
+      wrapper = buildWrapper({
+        templates: sharedTemplates,
+        totalTemplateQty: 2,
+      });
+    });
+
+    it('keeps a single entry per variable name', () => {
+      expect(wrapper.vm.values).toEqual({
+        nome: '',
+        endereco: '',
+        idade: '',
+      });
+    });
+
+    it('lets the shared variable be edited on its first appearance', () => {
+      const inputs = wrapper.findAllComponents({ name: 'VariableInput' });
+      expect(inputs[0].props('disabled')).toBe(false);
+      expect(inputs[1].props('disabled')).toBe(false);
+    });
+
+    it('locks the shared variable on later templates and keeps its value', async () => {
+      await setValue(wrapper, 'nome', 'Marcus');
+      await setValue(wrapper, 'endereco', 'Rua 1');
+      await clickNext(wrapper);
+
+      const inputs = wrapper.findAllComponents({ name: 'VariableInput' });
+      expect(inputs[0].props('disabled')).toBe(true);
+      expect(inputs[0].props('modelValue')).toBe('Marcus');
+      expect(inputs[1].props('disabled')).toBe(false);
+    });
+
+    it('emits confirm with a single value per variable name', async () => {
+      await setValue(wrapper, 'nome', 'Marcus');
+      await setValue(wrapper, 'endereco', 'Rua 1');
+      await clickNext(wrapper);
+      await setValue(wrapper, 'idade', '30');
+      wrapper.vm.isConfirmed = true;
+      await wrapper.vm.$nextTick();
+
+      await wrapper
+        .find('[data-testid="modal-variable-mapping-confirm"]')
+        .trigger('click');
+
+      expect(wrapper.emitted('confirm')[0][0]).toEqual({
+        nome: 'Marcus',
+        endereco: 'Rua 1',
+        idade: '30',
       });
     });
   });
@@ -304,11 +368,10 @@ describe('ModalVariableMapping', () => {
       const wrapper = buildWrapper({ localVariables: sampleLocalVariables });
       await setValue(
         wrapper,
-        0,
         'contactName',
         'Hello {{contact.name}}, from {{agent.name}}',
       );
-      await setValue(wrapper, 0, 'orderNumber', 'static');
+      await setValue(wrapper, 'orderNumber', 'static');
 
       expect(wrapper.vm.previewValues).toEqual({
         contactName: 'Hello Joao, from Ada Lovelace',
@@ -318,8 +381,8 @@ describe('ModalVariableMapping', () => {
 
     it('treats a token as a filled value', async () => {
       const wrapper = buildWrapper({ localVariables: sampleLocalVariables });
-      await setValue(wrapper, 0, 'contactName', '{{contact.name}}');
-      await setValue(wrapper, 0, 'orderNumber', '12345');
+      await setValue(wrapper, 'contactName', '{{contact.name}}');
+      await setValue(wrapper, 'orderNumber', '12345');
       wrapper.vm.isConfirmed = true;
       await wrapper.vm.$nextTick();
 
