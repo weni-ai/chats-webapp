@@ -173,10 +173,9 @@ export default {
 
         if (this.selectedFlow !== flowUuid) return;
 
+
         const templates = response?.templates || [];
-        const hasVariables = templates.some(
-          (template) => (template?.variables?.length ?? 0) > 0,
-        );
+        const hasVariables = hasTemplateVariables(templates);
 
         this.setCachedTemplate(
           hasVariables
@@ -186,6 +185,7 @@ export default {
                   response?.total_template_qty ?? templates.length,
               }
             : null,
+
         );
       } catch (error) {
         console.error('Error checking flow templates', error);
