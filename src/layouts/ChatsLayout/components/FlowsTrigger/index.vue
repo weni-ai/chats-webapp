@@ -252,6 +252,7 @@ import {
   getAvailableLocalVariables,
   resolveAllValues,
 } from '@/utils/localVariables';
+import { hasTemplateVariables } from '@/utils/flowTemplates';
 import SelectedContactsSection from '@/components/chats/FlowsTrigger/SelectedContactsSection.vue';
 import SendFlow from '@/components/chats/FlowsTrigger/SendFlow.vue';
 import FlowsContactCard from '@/components/chats/FlowsTrigger/FlowsContactCard.vue';
@@ -345,10 +346,7 @@ export default {
     },
 
     hasCachedTemplateVariables() {
-      const templates = this.cachedTemplate?.templates ?? [];
-      return templates.some(
-        (template) => (template?.variables?.length ?? 0) > 0,
-      );
+      return hasTemplateVariables(this.cachedTemplate?.templates ?? []);
     },
 
     contactsForResolution() {
@@ -507,12 +505,7 @@ export default {
     updateCachedTemplate(cachedTemplate) {
       this.cachedTemplate = cachedTemplate;
 
-      const templates = cachedTemplate?.templates ?? [];
-      const hasVariables = templates.some(
-        (template) => (template?.variables?.length ?? 0) > 0,
-      );
-
-      if (hasVariables) {
+      if (hasTemplateVariables(cachedTemplate?.templates ?? [])) {
         this.inlineTemplate = cachedTemplate;
         this.showInlineVariableModal = true;
         return;

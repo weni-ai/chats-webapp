@@ -67,6 +67,7 @@ import SelectFlow from './SelectFlow.vue';
 import SendFlowButton from './SendFlowButton.vue';
 import SelectProjects from './SelectProjects.vue';
 import { FLOW_TRIGGER_VARIABLE_MAPPING_FLAG } from './types';
+import { hasTemplateVariables } from '@/utils/flowTemplates';
 
 export default {
   name: 'SendFlow',
@@ -188,9 +189,7 @@ export default {
         if (this.selectedFlow !== flowUuid) return;
 
         const templates = response?.templates || [];
-        const hasVariables = templates.some(
-          (template) => (template?.variables?.length ?? 0) > 0,
-        );
+        const hasVariables = hasTemplateVariables(templates);
 
         this.setCachedTemplate(
           hasVariables

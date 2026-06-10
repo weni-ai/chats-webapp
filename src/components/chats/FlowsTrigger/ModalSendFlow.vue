@@ -63,6 +63,7 @@ import SendFlowButton from './SendFlowButton.vue';
 import ModalVariableMapping from './ModalVariableMapping.vue';
 import { FLOW_TRIGGER_VARIABLE_MAPPING_FLAG } from './types';
 import { getAvailableLocalVariables } from '@/utils/localVariables';
+import { hasTemplateVariables } from '@/utils/flowTemplates';
 
 export default {
   name: 'ModalSendFlow',
@@ -173,7 +174,6 @@ export default {
 
         if (this.selectedFlow !== flowUuid) return;
 
-
         const templates = response?.templates || [];
         const hasVariables = hasTemplateVariables(templates);
 
@@ -185,7 +185,6 @@ export default {
                   response?.total_template_qty ?? templates.length,
               }
             : null,
-
         );
       } catch (error) {
         console.error('Error checking flow templates', error);
