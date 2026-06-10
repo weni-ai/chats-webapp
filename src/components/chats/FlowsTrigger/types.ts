@@ -71,4 +71,4 @@ export type {
   LocalVariableRoom,
   ResolveContext,
   AvailabilityContext,
-} from './localVariables';
+} from '@/utils/localVariables';

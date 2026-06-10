@@ -21,7 +21,7 @@ import { useProfile } from '@/store/modules/profile';
 import FlowsTrigger from '@/services/api/resources/chats/flowsTrigger';
 
 import { FLOW_TRIGGER_VARIABLE_MAPPING_FLAG } from './types';
-import { resolveAllValues } from './localVariables';
+import { resolveAllValues } from '@/utils/localVariables';
 
 export default {
   name: 'SendFlowButton',
@@ -85,7 +85,10 @@ export default {
         return false;
       }
 
-      return (this.cachedTemplate?.variables?.length ?? 0) > 0;
+      const templates = this.cachedTemplate?.templates ?? [];
+      return templates.some(
+        (template) => (template?.variables?.length ?? 0) > 0,
+      );
     },
   },
 

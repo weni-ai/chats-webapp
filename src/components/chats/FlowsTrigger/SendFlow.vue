@@ -24,18 +24,6 @@
         @close="closeModalProgress"
       />
     </div>
-    <Teleport to="#app">
-      <ModalVariableMapping
-        v-if="showVariableModal && cachedTemplate"
-        :template="cachedTemplate.data"
-        :variables="cachedTemplate.variables"
-        :localVariables="localVariables"
-        :isLoading="isSendingFlow"
-        data-testid="send-flow-variable-mapping"
-        @close="onCancelVariableMapping"
-        @confirm="onConfirmVariableMapping"
-      />
-    </Teleport>
     <footer class="send-flow__handlers">
       <UnnnicButton
         class="send-flow__handlers__button"
@@ -68,8 +56,6 @@
 import { mapState } from 'pinia';
 
 import { useFeatureFlag } from '@/store/modules/featureFlag';
-import { useProfile } from '@/store/modules/profile';
-import { useRooms } from '@/store/modules/chats/rooms';
 
 import callUnnnicAlert from '@/utils/callUnnnicAlert';
 
@@ -80,9 +66,7 @@ import FlowsTriggerAPI from '@/services/api/resources/chats/flowsTrigger';
 import SelectFlow from './SelectFlow.vue';
 import SendFlowButton from './SendFlowButton.vue';
 import SelectProjects from './SelectProjects.vue';
-import ModalVariableMapping from './ModalVariableMapping.vue';
 import { FLOW_TRIGGER_VARIABLE_MAPPING_FLAG } from './types';
-import { getAvailableLocalVariables } from './localVariables';
 
 export default {
   name: 'SendFlow',
@@ -92,7 +76,6 @@ export default {
     SendFlowButton,
     ModalProgressBarFalse,
     SelectProjects,
-    ModalVariableMapping,
   },
 
   props: {
@@ -126,17 +109,11 @@ export default {
 
       isCheckingTemplate: false,
       cachedTemplate: null,
-      showVariableModal: false,
-      isSendingFlow: false,
     };
   },
 
   computed: {
     ...mapState(useFeatureFlag, ['featureFlags']),
-    ...mapState(useProfile, ['me']),
-    ...mapState(useRooms, {
-      activeRoom: (store) => store.activeRoom,
-    }),
 
     noHasContacts() {
       return !this.selectedContact && this.contacts.length === 0;
@@ -146,24 +123,6 @@ export default {
       return !!this.featureFlags?.active_features?.includes(
         FLOW_TRIGGER_VARIABLE_MAPPING_FLAG,
       );
-    },
-
-    contactsForResolution() {
-      if (
-        this.selectedContact &&
-        Object.keys(this.selectedContact).length > 0
-      ) {
-        return [this.selectedContact];
-      }
-      return this.contacts;
-    },
-
-    localVariables() {
-      return getAvailableLocalVariables({
-        contacts: this.contactsForResolution,
-        agent: this.me,
-        room: this.activeRoom,
-      });
     },
   },
 
@@ -211,21 +170,6 @@ export default {
     setCachedTemplate(template) {
       this.cachedTemplate = template;
       this.$emit('update:cachedTemplate', template);
-      this.showVariableModal = Boolean(template?.variables?.length);
-    },
-
-    onCancelVariableMapping() {
-      this.showVariableModal = false;
-    },
-
-    async onConfirmVariableMapping(params) {
-      this.isSendingFlow = true;
-      try {
-        await this.$refs.sendFlowButton.doSendFlow(params);
-        this.showVariableModal = false;
-      } finally {
-        this.isSendingFlow = false;
-      }
     },
 
     async checkFlowTemplate(flowUuid) {
@@ -243,9 +187,20 @@ export default {
 
         if (this.selectedFlow !== flowUuid) return;
 
-        const firstTemplate = response?.templates?.[0];
-        const variables = firstTemplate?.variables || [];
-        this.setCachedTemplate(variables.length > 0 ? firstTemplate : null);
+        const templates = response?.templates || [];
+        const hasVariables = templates.some(
+          (template) => (template?.variables?.length ?? 0) > 0,
+        );
+
+        this.setCachedTemplate(
+          hasVariables
+            ? {
+                templates,
+                total_template_qty:
+                  response?.total_template_qty ?? templates.length,
+              }
+            : null,
+        );
       } catch (error) {
         console.error('Error checking flow templates', error);
       } finally {
@@ -269,7 +224,7 @@ export default {
   &__handlers {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: $unnnic-spacing-xs;
+    gap: $unnnic-space-2;
 
     &__button {
       width: 100%;
