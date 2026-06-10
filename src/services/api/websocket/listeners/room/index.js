@@ -1,4 +1,5 @@
 import create from './create';
+import inactivity from './inactivity';
 import roomDelete from './delete';
 import update from './update';
 import message from './message';
@@ -10,4 +11,5 @@ export default {
   update,
   message,
   roomInternalNote,
+  inactivity,
 };
