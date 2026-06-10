@@ -30,6 +30,7 @@
               }"
             >
               <UnnnicIcon
+                data-testid="summary-icon"
                 icon="bi:stars"
                 clickable
                 scheme="fg-emphasized"

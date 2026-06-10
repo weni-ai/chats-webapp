@@ -27,7 +27,8 @@ const createWrapper = ({ store }) => {
           props: ['discussionContact', 'clickable'],
         },
         ContactHeader: {
-          template: '<div data-testid="chat-header" />',
+          template:
+            '<div data-testid="chat-header"><slot name="actions" /></div>',
           props: ['contactName', 'clickable'],
         },
       },
@@ -126,6 +127,7 @@ describe('HomeChatHeaders.vue', () => {
 
   it('calls setOpenActiveRoomSummary with the toggled value and active room uuid when the summary icon is clicked', async () => {
     store = createTestingPinia({
+      createSpy: vi.fn,
       initialState: {
         rooms: {
           activeRoom: {
@@ -141,18 +143,18 @@ describe('HomeChatHeaders.vue', () => {
     });
     wrapper = createWrapper({ store });
     roomStore = useRooms();
-    roomStore.setOpenActiveRoomSummary = vi.fn();
 
     await wrapper.vm.$nextTick();
 
+    const summaryIcon = wrapper.find('[data-testid="summary-icon"]');
+    expect(summaryIcon.exists()).toBe(true);
 
-    await wrapper.find('[data-testid="summary-icon"]').trigger('click');
+    await summaryIcon.trigger('click');
 
     expect(roomStore.setOpenActiveRoomSummary).toHaveBeenCalledWith(
       true,
       'room-42',
     );
-
   });
 
   it('emits openModalCloseChat event when close button is clicked', async () => {
