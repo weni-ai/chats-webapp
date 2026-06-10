@@ -210,8 +210,8 @@
       />
       <ModalVariableMapping
         v-if="showInlineVariableModal && inlineTemplate"
-        :template="inlineTemplate.data"
-        :variables="inlineTemplate.variables"
+        :templates="inlineTemplate.templates"
+        :totalTemplateQty="inlineTemplate.total_template_qty"
         :localVariables="localVariables"
         :isLoading="isLoadingSendFlow"
         @close="closeInlineVariableModal"
@@ -251,7 +251,7 @@ import { FLOW_TRIGGER_VARIABLE_MAPPING_FLAG } from '@/components/chats/FlowsTrig
 import {
   getAvailableLocalVariables,
   resolveAllValues,
-} from '@/components/chats/FlowsTrigger/localVariables';
+} from '@/utils/localVariables';
 import SelectedContactsSection from '@/components/chats/FlowsTrigger/SelectedContactsSection.vue';
 import SendFlow from '@/components/chats/FlowsTrigger/SendFlow.vue';
 import FlowsContactCard from '@/components/chats/FlowsTrigger/FlowsContactCard.vue';
@@ -345,7 +345,10 @@ export default {
     },
 
     hasCachedTemplateVariables() {
-      return (this.cachedTemplate?.variables?.length ?? 0) > 0;
+      const templates = this.cachedTemplate?.templates ?? [];
+      return templates.some(
+        (template) => (template?.variables?.length ?? 0) > 0,
+      );
     },
 
     contactsForResolution() {
@@ -504,7 +507,12 @@ export default {
     updateCachedTemplate(cachedTemplate) {
       this.cachedTemplate = cachedTemplate;
 
-      if (cachedTemplate?.variables?.length > 0) {
+      const templates = cachedTemplate?.templates ?? [];
+      const hasVariables = templates.some(
+        (template) => (template?.variables?.length ?? 0) > 0,
+      );
+
+      if (hasVariables) {
         this.inlineTemplate = cachedTemplate;
         this.showInlineVariableModal = true;
         return;
