@@ -28,5 +28,10 @@
     "select_services_queues": "Setează cozile pentru a primi chat-uri",
     "select_your_queues": "Selectează cozile tale",
     "success_update_queues": "Cozile tale de serviciu au fost actualizate"
+  },
+  "room_card": {
+    "new_chat_received": {
+      "tooltip": "Conversații noi primite"
+    }
   }
 }
