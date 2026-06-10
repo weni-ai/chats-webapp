@@ -69,7 +69,7 @@ import { computed, ref } from 'vue';
 
 import i18n from '@/plugins/i18n';
 
-import type { LocalVariable } from './localVariables';
+import type { LocalVariable } from '@/utils/localVariables';
 
 defineOptions({
   name: 'VariableInput',
