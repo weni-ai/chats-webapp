@@ -328,16 +328,16 @@
       },
       "csat": {
         "custom": {
-          "flow_disclaimer": "El flujo seleccionado debe usar una clasificación de satisfacción de 1 a 5 para garantizar los resultados correctos de la encuesta."
+          "flow_disclaimer": "El flujo seleccionado debe usar una calificación de satisfacción de 1 a 5 para garantizar resultados correctos en la encuesta."
         },
         "hint": "Si hay un flujo activo en el módulo de Flujos configurado para enviar una encuesta después de que el soporte termine, esta configuración puede causar conflictos y afectar el envío de la encuesta.",
-        "label": "Enviar automáticamente una encuesta de satisfacción después de que el soporte del Live desk termine",
+        "label": "Enviar automáticamente una encuesta de satisfacción después de finalizar el chat de soporte en Live Desk",
         "section_title": "Encuesta de satisfacción",
         "type": {
           "custom": "Flujos personalizados",
           "default": "Encuesta CSAT predeterminada (recomendado)",
           "label": "Tipo de encuesta",
-          "tooltip": "Elige entre la encuesta CSAT predeterminada o un flujo personalizado ya configurado en el módulo de Flujos."
+          "tooltip": "Elige entre la encuesta CSAT predeterminada o un flujo personalizado ya configurado en el módulo Flujos."
         }
       },
       "automated_message": {
@@ -370,6 +370,16 @@
   "export": {
     "metrics": "Exportar métricas en {filetype}",
     "all": "Exportar todo en {filetype}"
+  },
+  "export_conversation": {
+    "button": "Exportar conversación",
+    "title": "Exportar conversación",
+    "select_format": "Selecciona el formato para exportar la conversación",
+    "disclaimer": "Mientras se procesa esta exportación, nuevas exportaciones quedarán temporalmente bloqueadas para esta conversación",
+    "accept_terms": "Acepto los términos y entiendo las limitaciones de la exportación.",
+    "success_title": "Procesando exportación!",
+    "success_description": "Lo recibirás por email en breve. Recuerda revisar tu carpeta de spam.",
+    "error": "No se pudo procesar la exportación. Inténtalo de nuevo"
   },
   "name": "Nombre",
   "addition_date": "Fecha de adición",
@@ -636,6 +646,7 @@
   "no_tags_assigned": "No se han asignado etiquetas",
   "contact_await_for_you": "¡Un contacto está esperando por ti!",
   "agent": "Agente",
+  "representative": "Representante",
   "ai_text_improvement": {
     "tooltip_disabled": "Escribe una respuesta en el campo de texto para activar respuestas mejoradas con IA",
     "tooltip_enabled": "Mejorar respuesta con IA",
@@ -866,6 +877,7 @@
   },
   "select_agent": "Seleccionar agente",
   "select_queue": "Seleccionar cola",
+  "select_representative": "Seleccionar un representante",
   "select_sector": "Seleccionar sector",
   "send_media": "Enviar multimedia",
   "send_photo_or_video": "Enviar foto o vídeo",
@@ -1398,22 +1410,22 @@
   },
   "delete_modal": {
     "title": "Eliminar {name}",
-    "description_sector": "El sistema ha detectado {count} conversaciones en el sector {name} que están en atención o esperando para ser atendidas. Elija qué desea hacer con ellas",
-    "description_queue": "El sistema ha detectado {count} conversaciones en la fila {name} que están en atención o esperando para ser atendidas. Elija qué desea hacer con ellas",
-    "transfer_chats": "Transferir conversaciones a otro sector/fila",
+    "description_sector": "El sistema ha detectado {count} conversaciones en el departamento {name} que están en curso o a la espera de ser atendidas. Elige cómo deseas gestionarlas.",
+    "description_queue": "El sistema ha detectado {count} conversaciones en la cola {name} que están en curso o a la espera de ser atendidas. Selecciona cómo deseas gestionarlas.",
+    "transfer_chats": "Transferir conversaciones a otro departamento/cola",
     "end_all_chats": "Finalizar todas las conversaciones",
-    "select_sector": "Seleccione un sector",
-    "select_queue": "Seleccione una fila",
-    "type_name_sector": "Escriba el nombre del sector para eliminar",
-    "type_name_queue": "Escriba el nombre de la fila para eliminar",
-    "cannot_be_reversed": "Esta acción no se puede revertir.",
+    "select_sector": "Selecciona un departamento",
+    "select_queue": "Selecciona una cola",
+    "type_name_sector": "Ingresa el nombre del departamento que deseas eliminar",
+    "type_name_queue": "Ingresa el nombre de la cola que deseas eliminar",
+    "cannot_be_reversed": "Esta acción no se puede deshacer",
     "delete_button": "Eliminar",
-    "sector_success": "¡Sector eliminado con éxito!",
-    "sector_error": "No se pudo eliminar el sector.",
-    "queue_success": "¡Fila eliminada con éxito!",
-    "queue_error": "No se pudo eliminar la fila.",
-    "transfer_error_sector": "No se pudieron transferir las conversaciones. Eliminación del sector cancelada",
-    "transfer_error_queue": "No se pudieron transferir las conversaciones. Eliminación de la fila cancelada"
+    "sector_success": "Departamento eliminado con éxito",
+    "sector_error": "No se pudo eliminar el departamento",
+    "queue_success": "Cola eliminada con éxito",
+    "queue_error": "No se pudo eliminar la cola",
+    "transfer_error_sector": "No se pudieron transferir las conversaciones. Eliminación del departamento cancelada.",
+    "transfer_error_queue": "No se pudieron transferir las conversaciones. Eliminación de la cola cancelada."
   },
   "room_card": {
     "last_message": {

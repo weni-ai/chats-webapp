@@ -28,5 +28,64 @@
     "select_services_queues": "Setează cozile pentru a primi chat-uri",
     "select_your_queues": "Selectează cozile tale",
     "success_update_queues": "Cozile tale de serviciu au fost actualizate"
+  },
+  "room_card": {
+    "new_chat_received": {
+      "tooltip": "Conversații noi primite"
+    }
+  },
+  "delete_modal": {
+    "title": "Șterge {name}",
+    "description_sector": "Sistemul a detectat {count} conversații în departamentul {name} care sunt în curs de desfășurare sau așteaptă să fie gestionate. Alege ce dorești să faci cu ele.",
+    "description_queue": "Sistemul a detectat {count} conversații în coada {name} care sunt în curs de desfășurare sau în așteptare pentru a fi preluate. Alege ce dorești să faci cu ele.",
+    "transfer_chats": "Transferă conversațiile către un alt departament/coadă",
+    "end_all_chats": "Încheie toate conversațiile",
+    "select_sector": "Selectează un departament",
+    "select_queue": "Selectează o coadă",
+    "type_name_sector": "Introdu numele departamentului care urmează să fie șters",
+    "type_name_queue": "Introdu numele cozii care urmează să fie ștersă",
+    "cannot_be_reversed": "Această acțiune nu poate fi refăcută",
+    "delete_button": "Șterge",
+    "sector_success": "Departamentul a fost șters cu succes",
+    "sector_error": "Nu s-a putut șterge departamentul",
+    "queue_success": "Coada a fost ștearsă cu succes",
+    "queue_error": "Nu s-a putut șterge coada",
+    "transfer_error_sector": "Nu s-au putut transfera chaturile. Ștergerea departamentului a fost anulată.",
+    "transfer_error_queue": "Nu s-au putut transfera conversațiile. Ștergerea cozii a fost anulată.",
+  },
+  "export_conversation": {
+    "accept_terms": "Accept termenii și înțeleg limitările exportului.",
+    "button": "Exportă conversația",
+    "disclaimer": "În timp ce acest export este procesat, noile exporturi vor fi temporar blocate pentru această conversație",
+    "error": "Exportul nu a putut fi procesat. Încearcă din nou",
+    "select_format": "Selectează formatul pentru exportarea conversației",
+    "success_description": "Îl vei primi prin email în curând. Verifică și folderul de spam.",
+    "success_title": "Se procesează exportul!",
+    "title": "Exportă conversația"
+  },
+  "discussion_about": "Discuție despre {discussionGoal}",
+  "you_message_prefix": "Tu:",
+  "automatic_message": {
+    "automatic_opening_message": "Mesaj de deschidere automat"
+  },
+  "reply": "Răspuns",
+  "unread_messages": "{count} mesaj necitit | {count} mesaje necitite",
+  "yesterday": "Ieri",
+  "sector": {
+    "additional_options": {
+      "csat": {
+        "custom": {
+          "flow_disclaimer": "Fluxul selectat trebuie să utilizeze o evaluare a satisfacției de la 1 la 5 pentru a asigura rezultate corecte ale sondajului."
+        },
+        "label": "Trimite automat un sondaj de satisfacție după încheierea asistenței Live Desk",
+        "section_title": "Sondaj de satisfacție",
+        "type": {
+          "custom": "Fluxuri personalizate",
+          "default": "Sondaj CSAT implicit (recomandat)",
+          "label": "Tip de sondaj",
+          "tooltip": "Alege între sondajul CSAT implicit și un flux personalizat deja configurat în modulul Fluxuri."
+        }
+      }
+    }
   }
 }

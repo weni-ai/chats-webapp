@@ -331,13 +331,13 @@
           "flow_disclaimer": "The selected flow must use a 1 to 5 satisfaction rating to ensure correct survey results."
         },
         "hint": "If there is an active flow in the Flows module set to trigger a survey after support ends, this setting may cause conflicts and affect survey delivery.",
-        "label": "Automatically send a satisfaction survey after Live desk support ends",
+        "label": "Automatically send a satisfaction survey after Live Desk support ends",
         "section_title": "Satisfaction survey",
         "type": {
           "custom": "Custom flows",
-          "default": "Default CSAT survey (Recommended)",
+          "default": "Default CSAT survey (recommended)",
           "label": "Survey type",
-          "tooltip": "Choose between the default CSAT survey or a custom flow you've already configured in the Flows module."
+          "tooltip": "Choose between the default CSAT survey and a custom flow already configured in the Flows module."
         }
       },
       "automated_message": {
@@ -369,6 +369,16 @@
   "export": {
     "metrics": "Export metrics as {filetype}",
     "all": "Export everything as {filetype}"
+  },
+  "export_conversation": {
+    "button": "Export conversation",
+    "title": "Export conversation",
+    "select_format": "Select the format to export the conversation",
+    "disclaimer": "While this export is being processed, new exports will be temporarily blocked for this conversation",
+    "accept_terms": "I accept the terms and understand the export limitations.",
+    "success_title": "Processing export!",
+    "success_description": "You will receive it by email shortly. Remember to check your spam folder.",
+    "error": "The export could not be processed. Try again"
   },
   "name": "Name",
   "addition_date": "Date of addition",
@@ -632,6 +642,7 @@
   "no_tags_assigned": "No tags assigned",
   "contact_await_for_you": "A contact is waiting for you!",
   "agent": "Agent",
+  "representative": "Representative",
   "ai_text_improvement": {
     "tooltip_disabled": "Write a response in the text field to enable improved responses with AI",
     "tooltip_enabled": "Improve response with AI",
@@ -862,6 +873,7 @@
   },
   "select_agent": "Select agent",
   "select_queue": "Select queue",
+  "select_representative": "Select a representative",
   "select_sector": "Select sector",
   "send_media": "Send media",
   "send_photo_or_video": "Send photo or video",
@@ -1394,22 +1406,22 @@
   },
   "delete_modal": {
     "title": "Delete {name}",
-    "description_sector": "The system has detected {count} chats in the {name} sector that are in progress or waiting to be handled. Please choose what you'd like to do with them",
-    "description_queue": "The system has detected {count} chats in the {name} queue that are in progress or waiting to be handled. Please choose what you'd like to do with them",
-    "transfer_chats": "Transfer chats to another sector/queue",
-    "end_all_chats": "End all chats",
-    "select_sector": "Select a sector",
+    "description_sector": "The system has detected {count} conversations in the {name} department that are in progress or awaiting handling. Choose what you'd like to do with them.",
+    "description_queue": "The system has detected {count} conversations in the {name} queue that are in progress or awaiting handling. Choose what you'd like to do with them.",
+    "transfer_chats": "Transfer conversations to another department/queue",
+    "end_all_chats": "End all conversations",
+    "select_sector": "Select a department",
     "select_queue": "Select a queue",
-    "type_name_sector": "Type the name of the sector to delete",
-    "type_name_queue": "Type the name of the queue to delete",
-    "cannot_be_reversed": "This action cannot be reversed.",
+    "type_name_sector": "Type the name of the department to be deleted",
+    "type_name_queue": "Type the name of the queue to de deleted",
+    "cannot_be_reversed": "This action can't be undone",
     "delete_button": "Delete",
-    "sector_success": "Sector deleted successfully!",
-    "sector_error": "Unable to delete the sector.",
-    "queue_success": "Queue deleted successfully!",
-    "queue_error": "Unable to delete the queue.",
-    "transfer_error_sector": "Rooms couldn't be transferred. Sector deletion aborted",
-    "transfer_error_queue": "Rooms couldn't be transferred. Queue deletion aborted"
+    "sector_success": "Department deleted successfully",
+    "sector_error": "Couldn't delete department",
+    "queue_success": "Queue deleted successfully",
+    "queue_error": "Couldn't delete queue",
+    "transfer_error_sector": "Couldn't transfer conversations. Department deletion canceled.",
+    "transfer_error_queue": "Couldn't transfer conversations. Queue deletion canceled."
   },
   "room_card": {
     "last_message": {

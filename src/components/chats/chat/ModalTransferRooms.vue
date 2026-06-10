@@ -52,93 +52,98 @@
   </UnnnicDialog>
 </template>
 
-<script>
-import { mapState } from 'pinia';
+<script setup lang="ts">
+import { computed, ref } from 'vue';
+import { storeToRefs } from 'pinia';
 
 import { useRooms } from '@/store/modules/chats/rooms';
 
 import RoomsTransferFields from '@/components/chats/RoomsTransferFields.vue';
 import i18n from '@/plugins/i18n';
 
-export default {
-  name: 'ModalTransferRooms',
+interface QueueOption {
+  label: string;
+  value: string;
+  sector_uuid: string;
+  queue_name: string;
+}
 
-  components: {
-    RoomsTransferFields,
-  },
-  props: {
-    modelValue: {
-      type: Boolean,
-      required: true,
-    },
-    bulkTransfer: {
-      type: Boolean,
-      default: false,
-    },
-  },
+interface Props {
+  modelValue: boolean;
+  bulkTransfer?: boolean;
+}
 
-  emits: ['close', 'update:modelValue'],
+const props = withDefaults(defineProps<Props>(), {
+  bulkTransfer: false,
+});
 
-  data() {
-    return {
-      selectedQueue: [],
-      isLoadingBulkTransfer: false,
-    };
-  },
+const emit = defineEmits<{
+  close: [];
+  'update:modelValue': [value: boolean];
+}>();
 
-  computed: {
-    ...mapState(useRooms, [
-      'selectedOngoingRooms',
-      'selectedWaitingRooms',
-      'activeTab',
-    ]),
+defineOptions({ name: 'ModalTransferRooms' });
 
-    open: {
-      get() {
-        return this.modelValue;
-      },
-      set(value) {
-        this.$emit('update:modelValue', value);
-      },
-    },
-    disabledTransferButton() {
-      return (
-        this.selectedQueue.length === 0 || this.selectedQueue[0]?.value === ''
-      );
-    },
-    currentSelectedRooms() {
-      return this.activeTab === 'ongoing'
-        ? this.selectedOngoingRooms
-        : this.selectedWaitingRooms;
-    },
-    disclaimerDescription() {
-      return i18n.global.tc(
-        'bulk_transfer.selected_chats_count',
-        this.currentSelectedRooms.length,
-        { count: this.currentSelectedRooms.length },
-      );
-    },
-  },
+const roomsStore = useRooms();
+const { selectedOngoingRooms, selectedWaitingRooms, activeTab } =
+  storeToRefs(roomsStore);
 
-  methods: {
-    transfer() {
-      this.isLoadingBulkTransfer = true;
+const selectedQueue = ref<QueueOption[]>([]);
+const isLoadingBulkTransfer = ref(false);
+const roomsTransferFields = ref<InstanceType<
+  typeof RoomsTransferFields
+> | null>(null);
 
-      this.$refs.roomsTransferFields.transfer();
-    },
+const open = computed<boolean>({
+  get: () => props.modelValue,
+  set: (value) => emit('update:modelValue', value),
+});
 
-    transferComplete(status) {
-      this.isLoadingBulkTransfer = false;
-      if (status !== 'error') {
-        this.emitClose();
-      }
-    },
+const disabledTransferButton = computed(
+  () =>
+    selectedQueue.value.length === 0 || selectedQueue.value[0]?.value === '',
+);
 
-    emitClose() {
-      this.$emit('close');
-    },
-  },
-};
+const currentSelectedRooms = computed(() =>
+  activeTab.value === 'ongoing'
+    ? selectedOngoingRooms.value
+    : selectedWaitingRooms.value,
+);
+
+const disclaimerDescription = computed(() =>
+  i18n.global.tc(
+    'bulk_transfer.selected_chats_count',
+    currentSelectedRooms.value.length,
+    { count: currentSelectedRooms.value.length },
+  ),
+);
+
+function transfer() {
+  isLoadingBulkTransfer.value = true;
+  roomsTransferFields.value?.transfer();
+}
+
+function transferComplete(status: 'success' | 'error') {
+  isLoadingBulkTransfer.value = false;
+  if (status !== 'error') {
+    emitClose();
+  }
+}
+
+function emitClose() {
+  emit('close');
+}
+
+defineExpose({
+  selectedQueue,
+  isLoadingBulkTransfer,
+  disabledTransferButton,
+  currentSelectedRooms,
+  disclaimerDescription,
+  transfer,
+  transferComplete,
+  emitClose,
+});
 </script>
 
 <style lang="scss">
@@ -146,7 +151,7 @@ export default {
   &__content {
     display: flex;
     flex-direction: column;
-    gap: $unnnic-spacing-md;
+    gap: $unnnic-space-6;
     padding: $unnnic-space-6;
   }
 
