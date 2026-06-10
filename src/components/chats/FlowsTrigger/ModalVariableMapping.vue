@@ -39,7 +39,7 @@
               <VariableInput
                 v-for="(variableName, index) in currentVariables"
                 :key="`${currentIndex}-${variableName}`"
-                v-model="currentValues[variableName]"
+                v-model="values[variableName]"
                 :label="
                   $t('flows_trigger.variable_mapping.variable_label', {
                     name: variableName,
@@ -49,6 +49,7 @@
                   $t('flows_trigger.variable_mapping.input_placeholder')
                 "
                 :localVariables="localVariables"
+                :disabled="isVariableLocked(variableName)"
                 :dataTestid="`modal-variable-mapping-input-${index}`"
               />
             </section>
@@ -154,20 +155,23 @@ const emit = defineEmits<{
   confirm: [params: Record<string, string>];
 }>();
 
-const buildInitialValues = (templates: FlowTemplate[]) =>
-  templates.map((template) =>
-    (template.variables ?? []).reduce<Record<string, string>>((acc, name) => {
-      acc[name] = '';
-      return acc;
-    }, {}),
-  );
+// Variables are global by name: the same name reused across templates shares a
+// single value. Initialize one entry per unique variable name across all
+// templates.
+const buildInitialValues = (templates: FlowTemplate[]) => {
+  const values: Record<string, string> = {};
+  templates.forEach((template) => {
+    (template.variables ?? []).forEach((name) => {
+      if (!(name in values)) values[name] = '';
+    });
+  });
+  return values;
+};
 
 const isOpen = ref(true);
 const isConfirmed = ref(false);
 const currentIndex = ref(0);
-const valuesByTemplate = ref<Record<string, string>[]>(
-  buildInitialValues(props.templates),
-);
+const values = ref<Record<string, string>>(buildInitialValues(props.templates));
 
 const totalQty = computed(
   () => props.totalTemplateQty ?? props.templates.length,
@@ -185,9 +189,20 @@ const currentVariables = computed<string[]>(
   () => currentTemplate.value?.variables ?? [],
 );
 
-const currentValues = computed<Record<string, string>>(
-  () => valuesByTemplate.value[currentIndex.value] ?? {},
-);
+// First template index where each variable name appears. A variable is editable
+// only on its first appearance and locked (read-only, prefilled) afterwards.
+const firstStepIndexByVariable = computed<Record<string, number>>(() => {
+  const indexes: Record<string, number> = {};
+  props.templates.forEach((template, index) => {
+    (template.variables ?? []).forEach((name) => {
+      if (!(name in indexes)) indexes[name] = index;
+    });
+  });
+  return indexes;
+});
+
+const isVariableLocked = (name: string): boolean =>
+  firstStepIndexByVariable.value[name] !== currentIndex.value;
 
 const isFirstStep = computed(() => currentIndex.value === 0);
 
@@ -228,7 +243,7 @@ const sendLabel = computed(() =>
 
 const areCurrentVariablesFilled = computed(() =>
   currentVariables.value.every(
-    (name) => (currentValues.value[name] ?? '').trim().length > 0,
+    (name) => (values.value[name] ?? '').trim().length > 0,
   ),
 );
 
@@ -240,31 +255,28 @@ const canConfirm = computed(
 
 const previewValues = computed<Record<string, string>>(() => {
   const result: Record<string, string> = {};
-  Object.entries(currentValues.value).forEach(([key, value]) => {
-    let resolved = value ?? '';
+  currentVariables.value.forEach((name) => {
+    let resolved = values.value[name] ?? '';
     props.localVariables.forEach((lv) => {
       if (resolved.includes(lv.token)) {
         resolved = resolved.split(lv.token).join(lv.previewValue);
       }
     });
-    result[key] = resolved;
+    result[name] = resolved;
   });
   return result;
 });
 
-// Merge every template's values into a single params object. The exact payload
-// contract for multiple templates is still pending backend confirmation, so the
-// merge stays isolated here and is the only place to change if it becomes an
-// array/keyed structure.
-const buildConfirmParams = (): Record<string, string> =>
-  Object.assign({}, ...valuesByTemplate.value);
+// Variables are shared across templates, so a single map keyed by name is the
+// final payload (one value per variable name).
+const buildConfirmParams = (): Record<string, string> => ({ ...values.value });
 
 watch(
   () => props.templates,
   (templates) => {
     currentIndex.value = 0;
     isConfirmed.value = false;
-    valuesByTemplate.value = buildInitialValues(templates);
+    values.value = buildInitialValues(templates);
   },
 );
 
