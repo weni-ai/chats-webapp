@@ -37,7 +37,7 @@ import { mapWritableState } from 'pinia';
 import { useRoomMessages } from '@/store/modules/chats/roomMessages';
 import RoomNotes from '@/services/api/resources/chats/roomNotes';
 
-import { removeFromGroupedMessages } from '@/utils/messages';
+import { removeInternalNoteMessage } from '@/utils/messages';
 import { unnnicCallAlert } from '@weni/unnnic-system';
 
 import i18n from '@/plugins/i18n';
@@ -90,7 +90,7 @@ export default {
         );
 
         if (internalNoteMessage) {
-          removeFromGroupedMessages(this.roomMessagesSorted, {
+          removeInternalNoteMessage(this.roomMessagesSorted, {
             message: internalNoteMessage,
           });
 

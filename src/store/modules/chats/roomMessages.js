@@ -5,6 +5,8 @@ import { useRooms } from './rooms';
 import Message from '@/services/api/resources/chats/message';
 import RoomNotes from '@/services/api/resources/chats/roomNotes';
 
+import { useMessageManager } from './messageManager';
+
 import {
   isMessageFromCurrentUser,
   groupMessages,
@@ -15,6 +17,7 @@ import {
   resendMedia,
   resendMessage,
   removeFromGroupedMessages,
+  updateInternalNoteMessage,
   updateMessageStatusInGroupedMessages,
 } from '@/utils/messages';
 
@@ -222,20 +225,25 @@ export const useRoomMessages = defineStore('roomMessages', {
       }
     },
 
-    async sendRoomMessage(text, repliedMessage, aiTextImprovement = null) {
+    async sendRoomMessage(
+      text,
+      repliedMessage,
+      aiTextImprovement = null,
+      roomUuid = '',
+    ) {
       const roomsStore = useRooms();
       const { activeRoom } = roomsStore;
 
-      if (!activeRoom) return;
+      if (!activeRoom || !roomUuid) return;
 
       await sendMessage({
         itemType: 'room',
-        itemUuid: activeRoom.uuid,
+        itemUuid: roomUuid,
         itemUser: activeRoom.user,
         message: text,
         repliedMessage: repliedMessage,
         sendItemMessage: () =>
-          Message.sendRoomMessage(activeRoom.uuid, {
+          Message.sendRoomMessage(roomUuid, {
             text,
             user_email: activeRoom.user.email,
             seen: true,
@@ -253,19 +261,20 @@ export const useRoomMessages = defineStore('roomMessages', {
       files: medias,
       updateLoadingFiles,
       repliedMessage,
+      roomUuid,
     }) {
       const roomsStore = useRooms();
       const { activeRoom } = roomsStore;
-      if (!activeRoom) return;
+      if (!activeRoom || !roomUuid) return;
 
       await sendMedias({
         itemType: 'room',
-        itemUuid: activeRoom.uuid,
+        itemUuid: roomUuid,
         itemUser: activeRoom.user,
         medias,
         repliedMessage: repliedMessage,
         sendItemMedia: (media) =>
-          Message.sendRoomMedia(activeRoom.uuid, {
+          Message.sendRoomMedia(roomUuid, {
             user_email: activeRoom.user.email,
             media,
             updateLoadingFiles,
@@ -292,40 +301,135 @@ export const useRoomMessages = defineStore('roomMessages', {
       });
     },
 
-    async sendRoomInternalNote({ text }) {
+    async sendRoomInternalNote({ text, roomUuid, medias = [] }) {
       const roomsStore = useRooms();
 
-      if (!roomsStore.activeRoom) return;
+      if (!roomsStore.activeRoom || !roomUuid) return;
 
       const createdNote = await RoomNotes.createInternalNote({
         text,
-        room: roomsStore.activeRoom.uuid,
+        room: roomUuid,
       });
 
-      // add internal note in the room messages
-      sendMessage({
+      const temporaryMedias = medias.map((media, index) => ({
+        tempId: `${createdNote.uuid}-${index}`,
+        file: media,
+        content_type: media.type,
+        isLoading: true,
+      }));
+
+      const internalNoteWithMedias = {
+        ...createdNote,
+        media: [...temporaryMedias],
+      };
+
+      useMessageManager().clearInputs();
+
+      const internalNoteMessageUuid = `internal-note-${createdNote.uuid}`;
+
+      await sendMessage({
         itemType: 'room',
-        itemUuid: roomsStore.activeRoom.uuid,
+        itemUuid: roomUuid,
         itemUser: roomsStore.activeRoom.user,
         message: text,
-        internalNote: createdNote,
-        sendItemMessage: () => createdNote,
+        internalNote: internalNoteWithMedias,
+        sendItemMessage: () => ({
+          internal_note: internalNoteWithMedias,
+          uuid: internalNoteMessageUuid,
+          text: '',
+          media: [],
+        }),
         addMessage: (message) => this.handlingAddMessage({ message }),
         addSortedMessage: (message) => this.addRoomMessageSorted({ message }),
-        updateMessage: () => {},
+        updateMessage: ({ message, toUpdateMessageUuid }) => {
+          this.updateMessage({
+            message,
+            toUpdateMessageUuid,
+          });
+        },
+      });
+
+      for (const temporaryMedia of temporaryMedias) {
+        try {
+          const uploadedMedia = await RoomNotes.sendInternalNoteMedia({
+            note: createdNote.uuid,
+            media: temporaryMedia.file,
+          });
+
+          this.updateInternalNoteMedia({
+            noteUuid: createdNote.uuid,
+            messageUuid: internalNoteMessageUuid,
+            temporaryMedia: temporaryMedia,
+            uploadedMedia,
+          });
+        } catch (error) {
+          console.error(
+            'An error occurred while sending internal note media:',
+            error,
+          );
+        }
+      }
+    },
+
+    updateInternalNoteMedia({
+      noteUuid,
+      messageUuid,
+      temporaryMedia,
+      uploadedMedia,
+    }) {
+      const replaceTemporaryMedia = (mediaList = []) =>
+        mediaList.map((media) =>
+          media.tempId === temporaryMedia.tempId
+            ? { ...uploadedMedia, tempId: temporaryMedia.tempId }
+            : media,
+        );
+
+      const noteInList = this.roomInternalNotes.find(
+        (note) => note.uuid === noteUuid,
+      );
+
+      if (noteInList?.media) {
+        noteInList.media = replaceTemporaryMedia(noteInList.media);
+      }
+
+      const messageIndex = this.roomMessages.findIndex(
+        (message) => message.uuid === messageUuid,
+      );
+
+      if (messageIndex === -1) {
+        return;
+      }
+
+      const currentMessage = this.roomMessages[messageIndex];
+      const updatedInternalNoteMedia = replaceTemporaryMedia(
+        currentMessage.internal_note?.media,
+      );
+      const updatedMessage = parseMessageToMessageWithSenderProp({
+        ...currentMessage,
+        media: [],
+        internal_note: {
+          ...currentMessage.internal_note,
+          media: updatedInternalNoteMedia,
+        },
+      });
+
+      this.roomMessages[messageIndex] = updatedMessage;
+
+      updateInternalNoteMessage(this.roomMessagesSorted, {
+        message: updatedMessage,
       });
     },
 
-    async resendRoomMessage({ message }) {
+    async resendRoomMessage({ message, roomUuid }) {
       const roomsStore = useRooms();
       const { activeRoom } = roomsStore;
-      if (!activeRoom) return;
+      if (!activeRoom || !roomUuid) return;
 
       await resendMessage({
-        itemUuid: activeRoom.uuid,
+        itemUuid: roomUuid,
         message,
         sendItemMessage: () =>
-          Message.sendRoomMessage(activeRoom.uuid, {
+          Message.sendRoomMessage(roomUuid, {
             text: message.text,
             user_email: activeRoom.user.email,
             seen: true,
@@ -338,17 +442,17 @@ export const useRoomMessages = defineStore('roomMessages', {
       });
     },
 
-    async resendRoomMedia({ message, media }) {
+    async resendRoomMedia({ message, media, roomUuid }) {
       const roomsStore = useRooms();
       const { activeRoom } = roomsStore;
-      if (!activeRoom) return;
+      if (!activeRoom || !roomUuid) return;
 
       await resendMedia({
-        itemUuid: activeRoom.uuid,
+        itemUuid: roomUuid,
         message,
         media,
         sendItemMedia: (media) =>
-          Message.sendRoomMedia(activeRoom.uuid, {
+          Message.sendRoomMedia(roomUuid, {
             user_email: activeRoom.user.email,
             media: media.file,
           }),
@@ -386,7 +490,9 @@ export const useRoomMessages = defineStore('roomMessages', {
             (mappedMessage) => mappedMessage.uuid === messageUuid,
           );
 
-          await this.resendRoomMessage({ message: roomMessages[messageIndex] });
+          const message = roomMessages[messageIndex];
+
+          await this.resendRoomMessage({ message, roomUuid: message?.room });
         }
       }
     },

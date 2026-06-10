@@ -420,16 +420,17 @@ export default {
       this.$refs.audioRecorder?.stop();
     },
     async send() {
+      const roomUuid = this.activeRoom?.uuid;
       if (this.isInternalNote) {
-        await this.sendInternalNote();
+        await this.sendInternalNote(roomUuid);
       } else {
         let repliedMessage = null;
         if (this.replyMessage) {
           repliedMessage = { ...this.replyMessage };
           this.replyMessage = null;
         }
-        await this.sendTextBoxMessage(repliedMessage);
-        await this.sendAudio(repliedMessage);
+        await this.sendTextBoxMessage(repliedMessage, roomUuid);
+        await this.sendAudio(repliedMessage, roomUuid);
       }
       this.$refs.textBox?.clearTextarea();
     },
@@ -440,18 +441,18 @@ export default {
       await this.sendRoomInternalNote({ text });
       this.handleInternalNoteInput();
     },
-    async sendTextBoxMessage(repliedMessage) {
+    async sendTextBoxMessage(repliedMessage, roomUuid) {
       const message = this.inputMessage.trim();
       if (message) {
         this.clearTextBox();
         if (this.discussionId) {
           await this.sendDiscussionMessage(message);
         } else {
-          await this.sendRoomMessage(message, repliedMessage);
+          await this.sendRoomMessage(message, repliedMessage, null, roomUuid);
         }
       }
     },
-    async sendAudio(repliedMessage) {
+    async sendAudio(repliedMessage, roomUuid) {
       if (this.audioRecorderStatus === 'recording') {
         await this.stopRecord();
       }
@@ -481,7 +482,7 @@ export default {
       if (this.discussionId) {
         await this.sendDiscussionMedias(sendPayload);
       } else {
-        await this.sendRoomMedias(sendPayload);
+        await this.sendRoomMedias({ ...sendPayload, roomUuid });
       }
 
       this.totalValue = undefined;

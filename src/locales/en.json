@@ -201,6 +201,7 @@
   },
   "attachment": "Attach",
   "internal_note": "Internal note",
+  "internal_note_with_attachment_tooltip": "Internal note with attachment",
   "close_internal_note": "Close internal note (Esc)",
   "notes": "Notes",
   "bold": "Bold",
@@ -341,6 +342,16 @@
     "metrics": "Export metrics as {filetype}",
     "all": "Export everything as {filetype}"
   },
+  "export_conversation": {
+    "button": "Export conversation",
+    "title": "Export conversation",
+    "select_format": "Select the format to export the conversation",
+    "disclaimer": "While this export is being processed, new exports will be temporarily blocked for this conversation",
+    "accept_terms": "I accept the terms and understand the export limitations.",
+    "success_title": "Processing export!",
+    "success_description": "You will receive it by email shortly. Remember to check your spam folder.",
+    "error": "The export could not be processed. Try again"
+  },
   "name": "Name",
   "addition_date": "Date of addition",
   "in_queues": "in queues",
@@ -458,6 +469,7 @@
       "default": "An error occurred, please try again later"
     },
     "message_input_placeholder": "Type your message or / to activate quick messages",
+    "message_input_disabled_description": "Change your status to online to continue this conversation.",
     "search_contact": "Search contact",
     "search_contact_placeholder": "Search contact (name, phone or ticket ID)",
     "tags": "Chat tags",
@@ -600,6 +612,7 @@
   "no_tags_assigned": "No tags assigned",
   "contact_await_for_you": "A contact is waiting for you!",
   "agent": "Agent",
+  "representative": "Representative",
   "ai_text_improvement": {
     "tooltip_disabled": "Write a response in the text field to enable improved responses with AI",
     "tooltip_enabled": "Improve response with AI",
@@ -830,6 +843,7 @@
   },
   "select_agent": "Select agent",
   "select_queue": "Select queue",
+  "select_representative": "Select a representative",
   "select_sector": "Select sector",
   "send_media": "Send media",
   "send_photo_or_video": "Send photo or video",
@@ -1011,6 +1025,10 @@
           "description": "Turning off this option will permanently delete the scenarios and criteria prompt. You'll need to set it up again if you turn it back on.",
           "confirmation": "Do you want to continue anyway?"
         }
+      },
+      "restrict_offline_agents": {
+        "switch_label": "Allow interactions only for online representatives",
+        "hint": "If this option is enabled, offline or paused representatives will not be able to respond to ongoing chats."
       },
       "bulk_transfer": {
         "tooltip": "This function allows representatives to transfer various contacts at once to a queue or representative",

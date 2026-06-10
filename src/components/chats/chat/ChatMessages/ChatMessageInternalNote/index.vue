@@ -5,15 +5,35 @@
         class="chat-messages__internal-note"
         @click="$emit('clickNote')"
       >
+        <section class="chat-messages__internal-note-title-container">
+          <p
+            v-if="showAgentName"
+            class="chat-messages__internal-note-agent-name"
+          >
+            {{ agentName }}
+          </p>
+          <UnnnicToolTip
+            v-if="!isRoomMessage && medias.length > 0"
+            enabled
+            :text="$t('internal_note_with_attachment_tooltip')"
+          >
+            <UnnnicIcon
+              icon="attach_file"
+              size="ant"
+              scheme="fg-base"
+            />
+          </UnnnicToolTip>
+        </section>
         <p
-          v-if="showAgentName"
-          class="chat-messages__internal-note-agent-name"
-        >
-          {{ agentName }}
-        </p>
-        <p class="chat-messages__internal-note-text">
-          {{ text }}
-        </p>
+          v-if="formattedText"
+          class="chat-messages__internal-note-text"
+          :class="{ 'is-room-message': isRoomMessage }"
+          v-html="formattedText"
+        />
+        <Medias
+          v-if="medias.length > 0 && isRoomMessage"
+          :medias="medias"
+        />
       </section>
       <UnnnicIcon
         v-if="canDelete"
@@ -39,14 +59,22 @@ import { mapState } from 'pinia';
 import { useProfile } from '@/store/modules/profile';
 import { useRooms } from '@/store/modules/chats/rooms';
 
+import Medias from './Medias.vue';
 import ModalDeleteInternalNote from './ModalDeleteInternalNote.vue';
+
+import { formatMessageText } from '@/utils/string';
 
 export default {
   name: 'ChatMessagesInternalNote',
   components: {
     ModalDeleteInternalNote,
+    Medias,
   },
   props: {
+    isRoomMessage: {
+      type: Boolean,
+      default: false,
+    },
     showAgentName: {
       type: Boolean,
       default: false,
@@ -79,6 +107,12 @@ export default {
     text() {
       return this.note.text;
     },
+    formattedText() {
+      return formatMessageText(this.text);
+    },
+    medias() {
+      return this.note.media || [];
+    },
     noteUuid() {
       return this.note.uuid;
     },
@@ -109,6 +143,12 @@ export default {
   box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.1);
   cursor: pointer;
 
+  &-title-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
   &-container {
     margin-top: $unnnic-spacing-ant;
     display: flex;
@@ -120,6 +160,16 @@ export default {
     color: $unnnic-color-fg-base;
     font: $unnnic-font-body;
     word-break: break-word;
+
+    &:not(.is-room-message) {
+      max-height: 80px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+
+      display: -webkit-box;
+      -webkit-box-orient: vertical;
+      -webkit-line-clamp: 4;
+    }
   }
 
   &-delete {

@@ -15,6 +15,13 @@ export default {
 
     return response.data;
   },
+  async sendInternalNoteMedia({ note, media }) {
+    const url = `/room_note_media/`;
+    const bodyData = { note, media_file: media, content_type: media.type };
+    const response = await http.postForm(url, bodyData);
+
+    return response.data;
+  },
   async deleteInternalNote({ note }) {
     const response = await http.delete(`/room_notes/${note}/`);
 

@@ -26,16 +26,20 @@ export function createTemporaryMessage({
   repliedMessage = null,
   internalNote = null,
 }) {
+  const internalNoteMedia = internalNote?.media || [];
+
   return {
     uuid: Date.now().toString(),
     text: internalNote ? '' : message,
     created_on: new Date().toISOString(),
-    media: medias || [],
+    media: internalNote ? [] : medias || [],
     [itemType]: itemUuid,
     seen: true,
     user: itemUser,
     replied_message: repliedMessage,
-    internal_note: internalNote,
+    internal_note: internalNote
+      ? { ...internalNote, media: internalNoteMedia }
+      : null,
   };
 }
 
@@ -451,6 +455,47 @@ export function updateMessageStatusInGroupedMessages(
   );
 }
 
+export function updateInternalNoteMessage(messagesReference, { message }) {
+  const messageTimestamp = moment(message.created_on);
+  const messageDate = messageTimestamp.format('L');
+  const messageMinute = messageTimestamp.format('LT');
+
+  const dateIndex = messagesReference.findIndex(
+    (obj) => obj.date === messageDate,
+  );
+
+  if (dateIndex === -1) {
+    return;
+  }
+
+  const currentDateEntry = messagesReference[dateIndex];
+
+  const minuteIndex = currentDateEntry.minutes.findIndex(
+    (obj) => obj.minute === messageMinute,
+  );
+
+  if (minuteIndex === -1) {
+    return;
+  }
+
+  const currentMinuteEntry = currentDateEntry.minutes[minuteIndex];
+
+  currentMinuteEntry.messages = currentMinuteEntry.messages.map((obj) =>
+    obj.uuid === message.uuid ||
+    obj.internal_note?.uuid === message.internal_note?.uuid
+      ? {
+          ...obj,
+          ...message,
+          internal_note: {
+            ...obj.internal_note,
+            ...message.internal_note,
+          },
+          media: message.media ?? (obj.internal_note ? [] : obj.media),
+        }
+      : obj,
+  );
+}
+
 export function removeFromGroupedMessages(messagesReference, { message }) {
   const messageTimestamp = moment(message.created_on);
   const messageDate = messageTimestamp.format('L');
@@ -482,5 +527,42 @@ export function removeFromGroupedMessages(messagesReference, { message }) {
 
   if (!currentMinuteEntry.messages.length) {
     currentDateEntry.minutes.splice(minuteIndex, 1);
+  }
+}
+
+export function removeInternalNoteMessage(messagesReference, { message }) {
+  const messageUuid = message.uuid;
+  const internalNoteUuid = message.internal_note?.uuid;
+
+  const shouldRemove = (obj) =>
+    obj.uuid === messageUuid ||
+    (internalNoteUuid && obj.internal_note?.uuid === internalNoteUuid);
+
+  for (
+    let dateIndex = messagesReference.length - 1;
+    dateIndex >= 0;
+    dateIndex--
+  ) {
+    const currentDateEntry = messagesReference[dateIndex];
+
+    for (
+      let minuteIndex = currentDateEntry.minutes.length - 1;
+      minuteIndex >= 0;
+      minuteIndex--
+    ) {
+      const currentMinuteEntry = currentDateEntry.minutes[minuteIndex];
+
+      currentMinuteEntry.messages = currentMinuteEntry.messages.filter(
+        (obj) => !shouldRemove(obj),
+      );
+
+      if (!currentMinuteEntry.messages.length) {
+        currentDateEntry.minutes.splice(minuteIndex, 1);
+      }
+    }
+
+    if (!currentDateEntry.minutes.length) {
+      messagesReference.splice(dateIndex, 1);
+    }
   }
 }

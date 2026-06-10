@@ -46,6 +46,7 @@
               :ref="`internal-note-${message.internal_note.uuid}`"
               :key="message.uuid"
               :message="message"
+              isRoomMessage
               @click-note="$emit('open-room-contact-info')"
             />
 
@@ -59,7 +60,7 @@
               @click="handleClickChatFeedback(message)"
             />
 
-            <template v-else>
+            <template v-else-if="!isInternalNoteMessage(message)">
               <ChatsMessage
                 v-if="message.text || isGeolocation(message.media?.[0])"
                 :key="message.uuid"
@@ -135,7 +136,9 @@
                           : 'audio',
                     })
                   "
-                  @click="resendMedia({ message, media })"
+                  @click="
+                    resendMedia({ message, media, roomUuid: message.room })
+                  "
                 >
                   <img
                     v-if="isImage(media)"
@@ -154,7 +157,9 @@
                     :message="message"
                     :messageStatus="messageStatus({ message, media })"
                     :isClosedChat="isClosedChat"
-                    @failed-click="resendMedia({ message, media })"
+                    @failed-click="
+                      resendMedia({ message, media, roomUuid: message.room })
+                    "
                   />
                 </ChatsMessage>
                 <ChatsMessage
@@ -270,7 +275,7 @@ import ChatsMessage from '@/components/chats/Message/index.vue';
 import ChatFeedback from '../ChatFeedback.vue';
 import ChatMessagesStartFeedbacks from './ChatMessagesStartFeedbacks.vue';
 import ChatMessagesFeedbackMessage from './ChatMessagesFeedbackMessage.vue';
-import ChatMessagesInternalNote from './ChatMessagesInternalNote.vue';
+import ChatMessagesInternalNote from './ChatMessageInternalNote/index.vue';
 import ChatMessageAudio from './ChatMessageAudio/ChatMessageAudio.vue';
 
 import { isString } from '@/utils/string';
@@ -550,7 +555,7 @@ export default {
         const status = this.messageStatus({ message, media });
 
         if (status === 'failed') {
-          this.resendMedia({ message, media });
+          this.resendMedia({ message, media, roomUuid: message.room });
         } else {
           try {
             const mediaToDownload = media.url || media.preview;
@@ -947,8 +952,16 @@ export default {
       }
     }
 
+    &.is-video {
+      max-width: 250px;
+      max-height: 200px;
+    }
+
     .image {
       cursor: pointer;
+      max-width: 200px;
+      max-height: 200px;
+      object-fit: cover;
     }
 
     .audio {

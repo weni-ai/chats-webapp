@@ -1,14 +1,20 @@
-import { vi, describe, it, expect, beforeEach } from 'vitest';
-import { mount } from '@vue/test-utils';
+import {
+  vi,
+  describe,
+  it,
+  expect,
+  beforeAll,
+  afterAll,
+  beforeEach,
+} from 'vitest';
+import { mount, flushPromises, config } from '@vue/test-utils';
 import { createTestingPinia } from '@pinia/testing';
 
 import ModalTransferRooms from '../chat/ModalTransferRooms.vue';
 
 vi.mock('@/services/api/resources/chats/room', () => ({
   default: {
-    bulkTranfer: vi.fn(() => {
-      return Promise.resolve({ status: 200 });
-    }),
+    bulkTranfer: vi.fn(() => Promise.resolve({ status: 200 })),
     getRoomTags: vi.fn(() => ({ results: [] })),
   },
 }));
@@ -17,13 +23,37 @@ vi.mock('@/services/api/resources/settings/queue', () => ({
   default: {
     listByProject: vi.fn(() => ({
       results: [
-        { name: 'Queue 1', sector_name: 'Sector 1', uuid: '1' },
-        { name: 'Queue 2', sector_name: 'Sector 2', uuid: '2' },
+        {
+          name: 'Queue 1',
+          sector_name: 'Sector 1',
+          uuid: '1',
+          sector_uuid: 's1',
+        },
+        {
+          name: 'Queue 2',
+          sector_name: 'Sector 2',
+          uuid: '2',
+          sector_uuid: 's2',
+        },
       ],
     })),
     agentsToTransfer: vi.fn(() => [
-      { first_name: 'John', last_name: 'Doe', email: 'john@doe.com' },
-      { first_name: 'Jane', last_name: 'Doe', email: 'jane@doe.com' },
+      {
+        first_name: 'John',
+        last_name: 'Doe',
+        email: 'john@doe.com',
+        status: 'online',
+        photo_url: null,
+        language: 'pt-br',
+      },
+      {
+        first_name: 'Jane',
+        last_name: 'Doe',
+        email: 'jane@doe.com',
+        status: 'online',
+        photo_url: null,
+        language: 'pt-br',
+      },
     ]),
   },
 }));
@@ -32,6 +62,52 @@ vi.mock('@/utils/callUnnnicAlert', () => ({
   default: vi.fn(),
 }));
 
+let savedGlobalMocks;
+let savedGlobalStubs;
+
+beforeAll(() => {
+  savedGlobalMocks = { ...config.global.mocks };
+  savedGlobalStubs = { ...config.global.stubs };
+  config.global.mocks = {};
+  config.global.stubs = {
+    ...savedGlobalStubs,
+    UnnnicDialog: {
+      template: '<div><slot /></div>',
+      props: ['open'],
+    },
+    UnnnicDialogContent: {
+      template: '<div><slot /></div>',
+      props: ['size'],
+    },
+    UnnnicDialogHeader: {
+      template: '<div><slot /></div>',
+      props: ['closeButton'],
+    },
+    UnnnicDialogTitle: {
+      template: '<div><slot /></div>',
+    },
+    UnnnicDialogFooter: {
+      template: '<div><slot /></div>',
+    },
+    UnnnicDialogClose: {
+      template: '<div><slot /></div>',
+    },
+    UnnnicButton: {
+      template: '<button v-bind="$attrs"><slot /></button>',
+      props: ['text', 'type', 'loading', 'disabled'],
+    },
+    UnnnicDisclaimer: {
+      template: '<div v-bind="$attrs">{{ description }}</div>',
+      props: ['type', 'description'],
+    },
+  };
+});
+
+afterAll(() => {
+  config.global.mocks = savedGlobalMocks;
+  config.global.stubs = savedGlobalStubs;
+});
+
 function createStore(overrides = {}) {
   return createTestingPinia({
     initialState: {
@@ -39,6 +115,10 @@ function createStore(overrides = {}) {
         selectedOngoingRooms: ['1', '2'],
         selectedWaitingRooms: [],
         activeTab: 'ongoing',
+        rooms: [],
+        contactToTransfer: '',
+        activeRoom: null,
+        activeRoomTags: [],
         ...overrides,
       },
       profile: { me: { email: 'mocked@email.com' } },
@@ -47,58 +127,22 @@ function createStore(overrides = {}) {
 }
 
 function createWrapper(store, props = {}) {
-  const wrapper = mount(ModalTransferRooms, {
+  return mount(ModalTransferRooms, {
     props: {
       modelValue: true,
       ...props,
     },
     global: {
       plugins: [store],
-      mocks: {
-        $t: (key) => key,
-        $tc: (key, count, params) => `${key}_${count}`,
-      },
-      stubs: {
-        UnnnicDialog: {
-          template: '<div><slot /></div>',
-          props: ['open'],
-        },
-        UnnnicDialogContent: {
-          template: '<div><slot /></div>',
-          props: ['size'],
-        },
-        UnnnicDialogHeader: {
-          template: '<div><slot /></div>',
-          props: ['closeButton'],
-        },
-        UnnnicDialogTitle: {
-          template: '<div><slot /></div>',
-        },
-        UnnnicDialogFooter: {
-          template: '<div><slot /></div>',
-        },
-        UnnnicDialogClose: {
-          template: '<div><slot /></div>',
-        },
-        UnnnicButton: {
-          template: '<button v-bind="$attrs"><slot /></button>',
-          props: ['text', 'type', 'loading', 'disabled'],
-        },
-        UnnnicDisclaimer: {
-          template: '<div v-bind="$attrs">{{ description }}</div>',
-          props: ['type', 'description'],
-        },
-      },
     },
   });
-
-  return wrapper;
 }
 
 describe('ModalTransferRooms', () => {
   let wrapper;
 
   beforeEach(() => {
+    vi.clearAllMocks();
     const store = createStore();
     wrapper = createWrapper(store);
   });
@@ -166,9 +210,8 @@ describe('ModalTransferRooms', () => {
 
   describe('Button States', () => {
     it('should disable transfer button when no queue is selected', async () => {
-      await wrapper.setData({
-        selectedQueue: [{ value: '', label: 'Select queue' }],
-      });
+      wrapper.vm.selectedQueue = [{ value: '', label: 'Select queue' }];
+      await flushPromises();
       expect(wrapper.vm.disabledTransferButton).toBe(true);
     });
 
@@ -178,19 +221,15 @@ describe('ModalTransferRooms', () => {
     });
 
     it('should enable transfer button when queue is selected', async () => {
-      await wrapper.setData({
-        selectedQueue: [{ value: '1', label: 'Queue' }],
-      });
+      wrapper.vm.selectedQueue = [{ value: '1', label: 'Queue' }];
+      await flushPromises();
       expect(wrapper.vm.disabledTransferButton).toBe(false);
     });
 
     it('should show loading state when bulk transfer is in progress', async () => {
-      await wrapper.setData({
-        isLoadingBulkTransfer: true,
-        selectedQueue: [{ value: '1', label: 'Queue' }],
-      });
-
-      await wrapper.vm.$nextTick();
+      wrapper.vm.isLoadingBulkTransfer = true;
+      wrapper.vm.selectedQueue = [{ value: '1', label: 'Queue' }];
+      await flushPromises();
 
       expect(wrapper.vm.isLoadingBulkTransfer).toBe(true);
     });
