@@ -12,7 +12,7 @@
       :skipAnimation="skipSummaryAnimation"
       :isArchived="room?.is_archived || false"
       :archivedUrl="room?.archived_conversation_file_url || ''"
-      @close="openChatSummary = false"
+      @close="setOpenActiveRoomSummary(false, room?.uuid)"
     />
     <ChatMessages
       ref="activeChatMessages"
@@ -49,6 +49,7 @@ import RoomService from '@/services/api/resources/chats/room';
 import RoomNotes from '@/services/api/resources/chats/roomNotes';
 
 import { SEE_ALL_INTERNAL_NOTES_CHIP_CONTENT } from '@/utils/chats';
+import { isSummaryDismissed } from '@/utils/summaryDismissalStorage';
 import i18n from '@/plugins/i18n';
 
 export default {
@@ -156,7 +157,10 @@ export default {
                 !this.isLoadingCanSendMessageStatus
               : this.room?.is_24h_valid;
 
-            this.openActiveRoomSummary = this.isClosedRoom || isCanSendMessage;
+            const wasDismissedByUser = isSummaryDismissed(roomUuid);
+
+            this.openActiveRoomSummary =
+              !wasDismissedByUser && (this.isClosedRoom || isCanSendMessage);
             this.skipSummaryAnimation = false;
             this.handlingGetRoomSummary();
           }
@@ -173,6 +177,7 @@ export default {
       resetRoomMessages: 'resetRoomMessages',
       addSortedMessage: 'addRoomMessageSorted',
     }),
+    ...mapActions(useRooms, ['setOpenActiveRoomSummary']),
 
     async handlingGetRoomMessages() {
       try {

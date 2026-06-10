@@ -55,6 +55,7 @@ vi.mock('@/store/modules/config', () => ({
     status: 'ONLINE',
     socketClosedOffline: false,
     setSocketClosedOffline: vi.fn(),
+    setStatus: vi.fn(),
     getStatus: statusBarStoreMocks.getStatus,
     $patch: vi.fn(),
   }),

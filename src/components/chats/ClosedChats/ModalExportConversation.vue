@@ -67,7 +67,7 @@
 
 <script setup lang="ts">
 import { ref, computed } from 'vue';
-import { unnnicCallAlert } from '@weni/unnnic-system';
+import { UnnnicToastManager } from '@weni/unnnic-system';
 
 import History from '@/services/api/resources/chats/history';
 import i18n from '@/plugins/i18n';
@@ -118,24 +118,14 @@ async function handleExport() {
       types: [selectedFormat.value],
     });
 
-    unnnicCallAlert({
-      props: {
-        text: i18n.global.t('export_conversation.success_title'),
-        description: i18n.global.t('export_conversation.success_description'),
-        type: 'success',
-      },
-      seconds: 5,
-    });
+    UnnnicToastManager.success(
+      i18n.global.t('export_conversation.success_title'),
+      i18n.global.t('export_conversation.success_description'),
+    );
 
     isOpen.value = false;
   } catch {
-    unnnicCallAlert({
-      props: {
-        text: i18n.global.t('export_conversation.error'),
-        type: 'error',
-      },
-      seconds: 5,
-    });
+    UnnnicToastManager.error(i18n.global.t('export_conversation.error'));
   } finally {
     isLoading.value = false;
   }
