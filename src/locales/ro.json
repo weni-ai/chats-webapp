@@ -29,6 +29,11 @@
     "select_your_queues": "Selectează cozile tale",
     "success_update_queues": "Cozile tale de serviciu au fost actualizate"
   },
+  "room_card": {
+    "new_chat_received": {
+      "tooltip": "Conversații noi primite"
+    }
+  },
   "delete_modal": {
     "title": "Șterge {name}",
     "description_sector": "Sistemul a detectat {count} conversații în departamentul {name} care sunt în curs de desfășurare sau așteaptă să fie gestionate. Alege ce dorești să faci cu ele.",
