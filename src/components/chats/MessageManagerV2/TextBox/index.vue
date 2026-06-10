@@ -6,12 +6,10 @@
         'text-box--focused': inputMessageFocused,
         'text-box--ai-improving': isAiImproving,
         'internal-note': isInternalNote,
+        'text-box--disabled': isDisabledInput,
       },
     ]"
   >
-    <MessageManagerTextBoxUploadField ref="uploadField" />
-    <MessageManagerTextBoxMedias v-if="mediaUploadFiles.length > 0" />
-    <MessageManagerTextBoxAudioRecorder ref="audioRecorder" />
     <section
       v-if="showBackToOriginal"
       class="text-box__textarea-row"
@@ -26,6 +24,11 @@
       v-else
       ref="textArea"
       @keydown="handleKeyDown"
+    />
+    <MessageManagerTextBoxUploadField ref="uploadField" />
+    <MessageManagerTextBoxAudioRecorder ref="audioRecorder" />
+    <MessageManagerTextBoxMedias
+      v-if="mediaUploadFiles.length > 0 && !isInternalNote"
     />
     <hr class="text-box__divider" />
     <MessageManagerTextBoxActions
@@ -53,13 +56,14 @@ import { vOnClickOutside } from '@vueuse/components';
 
 import MessageManagerTextBoxMedias from './Medias.vue';
 import MessageManagerTextBoxAudioRecorder from './AudioRecorder.vue';
-import MessageManagerTextBoxActions from './Actions.vue';
+import MessageManagerTextBoxActions from './Actions/index.vue';
 import MessageManagerTextBoxUploadField from './UploadField.vue';
 import MessageManagerTextBoxTextArea from './TextArea.vue';
 import BackToOriginal from './BackToOriginal.vue';
 
 import { useMessageManager } from '@/store/modules/chats/messageManager';
 import { useAiTextImprovement } from '@/store/modules/chats/aiTextImprovement';
+import { useRooms } from '@/store/modules/chats/rooms';
 
 defineOptions({
   name: 'MessageManagerTextBox',
@@ -69,6 +73,9 @@ const emit = defineEmits<{
   keydown: [KeyboardEvent];
   send: [void];
 }>();
+
+const roomsStore = useRooms();
+const { activeRoom } = storeToRefs(roomsStore);
 
 const messageManager = useMessageManager();
 const { sendRoomMessage, sendMediasMessage } = messageManager;
@@ -80,6 +87,7 @@ const {
   mediaUploadFiles,
   isEmojiPickerOpen,
   inputMessageFocused,
+  isDisabledInput,
 } = storeToRefs(messageManager);
 
 const aiTextImprovementStore = useAiTextImprovement();
@@ -88,7 +96,7 @@ const { isLoading: isAiImproving, hasImprovedText } = storeToRefs(
 );
 
 const showBackToOriginal = computed(
-  () => hasImprovedText.value && !isAiImproving.value,
+  () => hasImprovedText.value && !isAiImproving.value && !isInternalNote.value,
 );
 
 const textareaRef = useTemplateRef('textArea');
@@ -120,10 +128,11 @@ const handleEmojiSelected = (emoji: string) => {
 };
 
 const handleSend = async () => {
-  if (mediaUploadFiles.value.length > 0) {
-    await sendMediasMessage();
+  const activeRoomUuid = activeRoom.value?.uuid;
+  if (mediaUploadFiles.value.length > 0 && !isInternalNote.value) {
+    await sendMediasMessage(activeRoomUuid);
   } else {
-    await sendRoomMessage();
+    await sendRoomMessage(activeRoomUuid);
   }
 };
 
@@ -146,8 +155,12 @@ const clearTextarea = () => {
   audioRecorderStatus.value = 'idle';
 };
 
-watch(isInternalNote, () => {
+watch(isInternalNote, (active) => {
   clearTextarea();
+
+  if (active) {
+    aiTextImprovementStore.reset();
+  }
 });
 
 defineExpose({
@@ -165,6 +178,11 @@ defineExpose({
   display: flex;
   flex-direction: column;
   gap: $unnnic-space-3;
+
+  &--disabled {
+    border: none;
+    background: $unnnic-color-bg-muted;
+  }
 
   &--focused {
     border-color: $unnnic-color-border-active;

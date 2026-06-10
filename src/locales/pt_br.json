@@ -201,6 +201,7 @@
   },
   "attachment": "Anexo",
   "internal_note": "Nota interna",
+  "internal_note_with_attachment_tooltip": "Nota interna com anexo",
   "close_internal_note": "Fechar nota interna (Esc)",
   "notes": "Notas",
   "bold": "Negrito",
@@ -342,6 +343,16 @@
     "metrics": "Exportar métricas em {filetype}",
     "all": "Exportar tudo em {filetype}"
   },
+  "export_conversation": {
+    "button": "Exportar conversa",
+    "title": "Exportar conversa",
+    "select_format": "Selecione o formato para exportar a conversa",
+    "disclaimer": "Enquanto esta exportação está sendo processada, novas exportações ficarão temporariamente bloqueadas para esta conversa",
+    "accept_terms": "Aceito os termos e entendo as limitações da exportação.",
+    "success_title": "Processando exportação!",
+    "success_description": "O resultado será enviado por email em breve. Verifique também a pasta de spam.",
+    "error": "Não foi possível processar a exportação. Tente novamente"
+  },
   "name": "Nome",
   "addition_date": "Data de Adição",
   "in_queues": "em filas",
@@ -462,6 +473,7 @@
       "default": "Ocorreu um erro, por favor, tente novamente mais tarde"
     },
     "message_input_placeholder": "Digite sua mensagem aqui ou / para ativar mensagens rápidas",
+    "message_input_disabled_description": "Altere seu status para online para continuar esta conversa.",
     "search_contact": "Pesquisar contato",
     "search_contact_placeholder": "Pesquisar contato (nome, telefone ou protocolo)",
     "tags": "Tags do chat",
@@ -604,6 +616,7 @@
   "no_tags_assigned": "Nenhuma tag atribuída",
   "contact_await_for_you": "Um contato está esperando por você!",
   "agent": "Atendente",
+  "representative": "Representante",
   "ai_text_improvement": {
     "tooltip_disabled": "Escreva uma resposta no campo de texto para habilitar respostas aprimoradas com IA",
     "tooltip_enabled": "Melhorar resposta com IA",
@@ -836,6 +849,7 @@
   },
   "select_agent": "Selecionar agente",
   "select_queue": "Selecionar fila",
+  "select_representative": "Selecionar um representante",
   "select_sector": "Selecione setor",
   "send_media": "Enviar mídia",
   "send_photo_or_video": "Enviar foto ou vídeo",
@@ -1017,6 +1031,10 @@
           "description": "Desativar essa opção excluirá permanentemente o prompt de cenários e critérios. Será necessário configurá-lo novamente ao reativar.",
           "confirmation": "Deseja continuar mesmo assim?"
         }
+      },
+      "restrict_offline_agents": {
+        "switch_label": "Permitir interações apenas para atendentes online",
+        "hint": "Se essa opção estiver ativada, atendentes offline ou em pausa não poderão responder a chats em andamento."
       },
       "bulk_transfer": {
         "tooltip": "Essa função permite que atendentes transfiram diversos contatos de uma vez para uma fila ou atendente",
@@ -1364,22 +1382,22 @@
   },
   "delete_modal": {
     "title": "Excluir {name}",
-    "description_sector": "O sistema detectou {count} conversas no setor {name} que estão em atendimento ou aguardando para serem atendidas. Escolha o que deseja fazer com elas",
-    "description_queue": "O sistema detectou {count} conversas na fila {name} que estão em atendimento ou aguardando para serem atendidas. Escolha o que deseja fazer com elas",
+    "description_sector": "O sistema detectou {count} conversas em andamento ou aguardando atendimento no setor {name}. Escolha o que deseja fazer com elas.",
+    "description_queue": "O sistema detectou {count, plural, one {uma conversa} other {{count} conversas}} na fila {name} que estão em atendimento ou aguardando atendimento. Escolha o que deseja fazer com elas.",
     "transfer_chats": "Transferir conversas para outro setor/fila",
     "end_all_chats": "Encerrar todas as conversas",
     "select_sector": "Selecione um setor",
     "select_queue": "Selecione uma fila",
     "type_name_sector": "Digite o nome do setor para excluir",
     "type_name_queue": "Digite o nome da fila para excluir",
-    "cannot_be_reversed": "Esta ação não pode ser revertida.",
+    "cannot_be_reversed": "Esta ação não poderá ser desfeita",
     "delete_button": "Excluir",
-    "sector_success": "Setor excluído com sucesso!",
-    "sector_error": "Não foi possível excluir o setor.",
-    "queue_success": "Fila excluída com sucesso!",
-    "queue_error": "Não foi possível excluir a fila.",
-    "transfer_error_sector": "Não foi possível transferir as conversas. Exclusão do setor cancelada",
-    "transfer_error_queue": "Não foi possível transferir as conversas. Exclusão da fila cancelada"
+    "sector_success": "Setor excluído com sucesso",
+    "sector_error": "Não foi possível excluir o setor",
+    "queue_success": "Fila excluída com sucesso",
+    "queue_error": "Não foi possível excluir a fila",
+    "transfer_error_sector": "Não foi possível transferir as conversas. Exclusão do setor cancelada.",
+    "transfer_error_queue": "Não foi possível transferir as conversas. Exclusão da fila cancelada."
   },
   "room_card": {
     "last_message": {

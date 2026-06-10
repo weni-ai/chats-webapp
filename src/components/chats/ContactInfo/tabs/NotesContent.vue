@@ -17,7 +17,7 @@
 <script setup>
 import { onMounted, onUnmounted } from 'vue';
 import { storeToRefs } from 'pinia';
-import ChatInternalNote from '@/components/chats/chat/ChatMessages/ChatMessagesInternalNote.vue';
+import ChatInternalNote from '@/components/chats/chat/ChatMessages/ChatMessageInternalNote/index.vue';
 import { useRoomMessages } from '@/store/modules/chats/roomMessages';
 import RoomNotes from '@/services/api/resources/chats/roomNotes';
 

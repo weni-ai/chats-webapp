@@ -444,6 +444,8 @@ describe('MessageManager', () => {
       expect(roomMessagesStore.sendRoomMessage).toHaveBeenCalledWith(
         'Hello room',
         null,
+        null,
+        'room-1',
       );
       expect(wrapper.vm.replyMessage).toBeNull();
     });

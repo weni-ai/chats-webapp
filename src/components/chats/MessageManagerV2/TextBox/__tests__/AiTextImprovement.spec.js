@@ -92,7 +92,12 @@ beforeAll(async () => {
 });
 
 const createWrapper = (options = {}) => {
-  const { inputMessage = '', isLoading = false, showNewTag = true } = options;
+  const {
+    inputMessage = '',
+    isInternalNote = false,
+    isLoading = false,
+    showNewTag = true,
+  } = options;
 
   const pinia = createPinia();
   setActivePinia(pinia);
@@ -103,6 +108,7 @@ const createWrapper = (options = {}) => {
 
   const msgStore = useMessageManager();
   msgStore.inputMessage = inputMessage;
+  msgStore.isInternalNote = isInternalNote;
 
   return mount(AiTextImprovement, {
     global: {
@@ -143,6 +149,28 @@ describe('AiTextImprovement', () => {
         '.ai-text-improvement__button-wrapper button',
       );
       expect(button.attributes('data-disabled')).toBe('false');
+    });
+
+    it('should disable button when isInternalNote is true even with text', () => {
+      const wrapper = createWrapper({
+        inputMessage: 'hello',
+        isInternalNote: true,
+      });
+      const button = wrapper.find(
+        '.ai-text-improvement__button-wrapper button',
+      );
+      expect(button.attributes('data-disabled')).toBe('true');
+    });
+
+    it('should show disabled tooltip when isInternalNote is true and has text', () => {
+      const wrapper = createWrapper({
+        inputMessage: 'hello',
+        isInternalNote: true,
+      });
+
+      expect(wrapper.vm.tooltipText).toBe(
+        'ai_text_improvement.tooltip_disabled',
+      );
     });
 
     it('should render 3 improvement options in the popover', () => {
@@ -242,6 +270,23 @@ describe('AiTextImprovement', () => {
 
     it('should not call requestImprovement when inputMessage is empty', async () => {
       const wrapper = createWrapper({ inputMessage: '   ' });
+      const store = useAiTextImprovement();
+      store.requestImprovement = vi.fn();
+
+      const firstOption = wrapper.find('.ai-text-improvement__popover-item');
+      if (firstOption.exists()) {
+        await firstOption.trigger('click');
+        await flushPromises();
+      }
+
+      expect(store.requestImprovement).not.toHaveBeenCalled();
+    });
+
+    it('should not call requestImprovement when isInternalNote is true', async () => {
+      const wrapper = createWrapper({
+        inputMessage: 'hello',
+        isInternalNote: true,
+      });
       const store = useAiTextImprovement();
       store.requestImprovement = vi.fn();
 

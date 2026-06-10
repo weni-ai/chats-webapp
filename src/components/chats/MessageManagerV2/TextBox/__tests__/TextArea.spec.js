@@ -140,5 +140,32 @@ describe('TextArea', () => {
       const wrapper = createWrapper({ isInternalNote: true });
       expect(wrapper.find('.internal-note__prefix').exists()).toBe(true);
     });
+
+    it('should keep textarea visible when media is attached', () => {
+      const wrapper = createWrapper({
+        isInternalNote: true,
+        mediaUploadFiles: [new File(['x'], 'file.png', { type: 'image/png' })],
+      });
+      expect(wrapper.find('[data-testid="text-area"]').exists()).toBe(true);
+    });
+
+    it('should show medias below textarea when media is attached', () => {
+      const wrapper = createWrapper({
+        isInternalNote: true,
+        mediaUploadFiles: [new File(['x'], 'file.png', { type: 'image/png' })],
+      });
+      const inputBlock = wrapper.find('.text-box__input-block');
+      expect(inputBlock.find('[data-testid="text-area"]').exists()).toBe(true);
+      expect(inputBlock.find('.text-box__medias').exists()).toBe(true);
+    });
+  });
+
+  describe('media attachments', () => {
+    it('should hide textarea when media is attached outside internal note mode', () => {
+      const wrapper = createWrapper({
+        mediaUploadFiles: [new File(['x'], 'file.png', { type: 'image/png' })],
+      });
+      expect(wrapper.find('[data-testid="text-area"]').exists()).toBe(false);
+    });
   });
 });
