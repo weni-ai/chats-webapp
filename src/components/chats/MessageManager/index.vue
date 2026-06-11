@@ -220,7 +220,10 @@ export default {
   }),
 
   computed: {
-    ...mapState(useQuickMessageShared, ['quickMessagesShared']),
+    ...mapState(useQuickMessageShared, [
+      'quickMessagesShared',
+      'sharedBySector',
+    ]),
     ...mapState(useQuickMessages, ['quickMessages']),
     ...mapState(useRooms, ['canUseCopilot', 'activeRoom']),
     ...mapState(useDiscussions, {
@@ -249,8 +252,19 @@ export default {
     isFileLoadingValueValid() {
       return typeof this.loadingFileValue === 'number';
     },
+    isQuickMessagesV2Enabled() {
+      return !!this.featureFlags?.active_features?.includes(
+        'weniChatsQuickMessagesV2',
+      );
+    },
+    sharedShortcuts() {
+      if (this.isQuickMessagesV2Enabled) {
+        return this.sharedBySector(this.activeRoom?.queue?.sector);
+      }
+      return this.quickMessagesShared;
+    },
     shortcuts() {
-      const allShortcuts = [...this.quickMessages, ...this.quickMessagesShared];
+      const allShortcuts = [...this.quickMessages, ...this.sharedShortcuts];
       const uniqueShortcuts = [];
 
       allShortcuts.forEach((item) => {
