@@ -101,6 +101,20 @@ describe('useQuickMessageShared Store', () => {
     expect(QuickMessage.getByProjectV2).toHaveBeenCalledTimes(2);
   });
 
+  it('should rethrow errors from project pagination', async () => {
+    QuickMessage.getByProjectV2.mockRejectedValueOnce(new Error('fail'));
+
+    await expect(
+      quickMessageSharedStore.getByProjectNextPage(),
+    ).rejects.toThrow('fail');
+    expect(quickMessageSharedStore.isLoadingQuickMessagesSharedByProject).toBe(
+      false,
+    );
+    expect(quickMessageSharedStore.quickMessagesSharedByProjectRequested).toBe(
+      false,
+    );
+  });
+
   it('should create a new shared quick message', async () => {
     const newMessage = {
       uuid: '2',
