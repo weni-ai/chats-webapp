@@ -2,6 +2,8 @@ import { expect, vi } from 'vitest';
 import { mount, config } from '@vue/test-utils';
 import { createPinia, setActivePinia } from 'pinia';
 import { useQuickMessages } from '@/store/modules/chats/quickMessages';
+import { useQuickMessageShared } from '@/store/modules/chats/quickMessagesShared';
+import { useFeatureFlag } from '@/store/modules/featureFlag';
 import isMobile from 'is-mobile';
 
 import QuickMessages from '../index.vue';
@@ -83,5 +85,39 @@ describe('QuickMessages.vue', () => {
     expect(wrapper.emitted()['select-quick-message'][0]).toEqual([
       quickMessage,
     ]);
+  });
+
+  it('lazy loads personal and project shared messages on open when v2 flag is on', () => {
+    setActivePinia(createPinia());
+
+    const featureFlagStore = useFeatureFlag();
+    featureFlagStore.featureFlags = {
+      active_features: ['weniChatsQuickMessagesV2'],
+    };
+
+    const personalStore = useQuickMessages();
+    const sharedStore = useQuickMessageShared();
+    const loadPersonalSpy = vi
+      .spyOn(personalStore, 'loadAllV2IfNeeded')
+      .mockResolvedValue();
+    const loadSharedSpy = vi
+      .spyOn(sharedStore, 'getByProjectNextPage')
+      .mockResolvedValue();
+
+    mount(QuickMessages, {
+      global: {
+        stubs: [
+          'AsideSlotTemplate',
+          'AsideSlotTemplateSection',
+          'QuickMessagesList',
+          'QuickMessageForm',
+          'UnnnicButton',
+          'UnnnicModal',
+        ],
+      },
+    });
+
+    expect(loadPersonalSpy).toHaveBeenCalled();
+    expect(loadSharedSpy).toHaveBeenCalled();
   });
 });
