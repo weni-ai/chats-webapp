@@ -36,6 +36,7 @@ import { useFeatureFlag } from './store/modules/featureFlag';
 import { useTheme } from '@weni/unnnic-system';
 
 import { applyRouteAwareTheme, notifyParentOfTheme } from '@/utils/theme';
+import { useQuickMessagesFeatureFlag } from '@/composables/useQuickMessagesFeatureFlag';
 
 import initHotjar from '@/plugins/Hotjar';
 import {
@@ -117,9 +118,7 @@ export default {
     },
 
     isQuickMessagesV2Enabled() {
-      return !!this.featureFlags?.active_features?.includes(
-        'weniChatsQuickMessagesV2',
-      );
+      return useQuickMessagesFeatureFlag(this.featureFlags);
     },
 
     quickMessagesBootstrapReady() {

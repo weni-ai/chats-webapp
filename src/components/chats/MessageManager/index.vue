@@ -176,6 +176,7 @@ import { useFeatureFlag } from '@/store/modules/featureFlag';
 import { useMessageManager } from '@/store/modules/chats/messageManager';
 
 import MessageManagerLoading from '@/views/loadings/chat/MessageManager.vue';
+import { useQuickMessagesShortcuts } from '@/composables/useQuickMessagesShortcuts';
 
 import TextBox from './TextBox.vue';
 import MoreActionsOption from './MoreActionsOption.vue';
@@ -252,16 +253,13 @@ export default {
     isFileLoadingValueValid() {
       return typeof this.loadingFileValue === 'number';
     },
-    isQuickMessagesV2Enabled() {
-      return !!this.featureFlags?.active_features?.includes(
-        'weniChatsQuickMessagesV2',
-      );
-    },
     sharedShortcuts() {
-      if (this.isQuickMessagesV2Enabled) {
-        return this.sharedBySector(this.activeRoom?.queue?.sector);
-      }
-      return this.quickMessagesShared;
+      return useQuickMessagesShortcuts({
+        featureFlags: this.featureFlags,
+        activeRoom: this.activeRoom,
+        sharedBySector: this.sharedBySector,
+        quickMessagesShared: this.quickMessagesShared,
+      });
     },
     shortcuts() {
       const allShortcuts = [...this.quickMessages, ...this.sharedShortcuts];

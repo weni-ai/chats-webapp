@@ -81,6 +81,7 @@ import ModalDeleteQuickMessage from './ModalDeleteQuickMessage.vue';
 import { useQuickMessages } from '@/store/modules/chats/quickMessages';
 import { useQuickMessageShared } from '@/store/modules/chats/quickMessagesShared';
 import { useFeatureFlag } from '@/store/modules/featureFlag';
+import { useQuickMessagesFeatureFlag } from '@/composables/useQuickMessagesFeatureFlag';
 
 export default {
   name: 'QuickMessages',
@@ -116,9 +117,7 @@ export default {
     ...mapState(useFeatureFlag, ['featureFlags']),
 
     isV2() {
-      return !!this.featureFlags?.active_features?.includes(
-        'weniChatsQuickMessagesV2',
-      );
+      return useQuickMessagesFeatureFlag(this.featureFlags);
     },
 
     sharedQuickMessages() {

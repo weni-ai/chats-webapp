@@ -48,6 +48,7 @@ import { useQuickMessages } from '@/store/modules/chats/quickMessages';
 import { useMessageManager } from '@/store/modules/chats/messageManager';
 import { useRooms } from '@/store/modules/chats/rooms';
 import { useFeatureFlag } from '@/store/modules/featureFlag';
+import { useQuickMessagesShortcuts } from '@/composables/useQuickMessagesShortcuts';
 
 export default {
   name: 'SuggestionBox',
@@ -97,16 +98,13 @@ export default {
     ...mapState(useMessageManager, ['inputMessageFocused']),
     ...mapState(useRooms, ['activeRoom']),
     ...mapState(useFeatureFlag, ['featureFlags']),
-    isQuickMessagesV2Enabled() {
-      return !!this.featureFlags?.active_features?.includes(
-        'weniChatsQuickMessagesV2',
-      );
-    },
     sharedShortcuts() {
-      if (this.isQuickMessagesV2Enabled) {
-        return this.sharedBySector(this.activeRoom?.queue?.sector);
-      }
-      return this.quickMessagesShared;
+      return useQuickMessagesShortcuts({
+        featureFlags: this.featureFlags,
+        activeRoom: this.activeRoom,
+        sharedBySector: this.sharedBySector,
+        quickMessagesShared: this.quickMessagesShared,
+      });
     },
     suggestions() {
       const allShortcuts = [...this.quickMessages, ...this.sharedShortcuts];
