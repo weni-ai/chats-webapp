@@ -29,9 +29,13 @@
       />
       <QuickMessagesList
         :title="$t('quick_messages.shared')"
-        :quickMessages="quickMessagesShared"
+        :quickMessages="sharedQuickMessages"
         :withoutMessagesText="$t('quick_messages.without_messages_shared')"
+        :infiniteScroll="isV2"
+        :loadingMore="isLoadingQuickMessagesSharedByProject"
+        :hasMore="hasMoreQuickMessagesSharedByProject"
         @select-quick-message="selectQuickMessage"
+        @load-more="loadMoreSharedByProject"
       />
     </AsideSlotTemplateSection>
 
@@ -76,6 +80,7 @@ import ModalDeleteQuickMessage from './ModalDeleteQuickMessage.vue';
 
 import { useQuickMessages } from '@/store/modules/chats/quickMessages';
 import { useQuickMessageShared } from '@/store/modules/chats/quickMessagesShared';
+import { useFeatureFlag } from '@/store/modules/featureFlag';
 
 export default {
   name: 'QuickMessages',
@@ -102,7 +107,25 @@ export default {
   },
   computed: {
     ...mapState(useQuickMessages, ['quickMessages']),
-    ...mapState(useQuickMessageShared, ['quickMessagesShared']),
+    ...mapState(useQuickMessageShared, [
+      'quickMessagesShared',
+      'quickMessagesSharedByProject',
+      'isLoadingQuickMessagesSharedByProject',
+      'hasMoreQuickMessagesSharedByProject',
+    ]),
+    ...mapState(useFeatureFlag, ['featureFlags']),
+
+    isV2() {
+      return !!this.featureFlags?.active_features?.includes(
+        'weniChatsQuickMessagesV2',
+      );
+    },
+
+    sharedQuickMessages() {
+      return this.isV2
+        ? this.quickMessagesSharedByProject
+        : this.quickMessagesShared;
+    },
 
     isEditing() {
       const { quickMessageToEdit } = this;
@@ -130,11 +153,24 @@ export default {
     },
   },
 
+  mounted() {
+    if (!this.isV2) return;
+
+    this.loadPersonalQuickMessagesV2IfNeeded();
+    if (!this.quickMessagesSharedByProject.length) {
+      this.loadMoreSharedByProject();
+    }
+  },
+
   methods: {
     ...mapActions(useQuickMessages, {
       actionCreateQuickMessage: 'create',
       actionUpdateQuickMessage: 'update',
       actionDeleteQuickMessage: 'delete',
+      loadPersonalQuickMessagesV2IfNeeded: 'loadAllV2IfNeeded',
+    }),
+    ...mapActions(useQuickMessageShared, {
+      loadMoreSharedByProject: 'getByProjectNextPage',
     }),
 
     async createQuickMessage({ title, text, shortcut }) {
