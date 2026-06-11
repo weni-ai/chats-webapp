@@ -39,6 +39,55 @@ describe('QuickMessageApi', () => {
     expect(response).toEqual(mockResponse.data);
   });
 
+  it('should fetch all v2 quick messages', async () => {
+    const mockResponse = { data: { results: [], next: '' } };
+    http.get.mockResolvedValueOnce(mockResponse);
+
+    const response = await QuickMessageApi.getAllV2({});
+
+    expect(http.get).toHaveBeenCalledWith('/v2/quick_messages/');
+    expect(response).toEqual(mockResponse.data);
+  });
+
+  it('should fetch v2 shared quick messages by sector', async () => {
+    const mockResponse = { data: { results: [], next: '' } };
+    http.get.mockResolvedValueOnce(mockResponse);
+
+    const response = await QuickMessageApi.getBySectorV2({
+      sectorUuid: 'sector1',
+    });
+
+    expect(http.get).toHaveBeenCalledWith(
+      '/v2/sector_quick_messages/?sector=sector1&project=project-uuid',
+    );
+    expect(response).toEqual(mockResponse.data);
+  });
+
+  it('should fetch v2 shared quick messages by project', async () => {
+    const mockResponse = { data: { results: [], next: '' } };
+    http.get.mockResolvedValueOnce(mockResponse);
+
+    const response = await QuickMessageApi.getByProjectV2({});
+
+    expect(http.get).toHaveBeenCalledWith(
+      '/v2/sector_quick_messages/?project=project-uuid',
+    );
+    expect(response).toEqual(mockResponse.data);
+  });
+
+  it('should paginate v2 shared quick messages by project using next', async () => {
+    const mockResponse = { data: { results: [], next: '' } };
+    http.get.mockResolvedValueOnce(mockResponse);
+
+    await QuickMessageApi.getByProjectV2({
+      next: 'https://api.test/v2/sector_quick_messages/?cursor=abc',
+    });
+
+    expect(http.get).toHaveBeenCalledWith(
+      '/v2/sector_quick_messages/?cursor=abc',
+    );
+  });
+
   it('should create a quick message', async () => {
     const mockResponse = { data: { id: 1, title: 'New Message' } };
 
