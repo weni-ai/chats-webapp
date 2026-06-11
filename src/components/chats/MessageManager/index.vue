@@ -34,7 +34,7 @@ import { nextTick, onMounted, ref, useTemplateRef, watch } from 'vue';
 import { storeToRefs } from 'pinia';
 
 import MessageManagerLoading from './MessageManagerLoading.vue';
-import MessageManagerTextBox from './TextBox/index.vue';
+
 import SuggestionBox from './SuggestionBox/index.vue';
 import CoPilot from './CoPilot.vue';
 
@@ -42,6 +42,7 @@ import { useDiscussions } from '@/store/modules/chats/discussions';
 import { useMessageManager } from '@/store/modules/chats/messageManager';
 import { useRooms } from '@/store/modules/chats/rooms';
 import { useProfile } from '@/store/modules/profile';
+import MessageManagerTextBox from './TextBox/index.vue';
 
 defineOptions({
   name: 'MessageManager',

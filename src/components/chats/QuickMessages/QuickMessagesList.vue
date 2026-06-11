@@ -34,6 +34,15 @@
           @edit="emitEditQuickMessage"
           @delete="emitDeleteQuickMessage"
         />
+        <div
+          v-if="infiniteScroll && !withoutQuickMessages"
+          ref="infiniteScrollSentinel"
+          class="quick-messages-list__sentinel"
+        />
+        <UnnnicIconLoading
+          v-if="infiniteScroll && loadingMore"
+          class="quick-messages-list__loading"
+        />
       </section>
     </Transition>
     <section
@@ -87,6 +96,18 @@ export default {
       type: String,
       default: '',
     },
+    infiniteScroll: {
+      type: Boolean,
+      default: false,
+    },
+    loadingMore: {
+      type: Boolean,
+      default: false,
+    },
+    hasMore: {
+      type: Boolean,
+      default: false,
+    },
   },
   emits: [
     'update:isEmpty',
@@ -94,11 +115,13 @@ export default {
     'edit-quick-message',
     'delete-quick-message',
     'open-new-quick-message',
+    'load-more',
   ],
 
   data() {
     return {
       openQuickMessages: true,
+      intersectionObserver: null,
     };
   },
 
@@ -114,9 +137,52 @@ export default {
         this.$emit('update:isEmpty', newWithoutQuickMessages);
       },
     },
+    infiniteScroll: {
+      handler(enabled) {
+        if (enabled) {
+          this.$nextTick(() => this.setupInfiniteScroll());
+        } else {
+          this.teardownInfiniteScroll();
+        }
+      },
+    },
+  },
+
+  mounted() {
+    if (this.infiniteScroll) {
+      this.$nextTick(() => this.setupInfiniteScroll());
+    }
+  },
+
+  beforeUnmount() {
+    this.teardownInfiniteScroll();
   },
 
   methods: {
+    setupInfiniteScroll() {
+      this.teardownInfiniteScroll();
+
+      const sentinel = this.$refs.infiniteScrollSentinel;
+      if (!sentinel) return;
+
+      this.intersectionObserver = new IntersectionObserver(
+        (entries) => {
+          const isVisible = entries.some((entry) => entry.isIntersecting);
+          if (isVisible && this.hasMore && !this.loadingMore) {
+            this.$emit('load-more');
+          }
+        },
+        { rootMargin: '120px' },
+      );
+
+      this.intersectionObserver.observe(sentinel);
+    },
+    teardownInfiniteScroll() {
+      if (this.intersectionObserver) {
+        this.intersectionObserver.disconnect();
+        this.intersectionObserver = null;
+      }
+    },
     emitSelectQuickMessage(quickMessage) {
       this.$emit('select-quick-message', quickMessage);
     },
@@ -162,6 +228,15 @@ export default {
   &__without-messages-text {
     font: $unnnic-font-body;
     color: $unnnic-color-fg-base;
+  }
+  &__sentinel {
+    width: 100%;
+    height: 1px;
+  }
+  &__loading {
+    display: flex;
+    justify-content: center;
+    padding: $unnnic-space-2 0;
   }
 }
 </style>

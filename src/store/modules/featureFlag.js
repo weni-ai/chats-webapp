@@ -5,6 +5,7 @@ export const useFeatureFlag = defineStore('featureFlag', {
   state: () => ({
     featureFlags: { active_features: [] },
     isLoadingFeatureFlags: false,
+    featureFlagsLoaded: false,
   }),
 
   actions: {
@@ -17,6 +18,7 @@ export const useFeatureFlag = defineStore('featureFlag', {
         console.error('Error getting feature flags', error);
       } finally {
         this.isLoadingFeatureFlags = false;
+        this.featureFlagsLoaded = true;
       }
     },
   },

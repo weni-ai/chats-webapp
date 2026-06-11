@@ -36,6 +36,7 @@ import { useFeatureFlag } from './store/modules/featureFlag';
 import { useTheme } from '@weni/unnnic-system';
 
 import { applyRouteAwareTheme, notifyParentOfTheme } from '@/utils/theme';
+import { useQuickMessagesFeatureFlag } from '@/composables/useQuickMessagesFeatureFlag';
 
 import initHotjar from '@/plugins/Hotjar';
 import {
@@ -77,11 +78,12 @@ export default {
         true,
       ),
       showDarkModeIntroModal: false,
+      quickMessagesBootstrapDone: false,
     };
   },
 
   computed: {
-    ...mapState(useFeatureFlag, ['featureFlags']),
+    ...mapState(useFeatureFlag, ['featureFlags', 'featureFlagsLoaded']),
     ...mapState(useRooms, ['activeRoom']),
     ...mapState(useProfile, ['me']),
     ...mapState(useDashboard, ['viewedAgent']),
@@ -113,6 +115,14 @@ export default {
       const { appToken, appProject } = this;
 
       return [appToken, appProject];
+    },
+
+    isQuickMessagesV2Enabled() {
+      return useQuickMessagesFeatureFlag(this.featureFlags);
+    },
+
+    quickMessagesBootstrapReady() {
+      return !!this.appToken && !!this.appProject && this.featureFlagsLoaded;
     },
 
     userWhoChangedStatus() {
@@ -153,9 +163,26 @@ export default {
             projectUuid: newAppProject,
           });
           this.getUserStatus();
-          this.loadQuickMessages();
-          this.loadQuickMessagesShared();
         }
+      },
+    },
+    quickMessagesBootstrapReady: {
+      immediate: true,
+      handler(ready) {
+        if (!ready || this.quickMessagesBootstrapDone) return;
+        this.quickMessagesBootstrapDone = true;
+        this.bootstrapQuickMessages();
+      },
+    },
+    activeRoom: {
+      handler(newRoom) {
+        if (!this.isQuickMessagesV2Enabled) return;
+
+        const sectorUuid = newRoom?.queue?.sector;
+        if (!sectorUuid) return;
+
+        this.loadPersonalQuickMessagesV2IfNeeded();
+        this.loadQuickMessagesSharedBySectorIfNeeded(sectorUuid);
       },
     },
     'me.email': {
@@ -224,9 +251,11 @@ export default {
     ...mapActions(useProfile, ['setMe', 'getMeQueues']),
     ...mapActions(useQuickMessages, {
       getAllQuickMessages: 'getAll',
+      loadPersonalQuickMessagesV2IfNeeded: 'loadAllV2IfNeeded',
     }),
     ...mapActions(useQuickMessageShared, {
       getAllQuickMessagesShared: 'getAll',
+      loadQuickMessagesSharedBySectorIfNeeded: 'loadBySectorIfNeeded',
     }),
     ...mapActions(useFeatureFlag, ['getFeatureFlags']),
     restoreSessionStorageUserStatus({ projectUuid }) {
@@ -261,9 +290,6 @@ export default {
       } catch (error) {
         console.error('[App] Failed to get user status:', error);
       }
-
-      this.loadQuickMessages();
-      this.loadQuickMessagesShared();
     },
 
     async getUser() {
@@ -282,6 +308,22 @@ export default {
     async getProjectLanguage() {
       const language = await Project.getProjectLanguage();
       this.setProject({ ...this.project, language });
+    },
+
+    bootstrapQuickMessages() {
+      if (!this.isQuickMessagesV2Enabled) {
+        this.loadQuickMessages();
+        this.loadQuickMessagesShared();
+        return;
+      }
+
+      // Under the v2 flag the live desk loads quick messages lazily (on room
+      // entry / panel open). The legacy eager load is only kept for the
+      // settings routes, which read the v1 store state directly.
+      if (this.$route.path.startsWith('/settings')) {
+        this.loadQuickMessages();
+        this.loadQuickMessagesShared();
+      }
     },
 
     async loadQuickMessages() {
