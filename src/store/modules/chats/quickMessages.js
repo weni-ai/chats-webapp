@@ -3,7 +3,11 @@ import { defineStore } from 'pinia';
 import QuickMessage from '@/services/api/resources/chats/quickMessage';
 
 export const useQuickMessages = defineStore('quickMessages', {
-  state: () => ({ quickMessages: [], nextQuickMessages: '' }),
+  state: () => ({
+    quickMessages: [],
+    nextQuickMessages: '',
+    quickMessagesRequested: false,
+  }),
   actions: {
     updateQuickMessage({ uuid, title, text, shortcut }) {
       const quickMessageToUpdate = this.quickMessages.find(
@@ -34,6 +38,33 @@ export const useQuickMessages = defineStore('quickMessages', {
       this.quickMessages = newQuickMessages;
 
       return newQuickMessages;
+    },
+
+    async getAllV2() {
+      const { quickMessages, nextQuickMessages } = this;
+
+      const response = await QuickMessage.getAllV2({ nextQuickMessages });
+
+      const newQuickMessages = [...quickMessages, ...(response.results || [])];
+
+      this.nextQuickMessages = response.next;
+      this.quickMessages = newQuickMessages;
+
+      return newQuickMessages;
+    },
+
+    async loadAllV2IfNeeded() {
+      if (this.quickMessagesRequested) return;
+      this.quickMessagesRequested = true;
+
+      try {
+        do {
+          await this.getAllV2();
+        } while (this.nextQuickMessages);
+      } catch (error) {
+        this.quickMessagesRequested = false;
+        throw error;
+      }
     },
 
     async create({ title, text, shortcut }) {
