@@ -14,6 +14,7 @@
     "back_to_original_tooltip": "Revenire la versiunea originală (Ctrl+Z)"
   },
   "chats": {
+    "message_input_disabled_description": "Schimbă-ți statusul în online pentru a continua această conversație",
     "assigned_queues": "Cozi atribuite",
     "define_the_queues": "Definește cozile",
     "error_update_queues": "Nu s-au putut actualiza cozile de serviciu",
@@ -28,6 +29,14 @@
     "select_services_queues": "Setează cozile pentru a primi chat-uri",
     "select_your_queues": "Selectează cozile tale",
     "success_update_queues": "Cozile tale de serviciu au fost actualizate"
+  },
+  "config_chats": {
+    "project_configs": {
+      "restrict_offline_agents": {
+        "switch_label": "Permite interacțiuni doar pentru reprezentanții online",
+        "hint": "Dacă această opțiune este activată, reprezentanții care sunt offline sau în pauză nu vor putea răspunde la conversațiile în curs"
+      }
+    }
   },
   "room_card": {
     "new_chat_received": {
@@ -51,7 +60,7 @@
     "queue_success": "Coada a fost ștearsă cu succes",
     "queue_error": "Nu s-a putut șterge coada",
     "transfer_error_sector": "Nu s-au putut transfera chaturile. Ștergerea departamentului a fost anulată.",
-    "transfer_error_queue": "Nu s-au putut transfera conversațiile. Ștergerea cozii a fost anulată.",
+    "transfer_error_queue": "Nu s-au putut transfera conversațiile. Ștergerea cozii a fost anulată."
   },
   "export_conversation": {
     "accept_terms": "Accept termenii și înțeleg limitările exportului.",
