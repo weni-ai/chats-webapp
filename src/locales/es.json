@@ -532,20 +532,20 @@
     "you_got_chat": "Tienes el chat",
     "chat_take_over": {
       "by_another_representative": {
-        "title": "Chat asumido por otro representante",
-        "description": "Tu chat con {contact} ha sido asumido por {representative}."
+        "title": "Chat asignado a otro representante",
+        "description": "Tu chat con {contact} se ha asignado a {representative}"
       },
       "transfer_to_another_representative": {
         "title": "Chat transferido a otro representante",
-        "description": "Tu chat con {contact} fue transferido por un moderador a {representative}."
+        "description": "Tu chat con {contact} fue transferido por un moderador a {representative}"
       },
       "transfer_to_queue": {
-        "title": "Chat transferido a cola",
-        "description": "Tu chat con {contact} fue transferido por un moderador a la cola {queue}."
+        "title": "Chat transferido a la cola",
+        "description": "Tu chat con {contact} fue transferido por un moderador a la cola {queue}"
       }
     },
-    "your_chat_assumed": "Chat asumido por otro representante",
-    "your_chat_assumed_description": "Tu chat con {contact} ha sido asumido por {representative}",
+    "your_chat_assumed": "Chat asignado a otro representante",
+    "your_chat_assumed_description": "Tu chat con {contact} se ha asignado a {representative}",
     "closed_chats": {
       "contact_history": "Historial del contacto",
       "general_history": "Historial general",
@@ -573,8 +573,8 @@
       "title": "Modo de vista en vivo del agente {viewedAgent}",
       "close": "Visualización final",
       "assume_chat": "Asumir solo este chat",
-      "assume_chat_question": "¿Asumir el chat con {contact}?",
-      "assume_chat_question_description": "¿Seguro de que deseas asumir el chat con {contact}?<br><br>Al confirmar, quitarás el chat del representante y serás responsable del chat."
+      "assume_chat_question": "¿Asignarse el chat con {contact}?",
+      "assume_chat_question_description": "¿Seguro de que deseas asignarte el chat con {contact}?<br><br>Al confirmar, el chat se removerá del representante actual y quedará bajo tu responsabilidad."
     }
   },
   "select": "Seleccionar",
