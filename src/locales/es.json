@@ -342,11 +342,10 @@
       },
       "automated_message": {
         "title": "Mensajes automatizados",
-        "switch_when_waiting_label": "Enviar mensaje automático a contactos esperando",
-        "switch_when_start_label": "Enviar mensaje automático cuando el soporte comience",
-        "hint_when_waiting": "Envía automáticamente un mensaje a contactos que están esperando asistencia en la cola.",
-        "hint_when_start": "Envía automáticamente un mensaje cuando un chat se asigna a un representante. El mensaje aparecerá como si lo hubiera enviado el representante asignado.",
-        "hint": "Envía automáticamente un mensaje cuando un chat se asigna a un representante. El mensaje aparecerá como si lo hubiera enviado el representante asignado.",
+        "switch_when_waiting_label": "Enviar mensaje automático a los contactos en espera",
+        "switch_when_start_label": "Enviar mensaje automático al iniciar el soporte",
+        "hint_when_waiting": "Se envía un mensaje automático a los contactos que están en la cola esperando soporte humano.",
+        "hint_when_start": "Se envía un mensaje automático cuando un chat se asigna a un representante. En el chat, el mensaje aparece como enviado por el representante asignado.",
         "field": {
           "title": "Mensaje automático",
           "placeholder": "Ejemplo: ¡Hola! ¿Cómo puedo ayudarte hoy?"
