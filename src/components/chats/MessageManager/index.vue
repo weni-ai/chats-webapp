@@ -176,6 +176,7 @@ import { useFeatureFlag } from '@/store/modules/featureFlag';
 import { useMessageManager } from '@/store/modules/chats/messageManager';
 
 import MessageManagerLoading from '@/views/loadings/chat/MessageManager.vue';
+import { useQuickMessagesShortcuts } from '@/composables/useQuickMessagesShortcuts';
 
 import TextBox from './TextBox.vue';
 import MoreActionsOption from './MoreActionsOption.vue';
@@ -220,7 +221,10 @@ export default {
   }),
 
   computed: {
-    ...mapState(useQuickMessageShared, ['quickMessagesShared']),
+    ...mapState(useQuickMessageShared, [
+      'quickMessagesShared',
+      'sharedBySector',
+    ]),
     ...mapState(useQuickMessages, ['quickMessages']),
     ...mapState(useRooms, ['canUseCopilot', 'activeRoom']),
     ...mapState(useDiscussions, {
@@ -249,8 +253,16 @@ export default {
     isFileLoadingValueValid() {
       return typeof this.loadingFileValue === 'number';
     },
+    sharedShortcuts() {
+      return useQuickMessagesShortcuts({
+        featureFlags: this.featureFlags,
+        activeRoom: this.activeRoom,
+        sharedBySector: this.sharedBySector,
+        quickMessagesShared: this.quickMessagesShared,
+      });
+    },
     shortcuts() {
-      const allShortcuts = [...this.quickMessages, ...this.quickMessagesShared];
+      const allShortcuts = [...this.quickMessages, ...this.sharedShortcuts];
       const uniqueShortcuts = [];
 
       allShortcuts.forEach((item) => {

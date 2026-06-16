@@ -2,6 +2,10 @@ import http from '@/services/api/http';
 import { getProject } from '@/utils/config';
 import { getURLParams } from '@/utils/requests';
 
+const v2Config = {
+  baseURL: http.defaults.baseURL.replace('/v1', '/v2'),
+};
+
 export default {
   async getAll({ nextQuickMessages = '' }) {
     const endpoint = '/quick_messages/';
@@ -22,6 +26,41 @@ export default {
       ? `${endpoint}${params}`
       : `${endpoint}?project=${projectUuid}`;
     const response = await http.get(url);
+
+    return response.data;
+  },
+
+  async getAllV2({ nextQuickMessages = '' }) {
+    const endpoint = '/quick_messages/';
+    const params = getURLParams({ URL: nextQuickMessages, endpoint });
+
+    const url = nextQuickMessages ? `${endpoint}${params}` : endpoint;
+    const response = await http.get(url, v2Config);
+
+    return response.data;
+  },
+
+  async getBySectorV2({ sectorUuid, next = '' }) {
+    const endpoint = '/sector_quick_messages/';
+    const params = getURLParams({ URL: next, endpoint });
+
+    const url = next
+      ? `${endpoint}${params}`
+      : `${endpoint}?sector=${sectorUuid}`;
+    const response = await http.get(url, v2Config);
+
+    return response.data;
+  },
+
+  async getByProjectV2({ next = '' }) {
+    const projectUuid = await getProject();
+    const endpoint = '/sector_quick_messages/';
+    const params = getURLParams({ URL: next, endpoint });
+
+    const url = next
+      ? `${endpoint}${params}`
+      : `${endpoint}?project=${projectUuid}`;
+    const response = await http.get(url, v2Config);
 
     return response.data;
   },
