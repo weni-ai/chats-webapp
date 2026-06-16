@@ -14,6 +14,7 @@
     "back_to_original_tooltip": "Revenire la versiunea originală (Ctrl+Z)"
   },
   "chats": {
+    "message_input_disabled_description": "Schimbă-ți statusul în online pentru a continua această conversație",
     "chat_take_over": {
       "by_another_representative": {
         "title": "Chat assumido por outro atendente",
@@ -44,6 +45,14 @@
     "select_services_queues": "Setează cozile pentru a primi chat-uri",
     "select_your_queues": "Selectează cozile tale",
     "success_update_queues": "Cozile tale de serviciu au fost actualizate"
+  },
+  "config_chats": {
+    "project_configs": {
+      "restrict_offline_agents": {
+        "switch_label": "Permite interacțiuni doar pentru reprezentanții online",
+        "hint": "Dacă această opțiune este activată, reprezentanții care sunt offline sau în pauză nu vor putea răspunde la conversațiile în curs"
+      }
+    }
   },
   "dashboard": {
     "view-mode": {
