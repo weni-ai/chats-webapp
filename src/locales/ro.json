@@ -14,6 +14,22 @@
     "back_to_original_tooltip": "Revenire la versiunea originală (Ctrl+Z)"
   },
   "chats": {
+    "chat_take_over": {
+      "by_another_representative": {
+        "title": "Chat assumido por outro atendente",
+        "description": "Seu chat com {contact} foi assumido por {representative}"
+      },
+      "transfer_to_another_representative": {
+        "title": "Chat transferido para outro atendente",
+        "description": "Seu chat com {contact} foi transferido por um moderador para {representative}"
+      },
+      "transfer_to_queue": {
+        "title": "Chat transferido para a fila",
+        "description": "Seu chat com {contact} foi transferido por um moderador para a fila {queue}"
+      }
+    },
+    "your_chat_assumed": "Chatul a fost preluat de un alt reprezentant",
+    "your_chat_assumed_description": "Chatul cu {contact} a fost preluat de {representative}",
     "assigned_queues": "Cozi atribuite",
     "define_the_queues": "Definește cozile",
     "error_update_queues": "Nu s-au putut actualiza cozile de serviciu",
@@ -28,6 +44,12 @@
     "select_services_queues": "Setează cozile pentru a primi chat-uri",
     "select_your_queues": "Selectează cozile tale",
     "success_update_queues": "Cozile tale de serviciu au fost actualizate"
+  },
+  "dashboard": {
+    "view-mode": {
+      "assume_chat_question": "Preiei chatul cu {contact}?",
+      "assume_chat_question_description": "Sigur dorești să preiei chatul cu {contact}?<br><br>Dacă confirmi, vei elimina chatul de la reprezentantul actual și vei fi responsabil pentru acesta."
+    }
   },
   "room_card": {
     "new_chat_received": {

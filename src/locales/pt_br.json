@@ -532,15 +532,15 @@
     "chat_take_over": {
       "by_another_representative": {
         "title": "Chat assumido por outro atendente",
-        "description": "Seu chat com {contact} foi assumido por {representative}."
+        "description": "Seu chat com {contact} foi assumido por {representative}"
       },
       "transfer_to_another_representative": {
         "title": "Chat transferido para outro atendente",
-        "description": "Seu chat com {contact} foi transferido por um moderador para {representative}."
+        "description": "Seu chat com {contact} foi transferido por um moderador para {representative}"
       },
       "transfer_to_queue": {
-        "title": "Chat transferido para fila",
-        "description": "Seu chat com {contact} foi transferido por um moderador para a fila {queue}."
+        "title": "Chat transferido para a fila",
+        "description": "Seu chat com {contact} foi transferido por um moderador para a fila {queue}"
       }
     },
     "your_chat_assumed": "Chat assumido por outro atendente",
@@ -573,7 +573,7 @@
       "close": "Encerrar visualização",
       "assume_chat": "Assumir apenas este chat",
       "assume_chat_question": "Assumir o chat com {contact}?",
-      "assume_chat_question_description": "Tem certeza de que deseja assumir o chat com {contact}?<br><br>Ao confirmar, você remove o chat do representante e fica responsável pelo chat."
+      "assume_chat_question_description": "Tem certeza de que deseja assumir o chat com {contact}?<br><br>Ao confirmar, você removerá o chat do atendente atual e será responsável pelo chat."
     }
   },
   "select": "Selecionar",
