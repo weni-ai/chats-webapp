@@ -345,7 +345,7 @@
         "switch_when_waiting_label": "Send automatic message to waiting contacts",
         "switch_when_start_label": "Send automatic message when support starts",
         "hint_when_waiting": "Automatically send a message to contacts while they wait for human support in the queue.",
-        "hint_when_start": "Automatically send a message when a chat is assigned to an representative. The message will appear as if sent by the assigned representative.",
+        "hint_when_start": "Automatically send a message when a chat is assigned to a representative. The message will appear as if sent by the assigned representative.",
         "field": {
           "title": "Automatic message",
           "placeholder": "Example: Hello! How can I help you today?"
@@ -529,15 +529,15 @@
     "chat_take_over": {
       "by_another_representative": {
         "title": "Chat taken over by another representative",
-        "description": "Your chat with {contact} has been taken over by {representative}."
+        "description": "Your chat with {contact} has been taken over by {representative}"
       },
       "transfer_to_another_representative": {
         "title": "Chat transferred to another representative",
-        "description": "Your chat with {contact} was transferred by a moderator to {representative}."
+        "description": "Your chat with {contact} was transferred by a moderator to {representative}"
       },
       "transfer_to_queue": {
         "title": "Chat transferred to queue",
-        "description": "Your chat with {contact} was transferred by a moderator to the {queue} queue."
+        "description": "Your chat with {contact} was transferred by a moderator to the {queue} queue"
       }
     },
     "your_chat_assumed": "Chat taken over by another representative",
@@ -570,7 +570,7 @@
       "close": "End visualization",
       "assume_chat": "Take over only this chat",
       "assume_chat_question": "Take over chat with {contact}?",
-      "assume_chat_question_description": "Are you sure you want to take over chat with {contact}?<br><br>When confirming you will remove the chat from representative and will be responsible for chat."
+      "assume_chat_question_description": "Are you sure you want to take over chat with {contact}?<br><br>If you confirm, you will remove the chat from the current representative and you will be responsible for it."
     }
   },
   "select": "Select",
