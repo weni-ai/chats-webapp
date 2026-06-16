@@ -14,6 +14,23 @@
     "back_to_original_tooltip": "Revenire la versiunea originală (Ctrl+Z)"
   },
   "chats": {
+    "message_input_disabled_description": "Schimbă-ți statusul în online pentru a continua această conversație",
+    "chat_take_over": {
+      "by_another_representative": {
+        "title": "Chat assumido por outro atendente",
+        "description": "Seu chat com {contact} foi assumido por {representative}"
+      },
+      "transfer_to_another_representative": {
+        "title": "Chat transferido para outro atendente",
+        "description": "Seu chat com {contact} foi transferido por um moderador para {representative}"
+      },
+      "transfer_to_queue": {
+        "title": "Chat transferido para a fila",
+        "description": "Seu chat com {contact} foi transferido por um moderador para a fila {queue}"
+      }
+    },
+    "your_chat_assumed": "Chatul a fost preluat de un alt reprezentant",
+    "your_chat_assumed_description": "Chatul cu {contact} a fost preluat de {representative}",
     "assigned_queues": "Cozi atribuite",
     "define_the_queues": "Definește cozile",
     "error_update_queues": "Nu s-au putut actualiza cozile de serviciu",
@@ -28,6 +45,20 @@
     "select_services_queues": "Setează cozile pentru a primi chat-uri",
     "select_your_queues": "Selectează cozile tale",
     "success_update_queues": "Cozile tale de serviciu au fost actualizate"
+  },
+  "config_chats": {
+    "project_configs": {
+      "restrict_offline_agents": {
+        "switch_label": "Permite interacțiuni doar pentru reprezentanții online",
+        "hint": "Dacă această opțiune este activată, reprezentanții care sunt offline sau în pauză nu vor putea răspunde la conversațiile în curs"
+      }
+    }
+  },
+  "dashboard": {
+    "view-mode": {
+      "assume_chat_question": "Preiei chatul cu {contact}?",
+      "assume_chat_question_description": "Sigur dorești să preiei chatul cu {contact}?<br><br>Dacă confirmi, vei elimina chatul de la reprezentantul actual și vei fi responsabil pentru acesta."
+    }
   },
   "room_card": {
     "new_chat_received": {
@@ -51,7 +82,7 @@
     "queue_success": "Coada a fost ștearsă cu succes",
     "queue_error": "Nu s-a putut șterge coada",
     "transfer_error_sector": "Nu s-au putut transfera chaturile. Ștergerea departamentului a fost anulată.",
-    "transfer_error_queue": "Nu s-au putut transfera conversațiile. Ștergerea cozii a fost anulată.",
+    "transfer_error_queue": "Nu s-au putut transfera conversațiile. Ștergerea cozii a fost anulată."
   },
   "export_conversation": {
     "accept_terms": "Accept termenii și înțeleg limitările exportului.",
@@ -62,6 +93,30 @@
     "success_description": "Îl vei primi prin email în curând. Verifică și folderul de spam.",
     "success_title": "Se procesează exportul!",
     "title": "Exportă conversația"
+  },
+  "flows_trigger": {
+    "variable_mapping": {
+      "confirmation_checkbox": "Am verificat și sunt gata să trimit",
+      "confirmation_helper": "Verifică dacă fiecare câmp este mapat corect; așa va arăta mesajul pentru fiecare contact selectat.",
+      "define_variables": "Definește variabilele",
+      "define_variables_ordinal": "Definește variabilele template-ului {ordinal}",
+      "description": "Variabilele vor fi completate în previzualizarea de mai jos folosind valorile contactelor selectate ori de câte ori fac referire la câmpuri de contact.",
+      "input_placeholder": "Introdu valoarea pentru această variabilă",
+      "local_variables": {
+        "agent_email": "Email reprezentant",
+        "agent_name": "Nume reprezentant",
+        "contact_name": "Nume contact",
+        "contact_urn": "Telefon contact"
+      },
+      "next_template": "Template următor",
+      "preview_title": "Previzualizare template",
+      "preview_title_ordinal": "Previzualizarea template-ului {ordinal}",
+      "preview_variable_tooltip": "Variabilă {placeholder}",
+      "send_templates": "Trimite ({count} template) | Trimite ({count} template-uri)",
+      "title": "Maparea variabilelor",
+      "title_tag": "Template {current} din {total}",
+      "variable_label": "Variabilă {name}"
+    }
   },
   "discussion_about": "Discuție despre {discussionGoal}",
   "you_message_prefix": "Tu:",
@@ -84,6 +139,14 @@
           "default": "Sondaj CSAT implicit (recomandat)",
           "label": "Tip de sondaj",
           "tooltip": "Alege între sondajul CSAT implicit și un flux personalizat deja configurat în modulul Fluxuri."
+        }
+      },
+      "additional_options": {
+        "automated_message": {
+          "switch_when_waiting_label": "Trimite mesaj automat contactelor care așteaptă",
+          "switch_when_start_label": "Trimite mesaj automat când începe asistența",
+          "hint_when_waiting": "Trimite automat un mesaj contactelor în timp ce acestea așteaptă asistență umană în coadă.",
+          "hint_when_start": "Trimite automat un mesaj atunci când un chat este atribuit unui reprezentant. Mesajul va apărea ca și cum ar fi fost trimis de reprezentantul atribuit."
         }
       }
     }

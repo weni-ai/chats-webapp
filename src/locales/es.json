@@ -163,8 +163,12 @@
     "title": "Mensaje automático",
     "info": "Define una respuesta automática para enviar al contacto mientras espera asistencia, déjalo en blanco si no deseas ningún mensaje.",
     "placeholder": "Aún no has definido un mensaje automático. Por favor, define un mensaje para tus contactos que están esperando.",
-    "automatic_opening_message": "Mensaje automático de bienvenida"
+    "automatic_opening_message": "Mensaje de apertura automático",
+    "inactive_warning_message": "Mensaje de aviso",
+    "inactive_close_message": "Mensaje de cierre"
   },
+  "inactive": "Inactivo",
+  "inactive_room_tooltip": "La conversación ha alcanzado el límite de inactividad de {minutes} minuto. | La conversación ha alcanzado el límite de inactividad de {minutes} minutos.",
   "reply": "Responder",
   "step_of": "Paso {step} de {total}",
   "type_to_filter": "Escribe para filtrar",
@@ -287,6 +291,30 @@
     },
     "additional_options": {
       "title": "Opciones extras",
+      "inactivity_timeout": {
+        "title": "Inactividad en la conversación",
+        "show": {
+          "switch_label": "Mostrar alerta de inactividad al representante y notificar al contacto",
+          "hint": "La alerta se muestra solo en chats en curso y considera el tiempo desde el último mensaje del representante.",
+          "field": {
+            "timeout_time_label": "Definir después de cuántos minutos sin respuesta del contacto el sistema debe enviar el mensaje de aviso",
+            "timeout_time_tooltip": "En ese momento, el representante también verá la conversación marcada con una alerta de inactividad.",
+            "warning_message_label": "Mensaje de aviso",
+            "warning_message_tooltip": "El mensaje aparecerá como si lo hubiera enviado el representante asignado.",
+            "default_warning_message": "¿Sigues ahí? Si no hay respuesta, esta sesión se cerrará pronto."
+          }
+        },
+        "close_room": {
+          "switch_label": "Finalizar chats inactivos automáticamente",
+          "hint": "Los chats se finalizan automáticamente si el contacto no envía mensajes en el período posterior al envío de la alerta.",
+          "field": {
+            "close_room_time_label": "Definir cuántos minutos después de enviar el mensaje de aviso el sistema debe finalizar el chat",
+            "close_room_message_label": "Mensaje de cierre",
+            "close_room_message_tooltip": "El mensaje aparecerá como si lo hubiera enviado el representante asignado.",
+            "default_close_room_message": "Esta sesión finalizó por inactividad. Inicia un nuevo chat cuando quieras."
+          }
+        }
+      },
       "template_message": {
         "switch_label": "Envío de plantillas de mensajes"
       },
@@ -314,11 +342,10 @@
       },
       "automated_message": {
         "title": "Mensajes automatizados",
-        "switch_when_waiting_label": "Enviar mensaje automático a contactos esperando",
-        "switch_when_start_label": "Enviar mensaje automático cuando el soporte comience",
-        "hint_when_waiting": "Envía automáticamente un mensaje a contactos que están esperando asistencia en la cola.",
-        "hint_when_start": "Envía automáticamente un mensaje cuando un chat se asigna a un representante. El mensaje aparecerá como si lo hubiera enviado el representante asignado.",
-        "hint": "Envía automáticamente un mensaje cuando un chat se asigna a un representante. El mensaje aparecerá como si lo hubiera enviado el representante asignado.",
+        "switch_when_waiting_label": "Enviar mensaje automático a los contactos en espera",
+        "switch_when_start_label": "Enviar mensaje automático al iniciar el soporte",
+        "hint_when_waiting": "Se envía un mensaje automático a los contactos que están en la cola esperando soporte humano.",
+        "hint_when_start": "Se envía un mensaje automático cuando un chat se asigna a un representante. En el chat, el mensaje aparece como enviado por el representante asignado.",
         "field": {
           "title": "Mensaje automático",
           "placeholder": "Ejemplo: ¡Hola! ¿Cómo puedo ayudarte hoy?"
@@ -443,7 +470,8 @@
       "transfer_to_agent": "{agent1} transfirió el chat a {agent2}",
       "transfer_to_agent_by_other": "{requestedBy} transfirió el chat de {agent1} a {agent2}",
       "transfer_to_queue": "{agent} transfirió el chat a la cola {queue}",
-      "transfer_to_queue_by_other": "{requestedBy} transfirió el chat de {agent} a la cola {queue}"
+      "transfer_to_queue_by_other": "{requestedBy} transfirió el chat de {agent} a la cola {queue}",
+      "automatic_close_room": "Finalizado automáticamente por falta de interacción del contacto"
     },
     "room_list": {
       "order_by": "Ordenar por:",
@@ -473,7 +501,7 @@
       "default": "Ocurrió un error, por favor, inténtelo de nuevo más tarde"
     },
     "message_input_placeholder": "Escribe tu mensaje o / para activar mensajes rápidos",
-    "message_input_disabled_description": "Cambia tu estado a en línea para continuar esta conversación.",
+    "message_input_disabled_description": "Cambia tu status a online para continuar esta conversación",
     "search_contact": "Buscar contacto",
     "search_contact_placeholder": "Buscar contacto (nombre, teléfono o ticket ID)",
     "tags": "Etiquetas de chat",
@@ -503,20 +531,20 @@
     "you_got_chat": "Tienes el chat",
     "chat_take_over": {
       "by_another_representative": {
-        "title": "Chat asumido por otro representante",
-        "description": "Tu chat con {contact} ha sido asumido por {representative}."
+        "title": "Chat asignado a otro representante",
+        "description": "Tu chat con {contact} se ha asignado a {representative}"
       },
       "transfer_to_another_representative": {
         "title": "Chat transferido a otro representante",
-        "description": "Tu chat con {contact} fue transferido por un moderador a {representative}."
+        "description": "Tu chat con {contact} fue transferido por un moderador a {representative}"
       },
       "transfer_to_queue": {
-        "title": "Chat transferido a cola",
-        "description": "Tu chat con {contact} fue transferido por un moderador a la cola {queue}."
+        "title": "Chat transferido a la cola",
+        "description": "Tu chat con {contact} fue transferido por un moderador a la cola {queue}"
       }
     },
-    "your_chat_assumed": "Chat asumido por otro representante",
-    "your_chat_assumed_description": "Tu chat con {contact} ha sido asumido por {representative}",
+    "your_chat_assumed": "Chat asignado a otro representante",
+    "your_chat_assumed_description": "Tu chat con {contact} se ha asignado a {representative}",
     "closed_chats": {
       "contact_history": "Historial del contacto",
       "general_history": "Historial general",
@@ -544,8 +572,8 @@
       "title": "Modo de vista en vivo del agente {viewedAgent}",
       "close": "Visualización final",
       "assume_chat": "Asumir solo este chat",
-      "assume_chat_question": "¿Asumir el chat con {contact}?",
-      "assume_chat_question_description": "¿Seguro de que deseas asumir el chat con {contact}?<br><br>Al confirmar, quitarás el chat del representante y serás responsable del chat."
+      "assume_chat_question": "¿Asignarse el chat con {contact}?",
+      "assume_chat_question_description": "¿Seguro de que deseas asignarte el chat con {contact}?<br><br>Al confirmar, el chat se removerá del representante actual y quedará bajo tu responsabilidad."
     }
   },
   "select": "Seleccionar",
@@ -610,6 +638,7 @@
   "pagination": "{from} - {to} de {total}",
   "contact": "Contacto",
   "unread_messages": "{count} mensaje no leído | {count} mensajes no leídos",
+  "automatically_ended": "Finalizado automáticamente",
   "unnamed_contact": "Contacto sin nombre",
   "unnamed_agent": "Agente sin nombre",
   "no_agent_assigned": "No se ha asignado un agente",
@@ -890,14 +919,19 @@
     "contact_already_exists": "El número {contact} ya está guardado en tu lista de contactos",
     "variable_mapping": {
       "title": "Mapeo de variables",
+      "title_tag": "Template {current} de {total}",
       "description": "Las variables se completarán en la vista previa siguiente con valores de los contactos seleccionados cuando hagan referencia a campos del contacto.",
       "define_variables": "Definir las variables",
+      "define_variables_ordinal": "Definir las variables del {ordinal} template",
       "variable_label": "Variable {name}",
       "input_placeholder": "Escribe el valor para esta variable",
       "preview_title": "Vista previa del template",
+      "preview_title_ordinal": "Vista previa del {ordinal} template",
       "preview_variable_tooltip": "Variable {placeholder}",
       "confirmation_helper": "Verifica si cada campo está mapeado correctamente; así se mostrará el mensaje a cada contacto seleccionado.",
       "confirmation_checkbox": "Lo verifiqué y estoy listo para enviar",
+      "next_template": "Siguiente template",
+      "send_templates": "Enviar ({count} template) | Enviar ({count} templates)",
       "local_variables": {
         "contact_name": "Nombre del contacto",
         "contact_urn": "Teléfono del contacto",
@@ -1031,8 +1065,8 @@
         }
       },
       "restrict_offline_agents": {
-        "switch_label": "Permitir interacciones solo para representantes en línea",
-        "hint": "Si esta opción está activada, los representantes sin conexión o en pausa no podrán responder a chats en curso."
+        "switch_label": "Permitir interacciones solo para representantes online",
+        "hint": "Si esta opción está activa, los representantes offline o en pausa no podrán responder a chats en curso."
       },
       "bulk_transfer": {
         "tooltip": "Esta función permite a los representantes transferir varios contactos a la vez a una fila o representante",

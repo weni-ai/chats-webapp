@@ -38,6 +38,15 @@ const sectorExtraOptionsMock = {
     is_active: false,
     text: '',
   },
+  inactivity_timeout: {
+    is_message_timeout_enabled: false,
+    message_timeout_text: '',
+    message_timeout_time: null,
+
+    is_close_room_enabled: false,
+    close_room_message_text: '',
+    close_room_timeout_time: null,
+  },
   is_csat_enabled: false,
   custom_csat_flow_uuid: null,
 };

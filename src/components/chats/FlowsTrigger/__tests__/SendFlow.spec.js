@@ -172,13 +172,14 @@ describe('SendFlow', () => {
       await new Promise((resolve) => setTimeout(resolve, 0));
 
       expect(FlowsTrigger.getFlowTemplates).toHaveBeenCalledWith('flow-1', '');
-      expect(wrapper.vm.cachedTemplate).toEqual(
-        templatesWithVariablesResponse.templates[0],
-      );
+      expect(wrapper.vm.cachedTemplate).toEqual({
+        templates: templatesWithVariablesResponse.templates,
+        total_template_qty: templatesWithVariablesResponse.total_template_qty,
+      });
       expect(wrapper.emitted('update:cachedTemplate')).toBeTruthy();
     });
 
-    it('opens the variable mapping modal when the selected flow has variables', async () => {
+    it('emits the cached template up when the selected flow has variables', async () => {
       FlowsTrigger.getFlowTemplates.mockResolvedValueOnce(
         templatesWithVariablesResponse,
       );
@@ -188,81 +189,16 @@ describe('SendFlow', () => {
         .vm.$emit('update:modelValue', 'flow-1');
       await new Promise((resolve) => setTimeout(resolve, 0));
 
-      expect(wrapper.vm.showVariableModal).toBe(true);
-      expect(
-        wrapper.find('[data-testid="send-flow-variable-mapping"]').exists(),
-      ).toBe(true);
-    });
+      const emissions = wrapper.emitted('update:cachedTemplate');
+      expect(emissions).toBeTruthy();
 
-    it('forwards localVariables to the variable mapping modal', async () => {
-      const pinia = createFlowsTriggerPinia({
-        initialState: {
-          profile: {
-            me: {
-              first_name: 'Ada',
-              last_name: 'Lovelace',
-              email: 'ada@example.com',
-            },
-          },
-        },
-      });
-
-      wrapper = mount(SendFlow, {
-        global: {
-          components: { SelectFlow, SendFlowButton },
-          plugins: [pinia],
-          stubs: sendFlowStubs,
-        },
-        props: {
-          contacts: [
-            { external_id: 'c1', name: 'Joao' },
-            { external_id: 'c2', name: 'Maria' },
-          ],
-          selectedContact: {},
-        },
-      });
-      enableVariableMappingFlag();
-
-      FlowsTrigger.getFlowTemplates.mockResolvedValueOnce(
-        templatesWithVariablesResponse,
+      const lastPayload = emissions[emissions.length - 1][0];
+      expect(lastPayload.templates).toEqual(
+        templatesWithVariablesResponse.templates,
       );
-
-      await wrapper
-        .findComponent('[data-testid="select-flow"]')
-        .vm.$emit('update:modelValue', 'flow-1');
-      await new Promise((resolve) => setTimeout(resolve, 0));
-
-      const tokens = wrapper.vm.localVariables.map((v) => v.token);
-      expect(tokens).toContain('{{contact.name}}');
-      expect(tokens).toContain('{{agent.name}}');
-      expect(tokens).toContain('{{agent.email}}');
-    });
-
-    it('sends with params after variable mapping confirmation', async () => {
-      FlowsTrigger.getFlowTemplates.mockResolvedValueOnce(
-        templatesWithVariablesResponse,
+      expect(lastPayload.total_template_qty).toBe(
+        templatesWithVariablesResponse.total_template_qty,
       );
-      FlowsTrigger.sendFlow.mockResolvedValue({});
-
-      await wrapper.setProps({
-        contacts: [{ external_id: 'contact-1', name: 'Contact 1' }],
-      });
-      wrapper.vm.projectUuidFlow = 'project-uuid';
-
-      await wrapper
-        .findComponent('[data-testid="select-flow"]')
-        .vm.$emit('update:modelValue', 'flow-1');
-      await new Promise((resolve) => setTimeout(resolve, 0));
-
-      await wrapper.vm.onConfirmVariableMapping({ nomecontato: 'Marcus' });
-
-      expect(FlowsTrigger.sendFlow).toHaveBeenCalledWith(
-        expect.objectContaining({
-          params: { nomecontato: 'Marcus' },
-        }),
-        'project-uuid',
-      );
-      expect(wrapper.vm.showVariableModal).toBe(false);
     });
 
     it('stores null when the selected flow has no template variables', async () => {

@@ -67,6 +67,17 @@ describe('MetaTemplatePreview', () => {
     expect(title.text()).toContain('template_test');
   });
 
+  it('uses the provided titleLabel for the preview header', () => {
+    const wrapperWithTitle = buildWrapper({
+      titleLabel: 'Preview of the 1st template',
+    });
+    const title = wrapperWithTitle.find(
+      '[data-testid="meta-template-preview-title"]',
+    );
+    expect(title.text()).toContain('Preview of the 1st template');
+    expect(title.text()).toContain('template_test');
+  });
+
   it('renders header and footer texts', () => {
     expect(
       wrapper.find('[data-testid="meta-template-preview-header"]').text(),
