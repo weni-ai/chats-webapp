@@ -236,6 +236,7 @@ export default {
             const errorText = i18n.global.t('chats.summary.error');
             this.setRoomSummary(errorText, { liked: null }, 'ERROR');
           }
+          return;
         }
       } catch (error) {
         if (this.room?.uuid !== roomUuid) return;
