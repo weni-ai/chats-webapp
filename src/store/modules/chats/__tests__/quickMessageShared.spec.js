@@ -49,6 +49,14 @@ describe('useQuickMessageShared Store', () => {
 
     await quickMessageSharedStore.loadBySectorIfNeeded('sector-1');
 
+    expect(QuickMessage.getBySectorV2).toHaveBeenNthCalledWith(1, {
+      sectorUuid: 'sector-1',
+      next: '',
+    });
+    expect(QuickMessage.getBySectorV2).toHaveBeenNthCalledWith(2, {
+      sectorUuid: 'sector-1',
+      next: 'next-page',
+    });
     expect(QuickMessage.getBySectorV2).toHaveBeenCalledTimes(2);
     expect(quickMessageSharedStore.sharedBySector('sector-1')).toHaveLength(2);
     expect(quickMessageSharedStore.requestedSectors).toContain('sector-1');

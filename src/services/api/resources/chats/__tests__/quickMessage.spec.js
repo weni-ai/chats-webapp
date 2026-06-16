@@ -3,7 +3,17 @@ import http from '@/services/api/http';
 import QuickMessageApi from '../quickMessage';
 import { getProject } from '@/utils/config';
 
-vi.mock('@/services/api/http');
+vi.mock('@/services/api/http', () => ({
+  default: {
+    get: vi.fn(),
+    post: vi.fn(),
+    patch: vi.fn(),
+    delete: vi.fn(),
+    defaults: {
+      baseURL: 'https://api.example.com/v1',
+    },
+  },
+}));
 vi.mock('@/utils/config');
 
 describe('QuickMessageApi', () => {
@@ -45,7 +55,9 @@ describe('QuickMessageApi', () => {
 
     const response = await QuickMessageApi.getAllV2({});
 
-    expect(http.get).toHaveBeenCalledWith('/v2/quick_messages/');
+    expect(http.get).toHaveBeenCalledWith('/quick_messages/', {
+      baseURL: 'https://api.example.com/v2',
+    });
     expect(response).toEqual(mockResponse.data);
   });
 
@@ -57,10 +69,28 @@ describe('QuickMessageApi', () => {
       sectorUuid: 'sector1',
     });
 
+    expect(getProject).not.toHaveBeenCalled();
     expect(http.get).toHaveBeenCalledWith(
-      '/v2/sector_quick_messages/?sector=sector1&project=project-uuid',
+      '/sector_quick_messages/?sector=sector1',
+      { baseURL: 'https://api.example.com/v2' },
     );
     expect(response).toEqual(mockResponse.data);
+  });
+
+  it('should paginate v2 shared quick messages by sector using next', async () => {
+    const mockResponse = { data: { results: [], next: '' } };
+    http.get.mockResolvedValueOnce(mockResponse);
+
+    await QuickMessageApi.getBySectorV2({
+      sectorUuid: 'sector1',
+      next: 'https://api.test/v2/sector_quick_messages/?cursor=abc',
+    });
+
+    expect(getProject).not.toHaveBeenCalled();
+    expect(http.get).toHaveBeenCalledWith(
+      '/sector_quick_messages/?cursor=abc',
+      { baseURL: 'https://api.example.com/v2' },
+    );
   });
 
   it('should fetch v2 shared quick messages by project', async () => {
@@ -70,7 +100,8 @@ describe('QuickMessageApi', () => {
     const response = await QuickMessageApi.getByProjectV2({});
 
     expect(http.get).toHaveBeenCalledWith(
-      '/v2/sector_quick_messages/?project=project-uuid',
+      '/sector_quick_messages/?project=project-uuid',
+      { baseURL: 'https://api.example.com/v2' },
     );
     expect(response).toEqual(mockResponse.data);
   });
@@ -84,7 +115,10 @@ describe('QuickMessageApi', () => {
     });
 
     expect(http.get).toHaveBeenCalledWith(
-      '/v2/sector_quick_messages/?cursor=abc',
+      '/sector_quick_messages/?cursor=abc',
+      {
+        baseURL: 'https://api.example.com/v2',
+      },
     );
   });
 
