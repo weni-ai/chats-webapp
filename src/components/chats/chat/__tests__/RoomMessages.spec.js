@@ -390,6 +390,36 @@ describe('RoomMessages.vue', () => {
       });
       expect(roomsStore.isLoadingActiveRoomSummary).toBe(false);
     });
+
+    it('stops the polling interval and resets attempts counter', async () => {
+      vi.useFakeTimers();
+      RoomNotes.getInternalNotes.mockResolvedValue({ results: [] });
+      RoomService.getSummary.mockResolvedValue({
+        status: 'IN_PROGRESS',
+        summary: '',
+        feedback: null,
+      });
+
+      const wrapper = createWrapper(
+        {},
+        {
+          rooms: { roomsSummary: {} },
+          config: { project: { config: { has_chats_summary: true } } },
+        },
+      );
+      await flushPromises();
+
+      wrapper.vm.handlingGetRoomSummary();
+      wrapper.vm.summaryPollAttempts = 5;
+      expect(wrapper.vm.getRoomSummaryInterval).not.toBe(null);
+
+      wrapper.vm.setRoomSummary('text', null, 'DONE');
+
+      expect(wrapper.vm.getRoomSummaryInterval).toBe(null);
+      expect(wrapper.vm.summaryPollAttempts).toBe(0);
+
+      vi.useRealTimers();
+    });
   });
 
   describe('getRoomSummary', () => {
@@ -472,6 +502,117 @@ describe('RoomMessages.vue', () => {
 
       expect(RoomService.getSummary).not.toHaveBeenCalled();
     });
+
+    it('does not call setRoomSummary when status is not terminal and cap is not reached', async () => {
+      vi.useFakeTimers();
+      RoomNotes.getInternalNotes.mockResolvedValue({ results: [] });
+      RoomService.getSummary.mockResolvedValue({
+        status: 'IN_PROGRESS',
+        summary: '',
+        feedback: null,
+      });
+
+      const wrapper = createWrapper(
+        {},
+        {
+          rooms: { roomsSummary: {} },
+          config: { project: { config: { has_chats_summary: true } } },
+        },
+      );
+      await flushPromises();
+
+      wrapper.vm.handlingGetRoomSummary();
+      await flushPromises();
+      expect(wrapper.vm.getRoomSummaryInterval).not.toBe(null);
+
+      const setRoomSummarySpy = vi.spyOn(wrapper.vm, 'setRoomSummary');
+      wrapper.vm.summaryPollAttempts = 0;
+
+      await wrapper.vm.getRoomSummary();
+
+      expect(setRoomSummarySpy).not.toHaveBeenCalled();
+      expect(wrapper.vm.getRoomSummaryInterval).not.toBe(null);
+
+      vi.useRealTimers();
+    });
+
+    it('falls back to error text when MAX_SUMMARY_POLL_ATTEMPTS is reached and summary is empty', async () => {
+      RoomNotes.getInternalNotes.mockResolvedValue({ results: [] });
+      RoomService.getSummary.mockResolvedValue({
+        status: 'IN_PROGRESS',
+        summary: '',
+        feedback: null,
+      });
+
+      const wrapper = createWrapper();
+      await flushPromises();
+
+      vi.spyOn(wrapper.vm, 'setRoomSummary');
+      wrapper.vm.summaryPollAttempts = 11;
+
+      await wrapper.vm.getRoomSummary();
+
+      const errorText = i18n.global.t('chats.summary.error');
+      expect(wrapper.vm.setRoomSummary).toHaveBeenCalledWith(
+        errorText,
+        { liked: null },
+        'ERROR',
+      );
+    });
+
+    it('preserves the partial summary text when MAX_SUMMARY_POLL_ATTEMPTS is reached with a populated summary', async () => {
+      RoomNotes.getInternalNotes.mockResolvedValue({ results: [] });
+      RoomService.getSummary.mockResolvedValue({
+        status: 'IN_PROGRESS',
+        summary: 'Partial summary content',
+        feedback: { liked: true },
+      });
+
+      const wrapper = createWrapper();
+      await flushPromises();
+
+      vi.spyOn(wrapper.vm, 'setRoomSummary');
+      wrapper.vm.summaryPollAttempts = 11;
+
+      await wrapper.vm.getRoomSummary();
+
+      expect(wrapper.vm.setRoomSummary).toHaveBeenCalledWith(
+        'Partial summary content',
+        { liked: true },
+        'ERROR',
+      );
+    });
+  });
+
+  describe('lifecycle', () => {
+    it('calls stopRoomSummaryPolling on beforeUnmount to avoid ghost intervals', async () => {
+      vi.useFakeTimers();
+      RoomNotes.getInternalNotes.mockResolvedValue({ results: [] });
+      RoomService.getSummary.mockResolvedValue({
+        status: 'IN_PROGRESS',
+        summary: '',
+        feedback: null,
+      });
+
+      const wrapper = createWrapper(
+        {},
+        {
+          rooms: { roomsSummary: {} },
+          config: { project: { config: { has_chats_summary: true } } },
+        },
+      );
+      await flushPromises();
+
+      wrapper.vm.handlingGetRoomSummary();
+      expect(wrapper.vm.getRoomSummaryInterval).not.toBe(null);
+
+      const stopSpy = vi.spyOn(wrapper.vm, 'stopRoomSummaryPolling');
+      wrapper.unmount();
+
+      expect(stopSpy).toHaveBeenCalled();
+
+      vi.useRealTimers();
+    });
   });
 
   describe('getRoomInternalNotes', () => {
@@ -545,8 +686,8 @@ describe('RoomMessages.vue', () => {
       vi.useFakeTimers();
       RoomNotes.getInternalNotes.mockResolvedValue({ results: [] });
       RoomService.getSummary.mockResolvedValue({
-        status: 'DONE',
-        summary: 'S',
+        status: 'IN_PROGRESS',
+        summary: '',
         feedback: null,
       });
 
