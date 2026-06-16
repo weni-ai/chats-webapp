@@ -39,6 +39,15 @@ describe('formatOrdinal', () => {
     });
   });
 
+  describe('Romanian locale', () => {
+    it('uses the masculine ordinal suffix -lea', () => {
+      expect(formatOrdinal(1, 'ro')).toBe('1-lea');
+      expect(formatOrdinal(2, 'ro')).toBe('2-lea');
+      expect(formatOrdinal(3, 'ro')).toBe('3-lea');
+      expect(formatOrdinal(21, 'ro')).toBe('21-lea');
+    });
+  });
+
   describe('fallbacks', () => {
     it('defaults to English formatting when locale is empty', () => {
       expect(formatOrdinal(1, '')).toBe('1st');
@@ -46,6 +55,7 @@ describe('formatOrdinal', () => {
 
     it('is case insensitive for the locale', () => {
       expect(formatOrdinal(2, 'PT-BR')).toBe('2º');
+      expect(formatOrdinal(2, 'RO')).toBe('2-lea');
     });
   });
 });
