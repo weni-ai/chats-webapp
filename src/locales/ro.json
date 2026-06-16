@@ -51,7 +51,7 @@
     "queue_success": "Coada a fost ștearsă cu succes",
     "queue_error": "Nu s-a putut șterge coada",
     "transfer_error_sector": "Nu s-au putut transfera chaturile. Ștergerea departamentului a fost anulată.",
-    "transfer_error_queue": "Nu s-au putut transfera conversațiile. Ștergerea cozii a fost anulată.",
+    "transfer_error_queue": "Nu s-au putut transfera conversațiile. Ștergerea cozii a fost anulată."
   },
   "export_conversation": {
     "accept_terms": "Accept termenii și înțeleg limitările exportului.",
@@ -84,6 +84,14 @@
           "default": "Sondaj CSAT implicit (recomandat)",
           "label": "Tip de sondaj",
           "tooltip": "Alege între sondajul CSAT implicit și un flux personalizat deja configurat în modulul Fluxuri."
+        }
+      },
+      "additional_options": {
+        "automated_message": {
+          "switch_when_waiting_label": "Trimite mesaj automat contactelor care așteaptă",
+          "switch_when_start_label": "Trimite mesaj automat când începe asistența",
+          "hint_when_waiting": "Trimite automat un mesaj contactelor în timp ce acestea așteaptă asistență umană în coadă.",
+          "hint_when_start": "Trimite automat un mesaj atunci când un chat este atribuit unui reprezentant. Mesajul va apărea ca și cum ar fi fost trimis de reprezentantul atribuit."
         }
       }
     }

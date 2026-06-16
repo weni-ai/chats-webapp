@@ -342,11 +342,10 @@
       },
       "automated_message": {
         "title": "Mensagens automatizadas",
-        "switch_when_waiting_label": "Enviar mensagem automática a contatos esperando",
-        "switch_when_start_label": "Enviar mensagem automática ao iniciar o atendimento",
-        "hint_when_waiting": "Envia automaticamente uma mensagem a contatos que estão esperando atendimento. A mensagem aparecerá como se enviada pelo atendente atribuído.",
-        "hint_when_start": "Envia automaticamente uma mensagem quando um chat é atribuído a um atendente. A mensagem aparecerá como se enviada pelo atendente atribuído.",
-        "hint": "Envia automaticamente uma mensagem quando um chat é atribuído a um atendente. A mensagem aparecerá como se enviada pelo atendente atribuído.",
+        "switch_when_waiting_label": "Enviar mensagem automática para contatos na fila de espera",
+        "switch_when_start_label": "Enviar mensagem automática quando o atendimento começar",
+        "hint_when_waiting": "Envia automaticamente uma mensagem para os contatos enquanto aguardam atendimento humano na fila.",
+        "hint_when_start": "Envia automaticamente uma mensagem quando um chat é atribuído a um atendente. A mensagem aparece como se tivesse sido enviada pelo atendente.",
         "field": {
           "title": "Mensagem automática",
           "placeholder": "Exemplo: Olá! Como posso ajudar você hoje?"
