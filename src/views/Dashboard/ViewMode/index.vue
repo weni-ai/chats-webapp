@@ -56,7 +56,9 @@
                   clickable
                   :scheme="openActiveRoomSummary ? 'gray-900' : 'gray-500'"
                   size="ant"
-                  @click="openActiveRoomSummary = !openActiveRoomSummary"
+                  @click="
+                    setOpenActiveRoomSummary(!openActiveRoomSummary, room?.uuid)
+                  "
                 />
               </section>
             </UnnnicToolTip>
@@ -287,7 +289,7 @@ export default {
 
   methods: {
     ...mapActions(useDiscussions, ['setActiveDiscussion']),
-    ...mapActions(useRooms, ['setActiveRoom']),
+    ...mapActions(useRooms, ['setActiveRoom', 'setOpenActiveRoomSummary']),
     ...mapActions(useDashboard, ['setViewedAgent']),
 
     handleModal(modalName, action) {

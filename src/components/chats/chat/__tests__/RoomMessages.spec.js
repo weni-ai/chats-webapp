@@ -10,6 +10,7 @@ import { useFeatureFlag } from '@/store/modules/featureFlag';
 import RoomService from '@/services/api/resources/chats/room';
 import RoomNotes from '@/services/api/resources/chats/roomNotes';
 import i18n from '@/plugins/i18n';
+import * as summaryDismissalStorage from '@/utils/summaryDismissalStorage';
 
 vi.mock('@/components/chats/chat/ChatMessages/index.vue', () => ({
   default: {
@@ -145,6 +146,7 @@ describe('RoomMessages.vue', () => {
 
   afterEach(() => {
     vi.clearAllMocks();
+    vi.restoreAllMocks();
     consoleErrorSpy.mockClear();
     consoleLogSpy.mockClear();
   });
@@ -338,6 +340,87 @@ describe('RoomMessages.vue', () => {
       await flushPromises();
 
       expect(wrapper.vm.isLoadingMessages).toBe(false);
+    });
+
+    it('keeps the summary closed when isSummaryDismissed returns true for the room', async () => {
+      RoomNotes.getInternalNotes.mockResolvedValue({ results: [] });
+      RoomService.getSummary.mockResolvedValue({
+        status: 'DONE',
+        summary: 'Summary',
+        feedback: null,
+      });
+      vi.spyOn(summaryDismissalStorage, 'isSummaryDismissed').mockReturnValue(
+        true,
+      );
+
+      const wrapper = createWrapper(
+        { showRoomSummary: true },
+        {
+          rooms: { openActiveRoomSummary: true },
+          config: { project: { config: { has_chats_summary: true } } },
+        },
+      );
+      await flushPromises();
+
+      const roomsStore = useRooms(wrapper.vm.$pinia);
+      expect(roomsStore.openActiveRoomSummary).toBe(false);
+    });
+
+    it('opens the summary by default when isSummaryDismissed returns false', async () => {
+      RoomNotes.getInternalNotes.mockResolvedValue({ results: [] });
+      RoomService.getSummary.mockResolvedValue({
+        status: 'DONE',
+        summary: 'Summary',
+        feedback: null,
+      });
+      vi.spyOn(summaryDismissalStorage, 'isSummaryDismissed').mockReturnValue(
+        false,
+      );
+
+      const wrapper = createWrapper(
+        { showRoomSummary: true },
+        {
+          rooms: { openActiveRoomSummary: false },
+          config: { project: { config: { has_chats_summary: true } } },
+        },
+      );
+      await flushPromises();
+
+      const roomsStore = useRooms(wrapper.vm.$pinia);
+      expect(roomsStore.openActiveRoomSummary).toBe(true);
+    });
+  });
+
+  describe('ChatSummary close', () => {
+    it('marks the room summary as dismissed and closes it when ChatSummary emits close', async () => {
+      RoomNotes.getInternalNotes.mockResolvedValue({ results: [] });
+      RoomService.getSummary.mockResolvedValue({
+        status: 'DONE',
+        summary: 'Summary',
+        feedback: null,
+      });
+      vi.spyOn(summaryDismissalStorage, 'isSummaryDismissed').mockReturnValue(
+        false,
+      );
+      const markSpy = vi
+        .spyOn(summaryDismissalStorage, 'markSummaryDismissed')
+        .mockImplementation(() => {});
+
+      const wrapper = createWrapper(
+        { showRoomSummary: true },
+        {
+          rooms: { openActiveRoomSummary: true },
+          config: { project: { config: { has_chats_summary: true } } },
+        },
+      );
+      await flushPromises();
+
+      const chatSummary = wrapper.findComponent({ name: 'ChatSummary' });
+      await chatSummary.vm.$emit('close');
+
+      const roomsStore = useRooms(wrapper.vm.$pinia);
+      expect(roomsStore.openActiveRoomSummary).toBe(false);
+      expect(markSpy).toHaveBeenCalledWith(mockRoom.uuid);
     });
   });
 
