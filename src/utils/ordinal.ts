@@ -14,6 +14,10 @@ export const formatOrdinal = (value: number, locale: string): string => {
     return `${value}º`;
   }
 
+  if (normalized.startsWith('ro')) {
+    return `${value}-lea`;
+  }
+
   const rules = new Intl.PluralRules('en', { type: 'ordinal' });
   const suffix = EN_ORDINAL_SUFFIXES[rules.select(value)] ?? 'th';
   return `${value}${suffix}`;

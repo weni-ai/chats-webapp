@@ -342,11 +342,10 @@
       },
       "automated_message": {
         "title": "Mensajes automatizados",
-        "switch_when_waiting_label": "Enviar mensaje automático a contactos esperando",
-        "switch_when_start_label": "Enviar mensaje automático cuando el soporte comience",
-        "hint_when_waiting": "Envía automáticamente un mensaje a contactos que están esperando asistencia en la cola.",
-        "hint_when_start": "Envía automáticamente un mensaje cuando un chat se asigna a un representante. El mensaje aparecerá como si lo hubiera enviado el representante asignado.",
-        "hint": "Envía automáticamente un mensaje cuando un chat se asigna a un representante. El mensaje aparecerá como si lo hubiera enviado el representante asignado.",
+        "switch_when_waiting_label": "Enviar mensaje automático a los contactos en espera",
+        "switch_when_start_label": "Enviar mensaje automático al iniciar el soporte",
+        "hint_when_waiting": "Se envía un mensaje automático a los contactos que están en la cola esperando soporte humano.",
+        "hint_when_start": "Se envía un mensaje automático cuando un chat se asigna a un representante. En el chat, el mensaje aparece como enviado por el representante asignado.",
         "field": {
           "title": "Mensaje automático",
           "placeholder": "Ejemplo: ¡Hola! ¿Cómo puedo ayudarte hoy?"
@@ -502,7 +501,7 @@
       "default": "Ocurrió un error, por favor, inténtelo de nuevo más tarde"
     },
     "message_input_placeholder": "Escribe tu mensaje o / para activar mensajes rápidos",
-    "message_input_disabled_description": "Cambia tu estado a en línea para continuar esta conversación.",
+    "message_input_disabled_description": "Cambia tu status a online para continuar esta conversación",
     "search_contact": "Buscar contacto",
     "search_contact_placeholder": "Buscar contacto (nombre, teléfono o ticket ID)",
     "tags": "Etiquetas de chat",
@@ -532,20 +531,20 @@
     "you_got_chat": "Tienes el chat",
     "chat_take_over": {
       "by_another_representative": {
-        "title": "Chat asumido por otro representante",
-        "description": "Tu chat con {contact} ha sido asumido por {representative}."
+        "title": "Chat asignado a otro representante",
+        "description": "Tu chat con {contact} se ha asignado a {representative}"
       },
       "transfer_to_another_representative": {
         "title": "Chat transferido a otro representante",
-        "description": "Tu chat con {contact} fue transferido por un moderador a {representative}."
+        "description": "Tu chat con {contact} fue transferido por un moderador a {representative}"
       },
       "transfer_to_queue": {
-        "title": "Chat transferido a cola",
-        "description": "Tu chat con {contact} fue transferido por un moderador a la cola {queue}."
+        "title": "Chat transferido a la cola",
+        "description": "Tu chat con {contact} fue transferido por un moderador a la cola {queue}"
       }
     },
-    "your_chat_assumed": "Chat asumido por otro representante",
-    "your_chat_assumed_description": "Tu chat con {contact} ha sido asumido por {representative}",
+    "your_chat_assumed": "Chat asignado a otro representante",
+    "your_chat_assumed_description": "Tu chat con {contact} se ha asignado a {representative}",
     "closed_chats": {
       "contact_history": "Historial del contacto",
       "general_history": "Historial general",
@@ -573,8 +572,8 @@
       "title": "Modo de vista en vivo del agente {viewedAgent}",
       "close": "Visualización final",
       "assume_chat": "Asumir solo este chat",
-      "assume_chat_question": "¿Asumir el chat con {contact}?",
-      "assume_chat_question_description": "¿Seguro de que deseas asumir el chat con {contact}?<br><br>Al confirmar, quitarás el chat del representante y serás responsable del chat."
+      "assume_chat_question": "¿Asignarse el chat con {contact}?",
+      "assume_chat_question_description": "¿Seguro de que deseas asignarte el chat con {contact}?<br><br>Al confirmar, el chat se removerá del representante actual y quedará bajo tu responsabilidad."
     }
   },
   "select": "Seleccionar",
@@ -1066,8 +1065,8 @@
         }
       },
       "restrict_offline_agents": {
-        "switch_label": "Permitir interacciones solo para representantes en línea",
-        "hint": "Si esta opción está activada, los representantes sin conexión o en pausa no podrán responder a chats en curso."
+        "switch_label": "Permitir interacciones solo para representantes online",
+        "hint": "Si esta opción está activa, los representantes offline o en pausa no podrán responder a chats en curso."
       },
       "bulk_transfer": {
         "tooltip": "Esta función permite a los representantes transferir varios contactos a la vez a una fila o representante",
