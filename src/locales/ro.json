@@ -94,6 +94,30 @@
     "success_title": "Se procesează exportul!",
     "title": "Exportă conversația"
   },
+  "flows_trigger": {
+    "variable_mapping": {
+      "confirmation_checkbox": "Am verificat și sunt gata să trimit",
+      "confirmation_helper": "Verifică dacă fiecare câmp este mapat corect; așa va arăta mesajul pentru fiecare contact selectat.",
+      "define_variables": "Definește variabilele",
+      "define_variables_ordinal": "Definește variabilele template-ului {ordinal}",
+      "description": "Variabilele vor fi completate în previzualizarea de mai jos folosind valorile contactelor selectate ori de câte ori fac referire la câmpuri de contact.",
+      "input_placeholder": "Introdu valoarea pentru această variabilă",
+      "local_variables": {
+        "agent_email": "Email reprezentant",
+        "agent_name": "Nume reprezentant",
+        "contact_name": "Nume contact",
+        "contact_urn": "Telefon contact"
+      },
+      "next_template": "Template următor",
+      "preview_title": "Previzualizare template",
+      "preview_title_ordinal": "Previzualizarea template-ului {ordinal}",
+      "preview_variable_tooltip": "Variabilă {placeholder}",
+      "send_templates": "Trimite ({count} template) | Trimite ({count} template-uri)",
+      "title": "Maparea variabilelor",
+      "title_tag": "Template {current} din {total}",
+      "variable_label": "Variabilă {name}"
+    }
+  },
   "discussion_about": "Discuție despre {discussionGoal}",
   "you_message_prefix": "Tu:",
   "automatic_message": {
