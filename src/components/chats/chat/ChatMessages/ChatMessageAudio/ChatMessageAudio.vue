@@ -101,7 +101,7 @@
     </UnnnicAudioRecorder>
 
     <section
-      v-if="isContactMessage"
+      v-if="canShowAudioDownloadAction"
       class="chat-message-audio__download"
     >
       <UnnnicToolTip
@@ -175,6 +175,17 @@ const messageMedia = computed(() => {
 
 const isContactMessage = computed(() => {
   return !!props.message.contact;
+});
+
+const canShowAudioDownloadAction = computed(() => {
+  if (
+    !featureFlags.value.active_features?.includes(
+      'weniChatsDownloadAudioMessage',
+    )
+  ) {
+    return false;
+  }
+  return isContactMessage.value;
 });
 
 const handleDownload = async () => {
