@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="chat-message-audio">
     <UnnnicAudioRecorder
       ref="audio-recorder"
       class="audio-player"
@@ -99,6 +99,23 @@
         </section>
       </template>
     </UnnnicAudioRecorder>
+
+    <UnnnicToolTip
+      v-if="isContactMessage"
+      enabled
+      :text="$t('chats.audio_download.tooltip')"
+      side="top"
+      class="audio-player__download"
+    >
+      <UnnnicButton
+        iconCenter="download"
+        type="tertiary"
+        size="small"
+        data-testid="download-button"
+        @click="handleDownload"
+      />
+    </UnnnicToolTip>
+
     <TranscriptionFeedbackModal
       v-if="showFeedbackModal"
       v-model="showFeedbackModal"
@@ -121,6 +138,7 @@ import { useFeatureFlag } from '@/store/modules/featureFlag';
 import TranscriptionFeedbackModal from './FeedbackModal.vue';
 
 import audioTranscriptionService from '@/services/api/resources/chats/audioTranscription';
+import Media from '@/services/api/resources/chats/media';
 
 import i18n from '@/plugins/i18n';
 
@@ -151,6 +169,27 @@ const dashboardStore = useDashboard();
 const messageMedia = computed(() => {
   return props.message.media[0];
 });
+
+const isContactMessage = computed(() => {
+  return !!props.message.contact;
+});
+
+const handleDownload = async () => {
+  try {
+    const url = messageMedia.value.url || messageMedia.value.preview;
+    const filename = url?.split('/').at(-1) || 'audio';
+    await Media.download({ media: url, name: filename });
+  } catch (error) {
+    console.error('Error downloading audio', error);
+    UnnnicCallAlert({
+      props: {
+        text: i18n.global.t('chats.audio_download.error'),
+        type: 'error',
+      },
+      seconds: 5,
+    });
+  }
+};
 
 const isLoadingTranscription = ref(false);
 const showTranscriptionText = ref(false);
@@ -216,8 +255,7 @@ const canShowTranscriptionAudioAction = computed(() => {
   ) {
     return false;
   }
-  const isContactMessage = !!props.message.contact;
-  return isContactMessage;
+  return isContactMessage.value;
 });
 
 const canGenerateTranscriptionAudio = computed(() => {
@@ -311,9 +349,25 @@ const handleCloseFeedbackModal = ({ reset } = {}) => {
 </script>
 
 <style lang="scss" scoped>
+.chat-message-audio {
+  display: flex;
+  align-items: flex-start;
+
+  :deep(.unnnic-audio-recorder) {
+    flex: 1;
+    min-width: 0;
+    width: auto;
+  }
+
+  :deep(.audio-player__transcription) {
+    background-color: $unnnic-color-bg-muted;
+  }
+}
+
 .audio-player {
-  padding: $unnnic-spacing-xs;
-  margin: $unnnic-spacing-nano 0;
+  padding: $unnnic-space-2;
+  margin: $unnnic-space-1 0;
+
   &__transcription {
     &-feedback {
       display: flex;
@@ -335,6 +389,10 @@ const handleCloseFeedbackModal = ({ reset } = {}) => {
         color: $unnnic-color-fg-emphasized;
       }
     }
+  }
+
+  &__download {
+    margin-top: $unnnic-space-1;
   }
 }
 </style>
