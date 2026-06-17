@@ -100,21 +100,24 @@
       </template>
     </UnnnicAudioRecorder>
 
-    <UnnnicToolTip
+    <section
       v-if="isContactMessage"
-      enabled
-      :text="$t('chats.audio_download.tooltip')"
-      side="top"
-      class="audio-player__download"
+      class="chat-message-audio__download"
     >
-      <UnnnicButton
-        iconCenter="download"
-        type="tertiary"
-        size="small"
-        data-testid="download-button"
-        @click="handleDownload"
-      />
-    </UnnnicToolTip>
+      <UnnnicToolTip
+        enabled
+        :text="$t('chats.audio_download.tooltip')"
+        side="top"
+      >
+        <UnnnicButton
+          iconCenter="download"
+          type="tertiary"
+          size="small"
+          data-testid="download-button"
+          @click="handleDownload"
+        />
+      </UnnnicToolTip>
+    </section>
 
     <TranscriptionFeedbackModal
       v-if="showFeedbackModal"
@@ -362,6 +365,14 @@ const handleCloseFeedbackModal = ({ reset } = {}) => {
   :deep(.audio-player__transcription) {
     background-color: $unnnic-color-bg-muted;
   }
+
+  &__download {
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    align-self: flex-start;
+    margin-top: $unnnic-space-1;
+  }
 }
 
 .audio-player {
@@ -389,10 +400,6 @@ const handleCloseFeedbackModal = ({ reset } = {}) => {
         color: $unnnic-color-fg-emphasized;
       }
     }
-  }
-
-  &__download {
-    margin-top: $unnnic-space-1;
   }
 }
 </style>
