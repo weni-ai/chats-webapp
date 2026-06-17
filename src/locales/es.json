@@ -418,6 +418,10 @@
         }
       }
     },
+    "audio_download": {
+      "tooltip": "Exportar",
+      "error": "No se pudo exportar el audio debido a un problema técnico"
+    },
     "search_messages": {
       "title": "Buscar en la conversación",
       "input_placeholder": "Ingrese una palabra o frase para buscar",
