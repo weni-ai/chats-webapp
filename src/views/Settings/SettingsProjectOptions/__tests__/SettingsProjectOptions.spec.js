@@ -217,6 +217,80 @@ describe('SettingsProjectOptions.vue', () => {
     });
   });
 
+  describe('Groups mode (main vs secondary project)', () => {
+    const otherKeys = [
+      'restrict_offline_agents',
+      'can_use_bulk_transfer',
+      'filter_offline_agents',
+      'can_use_bulk_close',
+      'can_close_chats_in_queue',
+      'can_use_queue_prioritization',
+      'can_see_waiting_rooms_count',
+      'can_use_name_sector_in_rooms',
+    ];
+
+    it('should hide ai_transfer item on main groups project but keep other items', async () => {
+      wrapper = createWrapper({
+        projectConfig: { its_principal: true },
+      });
+      await flushPromises();
+
+      const aiItem = wrapper.vm.optionsItems.find(
+        (item) => item.key === 'ai_transfer',
+      );
+      expect(aiItem).toBeUndefined();
+
+      otherKeys.forEach((key) => {
+        const item = wrapper.vm.optionsItems.find((i) => i.key === key);
+        expect(item).toBeTruthy();
+      });
+    });
+
+    it('should keep only ai_transfer item on secondary project', async () => {
+      wrapper = createWrapper({
+        projectConfig: { its_principal: false },
+      });
+      await flushPromises();
+
+      expect(wrapper.vm.optionsItems).toHaveLength(1);
+      expect(wrapper.vm.optionsItems[0].key).toBe('ai_transfer');
+
+      otherKeys.forEach((key) => {
+        const item = wrapper.vm.optionsItems.find((i) => i.key === key);
+        expect(item).toBeUndefined();
+      });
+    });
+
+    it('should hide ai_transfer on secondary project when hasAgentBuilder is false', async () => {
+      agentBuilder.getAiTransferConfig.mockRejectedValueOnce(
+        new Error('Not found'),
+      );
+
+      wrapper = createWrapper({
+        projectConfig: { its_principal: false },
+      });
+      await flushPromises();
+
+      expect(wrapper.vm.optionsItems).toHaveLength(0);
+    });
+
+    it('should not hide items on regular projects without groups mode', async () => {
+      wrapper = createWrapper();
+      await flushPromises();
+
+      const aiItem = wrapper.vm.optionsItems.find(
+        (item) => item.key === 'ai_transfer',
+      );
+      expect(aiItem).toBeTruthy();
+
+      otherKeys.forEach((key) => {
+        if (key === 'can_use_bulk_take') return;
+        const item = wrapper.vm.optionsItems.find((i) => i.key === key);
+        expect(item).toBeTruthy();
+      });
+    });
+  });
+
   describe('Agent Builder / AI Transfer', () => {
     it('should call agentBuilder.getAiTransferConfig on mount', async () => {
       await flushPromises();

@@ -120,7 +120,11 @@ export default {
   },
 
   computed: {
-    ...mapState(useConfig, ['project']),
+    ...mapState(useConfig, [
+      'project',
+      'isSecondaryProject',
+      'isMainGroupsProject',
+    ]),
     ...mapState(useProfile, ['me']),
     ...mapState(useFeatureFlag, ['featureFlags']),
 
@@ -199,7 +203,7 @@ export default {
         {
           key: 'ai_transfer',
           type: 'flag-prompt',
-          visible: this.hasAgentBuilder,
+          visible: this.hasAgentBuilder && !this.isMainGroupsProject,
           flag: this.aiTransferConfig.enabled,
           name: this.configAiTransferTranslation,
           prompt: {
@@ -218,7 +222,7 @@ export default {
         {
           key: 'restrict_offline_agents',
           type: 'flag',
-          visible: true,
+          visible: !this.isSecondaryProject,
           name: this.$t(
             'config_chats.project_configs.restrict_offline_agents.switch_label',
           ),
@@ -229,37 +233,37 @@ export default {
         {
           key: 'can_use_bulk_transfer',
           type: 'flag',
-          visible: true,
+          visible: !this.isSecondaryProject,
           name: this.configBulkTransferTranslation,
         },
         {
           key: 'filter_offline_agents',
           type: 'flag',
-          visible: true,
+          visible: !this.isSecondaryProject,
           name: this.configBlockTransferToOffAgentsTranslation,
         },
         {
           key: 'can_use_bulk_close',
           type: 'flag',
-          visible: this.isBulkCloseFeatureEnabled,
+          visible: this.isBulkCloseFeatureEnabled && !this.isSecondaryProject,
           name: this.configBulkCloseTranslation,
         },
         {
           key: 'can_close_chats_in_queue',
           type: 'flag',
-          visible: true,
+          visible: !this.isSecondaryProject,
           name: this.configBlockCloseChatsInQueueTranslation,
         },
         {
           key: 'can_use_bulk_take',
           type: 'flag',
-          visible: this.isBulkTakeFeatureEnabled,
+          visible: this.isBulkTakeFeatureEnabled && !this.isSecondaryProject,
           name: this.configBulkTakeTranslation,
         },
         {
           key: 'can_use_queue_prioritization',
           type: 'flag',
-          visible: true,
+          visible: !this.isSecondaryProject,
           name: this.$t(
             'config_chats.project_configs.queue_prioritization.switch_label',
           ),
@@ -270,7 +274,7 @@ export default {
         {
           key: 'can_see_waiting_rooms_count',
           type: 'flag',
-          visible: true,
+          visible: !this.isSecondaryProject,
           name: this.$t(
             'config_chats.project_configs.show_waiting_rooms_count.switch_label',
           ),
@@ -278,7 +282,7 @@ export default {
         {
           key: 'can_use_name_sector_in_rooms',
           type: 'flag',
-          visible: true,
+          visible: !this.isSecondaryProject,
           name: this.$t(
             'config_chats.project_configs.use_name_sector_in_rooms.switch_label',
           ),

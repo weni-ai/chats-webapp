@@ -811,4 +811,80 @@ describe('State Rooms', () => {
       ).toBe(true);
     });
   });
+
+  describe('setOpenActiveRoomSummary', () => {
+    let roomsStore;
+
+    beforeEach(async () => {
+      const summaryDismissalStorage = await import(
+        '@/utils/summaryDismissalStorage'
+      );
+      vi.spyOn(
+        summaryDismissalStorage,
+        'markSummaryDismissed',
+      ).mockImplementation(() => {});
+      vi.spyOn(
+        summaryDismissalStorage,
+        'clearSummaryDismissed',
+      ).mockImplementation(() => {});
+
+      mocks.useProfile.mockReturnValue(mockProfileAdminState);
+      roomsStore = useRooms();
+      roomsStore.openActiveRoomSummary = false;
+    });
+
+    it('updates openActiveRoomSummary state', () => {
+      roomsStore.setOpenActiveRoomSummary(true, 'room-1');
+      expect(roomsStore.openActiveRoomSummary).toBe(true);
+
+      roomsStore.setOpenActiveRoomSummary(false, 'room-1');
+      expect(roomsStore.openActiveRoomSummary).toBe(false);
+    });
+
+    it('marks the room as dismissed when closing', async () => {
+      const summaryDismissalStorage = await import(
+        '@/utils/summaryDismissalStorage'
+      );
+
+      roomsStore.setOpenActiveRoomSummary(false, 'room-1');
+
+      expect(summaryDismissalStorage.markSummaryDismissed).toHaveBeenCalledWith(
+        'room-1',
+      );
+      expect(
+        summaryDismissalStorage.clearSummaryDismissed,
+      ).not.toHaveBeenCalled();
+    });
+
+    it('clears the dismissal when reopening', async () => {
+      const summaryDismissalStorage = await import(
+        '@/utils/summaryDismissalStorage'
+      );
+
+      roomsStore.setOpenActiveRoomSummary(true, 'room-1');
+
+      expect(
+        summaryDismissalStorage.clearSummaryDismissed,
+      ).toHaveBeenCalledWith('room-1');
+      expect(
+        summaryDismissalStorage.markSummaryDismissed,
+      ).not.toHaveBeenCalled();
+    });
+
+    it('does not touch storage when no roomUuid is provided', async () => {
+      const summaryDismissalStorage = await import(
+        '@/utils/summaryDismissalStorage'
+      );
+
+      roomsStore.setOpenActiveRoomSummary(true);
+      roomsStore.setOpenActiveRoomSummary(false);
+
+      expect(
+        summaryDismissalStorage.markSummaryDismissed,
+      ).not.toHaveBeenCalled();
+      expect(
+        summaryDismissalStorage.clearSummaryDismissed,
+      ).not.toHaveBeenCalled();
+    });
+  });
 });

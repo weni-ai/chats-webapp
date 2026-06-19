@@ -36,105 +36,115 @@
   </AsideSlotTemplateSection>
 </template>
 
-<script>
-import { mapActions, mapState } from 'pinia';
-import { useRooms } from '@/store/modules/chats/rooms';
-
+<script setup lang="ts">
+import { onBeforeUnmount, ref } from 'vue';
+import { storeToRefs } from 'pinia';
 import isMobile from 'is-mobile';
+
+import { useRooms } from '@/store/modules/chats/rooms';
 
 import AsideSlotTemplateSection from '@/components/layouts/chats/AsideSlotTemplate/Section.vue';
 import RoomsTransferFields from '@/components/chats/RoomsTransferFields.vue';
 import ModalProgressBarFalse from '@/components/ModalProgressBarFalse.vue';
 
-export default {
-  name: 'TransferSession',
+interface QueueOption {
+  label: string;
+  value: string;
+  sector_uuid: string;
+  queue_name: string;
+}
 
-  components: {
-    AsideSlotTemplateSection,
-    RoomsTransferFields,
-    ModalProgressBarFalse,
-  },
+interface Props {
+  isViewMode?: boolean;
+}
 
-  props: {
-    isViewMode: {
-      type: Boolean,
-      default: false,
-    },
-  },
-  emits: ['transferred-contact'],
+withDefaults(defineProps<Props>(), {
+  isViewMode: false,
+});
 
-  data() {
-    return {
-      isMobile: isMobile(),
+const emit = defineEmits<{
+  'transferred-contact': [];
+}>();
 
-      selectedQueue: [],
+defineOptions({ name: 'TransferSession' });
 
-      isLoading: false,
-      showTransferProgressBar: false,
+const roomsStore = useRooms();
+const { activeRoom } = storeToRefs(roomsStore);
+
+const isMobileDevice = ref(isMobile());
+
+const selectedQueue = ref<QueueOption[]>([]);
+
+const isLoading = ref(false);
+const showTransferProgressBar = ref(false);
+
+const roomsTransferFields = ref<InstanceType<
+  typeof RoomsTransferFields
+> | null>(null);
+
+if (activeRoom.value?.uuid) {
+  roomsStore.setContactToTransfer(activeRoom.value.uuid);
+}
+
+onBeforeUnmount(() => {
+  roomsStore.setContactToTransfer('');
+});
+
+async function transferRooms() {
+  isLoading.value = true;
+
+  if (isMobileDevice.value) {
+    await handleFalseTransferProgressBar();
+  }
+
+  roomsTransferFields.value?.transfer();
+}
+
+function transferComplete(status: 'success' | 'error') {
+  isLoading.value = false;
+
+  if (status === 'success') {
+    resetActiveRoom();
+  }
+}
+
+function resetActiveRoom() {
+  roomsStore.setActiveRoom(null);
+}
+
+function handleFalseTransferProgressBar(): Promise<void> {
+  showTransferProgressBar.value = true;
+
+  return new Promise<void>((resolve) => {
+    const waitForCloseTransferProgressBar = () => {
+      if (showTransferProgressBar.value) {
+        setTimeout(waitForCloseTransferProgressBar, 100);
+      } else {
+        resolve();
+      }
     };
-  },
 
-  computed: {
-    ...mapState(useRooms, {
-      room: (store) => store.activeRoom,
-    }),
-  },
+    waitForCloseTransferProgressBar();
+  }).then(() => {
+    emit('transferred-contact');
+  });
+}
 
-  created() {
-    this.setContactToTransfer(this.room.uuid);
-  },
+function closeTransferProgressBar() {
+  showTransferProgressBar.value = false;
+}
 
-  beforeUnmount() {
-    this.setContactToTransfer([]);
-  },
-
-  methods: {
-    ...mapActions(useRooms, ['setContactToTransfer', 'setActiveRoom']),
-
-    async transferRooms() {
-      this.isLoading = true;
-
-      if (this.isMobile) {
-        await this.handleFalseTransferProgressBar();
-      }
-
-      this.$refs.roomsTransferFields.transfer();
-    },
-
-    transferComplete(status) {
-      this.isLoading = false;
-
-      if (status === 'success') {
-        this.resetActiveRoom();
-      }
-    },
-
-    resetActiveRoom() {
-      this.setActiveRoom(null);
-    },
-
-    async handleFalseTransferProgressBar() {
-      this.showTransferProgressBar = true;
-
-      return new Promise((resolve) => {
-        const waitForCloseTransferProgressBar = () => {
-          if (!this.showTransferProgressBar) {
-            resolve();
-          } else {
-            setTimeout(waitForCloseTransferProgressBar, 100);
-          }
-        };
-
-        waitForCloseTransferProgressBar();
-      }).then(() => {
-        this.$emit('transferred-contact');
-      });
-    },
-    closeTransferProgressBar() {
-      this.showTransferProgressBar = false;
-    },
-  },
-};
+defineExpose({
+  selectedQueue,
+  isLoading,
+  showTransferProgressBar,
+  isMobile: isMobileDevice,
+  transferRooms,
+  transferComplete,
+  resetActiveRoom,
+  handleFalseTransferProgressBar,
+  closeTransferProgressBar,
+});
 </script>
 
 <style lang="scss" scoped>
@@ -144,7 +154,7 @@ export default {
   }
 
   &__title {
-    margin-bottom: $unnnic-spacing-ant;
+    margin-bottom: $unnnic-space-3;
 
     font-weight: $unnnic-font-weight-bold;
     font-size: $unnnic-font-size-body-gt;
@@ -152,7 +162,7 @@ export default {
   }
 
   &__handler {
-    margin-top: $unnnic-spacing-ant;
+    margin-top: $unnnic-space-3;
     width: 100%;
   }
 }

@@ -50,6 +50,7 @@
         v-if="isText"
         :text="slotText"
         :isAutomatic="automatic"
+        :automaticType="automaticType"
       />
       <div
         v-if="isDocument"
@@ -170,6 +171,10 @@ export default {
     automatic: {
       type: Boolean,
       default: false,
+    },
+    automaticType: {
+      type: String,
+      default: 'automatic_open',
     },
     time: {
       type: Date,

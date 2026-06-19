@@ -9,6 +9,7 @@ import History from '@/services/api/resources/chats/history';
 import { useRooms } from '@/store/modules/chats/rooms';
 import { useRoomMessages } from '@/store/modules/chats/roomMessages';
 import { useConfig } from '@/store/modules/config';
+import { useProfile } from '@/store/modules/profile';
 
 vi.mock('@/store/modules/chats/rooms', () => ({
   useRooms: vi.fn(),
@@ -20,6 +21,10 @@ vi.mock('@/store/modules/chats/roomMessages', () => ({
 
 vi.mock('@/store/modules/config', () => ({
   useConfig: vi.fn(),
+}));
+
+vi.mock('@/store/modules/profile', () => ({
+  useProfile: vi.fn(),
 }));
 
 vi.mock('is-mobile', () => ({
@@ -90,6 +95,10 @@ describe('ClosedChats.vue', () => {
 
     useConfig.mockReturnValue({
       project: mockProject,
+    });
+
+    useProfile.mockReturnValue({
+      me: { project_permission_role: 1 },
     });
 
     isMobile.mockReset().mockReturnValue(false);
@@ -176,6 +185,11 @@ describe('ClosedChats.vue', () => {
           },
           WarningArchivedMessages: {
             template: '<div data-testid="warning-archived-messages"></div>',
+          },
+          ModalExportConversation: {
+            template:
+              '<div data-testid="modal-export-conversation" v-if="modelValue"></div>',
+            props: ['modelValue', 'roomId'],
           },
         },
       },
@@ -461,6 +475,78 @@ describe('ClosedChats.vue', () => {
       );
 
       expect(wrapper.vm.isLoadingHeader).toBe(false);
+    });
+  });
+
+  describe('Export Conversation', () => {
+    it('renders export button when a room is selected', async () => {
+      wrapper = createWrapper({ roomId: '123' });
+
+      await wrapper.setData({
+        selectedRoom: mockRoom,
+        isLoadingHeader: false,
+      });
+
+      const exportBtn = wrapper.find(
+        '[data-testid="export-conversation-button"]',
+      );
+      expect(exportBtn.exists()).toBe(true);
+    });
+
+    it('does not render export button when no room is selected', () => {
+      wrapper = createWrapper();
+
+      const exportBtn = wrapper.find(
+        '[data-testid="export-conversation-button"]',
+      );
+      expect(exportBtn.exists()).toBe(false);
+    });
+
+    it('does not render export button when user is not admin', async () => {
+      useProfile.mockReturnValue({
+        me: { project_permission_role: 2 },
+      });
+
+      wrapper = createWrapper({ roomId: '123' });
+
+      await wrapper.setData({
+        selectedRoom: mockRoom,
+        isLoadingHeader: false,
+      });
+
+      const exportBtn = wrapper.find(
+        '[data-testid="export-conversation-button"]',
+      );
+      expect(exportBtn.exists()).toBe(false);
+    });
+
+    it('opens export modal when export button is clicked', async () => {
+      wrapper = createWrapper({ roomId: '123' });
+
+      await wrapper.setData({
+        selectedRoom: mockRoom,
+        isLoadingHeader: false,
+      });
+
+      const exportBtn = wrapper.find(
+        '[data-testid="export-conversation-button"]',
+      );
+      await exportBtn.trigger('click');
+
+      expect(wrapper.vm.showExportModal).toBe(true);
+    });
+
+    it('passes roomId to the export modal', async () => {
+      wrapper = createWrapper({ roomId: '123' });
+
+      await wrapper.setData({
+        selectedRoom: mockRoom,
+        isLoadingHeader: false,
+        showExportModal: true,
+      });
+
+      const modal = wrapper.find('[data-testid="modal-export-conversation"]');
+      expect(modal.exists()).toBe(true);
     });
   });
 });

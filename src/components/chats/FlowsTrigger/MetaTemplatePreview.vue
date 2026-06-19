@@ -8,7 +8,7 @@
         class="meta-template-preview__header-title"
         data-testid="meta-template-preview-title"
       >
-        <span>{{ $t('flows_trigger.variable_mapping.preview_title') }}</span>
+        <span>{{ resolvedTitle }}</span>
         <template v-if="templateName">: {{ templateName }}</template>
       </p>
     </header>
@@ -106,15 +106,23 @@ interface Props {
   template?: MetaTemplate;
   variables?: string[];
   variableValues?: Record<string, string>;
+  titleLabel?: string;
 }
 
 const props = withDefaults(defineProps<Props>(), {
   template: () => ({}) as MetaTemplate,
   variables: () => [],
   variableValues: () => ({}),
+  titleLabel: '',
 });
 
 const templateName = computed(() => props.template?.name || '');
+
+const resolvedTitle = computed(
+  () =>
+    props.titleLabel ||
+    i18n.global.t('flows_trigger.variable_mapping.preview_title'),
+);
 
 const components = computed(() =>
   Array.isArray(props.template?.components) ? props.template.components : [],

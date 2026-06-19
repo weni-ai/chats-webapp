@@ -97,6 +97,20 @@
         >
           {{ subtitle }}
         </p>
+        <UnnnicToolTip
+          v-if="isInactive"
+          enabled
+          :text="
+            $tc('inactive_room_tooltip', inactivityTimeoutTime, {
+              minutes: inactivityTimeoutTime,
+            })
+          "
+          side="right"
+        >
+          <p class="inactive-indicator">
+            {{ $t('inactive') }}
+          </p>
+        </UnnnicToolTip>
       </div>
     </div>
     <section
@@ -281,6 +295,14 @@ export default {
     newMessageIndicatorTooltip: {
       type: String,
       default: '',
+    },
+    isInactive: {
+      type: Boolean,
+      default: false,
+    },
+    inactivityTimeoutTime: {
+      type: Number,
+      default: 0,
     },
   },
 
@@ -699,6 +721,11 @@ export default {
         border-radius: 50%;
         background-color: $unnnic-color-bg-blue-strong;
       }
+    }
+
+    .inactive-indicator {
+      color: $unnnic-color-fg-warning;
+      font: $unnnic-font-caption-2;
     }
 
     .ellipsis {

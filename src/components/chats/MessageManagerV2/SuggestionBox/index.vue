@@ -46,6 +46,9 @@ import SuggestionBoxShortcut from './SuggestionBoxShortcut.vue';
 import { useQuickMessageShared } from '@/store/modules/chats/quickMessagesShared';
 import { useQuickMessages } from '@/store/modules/chats/quickMessages';
 import { useMessageManager } from '@/store/modules/chats/messageManager';
+import { useRooms } from '@/store/modules/chats/rooms';
+import { useFeatureFlag } from '@/store/modules/featureFlag';
+import { useQuickMessagesShortcuts } from '@/composables/useQuickMessagesShortcuts';
 
 export default {
   name: 'SuggestionBox',
@@ -87,11 +90,24 @@ export default {
   }),
 
   computed: {
-    ...mapState(useQuickMessageShared, ['quickMessagesShared']),
+    ...mapState(useQuickMessageShared, [
+      'quickMessagesShared',
+      'sharedBySector',
+    ]),
     ...mapState(useQuickMessages, ['quickMessages']),
     ...mapState(useMessageManager, ['inputMessageFocused']),
+    ...mapState(useRooms, ['activeRoom']),
+    ...mapState(useFeatureFlag, ['featureFlags']),
+    sharedShortcuts() {
+      return useQuickMessagesShortcuts({
+        featureFlags: this.featureFlags,
+        activeRoom: this.activeRoom,
+        sharedBySector: this.sharedBySector,
+        quickMessagesShared: this.quickMessagesShared,
+      });
+    },
     suggestions() {
-      const allShortcuts = [...this.quickMessages, ...this.quickMessagesShared];
+      const allShortcuts = [...this.quickMessages, ...this.sharedShortcuts];
       const uniqueShortcuts = [];
 
       allShortcuts.forEach((item) => {

@@ -46,16 +46,21 @@ const createFlowsTriggerPiniaWithProfile = (profileState) => {
 };
 
 const cachedTemplateWithVariables = {
-  variables: ['nomecontato', 'nomeatendente'],
-  data: {
-    name: 'template_test',
-    components: [
-      {
-        type: 'BODY',
-        text: 'Olá {{1}}, falo {{2}}',
+  total_template_qty: 1,
+  templates: [
+    {
+      variables: ['nomecontato', 'nomeatendente'],
+      data: {
+        name: 'template_test',
+        components: [
+          {
+            type: 'BODY',
+            text: 'Olá {{1}}, falo {{2}}',
+          },
+        ],
       },
-    ],
-  },
+    },
+  ],
 };
 
 describe('SendFlowButton', () => {

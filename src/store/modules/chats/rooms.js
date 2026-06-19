@@ -9,6 +9,10 @@ import Room from '@/services/api/resources/chats/room';
 
 import { removeDuplicatedItems } from '@/utils/array';
 import { getRoomType } from '@/utils/room';
+import {
+  markSummaryDismissed,
+  clearSummaryDismissed,
+} from '@/utils/summaryDismissalStorage';
 import i18n from '@/plugins/i18n';
 
 export const useRooms = defineStore('rooms', {
@@ -108,6 +112,16 @@ export const useRooms = defineStore('rooms', {
 
     setIsCanSendMessageActiveRoom(isCanSendMessage) {
       this.isCanSendMessageActiveRoom = isCanSendMessage;
+    },
+
+    setOpenActiveRoomSummary(isOpen, roomUuid) {
+      this.openActiveRoomSummary = isOpen;
+      if (!roomUuid) return;
+      if (isOpen) {
+        clearSummaryDismissed(roomUuid);
+      } else {
+        markSummaryDismissed(roomUuid);
+      }
     },
 
     addRoom(room, { after = false } = {}) {
