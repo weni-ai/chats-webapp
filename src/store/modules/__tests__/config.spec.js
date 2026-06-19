@@ -140,4 +140,36 @@ describe('useConfig Store', () => {
 
     expect(config.copilot.customRules).toBe('rule-1');
   });
+
+  describe('groups mode getters', () => {
+    it('should return false for enableGroupsMode when its_principal is absent', () => {
+      const config = useConfig();
+      config.project = { config: {} };
+
+      expect(config.enableGroupsMode).toBe(false);
+      expect(config.isPrimaryProject).toBe(false);
+      expect(config.isSecondaryProject).toBe(false);
+      expect(config.isMainGroupsProject).toBe(false);
+    });
+
+    it('should identify main groups project when its_principal is true', () => {
+      const config = useConfig();
+      config.project = { config: { its_principal: true } };
+
+      expect(config.enableGroupsMode).toBe(true);
+      expect(config.isPrimaryProject).toBe(true);
+      expect(config.isSecondaryProject).toBe(false);
+      expect(config.isMainGroupsProject).toBe(true);
+    });
+
+    it('should identify secondary groups project when its_principal is false', () => {
+      const config = useConfig();
+      config.project = { config: { its_principal: false } };
+
+      expect(config.enableGroupsMode).toBe(true);
+      expect(config.isPrimaryProject).toBe(false);
+      expect(config.isSecondaryProject).toBe(true);
+      expect(config.isMainGroupsProject).toBe(false);
+    });
+  });
 });

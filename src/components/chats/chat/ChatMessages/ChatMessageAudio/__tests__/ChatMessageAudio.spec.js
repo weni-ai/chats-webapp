@@ -110,6 +110,7 @@ describe('ChatMessageAudio', () => {
     roomMessagesStore = useRoomMessages();
     useFeatureFlag().featureFlags.active_features = [
       'weniChatsTranscriptAudioMessage',
+      'weniChatsDownloadAudioMessage',
     ];
     vi.spyOn(roomMessagesStore, 'updateMessage').mockImplementation(() => {});
   });
@@ -333,6 +334,18 @@ describe('ChatMessageAudio', () => {
     it('does not render download button when message has no contact', () => {
       wrapper = mountComponent({
         message: createMessage({ contact: null }),
+      });
+      expect(wrapper.find('[data-testid="download-button"]').exists()).toBe(
+        false,
+      );
+    });
+
+    it('does not render download button when feature flag is disabled', () => {
+      useFeatureFlag().featureFlags.active_features = [
+        'weniChatsTranscriptAudioMessage',
+      ];
+      wrapper = mountComponent({
+        message: createMessage({ contact: { uuid: 'c1' } }),
       });
       expect(wrapper.find('[data-testid="download-button"]').exists()).toBe(
         false,

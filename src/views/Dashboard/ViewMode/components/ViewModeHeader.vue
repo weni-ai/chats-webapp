@@ -41,6 +41,7 @@
 <script>
 import { mapActions } from 'pinia';
 import { useRooms } from '@/store/modules/chats/rooms';
+import { emitToHost } from '@/utils/hostBridge';
 
 export default {
   name: 'ViewModeHeader',
@@ -65,13 +66,7 @@ export default {
       this.$router.push({ name: 'dashboard.manager' });
 
       if (this.$route.params.oldModule === 'insights')
-        return window.parent.postMessage(
-          {
-            event: 'redirect',
-            path: 'insights:init',
-          },
-          '*',
-        );
+        return emitToHost('redirect', { path: 'insights:init' });
     },
   },
 };

@@ -98,8 +98,11 @@ export const useConfig = defineStore('config', {
     isPrimaryProject: ({ project }) => {
       return !!project.config?.its_principal;
     },
-    isSecondaryProject: ({ project }) => {
-      return !!project.config?.its_principal === false;
+    isSecondaryProject() {
+      return this.enableGroupsMode && !this.isPrimaryProject;
+    },
+    isMainGroupsProject() {
+      return this.enableGroupsMode && this.isPrimaryProject;
     },
   },
 });

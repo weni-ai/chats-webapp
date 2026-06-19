@@ -120,17 +120,13 @@ export default {
   },
 
   computed: {
-    ...mapState(useConfig, ['project', 'enableGroupsMode', 'isPrimaryProject']),
+    ...mapState(useConfig, [
+      'project',
+      'isSecondaryProject',
+      'isMainGroupsProject',
+    ]),
     ...mapState(useProfile, ['me']),
     ...mapState(useFeatureFlag, ['featureFlags']),
-
-    isSecondaryProject() {
-      return this.enableGroupsMode && !this.isPrimaryProject;
-    },
-
-    isMainGroupsProject() {
-      return this.enableGroupsMode && this.isPrimaryProject;
-    },
 
     isBulkCloseFeatureEnabled() {
       return this.featureFlags.active_features?.includes('weniChatsBulkClose');

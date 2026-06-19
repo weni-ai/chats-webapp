@@ -102,11 +102,7 @@ const router = useRouter();
 const route = useRoute();
 
 const configStore = useConfig();
-const { isPrimaryProject, enableGroupsMode } = storeToRefs(configStore);
-
-const isSecondaryProject = computed(() => {
-  return enableGroupsMode.value && !isPrimaryProject.value;
-});
+const { isSecondaryProject, enableGroupsMode } = storeToRefs(configStore);
 
 const settingsStore = useSettings();
 const { sectors, groups } = storeToRefs(settingsStore);
