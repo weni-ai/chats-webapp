@@ -1235,11 +1235,11 @@
       "hint": "El Co-pilot es el asistente inteligente de tu agente; se podrá activar más tarde."
     },
     "representatives": {
-      "title": "Gestión de Representantes",
-      "description": "Define los representantes de los sectores y las colas, así como el número máximo de chats por representante. Los cambios hechos aquí también se actualizarán en la configuración de sectores y colas",
+      "title": "Gestión de representantes",
+      "description": "Define los representantes de los departamentos y colas, así como el número máximo de chats por representante. Los cambios aquí realizados también se actualizarán en la configuración de departamento y cola.",
       "select_all": "Seleccionar todos los representantes",
       "select_count": "{count} seleccionados",
-      "empty_list": "Aún no hay miembros con permiso de atención humana en este proyecto. Invita a alguien o actualiza los permisos de un miembro en Gestión de miembros para verlos aquí.",
+      "empty_list": "Aún no hay miembros con permiso para soporte humano en este proyecto. Invita a un nuevo miembro o actualiza los permisos de un miembro registrado en Gestión de miembros para verlo aquí.",
       "not_found_list": "Ningún representante encontrado. Prueba con otro filtro.",
       "save_success": "Cambios guardados con éxito",
       "save_error": "No se pudieron guardar los cambios",
@@ -1247,51 +1247,51 @@
         "title": "Límite de chats simultáneos",
         "disclaimer": "El límite se aplicará a los {count} representantes seleccionados.",
         "input": {
-          "label": "Definir el límite de chats simultáneos",
-          "tooltip": "Un límite definido para un representante específico reemplaza el límite a nivel de sector",
-          "helper": "Con 0, los representantes toman los chats de la cola",
+          "label": "Define el límite de chats simultáneos",
+          "tooltip": "Un límite definido para un representante específico reemplaza el límite a nivel de departamento",
+          "helper": "Defínelo como 0 para que los representantes puedan atender chats de la cola",
           "placeholder": "Ejemplo: 4"
         }
       },
       "queue_manager": {
         "title": "Gestionar {representativeName}",
-        "bulk_title": "Cambiar sectores y colas",
-        "bulk_disclaimer_description": "El cambio se aplicará a los {count} representantes seleccionados.",
-        "bulk_add_action": "Agregar a un sector/cola",
-        "bulk_remove_action": "Quitar de un sector/cola",
-        "bulk_select_action_description": "Selecciona la acción en lote que deseas aplicar a los representantes seleccionados:",
+        "bulk_title": "Cambiar departamentos y colas",
+        "bulk_disclaimer_description": "El cambio se aplicará a los {count} representantes seleccionados",
+        "bulk_add_action": "Agregar a departamento/cola",
+        "bulk_remove_action": "Remover de departamento/cola",
+        "bulk_select_action_description": "Selecciona la acción en masa que deseas realizar con los representantes seleccionados:",
         "chats_limit": {
-          "switch_label": "Definir límite en el número de chats simultáneos para este representante",
-          "switch_helper": "Un límite definido para un representante concreto reemplaza el límite a nivel de sector",
+          "switch_label": "Definir límite de chats simultáneos para este representante",
+          "switch_helper": "Un límite definido para un representante específico reemplaza el límite a nivel de departamento",
           "input_label": "Número de chats simultáneos",
-          "input_placeholder": "Ej.: 4",
-          "input_helper": "Con 0, el representante toma los chats de la cola"
+          "input_placeholder": "Ejemplo: 4",
+          "input_helper": "Defínelo como 0 para que los representantes puedan atender chats de la cola"
         },
         "sector_queues_checkbox": {
-          "title": "Sectores y colas",
-          "bulk_description": "Selecciona los sectores y las colas para el cambio:"
+          "title": "Departamentos y colas",
+          "bulk_description": "Selecciona los departamentos y colas en que se aplicará el cambio:"
         }
       },
       "chats_limit": {
         "label": "{count} chats simultáneos"
       },
       "sectors": {
-        "empty": "No agregado a ningún sector"
+        "empty": "Representante no agregado a ningún departamento"
       },
       "actions": {
-        "queue-management_tooltip": "Cambiar representantes seleccionados de sectores/colas.",
-        "chats-limit-management_tooltip": "Definir el límite de chats simultáneos para los representantes seleccionados."
+        "queue-management_tooltip": "Cambiar representantes seleccionados de los departamentos/colas",
+        "chats-limit-management_tooltip": "Define el límite de chats simultáneos para los representantes seleccionados"
       },
       "filter": {
         "status": {
-          "label": "Filtrar por estado"
+          "label": "Filtrar por status"
         },
         "representatives": {
           "label": "Filtrar por representantes"
         },
         "sectors": {
-          "label": "Filtrar por sectores",
-          "all": "Todos los sectores"
+          "label": "Filtrar por departamentos",
+          "all": "Todos los departamentos"
         },
         "queues": {
           "label": "Filtrar por colas"

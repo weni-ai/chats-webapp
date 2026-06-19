@@ -52,101 +52,168 @@
         "switch_label": "Permite interacțiuni doar pentru reprezentanții online",
         "hint": "Dacă această opțiune este activată, reprezentanții care sunt offline sau în pauză nu vor putea răspunde la conversațiile în curs"
       }
-    }
-  },
-  "dashboard": {
-    "view-mode": {
-      "assume_chat_question": "Preiei chatul cu {contact}?",
-      "assume_chat_question_description": "Sigur dorești să preiei chatul cu {contact}?<br><br>Dacă confirmi, vei elimina chatul de la reprezentantul actual și vei fi responsabil pentru acesta."
-    }
-  },
-  "room_card": {
-    "new_chat_received": {
-      "tooltip": "Conversații noi primite"
-    }
-  },
-  "delete_modal": {
-    "title": "Șterge {name}",
-    "description_sector": "Sistemul a detectat {count} conversații în departamentul {name} care sunt în curs de desfășurare sau așteaptă să fie gestionate. Alege ce dorești să faci cu ele.",
-    "description_queue": "Sistemul a detectat {count} conversații în coada {name} care sunt în curs de desfășurare sau în așteptare pentru a fi preluate. Alege ce dorești să faci cu ele.",
-    "transfer_chats": "Transferă conversațiile către un alt departament/coadă",
-    "end_all_chats": "Încheie toate conversațiile",
-    "select_sector": "Selectează un departament",
-    "select_queue": "Selectează o coadă",
-    "type_name_sector": "Introdu numele departamentului care urmează să fie șters",
-    "type_name_queue": "Introdu numele cozii care urmează să fie ștersă",
-    "cannot_be_reversed": "Această acțiune nu poate fi refăcută",
-    "delete_button": "Șterge",
-    "sector_success": "Departamentul a fost șters cu succes",
-    "sector_error": "Nu s-a putut șterge departamentul",
-    "queue_success": "Coada a fost ștearsă cu succes",
-    "queue_error": "Nu s-a putut șterge coada",
-    "transfer_error_sector": "Nu s-au putut transfera chaturile. Ștergerea departamentului a fost anulată.",
-    "transfer_error_queue": "Nu s-au putut transfera conversațiile. Ștergerea cozii a fost anulată."
-  },
-  "export_conversation": {
-    "accept_terms": "Accept termenii și înțeleg limitările exportului.",
-    "button": "Exportă conversația",
-    "disclaimer": "În timp ce acest export este procesat, noile exporturi vor fi temporar blocate pentru această conversație",
-    "error": "Exportul nu a putut fi procesat. Încearcă din nou",
-    "select_format": "Selectează formatul pentru exportarea conversației",
-    "success_description": "Îl vei primi prin email în curând. Verifică și folderul de spam.",
-    "success_title": "Se procesează exportul!",
-    "title": "Exportă conversația"
-  },
-  "flows_trigger": {
-    "variable_mapping": {
-      "confirmation_checkbox": "Am verificat și sunt gata să trimit",
-      "confirmation_helper": "Verifică dacă fiecare câmp este mapat corect; așa va arăta mesajul pentru fiecare contact selectat.",
-      "define_variables": "Definește variabilele",
-      "define_variables_ordinal": "Definește variabilele template-ului {ordinal}",
-      "description": "Variabilele vor fi completate în previzualizarea de mai jos folosind valorile contactelor selectate ori de câte ori fac referire la câmpuri de contact.",
-      "input_placeholder": "Introdu valoarea pentru această variabilă",
-      "local_variables": {
-        "agent_email": "Email reprezentant",
-        "agent_name": "Nume reprezentant",
-        "contact_name": "Nume contact",
-        "contact_urn": "Telefon contact"
-      },
-      "next_template": "Template următor",
-      "preview_title": "Previzualizare template",
-      "preview_title_ordinal": "Previzualizarea template-ului {ordinal}",
-      "preview_variable_tooltip": "Variabilă {placeholder}",
-      "send_templates": "Trimite ({count} template) | Trimite ({count} template-uri)",
-      "title": "Maparea variabilelor",
-      "title_tag": "Template {current} din {total}",
-      "variable_label": "Variabilă {name}"
-    }
-  },
-  "discussion_about": "Discuție despre {discussionGoal}",
-  "you_message_prefix": "Tu:",
-  "automatic_message": {
-    "automatic_opening_message": "Mesaj de deschidere automat"
-  },
-  "reply": "Răspuns",
-  "unread_messages": "{count} mesaj necitit | {count} mesaje necitite",
-  "yesterday": "Ieri",
-  "sector": {
-    "additional_options": {
-      "csat": {
-        "custom": {
-          "flow_disclaimer": "Fluxul selectat trebuie să utilizeze o evaluare a satisfacției de la 1 la 5 pentru a asigura rezultate corecte ale sondajului."
-        },
-        "label": "Trimite automat un sondaj de satisfacție după încheierea asistenței Live Desk",
-        "section_title": "Sondaj de satisfacție",
-        "type": {
-          "custom": "Fluxuri personalizate",
-          "default": "Sondaj CSAT implicit (recomandat)",
-          "label": "Tip de sondaj",
-          "tooltip": "Alege între sondajul CSAT implicit și un flux personalizat deja configurat în modulul Fluxuri."
+    },
+    "tabs": {
+      "representatives": "Reprezentanți"
+    },
+    "representatives": {
+      "title": "Gestionarea reprezentanților",
+      "description": "Definește reprezentanții pentru departamente şi cozi, precum şi numărul maxim de chaturi per reprezentant. Modificările făcute aici vor fi actualizate şi în setările departamentelor şi cozilor.",
+      "select_all": "Selectează toți reprezentanții",
+      "select_count": "{count} selectați",
+      "empty_list": "Nu există încă membri cu permisiuni de asistență umană în acest proiect. Invită un nou membru sau actualizează permisiunile unui membru existent în Gestionarea membrilor pentru a-i vedea aici.",
+      "not_found_list": "Niciun reprezentant găsit. Încearcă un alt filtru.",
+      "save_success": "Modificările au fost salvate cu succes",
+      "save_error": "Nu s-a reușit salvarea modificărilor.",
+      "bulk_chats_limit_modal": {
+        "title": "Limită a chaturilor simultane",
+        "disclaimer": "Limita va fi aplicată reprezentanților selectați ({count}).",
+        "input": {
+          "label": "Definește limita pentru chaturi simultane",
+          "tooltip": "O limită setată pentru un anumit reprezentant înlocuiește limita la nivel de departament.",
+          "helper": "Setează la 0 pentru ca reprezentanții să preia discuțiile din coadă.",
+          "placeholder": "Exemplu: 4"
         }
       },
+      "queue_manager": {
+        "title": "Gestionează {representativeName}",
+        "bulk_title": "Modifică departamentele și cozile",
+        "bulk_disclaimer_description": "Modificarea va fi aplicată reprezentanților selectați ({count}).",
+        "bulk_add_action": "Adaugă la un departament/coadă",
+        "bulk_remove_action": "Elimină din departament/coadă",
+        "bulk_select_action_description": "Selectează acțiunea în masă pe care dorești să o aplici reprezentanților selectați:",
+        "chats_limit": {
+          "switch_label": "Definește limita de chaturi simultane pentru acest reprezentant",
+          "switch_helper": "O limită setată pentru un anumit reprezentant înlocuiește limita la nivel de departament.",
+          "input_label": "Numărul de chaturi simultane",
+          "input_placeholder": "Exemplu: 4",
+          "input_helper": "Setează la 0 pentru ca reprezentanții să preia discuțiile din coadă."
+        },
+        "sector_queues_checkbox": {
+          "title": "Departamente și cozi",
+          "bulk_description": "Selectează departamentele și cozile pentru modificare:"
+        }
+      },
+      "chats_limit": {
+        "label": "{count} chaturi simultane"
+      },
+      "sectors": {
+        "empty": "Reprezentantul nu este adăugat în niciun departament"
+      },
+      "actions": {
+        "queue-management_tooltip": "Modifică reprezentanții selectați din departamente/cozi.",
+        "chats-limit-management_tooltip": "Definește limita de chaturi simultane pentru reprezentanții selectați."
+      },
+      "filter": {
+        "status": {
+          "label": "Filtrare după stare"
+        },
+        "representatives": {
+          "label": "Filtrare după reprezentant"
+        },
+        "sectors": {
+          "label": "Filtrare după departament",
+          "all": "Toate departamentele"
+        },
+        "queues": {
+          "label": "Filtrare după coadă"
+        }
+      }
+    },
+    "dashboard": {
+      "view-mode": {
+        "assume_chat_question": "Preiei chatul cu {contact}?",
+        "assume_chat_question_description": "Sigur dorești să preiei chatul cu {contact}?<br><br>Dacă confirmi, vei elimina chatul de la reprezentantul actual și vei fi responsabil pentru acesta."
+      }
+    },
+    "room_card": {
+      "new_chat_received": {
+        "tooltip": "Conversații noi primite"
+      }
+    },
+    "delete_modal": {
+      "title": "Șterge {name}",
+      "description_sector": "Sistemul a detectat {count} conversații în departamentul {name} care sunt în curs de desfășurare sau așteaptă să fie gestionate. Alege ce dorești să faci cu ele.",
+      "description_queue": "Sistemul a detectat {count} conversații în coada {name} care sunt în curs de desfășurare sau în așteptare pentru a fi preluate. Alege ce dorești să faci cu ele.",
+      "transfer_chats": "Transferă conversațiile către un alt departament/coadă",
+      "end_all_chats": "Încheie toate conversațiile",
+      "select_sector": "Selectează un departament",
+      "select_queue": "Selectează o coadă",
+      "type_name_sector": "Introdu numele departamentului care urmează să fie șters",
+      "type_name_queue": "Introdu numele cozii care urmează să fie ștersă",
+      "cannot_be_reversed": "Această acțiune nu poate fi refăcută",
+      "delete_button": "Șterge",
+      "sector_success": "Departamentul a fost șters cu succes",
+      "sector_error": "Nu s-a putut șterge departamentul",
+      "queue_success": "Coada a fost ștearsă cu succes",
+      "queue_error": "Nu s-a putut șterge coada",
+      "transfer_error_sector": "Nu s-au putut transfera chaturile. Ștergerea departamentului a fost anulată.",
+      "transfer_error_queue": "Nu s-au putut transfera conversațiile. Ștergerea cozii a fost anulată."
+    },
+    "export_conversation": {
+      "accept_terms": "Accept termenii și înțeleg limitările exportului.",
+      "button": "Exportă conversația",
+      "disclaimer": "În timp ce acest export este procesat, noile exporturi vor fi temporar blocate pentru această conversație",
+      "error": "Exportul nu a putut fi procesat. Încearcă din nou",
+      "select_format": "Selectează formatul pentru exportarea conversației",
+      "success_description": "Îl vei primi prin email în curând. Verifică și folderul de spam.",
+      "success_title": "Se procesează exportul!",
+      "title": "Exportă conversația"
+    },
+    "flows_trigger": {
+      "variable_mapping": {
+        "confirmation_checkbox": "Am verificat și sunt gata să trimit",
+        "confirmation_helper": "Verifică dacă fiecare câmp este mapat corect; așa va arăta mesajul pentru fiecare contact selectat.",
+        "define_variables": "Definește variabilele",
+        "define_variables_ordinal": "Definește variabilele template-ului {ordinal}",
+        "description": "Variabilele vor fi completate în previzualizarea de mai jos folosind valorile contactelor selectate ori de câte ori fac referire la câmpuri de contact.",
+        "input_placeholder": "Introdu valoarea pentru această variabilă",
+        "local_variables": {
+          "agent_email": "Email reprezentant",
+          "agent_name": "Nume reprezentant",
+          "contact_name": "Nume contact",
+          "contact_urn": "Telefon contact"
+        },
+        "next_template": "Template următor",
+        "preview_title": "Previzualizare template",
+        "preview_title_ordinal": "Previzualizarea template-ului {ordinal}",
+        "preview_variable_tooltip": "Variabilă {placeholder}",
+        "send_templates": "Trimite ({count} template) | Trimite ({count} template-uri)",
+        "title": "Maparea variabilelor",
+        "title_tag": "Template {current} din {total}",
+        "variable_label": "Variabilă {name}"
+      }
+    },
+    "discussion_about": "Discuție despre {discussionGoal}",
+    "you_message_prefix": "Tu:",
+    "automatic_message": {
+      "automatic_opening_message": "Mesaj de deschidere automat"
+    },
+    "reply": "Răspuns",
+    "unread_messages": "{count} mesaj necitit | {count} mesaje necitite",
+    "yesterday": "Ieri",
+    "sector": {
       "additional_options": {
-        "automated_message": {
-          "switch_when_waiting_label": "Trimite mesaj automat contactelor care așteaptă",
-          "switch_when_start_label": "Trimite mesaj automat când începe asistența",
-          "hint_when_waiting": "Trimite automat un mesaj contactelor în timp ce acestea așteaptă asistență umană în coadă.",
-          "hint_when_start": "Trimite automat un mesaj atunci când un chat este atribuit unui reprezentant. Mesajul va apărea ca și cum ar fi fost trimis de reprezentantul atribuit."
+        "csat": {
+          "custom": {
+            "flow_disclaimer": "Fluxul selectat trebuie să utilizeze o evaluare a satisfacției de la 1 la 5 pentru a asigura rezultate corecte ale sondajului."
+          },
+          "label": "Trimite automat un sondaj de satisfacție după încheierea asistenței Live Desk",
+          "section_title": "Sondaj de satisfacție",
+          "type": {
+            "custom": "Fluxuri personalizate",
+            "default": "Sondaj CSAT implicit (recomandat)",
+            "label": "Tip de sondaj",
+            "tooltip": "Alege între sondajul CSAT implicit și un flux personalizat deja configurat în modulul Fluxuri."
+          }
+        },
+        "additional_options": {
+          "automated_message": {
+            "switch_when_waiting_label": "Trimite mesaj automat contactelor care așteaptă",
+            "switch_when_start_label": "Trimite mesaj automat când începe asistența",
+            "hint_when_waiting": "Trimite automat un mesaj contactelor în timp ce acestea așteaptă asistență umană în coadă.",
+            "hint_when_start": "Trimite automat un mesaj atunci când un chat este atribuit unui reprezentant. Mesajul va apărea ca și cum ar fi fost trimis de reprezentantul atribuit."
+          }
         }
       }
     }
