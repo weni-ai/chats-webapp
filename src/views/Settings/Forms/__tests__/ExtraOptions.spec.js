@@ -276,6 +276,72 @@ describe('SectorExtraOptions', () => {
     );
   });
 
+  describe('inactivity timeout default messages', () => {
+    it('should use the current user locale for the warning message', async () => {
+      wrapper.vm.$i18n.locale = 'pt-br';
+
+      wrapper.vm.handleInactivityTimeoutIsMessageTimeoutEnabled(true);
+
+      expect(wrapper.vm.sector.inactivity_timeout.message_timeout_text).toBe(
+        wrapper.vm.$t(
+          'sector.additional_options.inactivity_timeout.show.field.default_warning_message',
+        ),
+      );
+    });
+
+    it('should use the current user locale for the close room message', async () => {
+      wrapper.vm.$i18n.locale = 'pt-br';
+
+      wrapper.vm.handleInactivityTimeoutIsCloseRoomEnabled(true);
+
+      expect(wrapper.vm.sector.inactivity_timeout.close_room_message_text).toBe(
+        wrapper.vm.$t(
+          'sector.additional_options.inactivity_timeout.close_room.field.default_close_room_message',
+        ),
+      );
+    });
+
+    it('should update default warning message when locale changes', async () => {
+      wrapper.vm.$i18n.locale = 'pt-br';
+      wrapper.vm.handleInactivityTimeoutIsMessageTimeoutEnabled(true);
+
+      wrapper.vm.$i18n.locale = 'en';
+      await flushPromises();
+
+      expect(wrapper.vm.sector.inactivity_timeout.message_timeout_text).toBe(
+        wrapper.vm.$t(
+          'sector.additional_options.inactivity_timeout.show.field.default_warning_message',
+        ),
+      );
+    });
+
+    it('should not update warning message when locale changes after customization', async () => {
+      wrapper.vm.$i18n.locale = 'pt-br';
+      wrapper.vm.handleInactivityTimeoutIsMessageTimeoutEnabled(true);
+      wrapper.vm.sector.inactivity_timeout.message_timeout_text =
+        'Mensagem personalizada';
+
+      wrapper.vm.$i18n.locale = 'en';
+      await flushPromises();
+
+      expect(wrapper.vm.sector.inactivity_timeout.message_timeout_text).toBe(
+        'Mensagem personalizada',
+      );
+    });
+
+    it('should use romanian default message when locale is ro', async () => {
+      wrapper.vm.$i18n.locale = 'ro';
+
+      wrapper.vm.handleInactivityTimeoutIsMessageTimeoutEnabled(true);
+
+      expect(wrapper.vm.sector.inactivity_timeout.message_timeout_text).toBe(
+        wrapper.vm.$t(
+          'sector.additional_options.inactivity_timeout.show.field.default_warning_message',
+        ),
+      );
+    });
+  });
+
   it('Should match the snapshot', () => {
     expect(wrapper.html()).toMatchSnapshot();
   });
