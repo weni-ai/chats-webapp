@@ -136,7 +136,7 @@
       </template>
     </DiscussionHeader>
     <ChatHeaderSendFlow
-      v-if="isShowingSendFlowHeader && !openActiveRoomSummary"
+      v-if="true"
       data-testid="chat-header-send-flow"
       @send-flow="emitOpenFlowsTrigger"
     />
