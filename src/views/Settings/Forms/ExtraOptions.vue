@@ -397,6 +397,9 @@ export default {
         'sector.additional_options.inactivity_timeout.close_room.field.default_close_room_message',
       );
     },
+    currentI18nLocale() {
+      return i18n.global.__composer.locale.value;
+    },
   },
   watch: {
     validForm: {
@@ -405,14 +408,9 @@ export default {
         this.$emit('changeIsValid', value);
       },
     },
-  },
-  created() {
-    this.$watch(
-      () => this.$i18n.locale,
-      () => {
-        this.syncInactivityTimeoutMessagesOnLocaleChange();
-      },
-    );
+    currentI18nLocale() {
+      this.syncInactivityTimeoutMessagesOnLocaleChange();
+    },
   },
   mounted() {
     if (this.isEditing) {
