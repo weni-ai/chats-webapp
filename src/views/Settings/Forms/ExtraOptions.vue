@@ -405,9 +405,14 @@ export default {
         this.$emit('changeIsValid', value);
       },
     },
-    '$i18n.locale'() {
-      this.syncInactivityTimeoutMessagesOnLocaleChange();
-    },
+  },
+  created() {
+    this.$watch(
+      () => this.$i18n.locale,
+      () => {
+        this.syncInactivityTimeoutMessagesOnLocaleChange();
+      },
+    );
   },
   mounted() {
     if (this.isEditing) {
@@ -467,9 +472,9 @@ export default {
 
       return INACTIVITY_TIMEOUT_LOCALES.map(
         (locale) =>
-          i18n.global.messages[locale].sector.additional_options
-            .inactivity_timeout[sectionKey].field[fieldKey],
-      );
+          i18n.global.messages[locale]?.sector?.additional_options
+            ?.inactivity_timeout?.[sectionKey]?.field?.[fieldKey],
+      ).filter(Boolean);
     },
     isUntouchedInactivityMessage(text, messageType) {
       if (!text) return false;
@@ -483,7 +488,10 @@ export default {
 
       if (
         timeout.is_message_timeout_enabled &&
-        this.isUntouchedInactivityMessage(timeout.message_timeout_text, 'warning')
+        this.isUntouchedInactivityMessage(
+          timeout.message_timeout_text,
+          'warning',
+        )
       ) {
         timeout.message_timeout_text = this.inactivityTimeoutDefaultMessage;
       }
