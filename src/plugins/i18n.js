@@ -4,14 +4,17 @@ import { createI18n } from 'vue-i18n';
 import pt_br from '@/locales/pt_br.json';
 import en from '@/locales/en.json';
 import es from '@/locales/es.json';
+import ro from '@/locales/ro.json';
 
 import('moment/dist/locale/es.js');
 import('moment/dist/locale/pt-br.js');
+import('moment/dist/locale/ro.js');
 
 const messages = {
   'pt-br': pt_br,
   en,
   es,
+  ro,
 };
 
 const i18n = createI18n({
@@ -45,6 +48,17 @@ const i18n = createI18n({
       },
     },
     es: {
+      short: {
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit',
+      },
+      long: {
+        month: 'long',
+        day: '2-digit',
+      },
+    },
+    ro: {
       short: {
         year: 'numeric',
         month: '2-digit',
