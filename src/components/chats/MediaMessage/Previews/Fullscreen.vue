@@ -9,66 +9,107 @@
       data-testid="toolbar"
       @click.stop
     >
-      <FullscreenControl
-        icon="rotate_left"
-        data-testid="rotate-left-button"
-        @click="rotate('left')"
-      />
-      <FullscreenControl
-        icon="rotate_right"
-        data-testid="rotate-right-button"
-        @click="rotate('right')"
-      />
-      <FullscreenControl
-        :icon="isZoomed ? 'zoom_out' : 'zoom_in'"
-        data-testid="zoom-button"
-        @click="zoomHandler"
-      />
-      <FullscreenControl
-        icon="download"
-        data-testid="download-button"
-        @click="download()"
-      />
-      <FullscreenControl
-        icon="close"
-        data-testid="close-button"
-        @click="close()"
-      />
+      <UnnnicToolTip
+        enabled
+        :text="$t('image_preview.tooltip.close')"
+      >
+        <FullscreenControl
+          icon="close"
+          data-testid="close-button"
+          @click="close()"
+        />
+      </UnnnicToolTip>
     </header>
 
     <div
-      ref="mediaContainer"
-      class="media__container"
-      data-testid="media-container"
-      @mousedown="startPan"
-      @mousemove="pan"
-      @mouseup="endPan"
+      class="preview__content"
       @click.stop
     >
+      <UnnnicToolTip
+        enabled
+        :text="$t('image_preview.tooltip.previous')"
+      >
+        <FullscreenControl
+          icon="chevron_left"
+          class="preview__nav"
+          data-testid="previous-button"
+          size="xl"
+          @click="previous"
+        />
+      </UnnnicToolTip>
       <div
-        ref="mediaWrapper"
-        class="media__wrapper"
-        :style="mediaStyle"
+        ref="mediaContainer"
+        class="media__container"
+        data-testid="media-container"
+        @mousedown="startPan"
+        @mousemove="pan"
+        @mouseup="endPan"
         @click.stop
       >
-        <slot />
+        <div
+          ref="mediaWrapper"
+          class="media__wrapper"
+          :style="mediaStyle"
+          @click.stop
+        >
+          <slot />
+        </div>
       </div>
+      <UnnnicToolTip
+        enabled
+        :text="$t('image_preview.tooltip.next')"
+      >
+        <FullscreenControl
+          icon="chevron_right"
+          class="preview__nav"
+          data-testid="next-button"
+          size="xl"
+          @click="next"
+        />
+      </UnnnicToolTip>
     </div>
 
     <footer
       class="controls"
-      @click.prevent
+      data-testid="controls"
+      @click.stop
     >
-      <FullscreenControl
-        icon="chevron_left"
-        data-testid="previous-button"
-        @click="previous"
-      />
-      <FullscreenControl
-        icon="chevron_right"
-        data-testid="next-button"
-        @click="next"
-      />
+      <UnnnicToolTip
+        enabled
+        side="top"
+        :text="$t('image_preview.tooltip.rotate')"
+      >
+        <FullscreenControl
+          icon="rotate_right"
+          data-testid="rotate-right-button"
+          size="xl"
+          @click="rotate"
+        />
+      </UnnnicToolTip>
+      <UnnnicToolTip
+        enabled
+        side="top"
+        :text="$t(`image_preview.tooltip.${isZoomed ? 'zoom_out' : 'zoom_in'}`)"
+      >
+        <FullscreenControl
+          :icon="isZoomed ? 'zoom_out' : 'zoom_in'"
+          data-testid="zoom-button"
+          size="xl"
+          @click="zoomHandler"
+        />
+      </UnnnicToolTip>
+      <UnnnicToolTip
+        enabled
+        :text="$t('image_preview.tooltip.export')"
+        side="top"
+      >
+        <FullscreenControl
+          icon="download"
+          data-testid="download-button"
+          size="xl"
+          @click="download()"
+        />
+      </UnnnicToolTip>
     </footer>
   </div>
 </template>
@@ -143,9 +184,23 @@ export default {
     },
   },
 
+  mounted() {
+    document.addEventListener('keydown', this.handleKeydown);
+  },
+
+  beforeUnmount() {
+    document.removeEventListener('keydown', this.handleKeydown);
+  },
+
   methods: {
     close() {
       this.$emit('close');
+    },
+
+    handleKeydown(event) {
+      if (event.key === 'Escape') {
+        this.close();
+      }
     },
 
     zoomHandler() {
@@ -163,13 +218,11 @@ export default {
       this.isZoomed = false;
     },
 
-    rotate(side) {
+    rotate() {
       const rotateInterval = 90;
-      if (side === 'right') {
-        this.rotatedDeg = (this.rotatedDeg + rotateInterval) % 360;
-      } else {
-        this.rotatedDeg = (this.rotatedDeg - rotateInterval) % 360;
-      }
+
+      this.rotatedDeg = this.rotatedDeg + rotateInterval;
+
       this.resetZoom();
     },
 
@@ -371,16 +424,15 @@ export default {
   max-width: 100vw;
   width: 100vw;
 
-  padding-bottom: 1rem;
-  background: rgba(0, 0, 0, $unnnic-opacity-level-clarifying);
+  padding-bottom: $unnnic-space-4;
+  background: rgba(31, 31, 31, 0.9);
 
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
   align-items: center;
 
   .toolbar {
-    height: 3rem;
+    height: $unnnic-space-12;
     width: 100%;
 
     display: flex;
@@ -388,6 +440,15 @@ export default {
     justify-content: flex-end;
     gap: $unnnic-spacing-inline-sm;
     padding: 0 1rem;
+  }
+
+  .preview__content {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex: 1 0 0;
+    width: 100%;
+    align-self: stretch;
   }
 
   .media__container {
@@ -425,11 +486,10 @@ export default {
   }
 
   .controls {
-    height: 2rem;
     width: 100%;
     display: flex;
     justify-content: center;
-    align-items: center;
+    gap: $unnnic-space-6;
   }
 }
 </style>

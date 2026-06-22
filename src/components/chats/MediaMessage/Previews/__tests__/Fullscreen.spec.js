@@ -24,6 +24,11 @@ describe('FullscreenPreview', () => {
     expect(wrapper.emitted('close')).toHaveLength(1);
   });
 
+  it('emits "close" event when Escape key is pressed', () => {
+    document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape' }));
+    expect(wrapper.emitted('close')).toHaveLength(1);
+  });
+
   it('does not emit "close" when clicking inside toolbar or media', async () => {
     await wrapper.find('[data-testid="toolbar"]').trigger('click');
     expect(wrapper.emitted('close')).toBeUndefined();
@@ -55,20 +60,16 @@ describe('FullscreenPreview', () => {
     expect(wrapper.vm.isZoomed).toBe(false);
   });
 
-  it('rotates media when rotate buttons are clicked', async () => {
-    const rotateLeftButton = wrapper.findComponent(
-      '[data-testid="rotate-left-button"]',
-    );
-
-    const rotateRightButton = wrapper.findComponent(
+  it('rotates media when rotate button is clicked', async () => {
+    const rotateButton = wrapper.findComponent(
       '[data-testid="rotate-right-button"]',
     );
 
-    await rotateLeftButton.trigger('click');
-    expect(wrapper.vm.rotatedDeg).toBe(-90);
+    await rotateButton.trigger('click');
+    expect(wrapper.vm.rotatedDeg).toBe(90);
 
-    await rotateRightButton.trigger('click');
-    expect(wrapper.vm.rotatedDeg).toBe(0); // resets to initial state
+    await rotateButton.trigger('click');
+    expect(wrapper.vm.rotatedDeg).toBe(180);
   });
 
   it('downloads media when download button is clicked', async () => {

@@ -8,6 +8,7 @@
       :icon="icon"
       scheme="neutral-snow"
       data-testid="control-icon"
+      :size="size"
     />
   </div>
 </template>
@@ -18,6 +19,10 @@ export default {
     icon: {
       type: String,
       required: true,
+    },
+    size: {
+      type: String,
+      default: 'md',
     },
   },
   emits: ['click'],
