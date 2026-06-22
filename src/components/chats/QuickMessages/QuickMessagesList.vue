@@ -37,6 +37,7 @@
         <div
           v-if="infiniteScroll && !withoutQuickMessages"
           ref="infiniteScrollSentinel"
+          data-testid="sentinel"
           class="quick-messages-list__sentinel"
         />
         <UnnnicIconLoading
