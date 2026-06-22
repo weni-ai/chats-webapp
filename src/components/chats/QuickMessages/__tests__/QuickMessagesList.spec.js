@@ -26,19 +26,25 @@ const createWrapper = (props = {}) => {
   });
 };
 
+const mockSentinelRect = (wrapper, { top, bottom }) => {
+  const sentinel = wrapper.find('[data-testid="sentinel"]').element;
+
+  vi.spyOn(sentinel, 'getBoundingClientRect').mockReturnValue({
+    top,
+    bottom,
+    left: 0,
+    right: 100,
+    width: 100,
+    height: bottom - top,
+  });
+};
+
 describe('QuickMessagesList.vue', () => {
   let observeMock;
   let intersectionCallback;
 
   beforeEach(() => {
-    observeMock = vi.fn((element) => {
-      intersectionCallback?.([
-        {
-          isIntersecting: true,
-          target: element,
-        },
-      ]);
-    });
+    observeMock = vi.fn();
 
     global.IntersectionObserver = vi.fn((callback) => {
       intersectionCallback = callback;
@@ -69,7 +75,7 @@ describe('QuickMessagesList.vue', () => {
     expect(observeMock).toHaveBeenCalled();
   });
 
-  it('emits load-more when sentinel intersects and hasMore is true', async () => {
+  it('emits load-more when sentinel intersects via IntersectionObserver', async () => {
     const wrapper = createWrapper({
       infiniteScroll: true,
       hasMore: true,
@@ -77,6 +83,13 @@ describe('QuickMessagesList.vue', () => {
     });
 
     await flushPromises();
+
+    intersectionCallback?.([
+      {
+        isIntersecting: true,
+        target: wrapper.find('[data-testid="sentinel"]').element,
+      },
+    ]);
 
     expect(wrapper.emitted('load-more')).toBeTruthy();
   });
@@ -90,6 +103,13 @@ describe('QuickMessagesList.vue', () => {
 
     await flushPromises();
 
+    intersectionCallback?.([
+      {
+        isIntersecting: true,
+        target: wrapper.find('[data-testid="sentinel"]').element,
+      },
+    ]);
+
     expect(wrapper.emitted('load-more')).toBeFalsy();
   });
 
@@ -97,56 +117,48 @@ describe('QuickMessagesList.vue', () => {
     const wrapper = createWrapper({
       infiniteScroll: true,
       hasMore: true,
-      loadingMore: false,
+      loadingMore: true,
       quickMessages,
     });
 
-    await flushPromises();
-    expect(wrapper.emitted('load-more')).toBeTruthy();
-
-    const emitCountAfterFirstLoad = wrapper.emitted('load-more').length;
-
-    await wrapper.setProps({ loadingMore: true });
     await flushPromises();
 
     intersectionCallback?.([
       {
         isIntersecting: true,
-        target: wrapper.vm.$refs.infiniteScrollSentinel,
+        target: wrapper.find('[data-testid="sentinel"]').element,
       },
     ]);
     await flushPromises();
 
-    expect(wrapper.emitted('load-more').length).toBe(emitCountAfterFirstLoad);
+    expect(wrapper.emitted('load-more')).toBeFalsy();
   });
 
   it('emits load-more again after loading completes while sentinel is visible', async () => {
     const wrapper = createWrapper({
       infiniteScroll: true,
       hasMore: true,
-      loadingMore: false,
+      loadingMore: true,
       quickMessages,
     });
 
     await flushPromises();
-    expect(wrapper.emitted('load-more')).toBeTruthy();
-
-    const emitCountAfterFirstLoad = wrapper.emitted('load-more').length;
-
-    await wrapper.setProps({ loadingMore: true });
-    await flushPromises();
-
-    expect(wrapper.emitted('load-more').length).toBe(emitCountAfterFirstLoad);
+    mockSentinelRect(wrapper, { top: 500, bottom: 510 });
 
     await wrapper.setProps({ loadingMore: false });
     await flushPromises();
+    expect(wrapper.emitted('load-more')).toHaveLength(1);
 
-    expect(wrapper.emitted('load-more').length).toBeGreaterThan(
-      emitCountAfterFirstLoad,
-    );
+    await wrapper.setProps({ loadingMore: true });
+    await flushPromises();
+    expect(wrapper.emitted('load-more')).toHaveLength(1);
+
+    await wrapper.setProps({ loadingMore: false });
+    await flushPromises();
+    expect(wrapper.emitted('load-more')).toHaveLength(2);
   });
 
-  it('emits load-more when hasMore becomes true after the first page loads', async () => {
+  it('emits load-more when hasMore becomes true and sentinel is within viewport', async () => {
     const wrapper = createWrapper({
       infiniteScroll: true,
       hasMore: false,
@@ -154,11 +166,46 @@ describe('QuickMessagesList.vue', () => {
     });
 
     await flushPromises();
-    expect(wrapper.emitted('load-more')).toBeFalsy();
+    mockSentinelRect(wrapper, { top: 500, bottom: 510 });
 
     await wrapper.setProps({ hasMore: true });
     await flushPromises();
 
     expect(wrapper.emitted('load-more')).toBeTruthy();
+  });
+
+  it('does not emit load-more when sentinel is above the viewport', async () => {
+    const wrapper = createWrapper({
+      infiniteScroll: true,
+      hasMore: false,
+      quickMessages,
+    });
+
+    await flushPromises();
+    mockSentinelRect(wrapper, { top: -1000, bottom: -999 });
+
+    await wrapper.setProps({ hasMore: true });
+    await flushPromises();
+
+    expect(wrapper.emitted('load-more')).toBeFalsy();
+  });
+
+  it('does not emit load-more when sentinel is below the viewport', async () => {
+    const wrapper = createWrapper({
+      infiniteScroll: true,
+      hasMore: false,
+      quickMessages,
+    });
+
+    await flushPromises();
+    mockSentinelRect(wrapper, {
+      top: window.innerHeight + 200,
+      bottom: window.innerHeight + 210,
+    });
+
+    await wrapper.setProps({ hasMore: true });
+    await flushPromises();
+
+    expect(wrapper.emitted('load-more')).toBeFalsy();
   });
 });
