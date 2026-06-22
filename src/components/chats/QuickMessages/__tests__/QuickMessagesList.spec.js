@@ -93,21 +93,57 @@ describe('QuickMessagesList.vue', () => {
     expect(wrapper.emitted('load-more')).toBeFalsy();
   });
 
-  it('emits load-more again after loading completes while sentinel is visible', async () => {
+  it('does not emit load-more while loadingMore is true', async () => {
     const wrapper = createWrapper({
       infiniteScroll: true,
       hasMore: true,
-      loadingMore: true,
+      loadingMore: false,
       quickMessages,
     });
 
     await flushPromises();
-    expect(wrapper.emitted('load-more')).toBeFalsy();
+    expect(wrapper.emitted('load-more')).toBeTruthy();
+
+    const emitCountAfterFirstLoad = wrapper.emitted('load-more').length;
+
+    await wrapper.setProps({ loadingMore: true });
+    await flushPromises();
+
+    intersectionCallback?.([
+      {
+        isIntersecting: true,
+        target: wrapper.vm.$refs.infiniteScrollSentinel,
+      },
+    ]);
+    await flushPromises();
+
+    expect(wrapper.emitted('load-more').length).toBe(emitCountAfterFirstLoad);
+  });
+
+  it('emits load-more again after loading completes while sentinel is visible', async () => {
+    const wrapper = createWrapper({
+      infiniteScroll: true,
+      hasMore: true,
+      loadingMore: false,
+      quickMessages,
+    });
+
+    await flushPromises();
+    expect(wrapper.emitted('load-more')).toBeTruthy();
+
+    const emitCountAfterFirstLoad = wrapper.emitted('load-more').length;
+
+    await wrapper.setProps({ loadingMore: true });
+    await flushPromises();
+
+    expect(wrapper.emitted('load-more').length).toBe(emitCountAfterFirstLoad);
 
     await wrapper.setProps({ loadingMore: false });
     await flushPromises();
 
-    expect(wrapper.emitted('load-more')).toBeTruthy();
+    expect(wrapper.emitted('load-more').length).toBeGreaterThan(
+      emitCountAfterFirstLoad,
+    );
   });
 
   it('emits load-more when hasMore becomes true after the first page loads', async () => {
