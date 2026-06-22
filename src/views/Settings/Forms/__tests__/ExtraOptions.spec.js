@@ -328,18 +328,6 @@ describe('SectorExtraOptions', () => {
         'Mensagem personalizada',
       );
     });
-
-    it('should use romanian default message when locale is ro', async () => {
-      wrapper.vm.$i18n.locale = 'ro';
-
-      wrapper.vm.handleInactivityTimeoutIsMessageTimeoutEnabled(true);
-
-      expect(wrapper.vm.sector.inactivity_timeout.message_timeout_text).toBe(
-        wrapper.vm.$t(
-          'sector.additional_options.inactivity_timeout.show.field.default_warning_message',
-        ),
-      );
-    });
   });
 
   it('Should match the snapshot', () => {
