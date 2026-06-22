@@ -288,7 +288,7 @@ import i18n from '@/plugins/i18n';
 
 import { parseSecondsToMinutes, parseMinutesToSeconds } from '@/utils/time';
 
-const INACTIVITY_TIMEOUT_LOCALES = ['en', 'pt-br', 'es'];
+const INACTIVITY_TIMEOUT_LOCALES = ['en', 'pt-br', 'es', 'ro'];
 
 export default {
   name: 'SectorExtraOptionsForm',
