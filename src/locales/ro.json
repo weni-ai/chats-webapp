@@ -163,6 +163,18 @@
           "tooltip": "Alege între sondajul CSAT implicit și un flux personalizat deja configurat în modulul Fluxuri."
         }
       },
+      "inactivity_timeout": {
+        "close_room": {
+          "field": {
+            "default_close_room_message": "Această sesiune s-a încheiat din cauza inactivității. Poți începe un chat nou oricând."
+          }
+        },
+        "show": {
+          "field": {
+            "default_warning_message": "Mai ești acolo? Dacă nu există răspuns, această sesiune se va închide în curând."
+          }
+        }
+      },
       "additional_options": {
         "automated_message": {
           "switch_when_waiting_label": "Trimite mesaj automat contactelor care așteaptă",
