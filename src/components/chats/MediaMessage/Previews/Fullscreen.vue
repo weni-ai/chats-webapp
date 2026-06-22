@@ -16,6 +16,7 @@
         <FullscreenControl
           icon="close"
           data-testid="close-button"
+          size="xl"
           @click="close()"
         />
       </UnnnicToolTip>
@@ -424,12 +425,12 @@ export default {
   max-width: 100vw;
   width: 100vw;
 
-  padding-bottom: $unnnic-space-4;
   background: rgba(31, 31, 31, 0.9);
 
   display: flex;
   flex-direction: column;
   align-items: center;
+  padding: $unnnic-space-6;
 
   .toolbar {
     height: $unnnic-space-12;
@@ -453,8 +454,8 @@ export default {
 
   .media__container {
     $height: calc(
-      100vh - 3rem - 2rem - 1rem
-    ); // 100vh - toolbar - footer - page's padding-bottom
+      90vh - $unnnic-space-12 - $unnnic-space-4 - $unnnic-space-6
+    ); // 90vh - toolbar - footer - page's padding-bottom
 
     display: flex;
     align-items: center;
