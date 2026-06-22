@@ -199,7 +199,8 @@ export default {
 
       const isVisible = scrollRoot
         ? this.isElementVisibleInContainer(sentinelRect, scrollRoot)
-        : sentinelRect.top <= window.innerHeight + 120;
+        : sentinelRect.top <= window.innerHeight + 120 &&
+          sentinelRect.bottom >= -120;
 
       if (isVisible) {
         this.$emit('load-more');
