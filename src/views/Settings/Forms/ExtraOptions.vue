@@ -398,7 +398,7 @@ export default {
       );
     },
     currentI18nLocale() {
-      return i18n.global.__composer.locale.value;
+      return this.$i18n.locale;
     },
   },
   watch: {
