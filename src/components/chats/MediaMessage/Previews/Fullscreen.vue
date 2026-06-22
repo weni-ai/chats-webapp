@@ -9,6 +9,13 @@
       data-testid="toolbar"
       @click.stop
     >
+      <p
+        v-if="showMediaCount"
+        class="toolbar__count"
+        data-testid="media-count"
+      >
+        {{ mediaCountLabel }}
+      </p>
       <UnnnicToolTip
         enabled
         :text="$t('image_preview.tooltip.close')"
@@ -27,6 +34,7 @@
       @click.stop
     >
       <UnnnicToolTip
+        v-if="!isPreviousDisabled"
         enabled
         :text="$t('image_preview.tooltip.previous')"
       >
@@ -57,6 +65,7 @@
         </div>
       </div>
       <UnnnicToolTip
+        v-if="!isNextDisabled"
         enabled
         :text="$t('image_preview.tooltip.next')"
       >
@@ -134,6 +143,14 @@ export default {
       type: String,
       default: '',
     },
+    mediaCurrent: {
+      type: Number,
+      default: null,
+    },
+    mediaTotal: {
+      type: Number,
+      default: null,
+    },
   },
   emits: ['close', 'next', 'previous'],
 
@@ -155,6 +172,25 @@ export default {
   },
 
   computed: {
+    showMediaCount() {
+      return this.mediaTotal !== null && this.mediaTotal > 0;
+    },
+
+    mediaCountLabel() {
+      return this.$t('image_preview.count', {
+        current: this.mediaCurrent,
+        total: this.mediaTotal,
+      });
+    },
+
+    isPreviousDisabled() {
+      return this.showMediaCount && this.mediaCurrent <= 1;
+    },
+
+    isNextDisabled() {
+      return this.showMediaCount && this.mediaCurrent >= this.mediaTotal;
+    },
+
     rotateDirection() {
       const isVertical = [90, 270].includes(Math.abs(this.rotatedDeg));
       return isVertical ? 'vertical' : 'horizontal';
@@ -292,12 +328,20 @@ export default {
     },
 
     next() {
+      if (this.isNextDisabled) {
+        return;
+      }
+
       this.resetZoom();
       this.resetRotate();
       this.$emit('next');
     },
 
     previous() {
+      if (this.isPreviousDisabled) {
+        return;
+      }
+
       this.resetZoom();
       this.resetRotate();
       this.$emit('previous');
@@ -438,9 +482,14 @@ export default {
 
     display: flex;
     align-items: center;
-    justify-content: flex-end;
-    gap: $unnnic-spacing-inline-sm;
-    padding: 0 1rem;
+    justify-content: space-between;
+    padding: $unnnic-space-6 $unnnic-space-6 0 $unnnic-space-6;
+    position: relative;
+
+    &__count {
+      color: $unnnic-color-fg-on-primary;
+      font: $unnnic-font-display-3;
+    }
   }
 
   .preview__content {

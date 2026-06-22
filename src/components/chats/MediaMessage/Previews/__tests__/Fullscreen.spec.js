@@ -48,6 +48,39 @@ describe('FullscreenPreview', () => {
     expect(wrapper.emitted('previous')).toHaveLength(1);
   });
 
+  it('shows media count when mediaTotal is provided', async () => {
+    await wrapper.setProps({
+      mediaCurrent: 2,
+      mediaTotal: 10,
+    });
+
+    const count = wrapper.find('[data-testid="media-count"]');
+    expect(count.exists()).toBe(true);
+    expect(count.text()).toBe('Image 2 of 10');
+  });
+
+  it('hides previous button on first media', async () => {
+    await wrapper.setProps({
+      mediaCurrent: 1,
+      mediaTotal: 10,
+    });
+
+    expect(wrapper.find('[data-testid="previous-button"]').exists()).toBe(
+      false,
+    );
+    expect(wrapper.find('[data-testid="next-button"]').exists()).toBe(true);
+  });
+
+  it('hides next button on last media', async () => {
+    await wrapper.setProps({
+      mediaCurrent: 10,
+      mediaTotal: 10,
+    });
+
+    expect(wrapper.find('[data-testid="previous-button"]').exists()).toBe(true);
+    expect(wrapper.find('[data-testid="next-button"]').exists()).toBe(false);
+  });
+
   it('toggles zoom state when zoom button is clicked', async () => {
     const zoomButton = wrapper.findComponent('[data-testid="zoom-button"]');
 
