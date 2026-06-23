@@ -204,7 +204,7 @@
   },
   "attachment": "Adjuntar",
   "internal_note": "Observación interna",
-  "internal_note_with_attachment_tooltip": "Nota interna con archivo adjunto",
+  "internal_note_with_attachment_tooltip": "Observación interna con anexo",
   "close_internal_note": "Cerrar nota interna (Esc)",
   "notes": "Observaciones",
   "bold": "Negrita",
@@ -562,7 +562,7 @@
     "closed_chats": {
       "general_history": "Historial general",
       "history": "Historial ",
-      "history_description": "Historial de todos los registros de atención del proyecto {projectName}",
+      "history_description": "Historial de todos los registros de chat de soporte del proyecto {projectName}",
       "project_history": "Historial del proyecto",
       "contact_history": "Historial del contacto"
     },

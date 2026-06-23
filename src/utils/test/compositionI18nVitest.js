@@ -8,6 +8,7 @@ import UnnnicSystemPlugin from '@/plugins/UnnnicSystem.js';
 import pt_br from '@/locales/pt_br.json';
 import en from '@/locales/en.json';
 import es from '@/locales/es.json';
+import ro from '@/locales/ro.json';
 
 /**
  * Legacy vue-i18n mixins break `<script setup>` in VTU (they assign `this.$t` in beforeCreate).
@@ -27,6 +28,7 @@ const compositionI18n = createI18n({
     'pt-br': pt_br,
     en,
     es,
+    ro,
   },
 });
 

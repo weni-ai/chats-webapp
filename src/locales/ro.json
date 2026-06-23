@@ -3,6 +3,50 @@
     "title": "Salut!",
     "description": "Selectează un chat pentru a începe"
   },
+  "internal_note_with_attachment_tooltip": "Notă internă cu atașament",
+  "view_options": {
+    "new_badge": "Nou"
+  },
+  "preferences": {
+        "title": "Preferințe",
+
+    "appearance": {
+      "title": "Aspect",
+      "dark_mode": "Mod întunecat",
+      "live_desk_theme": "Temă Live Desk",
+      "light": "Luminos",
+      "dark": "Întunecat"
+    },
+    "notifications": {
+      "title": "Notificări",
+      "sound": "Sunet",
+      "sound_notifications": "Notificări cu sunet",
+      "on": "Activ",
+      "off": "Dezactivat"
+    },
+    "help": {
+      "label": "Ajutor",
+      "title": "Meniu Ajutor",
+      "nilo": {
+        "active": "Nile activ",
+        "disabled": "Nile dezactivat"
+      }
+    }
+  },
+  "ai_text_improvement": {
+    "tooltip_disabled": "Scrie un răspuns în câmpul de text pentru a activa răspunsuri îmbunătățite cu AI",
+    "tooltip_enabled": "Îmbunătățește răspunsul cu AI",
+    "tooltip_cancel": "Anulează îmbunătățirea răspunsului cu AI",
+    "fix_grammar_and_spelling": "Corectează ortografia și gramatica",
+    "make_more_empathetic": "Fă-l mai empatic",
+    "rewrite_for_clarity": "Rescrie pentru claritate",
+    "improving_response": "Îmbunătățește-ți răspunsul",
+    "improvement": "Îmbunătățire",
+    "error": "Eroare la îmbunătățirea răspunsului cu AI. Încearcă din nou.",
+    "new": "New",
+    "back_to_original": "Original",
+    "back_to_original_tooltip": "Revenire la versiunea originală (Ctrl+Z)"
+  },
   "news_and_updates": "Știri și actualizări în Live Desk",
   "custom": "Personalizare",
   "country": {
@@ -71,21 +115,6 @@
     "error": "Actualizarea stării nu a reușit. Încearcă din nou."
   },
   "view-option": "Vizualizare opțiuni",
-  "preferences": {
-    "title": "Preferințe",
-    "notifications": {
-      "title": "Notificări",
-      "sound": "Sunet"
-    },
-    "help": {
-      "label": "Ajutor",
-      "title": "Meniu Ajutor",
-      "nilo": {
-        "active": "Nile activ",
-        "disabled": "Nile dezactivat"
-      }
-    }
-  },
   "upload_area": {
     "title": {
       "text": "Pune aici fișierul tău sau",
@@ -254,6 +283,8 @@
         "custom": {
           "flow_disclaimer": "Fluxul selectat trebuie să utilizeze o evaluare a satisfacției de la 1 la 5 pentru a asigura rezultate corecte ale sondajului."
         },
+        "hint": "Dacă un flux activ din modulul Fluxuri este configurat să declanșeze un sondaj după încheierea asistenței, această setare poate intra în conflict cu acel flux și poate afecta livrarea sondajului.",
+        "label": "Trimite automat un sondaj de satisfacție după încheierea asistenței Live Desk",
         "section_title": "Sondaj de satisfacție",
         "type": {
           "custom": "Fluxuri personalizate",
@@ -261,19 +292,17 @@
           "label": "Tip de sondaj",
           "tooltip": "Alege între sondajul CSAT implicit și un flux personalizat deja configurat în modulul Fluxuri."
         },
+        "confirm_modal": {
+          "content_1": "Dacă un flux activ din modulul Fluxuri este configurat să declanșeze un sondaj după încheierea asistenței, această setare poate intra în conflict cu acel flux și poate afecta livrarea sondajului.",
+          "content_2": "Vrei să continui oricum?"
+        }
+      },
         "automated_message": {
           "switch_when_waiting_label": "Trimite mesaj automat contactelor care așteaptă",
           "switch_when_start_label": "Trimite mesaj automat când începe asistența",
           "hint_when_waiting": "Trimite automat un mesaj contactelor în timp ce acestea așteaptă asistență umană în coadă.",
           "hint_when_start": "Trimite automat un mesaj atunci când un chat este atribuit unui reprezentant. Mesajul va apărea ca și cum ar fi fost trimis de reprezentantul atribuit."
         },
-        "label": "Trimite automat un sondaj de satisfacție după încheierea asistenței Live Desk",
-        "hint": "Dacă un flux activ din modulul Fluxuri este configurat să declanșeze un sondaj după încheierea asistenței, această setare poate intra în conflict cu acel flux și poate afecta livrarea sondajului.",
-        "confirm_modal": {
-          "content_1": "Dacă un flux activ din modulul Fluxuri este configurat să declanșeze un sondaj după încheierea asistenței, această setare poate intra în conflict cu acel flux și poate afecta livrarea sondajului.",
-          "content_2": "Vrei să continui oricum?"
-        }
-      },
       "automatic_message": {
         "switch_active": "Deschide automat mesajele",
         "switch_disabled": "Deschide automat mesajele",
@@ -468,13 +497,15 @@
     "get_chat_confirmation": "Confirmă dacă vrei să preiei acest chat cu {contact}",
     "get_chat_error": "Eroare la încercarea de a accesa sala",
     "you_got_chat": "Ai primit chatul",
+    "closed_chats": {
+      "contact_history": "Istoric contact",
+      "general_history": "Istoric general",
+      "history": "Istoric",
+      "history_description": "Istoricul tuturor înregistrărilor de asistență pentru proiectul {projectName}",
+      "project_history": "Istoric proiect"
+    },
     "your_chat_assumed": "Chatul a fost preluat de un alt reprezentant",
     "your_chat_assumed_description": "Chatul cu {contact} a fost preluat de {representative}",
-    "closed_chats": {
-      "history": "Istoric",
-      "project_history": "Istoric proiect",
-      "contact_history": "Istoric contact"
-    },
     "select_the_queues": "Selectează cozile",
     "assigned_queues": "Cozi atribuite",
     "define_the_queues": "Definește cozile",
@@ -565,20 +596,6 @@
   "no_tags_assigned": "Nicio etichetă atribuită",
   "contact_await_for_you": "Un contact așteaptă asistență",
   "agent": "Reprezentant",
-  "ai_text_improvement": {
-    "tooltip_disabled": "Scrie un răspuns în câmpul de text pentru a activa răspunsuri îmbunătățite cu AI",
-    "tooltip_enabled": "Îmbunătățește răspunsul cu AI",
-    "tooltip_cancel": "Anulează îmbunătățirea răspunsului cu AI",
-    "fix_grammar_and_spelling": "Corectează ortografia și gramatica",
-    "make_more_empathetic": "Fă-l mai empatic",
-    "rewrite_for_clarity": "Rescrie pentru claritate",
-    "improving_response": "Îmbunătățește-ți răspunsul",
-    "improvement": "Îmbunătățire",
-    "error": "Eroare la îmbunătățirea răspunsului cu AI. Încearcă din nou.",
-    "new": "New",
-    "back_to_original": "Original",
-    "back_to_original_tooltip": "Revenire la versiunea originală (Ctrl+Z)"
-  },
   "manager": "Manager",
   "you": "Tu",
   "queue": "Coadă",
@@ -916,6 +933,26 @@
           "start": "Pentru a-l folosi, integrează cu ChatGPT ",
           "middle": "făcând click aici.",
           "end": "Copilot oferă răspunsuri rapide bazate pe istoricul serviciilor contactului."
+        }
+      },
+      "inactivity_timeout": {
+        "close_room": {
+          "field": {
+            "default_close_room_message": "Această sesiune s-a încheiat din cauza inactivității. Poți începe un chat nou oricând."
+          }
+        },
+        "show": {
+          "field": {
+            "default_warning_message": "Mai ești acolo? Dacă nu există răspuns, această sesiune se va închide în curând."
+          }
+        }
+      },
+      "additional_options": {
+        "automated_message": {
+          "switch_when_waiting_label": "Trimite mesaj automat contactelor care așteaptă",
+          "switch_when_start_label": "Trimite mesaj automat când începe asistența",
+          "hint_when_waiting": "Trimite automat un mesaj contactelor în timp ce acestea așteaptă asistență umană în coadă.",
+          "hint_when_start": "Trimite automat un mesaj atunci când un chat este atribuit unui reprezentant. Mesajul va apărea ca și cum ar fi fost trimis de reprezentantul atribuit."
         }
       }
     }
