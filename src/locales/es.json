@@ -99,7 +99,7 @@
     "appearance": {
       "title": "Apariencia",
       "dark_mode": "Modo oscuro",
-      "live_desk_theme": "Tema del Live Desk",
+      "live_desk_theme": "Tema de Live Desk",
       "light": "Claro",
       "dark": "Oscuro"
     },
@@ -107,8 +107,8 @@
       "title": "Notificaciones",
       "sound": "Sonido",
       "sound_notifications": "Notificaciones sonoras",
-      "on": "Activado",
-      "off": "Desactivado"
+      "on": "Activadas",
+      "off": "Desactivadas"
     },
     "help": {
       "label": "Ayuda",
@@ -217,7 +217,7 @@
   },
   "attachment": "Adjuntar",
   "internal_note": "Nota interna",
-  "internal_note_with_attachment_tooltip": "Nota interna con archivo adjunto",
+  "internal_note_with_attachment_tooltip": "Observación interna con anexo",
   "close_internal_note": "Cerrar nota interna (Esc)",
   "notes": "Notas",
   "bold": "Negrita",
@@ -565,7 +565,7 @@
       "contact_history": "Historial del contacto",
       "general_history": "Historial general",
       "history": "Historial",
-      "history_description": "Historial de todos los registros de atención del proyecto {projectName}",
+      "history_description": "Historial de todos los registros de chat de soporte del proyecto {projectName}",
       "project_history": "Historial del proyecto"
     },
     "assigned_queues": "Colas asignadas",
