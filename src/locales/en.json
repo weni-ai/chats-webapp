@@ -786,7 +786,9 @@
     "transfering_chat": "Transferring the chat 📬",
     "ticket": "Ticket ID",
     "copy_protocol": "Click to copy the Ticket ID",
-    "protocol_copied": "Ticket ID copied to clipboard!"
+    "protocol_copied": "Ticket ID copied to clipboard!",
+    "copy_value": "Click to copy the value",
+    "value_copied": "Value copied to clipboard!"
   },
   "discussions": {
     "title": "Discussion | Discussions",
