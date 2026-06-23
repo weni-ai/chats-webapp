@@ -19,7 +19,7 @@
         <UnnnicIconSvg
           icon="content_copy"
           scheme="fg-base"
-          size="sm"
+          size="ant"
         />
       </section>
     </UnnnicToolTip>
@@ -67,7 +67,7 @@ const copyProtocol = () => {
   .protocol-text__ticket {
     display: flex;
     align-items: center;
-    gap: $unnnic-space-1;
+    gap: $unnnic-space-2;
     cursor: pointer;
 
     &-title {

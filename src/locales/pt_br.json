@@ -779,7 +779,9 @@
     "transfering_chat": "Transferindo o chat ​📬",
     "ticket": "Protocolo",
     "copy_protocol": "Clique para copiar o protocolo",
-    "protocol_copied": "Protocolo copiado para a área de transferência!"
+    "protocol_copied": "Protocolo copiado para a área de transferência!",
+    "copy_value": "Clique para copiar o valor",
+    "value_copied": "Valor copiado para a área de transferência!"
   },
   "discussions": {
     "title": "Discussão | Discussões",
