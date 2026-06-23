@@ -86,6 +86,7 @@ const {
   inputMessageFocused,
   isDisabledInput,
 } = storeToRefs(messageManager);
+
 const { addMediaUploadFiles, clearInputs } = messageManager;
 
 const aiTextImprovementStore = useAiTextImprovement();
@@ -216,83 +217,68 @@ defineExpose({
 </script>
 
 <style scoped lang="scss">
-.text-box__input-block {
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  gap: $unnnic-space-2;
-}
+.text-box {
+  &__input-block {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: $unnnic-space-2;
+  }
+  &__textarea-container {
+    width: 100%;
+    display: flex;
+    gap: $unnnic-space-1;
+  }
+  &__internal-note-medias {
+    width: 100%;
+  }
+  &__textarea {
+    flex: 1;
+    border: none;
+    resize: none;
+    overflow-y: hidden;
+    outline: none;
+    font: $unnnic-font-body;
+    max-height: 104px;
 
-.text-box__textarea-container {
-  width: 100%;
-  display: flex;
-  gap: $unnnic-space-1;
-}
+    background-color: transparent;
+    color: $unnnic-color-fg-emphasized;
+    caret-color: $unnnic-color-fg-emphasized;
 
-.text-box__internal-note-medias {
-  width: 100%;
-}
+    &::placeholder {
+      color: $unnnic-color-fg-muted;
+    }
 
-.text-box__textarea {
-  flex: 1;
-  border: none;
-  resize: none;
-  overflow-y: hidden;
-  outline: none;
-  font: $unnnic-font-body;
-  max-height: 104px;
-
-  background-color: transparent;
-  color: $unnnic-color-fg-emphasized;
-  caret-color: $unnnic-color-fg-emphasized;
-
-  &::placeholder {
+    &.internal-note {
+      color: $unnnic-color-fg-base;
+      caret-color: $unnnic-color-fg-base;
+    }
+  }
+  &__ai-loading-text {
+    font: $unnnic-font-body;
     color: $unnnic-color-fg-muted;
   }
-
-  &.internal-note {
-    color: $unnnic-color-fg-base;
-    caret-color: $unnnic-color-fg-base;
+  &__ai-loading-dots {
+    display: inline-flex;
+    align-items: flex-end;
+    gap: 3px;
+    margin-left: $unnnic-space-1;
+    padding-bottom: $unnnic-space-1;
   }
-}
+  &__ai-loading-dot {
+    display: inline-block;
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background-color: $unnnic-color-fg-muted;
+    animation: dot-jump 1.4s ease-in-out infinite;
 
-.text-box__ai-loading-text {
-  font: $unnnic-font-body;
-  color: $unnnic-color-fg-muted;
-}
-
-.text-box__ai-loading-dots {
-  display: inline-flex;
-  align-items: flex-end;
-  gap: 3px;
-  margin-left: $unnnic-space-1;
-  padding-bottom: $unnnic-space-1;
-}
-
-.text-box__ai-loading-dot {
-  display: inline-block;
-  width: 5px;
-  height: 5px;
-  border-radius: 50%;
-  background-color: $unnnic-color-fg-muted;
-  animation: dot-jump 1.4s ease-in-out infinite;
-
-  &:nth-child(2) {
-    animation-delay: 0.16s;
-  }
-  &:nth-child(3) {
-    animation-delay: 0.32s;
-  }
-}
-
-@keyframes dot-jump {
-  0%,
-  60%,
-  100% {
-    transform: translateY(0);
-  }
-  30% {
-    transform: translateY(-6px);
+    &:nth-child(2) {
+      animation-delay: 0.16s;
+    }
+    &:nth-child(3) {
+      animation-delay: 0.32s;
+    }
   }
 }
 
@@ -316,6 +302,17 @@ defineExpose({
     margin-right: $unnnic-spacing-ant;
     justify-self: end;
     padding: $unnnic-space-05 $unnnic-spacing-nano;
+  }
+}
+
+@keyframes dot-jump {
+  0%,
+  60%,
+  100% {
+    transform: translateY(0);
+  }
+  30% {
+    transform: translateY(-6px);
   }
 }
 </style>

@@ -506,6 +506,12 @@
     },
     "message_input_placeholder": "Digite sua mensagem aqui ou / para ativar mensagens rápidas",
     "message_input_disabled_description": "Altere seu status para online para continuar esta conversa",
+    "message_input_floating_actions": {
+      "copy": "Copiar conteúdo digitado",
+      "copy_alert_success": "Conteúdo copiado!",
+      "clear": "Limpar conteúdo digitado",
+      "clear_alert_success": "Conteúdo removido!"
+    },
     "search_contact": "Pesquisar contato",
     "search_contact_placeholder": "Pesquisar contato (nome, telefone ou protocolo)",
     "tags": "Tags do chat",

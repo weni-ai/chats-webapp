@@ -11,20 +11,20 @@
     ]"
   >
     <section
-      v-if="showBackToOriginal"
-      class="text-box__textarea-row"
+      :class="[
+        'text-box__textarea-wrapper',
+        { 'text-box__textarea-wrapper--with-back': showBackToOriginal },
+      ]"
     >
       <MessageManagerTextBoxTextArea
         ref="textArea"
         @keydown="handleKeyDown"
       />
-      <BackToOriginal @reverted="focus" />
+      <BackToOriginal
+        v-if="showBackToOriginal"
+        @reverted="focus"
+      />
     </section>
-    <MessageManagerTextBoxTextArea
-      v-else
-      ref="textArea"
-      @keydown="handleKeyDown"
-    />
     <MessageManagerTextBoxUploadField ref="uploadField" />
     <MessageManagerTextBoxAudioRecorder ref="audioRecorder" />
     <MessageManagerTextBoxMedias
@@ -194,11 +194,20 @@ defineExpose({
     background-color: $unnnic-color-bg-warning;
     border-color: $unnnic-color-border-warning;
   }
-  &__textarea-row {
-    display: flex;
-    align-items: stretch;
-    gap: $unnnic-space-2;
+
+  &__textarea-wrapper {
     width: 100%;
+
+    &--with-back {
+      display: flex;
+      align-items: stretch;
+      gap: $unnnic-space-2;
+
+      > :first-child {
+        flex: 1;
+        min-width: 0;
+      }
+    }
   }
 
   &__divider {
