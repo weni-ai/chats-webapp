@@ -53,6 +53,11 @@ export const useMessageManager = defineStore('messageManager', () => {
     },
   );
 
+  function copyInputMessageToClipboard() {
+    if (!inputMessage.value) return;
+    navigator.clipboard.writeText(inputMessage.value);
+  }
+
   function clearInputs() {
     inputMessage.value = '';
     audioMessage.value = null;
@@ -236,5 +241,6 @@ export const useMessageManager = defineStore('messageManager', () => {
     sendMediasMessage,
     addMediaUploadFiles,
     clearInputs,
+    copyInputMessageToClipboard,
   };
 });

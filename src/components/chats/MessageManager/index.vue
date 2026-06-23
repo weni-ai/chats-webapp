@@ -2,16 +2,21 @@
   <section class="message-manager">
     <UnnnicDisclaimer
       v-if="!isLoading && isDisabledInput"
-      class="message-manager__disabled-input"
+      class="message-manager-v2__disabled-input"
       :description="$t('chats.message_input_disabled_description')"
       type="informational"
     />
     <MessageManagerLoading v-if="isLoading" />
-    <MessageManagerTextBox
+    <section
       v-else
-      ref="messageManagerTextBox"
-      @keydown="onKeyDown"
-    />
+      class="message-manager-v2__input-area"
+    >
+      <FloatingActions :visible="showFloatingActions" />
+      <MessageManagerTextBox
+        ref="messageManagerTextBox"
+        @keydown="onKeyDown"
+      />
+    </section>
     <SuggestionBox
       v-if="!activeDiscussion?.uuid"
       :search="inputMessage"
@@ -30,11 +35,12 @@
 </template>
 
 <script setup lang="ts">
-import { nextTick, onMounted, ref, useTemplateRef, watch } from 'vue';
+import { computed, nextTick, onMounted, ref, useTemplateRef, watch } from 'vue';
 import { storeToRefs } from 'pinia';
 
 import MessageManagerLoading from './MessageManagerLoading.vue';
-
+import MessageManagerTextBox from './TextBox/index.vue';
+import FloatingActions from './TextBox/FloatingActions.vue';
 import SuggestionBox from './SuggestionBox/index.vue';
 import CoPilot from './CoPilot.vue';
 
@@ -42,10 +48,9 @@ import { useDiscussions } from '@/store/modules/chats/discussions';
 import { useMessageManager } from '@/store/modules/chats/messageManager';
 import { useRooms } from '@/store/modules/chats/rooms';
 import { useProfile } from '@/store/modules/profile';
-import MessageManagerTextBox from './TextBox/index.vue';
 
 defineOptions({
-  name: 'MessageManager',
+  name: 'MessageManagerV2',
 });
 
 interface Props {
@@ -79,6 +84,12 @@ const {
 
 const keyboardEvent = ref<KeyboardEvent | null>(null);
 const messageManagerTextBoxRef = useTemplateRef('messageManagerTextBox');
+
+const showFloatingActions = computed(() => {
+  const validInput =
+    inputMessage.value.trim() !== '' && !inputMessage.value.startsWith('/');
+  return !isInternalNote.value && validInput && !isDisabledInput.value;
+});
 
 const suggestionBoxIgnoreClickOutside = [messageManagerTextBoxRef];
 
@@ -162,5 +173,10 @@ onMounted(() => {
   gap: $unnnic-space-2;
   margin-right: $unnnic-space-2;
   align-items: end;
+
+  &__input-area {
+    position: relative;
+    width: 100%;
+  }
 }
 </style>
