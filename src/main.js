@@ -1,6 +1,7 @@
 import { createApp, watch } from 'vue';
 import { createPinia } from 'pinia';
 import * as Sentry from '@sentry/vue';
+import moment from 'moment';
 import env from './utils/env';
 
 import App from './App.vue';
@@ -28,6 +29,13 @@ const { useSharedStore } = await safeImport(
 );
 
 const sharedStore = useSharedStore?.();
+
+// The host stores raw account language values (e.g. `en-us`); chats i18n/moment
+// use `en`, `pt-br`, `es`, `ro`. Normalize before applying.
+function normalizeLocale(language) {
+  const locale = (language || 'en').toLowerCase();
+  return locale === 'en-us' ? 'en' : locale;
+}
 
 // Track the live app per container so a re-mount (HMR re-executing the exposed
 // module, or a duplicate host mount call) tears down the previous instance
@@ -81,6 +89,21 @@ export default async function mountChatsApp({
       () => sharedStore.current.project.uuid,
       (projectUuid) => {
         if (projectUuid) configStore.setProjectUuid(projectUuid);
+      },
+      { immediate: true },
+    );
+
+    // Federated: the legacy getLanguage/setLanguage postMessage handshake can't
+    // reach the host (same document, no iframe). Mirror the host's account
+    // language from the shared store instead. `legacy: true` makes
+    // `i18n.global.locale` the single source consumed everywhere (Accept-Language
+    // headers, $i18n.locale watchers, moment dates).
+    watch(
+      () => sharedStore.user?.language,
+      (language) => {
+        const locale = normalizeLocale(language);
+        i18n.global.locale = locale;
+        moment.locale(locale);
       },
       { immediate: true },
     );
@@ -138,6 +161,15 @@ export default async function mountChatsApp({
     containerEl.appendChild(mountPoint);
     app.mount(mountPoint);
     mountedAppsByContainer.set(containerId, app);
+
+    // Wait for the initial navigation triggered by `app.mount` before returning
+    // to the host — otherwise the host may push a route while the child router
+    // is still resolving its default redirect.
+    await router.isReady();
+  } else if (isFederatedModule) {
+    throw new Error(
+      `[chats] Mount container #${containerId} not found — refusing to mount into the host root`,
+    );
   } else {
     app.mount(`#${containerId}`);
   }
