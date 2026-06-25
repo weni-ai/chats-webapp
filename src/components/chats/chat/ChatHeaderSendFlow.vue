@@ -20,7 +20,7 @@
     >
       <UnnnicIconSvg
         icon="alert-circle-1-1"
-        scheme="fg-on-primary"
+        scheme="fg-base"
         size="sm"
       />
     </UnnnicToolTip>
@@ -43,9 +43,9 @@ export default {
 
   padding: $unnnic-space-1;
 
-  background-color: $unnnic-color-fg-base;
+  background-color: $unnnic-color-bg-base-soft;
 
-  color: $unnnic-color-fg-on-primary;
+  color: $unnnic-color-fg-base;
   font: $unnnic-font-body;
 
   &__trigger {

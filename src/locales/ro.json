@@ -1,4 +1,22 @@
 {
+  "internal_note_with_attachment_tooltip": "Notă internă cu atașament",
+  "view_options": {
+    "new_badge": "Nou"
+  },
+  "preferences": {
+    "appearance": {
+      "title": "Aspect",
+      "dark_mode": "Mod întunecat",
+      "live_desk_theme": "Temă Live Desk",
+      "light": "Luminos",
+      "dark": "Întunecat"
+    },
+    "notifications": {
+      "sound_notifications": "Notificări cu sunet",
+      "on": "Activ",
+      "off": "Dezactivat"
+    }
+  },
   "ai_text_improvement": {
     "tooltip_disabled": "Scrie un răspuns în câmpul de text pentru a activa răspunsuri îmbunătățite cu AI",
     "tooltip_enabled": "Îmbunătățește răspunsul cu AI",
@@ -28,6 +46,10 @@
         "title": "Chat transferido para a fila",
         "description": "Seu chat com {contact} foi transferido por um moderador para a fila {queue}"
       }
+    },
+    "closed_chats": {
+      "general_history": "Istoric general",
+      "history_description": "Istoricul tuturor înregistrărilor de asistență pentru proiectul {projectName}"
     },
     "your_chat_assumed": "Chatul a fost preluat de un alt reprezentant",
     "your_chat_assumed_description": "Chatul cu {contact} a fost preluat de {representative}",
@@ -139,6 +161,18 @@
           "default": "Sondaj CSAT implicit (recomandat)",
           "label": "Tip de sondaj",
           "tooltip": "Alege între sondajul CSAT implicit și un flux personalizat deja configurat în modulul Fluxuri."
+        }
+      },
+      "inactivity_timeout": {
+        "close_room": {
+          "field": {
+            "default_close_room_message": "Această sesiune s-a încheiat din cauza inactivității. Poți începe un chat nou oricând."
+          }
+        },
+        "show": {
+          "field": {
+            "default_warning_message": "Mai ești acolo? Dacă nu există răspuns, această sesiune se va închide în curând."
+          }
         }
       },
       "additional_options": {
