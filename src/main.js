@@ -45,6 +45,7 @@ const mountedAppsByContainer = new Map();
 export default async function mountChatsApp({
   containerId = 'app',
   initialRoute,
+  basePath = '',
 } = {}) {
   if (!isFederatedModule) {
     await getJwtToken();
@@ -132,6 +133,12 @@ export default async function mountChatsApp({
   const containerEl = document.getElementById(containerId);
   containerEl?.classList.add('chats-webapp');
   app.provide('chatsThemeMountContainer', containerEl);
+  // Based mounts (e.g. settings, `basePath="/settings"`) are light-only by
+  // definition — their entire route tree lives under `/settings`. Force light
+  // here instead of relying on the runtime route path, which is fragile during
+  // navigation transitions and across the theme state shared between the two
+  // chats mounts (live desk + settings) of the same remote.
+  app.provide('chatsForceLightTheme', !!basePath);
 
   // Federated: mount into a private child node instead of the host-owned
   // container element. The host's virtual DOM owns `#${containerId}`; mounting

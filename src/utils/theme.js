@@ -9,9 +9,15 @@ export function isLightOnlyRoute(path) {
   return LIGHT_ONLY_ROUTE_PREFIXES.some((prefix) => path.startsWith(prefix));
 }
 
-export function applyRouteAwareTheme(theme, routePath, mountContainer) {
+export function applyRouteAwareTheme(
+  theme,
+  routePath,
+  mountContainer,
+  forceLight = false,
+) {
   if (typeof document === 'undefined') return;
-  const wantsDark = theme === 'dark' && !isLightOnlyRoute(routePath);
+  const wantsDark =
+    theme === 'dark' && !forceLight && !isLightOnlyRoute(routePath);
   // Toggle on this instance's `.chats-webapp` mount container (not `<html>`)
   // so the unnnic dark-mode overrides — which postcss-prefixwrap rewrites as
   // `.chats-webapp .dark` / `.chats-webapp.dark` — actually match. In

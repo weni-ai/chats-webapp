@@ -51,13 +51,14 @@ import moment from 'moment';
 
 export default {
   name: 'App',
-  inject: {
-    chatsThemeMountContainer: { default: null },
-  },
   components: {
     SocketAlertBanner,
     ModalOfflineAgent,
     ModalDarkModeIntro,
+  },
+  inject: {
+    chatsThemeMountContainer: { default: null },
+    chatsForceLightTheme: { default: false },
   },
   setup() {
     const queryString = window.location.href.split('?')[1];
@@ -220,7 +221,12 @@ export default {
     routeAwareTheme: {
       immediate: true,
       handler([theme, path]) {
-        applyRouteAwareTheme(theme, path, this.chatsThemeMountContainer);
+        applyRouteAwareTheme(
+          theme,
+          path,
+          this.chatsThemeMountContainer,
+          this.chatsForceLightTheme,
+        );
       },
     },
   },

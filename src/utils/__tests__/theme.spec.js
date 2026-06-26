@@ -29,4 +29,26 @@ describe('applyRouteAwareTheme', () => {
 
     expect(settings.classList.contains('dark')).toBe(false);
   });
+
+  it('forces light mode when forceLight is set regardless of route path', () => {
+    const settings = document.createElement('div');
+    settings.className = 'chats-webapp dark';
+    document.body.appendChild(settings);
+
+    // Even a non-light-only path (e.g. the transient `/` before the based
+    // mount navigates to `/settings`) must stay light when forceLight is true.
+    applyRouteAwareTheme('dark', '/', settings, true);
+
+    expect(settings.classList.contains('dark')).toBe(false);
+  });
+
+  it('keeps route-aware behavior when forceLight is false', () => {
+    const liveDesk = document.createElement('div');
+    liveDesk.className = 'chats-webapp';
+    document.body.appendChild(liveDesk);
+
+    applyRouteAwareTheme('dark', '/rooms', liveDesk, false);
+
+    expect(liveDesk.classList.contains('dark')).toBe(true);
+  });
 });
