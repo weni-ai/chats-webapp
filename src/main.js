@@ -131,6 +131,7 @@ export default async function mountChatsApp({
 
   const containerEl = document.getElementById(containerId);
   containerEl?.classList.add('chats-webapp');
+  app.provide('chatsThemeMountContainer', containerEl);
 
   // Federated: mount into a private child node instead of the host-owned
   // container element. The host's virtual DOM owns `#${containerId}`; mounting

@@ -51,6 +51,9 @@ import moment from 'moment';
 
 export default {
   name: 'App',
+  inject: {
+    chatsThemeMountContainer: { default: null },
+  },
   components: {
     SocketAlertBanner,
     ModalOfflineAgent,
@@ -217,7 +220,7 @@ export default {
     routeAwareTheme: {
       immediate: true,
       handler([theme, path]) {
-        applyRouteAwareTheme(theme, path);
+        applyRouteAwareTheme(theme, path, this.chatsThemeMountContainer);
       },
     },
   },
