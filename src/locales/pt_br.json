@@ -926,23 +926,23 @@
     "variable_mapping": {
       "title": "Mapeamento de variáveis",
       "title_tag": "Template {current} de {total}",
-      "description": "As variáveis serão preenchidas na pré-visualização abaixo usando valores dos contatos selecionados sempre que fizerem referência a campos do contato.",
-      "define_variables": "Definir as variáveis",
+      "description": "Na pré-visualização abaixo, as variáveis que fazem referência a campos de contato serão preenchidas com dados dos contatos selecionados",
+      "define_variables": "Defina as variáveis",
       "define_variables_ordinal": "Definir as variáveis do {ordinal} template",
       "variable_label": "Variável {name}",
-      "input_placeholder": "Digite o valor para esta variável",
+      "input_placeholder": "Insira o valor para esta variável",
       "preview_title": "Pré-visualização do template",
       "preview_title_ordinal": "Pré-visualização do {ordinal} template",
       "preview_variable_tooltip": "Variável {placeholder}",
-      "confirmation_helper": "Verifique se cada campo está mapeado corretamente; é assim que a mensagem será exibida para cada contato selecionado.",
-      "confirmation_checkbox": "Verifiquei e estou pronto para enviar",
+      "confirmation_helper": "Verifique se todos os campos estão mapeados corretamente. Sua mensagem será personalizada para cada contato selecionado com base nesses mapeamentos.",
+      "confirmation_checkbox": "Verifiquei e quero enviar",
       "next_template": "Próximo template",
       "send_templates": "Enviar ({count} template) | Enviar ({count} templates)",
       "local_variables": {
         "contact_name": "Nome do contato",
         "contact_urn": "Telefone do contato",
         "agent_name": "Nome do atendente",
-        "agent_email": "E-mail do atendente"
+        "agent_email": "Email do atendente"
       }
     }
   },
