@@ -9,16 +9,18 @@ export function isLightOnlyRoute(path) {
   return LIGHT_ONLY_ROUTE_PREFIXES.some((prefix) => path.startsWith(prefix));
 }
 
-export function applyRouteAwareTheme(theme, routePath) {
+export function applyRouteAwareTheme(theme, routePath, mountContainer) {
   if (typeof document === 'undefined') return;
   const wantsDark = theme === 'dark' && !isLightOnlyRoute(routePath);
-  // Toggle on the `.chats-webapp` mount container (not `<html>`) so the
-  // unnnic dark-mode overrides — which postcss-prefixwrap rewrites as
-  // `.chats-webapp .dark` / `.chats-webapp.dark` — actually match. The host
-  // owns `<html>` in federation mode, so we shouldn't be touching it
-  // either way.
+  // Toggle on this instance's `.chats-webapp` mount container (not `<html>`)
+  // so the unnnic dark-mode overrides — which postcss-prefixwrap rewrites as
+  // `.chats-webapp .dark` / `.chats-webapp.dark` — actually match. In
+  // federation the host may keep two mounts alive (live desk + settings);
+  // `querySelector` would always hit the first one and leak theme state.
   const target =
-    document.querySelector('.chats-webapp') ?? document.documentElement;
+    mountContainer ??
+    document.querySelector('.chats-webapp') ??
+    document.documentElement;
   target.classList.toggle(DARK_CLASS, wantsDark);
 }
 
