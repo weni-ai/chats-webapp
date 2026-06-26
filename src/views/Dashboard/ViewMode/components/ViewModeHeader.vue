@@ -63,10 +63,12 @@ export default {
     ...mapActions(useRooms, ['setActiveRoom']),
     async closeViewMode() {
       await this.setActiveRoom(null);
-      this.$router.push({ name: 'dashboard.manager' });
 
-      if (this.$route.params.oldModule === 'insights')
+      if (this.$route.params.oldModule === 'insights') {
         return emitToHost('redirect', { path: 'insights:init' });
+      }
+
+      this.$router.push({ name: 'dashboard.manager' });
     },
   },
 };
