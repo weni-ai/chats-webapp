@@ -556,6 +556,7 @@
     "select_services_queues": "Select service queues",
     "select_at_least": "Select at least one queue to save changes",
     "define_the_queues": "Define the queues",
+    "select_the_queues": "Select queues",
     "select_queues_priorization_hint": "You will only receive new chats from the selected queues.",
     "select_your_queues": "Select your queues",
     "no_queue_selected": "No queue selected",
@@ -572,7 +573,8 @@
       "close": "Close view",
       "assume_chat": "Take over only this chat",
       "assume_chat_question": "Take over chat?",
-      "assume_chat_question_description": "Are you sure you want to take over chat with {contact}?<br><br>If you confirm, you will remove the chat from the current representative and you will be responsible for it."
+      "assume_chat_question_description": "Are you sure you want to take over chat with {contact}?<br><br>If you confirm, you will remove the chat from the current representative and you will be responsible for it.",
+      "assume_chat_confirmation": "If you confirm, this chat will be transferred from {viewedAgent} to you"
     }
   },
   "select": "Select",

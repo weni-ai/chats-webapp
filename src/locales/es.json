@@ -571,6 +571,7 @@
     "select_services_queues": "Seleccionar colas de servicio",
     "select_at_least": "Selecciona al menos una cola para guardar los cambios",
     "define_the_queues": "Definir las colas",
+    "select_the_queues": "Seleccionar colas",
     "select_queues_priorization_hint": "Solo recibirás chats nuevos de las colas seleccionadas.",
     "select_your_queues": "Selecciona tus colas",
     "no_queue_selected": "Ninguna cola seleccionada",
@@ -587,7 +588,8 @@
       "close": "Cerrar vista",
       "assume_chat": "Asignarme solamente este chat",
       "assume_chat_question": "¿Deseas asignarte el chat?",
-      "assume_chat_question_description": "¿Seguro de que deseas asignarte el chat con {contact}?<br><br>Al confirmar, el chat se removerá del representante actual y quedará bajo tu responsabilidad."
+      "assume_chat_question_description": "¿Seguro de que deseas asignarte el chat con {contact}?<br><br>Al confirmar, el chat se removerá del representante actual y quedará bajo tu responsabilidad.",
+      "assume_chat_confirmation": "Si confirmas, este chat se transferirá de {viewedAgent} a ti"
     }
   },
   "history": "Historial",

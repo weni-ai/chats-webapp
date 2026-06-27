@@ -567,6 +567,7 @@
     "select_services_queues": "Selecionar filas de serviço",
     "select_at_least": "Selecione pelo menos uma fila para salvar as alterações",
     "define_the_queues": "Definir as filas",
+    "select_the_queues": "Selecionar filas",
     "select_queues_priorization_hint": "Novos chats serão recebidos apenas das filas selecionadas.",
     "select_your_queues": "Selecione suas filas",
     "no_queue_selected": "Nenhuma fila selecionada",
@@ -583,7 +584,8 @@
       "close": "Fechar visualização",
       "assume_chat": "Assumir apenas este chat",
       "assume_chat_question": "Assumir o chat?",
-      "assume_chat_question_description": "Tem certeza de que deseja assumir o chat com {contact}?<br><br>Ao confirmar, você removerá o chat do atendente atual e será responsável pelo chat."
+      "assume_chat_question_description": "Tem certeza de que deseja assumir o chat com {contact}?<br><br>Ao confirmar, você removerá o chat do atendente atual e será responsável pelo chat.",
+      "assume_chat_confirmation": "Se confirmar, este chat será transferido de {viewedAgent} para você"
     }
   },
   "select": "Selecionar",

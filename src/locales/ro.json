@@ -510,6 +510,7 @@
     "your_chat_assumed_description": "Chatul cu {contact} a fost preluat de {representative}",
     "assigned_queues": "Cozi atribuite",
     "define_the_queues": "Definește cozile",
+    "select_the_queues": "Selectează cozile",
     "error_update_queues": "Nu s-au putut actualiza cozile de serviciu",
     "no_queue_selected": "Nicio coadă selectată",
     "select_at_least": "Trebuie selectată cel puțin o coadă pentru a salva modificările.",
@@ -529,7 +530,8 @@
       "close": "Închide vizualizarea",
       "assume_chat": "Preia doar acest chat",
       "assume_chat_question": "Preiei chatul?",
-      "assume_chat_question_description": "Sigur dorești să preiei chatul cu {contact}?<br><br>Dacă confirmi, vei elimina chatul de la reprezentantul actual și vei fi responsabil pentru acesta."
+      "assume_chat_question_description": "Sigur dorești să preiei chatul cu {contact}?<br><br>Dacă confirmi, vei elimina chatul de la reprezentantul actual și vei fi responsabil pentru acesta.",
+      "assume_chat_confirmation": "Dacă confirmi, acest chat va fi transferat de la {viewedAgent} către tine"
     }
   },
   "history": "Istoric",
