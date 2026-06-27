@@ -183,7 +183,7 @@
   "live": "Ao vivo",
   "number_chats": "Total de chats",
   "language": "Idioma",
-  "search": "Busca",
+  "search": "Buscar",
   "try_again": "Tentar novamente",
   "date_format_variable": "{day}/{month}/{year}",
   "undo": "Desfazer",
@@ -553,8 +553,8 @@
         "description": "Seu chat com {contact} foi transferido por um moderador para a fila {queue}"
       }
     },
-    "your_chat_assumed": "O chat com {contact} foi transferido",
-    "your_chat_assumed_description": "Seu chat com {contact} foi assumido por outro atendente",
+    "your_chat_assumed": "Chat assumido por outro atendente",
+    "your_chat_assumed_description": "Seu chat com {contact} foi assumido por {representative}",
     "closed_chats": {
       "contact_history": "Histórico do contato",
       "general_history": "Histórico geral",
@@ -717,7 +717,7 @@
   "contact_transferred_to_queue": "Contato transferido para a fila {queue}",
   "contact_transferred_error": "Erro ao transferir contato(s)",
   "contact_transferred_to_agent": "Contato transferido para atendente {agent}",
-  "agent_took_from_queue": "{agent} atendeu da fila {queue}",
+  "agent_took_from_queue": "{agent} pegou da fila {queue}",
   "contact_in_queue": "Contato na fila",
   "chat_closed_by": {
     "agent": "Chat encerrado pelo atendente"
@@ -734,7 +734,7 @@
     "queue_transfer_success": "Contato transferido para a fila {queue} com sucesso | Contatos transferidos para a fila {queue} com sucesso",
     "error": "Erro ao transferir contatos. Tente novamente.",
     "disclaimer": {
-      "transfer_to_other_sector": "Ao transferir o chat para uma fila de outro setor, as tags serão removidas",
+      "transfer_to_other_sector": "Ao transferir o chat para uma fila de outro setor, as tags serão removidas.",
       "selected_agent_offline": "O atendente selecionado está offline no momento",
       "without_online_agents": "Nenhum atendente está online no momento"
     }
@@ -896,7 +896,7 @@
   "photo_or_video": "Foto ou vídeo",
   "send_docs": "Enviar documento | Enviar documento | Enviar documentos",
   "doc": "Documento",
-  "send_images": "Enviar imagem | Enviar imagem | Enviar imagens",
+  "send_images": "Enviar imagem | Enviar imagens",
   "quick_message": "Mensagens rápidas",
   "flows": "Fluxos",
   "flows_trigger": {
@@ -905,7 +905,7 @@
     "triggered_flows": {
       "title": "Fluxos disparados",
       "single": "Fluxo disparado",
-      "trigger_time": "Tempo para o disparo"
+      "trigger_time": "Hora do disparo"
     },
     "groups": "Grupos ({length})",
     "group_contacts": "{n} contato | {n} contatos",
@@ -986,7 +986,7 @@
     "no_suggestions": "Nenhum resultado encontrado para o atalho informado",
     "disclaimer": "Digite / (barra) no campo de mensagem para ver mensagens rápidas"
   },
-  "discard": "Excluir",
+  "discard": "Descartar",
   "on_boarding": {
     "title": "Primeiros passos com Live Desk",
     "title_sector": "Configure sua equipe de suporte",

@@ -542,8 +542,8 @@
         "description": "Your chat with {contact} was transferred by a moderator to the {queue} queue"
       }
     },
-    "your_chat_assumed": "Chat with {contact} has been transferred",
-    "your_chat_assumed_description": "Your chat with {contact} has been taken over by another representative",
+    "your_chat_assumed": "Chat taken over by another representative",
+    "your_chat_assumed_description": "Your chat with {contact} has been taken over by {representative}",
     "closed_chats": {
       "contact_history": "Contact history",
       "general_history": "General history",
@@ -707,7 +707,7 @@
   "contact_transferred_to_queue": "Contact transferred to queue {queue}",
   "contact_transferred_error": "Error transfering contact(s)",
   "contact_transferred_to_agent": "Contact transferred to representative {agent}",
-  "agent_took_from_queue": "{agent} handled from queue {queue}",
+  "agent_took_from_queue": "{agent} took from queue {queue}",
   "contact_in_queue": "Contact in the queue",
   "chat_closed_by": {
     "agent": "Chat closed by representative"
@@ -724,7 +724,7 @@
     "queue_transfer_success": "Contact transferred to queue {queue} successfully | Contacts transferred to queue {queue} successfully",
     "error": "Error transferring contacts. Try again.",
     "disclaimer": {
-      "transfer_to_other_sector": "When transferring the chat to a queue in another department, tags will be removed",
+      "transfer_to_other_sector": "When transferring the chat to a queue in another department, tags will be removed.",
       "selected_agent_offline": "The selected representative is currently offline",
       "without_online_agents": "No representatives are currently online"
     }
@@ -884,7 +884,7 @@
   "photo_or_video": "Photo or video",
   "send_docs": "Send doc | Send doc | Send docs",
   "doc": "Doc",
-  "send_images": "Send image | Send image | Send images",
+  "send_images": "Send image | Send images",
   "quick_message": "Quick messages",
   "flows": "Flows",
   "flows_trigger": {
@@ -973,7 +973,7 @@
     "no_suggestions": "No results found for the entered shortcut",
     "disclaimer": "Type / (slash) shortcut in the message field to view quick messages"
   },
-  "discard": "Delete",
+  "discard": "Discard",
   "on_boarding": {
     "title": "Getting started with Live Desk",
     "title_sector": "Configure your support team",

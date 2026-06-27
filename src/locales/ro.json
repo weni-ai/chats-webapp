@@ -4,6 +4,7 @@
     "description": "Selectează un chat pentru a începe"
   },
   "internal_note_with_attachment_tooltip": "Notă internă cu atașament",
+  "close_internal_note": "Închide nota internă (Esc)",
   "view_options": {
     "new_badge": "Nou"
   },
@@ -454,6 +455,7 @@
       "401": "Eroare de autentificare",
       "default": "A apărut o eroare. Încearcă mai târziu."
     },
+    "message_input_placeholder": "Scrie mesajul tău sau / pentru a activa mesajele rapide",
     "message_input_disabled_description": "Schimbă-ți statusul în online pentru a continua această conversație",
     "search_contact": "Caută contact",
     "search_contact_placeholder": "Caută contact după nume, telefon sau ID tichet",
@@ -807,7 +809,7 @@
   "photo_or_video": "Fotografie sau video",
   "send_docs": "Trimite document | Trimite document | Trimite documente",
   "doc": "Document",
-  "send_images": "Trimite imagine | Trimite imagine | Trimite imagini",
+  "send_images": "Trimite imagine | Trimite imagini",
   "quick_message": "Mesaje rapide",
   "flows": "Fluxuri",
   "flows_trigger": {
