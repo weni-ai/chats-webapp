@@ -37,6 +37,7 @@
         <div
           v-if="infiniteScroll && !withoutQuickMessages"
           ref="infiniteScrollSentinel"
+          data-testid="sentinel"
           class="quick-messages-list__sentinel"
         />
         <UnnnicIconLoading
@@ -129,6 +130,9 @@ export default {
     withoutQuickMessages() {
       return this.quickMessages?.length === 0;
     },
+    infiniteScrollReady() {
+      return this.infiniteScroll && !this.withoutQuickMessages;
+    },
   },
   watch: {
     withoutQuickMessages: {
@@ -137,19 +141,30 @@ export default {
         this.$emit('update:isEmpty', newWithoutQuickMessages);
       },
     },
-    infiniteScroll: {
-      handler(enabled) {
-        if (enabled) {
+    infiniteScrollReady: {
+      handler(isReady) {
+        if (isReady) {
           this.$nextTick(() => this.setupInfiniteScroll());
-        } else {
-          this.teardownInfiniteScroll();
+          return;
         }
+
+        this.teardownInfiniteScroll();
       },
+    },
+    loadingMore(isLoading, wasLoading) {
+      if (!isLoading && wasLoading && this.infiniteScrollReady) {
+        this.$nextTick(() => this.checkSentinelVisibility());
+      }
+    },
+    hasMore(isAvailable) {
+      if (isAvailable && this.infiniteScrollReady && !this.loadingMore) {
+        this.$nextTick(() => this.checkSentinelVisibility());
+      }
     },
   },
 
   mounted() {
-    if (this.infiniteScroll) {
+    if (this.infiniteScrollReady) {
       this.$nextTick(() => this.setupInfiniteScroll());
     }
   },
@@ -159,11 +174,54 @@ export default {
   },
 
   methods: {
+    findScrollRoot(element) {
+      let parent = element?.parentElement;
+
+      while (parent) {
+        const { overflowY } = window.getComputedStyle(parent);
+
+        if (overflowY === 'auto' || overflowY === 'scroll') {
+          return parent;
+        }
+
+        parent = parent.parentElement;
+      }
+
+      return null;
+    },
+    checkSentinelVisibility() {
+      if (!this.hasMore || this.loadingMore) return;
+
+      const sentinel = this.$refs.infiniteScrollSentinel;
+      if (!sentinel) return;
+
+      const scrollRoot = this.findScrollRoot(sentinel);
+      const sentinelRect = sentinel.getBoundingClientRect();
+
+      const isVisible = scrollRoot
+        ? this.isElementVisibleInContainer(sentinelRect, scrollRoot)
+        : sentinelRect.top <= window.innerHeight + 120 &&
+          sentinelRect.bottom >= -120;
+
+      if (isVisible) {
+        this.$emit('load-more');
+      }
+    },
+    isElementVisibleInContainer(elementRect, container) {
+      const containerRect = container.getBoundingClientRect();
+
+      return (
+        elementRect.top <= containerRect.bottom + 120 &&
+        elementRect.bottom >= containerRect.top - 120
+      );
+    },
     setupInfiniteScroll() {
       this.teardownInfiniteScroll();
 
       const sentinel = this.$refs.infiniteScrollSentinel;
       if (!sentinel) return;
+
+      const scrollRoot = this.findScrollRoot(sentinel);
 
       this.intersectionObserver = new IntersectionObserver(
         (entries) => {
@@ -172,7 +230,10 @@ export default {
             this.$emit('load-more');
           }
         },
-        { rootMargin: '120px' },
+        {
+          root: scrollRoot,
+          rootMargin: '120px',
+        },
       );
 
       this.intersectionObserver.observe(sentinel);

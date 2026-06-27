@@ -129,13 +129,11 @@ function handleMouseEnter() {
 }
 
 function handleButtonClick() {
-
   if (isDisabled.value) {
     return;
   }
 
   isPopoverOpen.value = !isPopoverOpen.value;
-
 }
 
 async function selectOption(type: AiTextImprovementType) {

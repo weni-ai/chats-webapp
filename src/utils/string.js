@@ -16,7 +16,7 @@ export const normalizeText = (text) => {
  */
 export const formatMessageText = (text) => {
   function treatTextUrl(text) {
-    const urlRegex = /(https?:\/\/[^\s]+)/g;
+    const urlRegex = /(https?:\/\/[^\s<]+)/g;
     return text.replace(urlRegex, '<a href="$1" target="_blank">$1</a>');
   }
 
@@ -64,9 +64,8 @@ export const formatMessageText = (text) => {
     );
   }
 
-  const formattedText = treatTextUrl(
-    removeHtmlDangerousContent(text).trim()?.replace(/\n/g, '<br/>'),
-  );
+  const sanitizedText = removeHtmlDangerousContent(text).trim();
+  const formattedText = treatTextUrl(sanitizedText)?.replace(/\n/g, '<br/>');
 
   return typeof text === 'string' ? formattedText : '';
 };
