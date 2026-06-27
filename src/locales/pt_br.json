@@ -235,7 +235,7 @@
     "extra_options": "Opções adicionais",
     "queues": "Filas",
     "tags": "Tags",
-    "add": "Detalhes do setor",
+    "add_name_and_managers": "Defina um nome para o setor e seus gerentes",
     "add_queue": "Adicionar nova fila",
     "name": "Nome do setor",
     "placeholder": "Exemplo: Financeiro",
@@ -566,7 +566,7 @@
     "select_queues": "Selecionar filas",
     "select_services_queues": "Selecionar filas de serviço",
     "select_at_least": "Selecione pelo menos uma fila para salvar as alterações",
-    "select_the_queues": "Selecionar filas",
+    "define_the_queues": "Definir as filas",
     "select_queues_priorization_hint": "Novos chats serão recebidos apenas das filas selecionadas.",
     "select_your_queues": "Selecione suas filas",
     "no_queue_selected": "Nenhuma fila selecionada",
@@ -583,7 +583,7 @@
       "close": "Fechar visualização",
       "assume_chat": "Assumir apenas este chat",
       "assume_chat_question": "Assumir o chat?",
-      "assume_chat_confirmation": "Se confirmar, este chat será transferido de {viewedAgent} para você"
+      "assume_chat_question_description": "Tem certeza de que deseja assumir o chat com {contact}?<br><br>Ao confirmar, você removerá o chat do atendente atual e será responsável pelo chat."
     }
   },
   "select": "Selecionar",
@@ -613,7 +613,7 @@
   "add": "Adicionar",
   "proceed": "Continuar",
   "continue": "Continuar",
-  "please": " ",
+  "please": "Por favor",
   "confirm": "Confirmar",
   "back": "Voltar",
   "back_to_home_page": "Voltar para a página inicial",

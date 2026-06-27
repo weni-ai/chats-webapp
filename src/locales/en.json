@@ -235,7 +235,7 @@
     "extra_options": "Additional options",
     "queues": "Queues",
     "tags": "Tags",
-    "add": "Department details",
+    "add_name_and_managers": "Define a name for the department and its managers",
     "add_queue": "Add new queue",
     "name": "Department name",
     "placeholder": "Example: Financial",
@@ -555,7 +555,6 @@
     "select_queues": "Select queues",
     "select_services_queues": "Select service queues",
     "select_at_least": "Select at least one queue to save changes",
-    "select_the_queues": "Select queues",
     "define_the_queues": "Define the queues",
     "select_queues_priorization_hint": "You will only receive new chats from the selected queues.",
     "select_your_queues": "Select your queues",
@@ -573,7 +572,7 @@
       "close": "Close view",
       "assume_chat": "Take over only this chat",
       "assume_chat_question": "Take over chat?",
-      "assume_chat_confirmation": "If you confirm, this chat will be transferred from {viewedAgent} to you"
+      "assume_chat_question_description": "Are you sure you want to take over chat with {contact}?<br><br>If you confirm, you will remove the chat from the current representative and you will be responsible for it."
     }
   },
   "select": "Select",
@@ -603,7 +602,7 @@
   "add": "Add",
   "proceed": "Proceed",
   "continue": "Continue",
-  "please": " ",
+  "please": "Please",
   "confirm": "Confirm",
   "back": "Back",
   "back_to_home_page": "Back to homepage",

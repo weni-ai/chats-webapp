@@ -218,7 +218,7 @@
     "extra_options": "Opțiuni suplimentare",
     "queues": "Cozi",
     "tags": "Etichete",
-    "add": "Detalii despre departament",
+    "add_name_and_managers": "Definește un nume pentru departament și managerii acestuia",
     "add_queue": "Adaugă coadă nouă",
     "name": "Denumire departamentului",
     "placeholder": "Exemplu: Financiar",
@@ -508,7 +508,6 @@
     },
     "your_chat_assumed": "Chatul a fost preluat de un alt reprezentant",
     "your_chat_assumed_description": "Chatul cu {contact} a fost preluat de {representative}",
-    "select_the_queues": "Selectează cozile",
     "assigned_queues": "Cozi atribuite",
     "define_the_queues": "Definește cozile",
     "error_update_queues": "Nu s-au putut actualiza cozile de serviciu",
@@ -530,7 +529,6 @@
       "close": "Închide vizualizarea",
       "assume_chat": "Preia doar acest chat",
       "assume_chat_question": "Preiei chatul?",
-      "assume_chat_confirmation": "Dacă confirmi, acest chat va fi transferat de la {viewedAgent} către tine",
       "assume_chat_question_description": "Sigur dorești să preiei chatul cu {contact}?<br><br>Dacă confirmi, vei elimina chatul de la reprezentantul actual și vei fi responsabil pentru acesta."
     }
   },
@@ -560,7 +558,7 @@
   "add": "Adăugare",
   "proceed": "Continuă",
   "continue": "Continuă",
-  "please": " ",
+  "please": "Vă rugăm",
   "confirm": "Confirmare",
   "back": "Înapoi",
   "back_to_home_page": "Înapoi la pagina de pornire",

@@ -234,7 +234,7 @@
     "extra_options": "Opciones adicionales",
     "queues": "Colas",
     "tags": "Tags",
-    "add": "Detalles del departamento",
+    "add_name_and_managers": "Define un nombre para el departamento y sus gerentes",
     "add_queue": "Agregar nueva cola",
     "name": "Nombre del departamento",
     "placeholder": "Ejemplo: Financiero",
@@ -570,7 +570,6 @@
     "select_queues": "Seleccionar colas",
     "select_services_queues": "Seleccionar colas de servicio",
     "select_at_least": "Selecciona al menos una cola para guardar los cambios",
-    "select_the_queues": "Seleccionar colas",
     "define_the_queues": "Definir las colas",
     "select_queues_priorization_hint": "Solo recibirás chats nuevos de las colas seleccionadas.",
     "select_your_queues": "Selecciona tus colas",
@@ -588,7 +587,7 @@
       "close": "Cerrar vista",
       "assume_chat": "Asignarme solamente este chat",
       "assume_chat_question": "¿Deseas asignarte el chat?",
-      "assume_chat_confirmation": "Si confirmas, este chat se transferirá de {viewedAgent} a ti"
+      "assume_chat_question_description": "¿Seguro de que deseas asignarte el chat con {contact}?<br><br>Al confirmar, el chat se removerá del representante actual y quedará bajo tu responsabilidad."
     }
   },
   "history": "Historial",
@@ -617,7 +616,7 @@
   "add": "Agregar",
   "proceed": "Continuar",
   "continue": "Continuar",
-  "please": " ",
+  "please": "Por favor",
   "confirm": "Confirmar",
   "back": "Atrás",
   "back_to_home_page": "Volver a la página de inicio",
