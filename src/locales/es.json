@@ -1249,7 +1249,7 @@
         "input": {
           "label": "Define el límite de chats simultáneos",
           "tooltip": "Un límite definido para un representante específico reemplaza el límite a nivel de departamento",
-          "helper": "Defínelo como 0 para que los representantes puedan atender chats de la cola",
+          "helper": "Con 0, los representantes toman los chats de la cola",
           "placeholder": "Ejemplo: 4"
         }
       },
@@ -1265,7 +1265,7 @@
           "switch_helper": "Un límite definido para un representante específico reemplaza el límite a nivel de departamento",
           "input_label": "Número de chats simultáneos",
           "input_placeholder": "Ejemplo: 4",
-          "input_helper": "Defínelo como 0 para que los representantes puedan atender chats de la cola"
+          "input_helper": "Con 0, el representante toma los chats de la cola"
         },
         "sector_queues_checkbox": {
           "title": "Departamentos y colas",

@@ -109,7 +109,7 @@
           "switch_helper": "O limită setată pentru un anumit reprezentant înlocuiește limita la nivel de departament.",
           "input_label": "Numărul de chaturi simultane",
           "input_placeholder": "Exemplu: 4",
-          "input_helper": "Setează la 0 pentru ca reprezentanții să preia discuțiile din coadă."
+          "input_helper": "Setează la 0 pentru ca reprezentantul să preia discuțiile din coadă."
         },
         "sector_queues_checkbox": {
           "title": "Departamente și cozi",
