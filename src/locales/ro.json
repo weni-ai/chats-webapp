@@ -166,7 +166,7 @@
   "active_chats": "Chaturi active",
   "active_chats_tooltip": "Numărul de chaturi în curs",
   "since": "De la",
-  "date_format": "LL/ZZ/AAAA",
+  "date_format": "DD/MM/YYYY",
   "live": "Live",
   "number_chats": "Total chaturi",
   "language": "Limbă",
