@@ -144,7 +144,7 @@
       "audio": "Mensaje de audio"
     }
   },
-  "start": "Inicio",
+  "start": "Iniciar",
   "submit": "Enviar",
   "details": "Detalles",
   "discussion_about": "Discusión sobre {discussionGoal}",
@@ -561,7 +561,7 @@
     "your_chat_assumed_description": "El chat con {contact} se lo ha asignado {representative}",
     "closed_chats": {
       "general_history": "Historial general",
-      "history": "Historial ",
+      "history": "Historial",
       "history_description": "Historial de todos los registros de chat de soporte del proyecto {projectName}",
       "project_history": "Historial del proyecto",
       "contact_history": "Historial del contacto"
@@ -591,7 +591,7 @@
       "assume_chat_confirmation": "Si confirmas, este chat se transferirá de {viewedAgent} a ti"
     }
   },
-  "history": "Historial ",
+  "history": "Historial",
   "close_view": "Cerrar vista",
   "logout": "Cerrar sesión",
   "flow": "Flujo",

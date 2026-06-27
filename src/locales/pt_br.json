@@ -145,7 +145,7 @@
       "audio": "Mensagem de áudio"
     }
   },
-  "start": "Início",
+  "start": "Iniciar",
   "submit": "Enviar",
   "details": "Detalhes",
   "discussion_about": "Discussão sobre {discussionGoal}",
@@ -558,7 +558,7 @@
     "closed_chats": {
       "contact_history": "Histórico do contato",
       "general_history": "Histórico geral",
-      "history": "Histórico ",
+      "history": "Histórico",
       "history_description": "Histórico de todos os atendimentos do projeto {projectName}",
       "project_history": "Histórico do projeto"
     },
@@ -587,7 +587,7 @@
     }
   },
   "select": "Selecionar",
-  "history": "Histórico ",
+  "history": "Histórico",
   "close_view": "Fechar visualização",
   "logout": "Sair",
   "flow": "Fluxo",
@@ -853,7 +853,7 @@
     "speed": "Velocidade"
   },
   "media": "Mídia",
-  "medias": "Mídia",
+  "medias": "Mídias",
   "audio": "Áudio",
   "audios": "Áudios",
   "docs": "Documentos",
@@ -1195,7 +1195,7 @@
         "field": {
           "name": {
             "label": "Nome do grupo",
-            "placeholder": "Ex.: Vendas"
+            "placeholder": "Exemplo: Vendas"
           },
           "manager": {
             "label": "Adicionar gerentes",
