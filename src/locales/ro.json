@@ -1,5 +1,6 @@
 {
   "internal_note_with_attachment_tooltip": "Notă internă cu atașament",
+  "close_internal_note": "Închide nota internă (Esc)",
   "view_options": {
     "new_badge": "Nou"
   },
@@ -32,6 +33,7 @@
     "back_to_original_tooltip": "Revenire la versiunea originală (Ctrl+Z)"
   },
   "chats": {
+    "message_input_placeholder": "Scrie mesajul tău sau / pentru a activa mesajele rapide",
     "message_input_disabled_description": "Schimbă-ți statusul în online pentru a continua această conversație",
     "chat_take_over": {
       "by_another_representative": {
