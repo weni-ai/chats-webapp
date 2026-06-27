@@ -183,7 +183,7 @@
   "live": "Ao Vivo",
   "number_chats": "Quantidade de chats",
   "language": "Idioma",
-  "search": "Pesquisar",
+  "search": "Buscar",
   "try_again": "Tentar novamente",
   "date_format_variable": "{day}/{month}/{year}",
   "undo": "Desfazer",
@@ -727,7 +727,7 @@
     "queue_transfer_success": "Contato transferido com sucesso para fila {queue} | Contatos transferidos com sucesso para fila {queue}",
     "error": "Não foi possível transferir os contatos, tente novamente",
     "disclaimer": {
-      "transfer_to_other_sector": "Ao transferir o chat para uma fila em outro setor, as etiquetas adicionadas serão removidas.",
+      "transfer_to_other_sector": "Ao transferir o chat para uma fila de outro setor, as tags serão removidas.",
       "selected_agent_offline": "O agente selecionado está offline no momento",
       "without_online_agents": "Nenhum agente online no momento"
     }

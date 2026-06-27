@@ -884,7 +884,7 @@
   "photo_or_video": "Photo or video",
   "send_docs": "Send doc | Send doc | Send docs",
   "doc": "Doc",
-  "send_images": "Send image | Send image | Send images",
+  "send_images": "Send image | Send images",
   "quick_message": "Quick messages",
   "flows": "Flows",
   "flows_trigger": {
@@ -973,7 +973,7 @@
     "no_suggestions": "No results found for the entered shortcut.",
     "disclaimer": "Type the shortcut / (slash) in the chat message field to activate the display of quick messages."
   },
-  "discard": "Delete",
+  "discard": "Discard",
   "on_boarding": {
     "title": "Getting started with Live desk",
     "title_sector": "Configure your support team!",

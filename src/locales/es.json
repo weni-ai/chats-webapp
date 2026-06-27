@@ -547,8 +547,8 @@
         "description": "Tu chat con {contact} fue transferido por un moderador a la cola {queue}"
       }
     },
-    "your_chat_assumed": "Chat asignado a otro representante",
-    "your_chat_assumed_description": "Tu chat con {contact} se ha asignado a {representative}",
+    "your_chat_assumed": "Este chat se lo ha asignado otro representante",
+    "your_chat_assumed_description": "El chat con {contact} se lo ha asignado {representative}",
     "closed_chats": {
       "contact_history": "Historial del contacto",
       "general_history": "Historial general",
@@ -710,7 +710,7 @@
   "contact_transferred_to_queue": "Contacto transferido a la cola {queue}",
   "contact_transferred_error": "No se pudieron transferir los contactos",
   "contact_transferred_to_agent": "Contacto transferido al agente {agent}",
-  "agent_took_from_queue": "{agent} tomó de la cola {queue}",
+  "agent_took_from_queue": "{agent} se lo asignó de la cola {queue}",
   "contact_in_queue": "Contacto en la cola",
   "chat_closed_by": {
     "agent": "Chat cerrado por el agente"
@@ -727,7 +727,7 @@
     "queue_transfer_success": "Contacto transferido con éxito a la cola {queue} | Contactos transferidos con éxito a la cola {queue}",
     "error": "No fue posible transferir los contactos, intente nuevamente",
     "disclaimer": {
-      "transfer_to_other_sector": "Al transferir el chat a una cola en otro sector, las etiquetas agregadas se eliminarán.",
+      "transfer_to_other_sector": "Al transferir el chat a una cola de otro departamento las tags serán eliminadas.",
       "selected_agent_offline": "El agente seleccionado está actualmente desconectado",
       "without_online_agents": "No hay agentes en línea en este momento"
     }
@@ -844,7 +844,7 @@
     "speed": "Velocidad"
   },
   "media": "Multimedia",
-  "medias": "Multimedias",
+  "medias": "Contenidos multimedia",
   "audio": "Audio",
   "audios": "Audios",
   "docs": "Documentos",
@@ -887,7 +887,7 @@
   "photo_or_video": "Foto o vídeo",
   "send_docs": "Enviar documento | Enviar documento | Enviar documentos",
   "doc": "Documento",
-  "send_images": "Enviar imagen | Enviar imagen | Enviar imágenes",
+  "send_images": "Enviar imagen | Enviar imágenes",
   "quick_message": "Mensajes rápidos",
   "flows": "Flujos",
   "flows_trigger": {
@@ -895,7 +895,7 @@
     "triggered_flows": {
       "title": "Flujos activados",
       "single": "Flujo activado",
-      "trigger_time": "Tiempo de activación"
+      "trigger_time": "Hora del disparo"
     },
     "groups": "Grupos ({length})",
     "group_contacts": "{n} contacto | {n} contactos",
@@ -1249,7 +1249,7 @@
         "input": {
           "label": "Definir el límite de chats simultáneos",
           "tooltip": "Un límite definido para un representante específico reemplaza el límite a nivel de sector",
-          "helper": "Con 0, los representantes toman los chats de la cola",
+          "helper": "Define 0 para que los representantes puedan asignarse chats de la cola",
           "placeholder": "Ejemplo: 4"
         }
       },
@@ -1265,7 +1265,7 @@
           "switch_helper": "Un límite definido para un representante concreto reemplaza el límite a nivel de sector",
           "input_label": "Número de chats simultáneos",
           "input_placeholder": "Ej.: 4",
-          "input_helper": "Con 0, el representante toma los chats de la cola"
+          "input_helper": "Define 0 para que el representante pueda asignarse chats de la cola"
         },
         "sector_queues_checkbox": {
           "title": "Sectores y colas",
