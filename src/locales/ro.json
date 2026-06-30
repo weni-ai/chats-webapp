@@ -145,6 +145,15 @@
       "variable_label": "Variabilă {name}"
     }
   },
+  "queues": {
+    "queue_purpose": {
+      "field": {
+        "label": "Scopul cozii (opțional)",
+        "placeholder": "Exemplu: conversații legate de facturare, facturi, probleme de plată sau întrebări despre abonament.",
+        "helper": "Această informație ajută IA să direcționeze conversațiile către coada potrivită."
+      }
+    }
+  },
   "discussion_about": "Discuție despre {discussionGoal}",
   "you_message_prefix": "Tu:",
   "automatic_message": {

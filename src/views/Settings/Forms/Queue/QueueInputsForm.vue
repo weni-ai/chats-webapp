@@ -9,6 +9,14 @@
       class="input"
     />
 
+    <UnnnicTextArea
+      v-model="queueForm.queue_purpose"
+      :label="$t('queues.queue_purpose.field.label')"
+      :placeholder="$t('queues.queue_purpose.field.placeholder')"
+      :message="$t('queues.queue_purpose.field.helper')"
+      :maxLength="1000"
+    />
+
     <section
       v-if="enableQueueLimitFeature"
       class="sector-queues-form__limit-chats"

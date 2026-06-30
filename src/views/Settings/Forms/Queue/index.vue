@@ -135,6 +135,7 @@ export default {
         name: '',
         default_message: '',
         queue_limit: { is_active: false, limit: null },
+        queue_purpose: '',
         currentAgents: [],
         agents: 0,
         toAddAgentsUuids: [],

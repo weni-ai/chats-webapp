@@ -376,7 +376,14 @@
     "queue_title": "Filas em",
     "queue_table_name": "Nome",
     "quantity_agents": "Qtd de agentes",
-    "search": "Buscar uma fila"
+    "search": "Buscar uma fila",
+    "queue_purpose": {
+      "field": {
+        "label": "Finalidade da fila (opcional)",
+        "placeholder": "Exemplo: conversas relacionadas a cobrança, faturas, problemas de pagamento ou dúvidas sobre assinatura.",
+        "helper": "Esta informação ajuda a IA a direcionar os chats para a fila mais adequada."
+      }
+    }
   },
   "export": {
     "metrics": "Exportar métricas em {filetype}",

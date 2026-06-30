@@ -376,7 +376,14 @@
     "queue_title": "Cola en",
     "queue_table_name": "Nombre",
     "quantity_agents": "Cantidad de agentes",
-    "search": "Buscar una cola"
+    "search": "Buscar una cola",
+    "queue_purpose": {
+      "field": {
+        "label": "Propósito de la cola (opcional)",
+        "placeholder": "Ejemplo: conversaciones relacionadas con facturación, facturas, problemas de pago o preguntas sobre suscripciones.",
+        "helper": "Esta información ayuda a la IA a dirigir los chats a la cola más adecuada."
+      }
+    }
   },
   "export": {
     "metrics": "Exportar métricas en {filetype}",
