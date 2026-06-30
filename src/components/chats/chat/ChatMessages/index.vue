@@ -888,6 +888,7 @@ export default {
     z-index: 9;
     box-shadow: 0 4px 4px 0 rgba(0, 0, 0, 0.25); // token don't exist
     border-radius: $unnnic-radius-2;
+    background-color: $unnnic-color-bg-base;
   }
   &-chip {
     padding: 0 $unnnic-space-2;
