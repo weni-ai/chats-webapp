@@ -515,6 +515,12 @@
     },
     "message_input_placeholder": "Type your message or / to activate quick messages",
     "message_input_disabled_description": "Change your status to online to continue this conversation",
+    "message_input_floating_actions": {
+      "copy": "Copy typed content",
+      "copy_alert_success": "Content copied!",
+      "clear": "Clear typed content",
+      "clear_alert_success": "Typed content removed!"
+    },
     "search_contact": "Search contact",
     "search_contact_placeholder": "Search contact (name, phone or ticket ID)",
     "tags": "Chat tags",

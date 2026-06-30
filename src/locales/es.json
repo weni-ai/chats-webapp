@@ -518,6 +518,12 @@
     },
     "message_input_placeholder": "Escribe tu mensaje o / para activar mensajes rápidos",
     "message_input_disabled_description": "Cambia tu status a online para continuar esta conversación",
+    "message_input_floating_actions": {
+      "copy": "Copiar contenido escrito",
+      "copy_alert_success": "Contenido copiado!",
+      "clear": "Limpiar contenido escrito",
+      "clear_alert_success": "Contenido eliminado!"
+    },
     "search_contact": "Buscar contacto",
     "search_contact_placeholder": "Buscar contacto (nombre, teléfono o ticket ID)",
     "tags": "Etiquetas de chat",
