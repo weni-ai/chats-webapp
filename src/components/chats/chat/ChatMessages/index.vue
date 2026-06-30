@@ -209,6 +209,8 @@
         v-if="isFullscreen && currentMedia"
         :downloadMediaUrl="currentMedia?.url"
         :downloadMediaName="currentMedia?.message"
+        :mediaCurrent="currentMediaIndex"
+        :mediaTotal="medias.length"
         @close="isFullscreen = false"
         @next="nextMedia"
         @previous="previousMedia"
@@ -405,6 +407,15 @@ export default {
         .map((el) => el.media)
         .flat()
         .filter((media) => this.isMedia(media));
+    },
+    currentMediaIndex() {
+      if (!this.currentMedia?.url) {
+        return 0;
+      }
+
+      return (
+        this.medias.findIndex((el) => el.url === this.currentMedia.url) + 1
+      );
     },
     isViewMode() {
       return !!this.viewedAgent?.email;

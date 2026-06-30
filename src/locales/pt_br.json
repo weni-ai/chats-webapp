@@ -198,6 +198,18 @@
   "end_all_selected_chats_tooltip": "Encerrar todos os chats selecionados",
   "number_of_chats_selected": "{count} chat selecionado | {count} chats selecionados",
   "image": "Imagem",
+  "image_preview": {
+    "count": "Imagem {current} de {total}",
+    "tooltip": {
+      "close": "Fechar imagem (esc)",
+      "previous": "Anterior",
+      "next": "Próxima",
+      "rotate": "Girar 90°",
+      "zoom_in": "Ampliar",
+      "zoom_out": "Reduzir",
+      "export": "Exportar"
+    }
+  },
   "video": "Vídeo",
   "audio_message": "Mensagem de áudio",
   "audio_recorder": {

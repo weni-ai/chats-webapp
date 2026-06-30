@@ -238,9 +238,11 @@
       />
 
       <FullscreenPreview
-        v-if="isFullscreen"
+        v-if="isFullscreen && currentMedia"
         :downloadMediaUrl="currentMedia?.url"
         :downloadMediaName="currentMedia?.message"
+        :mediaCurrent="currentMediaIndex"
+        :mediaTotal="images.length"
         @close="isFullscreen = false"
         @next="nextMedia"
         @previous="previousMedia"
@@ -390,6 +392,15 @@ export default {
     filteredTags() {
       return this.allTags.filter((tag) =>
         tag.name.toLowerCase().includes(this.tagsFilter.toLowerCase()),
+      );
+    },
+    currentMediaIndex() {
+      if (!this.currentMedia?.url) {
+        return 0;
+      }
+
+      return (
+        this.images.findIndex((el) => el.url === this.currentMedia.url) + 1
       );
     },
     isMobile() {
