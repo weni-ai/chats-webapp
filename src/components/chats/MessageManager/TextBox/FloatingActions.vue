@@ -87,7 +87,7 @@ const handleClearInputs = () => {
 
   border-radius: $unnnic-radius-2;
   border: 1px solid $unnnic-color-border-base;
-  background: $unnnic-color-bg-base-soft;
+  background: $unnnic-color-bg-base;
   box-shadow: $unnnic-shadow-1;
 
   position: absolute;
