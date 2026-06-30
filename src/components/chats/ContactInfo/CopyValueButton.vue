@@ -5,7 +5,7 @@
   >
     <UnnnicToolTip
       enabled
-      :text="tooltipText"
+      :text="i18n.global.t(props.copyTooltipKey)"
       :side="side"
     >
       <UnnnicIconSvg
@@ -19,7 +19,7 @@
 </template>
 
 <script setup>
-import { computed, ref } from 'vue';
+import { UnnnicCallAlert } from '@weni/unnnic-system';
 import i18n from '@/plugins/i18n';
 
 defineOptions({
@@ -35,39 +35,46 @@ const props = defineProps({
     type: String,
     default: 'contact_info.copy_value',
   },
-  copiedTooltipKey: {
-    type: String,
-    default: 'contact_info.value_copied',
-  },
   side: {
     type: String,
     default: undefined,
   },
 });
 
-const isCopied = ref(false);
-
-const tooltipText = computed(() =>
-  isCopied.value
-    ? i18n.global.t(props.copiedTooltipKey)
-    : i18n.global.t(props.copyTooltipKey),
-);
+const fireErrorToast = () => {
+  UnnnicCallAlert({
+    props: {
+      text: i18n.global.t('contact_info.error_copying_value'),
+      type: 'error',
+    },
+  });
+};
 
 const copyValue = () => {
   if (!props.value) {
     return;
   }
 
+  if (!navigator.clipboard) {
+    console.error('Clipboard API not available');
+    fireErrorToast();
+    return;
+  }
+
   navigator.clipboard
     .writeText(props.value)
+
     .then(() => {
-      isCopied.value = true;
-      setTimeout(() => {
-        isCopied.value = false;
-      }, 3000);
+      UnnnicCallAlert({
+        props: {
+          text: i18n.global.t('contact_info.value_copied'),
+          type: 'success',
+        },
+      });
     })
     .catch((err) => {
       console.error('Failed to copy value:', err);
+      fireErrorToast();
     });
 };
 </script>
