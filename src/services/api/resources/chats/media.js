@@ -1,6 +1,7 @@
 import http from '@/services/api/http';
 import axios from 'axios';
 import { getProject } from '@/utils/config';
+import { normalizeS3MediaUrl } from '@/utils/medias';
 
 const client = axios.create();
 
@@ -33,7 +34,8 @@ export default {
   },
 
   async download({ media, name }) {
-    const file = await this.get(media);
+    const url = normalizeS3MediaUrl(media);
+    const file = await this.get(url);
     const link = document.createElement('a');
 
     link.href = URL.createObjectURL(file);

@@ -139,6 +139,30 @@ describe('Media service', () => {
       expect(mockRevokeObjectURL).toHaveBeenCalledWith('blob:mock-url');
     });
 
+    it('should fetch normalized S3 URL for production-chats media', async () => {
+      const mockBlob = new Blob(['audio data'], { type: 'audio/ogg' });
+      const mockResponse = { data: mockBlob };
+      mockAxiosInstance.get.mockResolvedValue(mockResponse);
+
+      const media =
+        'https://weni-production-chats.s3.amazonaws.com/audio/message.ogg';
+      const normalizedMedia =
+        'https://weni-production-chats.s3.sa-east-1.amazonaws.com/audio/message.ogg';
+
+      await mediaService.download({
+        media,
+        name: 'message.ogg',
+      });
+
+      expect(mockAxiosInstance.get).toHaveBeenCalledWith(normalizedMedia, {
+        responseType: 'blob',
+      });
+      expect(mockCreateObjectURL).toHaveBeenCalledWith(mockBlob);
+      expect(mockLink.href).toBe('blob:mock-url');
+      expect(mockLink.download).toBe('message.ogg');
+      expect(mockClick).toHaveBeenCalled();
+    });
+
     it('should handle download with special characters in filename', async () => {
       const mockBlob = new Blob(['content'], { type: 'image/png' });
       const mockResponse = { data: mockBlob };
@@ -171,6 +195,7 @@ describe('Media service', () => {
       expect(mockCreateElement).not.toHaveBeenCalled();
       expect(mockCreateObjectURL).not.toHaveBeenCalled();
       expect(mockClick).not.toHaveBeenCalled();
+      expect(mockLink.target).not.toBe('_blank');
     });
 
     it('should handle empty media URL', async () => {
