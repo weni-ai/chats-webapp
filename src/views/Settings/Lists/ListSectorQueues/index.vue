@@ -293,6 +293,7 @@ export default {
           queue_limit,
           toAddAgentsUuids,
           toRemoveAgentsUuids,
+          queue_purpose,
         } = this.queueToConfig[0];
 
         if (this.queueToConfig[0].uuid) {
@@ -311,6 +312,7 @@ export default {
             queue_limit: this.enableQueueLimitFeature
               ? queue_limit
               : { is_active: false, limit: null },
+            queue_purpose,
           });
 
           this.queues = this.queues.map((queue) =>
@@ -331,6 +333,7 @@ export default {
             queue_limit: this.enableQueueLimitFeature
               ? queue_limit
               : { is_active: false, limit: null },
+            queue_purpose,
           });
           await Promise.all(
             this.queueToConfig[0].currentAgents.map((agent) => {

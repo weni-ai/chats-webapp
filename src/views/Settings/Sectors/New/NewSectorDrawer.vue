@@ -174,6 +174,7 @@ export default {
         {
           name: '',
           queue_limit: { is_active: false, limit: null },
+          queue_purpose: '',
           currentAgents: [],
           agents: 0,
         },
@@ -305,6 +306,7 @@ export default {
           queue_limit: this.enableQueueLimitFeature
             ? sectorQueue.queue_limit
             : { is_active: false, limit: null },
+          queue_purpose: sectorQueue.queue_purpose,
           agents: sectorQueue.currentAgents.map((agent) => agent.user.email),
         }));
 
