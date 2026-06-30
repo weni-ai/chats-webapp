@@ -1,55 +1,63 @@
 <!-- eslint-disable vuejs-accessibility/form-control-has-label -->
 <template>
   <section class="custom-field">
-    <component
-      :is="isEditable && isCurrent ? 'label' : 'h3'"
-      class="title"
-      tabindex="0"
-    >
-      {{ title }}:
-    </component>
-    <section :class="descriptionClasses">
-      <a
-        v-if="showLink"
-        :href="description"
-        target="_blank"
+    <section class="custom-field__content">
+      <component
+        :is="isEditable && isCurrent ? 'label' : 'h3'"
+        class="title"
+        tabindex="0"
       >
-        {{ description }}
-      </a>
-
-      <UnnnicToolTip
-        v-if="showEditTooltip"
-        class="tooltip"
-        side="bottom"
-        :enabled="isEditable"
-        :text="$t('edit')"
-      >
-        <h4
-          tabindex="0"
-          @click="updateField"
-          @keypress.enter="updateField"
+        {{ title }}:
+      </component>
+      <section :class="descriptionClasses">
+        <a
+          v-if="showLink"
+          :href="description"
+          target="_blank"
         >
           {{ description }}
-        </h4>
-      </UnnnicToolTip>
+        </a>
 
-      <input
-        v-show="showInput"
-        :ref="'custom_field_input_' + title"
-        type="text"
-        :value="value"
-        maxlength="500"
-        @input="updateValue"
-        @blur="saveValue"
-        @keypress.enter="saveValue"
-      />
+        <UnnnicToolTip
+          v-if="showEditTooltip"
+          class="tooltip"
+          side="bottom"
+          :enabled="isEditable"
+          :text="$t('edit')"
+        >
+          <h4
+            tabindex="0"
+            @click="updateField"
+            @keypress.enter="updateField"
+          >
+            {{ description }}
+          </h4>
+        </UnnnicToolTip>
+
+        <input
+          v-show="showInput"
+          :ref="'custom_field_input_' + title"
+          type="text"
+          :value="value"
+          maxlength="500"
+          @input="updateValue"
+          @blur="saveValue"
+          @keypress.enter="saveValue"
+        />
+      </section>
     </section>
+    <CopyValueButton :value="description" />
   </section>
 </template>
 
 <script>
+import CopyValueButton from './CopyValueButton.vue';
+
 export default {
   name: 'CustomField',
+  components: {
+    CopyValueButton,
+  },
   props: {
     title: {
       type: String,
@@ -144,7 +152,13 @@ export default {
 .custom-field {
   display: flex;
   align-items: center;
-  gap: $unnnic-space-05;
+  gap: $unnnic-space-2;
+
+  &__content {
+    display: flex;
+    align-items: center;
+    gap: $unnnic-space-1;
+  }
 
   .title {
     font: $unnnic-font-emphasis;

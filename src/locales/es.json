@@ -789,7 +789,10 @@
     "transfering_chat": "Transfiriendo el chat 📬",
     "ticket": "Ticket ID",
     "copy_protocol": "Haga clic para copiar el Ticket ID",
-    "protocol_copied": "¡Ticket ID copiado al portapapeles!"
+    "protocol_copied": "¡Ticket ID copiado al portapapeles!",
+    "copy_value": "Copiar valor",
+    "value_copied": "¡Valor copiado con éxito!",
+    "error_copying_value": "No se pudo copiar el valor. Inténtalo de nuevo."
   },
   "discussions": {
     "title": "Discusión | Discusiones",
