@@ -58,8 +58,15 @@ const copyValue = () => {
     return;
   }
 
+
+  if (!navigator.clipboard) {
+    console.error('Clipboard API not available');
+    return;
+  }
+
   navigator.clipboard
     .writeText(props.value)
+
     .then(() => {
       isCopied.value = true;
       setTimeout(() => {
