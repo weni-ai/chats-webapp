@@ -76,6 +76,11 @@
       }
     }
   },
+  "contact_info": {
+    "copy_value": "Copiază valoarea",
+    "error_copying_value": "Nu s-a putut copia valoarea. Încearcă din nou.",
+    "value_copied": "Valoare copiată cu succes"
+  },
   "dashboard": {
     "view-mode": {
       "assume_chat_question": "Preiei chatul cu {contact}?",
