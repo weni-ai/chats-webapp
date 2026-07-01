@@ -115,6 +115,29 @@ describe('Media service', () => {
   });
 
   describe('download', () => {
+    it('should download audio via message proxy when messageUuid is provided', async () => {
+      const mockBlob = new Blob(['audio data'], { type: 'audio/mpeg' });
+      const messageUuid = 'a6d5a50a-09dd-4a21-bfa7-e69e9509667d';
+      http.get.mockResolvedValue({
+        data: mockBlob,
+        headers: {
+          'content-disposition':
+            'attachment; filename="42311976-902a-40b3-9568-968f22390509.mp3"',
+        },
+      });
+
+      await mediaService.download({ messageUuid });
+
+      expect(http.get).toHaveBeenCalledWith(`/msg/${messageUuid}/download/`, {
+        responseType: 'blob',
+      });
+      expect(mockCreateElement).toHaveBeenCalledWith('a');
+      expect(mockLink.download).toBe(
+        '42311976-902a-40b3-9568-968f22390509.mp3',
+      );
+      expect(mockAxiosInstance.get).not.toHaveBeenCalled();
+    });
+
     it('should download a file with correct name and media URL', async () => {
       const mockBlob = new Blob(['file content'], { type: 'application/pdf' });
       const mockResponse = { data: mockBlob };
