@@ -365,6 +365,19 @@ describe('ChatMessageAudio', () => {
       });
     });
 
+    it('shows error alert when message uuid is missing', async () => {
+      const message = createMessage({ uuid: undefined });
+      wrapper = mountComponent({ message });
+      await wrapper.find('[data-testid="download-button"]').trigger('click');
+      await flushPromises();
+      expect(Media.download).not.toHaveBeenCalled();
+      expect(UnnnicCallAlert).toHaveBeenCalledWith(
+        expect.objectContaining({
+          props: expect.objectContaining({ type: 'error' }),
+        }),
+      );
+    });
+
     it('shows error alert when download fails', async () => {
       Media.download.mockRejectedValue(new Error('Download failed'));
       const consoleSpy = vi

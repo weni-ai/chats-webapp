@@ -188,18 +188,27 @@ const canShowAudioDownloadAction = computed(() => {
   return isContactMessage.value;
 });
 
+const showDownloadErrorAlert = () => {
+  UnnnicCallAlert({
+    props: {
+      text: i18n.global.t('chats.audio_download.error'),
+      type: 'error',
+    },
+    seconds: 5,
+  });
+};
+
 const handleDownload = async () => {
+  if (!props.message.uuid) {
+    showDownloadErrorAlert();
+    return;
+  }
+
   try {
     await Media.download({ messageUuid: props.message.uuid });
   } catch (error) {
     console.error('Error downloading audio', error);
-    UnnnicCallAlert({
-      props: {
-        text: i18n.global.t('chats.audio_download.error'),
-        type: 'error',
-      },
-      seconds: 5,
-    });
+    showDownloadErrorAlert();
   }
 };
 
