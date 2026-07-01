@@ -352,43 +352,16 @@ describe('ChatMessageAudio', () => {
       );
     });
 
-    it('calls Media.download with correct params on click', async () => {
+    it('calls Media.download with message uuid on click', async () => {
       Media.download.mockResolvedValue();
       const message = createMessage({
-        media: [
-          {
-            url: 'https://example.com/audio-file.mp3',
-            preview: null,
-            transcription: null,
-          },
-        ],
+        uuid: 'a6d5a50a-09dd-4a21-bfa7-e69e9509667d',
       });
       wrapper = mountComponent({ message });
       await wrapper.find('[data-testid="download-button"]').trigger('click');
       await flushPromises();
       expect(Media.download).toHaveBeenCalledWith({
-        media: 'https://example.com/audio-file.mp3',
-        name: 'audio-file.mp3',
-      });
-    });
-
-    it('uses preview as fallback when url is not available', async () => {
-      Media.download.mockResolvedValue();
-      const message = createMessage({
-        media: [
-          {
-            url: null,
-            preview: 'https://example.com/audio-preview.mp3',
-            transcription: null,
-          },
-        ],
-      });
-      wrapper = mountComponent({ message });
-      await wrapper.find('[data-testid="download-button"]').trigger('click');
-      await flushPromises();
-      expect(Media.download).toHaveBeenCalledWith({
-        media: 'https://example.com/audio-preview.mp3',
-        name: 'audio-preview.mp3',
+        messageUuid: 'a6d5a50a-09dd-4a21-bfa7-e69e9509667d',
       });
     });
 

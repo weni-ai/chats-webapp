@@ -190,9 +190,7 @@ const canShowAudioDownloadAction = computed(() => {
 
 const handleDownload = async () => {
   try {
-    const url = messageMedia.value.url || messageMedia.value.preview;
-    const filename = url?.split('/').at(-1) || 'audio';
-    await Media.download({ media: url, name: filename });
+    await Media.download({ messageUuid: props.message.uuid });
   } catch (error) {
     console.error('Error downloading audio', error);
     UnnnicCallAlert({
