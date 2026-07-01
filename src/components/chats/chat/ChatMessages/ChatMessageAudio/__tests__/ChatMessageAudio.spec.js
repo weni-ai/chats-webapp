@@ -69,6 +69,7 @@ const createMessage = (overrides = {}) => ({
   contact: { uuid: 'contact-123' },
   media: [
     {
+      uuid: 'media-uuid-456',
       url: 'https://example.com/audio.mp3',
       preview: null,
       transcription: null,
@@ -352,8 +353,30 @@ describe('ChatMessageAudio', () => {
       );
     });
 
-    it('calls Media.download with correct params on click', async () => {
+    it('calls Media.download with media uuid on click', async () => {
       Media.download.mockResolvedValue();
+      const message = createMessage({
+        media: [
+          {
+            uuid: '1ac10d1c-cd37-4d9d-85eb-6022b43c5995',
+            url: 'https://example.com/audio-file.mp3',
+            preview: null,
+            transcription: null,
+          },
+        ],
+      });
+      wrapper = mountComponent({ message });
+      await wrapper.find('[data-testid="download-button"]').trigger('click');
+      await flushPromises();
+      expect(Media.download).toHaveBeenCalledWith({
+        mediaUuid: '1ac10d1c-cd37-4d9d-85eb-6022b43c5995',
+      });
+    });
+
+    it('shows error alert when media uuid is missing', async () => {
+      const consoleSpy = vi
+        .spyOn(console, 'error')
+        .mockImplementation(() => {});
       const message = createMessage({
         media: [
           {
@@ -366,30 +389,13 @@ describe('ChatMessageAudio', () => {
       wrapper = mountComponent({ message });
       await wrapper.find('[data-testid="download-button"]').trigger('click');
       await flushPromises();
-      expect(Media.download).toHaveBeenCalledWith({
-        media: 'https://example.com/audio-file.mp3',
-        name: 'audio-file.mp3',
-      });
-    });
-
-    it('uses preview as fallback when url is not available', async () => {
-      Media.download.mockResolvedValue();
-      const message = createMessage({
-        media: [
-          {
-            url: null,
-            preview: 'https://example.com/audio-preview.mp3',
-            transcription: null,
-          },
-        ],
-      });
-      wrapper = mountComponent({ message });
-      await wrapper.find('[data-testid="download-button"]').trigger('click');
-      await flushPromises();
-      expect(Media.download).toHaveBeenCalledWith({
-        media: 'https://example.com/audio-preview.mp3',
-        name: 'audio-preview.mp3',
-      });
+      expect(Media.download).not.toHaveBeenCalled();
+      expect(UnnnicCallAlert).toHaveBeenCalledWith(
+        expect.objectContaining({
+          props: expect.objectContaining({ type: 'error' }),
+        }),
+      );
+      consoleSpy.mockRestore();
     });
 
     it('shows error alert when download fails', async () => {
