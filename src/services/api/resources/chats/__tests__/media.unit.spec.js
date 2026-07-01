@@ -115,6 +115,59 @@ describe('Media service', () => {
   });
 
   describe('download', () => {
+    it('should download media via chats-engine proxy when mediaUuid is provided', async () => {
+      const mockBlob = new Blob(['audio data'], { type: 'audio/mpeg' });
+      const mediaUuid = '1ac10d1c-cd37-4d9d-85eb-6022b43c5995';
+      http.get.mockResolvedValue({
+        data: mockBlob,
+        headers: {
+          'content-disposition':
+            'attachment; filename="42311976-902a-40b3-9568-968f22390509.mp3"',
+        },
+      });
+
+      await mediaService.download({ mediaUuid });
+
+      expect(http.get).toHaveBeenCalledWith(`/media/${mediaUuid}/download/`, {
+        responseType: 'blob',
+      });
+      expect(mockCreateElement).toHaveBeenCalledWith('a');
+      expect(mockCreateObjectURL).toHaveBeenCalledWith(mockBlob);
+      expect(mockLink.download).toBe(
+        '42311976-902a-40b3-9568-968f22390509.mp3',
+      );
+      expect(mockClick).toHaveBeenCalled();
+      expect(mockRevokeObjectURL).toHaveBeenCalledWith('blob:mock-url');
+      expect(mockAxiosInstance.get).not.toHaveBeenCalled();
+    });
+
+    it('should fallback to mediaUuid filename when Content-Disposition is missing', async () => {
+      const mockBlob = new Blob(['audio data'], { type: 'audio/mpeg' });
+      const mediaUuid = '1ac10d1c-cd37-4d9d-85eb-6022b43c5995';
+      http.get.mockResolvedValue({
+        data: mockBlob,
+        headers: {},
+      });
+
+      await mediaService.download({ mediaUuid });
+
+      expect(mockLink.download).toBe(`${mediaUuid}.mp3`);
+    });
+
+    it('should reject proxy download when chats-engine request fails', async () => {
+      const error = new Error('Bad Gateway');
+      http.get.mockRejectedValue(error);
+
+      await expect(
+        mediaService.download({
+          mediaUuid: '1ac10d1c-cd37-4d9d-85eb-6022b43c5995',
+        }),
+      ).rejects.toThrow('Bad Gateway');
+
+      expect(mockCreateElement).not.toHaveBeenCalled();
+      expect(mockClick).not.toHaveBeenCalled();
+    });
+
     it('should download a file with correct name and media URL', async () => {
       const mockBlob = new Blob(['file content'], { type: 'application/pdf' });
       const mockResponse = { data: mockBlob };
