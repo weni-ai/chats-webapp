@@ -211,7 +211,7 @@ describe('SettingsProjectOptions.vue', () => {
         (item) => item.key === 'ai_transfer',
       );
       expect(aiItem.prompt).toBeDefined();
-      expect(aiItem.prompt.maxLength).toBe(1000);
+      expect(aiItem.prompt.maxLength).toBe(2000);
       expect(aiItem.onToggle).toBeTypeOf('function');
       expect(aiItem.onEdit).toBeTypeOf('function');
     });
