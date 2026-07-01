@@ -55,7 +55,19 @@ export default {
     return response.data;
   },
 
-  async download({ mediaUuid, media, name }) {
+  async download({ messageUuid, mediaUuid, media, name }) {
+    if (messageUuid) {
+      const response = await http.get(`/msg/${messageUuid}/download/`, {
+        responseType: 'blob',
+      });
+      const filename =
+        getFilenameFromContentDisposition(
+          response.headers['content-disposition'],
+        ) || `${messageUuid}.mp3`;
+      triggerBrowserDownload(response.data, filename);
+      return;
+    }
+
     if (mediaUuid) {
       const response = await http.get(`/media/${mediaUuid}/download/`, {
         responseType: 'blob',
