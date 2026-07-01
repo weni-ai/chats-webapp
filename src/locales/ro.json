@@ -123,20 +123,20 @@
   },
   "flows_trigger": {
     "variable_mapping": {
-      "confirmation_checkbox": "Am verificat și sunt gata să trimit",
-      "confirmation_helper": "Verifică dacă fiecare câmp este mapat corect; așa va arăta mesajul pentru fiecare contact selectat.",
+      "confirmation_checkbox": "Am verificat și sunt gata să o trimit",
+      "confirmation_helper": "Asigură-te că fiecare câmp este mapat corect. Mesajul tău va fi personalizat pentru fiecare contact selectat pe baza acestor mapări.",
       "define_variables": "Definește variabilele",
       "define_variables_ordinal": "Definește variabilele template-ului {ordinal}",
-      "description": "Variabilele vor fi completate în previzualizarea de mai jos folosind valorile contactelor selectate ori de câte ori fac referire la câmpuri de contact.",
+      "description": "Variabilele care fac referire la câmpurile de contact vor afișa valorile din contactele selectate în previzualizarea de mai jos",
       "input_placeholder": "Introdu valoarea pentru această variabilă",
       "local_variables": {
-        "agent_email": "Email reprezentant",
-        "agent_name": "Nume reprezentant",
+        "agent_email": "E-mail reprezentant",
+        "agent_name": "Numele reprezentantului",
         "contact_name": "Nume contact",
-        "contact_urn": "Telefon contact"
+        "contact_urn": "Telefon de contact"
       },
       "next_template": "Template următor",
-      "preview_title": "Previzualizare template",
+      "preview_title": "Previzualizare șablon",
       "preview_title_ordinal": "Previzualizarea template-ului {ordinal}",
       "preview_variable_tooltip": "Variabilă {placeholder}",
       "send_templates": "Trimite ({count} template) | Trimite ({count} template-uri)",
