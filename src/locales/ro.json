@@ -17,6 +17,7 @@
       "off": "Dezactivat"
     }
   },
+  "representative": "Reprezentant",
   "ai_text_improvement": {
     "tooltip_disabled": "Scrie un răspuns în câmpul de text pentru a activa răspunsuri îmbunătățite cu AI",
     "tooltip_enabled": "Îmbunătățește răspunsul cu AI",
@@ -121,6 +122,7 @@
     "success_title": "Se procesează exportul!",
     "title": "Exportă conversația"
   },
+  "select_representative": "Selectează un reprezentant",
   "flows_trigger": {
     "variable_mapping": {
       "confirmation_checkbox": "Am verificat și sunt gata să trimit",
