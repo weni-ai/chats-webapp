@@ -115,9 +115,9 @@ describe('Media service', () => {
   });
 
   describe('download', () => {
-    it('should download media via chats-engine proxy when mediaUuid is provided', async () => {
+    it('should download audio via message proxy when messageUuid is provided', async () => {
       const mockBlob = new Blob(['audio data'], { type: 'audio/mpeg' });
-      const mediaUuid = '1ac10d1c-cd37-4d9d-85eb-6022b43c5995';
+      const messageUuid = 'a6d5a50a-09dd-4a21-bfa7-e69e9509667d';
       http.get.mockResolvedValue({
         data: mockBlob,
         headers: {
@@ -126,9 +126,9 @@ describe('Media service', () => {
         },
       });
 
-      await mediaService.download({ mediaUuid });
+      await mediaService.download({ messageUuid });
 
-      expect(http.get).toHaveBeenCalledWith(`/media/${mediaUuid}/download/`, {
+      expect(http.get).toHaveBeenCalledWith(`/msg/${messageUuid}/download/`, {
         responseType: 'blob',
       });
       expect(mockCreateElement).toHaveBeenCalledWith('a');
@@ -141,17 +141,35 @@ describe('Media service', () => {
       expect(mockAxiosInstance.get).not.toHaveBeenCalled();
     });
 
-    it('should fallback to mediaUuid filename when Content-Disposition is missing', async () => {
+    it('should fallback to messageUuid filename when Content-Disposition is missing', async () => {
       const mockBlob = new Blob(['audio data'], { type: 'audio/mpeg' });
-      const mediaUuid = '1ac10d1c-cd37-4d9d-85eb-6022b43c5995';
+      const messageUuid = 'a6d5a50a-09dd-4a21-bfa7-e69e9509667d';
       http.get.mockResolvedValue({
         data: mockBlob,
         headers: {},
       });
 
+      await mediaService.download({ messageUuid });
+
+      expect(mockLink.download).toBe(`${messageUuid}.mp3`);
+    });
+
+    it('should download media via legacy proxy when mediaUuid is provided', async () => {
+      const mockBlob = new Blob(['audio data'], { type: 'audio/mpeg' });
+      const mediaUuid = '1ac10d1c-cd37-4d9d-85eb-6022b43c5995';
+      http.get.mockResolvedValue({
+        data: mockBlob,
+        headers: {
+          'content-disposition': 'attachment; filename="audio.mp3"',
+        },
+      });
+
       await mediaService.download({ mediaUuid });
 
-      expect(mockLink.download).toBe(`${mediaUuid}.mp3`);
+      expect(http.get).toHaveBeenCalledWith(`/media/${mediaUuid}/download/`, {
+        responseType: 'blob',
+      });
+      expect(mockLink.download).toBe('audio.mp3');
     });
 
     it('should reject proxy download when chats-engine request fails', async () => {
@@ -160,7 +178,7 @@ describe('Media service', () => {
 
       await expect(
         mediaService.download({
-          mediaUuid: '1ac10d1c-cd37-4d9d-85eb-6022b43c5995',
+          messageUuid: 'a6d5a50a-09dd-4a21-bfa7-e69e9509667d',
         }),
       ).rejects.toThrow('Bad Gateway');
 
