@@ -211,7 +211,7 @@ export default {
             placeholder: this.$t(
               'config_chats.project_configs.ai_transfer.textarea_placeholder',
             ),
-            maxLength: 1000,
+            maxLength: 2000,
           },
           onToggle: this.handleAiTransferToggle,
           onEdit: this.openAiTransferModal,
