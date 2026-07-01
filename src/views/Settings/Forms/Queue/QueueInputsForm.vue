@@ -10,6 +10,7 @@
     />
 
     <UnnnicTextArea
+      v-if="enableQueuePurposeFeature"
       v-model="queueForm.queue_purpose"
       :label="$t('queues.queue_purpose.field.label')"
       :placeholder="$t('queues.queue_purpose.field.placeholder')"
@@ -98,6 +99,11 @@ export default {
     ...mapState(useConfig, ['enableGroupsMode']),
     isEditing() {
       return !!this.queueForm.uuid;
+    },
+    enableQueuePurposeFeature() {
+      return this.featureFlags.active_features?.includes(
+        'weniChatsQueuePurpose',
+      );
     },
     enableQueueLimitFeature() {
       return this.featureFlags.active_features?.includes('weniChatsQueueLimit');

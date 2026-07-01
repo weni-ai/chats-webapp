@@ -97,7 +97,6 @@ import FillDefaultOption from '../FillDefaultOption.vue';
 
 import { useProfile } from '@/store/modules/profile';
 import { useConfig } from '@/store/modules/config';
-import { useFeatureFlag } from '@/store/modules/featureFlag';
 
 import { cloneDeep } from 'lodash';
 import { removeDuplicatedItems } from '@/utils/array';
@@ -150,7 +149,6 @@ export default {
   },
 
   computed: {
-    ...mapState(useFeatureFlag, ['featureFlags']),
     ...mapState(useProfile, ['me']),
     ...mapState(useConfig, ['enableGroupsMode']),
     isEditing() {
