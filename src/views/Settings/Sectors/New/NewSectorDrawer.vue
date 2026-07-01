@@ -217,6 +217,11 @@ export default {
     enableQueueLimitFeature() {
       return this.featureFlags.active_features?.includes('weniChatsQueueLimit');
     },
+    enableQueuePurposeFeature() {
+      return this.featureFlags.active_features?.includes(
+        'weniChatsQueuePurpose',
+      );
+    },
   },
   mounted() {
     handleConnectOverlay(true);
@@ -306,7 +311,9 @@ export default {
           queue_limit: this.enableQueueLimitFeature
             ? sectorQueue.queue_limit
             : { is_active: false, limit: null },
-          queue_purpose: sectorQueue.queue_purpose,
+          queue_purpose: this.enableQueuePurposeFeature
+            ? sectorQueue.queue_purpose
+            : undefined,
           agents: sectorQueue.currentAgents.map((agent) => agent.user.email),
         }));
 
