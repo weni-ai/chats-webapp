@@ -41,6 +41,7 @@
 <script>
 import { mapActions } from 'pinia';
 import { useRooms } from '@/store/modules/chats/rooms';
+import { emitToHost } from '@/utils/hostBridge';
 
 export default {
   name: 'ViewModeHeader',
@@ -62,16 +63,12 @@ export default {
     ...mapActions(useRooms, ['setActiveRoom']),
     async closeViewMode() {
       await this.setActiveRoom(null);
-      this.$router.push({ name: 'dashboard.manager' });
 
-      if (this.$route.params.oldModule === 'insights')
-        return window.parent.postMessage(
-          {
-            event: 'redirect',
-            path: 'insights:init',
-          },
-          '*',
-        );
+      if (this.$route.params.oldModule === 'insights') {
+        return emitToHost('redirect', { path: 'insights:init' });
+      }
+
+      this.$router.push({ name: 'dashboard.manager' });
     },
   },
 };

@@ -45,11 +45,15 @@ import {
 } from '@/utils/config';
 
 import { moduleStorage } from '@/utils/storage';
+import { isFederatedModule } from '@/utils/moduleFederation';
 
 import moment from 'moment';
 
 export default {
   name: 'App',
+  inject: {
+    chatsThemeMountContainer: { default: null },
+  },
   components: {
     SocketAlertBanner,
     ModalOfflineAgent,
@@ -216,7 +220,7 @@ export default {
     routeAwareTheme: {
       immediate: true,
       handler([theme, path]) {
-        applyRouteAwareTheme(theme, path);
+        applyRouteAwareTheme(theme, path, this.chatsThemeMountContainer);
       },
     },
   },
@@ -353,6 +357,10 @@ export default {
     },
 
     handleLocale() {
+      // Federation: locale is mirrored from the host shared store in main.js.
+      // The parent postMessage handshake only works standalone/iframe.
+      if (isFederatedModule) return;
+
       window.parent.postMessage({ event: 'getLanguage' }, '*');
 
       window.addEventListener('message', (ev) => {
@@ -480,7 +488,7 @@ export default {
 
 <style lang="scss" scoped>
 #app {
-  height: 100vh;
+  height: 100%;
 }
 </style>
 
