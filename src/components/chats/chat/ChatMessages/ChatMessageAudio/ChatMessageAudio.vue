@@ -190,9 +190,11 @@ const canShowAudioDownloadAction = computed(() => {
 
 const handleDownload = async () => {
   try {
-    const url = messageMedia.value.url || messageMedia.value.preview;
-    const filename = url?.split('/').at(-1) || 'audio';
-    await Media.download({ media: url, name: filename });
+    const mediaUuid = messageMedia.value.uuid;
+    if (!mediaUuid) {
+      throw new Error('Media uuid not available');
+    }
+    await Media.download({ mediaUuid });
   } catch (error) {
     console.error('Error downloading audio', error);
     UnnnicCallAlert({
