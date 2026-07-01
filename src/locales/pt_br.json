@@ -198,6 +198,18 @@
   "end_all_selected_chats_tooltip": "Encerrar todos os chats selecionados",
   "number_of_chats_selected": "{count} chat selecionado | {count} chats selecionados",
   "image": "Imagem",
+  "image_preview": {
+    "count": "Imagem {current} de {total}",
+    "tooltip": {
+      "close": "Fechar imagem (esc)",
+      "previous": "Anterior",
+      "next": "Próxima",
+      "rotate": "Girar 90°",
+      "zoom_in": "Ampliar",
+      "zoom_out": "Reduzir",
+      "export": "Exportar"
+    }
+  },
   "video": "Vídeo",
   "audio_message": "Mensagem de áudio",
   "audio_recorder": {
@@ -506,6 +518,12 @@
     },
     "message_input_placeholder": "Digite sua mensagem aqui ou / para ativar mensagens rápidas",
     "message_input_disabled_description": "Altere seu status para online para continuar esta conversa",
+    "message_input_floating_actions": {
+      "copy": "Copiar conteúdo digitado",
+      "copy_alert_success": "Conteúdo copiado!",
+      "clear": "Limpar conteúdo digitado",
+      "clear_alert_success": "Conteúdo removido!"
+    },
     "search_contact": "Pesquisar contato",
     "search_contact_placeholder": "Pesquisar contato (nome, telefone ou protocolo)",
     "tags": "Tags do chat",
@@ -779,7 +797,10 @@
     "transfering_chat": "Transferindo o chat ​📬",
     "ticket": "Protocolo",
     "copy_protocol": "Clique para copiar o protocolo",
-    "protocol_copied": "Protocolo copiado para a área de transferência!"
+    "protocol_copied": "Protocolo copiado para a área de transferência!",
+    "copy_value": "Copiar valor",
+    "value_copied": "Valor copiado com sucesso!",
+    "error_copying_value": "Não foi possível copiar o valor. Tente novamente."
   },
   "discussions": {
     "title": "Discussão | Discussões",

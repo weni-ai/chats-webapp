@@ -198,6 +198,18 @@
   "end_all_selected_chats_tooltip": "End all selected chats",
   "number_of_chats_selected": "{count} chat selected | {count} chats selected",
   "image": "Image",
+  "image_preview": {
+    "count": "Image {current} of {total}",
+    "tooltip": {
+      "close": "Close image (esc)",
+      "previous": "Previous",
+      "next": "Next",
+      "rotate": "Rotate 90°",
+      "zoom_in": "Zoom in",
+      "zoom_out": "Zoom out",
+      "export": "Export"
+    }
+  },
   "video": "Video",
   "audio_message": "Audio message",
   "audio_recorder": {
@@ -503,6 +515,12 @@
     },
     "message_input_placeholder": "Type your message or / to activate quick messages",
     "message_input_disabled_description": "Change your status to online to continue this conversation",
+    "message_input_floating_actions": {
+      "copy": "Copy typed content",
+      "copy_alert_success": "Content copied!",
+      "clear": "Clear typed content",
+      "clear_alert_success": "Typed content removed!"
+    },
     "search_contact": "Search contact",
     "search_contact_placeholder": "Search contact (name, phone or ticket ID)",
     "tags": "Chat tags",
@@ -774,7 +792,10 @@
     "transfering_chat": "Transferring the chat 📬",
     "ticket": "Ticket ID",
     "copy_protocol": "Click to copy the Ticket ID",
-    "protocol_copied": "Ticket ID copied to clipboard!"
+    "protocol_copied": "Ticket ID copied to clipboard!",
+    "copy_value": "Copy value",
+    "value_copied": "Value copied!",
+    "error_copying_value": "Unable to copy the value. Please try again."
   },
   "discussions": {
     "title": "Discussion | Discussions",

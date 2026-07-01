@@ -71,7 +71,7 @@
 </template>
 
 <script>
-import { mapState } from 'pinia';
+import { mapState, mapWritableState } from 'pinia';
 
 import { useConfig } from '@/store/modules/config';
 import { useProfile } from '@/store/modules/profile';
@@ -120,11 +120,8 @@ export default {
   },
 
   computed: {
-    ...mapState(useConfig, [
-      'project',
-      'isSecondaryProject',
-      'isMainGroupsProject',
-    ]),
+    ...mapWritableState(useConfig, ['project']),
+    ...mapState(useConfig, ['isSecondaryProject', 'isMainGroupsProject']),
     ...mapState(useProfile, ['me']),
     ...mapState(useFeatureFlag, ['featureFlags']),
 
@@ -394,7 +391,7 @@ export default {
         restrict_offline_agents,
       } = this.projectConfig;
 
-      Project.update({
+      await Project.update({
         can_use_bulk_transfer,
         filter_offline_agents,
         can_use_bulk_close,
@@ -406,6 +403,11 @@ export default {
         can_use_name_sector_in_rooms,
         restrict_offline_agents,
       });
+
+      this.project.config = {
+        ...this.project.config,
+        ...this.projectConfig,
+      };
     },
   },
 };
