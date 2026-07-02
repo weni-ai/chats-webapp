@@ -376,7 +376,14 @@
     "queue_title": "Queues in",
     "queue_table_name": "Name",
     "quantity_agents": "Number of agents",
-    "search": "Search a queue"
+    "search": "Search a queue",
+    "queue_purpose": {
+      "field": {
+        "label": "Queue purpose (optional)",
+        "placeholder": "Example: Conversations related to billing, invoices, payment issues, or subscription questions.",
+        "helper": "This information helps the AI route chats to the most appropriate queue."
+      }
+    }
   },
   "export": {
     "metrics": "Export metrics as {filetype}",
