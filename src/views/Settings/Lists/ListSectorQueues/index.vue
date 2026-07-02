@@ -312,7 +312,6 @@ export default {
               Queue.removeAgent(agentUuid),
             ),
           ]);
-          console.log('queue_purpose', queue_purpose);
 
           const { data: updatedQueue } = await Queue.editQueue({
             uuid,
@@ -336,7 +335,6 @@ export default {
             },
           });
         } else {
-          console.log('queue_purpose', queue_purpose);
           const createdQueue = await Queue.create({
             name,
             default_message,
