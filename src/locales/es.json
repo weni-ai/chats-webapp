@@ -396,9 +396,6 @@
   "addition_date": "Fecha de adición",
   "in_queues": "en colas",
   "in_progress": "En progreso",
-  "waiting": "Esperando",
-  "sent_flows": "Flujos enviados",
-  "discussion": "Discusiones",
   "in_progress_tooltip": "Cantidad de chats que ya están siendo atendidos por un agente",
   "in_progress_tooltip_filtered": "Cantidad de chats que han sido atendidos por un agente",
   "closed": "Cerrados",
@@ -675,7 +672,7 @@
     "fix_grammar_and_spelling": "Corregir gramática y ortografía",
     "make_more_empathetic": "Hacerla más empática",
     "rewrite_for_clarity": "Reescribir con claridad",
-    "improving_response": "Mejorando tu respuesta",
+    "improving_response": "Mejorando respuesta",
     "improvement": "Respuesta mejorada",
     "error": "Error al mejorar respuesta con IA. Vuelve a intentarlo.",
     "new": "Nueva",
@@ -1067,11 +1064,11 @@
       "status_remove_success": "Estado {status} eliminado",
       "status_error": "Ups, desafortunadamente los cambios no se han guardado, inténtalo de nuevo",
       "delete_modal": {
+        "title": "Eliminar pausa personalizada",
         "description_1": "¿Realmente deseas eliminar la pausa personalizada “{name}”?",
         "description_2": "Una vez eliminada, sus datos ya no aparecerán en el panel de Live Desk y no podrán recuperarse.",
-        "error": "No se pudo eliminar la pausa personalizada.",
         "success": "Pausa personalizada eliminada con éxito",
-        "title": "Eliminar pausa personalizada"
+        "error": "No se pudo eliminar la pausa personalizada."
       }
     },
     "changes_saved": "¡Cambios guardados con éxito!",
