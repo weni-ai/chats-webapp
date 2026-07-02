@@ -396,9 +396,6 @@
   "addition_date": "Data de Adição",
   "in_queues": "em filas",
   "in_progress": "Em andamento",
-  "waiting": "Aguardando",
-  "sent_flows": "Fluxos enviados",
-  "discussion": "Discussões",
   "in_progress_tooltip": "Quantidade de chats que já estão sendo atendidos por um agente",
   "in_progress_tooltip_filtered": "Quantidade de chats que foram atendidos por um agente",
   "closed": "Encerrados",
@@ -675,7 +672,7 @@
     "fix_grammar_and_spelling": "Corrigir gramática e ortografia",
     "make_more_empathetic": "Tornar mais empática",
     "rewrite_for_clarity": "Reescrever com clareza",
-    "improving_response": "Melhorando sua resposta",
+    "improving_response": "Melhorar resposta",
     "improvement": "Resposta aprimorada",
     "error": "Erro ao aprimorar resposta com IA. Tente novamente.",
     "new": "Novo",
@@ -780,8 +777,6 @@
     "partial_success_message": "{success} chat assumido, {failed} falhou. Tente novamente. | {success} chats assumidos, {failed} falharam. Tente novamente.",
     "error_message": "Não foi possível assumir os chats, tente novamente"
   },
-  "close_contact": "Encerrar contato",
-  "close_contact_confirmation": "Tem certeza que deseja encerrar este contato?",
   "contact_info": {
     "title": "Sobre o contato",
     "about_support": "Sobre o suporte",
@@ -1069,11 +1064,11 @@
       "status_remove_success": "Status {status} removido",
       "status_error": "Ops, infelizmente as alterações não foram salvas, tente novamente",
       "delete_modal": {
+        "title": "Excluir pausa personalizada",
         "description_1": "Tem certeza de que deseja excluir a pausa personalizada “{name}”?",
         "description_2": "Depois de excluir, os dados não aparecerão mais no painel do Live Desk e não poderão ser recuperados.",
-        "error": "Não foi possível excluir a pausa personalizada.",
         "success": "Pausa personalizada excluída com sucesso",
-        "title": "Excluir pausa personalizada"
+        "error": "Não foi possível excluir a pausa personalizada."
       }
     },
     "changes_saved": "Alterações salvas com sucesso!",
