@@ -221,6 +221,11 @@
                 @close="handleTagClick"
               />
               <ProtocolText :protocol="contactProtocol" />
+              <CsatInfo
+                v-if="closedRoom?.uuid"
+                :note="closedRoom?.csat_note"
+                :commentary="closedRoom?.csat_commentary"
+              />
               <DiscussionsSession v-if="isHistory" />
             </section>
           </section>
@@ -296,6 +301,7 @@ import FullscreenPreview from '../MediaMessage/Previews/Fullscreen.vue';
 import ModalStartDiscussion from './ModalStartDiscussion.vue';
 import DiscussionsSession from './DiscussionsSession.vue';
 import ProtocolText from './ProtocolText.vue';
+import CsatInfo from './CsatInfo.vue';
 
 import Queues from '@/services/api/resources/settings/queue';
 import TagGroup from '@/components/TagGroup.vue';
@@ -304,6 +310,7 @@ import moment from 'moment';
 import { parseUrn } from '@/utils/room';
 
 import i18n from '@/plugins/i18n';
+
 export default {
   name: 'ContactInfo',
 
@@ -320,6 +327,7 @@ export default {
     DiscussionsSession,
     ProtocolText,
     TagGroup,
+    CsatInfo,
   },
   props: {
     closedRoom: {
@@ -445,6 +453,7 @@ export default {
       return (this.closedRoom || this.room).service_chat;
     },
   },
+
   watch: {
     'room.uuid': {
       immediate: true,
@@ -782,6 +791,9 @@ export default {
 
   &__about-support {
     &-content {
+      display: flex;
+      flex-direction: column;
+      gap: $unnnic-space-2;
       // This is required to remove the tag icon
       :deep(.contact-info__about-support-content__tag-group) {
         .unnnic-icon {

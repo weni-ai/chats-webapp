@@ -800,7 +800,19 @@
     "protocol_copied": "Protocolo copiado para a área de transferência!",
     "copy_value": "Copiar valor",
     "value_copied": "Valor copiado com sucesso!",
-    "error_copying_value": "Não foi possível copiar o valor. Tente novamente."
+    "error_copying_value": "Não foi possível copiar o valor. Tente novamente.",
+    "csat": {
+      "title": "CSAT",
+      "no_comment": "Nenhum comentário",
+      "rating_label": {
+        "5": "Muito satisfeito",
+        "4": "Satisfeito",
+        "3": "Neutro",
+        "2": "Insatisfeito",
+        "1": "Muito insatisfeito",
+        "no_response": "Sem resposta"
+      }
+    }
   },
   "discussions": {
     "title": "Discussão | Discussões",
