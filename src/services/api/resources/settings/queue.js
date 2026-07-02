@@ -3,13 +3,20 @@ import { getProject } from '@/utils/config';
 import { getURLParams } from '@/utils/requests';
 
 export default {
-  async create({ name, sectorUuid, default_message, queue_limit }) {
+  async create({
+    name,
+    sectorUuid,
+    default_message,
+    queue_limit,
+    queue_purpose,
+  }) {
     const response = await http.post('/queue/', {
       name,
       sector: sectorUuid,
       default_message,
       project: getProject(),
       queue_limit,
+      queue_purpose,
     });
     return response.data;
   },
@@ -101,6 +108,7 @@ export default {
       name: queueInfo.name,
       default_message: queueInfo.default_message,
       queue_limit: queueInfo.queue_limit,
+      queue_purpose: queueInfo.queue_purpose,
     });
     return response;
   },

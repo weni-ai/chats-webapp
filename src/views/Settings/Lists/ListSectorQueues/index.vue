@@ -122,6 +122,11 @@ export default {
 
   computed: {
     ...mapState(useFeatureFlag, ['featureFlags']),
+    enableQueuePurposeFeature() {
+      return this.featureFlags.active_features?.includes(
+        'weniChatsQueuePurpose',
+      );
+    },
     enableQueueLimitFeature() {
       return this.featureFlags.active_features?.includes('weniChatsQueueLimit');
     },
@@ -248,6 +253,7 @@ export default {
                 ? null
                 : String(queue?.queue_limit?.limit),
             },
+            queue_purpose: queue?.queue_purpose || '',
           },
         ];
       } else {
@@ -258,6 +264,7 @@ export default {
             name: '',
             default_message: '',
             queue_limit: { is_active: false, limit: null },
+            queue_purpose: '',
           },
         ];
       }
@@ -293,6 +300,7 @@ export default {
           queue_limit,
           toAddAgentsUuids,
           toRemoveAgentsUuids,
+          queue_purpose,
         } = this.queueToConfig[0];
 
         if (this.queueToConfig[0].uuid) {
@@ -311,6 +319,9 @@ export default {
             queue_limit: this.enableQueueLimitFeature
               ? queue_limit
               : { is_active: false, limit: null },
+            queue_purpose: this.enableQueuePurposeFeature
+              ? queue_purpose
+              : undefined,
           });
 
           this.queues = this.queues.map((queue) =>
@@ -331,6 +342,9 @@ export default {
             queue_limit: this.enableQueueLimitFeature
               ? queue_limit
               : { is_active: false, limit: null },
+            queue_purpose: this.enableQueuePurposeFeature
+              ? queue_purpose
+              : undefined,
           });
           await Promise.all(
             this.queueToConfig[0].currentAgents.map((agent) => {
