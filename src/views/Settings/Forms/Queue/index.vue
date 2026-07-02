@@ -187,6 +187,7 @@ export default {
             ...this.queues[0].queue_limit,
           },
           agents: this.queues[0].agents,
+          queue_purpose: this.queues[0].queue_purpose || '',
         },
       ];
 

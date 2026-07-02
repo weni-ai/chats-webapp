@@ -253,6 +253,7 @@ export default {
                 ? null
                 : String(queue?.queue_limit?.limit),
             },
+            queue_purpose: queue?.queue_purpose || '',
           },
         ];
       } else {
@@ -263,6 +264,7 @@ export default {
             name: '',
             default_message: '',
             queue_limit: { is_active: false, limit: null },
+            queue_purpose: '',
           },
         ];
       }
@@ -310,6 +312,7 @@ export default {
               Queue.removeAgent(agentUuid),
             ),
           ]);
+          console.log('queue_purpose', queue_purpose);
 
           const { data: updatedQueue } = await Queue.editQueue({
             uuid,
@@ -333,6 +336,7 @@ export default {
             },
           });
         } else {
+          console.log('queue_purpose', queue_purpose);
           const createdQueue = await Queue.create({
             name,
             default_message,
