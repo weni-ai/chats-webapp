@@ -944,7 +944,7 @@
       "title_tag": "Template {current} of {total}",
       "description": "Variables that reference contact fields will display values from the selected contacts in the preview below",
       "define_variables": "Define the variables",
-      "define_variables_ordinal": "Define the variables of the {ordinal} template",
+      "define_variables_ordinal": "Define the variables for the {ordinal} template",
       "variable_label": "Variable {name}",
       "input_placeholder": "Enter the value for this variable",
       "preview_title": "Template preview",
