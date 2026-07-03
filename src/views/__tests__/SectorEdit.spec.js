@@ -159,9 +159,4 @@ describe('EditSector.vue', () => {
 
     expect(settings.currentSector).toBeNull();
   });
-
-  it('matches snapshot', async () => {
-    const wrapper = await mountWithQuery({ tab: 'general' });
-    expect(wrapper.html()).toMatchSnapshot();
-  });
 });

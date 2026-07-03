@@ -11,6 +11,7 @@
 </template>
 
 <script>
+import { unref } from 'vue';
 import { mapActions, mapState } from 'pinia';
 
 import SocketAlertBanner from './layouts/ChatsLayout/components/SocketAlertBanner.vue';
@@ -35,7 +36,12 @@ import { useDashboard } from './store/modules/dashboard';
 import { useFeatureFlag } from './store/modules/featureFlag';
 import { useTheme } from '@weni/unnnic-system';
 
-import { applyRouteAwareTheme, notifyParentOfTheme } from '@/utils/theme';
+import {
+  applyRouteAwareTheme,
+  notifyParentOfTheme,
+  startLightThemeEnforcement,
+  stopLightThemeEnforcement,
+} from '@/utils/theme';
 import { useQuickMessagesFeatureFlag } from '@/composables/useQuickMessagesFeatureFlag';
 
 import initHotjar from '@/plugins/Hotjar';
@@ -51,13 +57,15 @@ import moment from 'moment';
 
 export default {
   name: 'App',
-  inject: {
-    chatsThemeMountContainer: { default: null },
-  },
   components: {
     SocketAlertBanner,
     ModalOfflineAgent,
     ModalDarkModeIntro,
+  },
+  inject: {
+    chatsThemeMountContainer: { default: null },
+    chatsForceLightTheme: { default: false },
+    chatsThemeEnforcementActive: { default: null },
   },
   setup() {
     const queryString = window.location.href.split('?')[1];
@@ -134,7 +142,25 @@ export default {
     },
 
     routeAwareTheme() {
-      return [this.resolvedTheme, this.$route.path];
+      return [
+        this.resolvedTheme,
+        this.$route.path,
+        this.shouldEnforceLightTheme,
+      ];
+    },
+
+    shouldEnforceLightTheme() {
+      if (!this.chatsForceLightTheme) {
+        return false;
+      }
+
+      const activeRef = this.chatsThemeEnforcementActive;
+
+      if (!activeRef) {
+        return true;
+      }
+
+      return !!unref(activeRef);
     },
   },
 
@@ -219,8 +245,31 @@ export default {
     // even when the stored preference is dark.
     routeAwareTheme: {
       immediate: true,
-      handler([theme, path]) {
-        applyRouteAwareTheme(theme, path, this.chatsThemeMountContainer);
+      // Run after `useTheme()` (flush `pre`) so applyRouteAwareTheme wins the
+      // final toggle on the mount container.
+      flush: 'post',
+      handler([theme, path, enforceLight]) {
+        applyRouteAwareTheme(
+          theme,
+          path,
+          this.chatsThemeMountContainer,
+          enforceLight,
+        );
+      },
+    },
+
+    // `useTheme()` from unnnic keeps toggling `.dark` on the shared
+    // `document.documentElement` while both live-desk and settings mounts are
+    // alive. A one-shot clear loses the race, so install a MutationObserver
+    // guard while the based (settings) mount is visible.
+    shouldEnforceLightTheme: {
+      immediate: true,
+      handler(active, wasActive) {
+        if (active && !wasActive) {
+          startLightThemeEnforcement();
+        } else if (!active && wasActive) {
+          stopLightThemeEnforcement();
+        }
       },
     },
   },
@@ -242,6 +291,12 @@ export default {
     notifications.requestPermission();
     this.announceThemeToParent();
     this.maybeShowDarkModeIntroModal();
+  },
+
+  beforeUnmount() {
+    if (this.shouldEnforceLightTheme) {
+      stopLightThemeEnforcement();
+    }
   },
 
   methods: {
