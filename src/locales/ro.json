@@ -17,6 +17,7 @@
       "off": "Dezactivat"
     }
   },
+  "representative": "Reprezentant",
   "ai_text_improvement": {
     "tooltip_disabled": "Scrie un răspuns în câmpul de text pentru a activa răspunsuri îmbunătățite cu AI",
     "tooltip_enabled": "Îmbunătățește răspunsul cu AI",
@@ -112,15 +113,16 @@
     "transfer_error_queue": "Nu s-au putut transfera conversațiile. Ștergerea cozii a fost anulată."
   },
   "export_conversation": {
-    "accept_terms": "Accept termenii și înțeleg limitările exportului.",
+    "accept_terms": "Accept termenii și înțeleg limitările de export.",
     "button": "Exportă conversația",
-    "disclaimer": "În timp ce acest export este procesat, noile exporturi vor fi temporar blocate pentru această conversație",
-    "error": "Exportul nu a putut fi procesat. Încearcă din nou",
-    "select_format": "Selectează formatul pentru exportarea conversației",
-    "success_description": "Îl vei primi prin email în curând. Verifică și folderul de spam.",
-    "success_title": "Se procesează exportul!",
+    "disclaimer": "Exporturile noi vor fi blocate temporar pentru această conversație în timp ce acest export este procesat",
+    "error": "Exportul nu a putut fi procesat. Încearcă din nou.",
+    "select_format": "Selectează formatul pentru exportul conversației",
+    "success_description": "Vei primi fișierul prin e-mail în scurt timp. Nu uita să verifici dosarul de spam.",
+    "success_title": "Export în desfășurare",
     "title": "Exportă conversația"
   },
+  "select_representative": "Selectează un reprezentant",
   "flows_trigger": {
     "variable_mapping": {
       "confirmation_checkbox": "Am verificat și sunt gata să o trimit",
