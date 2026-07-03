@@ -198,6 +198,18 @@
   "end_all_selected_chats_tooltip": "Finalizar todos los chats seleccionados",
   "number_of_chats_selected": "{count} chat seleccionado | {count} chats seleccionados",
   "image": "Imagen",
+  "image_preview": {
+    "count": "Imagen {current} de {total}",
+    "tooltip": {
+      "close": "Cerrar imagen (esc)",
+      "previous": "Anterior",
+      "next": "Siguiente",
+      "rotate": "Rotar 90°",
+      "zoom_in": "Acercar",
+      "zoom_out": "Alejar",
+      "export": "Exportar"
+    }
+  },
   "video": "Vídeo",
   "audio_message": "Mensaje de audio",
   "audio_recorder": {
@@ -506,6 +518,12 @@
     },
     "message_input_placeholder": "Escribe tu mensaje o / para activar mensajes rápidos",
     "message_input_disabled_description": "Cambia tu status a online para continuar esta conversación",
+    "message_input_floating_actions": {
+      "copy": "Copiar contenido escrito",
+      "copy_alert_success": "Contenido copiado!",
+      "clear": "Limpiar contenido escrito",
+      "clear_alert_success": "Contenido eliminado!"
+    },
     "search_contact": "Buscar contacto",
     "search_contact_placeholder": "Buscar contacto (nombre, teléfono o ticket ID)",
     "tags": "Etiquetas de chat",
@@ -777,7 +795,10 @@
     "transfering_chat": "Transfiriendo el chat 📬",
     "ticket": "Ticket ID",
     "copy_protocol": "Haga clic para copiar el Ticket ID",
-    "protocol_copied": "¡Ticket ID copiado al portapapeles!"
+    "protocol_copied": "¡Ticket ID copiado al portapapeles!",
+    "copy_value": "Copiar valor",
+    "value_copied": "¡Valor copiado con éxito!",
+    "error_copying_value": "No se pudo copiar el valor. Inténtalo de nuevo."
   },
   "discussions": {
     "title": "Discusión | Discusiones",

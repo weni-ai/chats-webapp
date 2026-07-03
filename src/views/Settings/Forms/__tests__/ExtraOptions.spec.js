@@ -15,6 +15,8 @@ import { createMemoryHistory, createRouter } from 'vue-router';
 
 import i18n from '@/plugins/i18n';
 
+import { useConfig } from '@/store/modules/config';
+
 import FormSectorExtraOptions from '../ExtraOptions.vue';
 
 import unnnic from '@weni/unnnic-system';
@@ -68,11 +70,25 @@ const router = createRouter({
 
 router.push = vi.fn();
 
-function createWrapper(props = {}) {
+function createWrapper(props = {}, { projectLanguage = 'en-us' } = {}) {
   const wrapper = mount(FormSectorExtraOptions, {
     props: { modelValue: sectorExtraOptionsMock, isEditing: false, ...props },
     global: {
-      plugins: [router, createTestingPinia()],
+      plugins: [
+        router,
+        createTestingPinia({
+          initialState: {
+            config: {
+              project: {
+                name: '',
+                config: {},
+                uuid: '',
+                language: projectLanguage,
+              },
+            },
+          },
+        }),
+      ],
       stubs: {
         UnnnicSwitch: true,
       },
@@ -80,6 +96,14 @@ function createWrapper(props = {}) {
   });
 
   return wrapper;
+}
+
+function setProjectLanguage(language, pinia) {
+  const configStore = useConfig(pinia);
+  configStore.project = {
+    ...configStore.project,
+    language,
+  };
 }
 
 describe('SectorExtraOptions', () => {
@@ -296,26 +320,29 @@ describe('SectorExtraOptions', () => {
   });
 
   describe('inactivity timeout default messages', () => {
+    const inactivityTimeoutMock = {
+      is_message_timeout_enabled: false,
+      message_timeout_text: '',
+      message_timeout_time: null,
+      is_close_room_enabled: false,
+      close_room_message_text: '',
+      close_room_timeout_time: null,
+    };
+
     beforeEach(async () => {
-      i18n.global.locale = 'en';
+      setProjectLanguage('en-us', wrapper.vm.$pinia);
       await wrapper.setProps({
         modelValue: {
           ...sectorExtraOptionsMock,
-          inactivity_timeout: {
-            is_message_timeout_enabled: false,
-            message_timeout_text: '',
-            message_timeout_time: null,
-            is_close_room_enabled: false,
-            close_room_message_text: '',
-            close_room_timeout_time: null,
-          },
+          inactivity_timeout: { ...inactivityTimeoutMock },
         },
       });
       await flushPromises();
     });
 
-    it('should use the current user locale for the warning message', async () => {
-      i18n.global.locale = 'pt-br';
+    it('should use project language for the warning message', async () => {
+      setProjectLanguage('pt-br', wrapper.vm.$pinia);
+      await nextTick();
 
       wrapper.vm.handleInactivityTimeoutIsMessageTimeoutEnabled(true);
 
@@ -324,8 +351,9 @@ describe('SectorExtraOptions', () => {
       );
     });
 
-    it('should use the current user locale for the close room message', async () => {
-      i18n.global.locale = 'pt-br';
+    it('should use project language for the close room message', async () => {
+      setProjectLanguage('pt-br', wrapper.vm.$pinia);
+      await nextTick();
 
       wrapper.vm.handleInactivityTimeoutIsCloseRoomEnabled(true);
 
@@ -334,43 +362,18 @@ describe('SectorExtraOptions', () => {
       );
     });
 
-    it('should sync default warning message when locale changes', async () => {
-      const localWrapper = createWrapper();
+    it('should use english default messages when project language is en-us', async () => {
+      const localWrapper = createWrapper({}, { projectLanguage: 'en-us' });
       await flushPromises();
 
-      const syncSpy = vi.spyOn(
-        localWrapper.vm,
-        'syncInactivityTimeoutMessagesOnLocaleChange',
-      );
-
-      i18n.global.locale = 'pt-br';
-      await nextTick();
       localWrapper.vm.handleInactivityTimeoutIsMessageTimeoutEnabled(true);
-      syncSpy.mockClear();
+      localWrapper.vm.handleInactivityTimeoutIsCloseRoomEnabled(true);
 
-      i18n.global.locale = 'en';
-      await nextTick();
-
-      expect(syncSpy).toHaveBeenCalled();
       expect(
         localWrapper.vm.sector.inactivity_timeout.message_timeout_text,
       ).toBe(
         "Are you still there? If there's no response, this session will be closed soon.",
       );
-    });
-
-    it('should sync default close room message when locale changes', async () => {
-      const localWrapper = createWrapper();
-      await flushPromises();
-
-      i18n.global.locale = 'pt-br';
-      await nextTick();
-      localWrapper.vm.handleInactivityTimeoutIsMessageTimeoutEnabled(true);
-      localWrapper.vm.handleInactivityTimeoutIsCloseRoomEnabled(true);
-
-      i18n.global.locale = 'en';
-      await nextTick();
-
       expect(
         localWrapper.vm.sector.inactivity_timeout.close_room_message_text,
       ).toBe(
@@ -378,17 +381,31 @@ describe('SectorExtraOptions', () => {
       );
     });
 
-    it('should not sync warning message when locale changes after customization', async () => {
-      const localWrapper = createWrapper();
+    it('should not update warning message when project language changes after enable', async () => {
+      const localWrapper = createWrapper({}, { projectLanguage: 'pt-br' });
       await flushPromises();
 
-      i18n.global.locale = 'pt-br';
+      localWrapper.vm.handleInactivityTimeoutIsMessageTimeoutEnabled(true);
+
+      setProjectLanguage('en-us', localWrapper.vm.$pinia);
       await nextTick();
+
+      expect(
+        localWrapper.vm.sector.inactivity_timeout.message_timeout_text,
+      ).toBe(
+        'Você ainda está aí? Se não houver resposta, este atendimento será encerrado em breve.',
+      );
+    });
+
+    it('should not update warning message when project language changes after customization', async () => {
+      const localWrapper = createWrapper({}, { projectLanguage: 'pt-br' });
+      await flushPromises();
+
       localWrapper.vm.handleInactivityTimeoutIsMessageTimeoutEnabled(true);
       localWrapper.vm.sector.inactivity_timeout.message_timeout_text =
         'Mensagem personalizada';
 
-      i18n.global.locale = 'en';
+      setProjectLanguage('en-us', localWrapper.vm.$pinia);
       await nextTick();
 
       expect(
@@ -396,12 +413,9 @@ describe('SectorExtraOptions', () => {
       ).toBe('Mensagem personalizada');
     });
 
-    it('should use romanian default messages when locale is ro', async () => {
-      const localWrapper = createWrapper();
+    it('should use romanian default messages when project language is ro', async () => {
+      const localWrapper = createWrapper({}, { projectLanguage: 'ro' });
       await flushPromises();
-
-      i18n.global.locale = 'ro';
-      await nextTick();
 
       localWrapper.vm.handleInactivityTimeoutIsMessageTimeoutEnabled(true);
       localWrapper.vm.handleInactivityTimeoutIsCloseRoomEnabled(true);

@@ -17,6 +17,7 @@
       "off": "Dezactivat"
     }
   },
+  "representative": "Reprezentant",
   "ai_text_improvement": {
     "tooltip_disabled": "Scrie un răspuns în câmpul de text pentru a activa răspunsuri îmbunătățite cu AI",
     "tooltip_enabled": "Îmbunătățește răspunsul cu AI",
@@ -76,6 +77,11 @@
       }
     }
   },
+  "contact_info": {
+    "copy_value": "Copiază valoarea",
+    "error_copying_value": "Nu s-a putut copia valoarea. Încearcă din nou.",
+    "value_copied": "Valoare copiată cu succes"
+  },
   "dashboard": {
     "view-mode": {
       "assume_chat_question": "Preiei chatul cu {contact}?",
@@ -116,6 +122,7 @@
     "success_title": "Export în desfășurare",
     "title": "Exportă conversația"
   },
+  "select_representative": "Selectează un reprezentant",
   "flows_trigger": {
     "variable_mapping": {
       "confirmation_checkbox": "Am verificat și sunt gata să trimit",
