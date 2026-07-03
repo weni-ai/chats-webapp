@@ -465,10 +465,10 @@
       }
     },
     "feedback": {
-      "agent_took_chat": "Oops! The chat with the contact {contact} has already been taken over by another agent",
+      "agent_took_chat": "Oops! The chat with contact {contact} has already been taken over by another agent",
       "automatic_transfer_from_queue": "Chat assigned to {agent}",
       "chat_ended_by": "Chat ended by {agent}",
-      "discussion_created": "{agent} started discussion with queue {queue}",
+      "discussion_created": "{agent} started discussion in queue {queue}",
       "discussion_joined": "{agent} joined the discussion",
       "edit_custom_field": "edited custom field",
       "forwarded_to_agent": "Contact forwarded to agent {agent}",
