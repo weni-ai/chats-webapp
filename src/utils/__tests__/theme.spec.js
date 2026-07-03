@@ -1,6 +1,10 @@
 import { afterEach, describe, expect, it } from 'vitest';
 
-import { applyRouteAwareTheme } from '../theme';
+import {
+  applyRouteAwareTheme,
+  startLightThemeEnforcement,
+  stopLightThemeEnforcement,
+} from '../theme';
 
 describe('applyRouteAwareTheme', () => {
   afterEach(() => {
@@ -50,5 +54,66 @@ describe('applyRouteAwareTheme', () => {
     applyRouteAwareTheme('dark', '/rooms', liveDesk, false);
 
     expect(liveDesk.classList.contains('dark')).toBe(true);
+  });
+
+});
+
+describe('light theme enforcement', () => {
+  afterEach(() => {
+    // Guard against test leaks: drop `.dark` and force-drain the refcount.
+    document.documentElement.classList.remove('dark');
+    for (let i = 0; i < 8; i += 1) stopLightThemeEnforcement();
+  });
+
+  it('strips the initial `.dark` class from documentElement on start', () => {
+    document.documentElement.classList.add('dark');
+
+    startLightThemeEnforcement();
+
+    expect(document.documentElement.classList.contains('dark')).toBe(false);
+
+    stopLightThemeEnforcement();
+  });
+
+  it('re-strips `.dark` when something re-adds it while enforcement is active', async () => {
+    startLightThemeEnforcement();
+
+    document.documentElement.classList.add('dark');
+
+    await new Promise((resolve) => setTimeout(resolve, 0));
+
+    expect(document.documentElement.classList.contains('dark')).toBe(false);
+
+    stopLightThemeEnforcement();
+  });
+
+  it('stops observing after stopLightThemeEnforcement', async () => {
+    startLightThemeEnforcement();
+    stopLightThemeEnforcement();
+
+    document.documentElement.classList.add('dark');
+
+    await new Promise((resolve) => setTimeout(resolve, 0));
+
+    expect(document.documentElement.classList.contains('dark')).toBe(true);
+  });
+
+  it('is refcounted across multiple start/stop calls', async () => {
+    startLightThemeEnforcement();
+    startLightThemeEnforcement();
+    stopLightThemeEnforcement();
+
+    document.documentElement.classList.add('dark');
+    await new Promise((resolve) => setTimeout(resolve, 0));
+
+    // Still enforced after one nested stop.
+    expect(document.documentElement.classList.contains('dark')).toBe(false);
+
+    stopLightThemeEnforcement();
+
+    document.documentElement.classList.add('dark');
+    await new Promise((resolve) => setTimeout(resolve, 0));
+
+    expect(document.documentElement.classList.contains('dark')).toBe(true);
   });
 });
