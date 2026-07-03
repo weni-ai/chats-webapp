@@ -198,6 +198,18 @@
   "end_all_selected_chats_tooltip": "End all selected chats",
   "number_of_chats_selected": "{count} chat selected | {count} chats selected",
   "image": "Image",
+  "image_preview": {
+    "count": "Image {current} of {total}",
+    "tooltip": {
+      "close": "Close image (esc)",
+      "previous": "Previous",
+      "next": "Next",
+      "rotate": "Rotate 90°",
+      "zoom_in": "Zoom in",
+      "zoom_out": "Zoom out",
+      "export": "Export"
+    }
+  },
   "video": "Video",
   "audio_message": "Audio message",
   "audio_recorder": {
@@ -374,11 +386,11 @@
     "button": "Export conversation",
     "title": "Export conversation",
     "select_format": "Select the format to export the conversation",
-    "disclaimer": "While this export is being processed, new exports will be temporarily blocked for this conversation",
+    "disclaimer": "New exports will be temporarily blocked for this conversation while this export is being processed",
     "accept_terms": "I accept the terms and understand the export limitations.",
-    "success_title": "Processing export!",
-    "success_description": "You will receive it by email shortly. Remember to check your spam folder.",
-    "error": "The export could not be processed. Try again"
+    "success_title": "Export in progress",
+    "success_description": "You will receive the file by email shortly. Remember to check your spam folder.",
+    "error": "The export couldn't be processed. Try again."
   },
   "name": "Name",
   "addition_date": "Date of addition",
@@ -503,6 +515,12 @@
     },
     "message_input_placeholder": "Type your message or / to activate quick messages",
     "message_input_disabled_description": "Change your status to online to continue this conversation",
+    "message_input_floating_actions": {
+      "copy": "Copy typed content",
+      "copy_alert_success": "Content copied!",
+      "clear": "Clear typed content",
+      "clear_alert_success": "Typed content removed!"
+    },
     "search_contact": "Search contact",
     "search_contact_placeholder": "Search contact (name, phone or ticket ID)",
     "tags": "Chat tags",
@@ -774,7 +792,10 @@
     "transfering_chat": "Transferring the chat 📬",
     "ticket": "Ticket ID",
     "copy_protocol": "Click to copy the Ticket ID",
-    "protocol_copied": "Ticket ID copied to clipboard!"
+    "protocol_copied": "Ticket ID copied to clipboard!",
+    "copy_value": "Copy value",
+    "value_copied": "Value copied!",
+    "error_copying_value": "Unable to copy the value. Please try again."
   },
   "discussions": {
     "title": "Discussion | Discussions",
@@ -921,15 +942,15 @@
     "variable_mapping": {
       "title": "Variable mapping",
       "title_tag": "Template {current} of {total}",
-      "description": "Variables will be populated in the preview below using values from the selected contacts whenever they reference contact fields.",
+      "description": "Variables that reference contact fields will display values from the selected contacts in the preview below",
       "define_variables": "Define the variables",
       "define_variables_ordinal": "Define the variables of the {ordinal} template",
       "variable_label": "Variable {name}",
-      "input_placeholder": "Type the value for this variable",
+      "input_placeholder": "Enter the value for this variable",
       "preview_title": "Template preview",
       "preview_title_ordinal": "Preview of the {ordinal} template",
       "preview_variable_tooltip": "Variable {placeholder}",
-      "confirmation_helper": "Check if each field is correctly mapped, this is how your message will look to each selected contact.",
+      "confirmation_helper": "Make sure each field is correctly mapped. Your message will be customized for each selected contact based on these mappings.",
       "confirmation_checkbox": "I've checked it and I'm ready to send it",
       "next_template": "Next template",
       "send_templates": "Send ({count} template) | Send ({count} templates)",

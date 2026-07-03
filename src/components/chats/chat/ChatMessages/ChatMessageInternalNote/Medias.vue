@@ -68,6 +68,8 @@
       v-if="isFullscreen && currentMedia"
       :downloadMediaUrl="currentMedia.url"
       :downloadMediaName="currentMedia.message || ''"
+      :mediaCurrent="currentMediaIndex"
+      :mediaTotal="imageMedias.length"
       @close="closeFullscreen"
       @next="nextMedia"
       @previous="previousMedia"
@@ -182,6 +184,18 @@ const previewableMedias = computed(() =>
 const imageMedias = computed(() =>
   props.medias.filter((media) => isImage(media) && media.url),
 );
+
+const currentMediaIndex = computed(() => {
+  if (!currentMedia.value?.url) {
+    return 0;
+  }
+
+  return (
+    imageMedias.value.findIndex(
+      (media) => media.url === currentMedia.value?.url,
+    ) + 1
+  );
+});
 
 const openFullscreen = (media: InternalNoteMedia) => {
   if (!media.url) {

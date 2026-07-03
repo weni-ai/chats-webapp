@@ -5,6 +5,7 @@ import {
   sendMediaMessage,
   validateMediaFormat,
   treatedMediaName,
+  normalizeS3MediaUrl,
 } from '@/utils/medias.js';
 
 vi.mock('mime', () => ({
@@ -262,5 +263,42 @@ describe('treatedMediaName', () => {
 
     global.decodeURIComponent = originalDecode;
     consoleSpy.mockRestore();
+  });
+});
+
+describe('normalizeS3MediaUrl', () => {
+  it('should add region to production-chats URLs without region', () => {
+    const url =
+      'https://weni-production-chats.s3.amazonaws.com/audio/message.ogg';
+    const result = normalizeS3MediaUrl(url);
+
+    expect(result).toBe(
+      'https://weni-production-chats.s3.sa-east-1.amazonaws.com/audio/message.ogg',
+    );
+  });
+
+  it('should not modify production-chats URLs that already include region', () => {
+    const url =
+      'https://weni-production-chats.s3.sa-east-1.amazonaws.com/audio/message.ogg';
+    const result = normalizeS3MediaUrl(url);
+
+    expect(result).toBe(url);
+  });
+
+  it('should remove region from develop-flows URLs', () => {
+    const url =
+      'https://weni-develop-flows.s3.us-east-1.amazonaws.com/image/photo.jpg';
+    const result = normalizeS3MediaUrl(url);
+
+    expect(result).toBe(
+      'https://weni-develop-flows.s3.amazonaws.com/image/photo.jpg',
+    );
+  });
+
+  it('should return the original URL when no S3 mapping applies', () => {
+    const url = 'https://example.com/media/audio.ogg';
+    const result = normalizeS3MediaUrl(url);
+
+    expect(result).toBe(url);
   });
 });
