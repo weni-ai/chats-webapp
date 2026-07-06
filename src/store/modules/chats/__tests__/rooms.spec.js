@@ -863,6 +863,64 @@ describe('State Rooms', () => {
       expect(roomsStore.maxPinLimit).toBe(5);
     });
 
+    it('keeps pinned rooms at the top of rooms after paginated concat without duplicates', async () => {
+      const pinnedRoom = ongoingRoom({
+        uuid: 'pinned',
+        is_pinned: true,
+        last_interaction: '2023-01-01T00:00:00Z',
+      });
+      const pageOneRoom = ongoingRoom({
+        uuid: 'page-one',
+        last_interaction: '2024-05-01T00:00:00Z',
+      });
+
+      Room.getAll.mockResolvedValueOnce({
+        results: [pageOneRoom],
+        pinned_rooms: [pinnedRoom],
+        next: true,
+        count: 3,
+      });
+
+      await roomsStore.getAll({
+        offset: 0,
+        limit: 30,
+        roomsType: 'ongoing',
+      });
+
+      const pageTwoRoom = ongoingRoom({
+        uuid: 'page-two',
+        last_interaction: '2024-06-01T00:00:00Z',
+      });
+      const updatedPinnedRoom = {
+        ...pinnedRoom,
+        last_interaction: '2024-06-02T00:00:00Z',
+      };
+
+      Room.getAll.mockResolvedValueOnce({
+        results: [pageTwoRoom],
+        pinned_rooms: [updatedPinnedRoom],
+        next: false,
+        count: 3,
+      });
+
+      await roomsStore.getAll({
+        offset: 30,
+        limit: 30,
+        roomsType: 'ongoing',
+        concat: true,
+      });
+
+      expect(roomsStore.rooms[0].uuid).toBe('pinned');
+      expect(roomsStore.rooms[0].last_interaction).toBe('2024-06-02T00:00:00Z');
+      expect(
+        roomsStore.rooms.filter((room) => room.uuid === 'pinned'),
+      ).toHaveLength(1);
+      expect(roomsStore.agentRooms[0].uuid).toBe('pinned');
+      expect(roomsStore.agentRooms.map((room) => room.uuid)).toEqual(
+        expect.arrayContaining(['pinned', 'page-one', 'page-two']),
+      );
+    });
+
     it('does not throw and keeps existing rooms when pinned_rooms is missing or empty', async () => {
       const existingRoom = ongoingRoom({ uuid: 'existing', is_pinned: false });
       roomsStore.rooms = [existingRoom];
