@@ -48,7 +48,7 @@ vi.mock('../Actions/index.vue', () => ({
       <button data-testid="improvement-cancelled-btn" @click="$emit('improvementCancelled')" />
     </div>`,
     emits: [
-      'startAudioRecording',
+      'toggleAudioRecording',
       'openUploadFiles',
       'focusInput',
       'send',
