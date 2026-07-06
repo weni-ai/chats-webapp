@@ -101,7 +101,7 @@ describe('ModalAddNewContact', () => {
       expect.objectContaining({
         props: {
           text: wrapper.vm.$t('flows_trigger.contact_already_exists', {
-            contact: ['5511912345678'],
+            contact: '5511912345678',
           }),
           type: 'error',
         },

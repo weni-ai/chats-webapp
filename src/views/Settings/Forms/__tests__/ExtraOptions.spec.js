@@ -121,7 +121,7 @@ describe('SectorExtraOptions', () => {
   let wrapper;
 
   beforeEach(async () => {
-    i18n.global.locale = 'en';
+    i18n.global.locale.value = 'en';
     wrapper = createWrapper();
     await flushPromises();
   });

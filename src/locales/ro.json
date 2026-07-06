@@ -130,10 +130,10 @@
   "dashboard": {
     "view-mode": {
       "assume_chat_question": "Preiei chatul cu {contact}?",
-      "assume_chat_question_description": "Sigur dorești să preiei chatul cu {contact}?<br><br>Dacă confirmi, vei elimina chatul de la reprezentantul actual și vei fi responsabil pentru acesta."
+      "assume_chat_question_description": "Sigur dorești să preiei chatul cu {contact}?<br /><br />Dacă confirmi, vei elimina chatul de la reprezentantul actual și vei fi responsabil pentru acesta."
     }
   },
-  "unread_messages": "{count} mesaj necitit | {count} mesaje necitite",
+  "unread_messages": "{count, plural, one {{count} mesaj necitit} other {{count} mesaje necitite}}",
   "representative": "Reprezentant",
   "ai_text_improvement": {
     "tooltip_disabled": "Scrie un răspuns în câmpul de text pentru a activa răspunsuri îmbunătățite cu AI",
@@ -171,7 +171,7 @@
       "confirmation_helper": "Asigură-te că fiecare câmp este mapat corect. Mesajul tău va fi personalizat pentru fiecare contact selectat pe baza acestor mapări.",
       "confirmation_checkbox": "Am verificat și sunt gata să o trimit",
       "next_template": "Template următor",
-      "send_templates": "Trimite ({count} template) | Trimite ({count} template-uri)",
+      "send_templates": "{count, plural, one {Trimite ({count} template)} other {Trimite ({count} template-uri)}}",
       "local_variables": {
         "contact_name": "Nume contact",
         "contact_urn": "Telefon de contact",

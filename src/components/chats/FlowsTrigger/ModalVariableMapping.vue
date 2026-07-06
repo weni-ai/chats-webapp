@@ -211,7 +211,7 @@ const isLastStep = computed(
 );
 
 const ordinalLabel = computed(() =>
-  formatOrdinal(currentIndex.value + 1, i18n.global.locale as string),
+  formatOrdinal(currentIndex.value + 1, i18n.global.locale.value as string),
 );
 
 const tagText = computed(() =>
@@ -234,11 +234,9 @@ const previewTitleLabel = computed(() =>
 );
 
 const sendLabel = computed(() =>
-  i18n.global.tc(
-    'flows_trigger.variable_mapping.send_templates',
-    totalQty.value,
-    { count: totalQty.value },
-  ),
+  i18n.global.t('flows_trigger.variable_mapping.send_templates', {
+    count: totalQty.value,
+  }),
 );
 
 const areCurrentVariablesFilled = computed(() =>
