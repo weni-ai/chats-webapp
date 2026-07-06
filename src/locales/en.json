@@ -135,7 +135,7 @@
     "description": "Drop your file here to send"
   },
   "waiting_for": {
-    "minutes": "{n, plural, one {1 minute waiting} other {{n} minutes waiting}}"
+    "minutes": "{count, plural, one {1 minute waiting} other {{count} minutes waiting}}"
   },
   "chat_message": {
     "reply_message": {
@@ -168,7 +168,7 @@
     "inactive_close_message": "Closing message"
   },
   "inactive": "Inactive",
-  "inactive_room_tooltip": "The conversation has reached the {minutes}-minute inactivity limit. | The conversation has reached the {minutes}-minutes inactivity limit.",
+  "inactive_room_tooltip": "{minutes, plural, one {The conversation has reached the {minutes}-minute inactivity limit.} other {The conversation has reached the {minutes}-minutes inactivity limit.}}",
   "reply": "Reply",
   "step_of": "Step {step} of {total}",
   "type_to_filter": "Type to filter",
@@ -592,7 +592,7 @@
       "close": "End visualization",
       "assume_chat": "Take over only this chat",
       "assume_chat_question": "Take over chat with {contact}?",
-      "assume_chat_question_description": "Are you sure you want to take over chat with {contact}?<br><br>If you confirm, you will remove the chat from the current representative and you will be responsible for it."
+      "assume_chat_question_description": "Are you sure you want to take over chat with {contact}?<br /><br />If you confirm, you will remove the chat from the current representative and you will be responsible for it."
     }
   },
   "select": "Select",
@@ -656,7 +656,7 @@
   },
   "pagination": "{from} - {to} of {total}",
   "contact": "Contact",
-  "unread_messages": "{count} unread message | {count} unread messages",
+  "unread_messages": "{count, plural, one {{count} unread message} other {{count} unread messages}}",
   "automatically_ended": "Automatically ended",
   "unnamed_contact": "Unnamed contact",
   "unnamed_agent": "Unnamed agent",
@@ -953,7 +953,7 @@
       "confirmation_helper": "Make sure each field is correctly mapped. Your message will be customized for each selected contact based on these mappings.",
       "confirmation_checkbox": "I've checked it and I'm ready to send it",
       "next_template": "Next template",
-      "send_templates": "Send ({count} template) | Send ({count} templates)",
+      "send_templates": "{count, plural, one {Send ({count} template)} other {Send ({count} templates)}}",
       "local_variables": {
         "contact_name": "Contact name",
         "contact_urn": "Contact phone",

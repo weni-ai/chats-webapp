@@ -98,10 +98,10 @@ describe('icuMessageCompiler plural messages', () => {
   });
 
   it('formats plural with named variable n', () => {
-    expect(compileMessage(en.waiting_for.minutes, { n: 1 })).toBe(
+    expect(compileMessage(en.waiting_for.minutes, { count: 1 })).toBe(
       '1 minute waiting',
     );
-    expect(compileMessage(en.waiting_for.minutes, { n: 5 })).toBe(
+    expect(compileMessage(en.waiting_for.minutes, { count: 5 })).toBe(
       '5 minutes waiting',
     );
   });
@@ -113,6 +113,37 @@ describe('icuMessageCompiler plural messages', () => {
     expect(compileMessage(en.transfer_contact, { count: 4 })).toBe(
       'Transfer contacts',
     );
+  });
+
+  it('formats unread_messages singular and plural labels', () => {
+    expect(compileMessage(en.unread_messages, { count: 1 })).toBe(
+      '1 unread message',
+    );
+    expect(compileMessage(en.unread_messages, { count: 5 })).toBe(
+      '5 unread messages',
+    );
+  });
+
+  it('formats inactive_room_tooltip singular and plural labels', () => {
+    expect(compileMessage(en.inactive_room_tooltip, { minutes: 1 })).toBe(
+      'The conversation has reached the 1-minute inactivity limit.',
+    );
+    expect(compileMessage(en.inactive_room_tooltip, { minutes: 30 })).toBe(
+      'The conversation has reached the 30-minutes inactivity limit.',
+    );
+  });
+
+  it('formats send_templates singular and plural labels', () => {
+    expect(
+      compileMessage(en.flows_trigger.variable_mapping.send_templates, {
+        count: 1,
+      }),
+    ).toBe('Send (1 template)');
+    expect(
+      compileMessage(en.flows_trigger.variable_mapping.send_templates, {
+        count: 3,
+      }),
+    ).toBe('Send (3 templates)');
   });
 });
 

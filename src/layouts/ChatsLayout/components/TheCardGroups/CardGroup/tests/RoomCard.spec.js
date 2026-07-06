@@ -85,8 +85,9 @@ describe('RoomCard.vue', () => {
         mocks: {
           $t: (key, arg) => {
             if (key === 'waiting_for.minutes') {
-              const n = typeof arg === 'number' ? arg : arg?.n;
-              return `${n} minute waiting`;
+              const count =
+                typeof arg === 'number' ? arg : (arg?.count ?? arg?.n);
+              return `${count} minute waiting`;
             }
             return key;
           },

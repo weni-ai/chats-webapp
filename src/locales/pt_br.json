@@ -135,7 +135,7 @@
     "description": "Solte aqui seu arquivo para enviar"
   },
   "waiting_for": {
-    "minutes": "{n, plural, one {Aguardando há 1 minuto} other {Aguardando há {n} minutos}}"
+    "minutes": "{count, plural, one {Aguardando há 1 minuto} other {Aguardando há {count} minutos}}"
   },
   "chat_message": {
     "reply_message": {
@@ -168,7 +168,7 @@
     "inactive_close_message": "Mensagem de encerramento"
   },
   "inactive": "Inativo",
-  "inactive_room_tooltip": "A conversa atingiu o limite de inatividade de {minutes} minuto. | A conversa atingiu o limite de inatividade de {minutes} minutos.",
+  "inactive_room_tooltip": "{minutes, plural, one {A conversa atingiu o limite de inatividade de {minutes} minuto.} other {A conversa atingiu o limite de inatividade de {minutes} minutos.}}",
   "reply": "Responder",
   "step_of": "Etapa {step} de {total}",
   "type_to_filter": "Digite para filtrar",
@@ -595,7 +595,7 @@
       "close": "Encerrar visualização",
       "assume_chat": "Assumir apenas este chat",
       "assume_chat_question": "Assumir o chat com {contact}?",
-      "assume_chat_question_description": "Tem certeza de que deseja assumir o chat com {contact}?<br><br>Ao confirmar, você removerá o chat do atendente atual e será responsável pelo chat."
+      "assume_chat_question_description": "Tem certeza de que deseja assumir o chat com {contact}?<br /><br />Ao confirmar, você removerá o chat do atendente atual e será responsável pelo chat."
     }
   },
   "select": "Selecionar",
@@ -659,7 +659,7 @@
   },
   "pagination": "{from} - {to} de {total}",
   "contact": "Contato",
-  "unread_messages": "{count} mensagem não lida | {count} mensagens não lidas",
+  "unread_messages": "{count, plural, one {{count} mensagem não lida} other {{count} mensagens não lidas}}",
   "automatically_ended": "Encerrado automaticamente",
   "unnamed_contact": "Contato sem nome",
   "unnamed_agent": "Atendente sem nome",
@@ -958,7 +958,7 @@
       "confirmation_helper": "Verifique se todos os campos estão mapeados corretamente. Sua mensagem será personalizada para cada contato selecionado com base nesses mapeamentos.",
       "confirmation_checkbox": "Verifiquei e quero enviar",
       "next_template": "Próximo template",
-      "send_templates": "Enviar ({count} template) | Enviar ({count} templates)",
+      "send_templates": "{count, plural, one {Enviar ({count} template)} other {Enviar ({count} templates)}}",
       "local_variables": {
         "contact_name": "Nome do contato",
         "contact_urn": "Telefone do contato",
