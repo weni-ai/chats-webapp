@@ -218,6 +218,10 @@ export const useRooms = defineStore('rooms', {
 
         this.pinnedRooms = newPinnedRooms;
 
+        if (concat) {
+          gettedRooms = gettedRooms.concat(this.rooms);
+        }
+
         const pinnedRoomsMarked = newPinnedRooms.map((room) => ({
           ...room,
           is_pinned: true,
@@ -227,9 +231,7 @@ export const useRooms = defineStore('rooms', {
           ...pinnedRoomsMarked,
           ...gettedRooms.filter((room) => !newPinnedUuids.has(room.uuid)),
         ];
-      }
-
-      if (concat) {
+      } else if (concat) {
         gettedRooms = gettedRooms.concat(this.rooms);
       }
 
