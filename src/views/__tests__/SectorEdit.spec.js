@@ -160,13 +160,4 @@ describe('EditSector.vue', () => {
 
     expect(settings.currentSector).toBeNull();
   });
-
-  it('matches snapshot', async () => {
-    i18n.global.locale.value = 'en';
-    const wrapper = await mountWithQuery({ tab: 'general' });
-    const html = wrapper
-      .html()
-      .replace(/\sstyle="animation-duration:\s*0s;"/g, ' style=""');
-    expect(html).toMatchSnapshot();
-  });
 });

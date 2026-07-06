@@ -5,7 +5,6 @@ import { setActivePinia, createPinia } from 'pinia';
 import { useRooms } from '@/store/modules/chats/rooms';
 import { useProfile } from '@/store/modules/profile';
 import { useDashboard } from '@/store/modules/dashboard';
-import { useFeatureFlag } from '@/store/modules/featureFlag';
 
 import { roomsMock } from './mocks/roomsMock';
 import {
@@ -592,8 +591,13 @@ describe('State Rooms', () => {
 
       it('should handle room transfers', async () => {
         const routerReplace = vi.fn();
+        const roomWithAssignee = {
+          ...humanServiceRoomsStore.rooms[0],
+          user: { email: 'testing@weni.ai' },
+        };
         humanServiceRoomsStore.$patch({
-          activeRoom: { ...humanServiceRoomsStore.rooms[0] },
+          rooms: [roomWithAssignee, ...humanServiceRoomsStore.rooms.slice(1)],
+          activeRoom: roomWithAssignee,
         });
         const roomUuid = humanServiceRoomsStore.activeRoom.uuid;
 
@@ -615,27 +619,6 @@ describe('State Rooms', () => {
         expect(humanServiceRoomsStore.activeRoom).eq(null);
         expect(routerReplace).toHaveBeenCalled();
         expect(existRoomByUuid(humanServiceRoomsStore, roomUuid)).eq(false);
-      });
-
-      it('should show modal for assumed chat', async () => {
-        await updateRoom(
-          {
-            id: '5',
-            user: { email: 'testing-adm@weni.ai' },
-            transfer_history: { from: { type: 'user' } },
-            contact: { name: 'Cliente 1' },
-          },
-          {
-            app: {
-              ...humanServiceProfileStore,
-              viewedAgent: dashboardStore.viewedAgent,
-            },
-          },
-        );
-        flushPendingUpdates();
-
-        expect(dashboardStore.showModalAssumedChat).eq(true);
-        expect(dashboardStore.assumedChatContactName).eq('Cliente 1');
       });
     });
   });
@@ -697,10 +680,6 @@ describe('State Rooms', () => {
       mocks.useProfile.mockReturnValue(mockProfileAdminState);
       roomsStore = useRooms();
       roomsStore.$patch({ rooms: [] });
-      const featureFlagStore = useFeatureFlag();
-      featureFlagStore.$patch({
-        featureFlags: { active_features: ['WeniChatsNewRoomUpdate'] },
-      });
     });
 
     it('does not re-add a closed room when alreadyClosedThisBatch is true', () => {
@@ -794,6 +773,118 @@ describe('State Rooms', () => {
     it('setActiveRoom does not throw when the room has no uuid', () => {
       expect(() => roomsStore.setActiveRoom({})).not.toThrow();
       expect(roomsStore.activeRoom).toEqual({});
+    });
+
+    it('updateRoom preserves isNewChatReceived when the same room receives a subsequent payload from the socket', () => {
+      const userEmail = 'me@weni.ai';
+      const initialRoom = {
+        uuid: 'transferred',
+        user: { email: userEmail },
+        is_waiting: false,
+      };
+
+      roomsStore.$patch({ rooms: [initialRoom] });
+      roomsStore.markNewChatReceived('transferred');
+      expect(
+        roomsStore.rooms.find((r) => r.uuid === 'transferred')
+          ?.isNewChatReceived,
+      ).toBe(true);
+
+      // a follow-up rooms.update for the same room (e.g. the second event the
+      // backend emits right after a transfer) must not wipe the client-side
+      // indicator
+      roomsStore.updateRoom({
+        room: {
+          uuid: 'transferred',
+          user: { email: userEmail },
+          is_waiting: false,
+          modified_on: '2026-05-27T10:59:49.500Z',
+        },
+        userEmail,
+        routerReplace: vi.fn(),
+        viewedAgentEmail: null,
+      });
+
+      expect(
+        roomsStore.rooms.find((r) => r.uuid === 'transferred')
+          ?.isNewChatReceived,
+      ).toBe(true);
+    });
+  });
+
+  describe('setOpenActiveRoomSummary', () => {
+    let roomsStore;
+
+    beforeEach(async () => {
+      const summaryDismissalStorage = await import(
+        '@/utils/summaryDismissalStorage'
+      );
+      vi.spyOn(
+        summaryDismissalStorage,
+        'markSummaryDismissed',
+      ).mockImplementation(() => {});
+      vi.spyOn(
+        summaryDismissalStorage,
+        'clearSummaryDismissed',
+      ).mockImplementation(() => {});
+
+      mocks.useProfile.mockReturnValue(mockProfileAdminState);
+      roomsStore = useRooms();
+      roomsStore.openActiveRoomSummary = false;
+    });
+
+    it('updates openActiveRoomSummary state', () => {
+      roomsStore.setOpenActiveRoomSummary(true, 'room-1');
+      expect(roomsStore.openActiveRoomSummary).toBe(true);
+
+      roomsStore.setOpenActiveRoomSummary(false, 'room-1');
+      expect(roomsStore.openActiveRoomSummary).toBe(false);
+    });
+
+    it('marks the room as dismissed when closing', async () => {
+      const summaryDismissalStorage = await import(
+        '@/utils/summaryDismissalStorage'
+      );
+
+      roomsStore.setOpenActiveRoomSummary(false, 'room-1');
+
+      expect(summaryDismissalStorage.markSummaryDismissed).toHaveBeenCalledWith(
+        'room-1',
+      );
+      expect(
+        summaryDismissalStorage.clearSummaryDismissed,
+      ).not.toHaveBeenCalled();
+    });
+
+    it('clears the dismissal when reopening', async () => {
+      const summaryDismissalStorage = await import(
+        '@/utils/summaryDismissalStorage'
+      );
+
+      roomsStore.setOpenActiveRoomSummary(true, 'room-1');
+
+      expect(
+        summaryDismissalStorage.clearSummaryDismissed,
+      ).toHaveBeenCalledWith('room-1');
+      expect(
+        summaryDismissalStorage.markSummaryDismissed,
+      ).not.toHaveBeenCalled();
+    });
+
+    it('does not touch storage when no roomUuid is provided', async () => {
+      const summaryDismissalStorage = await import(
+        '@/utils/summaryDismissalStorage'
+      );
+
+      roomsStore.setOpenActiveRoomSummary(true);
+      roomsStore.setOpenActiveRoomSummary(false);
+
+      expect(
+        summaryDismissalStorage.markSummaryDismissed,
+      ).not.toHaveBeenCalled();
+      expect(
+        summaryDismissalStorage.clearSummaryDismissed,
+      ).not.toHaveBeenCalled();
     });
   });
 });

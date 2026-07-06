@@ -66,9 +66,9 @@
       "not_now": "Not now",
       "switch": "Switch to dark mode"
     },
-    "description_1": "Work with greater comfort and focus throughout the day. Dark mode reduces eye strain, lowers screen brightness, and makes conversations easier to read — ideal for long support shifts and low-light environments.",
-    "description_2": "With less visual fatigue, you gain clarity and speed when responding to customers, maintaining high-quality support even during peak times.",
-    "tagline": "Switch to dark mode in this module and experience a new way to work!",
+    "description_1": "Work with greater comfort and focus throughout the day. Dark mode reduces eye strain and screen brightness, making conversations easier to read. It's ideal if you're on a long support shift or working in a low-light space.",
+    "description_2": "With less eye strain, you gain clarity and speed when responding to customers, maintaining high-quality support even during peak times.",
+    "tagline": "Switch to dark mode in this module and discover a new way to work",
     "title": "Dark mode is here",
     "toast": {
       "error": {
@@ -148,10 +148,12 @@
   "start": "Start",
   "submit": "Submit",
   "details": "Details",
+  "discussion_about": "Discussion about {discussionGoal}",
   "doubts": "Doubts",
   "finance": "Finance",
   "chats_in_the_period": "Chats in the period",
   "chats_per_agents": "Chats per agent",
+  "you_message_prefix": "You:",
   "new_messages_song": {
     "queue": "Sound for new messages from contacts waiting in the queue",
     "in_progress": "Sound for new messages in ongoing chats",
@@ -160,8 +162,14 @@
   "automatic_message": {
     "title": "Automatic message",
     "info": "Define an automatic response to be sent to the contact while they are waiting for assistance, leave it blank if you don’t want any message.",
-    "placeholder": "You haven't set an automatic message yet. Please define a message for your contacts who are waiting."
+    "placeholder": "You haven't set an automatic message yet. Please define a message for your contacts who are waiting.",
+    "automatic_opening_message": "Automatic Opening Message",
+    "inactive_warning_message": "Warning message",
+    "inactive_close_message": "Closing message"
   },
+  "inactive": "Inactive",
+  "inactive_room_tooltip": "The conversation has reached the {minutes}-minute inactivity limit. | The conversation has reached the {minutes}-minutes inactivity limit.",
+  "reply": "Reply",
   "step_of": "Step {step} of {total}",
   "type_to_filter": "Type to filter",
   "chats_count": "{count, plural, one {{count} chat} other {{count} chats}}",
@@ -190,6 +198,18 @@
   "end_all_selected_chats_tooltip": "End all selected chats",
   "number_of_chats_selected": "{count, plural, one {{count} chat selected} other {{count} chats selected}}",
   "image": "Image",
+  "image_preview": {
+    "count": "Image {current} of {total}",
+    "tooltip": {
+      "close": "Close image (esc)",
+      "previous": "Previous",
+      "next": "Next",
+      "rotate": "Rotate 90°",
+      "zoom_in": "Zoom in",
+      "zoom_out": "Zoom out",
+      "export": "Export"
+    }
+  },
   "video": "Video",
   "audio_message": "Audio message",
   "audio_recorder": {
@@ -197,6 +217,7 @@
   },
   "attachment": "Attach",
   "internal_note": "Internal note",
+  "internal_note_with_attachment_tooltip": "Internal note with attachment",
   "close_internal_note": "Close internal note (Esc)",
   "notes": "Notes",
   "bold": "Bold",
@@ -282,6 +303,30 @@
     },
     "additional_options": {
       "title": "Extra options",
+      "inactivity_timeout": {
+        "title": "Inactivity in conversation",
+        "show": {
+          "switch_label": "Show inactivity alert to the representative and notify the contact",
+          "hint": "The alert is shown only for ongoing chats and considers the time since the representative's last message.",
+          "field": {
+            "timeout_time_label": "Define after how many minutes without a response from the contact the system should send the warning message",
+            "timeout_time_tooltip": "At this moment, the representative will also see the chat marked with an inactivity alert.",
+            "warning_message_label": "Warning message",
+            "warning_message_tooltip": "The message will appear as if sent by the assigned representative.",
+            "default_warning_message": "Are you still there? If there's no response, this session will be closed soon."
+          }
+        },
+        "close_room": {
+          "switch_label": "Automatically end inactive chats",
+          "hint": "Chats are automatically ended if the contact does not send any messages within the period after the alert is sent.",
+          "field": {
+            "close_room_time_label": "Define how many minutes after sending the warning message the system should end the chat",
+            "close_room_message_label": "Closing message",
+            "close_room_message_tooltip": "The message will appear as if sent by the assigned representative.",
+            "default_close_room_message": "This session has ended due to inactivity. Feel free to start a new chat anytime!"
+          }
+        }
+      },
       "template_message": {
         "switch_label": "Triggering message templates"
       },
@@ -298,19 +343,21 @@
           "flow_disclaimer": "The selected flow must use a 1 to 5 satisfaction rating to ensure correct survey results."
         },
         "hint": "If there is an active flow in the Flows module set to trigger a survey after support ends, this setting may cause conflicts and affect survey delivery.",
-        "label": "Automatically send a satisfaction survey after Live desk support ends",
+        "label": "Automatically send a satisfaction survey after Live Desk support ends",
         "section_title": "Satisfaction survey",
         "type": {
           "custom": "Custom flows",
-          "default": "Default CSAT survey (Recommended)",
+          "default": "Default CSAT survey (recommended)",
           "label": "Survey type",
-          "tooltip": "Choose between the default CSAT survey or a custom flow you've already configured in the Flows module."
+          "tooltip": "Choose between the default CSAT survey and a custom flow already configured in the Flows module."
         }
       },
       "automated_message": {
         "title": "Automated messages",
-        "switch_label": "Send automatic message when support starts",
-        "hint": "Automatically send a message when a chat is assigned to an representative. The message will appear as if sent by the assigned representative.",
+        "switch_when_waiting_label": "Send automatic message to waiting contacts",
+        "switch_when_start_label": "Send automatic message when support starts",
+        "hint_when_waiting": "Automatically send a message to contacts while they wait for human support in the queue.",
+        "hint_when_start": "Automatically send a message when a chat is assigned to a representative. The message will appear as if sent by the assigned representative.",
         "field": {
           "title": "Automatic message",
           "placeholder": "Example: Hello! How can I help you today?"
@@ -334,6 +381,16 @@
   "export": {
     "metrics": "Export metrics as {filetype}",
     "all": "Export everything as {filetype}"
+  },
+  "export_conversation": {
+    "button": "Export conversation",
+    "title": "Export conversation",
+    "select_format": "Select the format to export the conversation",
+    "disclaimer": "New exports will be temporarily blocked for this conversation while this export is being processed",
+    "accept_terms": "I accept the terms and understand the export limitations.",
+    "success_title": "Export in progress",
+    "success_description": "You will receive the file by email shortly. Remember to check your spam folder.",
+    "error": "The export couldn't be processed. Try again."
   },
   "name": "Name",
   "addition_date": "Date of addition",
@@ -369,6 +426,10 @@
           "input_placeholder": "Enter your feedback here"
         }
       }
+    },
+    "audio_download": {
+      "tooltip": "Export",
+      "error": "Audio couldn't be exported due to a technical issue"
     },
     "search_messages": {
       "title": "Search in conversation",
@@ -422,7 +483,8 @@
       "transfer_to_agent": "{agent1} transferred the chat to {agent2}",
       "transfer_to_agent_by_other": "{requestedBy} transferred {agent1}'s chat to {agent2}",
       "transfer_to_queue": "{agent} transferred the chat to queue {queue}",
-      "transfer_to_queue_by_other": "{requestedBy} transferred {agent}'s chat to queue {queue}"
+      "transfer_to_queue_by_other": "{requestedBy} transferred {agent}'s chat to queue {queue}",
+      "automatic_close_room": "Automatically ended due to lack of interaction from the contact"
     },
     "room_list": {
       "order_by": "Order by:",
@@ -452,6 +514,13 @@
       "default": "An error occurred, please try again later"
     },
     "message_input_placeholder": "Type your message or / to activate quick messages",
+    "message_input_disabled_description": "Change your status to online to continue this conversation",
+    "message_input_floating_actions": {
+      "copy": "Copy typed content",
+      "copy_alert_success": "Content copied!",
+      "clear": "Clear typed content",
+      "clear_alert_success": "Typed content removed!"
+    },
     "search_contact": "Search contact",
     "search_contact_placeholder": "Search contact (name, phone or ticket ID)",
     "tags": "Chat tags",
@@ -479,8 +548,22 @@
     "get_chat_confirmation": "Confirm if you want to do the service of {contact}",
     "get_chat_error": "Error when trying to get the room",
     "you_got_chat": "You got the chat",
-    "your_chat_assumed": "Chat with {contact} has been transferred",
-    "your_chat_assumed_description": "Your chat with {contact} has been taken over by another agent",
+    "chat_take_over": {
+      "by_another_representative": {
+        "title": "Chat taken over by another representative",
+        "description": "Your chat with {contact} has been taken over by {representative}"
+      },
+      "transfer_to_another_representative": {
+        "title": "Chat transferred to another representative",
+        "description": "Your chat with {contact} was transferred by a moderator to {representative}"
+      },
+      "transfer_to_queue": {
+        "title": "Chat transferred to queue",
+        "description": "Your chat with {contact} was transferred by a moderator to the {queue} queue"
+      }
+    },
+    "your_chat_assumed": "Chat taken over by another representative",
+    "your_chat_assumed_description": "Your chat with {contact} has been taken over by {representative}",
     "closed_chats": {
       "contact_history": "Contact history",
       "general_history": "General history",
@@ -508,8 +591,8 @@
       "title": "Agent {viewedAgent} live view mode",
       "close": "End visualization",
       "assume_chat": "Take over only this chat",
-      "assume_chat_question": "Take Chat?",
-      "assume_chat_confirmation": "When confirming you will remove the Chat from agent {viewedAgent} and will be responsible for Chat"
+      "assume_chat_question": "Take over chat with {contact}?",
+      "assume_chat_question_description": "Are you sure you want to take over chat with {contact}?<br><br>If you confirm, you will remove the chat from the current representative and you will be responsible for it."
     }
   },
   "select": "Select",
@@ -573,12 +656,15 @@
   },
   "pagination": "{from} - {to} of {total}",
   "contact": "Contact",
+  "unread_messages": "{count} unread message | {count} unread messages",
+  "automatically_ended": "Automatically ended",
   "unnamed_contact": "Unnamed contact",
   "unnamed_agent": "Unnamed agent",
   "no_agent_assigned": "No agent assigned",
   "no_tags_assigned": "No tags assigned",
   "contact_await_for_you": "A contact is waiting for you!",
   "agent": "Agent",
+  "representative": "Representative",
   "ai_text_improvement": {
     "tooltip_disabled": "Write a response in the text field to enable improved responses with AI",
     "tooltip_enabled": "Improve response with AI",
@@ -594,6 +680,7 @@
     "back_to_original_tooltip": "Go back to original version (Ctrl+Z)"
   },
   "manager": "Manager",
+  "yesterday": "Yesterday",
   "you": "You",
   "queue": "Queue",
   "agents": {
@@ -705,7 +792,10 @@
     "transfering_chat": "Transferring the chat 📬",
     "ticket": "Ticket ID",
     "copy_protocol": "Click to copy the Ticket ID",
-    "protocol_copied": "Ticket ID copied to clipboard!"
+    "protocol_copied": "Ticket ID copied to clipboard!",
+    "copy_value": "Copy value",
+    "value_copied": "Value copied!",
+    "error_copying_value": "Unable to copy the value. Please try again."
   },
   "discussions": {
     "title": "{count, plural, one {Discussion} other {Discussions}}",
@@ -808,6 +898,7 @@
   },
   "select_agent": "Select agent",
   "select_queue": "Select queue",
+  "select_representative": "Select a representative",
   "select_sector": "Select sector",
   "send_media": "Send media",
   "send_photo_or_video": "Send photo or video",
@@ -850,14 +941,19 @@
     "contact_already_exists": "The number {contact} is already saved in your contact list",
     "variable_mapping": {
       "title": "Variable mapping",
-      "description": "Variables will be populated in the preview below using values from the selected contacts whenever they reference contact fields",
+      "title_tag": "Template {current} of {total}",
+      "description": "Variables that reference contact fields will display values from the selected contacts in the preview below",
       "define_variables": "Define the variables",
+      "define_variables_ordinal": "Define the variables of the {ordinal} template",
       "variable_label": "Variable {name}",
-      "input_placeholder": "Type the value for this variable",
+      "input_placeholder": "Enter the value for this variable",
       "preview_title": "Template preview",
+      "preview_title_ordinal": "Preview of the {ordinal} template",
       "preview_variable_tooltip": "Variable {placeholder}",
-      "confirmation_helper": "Check if each field is correctly mapped, this is how your message will look to each selected contact",
+      "confirmation_helper": "Make sure each field is correctly mapped. Your message will be customized for each selected contact based on these mappings.",
       "confirmation_checkbox": "I've checked it and I'm ready to send it",
+      "next_template": "Next template",
+      "send_templates": "Send ({count} template) | Send ({count} templates)",
       "local_variables": {
         "contact_name": "Contact name",
         "contact_urn": "Contact phone",
@@ -989,6 +1085,10 @@
           "description": "Turning off this option will permanently delete the scenarios and criteria prompt. You'll need to set it up again if you turn it back on.",
           "confirmation": "Do you want to continue anyway?"
         }
+      },
+      "restrict_offline_agents": {
+        "switch_label": "Allow interactions only for online representatives",
+        "hint": "If this option is enabled, representatives that are offline or on break won't be able to respond to chats in progress"
       },
       "bulk_transfer": {
         "tooltip": "This function allows representatives to transfer various contacts at once to a queue or representative",
@@ -1336,22 +1436,22 @@
   },
   "delete_modal": {
     "title": "Delete {name}",
-    "description_sector": "The system has detected {count} chats in the {name} sector that are in progress or waiting to be handled. Please choose what you'd like to do with them",
-    "description_queue": "The system has detected {count} chats in the {name} queue that are in progress or waiting to be handled. Please choose what you'd like to do with them",
-    "transfer_chats": "Transfer chats to another sector/queue",
-    "end_all_chats": "End all chats",
-    "select_sector": "Select a sector",
+    "description_sector": "The system has detected {count} conversations in the {name} department that are in progress or awaiting handling. Choose what you'd like to do with them.",
+    "description_queue": "The system has detected {count} conversations in the {name} queue that are in progress or awaiting handling. Choose what you'd like to do with them.",
+    "transfer_chats": "Transfer conversations to another department/queue",
+    "end_all_chats": "End all conversations",
+    "select_sector": "Select a department",
     "select_queue": "Select a queue",
-    "type_name_sector": "Type the name of the sector to delete",
-    "type_name_queue": "Type the name of the queue to delete",
-    "cannot_be_reversed": "This action cannot be reversed.",
+    "type_name_sector": "Type the name of the department to be deleted",
+    "type_name_queue": "Type the name of the queue to de deleted",
+    "cannot_be_reversed": "This action can't be undone",
     "delete_button": "Delete",
-    "sector_success": "Sector deleted successfully!",
-    "sector_error": "Unable to delete the sector.",
-    "queue_success": "Queue deleted successfully!",
-    "queue_error": "Unable to delete the queue.",
-    "transfer_error_sector": "Rooms couldn't be transferred. Sector deletion aborted",
-    "transfer_error_queue": "Rooms couldn't be transferred. Queue deletion aborted"
+    "sector_success": "Department deleted successfully",
+    "sector_error": "Couldn't delete department",
+    "queue_success": "Queue deleted successfully",
+    "queue_error": "Couldn't delete queue",
+    "transfer_error_sector": "Couldn't transfer conversations. Department deletion canceled.",
+    "transfer_error_queue": "Couldn't transfer conversations. Queue deletion canceled."
   },
   "room_card": {
     "last_message": {

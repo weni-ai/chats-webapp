@@ -34,7 +34,7 @@
       class="discussion-container"
       data-testid="discussion-container"
     >
-      <UnnnicChatsContact
+      <ChatContact
         v-for="(discussion, index) in discussions"
         :key="discussion.uuid"
         :class="{
@@ -77,15 +77,17 @@ import { mapActions, mapState } from 'pinia';
 import { useRooms } from '@/store/modules/chats/rooms';
 import { useDiscussions } from '@/store/modules/chats/discussions';
 import { useRoomMessages } from '@/store/modules/chats/roomMessages';
-
-import RoomCard from './RoomCard.vue';
 import { useDashboard } from '@/store/modules/dashboard';
+
+import ChatContact from '@/components/chats/ChatContact.vue';
+import RoomCard from './RoomCard.vue';
 
 export default {
   name: 'CardGroup',
 
   components: {
     RoomCard,
+    ChatContact,
   },
 
   props: {

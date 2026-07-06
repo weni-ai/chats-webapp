@@ -1,11 +1,22 @@
 <template>
   <section class="message-manager-v2">
-    <MessageManagerLoading v-if="isLoading" />
-    <MessageManagerTextBox
-      v-else
-      ref="messageManagerTextBox"
-      @keydown="onKeyDown"
+    <UnnnicDisclaimer
+      v-if="!isLoading && isDisabledInput"
+      class="message-manager-v2__disabled-input"
+      :description="$t('chats.message_input_disabled_description')"
+      type="informational"
     />
+    <MessageManagerLoading v-if="isLoading" />
+    <section
+      v-else
+      class="message-manager-v2__input-area"
+    >
+      <FloatingActions :visible="showFloatingActions" />
+      <MessageManagerTextBox
+        ref="messageManagerTextBox"
+        @keydown="onKeyDown"
+      />
+    </section>
     <SuggestionBox
       v-if="!activeDiscussion?.uuid"
       :search="inputMessage"
@@ -24,11 +35,12 @@
 </template>
 
 <script setup lang="ts">
-import { nextTick, onMounted, ref, useTemplateRef, watch } from 'vue';
+import { computed, nextTick, onMounted, ref, useTemplateRef, watch } from 'vue';
 import { storeToRefs } from 'pinia';
 
 import MessageManagerLoading from './MessageManagerLoading.vue';
 import MessageManagerTextBox from './TextBox/index.vue';
+import FloatingActions from './TextBox/FloatingActions.vue';
 import SuggestionBox from './SuggestionBox/index.vue';
 import CoPilot from './CoPilot.vue';
 
@@ -42,10 +54,12 @@ defineOptions({
 });
 
 interface Props {
-  isLoading: boolean;
+  isLoading?: boolean;
 }
 
-const props = defineProps<Props>();
+const props = withDefaults(defineProps<Props>(), {
+  isLoading: false,
+});
 
 const profileStore = useProfile();
 const { me } = storeToRefs(profileStore);
@@ -65,10 +79,17 @@ const {
   isInternalNote,
   mediaUploadFiles,
   inputMessageFocused,
+  isDisabledInput,
 } = storeToRefs(messageManager);
 
 const keyboardEvent = ref<KeyboardEvent | null>(null);
 const messageManagerTextBoxRef = useTemplateRef('messageManagerTextBox');
+
+const showFloatingActions = computed(() => {
+  const validInput =
+    inputMessage.value.trim() !== '' && !inputMessage.value.startsWith('/');
+  return !isInternalNote.value && validInput && !isDisabledInput.value;
+});
 
 const suggestionBoxIgnoreClickOutside = [messageManagerTextBoxRef];
 
@@ -106,10 +127,11 @@ const onKeyDown = (event: KeyboardEvent) => {
 
   if (event.key === 'Enter') {
     if (event.shiftKey) return;
-    if (mediaUploadFiles.value.length > 0) {
-      sendMediasMessage();
+    const activeRoomUuid = activeRoom.value?.uuid;
+    if (mediaUploadFiles.value.length > 0 && !isInternalNote.value) {
+      sendMediasMessage(activeRoomUuid);
     } else {
-      sendRoomMessage();
+      sendRoomMessage(activeRoomUuid);
     }
     event.preventDefault();
   }
@@ -146,8 +168,15 @@ onMounted(() => {
   position: relative;
 
   display: grid;
-  grid-template-columns: 1fr auto;
+  grid-template-columns: 1fr;
+  grid-template-rows: auto auto;
   gap: $unnnic-space-2;
+  margin-right: $unnnic-space-2;
   align-items: end;
+
+  &__input-area {
+    position: relative;
+    width: 100%;
+  }
 }
 </style>

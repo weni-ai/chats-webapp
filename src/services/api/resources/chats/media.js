@@ -1,8 +1,31 @@
 import http from '@/services/api/http';
 import axios from 'axios';
 import { getProject } from '@/utils/config';
+import { normalizeS3MediaUrl } from '@/utils/medias';
 
 const client = axios.create();
+
+/**
+ * @param {string|null|undefined} header
+ * @returns {string|null}
+ */
+export function getFilenameFromContentDisposition(header) {
+  if (!header) return null;
+  const match = header.match(/filename="([^"]+)"/);
+  return match ? match[1] : null;
+}
+
+/**
+ * @param {Blob} blob
+ * @param {string} filename
+ */
+function triggerBrowserDownload(blob, filename) {
+  const link = document.createElement('a');
+  link.href = URL.createObjectURL(blob);
+  link.download = filename;
+  link.click();
+  URL.revokeObjectURL(link.href);
+}
 
 /**
  * Extracts cursor from pagination URL
@@ -32,14 +55,34 @@ export default {
     return response.data;
   },
 
-  async download({ media, name }) {
-    const file = await this.get(media);
-    const link = document.createElement('a');
+  async download({ messageUuid, mediaUuid, media, name }) {
+    if (messageUuid) {
+      const response = await http.get(`/msg/${messageUuid}/download/`, {
+        responseType: 'blob',
+      });
+      const filename =
+        getFilenameFromContentDisposition(
+          response.headers['content-disposition'],
+        ) || `${messageUuid}.mp3`;
+      triggerBrowserDownload(response.data, filename);
+      return;
+    }
 
-    link.href = URL.createObjectURL(file);
-    link.download = name;
-    link.click();
-    URL.revokeObjectURL(link.href);
+    if (mediaUuid) {
+      const response = await http.get(`/media/${mediaUuid}/download/`, {
+        responseType: 'blob',
+      });
+      const filename =
+        getFilenameFromContentDisposition(
+          response.headers['content-disposition'],
+        ) || `${mediaUuid}.mp3`;
+      triggerBrowserDownload(response.data, filename);
+      return;
+    }
+
+    const url = normalizeS3MediaUrl(media);
+    const file = await this.get(url);
+    triggerBrowserDownload(file, name);
   },
 
   async listFromContactAndRoom({

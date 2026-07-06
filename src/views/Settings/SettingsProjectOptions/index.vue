@@ -71,7 +71,7 @@
 </template>
 
 <script>
-import { mapState } from 'pinia';
+import { mapState, mapWritableState } from 'pinia';
 
 import { useConfig } from '@/store/modules/config';
 import { useProfile } from '@/store/modules/profile';
@@ -106,6 +106,7 @@ export default {
         can_see_timer: false,
         can_see_waiting_rooms_count: true,
         can_use_name_sector_in_rooms: false,
+        restrict_offline_agents: false,
       },
       hasAgentBuilder: false,
       aiTransferConfig: {
@@ -119,7 +120,8 @@ export default {
   },
 
   computed: {
-    ...mapState(useConfig, ['project']),
+    ...mapWritableState(useConfig, ['project']),
+    ...mapState(useConfig, ['isSecondaryProject', 'isMainGroupsProject']),
     ...mapState(useProfile, ['me']),
     ...mapState(useFeatureFlag, ['featureFlags']),
 
@@ -198,7 +200,7 @@ export default {
         {
           key: 'ai_transfer',
           type: 'flag-prompt',
-          visible: this.hasAgentBuilder,
+          visible: this.hasAgentBuilder && !this.isMainGroupsProject,
           flag: this.aiTransferConfig.enabled,
           name: this.configAiTransferTranslation,
           prompt: {
@@ -209,45 +211,56 @@ export default {
             placeholder: this.$t(
               'config_chats.project_configs.ai_transfer.textarea_placeholder',
             ),
-            maxLength: 1000,
+            maxLength: 2000,
           },
           onToggle: this.handleAiTransferToggle,
           onEdit: this.openAiTransferModal,
         },
         {
+          key: 'restrict_offline_agents',
+          type: 'flag',
+          visible: !this.isSecondaryProject,
+          name: this.$t(
+            'config_chats.project_configs.restrict_offline_agents.switch_label',
+          ),
+          hint: this.$t(
+            'config_chats.project_configs.restrict_offline_agents.hint',
+          ),
+        },
+        {
           key: 'can_use_bulk_transfer',
           type: 'flag',
-          visible: true,
+          visible: !this.isSecondaryProject,
           name: this.configBulkTransferTranslation,
         },
         {
           key: 'filter_offline_agents',
           type: 'flag',
-          visible: true,
+          visible: !this.isSecondaryProject,
           name: this.configBlockTransferToOffAgentsTranslation,
         },
         {
           key: 'can_use_bulk_close',
           type: 'flag',
-          visible: this.isBulkCloseFeatureEnabled,
+          visible: this.isBulkCloseFeatureEnabled && !this.isSecondaryProject,
           name: this.configBulkCloseTranslation,
         },
         {
           key: 'can_close_chats_in_queue',
           type: 'flag',
-          visible: true,
+          visible: !this.isSecondaryProject,
           name: this.configBlockCloseChatsInQueueTranslation,
         },
         {
           key: 'can_use_bulk_take',
           type: 'flag',
-          visible: this.isBulkTakeFeatureEnabled,
+          visible: this.isBulkTakeFeatureEnabled && !this.isSecondaryProject,
           name: this.configBulkTakeTranslation,
         },
         {
           key: 'can_use_queue_prioritization',
           type: 'flag',
-          visible: true,
+          visible: !this.isSecondaryProject,
           name: this.$t(
             'config_chats.project_configs.queue_prioritization.switch_label',
           ),
@@ -258,7 +271,7 @@ export default {
         {
           key: 'can_see_waiting_rooms_count',
           type: 'flag',
-          visible: true,
+          visible: !this.isSecondaryProject,
           name: this.$t(
             'config_chats.project_configs.show_waiting_rooms_count.switch_label',
           ),
@@ -266,7 +279,7 @@ export default {
         {
           key: 'can_use_name_sector_in_rooms',
           type: 'flag',
-          visible: true,
+          visible: !this.isSecondaryProject,
           name: this.$t(
             'config_chats.project_configs.use_name_sector_in_rooms.switch_label',
           ),
@@ -375,9 +388,10 @@ export default {
         can_see_timer,
         can_see_waiting_rooms_count,
         can_use_name_sector_in_rooms,
+        restrict_offline_agents,
       } = this.projectConfig;
 
-      Project.update({
+      await Project.update({
         can_use_bulk_transfer,
         filter_offline_agents,
         can_use_bulk_close,
@@ -387,7 +401,13 @@ export default {
         can_see_timer,
         can_see_waiting_rooms_count,
         can_use_name_sector_in_rooms,
+        restrict_offline_agents,
       });
+
+      this.project.config = {
+        ...this.project.config,
+        ...this.projectConfig,
+      };
     },
   },
 };

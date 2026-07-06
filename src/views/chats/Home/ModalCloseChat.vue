@@ -74,7 +74,6 @@ import ChatClassifier from '@/components/chats/ChatClassifier.vue';
 
 import { useRooms } from '@/store/modules/chats/rooms';
 import { useRoomCounters } from '@/store/modules/chats/roomCounters';
-import { useFeatureFlag } from '@/store/modules/featureFlag';
 import { useFeedback } from '@/store/modules/feedback';
 
 import {
@@ -149,7 +148,6 @@ export default {
 
   methods: {
     ...mapActions(useFeedback, ['setIsRenderFeedbackModal']),
-    ...mapActions(useRooms, ['removeRoom']),
     async loadRoomTags() {
       try {
         const roomUuid = this.room.uuid;
@@ -182,39 +180,28 @@ export default {
         else this.isLoadingTags = false;
       }
     },
-    isNewRoomUpdateEnabled() {
-      const featureFlagStore = useFeatureFlag();
-      return !!featureFlagStore.featureFlags?.active_features?.includes(
-        'WeniChatsNewRoomUpdate',
-      );
-    },
     async closeRoom() {
       this.isLoadingCloseRoom = true;
       const { uuid } = this.room;
 
-      const useNewLogic = this.isNewRoomUpdateEnabled();
-      if (useNewLogic) markPendingClose(uuid);
+      markPendingClose(uuid);
 
       const tagsUuids = this.tags.map((tag) => tag.uuid);
 
       try {
         await Room.close(uuid, tagsUuids);
       } catch (error) {
-        if (useNewLogic) unmarkPendingClose(uuid);
+        unmarkPendingClose(uuid);
         this.isLoadingCloseRoom = false;
         throw error;
       }
 
-      if (useNewLogic) {
-        const roomsStore = useRooms();
-        const counters = useRoomCounters();
-        const roomType = roomsStore.applyClose(uuid, this.room);
-        if (roomType) {
-          counters.handleClose(roomType);
-          counters.clearTypeCache(uuid);
-        }
-      } else {
-        this.removeRoom(uuid);
+      const roomsStore = useRooms();
+      const counters = useRoomCounters();
+      const roomType = roomsStore.applyClose(uuid, this.room);
+      if (roomType) {
+        counters.handleClose(roomType);
+        counters.clearTypeCache(uuid);
       }
 
       this.isLoadingCloseRoom = false;

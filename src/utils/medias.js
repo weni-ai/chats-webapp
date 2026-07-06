@@ -64,6 +64,46 @@ export function validateMediaFormat(files) {
 }
 
 /**
+ * Normalizes S3 media URLs to avoid cross-origin redirects that taint Origin to null.
+ * Adds region to production-chats URLs and removes region from develop-flows URLs.
+ * @param {string} url - The S3 media URL to normalize.
+ * @returns {string} The normalized URL.
+ */
+export function normalizeS3MediaUrl(url) {
+  const domain = 's3';
+  const mappings = {
+    'production-chats': {
+      region: 'sa-east-1',
+    },
+    'develop-flows': {
+      region: 'us-east-1',
+    },
+  };
+
+  if (
+    url.includes('production-chats') &&
+    !url.includes(mappings['production-chats'].region)
+  ) {
+    const { region } = mappings['production-chats'];
+    const [part1, part2] = url.split(domain);
+
+    if (part2) {
+      return `${part1}${domain}.${region}${part2}`;
+    }
+  }
+
+  if (
+    url.includes('develop-flows') &&
+    url.includes(mappings['develop-flows'].region)
+  ) {
+    const { region } = mappings['develop-flows'];
+    return url.replace(`.${region}`, '');
+  }
+
+  return url;
+}
+
+/**
  * Treats the media name to be used in the chat.
  * @param {string} mediaName - The name of the media to be treated.
  * @returns {string} The treated media name.

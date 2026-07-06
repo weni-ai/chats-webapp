@@ -6,6 +6,7 @@ import QuickMessage from '@/services/api/resources/chats/quickMessage';
 vi.mock('@/services/api/resources/chats/quickMessage', () => ({
   default: {
     getAll: vi.fn(),
+    getAllV2: vi.fn(),
     create: vi.fn(),
     update: vi.fn(),
     delete: vi.fn(),
@@ -36,6 +37,34 @@ describe('useQuickMessages Store', () => {
     await quickMessageStore.getAll();
     expect(quickMessageStore.quickMessages).toEqual(mockMessages);
     expect(quickMessageStore.nextQuickMessages).toBe('next-url');
+  });
+
+  it('should fetch all v2 quick messages across pages only once', async () => {
+    QuickMessage.getAllV2
+      .mockResolvedValueOnce({
+        results: [{ uuid: '1', title: 'A', text: 'a', shortcut: 'a' }],
+        next: 'next-url',
+      })
+      .mockResolvedValueOnce({
+        results: [{ uuid: '2', title: 'B', text: 'b', shortcut: 'b' }],
+        next: '',
+      });
+
+    await quickMessageStore.loadAllV2IfNeeded();
+
+    expect(QuickMessage.getAllV2).toHaveBeenCalledTimes(2);
+    expect(quickMessageStore.quickMessages).toHaveLength(2);
+    expect(quickMessageStore.quickMessagesRequested).toBe(true);
+
+    await quickMessageStore.loadAllV2IfNeeded();
+    expect(QuickMessage.getAllV2).toHaveBeenCalledTimes(2);
+  });
+
+  it('should reset requested flag when v2 load fails', async () => {
+    QuickMessage.getAllV2.mockRejectedValueOnce(new Error('fail'));
+
+    await expect(quickMessageStore.loadAllV2IfNeeded()).rejects.toThrow('fail');
+    expect(quickMessageStore.quickMessagesRequested).toBe(false);
   });
 
   it('should create a new quick message', async () => {

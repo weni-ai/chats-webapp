@@ -24,15 +24,43 @@
         data-testid="select-agent"
         :size="size"
         :disabled="isAgentsFieldDisabled"
-        :options="agents"
-        :label="size !== 'sm' ? $t('agent') : undefined"
-        :placeholder="$t('select_agent')"
+        :options="sortedAgents"
+        :label="size !== 'sm' ? $t('representative') : undefined"
+        :placeholder="$t('select_representative')"
         returnObject
         clearable
         enableSearch
         :search="searchAgent"
         @update:search="searchAgent = $event"
-      />
+      >
+        <template #option="{ label, option }">
+          <span
+            class="select-destination__agent-label"
+            data-testid="agent-option"
+          >
+            {{ label }}
+          </span>
+          <UnnnicTag
+            data-testid="agent-status-tag"
+            type="default"
+            size="small"
+            :data-status="option.status"
+            :text="getAgentStatusLabel(option.status)"
+            :scheme="getAgentStatusScheme(option.status)"
+          />
+        </template>
+        <template #selected="{ label, option }">
+          <span class="select-destination__agent-label">
+            {{ label }}
+          </span>
+          <UnnnicTag
+            type="default"
+            size="small"
+            :text="getAgentStatusLabel(option.status)"
+            :scheme="getAgentStatusScheme(option.status)"
+          />
+        </template>
+      </UnnnicSelect>
     </section>
     <UnnnicDisclaimer
       v-if="showTransferDisclaimer"
@@ -57,355 +85,408 @@
   </main>
 </template>
 
-<script>
+<script setup lang="ts">
+import { computed, onMounted, ref, watch } from 'vue';
 import isMobile from 'is-mobile';
 
-import Room from '@/services/api/resources/chats/room';
-
-import { mapActions, mapState, mapWritableState } from 'pinia';
+import { storeToRefs } from 'pinia';
 
 import { useRooms } from '@/store/modules/chats/rooms';
 import { useProfile } from '@/store/modules/profile';
 
+import Room from '@/services/api/resources/chats/room';
 import Queue from '@/services/api/resources/settings/queue';
 import callUnnnicAlert from '@/utils/callUnnnicAlert';
 
 import i18n from '@/plugins/i18n';
 
+type AgentStatus = 'online' | 'offline' | (string & {});
+
+interface AgentApi {
+  status: AgentStatus;
+  first_name: string;
+  last_name: string;
+  email: string;
+  photo_url: string | null;
+  language: string;
+}
+
+interface AgentOption {
+  label: string;
+  value: string;
+  status: AgentStatus;
+}
+
+interface QueueOption {
+  label: string;
+  value: string;
+  sector_uuid: string;
+  queue_name: string;
+}
+
+interface Props {
+  size?: 'sm' | 'md';
+  bulkTransfer?: boolean;
+  modelValue: QueueOption[];
+  fixed?: boolean;
+}
+
+const props = withDefaults(defineProps<Props>(), {
+  size: 'md',
+  bulkTransfer: false,
+  fixed: false,
+});
+
+const emit = defineEmits<{
+  'update:model-value': [value: QueueOption[]];
+  'update:selectedAgent': [value: AgentOption[]];
+  'transfer-complete': [status: 'success' | 'error'];
+}>();
+
+defineOptions({ name: 'RoomsTransferFields' });
+
 const BULK_TRANSFER_BATCH_SIZE = 200;
 
-export default {
-  name: 'RoomsTransferFields',
-
-  props: {
-    size: {
-      type: String,
-      default: 'md',
-      validator(value) {
-        return ['sm', 'md'].includes(value);
-      },
-    },
-    bulkTransfer: {
-      type: Boolean,
-      default: false,
-    },
-    modelValue: {
-      type: Array,
-      required: true,
-    },
-    fixed: {
-      type: Boolean,
-      default: false,
-    },
-  },
-
-  emits: ['update:model-value', 'update:selectedAgent', 'transfer-complete'],
-
-  data() {
-    return {
-      isMobile: isMobile(),
-
-      queues: [],
-      agents: [],
-      selectedAgent: null,
-
-      searchQueue: '',
-      searchAgent: '',
-
-      showTransferDisclaimer: false,
-    };
-  },
-
-  computed: {
-    ...mapState(useRooms, [
-      'contactToTransfer',
-      'rooms',
-      'activeRoom',
-      'activeTab',
-      'selectedOngoingRooms',
-      'selectedWaitingRooms',
-    ]),
-    ...mapWritableState(useRooms, ['activeRoomTags']),
-    ...mapState(useProfile, ['me']),
-
-    currentSelectedRooms() {
-      return this.activeTab === 'ongoing'
-        ? this.selectedOngoingRooms
-        : this.selectedWaitingRooms;
-    },
-
-    roomsToTransfer() {
-      if (this.bulkTransfer) {
-        return this.rooms.filter((room) =>
-          this.currentSelectedRooms.includes(room.uuid),
-        );
-      }
-
-      return this.rooms.filter((room) => room.uuid === this.contactToTransfer);
-    },
-
-    showTransferToOtherSectorDisclaimer() {
-      const queueOption = this.modelValue?.[0];
-      if (!queueOption?.value) return false;
-
-      return this.roomsToTransfer.some(
-        (room) => room.queue?.sector !== queueOption?.sector_uuid,
-      );
-    },
-
-    dropdownFixed() {
-      return this.fixed ? 'fixed' : 'relative';
-    },
-
-    selectedQueueOption: {
-      get() {
-        return this.modelValue?.[0] || null;
-      },
-      set(option) {
-        this.$emit('update:model-value', option ? [option] : []);
-
-        if (option?.value) {
-          this.getAgents(option.value);
-        }
-      },
-    },
-
-    isAgentsFieldDisabled() {
-      const queueValue = this.modelValue?.[0]?.value;
-      return !queueValue || this.agents?.length === 0;
-    },
-
-    isSelectedAgentOffline() {
-      return (
-        this.selectedAgent?.value && this.selectedAgent?.status === 'offline'
-      );
-    },
-    haveSelectedQueue() {
-      return !!this.modelValue?.[0]?.value;
-    },
-
-    isAgentsListEmpty() {
-      return this.haveSelectedQueue && this.agents?.length === 0;
-    },
-
-    transferDisclaimerText() {
-      if (this.isSelectedAgentOffline) {
-        return this.$t('bulk_transfer.disclaimer.selected_agent_offline');
-      }
-
-      if (this.isAgentsListEmpty) {
-        return this.$t('bulk_transfer.disclaimer.without_online_agents');
-      }
-      return '';
-    },
-  },
-
-  watch: {
-    selectedAgent(newSelectedAgent) {
-      this.$emit(
-        'update:selectedAgent',
-        newSelectedAgent ? [newSelectedAgent] : [],
-      );
-
-      this.showTransferDisclaimer = newSelectedAgent?.status === 'offline';
-    },
-    modelValue: {
-      handler(newValue) {
-        const queueUuid = newValue?.[0]?.value;
-        if (queueUuid) {
-          this.getAgents(queueUuid);
-        }
-      },
-      immediate: false,
-    },
-  },
-
-  mounted() {
-    this.queues = [];
-    this.agents = [];
-    this.getQueues();
-  },
-
-  methods: {
-    ...mapActions(useRooms, [
-      'setSelectedOngoingRooms',
-      'setSelectedWaitingRooms',
-      'setContactToTransfer',
-      'removeRoom',
-    ]),
-
-    async getQueues() {
-      const newQueues = await Queue.listByProject();
-
-      const treatedQueues = newQueues.results.map(
-        ({ name, sector_name, uuid, sector_uuid }) => ({
-          sector_uuid,
-          queue_name: name,
-          label: `${name} | ${i18n.global.t('sector.title')} ${sector_name}`,
-          value: uuid,
-        }),
-      );
-
-      this.queues = treatedQueues;
-    },
-
-    async getAgents(queueUuid) {
-      this.showTransferDisclaimer = false;
-
-      const newAgents = await Queue.agentsToTransfer(queueUuid);
-
-      const treatedAgents = newAgents
-        .filter((agent) => agent.email !== this.me.email)
-        .map(({ first_name, last_name, email, status }) => ({
-          label: [first_name, last_name].join(' ').trim() || email,
-          value: email,
-          status,
-        }));
-
-      if (treatedAgents.length === 0) {
-        this.showTransferDisclaimer = true;
-      }
-
-      this.agents = treatedAgents;
-    },
-
-    async transfer() {
-      const { roomsToTransfer } = this;
-
-      const selectedQueue = this.modelValue?.[0]?.value;
-      const selectedAgent = this.selectedAgent?.value;
-
-      const roomUuids = roomsToTransfer.map((room) => room.uuid);
-
-      if (!this.bulkTransfer) {
-        return this.transferSingle(roomUuids, selectedQueue, selectedAgent);
-      }
-
-      return this.transferBulk(roomUuids, selectedQueue, selectedAgent);
-    },
-
-    async transferSingle(roomUuids, selectedQueue, selectedAgent) {
-      try {
-        const response = await Room.bulkTranfer({
-          rooms: roomUuids,
-          intended_queue: selectedQueue,
-          intended_agent: selectedAgent,
-        });
-
-        if (response.status === 200) {
-          this.callSingleSuccessAlert();
-          this.resetRoomsToTransfer();
-          if (this.activeRoom) {
-            const { results } = await Room.getRoomTags(this.activeRoom.uuid, {
-              next: this.tagsNext,
-              limit: 20,
-            });
-            this.activeRoomTags = results;
-          }
-          this.$emit('transfer-complete', 'success');
-        } else {
-          this.showAlert(i18n.global.t('contact_transferred_error'), 'error');
-          this.$emit('transfer-complete', 'error');
-        }
-      } catch (error) {
-        console.error(
-          'An error occurred while performing the transfer:',
-          error,
-        );
-        this.showAlert(i18n.global.t('contact_transferred_error'), 'error');
-        this.$emit('transfer-complete', 'error');
-      }
-    },
-
-    async transferBulk(roomUuids, selectedQueue, selectedAgent) {
-      const chunks = [];
-      for (let i = 0; i < roomUuids.length; i += BULK_TRANSFER_BATCH_SIZE) {
-        chunks.push(roomUuids.slice(i, i + BULK_TRANSFER_BATCH_SIZE));
-      }
-
-      let totalSuccess = 0;
-      let totalFailed = 0;
-
-      for (const chunk of chunks) {
-        const response = await Room.bulkTranfer({
-          rooms: chunk,
-          intended_queue: selectedQueue,
-          intended_agent: selectedAgent,
-        });
-        const { data } = response;
-        totalSuccess += data?.success_count || 0;
-        totalFailed += data?.failed_count || 0;
-      }
-
-      if (totalFailed === 0 && totalSuccess > 0) {
-        this.showAlert(
-          i18n.global.t('bulk_transfer.success_message', {
-            count: totalSuccess,
-          }),
-          'success',
-        );
-        this.resetRoomsToTransfer();
-        this.$emit('transfer-complete', 'success');
-      } else if (totalFailed > 0 && totalSuccess > 0) {
-        this.showAlert(
-          i18n.global.t('bulk_transfer.partial_success_message', {
-            success: totalSuccess,
-            failed: totalFailed,
-          }),
-          'attention',
-        );
-        this.resetRoomsToTransfer();
-        this.$emit('transfer-complete', 'success');
-      } else {
-        this.showAlert(i18n.global.t('bulk_transfer.error_message'), 'error');
-        this.$emit('transfer-complete', 'error');
-      }
-    },
-
-    resetRoomsToTransfer() {
-      this.setSelectedOngoingRooms([]);
-      this.setSelectedWaitingRooms([]);
-      this.setContactToTransfer('');
-    },
-
-    callSingleSuccessAlert() {
-      const selectedAgent = this.selectedAgent?.[0]?.label;
-      const selectedQueueUuid = this.selectedQueue?.[0]?.value;
-      const selectedQueueName = this.queues.find(
-        (queue) => queue.value === selectedQueueUuid,
-      )?.queue_name;
-
-      const destination = selectedAgent || selectedQueueName;
-      const toDestination = selectedAgent ? 'agent' : 'queue';
-
-      this.showAlert(
-        i18n.global.t(`contact_transferred_to_${toDestination}`, {
-          [toDestination]: destination,
-        }),
-        'success',
-      );
-    },
-
-    showAlert(text, type) {
-      if (!this.isMobile) {
-        callUnnnicAlert({
-          props: { text, type },
-          seconds: 5,
-        });
-      }
-    },
-  },
+const STATUS_PRIORITY: Record<string, number> = {
+  online: 0,
+  offline: 2,
 };
+
+const roomsStore = useRooms();
+const profileStore = useProfile();
+const {
+  contactToTransfer,
+  rooms,
+  activeRoom,
+  activeTab,
+  selectedOngoingRooms,
+  selectedWaitingRooms,
+  activeRoomTags,
+} = storeToRefs(roomsStore);
+const { me } = storeToRefs(profileStore);
+
+const isMobileDevice = ref(isMobile());
+
+const queues = ref<QueueOption[]>([]);
+const agents = ref<AgentOption[]>([]);
+const selectedAgent = ref<AgentOption | null>(null);
+
+const searchQueue = ref('');
+const searchAgent = ref('');
+
+const showTransferDisclaimer = ref(false);
+
+const currentSelectedRooms = computed(() =>
+  activeTab.value === 'ongoing'
+    ? selectedOngoingRooms.value
+    : selectedWaitingRooms.value,
+);
+
+const roomsToTransfer = computed(() => {
+  if (props.bulkTransfer) {
+    return rooms.value.filter((room: { uuid: string }) =>
+      currentSelectedRooms.value.includes(room.uuid),
+    );
+  }
+
+  return rooms.value.filter(
+    (room: { uuid: string }) => room.uuid === contactToTransfer.value,
+  );
+});
+
+const showTransferToOtherSectorDisclaimer = computed(() => {
+  const queueOption = props.modelValue?.[0];
+  if (!queueOption?.value) return false;
+
+  return roomsToTransfer.value.some(
+    (room: { queue?: { sector?: string } }) =>
+      room.queue?.sector !== queueOption?.sector_uuid,
+  );
+});
+
+const selectedQueueOption = computed<QueueOption | null>({
+  get() {
+    return props.modelValue?.[0] || null;
+  },
+  set(option) {
+    emit('update:model-value', option ? [option] : []);
+
+    if (option?.value) {
+      getAgents(option.value);
+    }
+  },
+});
+
+const isAgentsFieldDisabled = computed(() => {
+  const queueValue = props.modelValue?.[0]?.value;
+  return !queueValue || agents.value?.length === 0;
+});
+
+const isSelectedAgentOffline = computed(
+  () =>
+    !!selectedAgent.value?.value && selectedAgent.value?.status === 'offline',
+);
+
+const haveSelectedQueue = computed(() => !!props.modelValue?.[0]?.value);
+
+const isAgentsListEmpty = computed(
+  () => haveSelectedQueue.value && agents.value?.length === 0,
+);
+
+const transferDisclaimerText = computed(() => {
+  if (isSelectedAgentOffline.value) {
+    return i18n.global.t('bulk_transfer.disclaimer.selected_agent_offline');
+  }
+
+  if (isAgentsListEmpty.value) {
+    return i18n.global.t('bulk_transfer.disclaimer.without_online_agents');
+  }
+  return '';
+});
+
+const sortedAgents = computed<AgentOption[]>(() => {
+  return [...agents.value].sort((a, b) => {
+    const priorityA = getStatusPriority(a.status);
+    const priorityB = getStatusPriority(b.status);
+    if (priorityA !== priorityB) return priorityA - priorityB;
+    return a.label.localeCompare(b.label);
+  });
+});
+
+function getStatusPriority(status: AgentStatus): number {
+  if (status in STATUS_PRIORITY) return STATUS_PRIORITY[status];
+  return 1;
+}
+
+function getAgentStatusLabel(status: AgentStatus): string {
+  if (!status) return '';
+  return status.charAt(0).toUpperCase() + status.slice(1);
+}
+
+function getAgentStatusScheme(status: AgentStatus): string {
+  if (status === 'online') return 'aux-green';
+  if (status === 'offline') return 'aux-gray';
+  return 'aux-orange';
+}
+
+watch(selectedAgent, (newSelectedAgent) => {
+  emit('update:selectedAgent', newSelectedAgent ? [newSelectedAgent] : []);
+
+  showTransferDisclaimer.value = newSelectedAgent?.status === 'offline';
+});
+
+watch(
+  () => props.modelValue,
+  (newValue) => {
+    const queueUuid = newValue?.[0]?.value;
+    if (queueUuid) {
+      getAgents(queueUuid);
+    }
+  },
+);
+
+onMounted(() => {
+  queues.value = [];
+  agents.value = [];
+  getQueues();
+});
+
+async function getQueues() {
+  const newQueues = await Queue.listByProject();
+
+  queues.value = newQueues.results.map(
+    ({
+      name,
+      sector_name,
+      uuid,
+      sector_uuid,
+    }: {
+      name: string;
+      sector_name: string;
+      uuid: string;
+      sector_uuid: string;
+    }) => ({
+      sector_uuid,
+      queue_name: name,
+      label: `${name} | ${i18n.global.t('sector.title')} ${sector_name}`,
+      value: uuid,
+    }),
+  );
+}
+
+async function getAgents(queueUuid: string) {
+  showTransferDisclaimer.value = false;
+
+  const newAgents: AgentApi[] = await Queue.agentsToTransfer(queueUuid);
+
+  const treatedAgents = newAgents
+    .filter((agent) => agent.email !== me.value?.email)
+    .map<AgentOption>(({ first_name, last_name, email, status }) => ({
+      label: [first_name, last_name].join(' ').trim() || email,
+      value: email,
+      status,
+    }));
+
+  if (treatedAgents.length === 0) {
+    showTransferDisclaimer.value = true;
+  }
+
+  agents.value = treatedAgents;
+}
+
+async function transfer() {
+  const selectedQueue = props.modelValue?.[0]?.value;
+  const intendedAgent = selectedAgent.value?.value;
+
+  const roomUuids = roomsToTransfer.value.map(
+    (room: { uuid: string }) => room.uuid,
+  );
+
+  if (!props.bulkTransfer) {
+    return transferSingle(roomUuids, selectedQueue, intendedAgent);
+  }
+
+  return transferBulk(roomUuids, selectedQueue, intendedAgent);
+}
+
+async function transferSingle(
+  roomUuids: string[],
+  selectedQueue: string | undefined,
+  intendedAgent: string | undefined,
+) {
+  try {
+    const response = await Room.bulkTranfer({
+      rooms: roomUuids,
+      intended_queue: selectedQueue,
+      intended_agent: intendedAgent,
+    });
+
+    if (response.status === 200) {
+      callSingleSuccessAlert();
+      resetRoomsToTransfer();
+      if (activeRoom.value) {
+        const { results } = await Room.getRoomTags(activeRoom.value.uuid, {
+          next: null,
+          limit: 20,
+        });
+        activeRoomTags.value = results;
+      }
+      emit('transfer-complete', 'success');
+    } else {
+      showAlert(i18n.global.t('contact_transferred_error'), 'error');
+      emit('transfer-complete', 'error');
+    }
+  } catch (error) {
+    console.error('An error occurred while performing the transfer:', error);
+    showAlert(i18n.global.t('contact_transferred_error'), 'error');
+    emit('transfer-complete', 'error');
+  }
+}
+
+async function transferBulk(
+  roomUuids: string[],
+  selectedQueue: string | undefined,
+  intendedAgent: string | undefined,
+) {
+  const chunks: string[][] = [];
+  for (let i = 0; i < roomUuids.length; i += BULK_TRANSFER_BATCH_SIZE) {
+    chunks.push(roomUuids.slice(i, i + BULK_TRANSFER_BATCH_SIZE));
+  }
+
+  let totalSuccess = 0;
+  let totalFailed = 0;
+
+  for (const chunk of chunks) {
+    const response = await Room.bulkTranfer({
+      rooms: chunk,
+      intended_queue: selectedQueue,
+      intended_agent: intendedAgent,
+    });
+    const { data } = response;
+    totalSuccess += data?.success_count || 0;
+    totalFailed += data?.failed_count || 0;
+  }
+
+  if (totalFailed === 0 && totalSuccess > 0) {
+    showAlert(
+      i18n.global.t('bulk_transfer.success_message', {
+        count: totalSuccess,
+      }),
+      'success',
+    );
+    resetRoomsToTransfer();
+    emit('transfer-complete', 'success');
+  } else if (totalFailed > 0 && totalSuccess > 0) {
+    showAlert(
+      i18n.global.t('bulk_transfer.partial_success_message', {
+        success: totalSuccess,
+        failed: totalFailed,
+      }),
+      'attention',
+    );
+    resetRoomsToTransfer();
+    emit('transfer-complete', 'success');
+  } else {
+    showAlert(i18n.global.t('bulk_transfer.error_message'), 'error');
+    emit('transfer-complete', 'error');
+  }
+}
+
+function resetRoomsToTransfer() {
+  roomsStore.setSelectedOngoingRooms([]);
+  roomsStore.setSelectedWaitingRooms([]);
+  roomsStore.setContactToTransfer('');
+}
+
+function callSingleSuccessAlert() {
+  const selectedAgentLabel = selectedAgent.value?.label;
+  const selectedQueueUuid = props.modelValue?.[0]?.value;
+  const selectedQueueName = queues.value.find(
+    (queue) => queue.value === selectedQueueUuid,
+  )?.queue_name;
+
+  const destination = selectedAgentLabel || selectedQueueName;
+  const toDestination = selectedAgentLabel ? 'agent' : 'queue';
+
+  showAlert(
+    i18n.global.t(`contact_transferred_to_${toDestination}`, {
+      [toDestination]: destination,
+    }),
+    'success',
+  );
+}
+
+function showAlert(text: string, type: 'success' | 'error' | 'attention') {
+  if (!isMobileDevice.value) {
+    callUnnnicAlert({
+      props: { text, type },
+      seconds: 5,
+    });
+  }
+}
+
+defineExpose({
+  transfer,
+  showAlert,
+  agents,
+  sortedAgents,
+  selectedAgent,
+  queues,
+  currentSelectedRooms,
+  isMobile: isMobileDevice,
+  getAgentStatusLabel,
+  getAgentStatusScheme,
+});
 </script>
 
 <style lang="scss" scoped>
 .rooms-transfer {
   &__select-destination {
     display: grid;
-    gap: $unnnic-spacing-sm;
+    gap: $unnnic-space-4;
 
     &.small {
-      gap: $unnnic-spacing-nano;
+      gap: $unnnic-space-1;
     }
 
     .select-destination {
@@ -413,18 +494,29 @@ export default {
         text-align: left;
 
         .field__label {
-          margin: 0 0 $unnnic-spacing-xs;
+          margin: 0 0 $unnnic-space-2;
         }
       }
 
       &__disclaimer {
-        margin-top: -$unnnic-spacing-nano;
+        margin-top: -$unnnic-space-1;
 
         &--small {
-          margin-top: $unnnic-spacing-xs;
+          margin-top: $unnnic-space-2;
         }
       }
+
+      &__agent-label {
+        flex: 1 1 auto;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
     }
+  }
+
+  :deep(.unnnic-select__trigger-content) {
+    justify-content: space-between;
   }
 }
 </style>

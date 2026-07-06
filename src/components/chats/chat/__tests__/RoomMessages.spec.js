@@ -10,6 +10,7 @@ import { useFeatureFlag } from '@/store/modules/featureFlag';
 import RoomService from '@/services/api/resources/chats/room';
 import RoomNotes from '@/services/api/resources/chats/roomNotes';
 import i18n from '@/plugins/i18n';
+import * as summaryDismissalStorage from '@/utils/summaryDismissalStorage';
 
 vi.mock('@/components/chats/chat/ChatMessages/index.vue', () => ({
   default: {
@@ -142,6 +143,7 @@ describe('RoomMessages.vue', () => {
 
   afterEach(() => {
     vi.clearAllMocks();
+    vi.restoreAllMocks();
     consoleErrorSpy.mockClear();
     consoleLogSpy.mockClear();
   });
@@ -336,6 +338,87 @@ describe('RoomMessages.vue', () => {
 
       expect(wrapper.vm.isLoadingMessages).toBe(false);
     });
+
+    it('keeps the summary closed when isSummaryDismissed returns true for the room', async () => {
+      RoomNotes.getInternalNotes.mockResolvedValue({ results: [] });
+      RoomService.getSummary.mockResolvedValue({
+        status: 'DONE',
+        summary: 'Summary',
+        feedback: null,
+      });
+      vi.spyOn(summaryDismissalStorage, 'isSummaryDismissed').mockReturnValue(
+        true,
+      );
+
+      const wrapper = createWrapper(
+        { showRoomSummary: true },
+        {
+          rooms: { openActiveRoomSummary: true },
+          config: { project: { config: { has_chats_summary: true } } },
+        },
+      );
+      await flushPromises();
+
+      const roomsStore = useRooms(wrapper.vm.$pinia);
+      expect(roomsStore.openActiveRoomSummary).toBe(false);
+    });
+
+    it('opens the summary by default when isSummaryDismissed returns false', async () => {
+      RoomNotes.getInternalNotes.mockResolvedValue({ results: [] });
+      RoomService.getSummary.mockResolvedValue({
+        status: 'DONE',
+        summary: 'Summary',
+        feedback: null,
+      });
+      vi.spyOn(summaryDismissalStorage, 'isSummaryDismissed').mockReturnValue(
+        false,
+      );
+
+      const wrapper = createWrapper(
+        { showRoomSummary: true },
+        {
+          rooms: { openActiveRoomSummary: false },
+          config: { project: { config: { has_chats_summary: true } } },
+        },
+      );
+      await flushPromises();
+
+      const roomsStore = useRooms(wrapper.vm.$pinia);
+      expect(roomsStore.openActiveRoomSummary).toBe(true);
+    });
+  });
+
+  describe('ChatSummary close', () => {
+    it('marks the room summary as dismissed and closes it when ChatSummary emits close', async () => {
+      RoomNotes.getInternalNotes.mockResolvedValue({ results: [] });
+      RoomService.getSummary.mockResolvedValue({
+        status: 'DONE',
+        summary: 'Summary',
+        feedback: null,
+      });
+      vi.spyOn(summaryDismissalStorage, 'isSummaryDismissed').mockReturnValue(
+        false,
+      );
+      const markSpy = vi
+        .spyOn(summaryDismissalStorage, 'markSummaryDismissed')
+        .mockImplementation(() => {});
+
+      const wrapper = createWrapper(
+        { showRoomSummary: true },
+        {
+          rooms: { openActiveRoomSummary: true },
+          config: { project: { config: { has_chats_summary: true } } },
+        },
+      );
+      await flushPromises();
+
+      const chatSummary = wrapper.findComponent({ name: 'ChatSummary' });
+      await chatSummary.vm.$emit('close');
+
+      const roomsStore = useRooms(wrapper.vm.$pinia);
+      expect(roomsStore.openActiveRoomSummary).toBe(false);
+      expect(markSpy).toHaveBeenCalledWith(mockRoom.uuid);
+    });
   });
 
   describe('searchForMoreMessages', () => {
@@ -386,6 +469,36 @@ describe('RoomMessages.vue', () => {
         status: 'DONE',
       });
       expect(roomsStore.isLoadingActiveRoomSummary).toBe(false);
+    });
+
+    it('stops the polling interval and resets attempts counter', async () => {
+      vi.useFakeTimers();
+      RoomNotes.getInternalNotes.mockResolvedValue({ results: [] });
+      RoomService.getSummary.mockResolvedValue({
+        status: 'IN_PROGRESS',
+        summary: '',
+        feedback: null,
+      });
+
+      const wrapper = createWrapper(
+        {},
+        {
+          rooms: { roomsSummary: {} },
+          config: { project: { config: { has_chats_summary: true } } },
+        },
+      );
+      await flushPromises();
+
+      wrapper.vm.handlingGetRoomSummary();
+      wrapper.vm.summaryPollAttempts = 5;
+      expect(wrapper.vm.getRoomSummaryInterval).not.toBe(null);
+
+      wrapper.vm.setRoomSummary('text', null, 'DONE');
+
+      expect(wrapper.vm.getRoomSummaryInterval).toBe(null);
+      expect(wrapper.vm.summaryPollAttempts).toBe(0);
+
+      vi.useRealTimers();
     });
   });
 
@@ -468,6 +581,117 @@ describe('RoomMessages.vue', () => {
 
       expect(RoomService.getSummary).not.toHaveBeenCalled();
     });
+
+    it('does not call setRoomSummary when status is not terminal and cap is not reached', async () => {
+      vi.useFakeTimers();
+      RoomNotes.getInternalNotes.mockResolvedValue({ results: [] });
+      RoomService.getSummary.mockResolvedValue({
+        status: 'IN_PROGRESS',
+        summary: '',
+        feedback: null,
+      });
+
+      const wrapper = createWrapper(
+        {},
+        {
+          rooms: { roomsSummary: {} },
+          config: { project: { config: { has_chats_summary: true } } },
+        },
+      );
+      await flushPromises();
+
+      wrapper.vm.handlingGetRoomSummary();
+      await flushPromises();
+      expect(wrapper.vm.getRoomSummaryInterval).not.toBe(null);
+
+      const setRoomSummarySpy = vi.spyOn(wrapper.vm, 'setRoomSummary');
+      wrapper.vm.summaryPollAttempts = 0;
+
+      await wrapper.vm.getRoomSummary();
+
+      expect(setRoomSummarySpy).not.toHaveBeenCalled();
+      expect(wrapper.vm.getRoomSummaryInterval).not.toBe(null);
+
+      vi.useRealTimers();
+    });
+
+    it('falls back to error text when MAX_SUMMARY_POLL_ATTEMPTS is reached and summary is empty', async () => {
+      RoomNotes.getInternalNotes.mockResolvedValue({ results: [] });
+      RoomService.getSummary.mockResolvedValue({
+        status: 'IN_PROGRESS',
+        summary: '',
+        feedback: null,
+      });
+
+      const wrapper = createWrapper();
+      await flushPromises();
+
+      vi.spyOn(wrapper.vm, 'setRoomSummary');
+      wrapper.vm.summaryPollAttempts = 11;
+
+      await wrapper.vm.getRoomSummary();
+
+      const errorText = i18n.global.t('chats.summary.error');
+      expect(wrapper.vm.setRoomSummary).toHaveBeenCalledWith(
+        errorText,
+        { liked: null },
+        'ERROR',
+      );
+    });
+
+    it('preserves the partial summary text when MAX_SUMMARY_POLL_ATTEMPTS is reached with a populated summary', async () => {
+      RoomNotes.getInternalNotes.mockResolvedValue({ results: [] });
+      RoomService.getSummary.mockResolvedValue({
+        status: 'IN_PROGRESS',
+        summary: 'Partial summary content',
+        feedback: { liked: true },
+      });
+
+      const wrapper = createWrapper();
+      await flushPromises();
+
+      vi.spyOn(wrapper.vm, 'setRoomSummary');
+      wrapper.vm.summaryPollAttempts = 11;
+
+      await wrapper.vm.getRoomSummary();
+
+      expect(wrapper.vm.setRoomSummary).toHaveBeenCalledWith(
+        'Partial summary content',
+        { liked: true },
+        'ERROR',
+      );
+    });
+  });
+
+  describe('lifecycle', () => {
+    it('calls stopRoomSummaryPolling on beforeUnmount to avoid ghost intervals', async () => {
+      vi.useFakeTimers();
+      RoomNotes.getInternalNotes.mockResolvedValue({ results: [] });
+      RoomService.getSummary.mockResolvedValue({
+        status: 'IN_PROGRESS',
+        summary: '',
+        feedback: null,
+      });
+
+      const wrapper = createWrapper(
+        {},
+        {
+          rooms: { roomsSummary: {} },
+          config: { project: { config: { has_chats_summary: true } } },
+        },
+      );
+      await flushPromises();
+
+      wrapper.vm.handlingGetRoomSummary();
+      expect(wrapper.vm.getRoomSummaryInterval).not.toBe(null);
+
+      const stopSpy = vi.spyOn(wrapper.vm, 'stopRoomSummaryPolling');
+      wrapper.unmount();
+
+      expect(stopSpy).toHaveBeenCalled();
+
+      vi.useRealTimers();
+    });
   });
 
   describe('getRoomInternalNotes', () => {
@@ -541,8 +765,8 @@ describe('RoomMessages.vue', () => {
       vi.useFakeTimers();
       RoomNotes.getInternalNotes.mockResolvedValue({ results: [] });
       RoomService.getSummary.mockResolvedValue({
-        status: 'DONE',
-        summary: 'S',
+        status: 'IN_PROGRESS',
+        summary: '',
         feedback: null,
       });
 

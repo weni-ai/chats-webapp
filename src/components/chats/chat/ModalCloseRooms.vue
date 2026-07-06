@@ -96,7 +96,6 @@ import i18n from '@/plugins/i18n';
 
 import { useRooms } from '@/store/modules/chats/rooms';
 import { useRoomCounters } from '@/store/modules/chats/roomCounters';
-import { useFeatureFlag } from '@/store/modules/featureFlag';
 import Room from '@/services/api/resources/chats/room';
 import Queue from '@/services/api/resources/settings/queue';
 
@@ -369,15 +368,7 @@ const refetchRoomsIfEmpty = async () => {
   });
 };
 
-const isNewRoomUpdateEnabled = () => {
-  const featureFlagStore = useFeatureFlag();
-  return !!featureFlagStore.featureFlags?.active_features?.includes(
-    'WeniChatsNewRoomUpdate',
-  );
-};
-
 const scheduleReconciliation = () => {
-  if (!isNewRoomUpdateEnabled()) return;
   setTimeout(() => {
     const tab = activeTab.value;
     roomsStore
@@ -411,7 +402,6 @@ const clearSelectionsAndClose = async () => {
 };
 
 const applyOptimisticClose = (uuids) => {
-  if (!isNewRoomUpdateEnabled()) return;
   const counters = useRoomCounters();
   for (const uuid of uuids) {
     const roomType = roomsStore.applyClose(uuid);
@@ -481,23 +471,18 @@ const executeBulkClose = async () => {
   isLoadingBulkClose.value = true;
 
   const roomsToClose = collectRoomsToClose();
-  const useNewLogic = isNewRoomUpdateEnabled();
 
-  if (useNewLogic) {
-    for (const { uuid } of roomsToClose) markPendingClose(uuid);
-  }
+  for (const { uuid } of roomsToClose) markPendingClose(uuid);
 
   const chunks = chunkRoomsToClose(roomsToClose);
   const { totalSuccess, totalFailed, successUuids } =
     await submitBulkCloseChunks(chunks);
 
-  if (useNewLogic) {
-    applyOptimisticClose(successUuids);
-    reconcilePendingMarks(
-      roomsToClose.map((r) => r.uuid),
-      successUuids,
-    );
-  }
+  applyOptimisticClose(successUuids);
+  reconcilePendingMarks(
+    roomsToClose.map((r) => r.uuid),
+    successUuids,
+  );
 
   if (totalFailed === 0 && totalSuccess > 0) {
     unnnicCallAlert({

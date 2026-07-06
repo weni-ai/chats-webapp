@@ -46,6 +46,7 @@
               :ref="`internal-note-${message.internal_note.uuid}`"
               :key="message.uuid"
               :message="message"
+              isRoomMessage
               @click-note="$emit('open-room-contact-info')"
             />
 
@@ -59,8 +60,8 @@
               @click="handleClickChatFeedback(message)"
             />
 
-            <template v-else>
-              <UnnnicChatsMessage
+            <template v-else-if="!isInternalNoteMessage(message)">
+              <ChatsMessage
                 v-if="message.text || isGeolocation(message.media?.[0])"
                 :key="message.uuid"
                 :ref="`message-${message.uuid}`"
@@ -79,6 +80,7 @@
                 :enableReply="enableReply"
                 :replyMessage="message.replied_message"
                 :automatic="message.is_automatic_message"
+                :automaticType="message.automatic_message_type"
                 :locale="$i18n.locale"
                 data-testid="chat-message"
                 :highlighted="message.uuid === toScrollMessage?.uuid"
@@ -94,9 +96,9 @@
                     ? message.media?.[0]?.url
                     : message.text
                 }}
-              </UnnnicChatsMessage>
+              </ChatsMessage>
               <template v-for="media in message.media">
-                <UnnnicChatsMessage
+                <ChatsMessage
                   v-if="isMedia(media) && !isGeolocation(media)"
                   :key="media.message"
                   :ref="`message-${message.uuid}`"
@@ -135,7 +137,9 @@
                           : 'audio',
                     })
                   "
-                  @click="resendMedia({ message, media })"
+                  @click="
+                    resendMedia({ message, media, roomUuid: message.room })
+                  "
                 >
                   <img
                     v-if="isImage(media)"
@@ -154,10 +158,12 @@
                     :message="message"
                     :messageStatus="messageStatus({ message, media })"
                     :isClosedChat="isClosedChat"
-                    @failed-click="resendMedia({ message, media })"
+                    @failed-click="
+                      resendMedia({ message, media, roomUuid: message.room })
+                    "
                   />
-                </UnnnicChatsMessage>
-                <UnnnicChatsMessage
+                </ChatsMessage>
+                <ChatsMessage
                   v-else-if="!isGeolocation(media)"
                   :key="media.created_on"
                   :ref="`message-${message.uuid}`"
@@ -203,6 +209,8 @@
         v-if="isFullscreen && currentMedia"
         :downloadMediaUrl="currentMedia?.url"
         :downloadMediaName="currentMedia?.message"
+        :mediaCurrent="currentMediaIndex"
+        :mediaTotal="medias.length"
         @close="isFullscreen = false"
         @next="nextMedia"
         @previous="previousMedia"
@@ -266,10 +274,11 @@ import ChatMessagesLoading from '@/views/loadings/chat/ChatMessages.vue';
 import VideoPlayer from '@/components/chats/MediaMessage/Previews/Video.vue';
 import FullscreenPreview from '@/components/chats/MediaMessage/Previews/Fullscreen.vue';
 
+import ChatsMessage from '@/components/chats/Message/index.vue';
 import ChatFeedback from '../ChatFeedback.vue';
 import ChatMessagesStartFeedbacks from './ChatMessagesStartFeedbacks.vue';
 import ChatMessagesFeedbackMessage from './ChatMessagesFeedbackMessage.vue';
-import ChatMessagesInternalNote from './ChatMessagesInternalNote.vue';
+import ChatMessagesInternalNote from './ChatMessageInternalNote/index.vue';
 import ChatMessageAudio from './ChatMessageAudio/ChatMessageAudio.vue';
 
 import { isString } from '@/utils/string';
@@ -282,6 +291,7 @@ export default {
   name: 'ChatMessages',
 
   components: {
+    ChatsMessage,
     ChatMessagesLoading,
     ChatFeedback,
     ChatMessagesStartFeedbacks,
@@ -386,7 +396,7 @@ export default {
     }),
     ...mapState(useDashboard, ['viewedAgent']),
     ...mapState(useRoomMessages, ['roomMessagesNext']),
-    ...mapWritableState(useMessageManager, ['replyMessage']),
+    ...mapWritableState(useMessageManager, ['replyMessage', 'inputMessage']),
     ...mapWritableState(useRoomMessages, [
       'toScrollNote',
       'toScrollMessage',
@@ -398,6 +408,15 @@ export default {
         .flat()
         .filter((media) => this.isMedia(media));
     },
+    currentMediaIndex() {
+      if (!this.currentMedia?.url) {
+        return 0;
+      }
+
+      return (
+        this.medias.findIndex((el) => el.url === this.currentMedia.url) + 1
+      );
+    },
     isViewMode() {
       return !!this.viewedAgent?.email;
     },
@@ -408,6 +427,11 @@ export default {
     unreadMessages() {
       if (!this.room) return 0;
       return this.newMessagesByRoom[this.room.uuid]?.messages?.length || 0;
+    },
+    scrollToBottomButtonPosition() {
+      return this.inputMessage.length > 0
+        ? '64px' // unnnic-space-16
+        : '24px'; // unnnic-space-6
     },
   },
 
@@ -548,7 +572,7 @@ export default {
         const status = this.messageStatus({ message, media });
 
         if (status === 'failed') {
-          this.resendMedia({ message, media });
+          this.resendMedia({ message, media, roomUuid: message.room });
         } else {
           try {
             const mediaToDownload = media.url || media.preview;
@@ -870,9 +894,12 @@ export default {
 .chat-messages__scroll-button {
   &-container {
     position: absolute;
-    bottom: $unnnic-space-6;
-    right: $unnnic-space-4;
+    bottom: v-bind(scrollToBottomButtonPosition);
+    right: $unnnic-space-2;
     z-index: 9;
+    box-shadow: 0 4px 4px 0 rgba(0, 0, 0, 0.25); // token don't exist
+    border-radius: $unnnic-radius-2;
+    background-color: $unnnic-color-bg-base;
   }
   &-chip {
     padding: 0 $unnnic-space-2;
@@ -945,8 +972,16 @@ export default {
       }
     }
 
+    &.is-video {
+      max-width: 250px;
+      max-height: 200px;
+    }
+
     .image {
       cursor: pointer;
+      max-width: 200px;
+      max-height: 200px;
+      object-fit: cover;
     }
 
     .audio {

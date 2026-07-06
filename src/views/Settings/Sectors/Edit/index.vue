@@ -164,7 +164,19 @@ const sector = ref<Sector>({
   config: {} as Record<string, any>,
   can_trigger_flows: false,
   can_edit_custom_fields: false,
+  inactivity_timeout: {
+    is_message_timeout_enabled: false,
+    message_timeout_text: '',
+    message_timeout_time: null,
+    is_close_room_enabled: false,
+    close_room_message_text: '',
+    close_room_time: null,
+  },
   automatic_message: {
+    is_active: false,
+    text: '',
+  },
+  automatic_message_queue: {
     is_active: false,
     text: '',
   },
@@ -240,7 +252,9 @@ const handlerSectorData = async () => {
     sign_messages,
     rooms_limit,
     uuid,
+    inactivity_timeout,
     automatic_message,
+    automatic_message_queue,
     required_tags,
     is_csat_enabled,
     custom_csat_flow_uuid,
@@ -254,7 +268,18 @@ const handlerSectorData = async () => {
     config,
     sign_messages,
     rooms_limit: rooms_limit.toString(),
+    inactivity_timeout: inactivity_timeout || {
+      is_message_timeout_enabled: false,
+      message_timeout_text: '',
+      message_timeout_time: null,
+      is_close_room_enabled: false,
+      close_room_message_text: '',
+      close_room_time: null,
+    },
     automatic_message,
+    automatic_message_queue: automatic_message_queue
+      ? automatic_message_queue
+      : { is_active: false, text: '' },
     required_tags,
     is_csat_enabled,
     custom_csat_flow_uuid: custom_csat_flow_uuid ?? null,

@@ -18,7 +18,7 @@
           :placeholder="
             $t('config_chats.project_configs.ai_transfer.textarea_placeholder')
           "
-          :maxLength="1000"
+          :maxLength="2000"
           data-testid="ai-transfer-criteria-textarea"
         />
       </section>

@@ -30,11 +30,14 @@
               }"
             >
               <UnnnicIcon
+                data-testid="summary-icon"
                 icon="bi:stars"
                 clickable
                 scheme="fg-emphasized"
                 size="ant"
-                @click="openActiveRoomSummary = !openActiveRoomSummary"
+                @click="
+                  setOpenActiveRoomSummary(!openActiveRoomSummary, room?.uuid)
+                "
               />
             </section>
           </UnnnicToolTip>
@@ -152,7 +155,7 @@
 
 <script>
 import { format as dateFnsFormat, subYears as dateFnsSubYears } from 'date-fns';
-import { mapState, mapWritableState } from 'pinia';
+import { mapActions, mapState, mapWritableState } from 'pinia';
 import isMobile from 'is-mobile';
 
 import { useRooms } from '@/store/modules/chats/rooms';
@@ -295,6 +298,7 @@ export default {
   },
 
   methods: {
+    ...mapActions(useRooms, ['setOpenActiveRoomSummary']),
     emitOpenRoomContactInfo() {
       this.$emit('openRoomContactInfo');
     },

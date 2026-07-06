@@ -56,7 +56,9 @@
                   clickable
                   :scheme="openActiveRoomSummary ? 'gray-900' : 'gray-500'"
                   size="ant"
-                  @click="openActiveRoomSummary = !openActiveRoomSummary"
+                  @click="
+                    setOpenActiveRoomSummary(!openActiveRoomSummary, room?.uuid)
+                  "
                 />
               </section>
             </UnnnicToolTip>
@@ -100,7 +102,7 @@
         </template>
       </ContactHeader>
 
-      <UnnnicChatsHeader
+      <ChatsHeader
         v-show="!isRoomSkeletonActive"
         v-if="!!discussion"
         class="discussion-header"
@@ -140,10 +142,14 @@
 
     <ModalGetChat
       :showModal="isAssumeChatConfirmationOpened"
-      :title="$t('dashboard.view-mode.assume_chat_question')"
+      :title="
+        $t('dashboard.view-mode.assume_chat_question', {
+          contact: room?.contact?.name || `[${$t('without_name')}]`,
+        })
+      "
       :description="
-        $t('dashboard.view-mode.assume_chat_confirmation', {
-          viewedAgent: viewedAgent.name,
+        $t('dashboard.view-mode.assume_chat_question_description', {
+          contact: room?.contact?.name || `[${$t('without_name')}]`,
         })
       "
       :whenGetChat="whenGetChat"
@@ -193,6 +199,7 @@ import ButtonJoinDiscussion from '@/components/chats/chat/ButtonJoinDiscussion.v
 import ModalTransferRooms from '@/components/chats/chat/ModalTransferRooms.vue';
 import ViewModeHeader from './components/ViewModeHeader.vue';
 import ContactHeader from '@/components/chats/ContactHeader.vue';
+import ChatsHeader from '@/components/chats/ChatHeader.vue';
 
 import { buildHistorySearchTerm } from '@/utils/room';
 
@@ -209,7 +216,7 @@ export default {
     ViewModeHeader,
     ModalGetChat,
     ButtonJoinDiscussion,
-
+    ChatsHeader,
     ModalTransferRooms,
     ContactHeader,
   },
@@ -282,7 +289,7 @@ export default {
 
   methods: {
     ...mapActions(useDiscussions, ['setActiveDiscussion']),
-    ...mapActions(useRooms, ['setActiveRoom']),
+    ...mapActions(useRooms, ['setActiveRoom', 'setOpenActiveRoomSummary']),
     ...mapActions(useDashboard, ['setViewedAgent']),
 
     handleModal(modalName, action) {

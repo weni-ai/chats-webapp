@@ -7,6 +7,7 @@ import { useRooms } from '@/store/modules/chats/rooms';
 import { useConfig } from '@/store/modules/config';
 import { useFeatureFlag } from '@/store/modules/featureFlag';
 import { useProfile } from '@/store/modules/profile';
+import { useDashboard } from '@/store/modules/dashboard';
 
 import RoomCard from '../RoomCard.vue';
 
@@ -129,6 +130,9 @@ describe('RoomCard.vue', () => {
 
     const profileStore = useProfile();
     profileStore.me = { email: 'agent@weni.ai' };
+
+    const dashboardStore = useDashboard();
+    dashboardStore.viewedAgent = { email: '', name: '' };
   });
 
   afterEach(() => {
@@ -214,7 +218,7 @@ describe('RoomCard.vue', () => {
       wrapper.vm.waitingTime = 50;
 
       expect(wrapper.vm.waitingTime).toBe(50);
-      expect(wrapper.vm.waitingTimeComputed).toContain('minute waiting');
+      expect(wrapper.vm.waitingTimeComputed).toMatch(/minutes? waiting/);
 
       wrapper.unmount();
     });
@@ -434,6 +438,51 @@ describe('RoomCard.vue', () => {
       wrapper.unmount();
     });
 
+    it('calculates isLastMessageFromAnotherAgent as false in view mode even when last message is from another agent', () => {
+      const dashboardStore = useDashboard();
+      dashboardStore.viewedAgent = {
+        email: 'other-agent@weni.ai',
+        name: 'Other Agent',
+      };
+
+      const room = {
+        ...mockRoom,
+        last_message: {
+          ...mockRoom.last_message,
+          user: { email: 'other-agent@weni.ai' },
+        },
+      };
+      const wrapper = createWrapper({ room });
+
+      expect(wrapper.vm.isViewMode).toBe(true);
+      expect(wrapper.vm.isLastMessageFromAnotherAgent).toBe(false);
+
+      wrapper.unmount();
+    });
+
+    it('calculates isLastMessageFromBot as false in view mode even when last message has no contact and no user', () => {
+      const dashboardStore = useDashboard();
+      dashboardStore.viewedAgent = {
+        email: 'other-agent@weni.ai',
+        name: 'Other Agent',
+      };
+
+      const room = {
+        ...mockRoom,
+        last_message: {
+          ...mockRoom.last_message,
+          user: null,
+          contact: null,
+        },
+      };
+      const wrapper = createWrapper({ room });
+
+      expect(wrapper.vm.isViewMode).toBe(true);
+      expect(wrapper.vm.isLastMessageFromBot).toBe(false);
+
+      wrapper.unmount();
+    });
+
     it('returns queue sector_name when canUseNameSectorInRooms is true', () => {
       const configStore = useConfig();
       configStore.project = {
@@ -639,7 +688,7 @@ describe('RoomCard.vue', () => {
   });
 
   describe('contact props passing tests', () => {
-    it('passes correct props to UnnnicChatsContact', () => {
+    it('passes correct props to ChatContact', () => {
       const roomsStore = useRooms();
       roomsStore.newMessagesByRoom = {
         'room-uuid-123': {

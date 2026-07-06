@@ -25,7 +25,7 @@
         @change="checkboxValue = $event"
       />
     </UnnnicToolTip>
-    <UnnnicChatsContact
+    <ChatContact
       :class="{
         'room-card__contact': true,
         'room-card__contact--selected': room.uuid === activeRoomId && active,
@@ -53,6 +53,10 @@
       :newMessageIndicatorTooltip="
         showNewChatReceivedIndicator ? newChatReceivedTooltipText : ''
       "
+      :isInactive="isInactive"
+      :inactivityTimeoutTime="
+        parseSecondsToMinutes(room?.inactivity_timeout_time || 0)
+      "
       data-testid="room-card-contact"
       @click="$emit('click')"
       @click-pin="$emit('clickPin', $event)"
@@ -66,7 +70,7 @@
           textColor="fg-emphasized"
         />
       </template>
-    </UnnnicChatsContact>
+    </ChatContact>
   </section>
 </template>
 
@@ -77,12 +81,23 @@ import { useRooms } from '@/store/modules/chats/rooms';
 import { useConfig } from '@/store/modules/config';
 import { useFeatureFlag } from '@/store/modules/featureFlag';
 import { useProfile } from '@/store/modules/profile';
+import { useDashboard } from '@/store/modules/dashboard';
+
+import ChatContact from '@/components/chats/ChatContact.vue';
+
 import { formatContactName } from '@/utils/chats';
+import { getRoomType } from '@/utils/room.js';
+
+import { parseSecondsToMinutes } from '@/utils/time';
 
 const ONE_MINUTE_IN_MILLISECONDS = 60000;
 
 export default {
   name: 'RoomCard',
+
+  components: {
+    ChatContact,
+  },
 
   props: {
     room: {
@@ -114,6 +129,7 @@ export default {
 
   data: () => ({
     formatContactName,
+    parseSecondsToMinutes,
     waitingTime: 0,
     timer: null,
     checkboxValue: false,
@@ -121,6 +137,7 @@ export default {
   }),
 
   computed: {
+    ...mapState(useDashboard, ['viewedAgent']),
     ...mapState(useRooms, {
       newMessages(store) {
         return store.newMessagesByRoom[this.room.uuid]?.messages;
@@ -139,6 +156,12 @@ export default {
     ...mapState(useProfile, {
       me: 'me',
     }),
+    isInactive() {
+      return !!(getRoomType(this.room) === 'ongoing' && this.room.is_inactive);
+    },
+    isViewMode() {
+      return this.viewedAgent?.email !== '';
+    },
     isPendingResponseFeatureEnabled() {
       return !!this.featureFlags?.active_features?.includes(
         'weniChatsPendingResponse',
@@ -151,6 +174,8 @@ export default {
       return !!this.room.last_message?.contact && !this.room.last_message?.user;
     },
     isLastMessageFromAnotherAgent() {
+      if (this.isViewMode) return false;
+
       const isUserHaveEmail = this.room.last_message?.user?.email;
 
       const verifyEmail = isUserHaveEmail
@@ -160,6 +185,8 @@ export default {
       return !!this.room.last_message?.user && verifyEmail;
     },
     isLastMessageFromBot() {
+      if (this.isViewMode) return false;
+
       return !this.room.last_message?.contact && !this.room.last_message?.user;
     },
     showPendingResponse() {
@@ -337,25 +364,14 @@ export default {
   }
 
   .room-card__contact--selected {
-    :deep(.chats-contact__infos__unread-messages-container) {
+    :deep(
+      .chats-contact__infos__unread-messages-container:not(
+          .chats-contact__infos__unread-messages-container--new-message-centered
+        )
+    ) {
       justify-content: flex-start;
       margin-top: $unnnic-spacing-nano;
     }
-  }
-
-  :deep(
-    .chats-contact__infos__unread-messages-container:has(
-        .chats-contact__infos__new-message-indicator
-      ):not(:has(.chats-contact__infos__message-time))
-  ) {
-    justify-content: center;
-  }
-
-  :deep(
-    .chats-contact:has(.chats-contact__infos__new-message-indicator)
-      .chats-contact__infos__additional-information
-  ) {
-    font-weight: $unnnic-font-weight-bold;
   }
 }
 

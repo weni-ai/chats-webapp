@@ -52,6 +52,7 @@ const removeMedia = (media: File) => {
     flex-direction: row;
     gap: $unnnic-space-2;
     width: 100%;
+    flex-wrap: wrap;
     &__item {
       display: flex;
       flex-direction: row;

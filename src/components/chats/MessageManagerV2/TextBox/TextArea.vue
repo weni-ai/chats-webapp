@@ -9,7 +9,7 @@
       size="sm"
       scheme="neutral-white"
       clickable
-      @click="isInternalNote = false"
+      @click="closeInternalNote"
     />
   </button>
   <section
@@ -26,36 +26,46 @@
     </span>
   </section>
   <section
-    v-else-if="!isAudioRecorderVisible && mediaUploadFiles.length === 0"
-    class="text-box__textarea-container"
+    v-else-if="showTextareaInput"
+    class="text-box__input-block"
   >
-    <p
-      v-if="isInternalNote"
-      class="internal-note__prefix"
-    >
-      {{ `${$t('internal_note')}: ` }}
-    </p>
-    <textarea
-      ref="textInput"
-      :value="inputMessage"
-      :placeholder="isInternalNote ? '' : $t('chats.message_input_placeholder')"
-      rows="1"
-      :class="['text-box__textarea', { 'internal-note': isInternalNote }]"
-      data-testid="text-area"
-      spellcheck="true"
-      @input="handleTextarea"
-      @keydown="handleKeyDown"
-      @focus="inputMessageFocused = true"
-      @blur="inputMessageFocused = false"
-      @paste="handlePaste"
+    <section class="text-box__textarea-container">
+      <p
+        v-if="isInternalNote"
+        class="internal-note__prefix"
+      >
+        {{ `${$t('internal_note')}: ` }}
+      </p>
+      <textarea
+        ref="textInput"
+        :value="inputMessage"
+        :placeholder="
+          isInternalNote ? '' : $t('chats.message_input_placeholder')
+        "
+        rows="1"
+        :class="['text-box__textarea', { 'internal-note': isInternalNote }]"
+        data-testid="text-area"
+        spellcheck="true"
+        :disabled="isDisabledInput"
+        @input="handleTextarea"
+        @keydown="handleKeyDown"
+        @focus="inputMessageFocused = true"
+        @blur="inputMessageFocused = false"
+        @paste="handlePaste"
+      />
+    </section>
+    <MessageManagerTextBoxMedias
+      v-if="isInternalNote && mediaUploadFiles.length > 0"
+      class="text-box__internal-note-medias"
     />
   </section>
 </template>
 
 <script setup lang="ts">
-import { onMounted, useTemplateRef, watch, nextTick } from 'vue';
+import { computed, onMounted, useTemplateRef, watch, nextTick } from 'vue';
 import { storeToRefs } from 'pinia';
 
+import MessageManagerTextBoxMedias from './Medias.vue';
 import { useMessageManager } from '@/store/modules/chats/messageManager';
 import { useAiTextImprovement } from '@/store/modules/chats/aiTextImprovement';
 
@@ -74,7 +84,10 @@ const {
   mediaUploadFiles,
   isAudioRecorderVisible,
   inputMessageFocused,
+  isDisabledInput,
 } = storeToRefs(messageManager);
+
+const { addMediaUploadFiles, clearInputs } = messageManager;
 
 const aiTextImprovementStore = useAiTextImprovement();
 const { isLoading: isAiImproving } = storeToRefs(aiTextImprovementStore);
@@ -82,6 +95,18 @@ const { isLoading: isAiImproving } = storeToRefs(aiTextImprovementStore);
 const MAX_TEXTAREA_ROWS = 5;
 
 const textInputRef = useTemplateRef<HTMLTextAreaElement>('textInput');
+
+const showTextareaInput = computed(() => {
+  if (isAudioRecorderVisible.value) {
+    return false;
+  }
+
+  if (mediaUploadFiles.value.length > 0 && !isInternalNote.value) {
+    return false;
+  }
+
+  return true;
+});
 
 function getLineHeightPx(el: HTMLTextAreaElement): number {
   const computed = getComputedStyle(el);
@@ -137,7 +162,7 @@ const handlePaste = (event: ClipboardEvent) => {
   });
 
   if (fileList.length) {
-    mediaUploadFiles.value = [...mediaUploadFiles.value, ...fileList];
+    addMediaUploadFiles(fileList);
   }
 };
 
@@ -157,15 +182,21 @@ const adjustTextareaHeight = () => {
   el.style.overflowY = scrollH > maxHeight ? 'scroll' : 'hidden';
 };
 
+const closeInternalNote = () => {
+  isInternalNote.value = false;
+  clearInputs();
+};
+
 watch(inputMessage, adjustTextareaHeight, { flush: 'post' });
 
-const isTextareaVisible = () =>
-  !isAudioRecorderVisible.value && mediaUploadFiles.value.length === 0;
-
 watch(
-  () => [isAudioRecorderVisible.value, mediaUploadFiles.value.length],
+  () => [
+    isAudioRecorderVisible.value,
+    mediaUploadFiles.value.length,
+    isInternalNote.value,
+  ],
   () => {
-    if (isTextareaVisible()) {
+    if (showTextareaInput.value) {
       nextTick(adjustTextareaHeight);
     }
   },
@@ -186,72 +217,68 @@ defineExpose({
 </script>
 
 <style scoped lang="scss">
-.text-box__textarea-container {
-  width: 100%;
-  display: flex;
-  gap: $unnnic-space-1;
-}
+.text-box {
+  &__input-block {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: $unnnic-space-2;
+  }
+  &__textarea-container {
+    width: 100%;
+    display: flex;
+    gap: $unnnic-space-1;
+  }
+  &__internal-note-medias {
+    width: 100%;
+  }
+  &__textarea {
+    flex: 1;
+    border: none;
+    resize: none;
+    overflow-y: hidden;
+    outline: none;
+    font: $unnnic-font-body;
+    max-height: 104px;
 
-.text-box__textarea {
-  flex: 1;
-  border: none;
-  resize: none;
-  overflow-y: hidden;
-  outline: none;
-  font: $unnnic-font-body;
-  max-height: 104px;
+    background-color: transparent;
+    color: $unnnic-color-fg-emphasized;
+    caret-color: $unnnic-color-fg-emphasized;
 
-  background-color: transparent;
-  color: $unnnic-color-fg-emphasized;
-  caret-color: $unnnic-color-fg-emphasized;
+    &::placeholder {
+      color: $unnnic-color-fg-muted;
+    }
 
-  &::placeholder {
+    &.internal-note {
+      color: $unnnic-color-fg-base;
+      caret-color: $unnnic-color-fg-base;
+    }
+  }
+  &__ai-loading-text {
+    font: $unnnic-font-body;
     color: $unnnic-color-fg-muted;
   }
-
-  &.internal-note {
-    color: $unnnic-color-fg-base;
-    caret-color: $unnnic-color-fg-base;
+  &__ai-loading-dots {
+    display: inline-flex;
+    align-items: flex-end;
+    gap: 3px;
+    margin-left: $unnnic-space-1;
+    padding-bottom: $unnnic-space-1;
   }
-}
+  &__ai-loading-dot {
+    display: inline-block;
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background-color: $unnnic-color-fg-muted;
+    animation: dot-jump 1.4s ease-in-out infinite;
 
-.text-box__ai-loading-text {
-  font: $unnnic-font-body;
-  color: $unnnic-color-fg-muted;
-}
-
-.text-box__ai-loading-dots {
-  display: inline-flex;
-  align-items: flex-end;
-  gap: 3px;
-  margin-left: $unnnic-space-1;
-  padding-bottom: $unnnic-space-1;
-}
-
-.text-box__ai-loading-dot {
-  display: inline-block;
-  width: 5px;
-  height: 5px;
-  border-radius: 50%;
-  background-color: $unnnic-color-fg-muted;
-  animation: dot-jump 1.4s ease-in-out infinite;
-
-  &:nth-child(2) {
-    animation-delay: 0.16s;
-  }
-  &:nth-child(3) {
-    animation-delay: 0.32s;
-  }
-}
-
-@keyframes dot-jump {
-  0%,
-  60%,
-  100% {
-    transform: translateY(0);
-  }
-  30% {
-    transform: translateY(-6px);
+    &:nth-child(2) {
+      animation-delay: 0.16s;
+    }
+    &:nth-child(3) {
+      animation-delay: 0.32s;
+    }
   }
 }
 
@@ -275,6 +302,17 @@ defineExpose({
     margin-right: $unnnic-spacing-ant;
     justify-self: end;
     padding: $unnnic-space-05 $unnnic-spacing-nano;
+  }
+}
+
+@keyframes dot-jump {
+  0%,
+  60%,
+  100% {
+    transform: translateY(0);
+  }
+  30% {
+    transform: translateY(-6px);
   }
 }
 </style>

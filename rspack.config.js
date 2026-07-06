@@ -21,7 +21,7 @@ module.exports = defineConfig({
   },
   output: {
     path: path.resolve(__dirname, './dist'),
-    publicPath: `${process.env.PUBLIC_PATH_URL}`,
+    publicPath: `${process.env.PUBLIC_PATH_URL}/`,
     filename: 'assets/js/[name]-[contenthash].js',
     chunkFilename: 'assets/js/[name]-[contenthash].js',
     assetModuleFilename: 'assets/[name]-[hash][ext]',
@@ -63,11 +63,21 @@ module.exports = defineConfig({
       },
       {
         test: /\.(scss|sass)$/,
-        loader: 'sass-loader',
+        use: [
+          'postcss-loader',
+          {
+            loader: 'sass-loader',
+            options: {
+              additionalData: `@import '@weni/unnnic-system/src/assets/scss/unnnic.scss';`,
+            },
+          },
+        ],
         type: 'css',
-        options: {
-          additionalData: `@import '@weni/unnnic-system/src/assets/scss/unnnic.scss';`,
-        },
+      },
+      {
+        test: /\.css$/,
+        use: ['postcss-loader'],
+        type: 'css',
       },
       {
         test: /\.(png|jpe?g|gif|svg|webp|avif)$/i,
