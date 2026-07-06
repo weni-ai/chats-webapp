@@ -1241,6 +1241,22 @@
     "toast_postponed": "Feedbackul a fost salvat pentru mai târziu. Poți răspunde altă dată.",
     "toast_postponed_respond": "Răspunde acum"
   },
+  "sector": {
+    "additional_options": {
+      "inactivity_timeout": {
+        "show": {
+          "field": {
+            "default_warning_message": "Mai ești acolo? Dacă nu există răspuns, această sesiune se va închide în curând."
+          }
+        },
+        "close_room": {
+          "field": {
+            "default_close_room_message": "Această sesiune s-a încheiat din cauza inactivității. Poți începe un chat nou oricând."
+          }
+        }
+      }
+    }
+  },
   "without_results": "No results found",
   "mcp_news": {
     "modal_title": "Analytics este acum disponibilă în instrumentele IA!",
