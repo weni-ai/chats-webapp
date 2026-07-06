@@ -64,16 +64,16 @@
   "dark_mode_intro": {
     "buttons": {
       "not_now": "Agora não",
-      "switch": "Ativar modo escuro"
+      "switch": "Mudar para modo escuro"
     },
-    "description_1": "Trabalhe com mais conforto e foco durante todo o dia. O modo escuro reduz a fadiga visual, diminui o brilho da tela e facilita a leitura das conversas — ideal para longas jornadas de atendimento e ambientes com pouca luz.",
-    "description_2": "Com menos fadiga visual, você ganha clareza e agilidade ao responder aos clientes, mantendo um atendimento de alta qualidade mesmo nos horários de pico.",
-    "tagline": "Ative o modo escuro neste módulo e experimente uma nova forma de trabalhar!",
-    "title": "O modo escuro chegou",
+    "description_1": "Trabalhe com mais conforto e foco ao longo do dia. O modo escuro reduz o cansaço visual e diminui o brilho da tela, facilitando a leitura. É ideal para longos períodos de atendimento ou para ambientes com pouca iluminação.",
+    "description_2": "Com menos cansaço visual, você responde aos clientes com mais agilidade e mantém a qualidade do atendimento mesmo nos momentos de maior demanda.",
+    "tagline": "Altere este módulo para o modo escuro e descubra uma nova forma de trabalhar",
+    "title": "Modo escuro disponível",
     "toast": {
       "error": {
         "action": "Tentar novamente",
-        "title": "Erro ao aplicar o modo escuro"
+        "title": "Erro ao mudar para modo escuro"
       },
       "success": {
         "action": "Voltar ao modo claro",
@@ -386,11 +386,11 @@
     "button": "Exportar conversa",
     "title": "Exportar conversa",
     "select_format": "Selecione o formato para exportar a conversa",
-    "disclaimer": "Enquanto esta exportação está sendo processada, novas exportações ficarão temporariamente bloqueadas para esta conversa",
-    "accept_terms": "Aceito os termos e entendo as limitações da exportação.",
-    "success_title": "Processando exportação!",
-    "success_description": "O resultado será enviado por email em breve. Verifique também a pasta de spam.",
-    "error": "Não foi possível processar a exportação. Tente novamente"
+    "disclaimer": "Enquanto esta exportação estiver em andamento, novas exportações ficarão temporariamente bloqueadas para esta conversa.",
+    "accept_terms": "Eu aceito os termos e entendo as limitações de exportação.",
+    "success_title": "Exportação em andamento",
+    "success_description": "Você receberá o arquivo por email em breve. Lembre-se de verificar sua pasta de spam.",
+    "error": "Não foi possível processar a exportação. Tente novamente."
   },
   "name": "Nome",
   "addition_date": "Data de Adição",
@@ -667,7 +667,7 @@
   "no_tags_assigned": "Nenhuma tag atribuída",
   "contact_await_for_you": "Um contato está esperando por você!",
   "agent": "Atendente",
-  "representative": "Representante",
+  "representative": "Atendente",
   "ai_text_improvement": {
     "tooltip_disabled": "Escreva uma resposta no campo de texto para habilitar respostas aprimoradas com IA",
     "tooltip_enabled": "Melhorar resposta com IA",
@@ -915,7 +915,7 @@
   },
   "select_agent": "Selecionar agente",
   "select_queue": "Selecionar fila",
-  "select_representative": "Selecionar um representante",
+  "select_representative": "Selecionar um atendente",
   "select_sector": "Selecione setor",
   "send_media": "Enviar mídia",
   "send_photo_or_video": "Enviar foto ou vídeo",
@@ -959,23 +959,23 @@
     "variable_mapping": {
       "title": "Mapeamento de variáveis",
       "title_tag": "Template {current} de {total}",
-      "description": "As variáveis serão preenchidas na pré-visualização abaixo usando valores dos contatos selecionados sempre que fizerem referência a campos do contato.",
-      "define_variables": "Definir as variáveis",
+      "description": "Na pré-visualização abaixo, as variáveis que fazem referência a campos de contato serão preenchidas com dados dos contatos selecionados",
+      "define_variables": "Defina as variáveis",
       "define_variables_ordinal": "Definir as variáveis do {ordinal} template",
       "variable_label": "Variável {name}",
-      "input_placeholder": "Digite o valor para esta variável",
+      "input_placeholder": "Insira o valor para esta variável",
       "preview_title": "Pré-visualização do template",
       "preview_title_ordinal": "Pré-visualização do {ordinal} template",
       "preview_variable_tooltip": "Variável {placeholder}",
-      "confirmation_helper": "Verifique se cada campo está mapeado corretamente; é assim que a mensagem será exibida para cada contato selecionado.",
-      "confirmation_checkbox": "Verifiquei e estou pronto para enviar",
+      "confirmation_helper": "Verifique se todos os campos estão mapeados corretamente. Sua mensagem será personalizada para cada contato selecionado com base nesses mapeamentos.",
+      "confirmation_checkbox": "Verifiquei e quero enviar",
       "next_template": "Próximo template",
       "send_templates": "Enviar ({count} template) | Enviar ({count} templates)",
       "local_variables": {
         "contact_name": "Nome do contato",
         "contact_urn": "Telefone do contato",
         "agent_name": "Nome do atendente",
-        "agent_email": "E-mail do atendente"
+        "agent_email": "Email do atendente"
       }
     }
   },
