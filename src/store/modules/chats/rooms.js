@@ -3,6 +3,7 @@ import { cloneDeep } from 'lodash';
 
 import { useDashboard } from '../dashboard';
 import { useProfile } from '../profile';
+import { useFeatureFlag } from '../featureFlag';
 import { useRoomCounters } from './roomCounters';
 
 import Room from '@/services/api/resources/chats/room';
@@ -204,7 +205,12 @@ export const useRooms = defineStore('rooms', {
       let gettedRooms = response.results || [];
       const listRoomHasNext = response.next;
 
-      if (roomsType === 'ongoing') {
+      const isPinRoomsOptimizationEnabled =
+        useFeatureFlag().featureFlags?.active_features?.includes(
+          'weniChatsPinRoomsOptimization',
+        );
+
+      if (roomsType === 'ongoing' && isPinRoomsOptimizationEnabled) {
         const newPinnedRooms = response.pinned_rooms || [];
         const newPinnedUuids = new Set(newPinnedRooms.map((room) => room.uuid));
 
