@@ -33,7 +33,7 @@
     <hr class="text-box__divider" />
     <MessageManagerTextBoxActions
       ref="messageManagerActions"
-      @start-audio-recording="audioRecorderRef.record()"
+      @toggle-audio-recording="toggleAudioRecording"
       @open-upload-files="uploadFieldRef.clickInput()"
       @focus-input="focus"
       @send="handleSend"
@@ -78,7 +78,7 @@ const roomsStore = useRooms();
 const { activeRoom } = storeToRefs(roomsStore);
 
 const messageManager = useMessageManager();
-const { sendRoomMessage, sendMediasMessage } = messageManager;
+const { sendRoomMessage, sendMediasMessage, clearInputs } = messageManager;
 const {
   inputMessage,
   audioMessage,
@@ -147,6 +147,21 @@ const handleImprovementCancelled = () => {
     inputMessage.value = original;
   }
   focus();
+};
+
+const toggleAudioRecording = () => {
+  if (
+    ['recording', 'recorded', 'playing', 'paused'].includes(
+      audioRecorderStatus.value,
+    )
+  ) {
+    audioRecorderRef.value?.discard();
+    clearInputs();
+    return;
+  }
+
+  clearInputs();
+  audioRecorderRef.value?.record();
 };
 
 const clearTextarea = () => {
