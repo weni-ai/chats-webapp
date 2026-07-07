@@ -3,6 +3,7 @@ import { mount, config } from '@vue/test-utils';
 import FormAgent from '../Agent.vue';
 import defaultProps from './mocks/agentMock';
 import { expect, it } from 'vitest';
+import i18n from '@/plugins/i18n';
 
 import { useCompositionI18nInThisSpecFile } from '@/utils/test/compositionI18nVitest';
 
@@ -32,7 +33,9 @@ describe('FormAgent', () => {
     const selects = wrapper.findAllComponents({ name: 'UnnnicSelect' });
 
     expect(selects.length).toBe(1);
-    expect(selects.at(0).props('label')).toMatch('agents.add.select.label');
+    expect(selects.at(0).props('label')).toBe(
+      i18n.global.t('agents.add.select.label'),
+    );
   });
 
   it('should have a agents list rendered', async () => {
