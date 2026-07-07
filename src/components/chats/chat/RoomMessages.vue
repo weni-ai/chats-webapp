@@ -12,7 +12,7 @@
       :skipAnimation="skipSummaryAnimation"
       :isArchived="room?.is_archived || false"
       :archivedUrl="room?.archived_conversation_file_url || ''"
-      @close="openChatSummary = false"
+      @close="setOpenActiveRoomSummary(false, room?.uuid)"
     />
     <ChatMessages
       ref="activeChatMessages"
@@ -49,7 +49,11 @@ import RoomService from '@/services/api/resources/chats/room';
 import RoomNotes from '@/services/api/resources/chats/roomNotes';
 
 import { SEE_ALL_INTERNAL_NOTES_CHIP_CONTENT } from '@/utils/chats';
+import { isSummaryDismissed } from '@/utils/summaryDismissalStorage';
 import i18n from '@/plugins/i18n';
+
+const TERMINAL_SUMMARY_STATUSES = new Set(['DONE', 'UNAVAILABLE']);
+const MAX_SUMMARY_POLL_ATTEMPTS = 12;
 
 export default {
   name: 'RoomMessages',
@@ -73,6 +77,7 @@ export default {
       silentLoadingMessages: false,
       isLoadingSummary: false,
       getRoomSummaryInterval: null,
+      summaryPollAttempts: 0,
       skipSummaryAnimation: false,
     };
   },
@@ -131,7 +136,8 @@ export default {
     'room.uuid': {
       immediate: true,
       async handler(roomUuid) {
-        clearInterval(this.getRoomSummaryInterval);
+        this.stopRoomSummaryPolling();
+        this.summaryPollAttempts = 0;
         if (roomUuid) {
           this.resetRoomMessages();
           this.page = 0;
@@ -156,13 +162,20 @@ export default {
                 !this.isLoadingCanSendMessageStatus
               : this.room?.is_24h_valid;
 
-            this.openActiveRoomSummary = this.isClosedRoom || isCanSendMessage;
+            const wasDismissedByUser = isSummaryDismissed(roomUuid);
+
+            this.openActiveRoomSummary =
+              !wasDismissedByUser && (this.isClosedRoom || isCanSendMessage);
             this.skipSummaryAnimation = false;
             this.handlingGetRoomSummary();
           }
         }
       },
     },
+  },
+
+  beforeUnmount() {
+    this.stopRoomSummaryPolling();
   },
 
   methods: {
@@ -173,6 +186,7 @@ export default {
       resetRoomMessages: 'resetRoomMessages',
       addSortedMessage: 'addRoomMessageSorted',
     }),
+    ...mapActions(useRooms, ['setOpenActiveRoomSummary']),
 
     async handlingGetRoomMessages() {
       try {
@@ -184,6 +198,11 @@ export default {
       }
     },
 
+    stopRoomSummaryPolling() {
+      clearInterval(this.getRoomSummaryInterval);
+      this.getRoomSummaryInterval = null;
+    },
+
     setRoomSummary(text, feedback, status = '') {
       this.isLoadingActiveRoomSummary = false;
       if (this.room) {
@@ -193,24 +212,36 @@ export default {
           status,
         };
       }
-      clearInterval(this.getRoomSummaryInterval);
+      this.stopRoomSummaryPolling();
+      this.summaryPollAttempts = 0;
     },
 
     async getRoomSummary() {
       if (!this.room) return;
       const roomUuid = this.room.uuid;
+      this.summaryPollAttempts += 1;
       try {
         const { status, summary, feedback } = await RoomService.getSummary({
           roomUuid,
         });
         if (this.room?.uuid !== roomUuid) return;
-        if (['DONE', 'UNAVAILABLE'].includes(status)) {
+        if (TERMINAL_SUMMARY_STATUSES.has(status)) {
           const unavailableText = this.$t('chats.summary.unavailable');
           this.setRoomSummary(
             status === 'UNAVAILABLE' ? unavailableText : summary,
             feedback,
             status,
           );
+          return;
+        }
+        if (this.summaryPollAttempts >= MAX_SUMMARY_POLL_ATTEMPTS) {
+          if (summary) {
+            this.setRoomSummary(summary, feedback, 'ERROR');
+          } else {
+            const errorText = i18n.global.t('chats.summary.error');
+            this.setRoomSummary(errorText, { liked: null }, 'ERROR');
+          }
+          return;
         }
       } catch (error) {
         if (this.room?.uuid !== roomUuid) return;

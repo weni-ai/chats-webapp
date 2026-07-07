@@ -80,6 +80,7 @@
                 :enableReply="enableReply"
                 :replyMessage="message.replied_message"
                 :automatic="message.is_automatic_message"
+                :automaticType="message.automatic_message_type"
                 :locale="$i18n.locale"
                 data-testid="chat-message"
                 :highlighted="message.uuid === toScrollMessage?.uuid"
@@ -208,6 +209,8 @@
         v-if="isFullscreen && currentMedia"
         :downloadMediaUrl="currentMedia?.url"
         :downloadMediaName="currentMedia?.message"
+        :mediaCurrent="currentMediaIndex"
+        :mediaTotal="medias.length"
         @close="isFullscreen = false"
         @next="nextMedia"
         @previous="previousMedia"
@@ -393,7 +396,7 @@ export default {
     }),
     ...mapState(useDashboard, ['viewedAgent']),
     ...mapState(useRoomMessages, ['roomMessagesNext']),
-    ...mapWritableState(useMessageManager, ['replyMessage']),
+    ...mapWritableState(useMessageManager, ['replyMessage', 'inputMessage']),
     ...mapWritableState(useRoomMessages, [
       'toScrollNote',
       'toScrollMessage',
@@ -405,6 +408,15 @@ export default {
         .flat()
         .filter((media) => this.isMedia(media));
     },
+    currentMediaIndex() {
+      if (!this.currentMedia?.url) {
+        return 0;
+      }
+
+      return (
+        this.medias.findIndex((el) => el.url === this.currentMedia.url) + 1
+      );
+    },
     isViewMode() {
       return !!this.viewedAgent?.email;
     },
@@ -415,6 +427,11 @@ export default {
     unreadMessages() {
       if (!this.room) return 0;
       return this.newMessagesByRoom[this.room.uuid]?.messages?.length || 0;
+    },
+    scrollToBottomButtonPosition() {
+      return this.inputMessage.length > 0
+        ? '64px' // unnnic-space-16
+        : '24px'; // unnnic-space-6
     },
   },
 
@@ -877,9 +894,12 @@ export default {
 .chat-messages__scroll-button {
   &-container {
     position: absolute;
-    bottom: $unnnic-space-6;
-    right: $unnnic-space-4;
+    bottom: v-bind(scrollToBottomButtonPosition);
+    right: $unnnic-space-2;
     z-index: 9;
+    box-shadow: 0 4px 4px 0 rgba(0, 0, 0, 0.25); // token don't exist
+    border-radius: $unnnic-radius-2;
+    background-color: $unnnic-color-bg-base;
   }
   &-chip {
     padding: 0 $unnnic-space-2;

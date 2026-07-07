@@ -34,6 +34,16 @@
           @edit="emitEditQuickMessage"
           @delete="emitDeleteQuickMessage"
         />
+        <div
+          v-if="infiniteScroll && !withoutQuickMessages"
+          ref="infiniteScrollSentinel"
+          data-testid="sentinel"
+          class="quick-messages-list__sentinel"
+        />
+        <UnnnicIconLoading
+          v-if="infiniteScroll && loadingMore"
+          class="quick-messages-list__loading"
+        />
       </section>
     </Transition>
     <section
@@ -87,6 +97,18 @@ export default {
       type: String,
       default: '',
     },
+    infiniteScroll: {
+      type: Boolean,
+      default: false,
+    },
+    loadingMore: {
+      type: Boolean,
+      default: false,
+    },
+    hasMore: {
+      type: Boolean,
+      default: false,
+    },
   },
   emits: [
     'update:isEmpty',
@@ -94,17 +116,22 @@ export default {
     'edit-quick-message',
     'delete-quick-message',
     'open-new-quick-message',
+    'load-more',
   ],
 
   data() {
     return {
       openQuickMessages: true,
+      intersectionObserver: null,
     };
   },
 
   computed: {
     withoutQuickMessages() {
       return this.quickMessages?.length === 0;
+    },
+    infiniteScrollReady() {
+      return this.infiniteScroll && !this.withoutQuickMessages;
     },
   },
   watch: {
@@ -114,9 +141,109 @@ export default {
         this.$emit('update:isEmpty', newWithoutQuickMessages);
       },
     },
+    infiniteScrollReady: {
+      handler(isReady) {
+        if (isReady) {
+          this.$nextTick(() => this.setupInfiniteScroll());
+          return;
+        }
+
+        this.teardownInfiniteScroll();
+      },
+    },
+    loadingMore(isLoading, wasLoading) {
+      if (!isLoading && wasLoading && this.infiniteScrollReady) {
+        this.$nextTick(() => this.checkSentinelVisibility());
+      }
+    },
+    hasMore(isAvailable) {
+      if (isAvailable && this.infiniteScrollReady && !this.loadingMore) {
+        this.$nextTick(() => this.checkSentinelVisibility());
+      }
+    },
+  },
+
+  mounted() {
+    if (this.infiniteScrollReady) {
+      this.$nextTick(() => this.setupInfiniteScroll());
+    }
+  },
+
+  beforeUnmount() {
+    this.teardownInfiniteScroll();
   },
 
   methods: {
+    findScrollRoot(element) {
+      let parent = element?.parentElement;
+
+      while (parent) {
+        const { overflowY } = window.getComputedStyle(parent);
+
+        if (overflowY === 'auto' || overflowY === 'scroll') {
+          return parent;
+        }
+
+        parent = parent.parentElement;
+      }
+
+      return null;
+    },
+    checkSentinelVisibility() {
+      if (!this.hasMore || this.loadingMore) return;
+
+      const sentinel = this.$refs.infiniteScrollSentinel;
+      if (!sentinel) return;
+
+      const scrollRoot = this.findScrollRoot(sentinel);
+      const sentinelRect = sentinel.getBoundingClientRect();
+
+      const isVisible = scrollRoot
+        ? this.isElementVisibleInContainer(sentinelRect, scrollRoot)
+        : sentinelRect.top <= window.innerHeight + 120 &&
+          sentinelRect.bottom >= -120;
+
+      if (isVisible) {
+        this.$emit('load-more');
+      }
+    },
+    isElementVisibleInContainer(elementRect, container) {
+      const containerRect = container.getBoundingClientRect();
+
+      return (
+        elementRect.top <= containerRect.bottom + 120 &&
+        elementRect.bottom >= containerRect.top - 120
+      );
+    },
+    setupInfiniteScroll() {
+      this.teardownInfiniteScroll();
+
+      const sentinel = this.$refs.infiniteScrollSentinel;
+      if (!sentinel) return;
+
+      const scrollRoot = this.findScrollRoot(sentinel);
+
+      this.intersectionObserver = new IntersectionObserver(
+        (entries) => {
+          const isVisible = entries.some((entry) => entry.isIntersecting);
+          if (isVisible && this.hasMore && !this.loadingMore) {
+            this.$emit('load-more');
+          }
+        },
+        {
+          root: scrollRoot,
+          rootMargin: '120px',
+        },
+      );
+
+      this.intersectionObserver.observe(sentinel);
+    },
+    teardownInfiniteScroll() {
+      if (this.intersectionObserver) {
+        this.intersectionObserver.disconnect();
+        this.intersectionObserver = null;
+      }
+    },
     emitSelectQuickMessage(quickMessage) {
       this.$emit('select-quick-message', quickMessage);
     },
@@ -162,6 +289,15 @@ export default {
   &__without-messages-text {
     font: $unnnic-font-body;
     color: $unnnic-color-fg-base;
+  }
+  &__sentinel {
+    width: 100%;
+    height: 1px;
+  }
+  &__loading {
+    display: flex;
+    justify-content: center;
+    padding: $unnnic-space-2 0;
   }
 }
 </style>

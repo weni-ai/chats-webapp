@@ -4,6 +4,10 @@ import { createTestingPinia } from '@pinia/testing';
 import { setActivePinia } from 'pinia';
 import App from '@/App.vue';
 import { useConfig } from '@/store/modules/config';
+import { useFeatureFlag } from '@/store/modules/featureFlag';
+import { useQuickMessages } from '@/store/modules/chats/quickMessages';
+import { useQuickMessageShared } from '@/store/modules/chats/quickMessagesShared';
+import { useRooms } from '@/store/modules/chats/rooms';
 import * as ProfileService from '@/services/api/resources/profile';
 import * as ProjectService from '@/services/api/resources/settings/project';
 import * as notifications from '@/utils/notifications';
@@ -36,6 +40,7 @@ vi.mock('@/services/api/resources/profile', () => ({
 vi.mock('@/services/api/resources/settings/project', () => ({
   default: {
     getInfo: vi.fn(),
+    getProjectLanguage: vi.fn(() => 'en-us'),
   },
 }));
 
@@ -136,6 +141,7 @@ describe('App.vue', () => {
   const createWrapper = (options = {}) => {
     const {
       routeName = 'home',
+      routePath = '/',
       socketStatus = 'open',
       socketRetryCount = 0,
       wsMock = null,
@@ -157,7 +163,7 @@ describe('App.vue', () => {
         mocks: {
           $t: (key) => key,
           $router: mockRouter,
-          $route: { name: routeName },
+          $route: { name: routeName, path: routePath },
           $i18n: {
             locale: 'en',
           },
@@ -378,6 +384,71 @@ describe('App.vue', () => {
 
       wrapper = createWrapper();
       expect(wrapper.vm.userWhoChangedStatus).toBe('test-user');
+    });
+  });
+
+  describe('Quick messages bootstrap', () => {
+    it('eager loads quick messages when v2 flag is off', () => {
+      const ffStore = useFeatureFlag();
+      ffStore.featureFlags = { active_features: [] };
+      ffStore.featureFlagsLoaded = true;
+      const qmStore = useQuickMessages();
+      const qmsStore = useQuickMessageShared();
+
+      wrapper = createWrapper({ routePath: '/' });
+
+      expect(qmStore.getAll).toHaveBeenCalled();
+      expect(qmsStore.getAll).toHaveBeenCalled();
+    });
+
+    it('does not eager load on the live desk when v2 flag is on', () => {
+      const ffStore = useFeatureFlag();
+      ffStore.featureFlags = {
+        active_features: ['weniChatsQuickMessagesV2'],
+      };
+      ffStore.featureFlagsLoaded = true;
+      const qmStore = useQuickMessages();
+      const qmsStore = useQuickMessageShared();
+
+      wrapper = createWrapper({ routePath: '/' });
+
+      expect(qmStore.getAll).not.toHaveBeenCalled();
+      expect(qmsStore.getAll).not.toHaveBeenCalled();
+    });
+
+    it('keeps eager loading on settings routes when v2 flag is on', () => {
+      const ffStore = useFeatureFlag();
+      ffStore.featureFlags = {
+        active_features: ['weniChatsQuickMessagesV2'],
+      };
+      ffStore.featureFlagsLoaded = true;
+      const qmStore = useQuickMessages();
+
+      wrapper = createWrapper({
+        routeName: 'settings',
+        routePath: '/settings',
+      });
+
+      expect(qmStore.getAll).toHaveBeenCalled();
+    });
+
+    it('lazy loads quick messages by sector when entering a room with v2 flag on', async () => {
+      const ffStore = useFeatureFlag();
+      ffStore.featureFlags = {
+        active_features: ['weniChatsQuickMessagesV2'],
+      };
+      ffStore.featureFlagsLoaded = true;
+      const qmStore = useQuickMessages();
+      const qmsStore = useQuickMessageShared();
+
+      wrapper = createWrapper({ routePath: '/' });
+
+      const roomsStore = useRooms();
+      roomsStore.activeRoom = { queue: { sector: 'sector-1' } };
+      await wrapper.vm.$nextTick();
+
+      expect(qmStore.loadAllV2IfNeeded).toHaveBeenCalled();
+      expect(qmsStore.loadBySectorIfNeeded).toHaveBeenCalledWith('sector-1');
     });
   });
 });

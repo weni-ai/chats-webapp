@@ -14,6 +14,7 @@ import { useRoomMessages } from '@/store/modules/chats/roomMessages';
 import { useFeatureFlag } from '@/store/modules/featureFlag';
 import audioTranscriptionService from '@/services/api/resources/chats/audioTranscription';
 import { UnnnicCallAlert, UnnnicAudioRecorder } from '@weni/unnnic-system';
+import Media from '@/services/api/resources/chats/media';
 import i18n from '@/plugins/i18n';
 
 beforeAll(() => {
@@ -33,6 +34,12 @@ vi.mock('@/services/api/resources/chats/audioTranscription', () => ({
   default: {
     generateAudioTranscription: vi.fn(),
     sendAudioTranscriptionFeedback: vi.fn(),
+  },
+}));
+
+vi.mock('@/services/api/resources/chats/media', () => ({
+  default: {
+    download: vi.fn(),
   },
 }));
 
@@ -103,6 +110,7 @@ describe('ChatMessageAudio', () => {
     roomMessagesStore = useRoomMessages();
     useFeatureFlag().featureFlags.active_features = [
       'weniChatsTranscriptAudioMessage',
+      'weniChatsDownloadAudioMessage',
     ];
     vi.spyOn(roomMessagesStore, 'updateMessage').mockImplementation(() => {});
   });
@@ -310,6 +318,80 @@ describe('ChatMessageAudio', () => {
       wrapper = mountComponent({ isClosedChat: true });
       const recorder = wrapper.findComponent(UnnnicAudioRecorder);
       expect(recorder.props('enableGenerateTranscription')).toBeDefined();
+    });
+  });
+
+  describe('download button', () => {
+    it('renders download button when message has contact', () => {
+      wrapper = mountComponent({
+        message: createMessage({ contact: { uuid: 'c1' } }),
+      });
+      expect(wrapper.find('[data-testid="download-button"]').exists()).toBe(
+        true,
+      );
+    });
+
+    it('does not render download button when message has no contact', () => {
+      wrapper = mountComponent({
+        message: createMessage({ contact: null }),
+      });
+      expect(wrapper.find('[data-testid="download-button"]').exists()).toBe(
+        false,
+      );
+    });
+
+    it('does not render download button when feature flag is disabled', () => {
+      useFeatureFlag().featureFlags.active_features = [
+        'weniChatsTranscriptAudioMessage',
+      ];
+      wrapper = mountComponent({
+        message: createMessage({ contact: { uuid: 'c1' } }),
+      });
+      expect(wrapper.find('[data-testid="download-button"]').exists()).toBe(
+        false,
+      );
+    });
+
+    it('calls Media.download with message uuid on click', async () => {
+      Media.download.mockResolvedValue();
+      const message = createMessage({
+        uuid: 'a6d5a50a-09dd-4a21-bfa7-e69e9509667d',
+      });
+      wrapper = mountComponent({ message });
+      await wrapper.find('[data-testid="download-button"]').trigger('click');
+      await flushPromises();
+      expect(Media.download).toHaveBeenCalledWith({
+        messageUuid: 'a6d5a50a-09dd-4a21-bfa7-e69e9509667d',
+      });
+    });
+
+    it('shows error alert when message uuid is missing', async () => {
+      const message = createMessage({ uuid: undefined });
+      wrapper = mountComponent({ message });
+      await wrapper.find('[data-testid="download-button"]').trigger('click');
+      await flushPromises();
+      expect(Media.download).not.toHaveBeenCalled();
+      expect(UnnnicCallAlert).toHaveBeenCalledWith(
+        expect.objectContaining({
+          props: expect.objectContaining({ type: 'error' }),
+        }),
+      );
+    });
+
+    it('shows error alert when download fails', async () => {
+      Media.download.mockRejectedValue(new Error('Download failed'));
+      const consoleSpy = vi
+        .spyOn(console, 'error')
+        .mockImplementation(() => {});
+      wrapper = mountComponent();
+      await wrapper.find('[data-testid="download-button"]').trigger('click');
+      await flushPromises();
+      expect(UnnnicCallAlert).toHaveBeenCalledWith(
+        expect.objectContaining({
+          props: expect.objectContaining({ type: 'error' }),
+        }),
+      );
+      consoleSpy.mockRestore();
     });
   });
 });

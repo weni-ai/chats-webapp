@@ -59,6 +59,7 @@ const UnnnicInputStub = {
     'label',
     'placeholder',
     'readonly',
+    'disabled',
     'iconRight',
     'iconRightClickable',
     'showClear',
@@ -69,6 +70,7 @@ const UnnnicInputStub = {
     <div
       :data-testid="$attrs['data-testid']"
       :data-readonly="readonly ? 'true' : 'false'"
+      :data-disabled="disabled ? 'true' : 'false'"
       :data-show-clear="showClear ? 'true' : 'false'"
       :data-icon-right="iconRight"
       :data-value="modelValue"
@@ -77,6 +79,7 @@ const UnnnicInputStub = {
         :data-testid="($attrs['data-testid'] || 'input') + '-native'"
         :value="modelValue"
         :readonly="readonly"
+        :disabled="disabled"
         @input="$emit('update:modelValue', $event.target.value)"
         @click="$emit('click', $event)"
         @focus="$emit('focus', $event)"
@@ -247,5 +250,37 @@ describe('VariableInput', () => {
 
     const emitted = wrapper.emitted('update:modelValue');
     expect(emitted).toBeFalsy();
+  });
+
+  describe('disabled state', () => {
+    it('does not render the popover and shows a disabled input', () => {
+      wrapper = buildWrapper({ disabled: true, modelValue: 'Marcus' });
+
+      expect(wrapper.find('[data-testid="popover-stub"]').exists()).toBe(false);
+
+      const input = wrapper.find('[data-testid="variable-input-input"]');
+      expect(input.attributes('data-disabled')).toBe('true');
+      expect(input.attributes('data-value')).toBe('Marcus');
+    });
+
+    it('displays the local variable label when disabled with a token value', () => {
+      wrapper = buildWrapper({
+        disabled: true,
+        modelValue: '{{contact.name}}',
+      });
+
+      const input = wrapper.find('[data-testid="variable-input-input"]');
+      expect(input.attributes('data-value')).toBe(labelFor('{{contact.name}}'));
+    });
+
+    it('does not emit when the input changes while disabled', async () => {
+      wrapper = buildWrapper({ disabled: true, modelValue: 'Marcus' });
+
+      await wrapper
+        .find('[data-testid="variable-input-input-native"]')
+        .trigger('input');
+
+      expect(wrapper.emitted('update:modelValue')).toBeFalsy();
+    });
   });
 });

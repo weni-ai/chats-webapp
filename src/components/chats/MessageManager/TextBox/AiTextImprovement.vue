@@ -94,9 +94,12 @@ const aiTextImprovement = useAiTextImprovement();
 const { isLoading, isPopoverOpen, showNewTag } = storeToRefs(aiTextImprovement);
 
 const messageManager = useMessageManager();
-const { inputMessage, isDisabledInput } = storeToRefs(messageManager);
+const { inputMessage, isDisabledInput, isInternalNote } =
+  storeToRefs(messageManager);
 
-const isDisabled = computed(() => !inputMessage.value.trim());
+const isDisabled = computed(
+  () => !inputMessage.value.trim() || isInternalNote.value,
+);
 
 const tooltipText = computed(() =>
   isDisabled.value
@@ -126,13 +129,17 @@ function handleMouseEnter() {
 }
 
 function handleButtonClick() {
-  if (!isDisabled.value) {
-    isPopoverOpen.value = !isPopoverOpen.value;
+  if (isDisabled.value) {
+    return;
   }
+
+  isPopoverOpen.value = !isPopoverOpen.value;
 }
 
 async function selectOption(type: AiTextImprovementType) {
   isPopoverOpen.value = false;
+
+  if (isInternalNote.value) return;
 
   const text = inputMessage.value.trim();
   if (!text) return;

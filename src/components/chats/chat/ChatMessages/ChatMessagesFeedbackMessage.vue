@@ -36,7 +36,7 @@ export default {
     createFeedbackLabel(message) {
       const textJson = JSON.parse(message.text);
 
-      const t = (key, params) => this.$t(key, params);
+      const t = this.$t;
 
       const isOldFeedback = textJson.type;
 
@@ -170,7 +170,14 @@ export default {
         return '';
       };
 
+      const getRoomClosedLabel = (action) => {
+        if (action === 'automatic_close') {
+          return t('chats.feedback.automatic_close_room');
+        }
+      };
+
       const feedbackLabels = {
+        rc: getRoomClosedLabel(content.action),
         rt:
           getPickLabel(content.action, content.from, content.to) ||
           getTransferLabel(

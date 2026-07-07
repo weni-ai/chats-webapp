@@ -1,8 +1,5 @@
 <template>
-  <section
-    v-if="showSettings"
-    class="settings-page"
-  >
+  <section class="settings-page">
     <UnnnicPageHeader :title="$t('config_chats.title')">
       <template #actions>
         <UnnnicButton
@@ -39,7 +36,7 @@
           <UnnnicTabsContent value="general">
             <section class="settings-page__content">
               <SettingsProjectOptions />
-              <CustomBreaks />
+              <CustomBreaks v-if="!isSecondaryProject" />
             </section>
           </UnnnicTabsContent>
           <UnnnicTabsContent value="sectors">
@@ -105,7 +102,7 @@ const router = useRouter();
 const route = useRoute();
 
 const configStore = useConfig();
-const { isPrimaryProject, enableGroupsMode } = storeToRefs(configStore);
+const { isSecondaryProject, enableGroupsMode } = storeToRefs(configStore);
 
 const settingsStore = useSettings();
 const { sectors, groups } = storeToRefs(settingsStore);
@@ -119,12 +116,12 @@ const enableRepresentativesManagement = computed(() => {
   );
 });
 
-const showSettings = computed(() => {
-  return !enableGroupsMode.value || isPrimaryProject.value;
-});
-
 const activeTab = ref('');
 const settingsTabs = computed(() => {
+  if (isSecondaryProject.value) {
+    return [{ label: t('config_chats.tabs.general'), value: 'general' }];
+  }
+
   const tabs = [
     { label: t('config_chats.tabs.general'), value: 'general' },
     { label: t('config_chats.tabs.sectors'), value: 'sectors' },

@@ -1,10 +1,21 @@
-import { expect, describe, it, vi, beforeEach } from 'vitest';
-import { flushPromises, mount } from '@vue/test-utils';
+import {
+  expect,
+  describe,
+  it,
+  vi,
+  beforeEach,
+  beforeAll,
+  afterAll,
+} from 'vitest';
+import { config, flushPromises, mount } from '@vue/test-utils';
+import { nextTick } from 'vue';
 import { createTestingPinia } from '@pinia/testing';
 
 import { createMemoryHistory, createRouter } from 'vue-router';
 
-import { useCompositionI18nInThisSpecFile } from '@/utils/test/compositionI18nVitest';
+import i18n from '@/plugins/i18n';
+
+import { useConfig } from '@/store/modules/config';
 
 import FormSectorExtraOptions from '../ExtraOptions.vue';
 
@@ -38,6 +49,15 @@ const sectorExtraOptionsMock = {
     is_active: false,
     text: '',
   },
+  inactivity_timeout: {
+    is_message_timeout_enabled: false,
+    message_timeout_text: '',
+    message_timeout_time: null,
+
+    is_close_room_enabled: false,
+    close_room_message_text: '',
+    close_room_timeout_time: null,
+  },
   is_csat_enabled: false,
   custom_csat_flow_uuid: null,
 };
@@ -50,11 +70,25 @@ const router = createRouter({
 
 router.push = vi.fn();
 
-function createWrapper(props = {}) {
+function createWrapper(props = {}, { projectLanguage = 'en-us' } = {}) {
   const wrapper = mount(FormSectorExtraOptions, {
     props: { modelValue: sectorExtraOptionsMock, isEditing: false, ...props },
     global: {
-      plugins: [router, createTestingPinia()],
+      plugins: [
+        router,
+        createTestingPinia({
+          initialState: {
+            config: {
+              project: {
+                name: '',
+                config: {},
+                uuid: '',
+                language: projectLanguage,
+              },
+            },
+          },
+        }),
+      ],
       stubs: {
         UnnnicSwitch: true,
       },
@@ -64,12 +98,30 @@ function createWrapper(props = {}) {
   return wrapper;
 }
 
+function setProjectLanguage(language, pinia) {
+  const configStore = useConfig(pinia);
+  configStore.project = {
+    ...configStore.project,
+    language,
+  };
+}
+
 describe('SectorExtraOptions', () => {
-  useCompositionI18nInThisSpecFile();
+  let savedTMock;
+
+  beforeAll(() => {
+    savedTMock = config.global.mocks.$t;
+    delete config.global.mocks.$t;
+  });
+
+  afterAll(() => {
+    config.global.mocks.$t = savedTMock;
+  });
 
   let wrapper;
 
   beforeEach(async () => {
+    i18n.global.locale = 'en';
     wrapper = createWrapper();
     await flushPromises();
   });
@@ -265,6 +317,120 @@ describe('SectorExtraOptions', () => {
         custom_csat_flow_uuid: null,
       }),
     );
+  });
+
+  describe('inactivity timeout default messages', () => {
+    const inactivityTimeoutMock = {
+      is_message_timeout_enabled: false,
+      message_timeout_text: '',
+      message_timeout_time: null,
+      is_close_room_enabled: false,
+      close_room_message_text: '',
+      close_room_timeout_time: null,
+    };
+
+    beforeEach(async () => {
+      setProjectLanguage('en-us', wrapper.vm.$pinia);
+      await wrapper.setProps({
+        modelValue: {
+          ...sectorExtraOptionsMock,
+          inactivity_timeout: { ...inactivityTimeoutMock },
+        },
+      });
+      await flushPromises();
+    });
+
+    it('should use project language for the warning message', async () => {
+      setProjectLanguage('pt-br', wrapper.vm.$pinia);
+      await nextTick();
+
+      wrapper.vm.handleInactivityTimeoutIsMessageTimeoutEnabled(true);
+
+      expect(wrapper.vm.sector.inactivity_timeout.message_timeout_text).toBe(
+        'Você ainda está aí? Se não houver resposta, este atendimento será encerrado em breve.',
+      );
+    });
+
+    it('should use project language for the close room message', async () => {
+      setProjectLanguage('pt-br', wrapper.vm.$pinia);
+      await nextTick();
+
+      wrapper.vm.handleInactivityTimeoutIsCloseRoomEnabled(true);
+
+      expect(wrapper.vm.sector.inactivity_timeout.close_room_message_text).toBe(
+        'Este atendimento foi encerrado por inatividade. Inicie um novo chat quando quiser.',
+      );
+    });
+
+    it('should use english default messages when project language is en-us', async () => {
+      const localWrapper = createWrapper({}, { projectLanguage: 'en-us' });
+      await flushPromises();
+
+      localWrapper.vm.handleInactivityTimeoutIsMessageTimeoutEnabled(true);
+      localWrapper.vm.handleInactivityTimeoutIsCloseRoomEnabled(true);
+
+      expect(
+        localWrapper.vm.sector.inactivity_timeout.message_timeout_text,
+      ).toBe(
+        "Are you still there? If there's no response, this session will be closed soon.",
+      );
+      expect(
+        localWrapper.vm.sector.inactivity_timeout.close_room_message_text,
+      ).toBe(
+        'This session has ended due to inactivity. Feel free to start a new chat anytime!',
+      );
+    });
+
+    it('should not update warning message when project language changes after enable', async () => {
+      const localWrapper = createWrapper({}, { projectLanguage: 'pt-br' });
+      await flushPromises();
+
+      localWrapper.vm.handleInactivityTimeoutIsMessageTimeoutEnabled(true);
+
+      setProjectLanguage('en-us', localWrapper.vm.$pinia);
+      await nextTick();
+
+      expect(
+        localWrapper.vm.sector.inactivity_timeout.message_timeout_text,
+      ).toBe(
+        'Você ainda está aí? Se não houver resposta, este atendimento será encerrado em breve.',
+      );
+    });
+
+    it('should not update warning message when project language changes after customization', async () => {
+      const localWrapper = createWrapper({}, { projectLanguage: 'pt-br' });
+      await flushPromises();
+
+      localWrapper.vm.handleInactivityTimeoutIsMessageTimeoutEnabled(true);
+      localWrapper.vm.sector.inactivity_timeout.message_timeout_text =
+        'Mensagem personalizada';
+
+      setProjectLanguage('en-us', localWrapper.vm.$pinia);
+      await nextTick();
+
+      expect(
+        localWrapper.vm.sector.inactivity_timeout.message_timeout_text,
+      ).toBe('Mensagem personalizada');
+    });
+
+    it('should use romanian default messages when project language is ro', async () => {
+      const localWrapper = createWrapper({}, { projectLanguage: 'ro' });
+      await flushPromises();
+
+      localWrapper.vm.handleInactivityTimeoutIsMessageTimeoutEnabled(true);
+      localWrapper.vm.handleInactivityTimeoutIsCloseRoomEnabled(true);
+
+      expect(
+        localWrapper.vm.sector.inactivity_timeout.message_timeout_text,
+      ).toBe(
+        'Mai ești acolo? Dacă nu există răspuns, această sesiune se va închide în curând.',
+      );
+      expect(
+        localWrapper.vm.sector.inactivity_timeout.close_room_message_text,
+      ).toBe(
+        'Această sesiune s-a încheiat din cauza inactivității. Poți începe un chat nou oricând.',
+      );
+    });
   });
 
   it('Should match the snapshot', () => {

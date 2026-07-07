@@ -64,16 +64,16 @@
   "dark_mode_intro": {
     "buttons": {
       "not_now": "Agora não",
-      "switch": "Ativar modo escuro"
+      "switch": "Mudar para modo escuro"
     },
-    "description_1": "Trabalhe com mais conforto e foco durante todo o dia. O modo escuro reduz a fadiga visual, diminui o brilho da tela e facilita a leitura das conversas — ideal para longas jornadas de atendimento e ambientes com pouca luz.",
-    "description_2": "Com menos fadiga visual, você ganha clareza e agilidade ao responder aos clientes, mantendo um atendimento de alta qualidade mesmo nos horários de pico.",
-    "tagline": "Ative o modo escuro neste módulo e experimente uma nova forma de trabalhar!",
-    "title": "O modo escuro chegou",
+    "description_1": "Trabalhe com mais conforto e foco ao longo do dia. O modo escuro reduz o cansaço visual e diminui o brilho da tela, facilitando a leitura. É ideal para longos períodos de atendimento ou para ambientes com pouca iluminação.",
+    "description_2": "Com menos cansaço visual, você responde aos clientes com mais agilidade e mantém a qualidade do atendimento mesmo nos momentos de maior demanda.",
+    "tagline": "Altere este módulo para o modo escuro e descubra uma nova forma de trabalhar",
+    "title": "Modo escuro disponível",
     "toast": {
       "error": {
         "action": "Tentar novamente",
-        "title": "Erro ao aplicar o modo escuro"
+        "title": "Erro ao mudar para modo escuro"
       },
       "success": {
         "action": "Voltar ao modo claro",
@@ -107,8 +107,8 @@
       "title": "Notificações",
       "sound": "Som",
       "sound_notifications": "Notificações sonoras",
-      "on": "Ativado",
-      "off": "Desativado"
+      "on": "Ativadas",
+      "off": "Desativadas"
     },
     "help": {
       "label": "Ajuda",
@@ -163,8 +163,12 @@
     "title": "Mensagem automática",
     "info": "Defina uma resposta automática para ser enviada ao contato enquanto está aguardando atendimento, deixe em branco caso não queira nenhuma mensagem.",
     "placeholder": "Por enquanto você não definiu uma mensagem automática, defina uma mensagem para seus contatos que estão aguardando",
-    "automatic_opening_message": "Mensagem de abertura automática"
+    "automatic_opening_message": "Mensagem de abertura automática",
+    "inactive_warning_message": "Mensagem de aviso",
+    "inactive_close_message": "Mensagem de encerramento"
   },
+  "inactive": "Inativo",
+  "inactive_room_tooltip": "A conversa atingiu o limite de inatividade de {minutes} minuto. | A conversa atingiu o limite de inatividade de {minutes} minutos.",
   "reply": "Responder",
   "step_of": "Etapa {step} de {total}",
   "type_to_filter": "Digite para filtrar",
@@ -194,6 +198,18 @@
   "end_all_selected_chats_tooltip": "Encerrar todos os chats selecionados",
   "number_of_chats_selected": "{count} chat selecionado | {count} chats selecionados",
   "image": "Imagem",
+  "image_preview": {
+    "count": "Imagem {current} de {total}",
+    "tooltip": {
+      "close": "Fechar imagem (esc)",
+      "previous": "Anterior",
+      "next": "Próxima",
+      "rotate": "Girar 90°",
+      "zoom_in": "Ampliar",
+      "zoom_out": "Reduzir",
+      "export": "Exportar"
+    }
+  },
   "video": "Vídeo",
   "audio_message": "Mensagem de áudio",
   "audio_recorder": {
@@ -287,6 +303,30 @@
     },
     "additional_options": {
       "title": "Opções extras",
+      "inactivity_timeout": {
+        "title": "Inatividade na conversa",
+        "show": {
+          "switch_label": "Exibir alerta de inatividade ao atendente e notificar o contato",
+          "hint": "O alerta é exibido apenas em chats em andamento e considera o tempo desde a última mensagem do atendente.",
+          "field": {
+            "timeout_time_label": "Definir após quantos minutos sem resposta do contato o sistema deve enviar a mensagem de aviso",
+            "timeout_time_tooltip": "Nesse momento, o atendente também verá a conversa marcada com um alerta de inatividade.",
+            "warning_message_label": "Mensagem de aviso",
+            "warning_message_tooltip": "A mensagem aparecerá como se tivesse sido enviada pelo atendente designado.",
+            "default_warning_message": "Você ainda está aí? Se não houver resposta, este atendimento será encerrado em breve."
+          }
+        },
+        "close_room": {
+          "switch_label": "Encerrar chats inativos automaticamente",
+          "hint": "Os chats são encerrados automaticamente se o contato não enviar mensagens no período após o envio do alerta.",
+          "field": {
+            "close_room_time_label": "Definir quantos minutos após o envio da mensagem de aviso o sistema deve encerrar o chat",
+            "close_room_message_label": "Mensagem de encerramento",
+            "close_room_message_tooltip": "A mensagem aparecerá como se tivesse sido enviada pelo atendente designado.",
+            "default_close_room_message": "Este atendimento foi encerrado por inatividade. Inicie um novo chat quando quiser."
+          }
+        }
+      },
       "template_message": {
         "switch_label": "Disparo de modelos de mensagens"
       },
@@ -300,25 +340,24 @@
       },
       "csat": {
         "custom": {
-          "flow_disclaimer": "O fluxo selecionado deve usar uma classificação de satisfação de 1 a 5 para garantir os resultados corretos da pesquisa."
+          "flow_disclaimer": "O fluxo selecionado deve usar uma escala de satisfação de 1 a 5 para garantir resultados precisos na pesquisa."
         },
         "hint": "Se houver um fluxo ativo no módulo Flows configurado para disparar a pesquisa após o atendimento, esta configuração pode gerar conflito e impactar o envio da pesquisa.",
-        "label": "Enviar automaticamente uma pesquisa de satisfação após o atendimento do Live desk ser encerrado",
+        "label": "Enviar automaticamente uma pesquisa de satisfação após o atendimento do Live Desk ser encerrado",
         "section_title": "Pesquisa de satisfação",
         "type": {
           "custom": "Fluxos personalizados",
           "default": "Pesquisa CSAT padrão (recomendado)",
           "label": "Tipo de pesquisa",
-          "tooltip": "Escolha entre a pesquisa CSAT padrão ou um fluxo personalizado já configurado no módulo Flows."
+          "tooltip": "Escolha entre a pesquisa CSAT padrão ou um fluxo personalizado já configurado no módulo Fluxos."
         }
       },
       "automated_message": {
         "title": "Mensagens automatizadas",
-        "switch_when_waiting_label": "Enviar mensagem automática a contatos esperando",
-        "switch_when_start_label": "Enviar mensagem automática ao iniciar o atendimento",
-        "hint_when_waiting": "Envia automaticamente uma mensagem a contatos que estão esperando atendimento. A mensagem aparecerá como se enviada pelo atendente atribuído.",
-        "hint_when_start": "Envia automaticamente uma mensagem quando um chat é atribuído a um atendente. A mensagem aparecerá como se enviada pelo atendente atribuído.",
-        "hint": "Envia automaticamente uma mensagem quando um chat é atribuído a um atendente. A mensagem aparecerá como se enviada pelo atendente atribuído.",
+        "switch_when_waiting_label": "Enviar mensagem automática para contatos na fila de espera",
+        "switch_when_start_label": "Enviar mensagem automática quando o atendimento começar",
+        "hint_when_waiting": "Envia automaticamente uma mensagem para os contatos enquanto aguardam atendimento humano na fila.",
+        "hint_when_start": "Envia automaticamente uma mensagem quando um chat é atribuído a um atendente. A mensagem aparece como se tivesse sido enviada pelo atendente.",
         "field": {
           "title": "Mensagem automática",
           "placeholder": "Exemplo: Olá! Como posso ajudar você hoje?"
@@ -342,6 +381,16 @@
   "export": {
     "metrics": "Exportar métricas em {filetype}",
     "all": "Exportar tudo em {filetype}"
+  },
+  "export_conversation": {
+    "button": "Exportar conversa",
+    "title": "Exportar conversa",
+    "select_format": "Selecione o formato para exportar a conversa",
+    "disclaimer": "Enquanto esta exportação estiver em andamento, novas exportações ficarão temporariamente bloqueadas para esta conversa.",
+    "accept_terms": "Eu aceito os termos e entendo as limitações de exportação.",
+    "success_title": "Exportação em andamento",
+    "success_description": "Você receberá o arquivo por email em breve. Lembre-se de verificar sua pasta de spam.",
+    "error": "Não foi possível processar a exportação. Tente novamente."
   },
   "name": "Nome",
   "addition_date": "Data de Adição",
@@ -380,6 +429,10 @@
           "input_placeholder": "Compartilhe seu feedback aqui"
         }
       }
+    },
+    "audio_download": {
+      "tooltip": "Exportar",
+      "error": "Não foi possível exportar o áudio devido a um problema técnico"
     },
     "search_messages": {
       "title": "Pesquisar na conversa",
@@ -433,7 +486,8 @@
       "transfer_to_agent": "{agent1} transferiu o chat para {agent2}",
       "transfer_to_agent_by_other": "{requestedBy} transferiu o chat de {agent1} para {agent2}",
       "transfer_to_queue": "{agent} transferiu o chat para a fila {queue}",
-      "transfer_to_queue_by_other": "{requestedBy} transferiu o chat de {agent} para a fila {queue}"
+      "transfer_to_queue_by_other": "{requestedBy} transferiu o chat de {agent} para a fila {queue}",
+      "automatic_close_room": "Encerrado automaticamente por falta de interação do contato"
     },
     "room_list": {
       "order_by": "Ordenar por:",
@@ -463,7 +517,13 @@
       "default": "Ocorreu um erro, por favor, tente novamente mais tarde"
     },
     "message_input_placeholder": "Digite sua mensagem aqui ou / para ativar mensagens rápidas",
-    "message_input_disabled_description": "Altere seu status para online para continuar esta conversa.",
+    "message_input_disabled_description": "Altere seu status para online para continuar esta conversa",
+    "message_input_floating_actions": {
+      "copy": "Copiar conteúdo digitado",
+      "copy_alert_success": "Conteúdo copiado!",
+      "clear": "Limpar conteúdo digitado",
+      "clear_alert_success": "Conteúdo removido!"
+    },
     "search_contact": "Pesquisar contato",
     "search_contact_placeholder": "Pesquisar contato (nome, telefone ou protocolo)",
     "tags": "Tags do chat",
@@ -494,15 +554,15 @@
     "chat_take_over": {
       "by_another_representative": {
         "title": "Chat assumido por outro atendente",
-        "description": "Seu chat com {contact} foi assumido por {representative}."
+        "description": "Seu chat com {contact} foi assumido por {representative}"
       },
       "transfer_to_another_representative": {
         "title": "Chat transferido para outro atendente",
-        "description": "Seu chat com {contact} foi transferido por um moderador para {representative}."
+        "description": "Seu chat com {contact} foi transferido por um moderador para {representative}"
       },
       "transfer_to_queue": {
-        "title": "Chat transferido para fila",
-        "description": "Seu chat com {contact} foi transferido por um moderador para a fila {queue}."
+        "title": "Chat transferido para a fila",
+        "description": "Seu chat com {contact} foi transferido por um moderador para a fila {queue}"
       }
     },
     "your_chat_assumed": "Chat assumido por outro atendente",
@@ -535,7 +595,7 @@
       "close": "Encerrar visualização",
       "assume_chat": "Assumir apenas este chat",
       "assume_chat_question": "Assumir o chat com {contact}?",
-      "assume_chat_question_description": "Tem certeza de que deseja assumir o chat com {contact}?<br><br>Ao confirmar, você remove o chat do representante e fica responsável pelo chat."
+      "assume_chat_question_description": "Tem certeza de que deseja assumir o chat com {contact}?<br><br>Ao confirmar, você removerá o chat do atendente atual e será responsável pelo chat."
     }
   },
   "select": "Selecionar",
@@ -600,12 +660,14 @@
   "pagination": "{from} - {to} de {total}",
   "contact": "Contato",
   "unread_messages": "{count} mensagem não lida | {count} mensagens não lidas",
+  "automatically_ended": "Encerrado automaticamente",
   "unnamed_contact": "Contato sem nome",
   "unnamed_agent": "Atendente sem nome",
   "no_agent_assigned": "Nenhum agente atribuído",
   "no_tags_assigned": "Nenhuma tag atribuída",
   "contact_await_for_you": "Um contato está esperando por você!",
   "agent": "Atendente",
+  "representative": "Atendente",
   "ai_text_improvement": {
     "tooltip_disabled": "Escreva uma resposta no campo de texto para habilitar respostas aprimoradas com IA",
     "tooltip_enabled": "Melhorar resposta com IA",
@@ -735,7 +797,10 @@
     "transfering_chat": "Transferindo o chat ​📬",
     "ticket": "Protocolo",
     "copy_protocol": "Clique para copiar o protocolo",
-    "protocol_copied": "Protocolo copiado para a área de transferência!"
+    "protocol_copied": "Protocolo copiado para a área de transferência!",
+    "copy_value": "Copiar valor",
+    "value_copied": "Valor copiado com sucesso!",
+    "error_copying_value": "Não foi possível copiar o valor. Tente novamente."
   },
   "discussions": {
     "title": "Discussão | Discussões",
@@ -838,6 +903,7 @@
   },
   "select_agent": "Selecionar agente",
   "select_queue": "Selecionar fila",
+  "select_representative": "Selecionar um atendente",
   "select_sector": "Selecione setor",
   "send_media": "Enviar mídia",
   "send_photo_or_video": "Enviar foto ou vídeo",
@@ -880,19 +946,24 @@
     "contact_already_exists": "O número {contact} já está salvo em sua lista de contatos",
     "variable_mapping": {
       "title": "Mapeamento de variáveis",
-      "description": "As variáveis serão preenchidas na pré-visualização abaixo usando valores dos contatos selecionados sempre que fizerem referência a campos do contato.",
-      "define_variables": "Definir as variáveis",
+      "title_tag": "Template {current} de {total}",
+      "description": "Na pré-visualização abaixo, as variáveis que fazem referência a campos de contato serão preenchidas com dados dos contatos selecionados",
+      "define_variables": "Defina as variáveis",
+      "define_variables_ordinal": "Definir as variáveis do {ordinal} template",
       "variable_label": "Variável {name}",
-      "input_placeholder": "Digite o valor para esta variável",
+      "input_placeholder": "Insira o valor para esta variável",
       "preview_title": "Pré-visualização do template",
+      "preview_title_ordinal": "Pré-visualização do {ordinal} template",
       "preview_variable_tooltip": "Variável {placeholder}",
-      "confirmation_helper": "Verifique se cada campo está mapeado corretamente; é assim que a mensagem será exibida para cada contato selecionado.",
-      "confirmation_checkbox": "Verifiquei e estou pronto para enviar",
+      "confirmation_helper": "Verifique se todos os campos estão mapeados corretamente. Sua mensagem será personalizada para cada contato selecionado com base nesses mapeamentos.",
+      "confirmation_checkbox": "Verifiquei e quero enviar",
+      "next_template": "Próximo template",
+      "send_templates": "Enviar ({count} template) | Enviar ({count} templates)",
       "local_variables": {
         "contact_name": "Nome do contato",
         "contact_urn": "Telefone do contato",
         "agent_name": "Nome do atendente",
-        "agent_email": "E-mail do atendente"
+        "agent_email": "Email do atendente"
       }
     }
   },
@@ -1370,22 +1441,22 @@
   },
   "delete_modal": {
     "title": "Excluir {name}",
-    "description_sector": "O sistema detectou {count} conversas no setor {name} que estão em atendimento ou aguardando para serem atendidas. Escolha o que deseja fazer com elas",
-    "description_queue": "O sistema detectou {count} conversas na fila {name} que estão em atendimento ou aguardando para serem atendidas. Escolha o que deseja fazer com elas",
+    "description_sector": "O sistema detectou {count} conversas em andamento ou aguardando atendimento no setor {name}. Escolha o que deseja fazer com elas.",
+    "description_queue": "O sistema detectou {count, plural, one {uma conversa} other {{count} conversas}} na fila {name} que estão em atendimento ou aguardando atendimento. Escolha o que deseja fazer com elas.",
     "transfer_chats": "Transferir conversas para outro setor/fila",
     "end_all_chats": "Encerrar todas as conversas",
     "select_sector": "Selecione um setor",
     "select_queue": "Selecione uma fila",
     "type_name_sector": "Digite o nome do setor para excluir",
     "type_name_queue": "Digite o nome da fila para excluir",
-    "cannot_be_reversed": "Esta ação não pode ser revertida.",
+    "cannot_be_reversed": "Esta ação não poderá ser desfeita",
     "delete_button": "Excluir",
-    "sector_success": "Setor excluído com sucesso!",
-    "sector_error": "Não foi possível excluir o setor.",
-    "queue_success": "Fila excluída com sucesso!",
-    "queue_error": "Não foi possível excluir a fila.",
-    "transfer_error_sector": "Não foi possível transferir as conversas. Exclusão do setor cancelada",
-    "transfer_error_queue": "Não foi possível transferir as conversas. Exclusão da fila cancelada"
+    "sector_success": "Setor excluído com sucesso",
+    "sector_error": "Não foi possível excluir o setor",
+    "queue_success": "Fila excluída com sucesso",
+    "queue_error": "Não foi possível excluir a fila",
+    "transfer_error_sector": "Não foi possível transferir as conversas. Exclusão do setor cancelada.",
+    "transfer_error_queue": "Não foi possível transferir as conversas. Exclusão da fila cancelada."
   },
   "room_card": {
     "last_message": {

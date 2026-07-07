@@ -99,18 +99,24 @@
               }}
             </p>
             <section class="infos-contact__item">
-              <p class="infos-contact__item-title">{{ $t('name') }}:</p>
-              <p class="infos-contact__item-value">
-                {{ (closedRoom || room).contact.name }}
-              </p>
+              <section class="infos-contact__item-content">
+                <p class="infos-contact__item-title">{{ $t('name') }}:</p>
+                <p class="infos-contact__item-value">
+                  {{ (closedRoom || room).contact.name }}
+                </p>
+              </section>
+              <CopyValueButton :value="(closedRoom || room).contact.name" />
             </section>
             <section class="infos-contact__item">
-              <p class="infos-contact__item-title">
-                {{ contactNumber?.plataform || $t('URN') }}:
-              </p>
-              <p class="infos-contact__item-value">
-                {{ contactNumber?.contactNum }}
-              </p>
+              <section class="infos-contact__item-content">
+                <p class="infos-contact__item-title">
+                  {{ contactNumber?.plataform || $t('URN') }}:
+                </p>
+                <p class="infos-contact__item-value">
+                  {{ contactNumber?.contactNum }}
+                </p>
+              </section>
+              <CopyValueButton :value="contactNumber?.contactNum" />
             </section>
 
             <Transition name="expand-with-fade">
@@ -238,9 +244,11 @@
       />
 
       <FullscreenPreview
-        v-if="isFullscreen"
+        v-if="isFullscreen && currentMedia"
         :downloadMediaUrl="currentMedia?.url"
         :downloadMediaName="currentMedia?.message"
+        :mediaCurrent="currentMediaIndex"
+        :mediaTotal="images.length"
         @close="isFullscreen = false"
         @next="nextMedia"
         @previous="previousMedia"
@@ -281,6 +289,7 @@ import LinkContact from '@/services/api/resources/chats/linkContact';
 import unnnic from '@weni/unnnic-system';
 
 import CustomField from './CustomField.vue';
+import CopyValueButton from './CopyValueButton.vue';
 import ContactMedia from './Media.vue';
 import VideoPreview from '../MediaMessage/Previews/Video.vue';
 import FullscreenPreview from '../MediaMessage/Previews/Fullscreen.vue';
@@ -303,6 +312,7 @@ export default {
     AsideSlotTemplate,
     AsideSlotTemplateSection,
     CustomField,
+    CopyValueButton,
     ContactMedia,
     FullscreenPreview,
     VideoPreview,
@@ -390,6 +400,15 @@ export default {
     filteredTags() {
       return this.allTags.filter((tag) =>
         tag.name.toLowerCase().includes(this.tagsFilter.toLowerCase()),
+      );
+    },
+    currentMediaIndex() {
+      if (!this.currentMedia?.url) {
+        return 0;
+      }
+
+      return (
+        this.images.findIndex((el) => el.url === this.currentMedia.url) + 1
       );
     },
     isMobile() {
@@ -867,7 +886,12 @@ export default {
       &__item {
         display: flex;
         align-items: baseline;
-        gap: $unnnic-space-05;
+        gap: $unnnic-space-2;
+        &-content {
+          display: flex;
+          align-items: center;
+          gap: $unnnic-space-1;
+        }
 
         &-title {
           font: $unnnic-font-emphasis;

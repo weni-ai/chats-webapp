@@ -4,10 +4,15 @@ import { mount } from '@vue/test-utils';
 import UnnnicChatsContact from '../ChatContact.vue';
 import moment from 'moment';
 
+const FIXED_NOW = new Date('2025-06-10T15:00:00');
+
 describe('UnnnicChatsContact', () => {
   let wrapper;
 
   beforeEach(() => {
+    vi.useFakeTimers();
+    vi.setSystemTime(FIXED_NOW);
+
     wrapper = mount(UnnnicChatsContact, {
       props: {
         title: 'Contact Name',
@@ -17,7 +22,7 @@ describe('UnnnicChatsContact', () => {
   });
 
   afterEach(() => {
-    // Reset moment locale after each test
+    vi.useRealTimers();
     moment.locale('en');
   });
 
@@ -86,10 +91,8 @@ describe('UnnnicChatsContact', () => {
   });
 
   it('should show date when difference is more than 1 hour but not yesterday', async () => {
-    const mockNow = new Date('2025-06-06T15:00:00Z');
+    vi.setSystemTime(new Date('2025-06-06T15:00:00Z'));
     const moreThanOneHourAgo = moment('2025-06-04T12:00:00Z').toISOString();
-
-    vi.setSystemTime(mockNow);
 
     await wrapper.setProps({ lastInteractionTime: moreThanOneHourAgo });
 
@@ -101,8 +104,6 @@ describe('UnnnicChatsContact', () => {
     expect(interactionTimeText.text()).toBe(
       moment(moreThanOneHourAgo).format('L'),
     );
-
-    vi.useRealTimers();
   });
 
   it('should not show time when lastInteractionTime is empty', async () => {
