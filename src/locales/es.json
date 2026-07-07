@@ -801,7 +801,7 @@
     "error_copying_value": "No se pudo copiar el valor. Inténtalo de nuevo."
   },
   "discussions": {
-    "title": "{count, plural, one {Discusión} other {Discusiones}}",
+    "title": "Discusión",
     "start_discussion": {
       "title": "Iniciar discusión",
       "form": {
