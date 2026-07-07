@@ -27,18 +27,16 @@ defineOptions({
 });
 
 const emit = defineEmits<{
-  startAudioRecording: [void];
+  toggleAudioRecording: [void];
 }>();
 
-const messageManager = useMessageManager();
-const { clearInputs } = messageManager;
 const {
   inputMessage,
   isInternalNote,
   isSuggestionBoxOpen,
   audioRecorderStatus,
   mediaUploadFiles,
-} = storeToRefs(messageManager);
+} = storeToRefs(useMessageManager());
 
 const { isLoading: isAiLoading } = storeToRefs(useAiTextImprovement());
 
@@ -62,7 +60,6 @@ const isPressed = computed(() =>
 );
 
 function handleClick() {
-  clearInputs();
-  emit('startAudioRecording');
+  emit('toggleAudioRecording');
 }
 </script>
