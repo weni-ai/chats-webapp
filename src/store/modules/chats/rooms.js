@@ -3,6 +3,7 @@ import { cloneDeep } from 'lodash';
 
 import { useDashboard } from '../dashboard';
 import { useProfile } from '../profile';
+import { useFeatureFlag } from '../featureFlag';
 import { useRoomCounters } from './roomCounters';
 
 import Room from '@/services/api/resources/chats/room';
@@ -48,6 +49,7 @@ export const useRooms = defineStore('rooms', {
       flow_start: 0,
     },
     filterQueues: [],
+    pinnedRooms: [],
   }),
 
   actions: {
@@ -203,7 +205,39 @@ export const useRooms = defineStore('rooms', {
       let gettedRooms = response.results || [];
       const listRoomHasNext = response.next;
 
-      if (concat) {
+      const isPinRoomsOptimizationEnabled =
+        useFeatureFlag().featureFlags?.active_features?.includes(
+          'weniChatsPinRoomsOptimization',
+        );
+
+      if (roomsType === 'ongoing' && isPinRoomsOptimizationEnabled) {
+        const newPinnedRooms = response.pinned_rooms || [];
+        const newPinnedUuids = new Set(newPinnedRooms.map((room) => room.uuid));
+
+        this.pinnedRooms.forEach(({ uuid }) => {
+          if (newPinnedUuids.has(uuid)) return;
+          const index = this.rooms.findIndex((room) => room.uuid === uuid);
+          if (index !== -1 && this.rooms[index].is_pinned) {
+            this.rooms[index] = { ...this.rooms[index], is_pinned: false };
+          }
+        });
+
+        this.pinnedRooms = newPinnedRooms;
+
+        if (concat) {
+          gettedRooms = gettedRooms.concat(this.rooms);
+        }
+
+        const pinnedRoomsMarked = newPinnedRooms.map((room) => ({
+          ...room,
+          is_pinned: true,
+        }));
+
+        gettedRooms = [
+          ...pinnedRoomsMarked,
+          ...gettedRooms.filter((room) => !newPinnedUuids.has(room.uuid)),
+        ];
+      } else if (concat) {
         gettedRooms = gettedRooms.concat(this.rooms);
       }
 
