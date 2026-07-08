@@ -282,7 +282,7 @@ export default {
     },
     headerDiscussionSubtitle() {
       const { discussion } = this;
-      return `${this.$t('discussions.title', { count: 1 })} ${this.$t('about')} ${
+      return `${this.$t('discussions.title')} ${this.$t('about')} ${
         discussion?.contact
       }`;
     },

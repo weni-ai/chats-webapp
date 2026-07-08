@@ -5,7 +5,7 @@
   >
     <AsideSlotTemplateSection class="discussion-about__section">
       <h2 class="discussion-about__section__title">
-        {{ `${$t('discussions.title', { count: 1 })} ${$t('about')} ${details?.contact}` }}
+        {{ `${$t('discussions.title')} ${$t('about')} ${details?.contact}` }}
       </h2>
       <p>
         {{ `${$t('discussions.about.started_in')} ${discussionStartDate}` }}

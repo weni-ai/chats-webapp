@@ -812,17 +812,17 @@
       "title": "CSAT",
       "no_comment": "Nenhum comentário",
       "rating_label": {
-        "5": "Muito satisfeito",
-        "4": "Satisfeito",
-        "3": "Neutro",
-        "2": "Insatisfeito",
-        "1": "Muito insatisfeito",
+        "5": "🤩 Muito satisfeito",
+        "4": "😁 Satisfeito",
+        "3": "😐 Neutro",
+        "2": "☹️ Insatisfeito",
+        "1": "😡 Muito insatisfeito",
         "no_response": "Sem resposta"
       }
     }
   },
   "discussions": {
-    "title": "{count, plural, one {Discussão} other {Discussões}}",
+    "title": "Discussão",
     "start_discussion": {
       "title": "Iniciar discussão",
       "form": {
@@ -1277,20 +1277,20 @@
       "hint": "O Co-pilot é o assistente inteligente do seu agente, ele poderá ser ativo mais tarde."
     },
     "representatives": {
-      "title": "Gestão de Atendentes",
-      "description": "Defina os atendentes para os setores e filas, além do número máximo de chats por atendente. As alterações feitas aqui também serão atualizadas nas configurações de setor e de fila",
+      "title": "Gerenciamento de atendentes",
+      "description": "Defina os atendentes para os setores e filas, bem como o número máximo de chats por atendente. As alterações feitas aqui também serão atualizadas nas configurações do setor e da fila.",
       "select_all": "Selecionar todos os atendentes",
       "select_count": "{count} selecionados",
-      "empty_list": "Ainda não há membros com permissão para atendimento humano neste projeto. Convide um membro ou atualize as permissões de um membro em Gestão de membros para vê-los aqui.",
-      "not_found_list": "Nenhum atendente encontrado. Tente outro filtro.",
+      "empty_list": "Ainda não há membros com permissão para atendimento humano neste projeto. Convide um novo membro ou atualize as permissões de um membro cadastrado em Gerenciamento de membros para visualizá-lo aqui.",
+      "not_found_list": "Nenhum atendente encontrado. Tente usar outro filtro.",
       "save_success": "Alterações salvas com sucesso",
       "save_error": "Não foi possível salvar as alterações",
       "bulk_chats_limit_modal": {
         "title": "Limite de chats simultâneos",
-        "disclaimer": "O limite será aplicado aos {count} atendentes selecionados.",
+        "disclaimer": "O limite será aplicado aos {count} atendentes selecionados",
         "input": {
-          "label": "Definir o limite de chats simultâneos",
-          "tooltip": "Um limite definido para um atendente específico substitui o limite a nível de setor",
+          "label": "Defina o limite de chats simultâneos",
+          "tooltip": "Um limite definido para um atendente específico substitui o limite no nível do setor",
           "helper": "Defina 0 para que os atendentes puxem chats a partir da fila",
           "placeholder": "Exemplo: 4"
         }
@@ -1298,15 +1298,15 @@
       "queue_manager": {
         "title": "Gerenciar {representativeName}",
         "bulk_title": "Alterar setores e filas",
-        "bulk_disclaimer_description": "A alteração será aplicada aos {count} atendentes selecionados.",
+        "bulk_disclaimer_description": "A alteração será aplicada aos {count} atendentes selecionados",
         "bulk_add_action": "Adicionar a setor/fila",
         "bulk_remove_action": "Remover de setor/fila",
-        "bulk_select_action_description": "Selecione a ação em lote que deseja aplicar aos atendentes selecionados:",
+        "bulk_select_action_description": "Selecione a ação em massa que deseja realizar com os atendentes selecionados:",
         "chats_limit": {
           "switch_label": "Definir limite no número de chats simultâneos para este atendente",
-          "switch_helper": "Um limite definido para um atendente específico substitui o limite a nível de setor",
+          "switch_helper": "Um limite definido para um atendente específico substitui o limite no nível do setor",
           "input_label": "Número de chats simultâneos",
-          "input_placeholder": "Ex.: 4",
+          "input_placeholder": "Exemplo: 4",
           "input_helper": "Defina 0 para o atendente puxar chats a partir da fila"
         },
         "sector_queues_checkbox": {
@@ -1318,11 +1318,11 @@
         "label": "{count} chats simultâneos"
       },
       "sectors": {
-        "empty": "Não adicionado a nenhum setor"
+        "empty": "Atendente não adicionado a nenhum setor"
       },
       "actions": {
-        "queue-management_tooltip": "Alterar atendentes selecionados de setores/filas.",
-        "chats-limit-management_tooltip": "Definir o limite de chats simultâneos para os atendentes selecionados."
+        "queue-management_tooltip": "Alterar atendentes selecionados dos setores/filas",
+        "chats-limit-management_tooltip": "Defina o limite de chats simultâneos para os atendentes selecionados"
       },
       "filter": {
         "status": {

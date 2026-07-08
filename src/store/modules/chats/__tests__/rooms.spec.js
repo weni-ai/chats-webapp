@@ -5,6 +5,7 @@ import { setActivePinia, createPinia } from 'pinia';
 import { useRooms } from '@/store/modules/chats/rooms';
 import { useProfile } from '@/store/modules/profile';
 import { useDashboard } from '@/store/modules/dashboard';
+import { useFeatureFlag } from '@/store/modules/featureFlag';
 
 import { roomsMock } from './mocks/roomsMock';
 import {
@@ -823,6 +824,10 @@ describe('State Rooms', () => {
 
     beforeEach(() => {
       mocks.useProfile.mockReturnValue(mockProfileHumanServiceState);
+      const featureFlagStore = useFeatureFlag();
+      featureFlagStore.featureFlags = {
+        active_features: ['weniChatsPinRoomsOptimization'],
+      };
       roomsStore = useRooms();
       roomsStore.rooms = [];
       roomsStore.pinnedRooms = [];
@@ -1022,6 +1027,37 @@ describe('State Rooms', () => {
       expect(roomsStore.waitingQueue).toHaveLength(1);
       expect(roomsStore.waitingQueue[0].uuid).toBe('waiting-room');
       expect(roomsStore.agentRooms).toHaveLength(0);
+    });
+
+    it('uses legacy behavior when weniChatsPinRoomsOptimization is disabled', async () => {
+      const featureFlagStore = useFeatureFlag();
+      featureFlagStore.featureFlags = { active_features: [] };
+
+      const pinnedOnly = ongoingRoom({
+        uuid: 'pinned-only',
+        is_pinned: true,
+      });
+      const regularRoom = ongoingRoom({
+        uuid: 'regular',
+        is_pinned: false,
+      });
+
+      Room.getAll.mockResolvedValue({
+        results: [regularRoom],
+        pinned_rooms: [pinnedOnly],
+        next: false,
+        count: 2,
+      });
+
+      await roomsStore.getAll({
+        offset: 0,
+        limit: 30,
+        roomsType: 'ongoing',
+      });
+
+      expect(roomsStore.pinnedRooms).toEqual([]);
+      expect(roomsStore.agentRooms).toHaveLength(1);
+      expect(roomsStore.agentRooms[0].uuid).toBe('regular');
     });
   });
 

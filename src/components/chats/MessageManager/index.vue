@@ -1,5 +1,5 @@
 <template>
-  <section class="message-manager">
+  <section class="message-manager-v2">
     <UnnnicDisclaimer
       v-if="!isLoading && isDisabledInput"
       class="message-manager-v2__disabled-input"
@@ -164,7 +164,7 @@ onMounted(() => {
 </script>
 
 <style lang="scss" scoped>
-.message-manager {
+.message-manager-v2 {
   position: relative;
 
   display: grid;

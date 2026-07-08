@@ -291,7 +291,6 @@ defineExpose({
     position: fixed;
     width: $unnnic-space-6;
     margin-top: -33px;
-    align-self: flex-end;
 
     background-color: $unnnic-color-bg-yellow-strong;
     padding: 0px $unnnic-spacing-nano;
