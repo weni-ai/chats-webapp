@@ -208,7 +208,19 @@
   "contact_info": {
     "copy_value": "Copiază valoarea",
     "value_copied": "Valoare copiată cu succes",
-    "error_copying_value": "Nu s-a putut copia valoarea. Încearcă din nou."
+    "error_copying_value": "Nu s-a putut copia valoarea. Încearcă din nou.",
+    "csat": {
+      "title": "CSAT",
+      "no_comment": "Niciun comentariu",
+      "rating_label": {
+        "5": "🤩 Foarte mulțumit",
+        "4": "😁 Mulțumit",
+        "3": "😐 Neutru",
+        "2": "☹️ Nemulțumit",
+        "1": "😡 Foarte nemulțumit",
+        "no_response": "Fără răspuns"
+      }
+    }
   },
   "select_representative": "Selectează un reprezentant",
   "flows_trigger": {

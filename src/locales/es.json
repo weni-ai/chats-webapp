@@ -805,7 +805,19 @@
     "protocol_copied": "¡Ticket ID copiado al portapapeles!",
     "copy_value": "Copiar valor",
     "value_copied": "¡Valor copiado con éxito!",
-    "error_copying_value": "No se pudo copiar el valor. Inténtalo de nuevo."
+    "error_copying_value": "No se pudo copiar el valor. Inténtalo de nuevo.",
+    "csat": {
+      "title": "CSAT",
+      "no_comment": "Ningún comentario",
+      "rating_label": {
+        "5": "🤩 Muy satisfecho",
+        "4": "😁 Satisfecho",
+        "3": "😐 Neutral",
+        "2": "☹️ Insatisfecho",
+        "1": "😡 Muy insatisfecho",
+        "no_response": "Sin respuesta"
+      }
+    }
   },
   "discussions": {
     "title": "Discusión",

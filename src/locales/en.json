@@ -802,7 +802,19 @@
     "protocol_copied": "Ticket ID copied to clipboard!",
     "copy_value": "Copy value",
     "value_copied": "Value copied!",
-    "error_copying_value": "Unable to copy the value. Please try again."
+    "error_copying_value": "Unable to copy the value. Please try again.",
+    "csat": {
+      "title": "CSAT",
+      "no_comment": "No comment",
+      "rating_label": {
+        "5": "🤩 Very satisfied",
+        "4": "😁 Satisfied",
+        "3": "😐 Neutral",
+        "2": "☹️ Dissatisfied",
+        "1": "😡 Very dissatisfied",
+        "no_response": "No response"
+      }
+    }
   },
   "discussions": {
     "title": "Discussion",
