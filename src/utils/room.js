@@ -22,16 +22,15 @@ export const sanitizeDocument = (doc) => {
   return doc.replaceAll(/[^a-zA-Z0-9]/g, '');
 };
 
-export const buildHistorySearchTerm = (room) => {
-  const { plataform, contactNum } = parseUrn(room);
-  const contactUrn =
-    plataform === 'whatsapp' ? contactNum.replace('+', '') : contactNum;
+export const buildHistoryContactQuery = (room) => {
+  const query = {};
+  const externalId = room?.contact?.external_id;
+  const email = room?.contact?.email;
+  const document = sanitizeDocument(room?.contact?.document);
 
-  const parts = [];
-  if (contactUrn) parts.push(contactUrn);
-  if (room?.contact?.email) parts.push(room.contact.email);
-  if (room?.contact?.document)
-    parts.push(sanitizeDocument(room.contact.document));
+  if (externalId) query.contact = externalId;
+  if (email) query.email = email;
+  if (document) query.document = document;
 
-  return parts.join(',');
+  return query;
 };

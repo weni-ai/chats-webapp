@@ -52,7 +52,7 @@ describe('RoomsTableFilters.vue', () => {
   let wrapper;
 
   const createWrapper = (props = {}, mountOptions = {}, routeQuery = null) => {
-    const defaultRouteQuery = { contactUrn: '', startDate: '', endDate: '' };
+    const defaultRouteQuery = { contact: '', startDate: '', endDate: '' };
     const currentRouteQuery = routeQuery
       ? { ...defaultRouteQuery, ...routeQuery }
       : defaultRouteQuery;
@@ -490,31 +490,47 @@ describe('RoomsTableFilters.vue', () => {
   });
 
   describe('Query params and filters value tests', () => {
-    it('sets filter values from query params correctly for desktop', async () => {
+    it('does not set filterContact from contact without commas (new format)', async () => {
       isMobile.mockReturnValue(false);
       wrapper = createWrapper(
         {},
         {},
         {
-          contactUrn: 'test-contact',
+          contact: 'test-contact',
           startDate: '2023-01-01',
           endDate: '2023-01-07',
         },
       );
       await flushPromises();
 
-      expect(wrapper.vm.filterContact).toBe('test-contact');
+      expect(wrapper.vm.filterContact).toBe('');
       expect(wrapper.vm.filterDate.start).toBe('2023-01-01');
       expect(wrapper.vm.filterDate.end).toBe('2023-01-07');
     });
 
-    it('sets filter values from query params correctly for mobile', async () => {
+    it('sets filterContact from legacy comma-separated contactUrn', async () => {
+      isMobile.mockReturnValue(false);
+      wrapper = createWrapper(
+        {},
+        {},
+        {
+          contactUrn: '558486065742,kallil@gmail.com',
+          startDate: '2023-01-01',
+          endDate: '2023-01-07',
+        },
+      );
+      await flushPromises();
+
+      expect(wrapper.vm.filterContact).toBe('558486065742,kallil@gmail.com');
+    });
+
+    it('does not set filterContact from contact without commas on mobile', async () => {
       isMobile.mockReturnValue(true);
       wrapper = createWrapper(
         {},
         {},
         {
-          contactUrn: 'test-contact',
+          contact: 'test-contact',
           startDate: '2023-01-01',
         },
       );
@@ -527,7 +543,7 @@ describe('RoomsTableFilters.vue', () => {
 
       await flushPromises();
 
-      expect(wrapper.vm.filterContact).toBe('test-contact');
+      expect(wrapper.vm.filterContact).toBe('');
       const expectedDateObject = wrapper.vm.datesToFilter.find(
         (d) => d.value === 'last_12_months',
       );
@@ -558,14 +574,14 @@ describe('RoomsTableFilters.vue', () => {
         { modelValue: valueProps },
         {},
         {
-          contactUrn: 'query-contact',
+          contact: 'query-contact',
           startDate: '2023-06-01',
           endDate: '2023-06-30',
         },
       );
       await flushPromises();
 
-      expect(wrapper.vm.filterContact).toBe('query-contact');
+      expect(wrapper.vm.filterContact).toBe('Model Contact');
       expect(wrapper.vm.filterDate.start).toBe('2023-06-01');
       expect(wrapper.vm.filterDate.end).toBe('2023-06-30');
     });

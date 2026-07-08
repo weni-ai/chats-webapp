@@ -33,12 +33,59 @@ describe('History Chat Service', () => {
           ended_at_before: '',
           ended_at_after: '',
           sector: '',
-          search: '',
           tag: '',
           ordering: '-ended_at',
         },
       });
       expect(result).toEqual(mockResponse.data);
+    });
+
+    it('should send contact, email, and document when provided', async () => {
+      const mockResponse = { data: [] };
+      http.get.mockResolvedValue(mockResponse);
+      getProject.mockReturnValue('mocked-project-id');
+
+      await apiService.getHistoryRooms({
+        offset: 0,
+        limit: 5,
+        contact: 'abc-123',
+        email: 'test@example.com',
+        document: '12345678900',
+      });
+
+      expect(http.get).toHaveBeenCalledWith('/history/rooms/', {
+        params: {
+          project: 'mocked-project-id',
+          offset: 0,
+          limit: 5,
+          ended_at_before: '',
+          ended_at_after: '',
+          sector: '',
+          tag: '',
+          ordering: '-ended_at',
+          contact: 'abc-123',
+          email: 'test@example.com',
+          document: '12345678900',
+        },
+      });
+    });
+
+    it('should send search when provided', async () => {
+      const mockResponse = { data: [] };
+      http.get.mockResolvedValue(mockResponse);
+      getProject.mockReturnValue('mocked-project-id');
+
+      await apiService.getHistoryRooms({
+        offset: 0,
+        limit: 5,
+        search: 'manual query',
+      });
+
+      expect(http.get).toHaveBeenCalledWith('/history/rooms/', {
+        params: expect.objectContaining({
+          search: 'manual query',
+        }),
+      });
     });
   });
 

@@ -505,7 +505,7 @@ export default {
     setFiltersByQueryParams() {
       const { contactUrn, startDate, endDate } = this.$route.query;
 
-      if (contactUrn) {
+      if (contactUrn?.includes(',')) {
         this.filterContact = contactUrn;
       }
 
