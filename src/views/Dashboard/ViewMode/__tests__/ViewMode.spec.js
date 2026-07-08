@@ -63,9 +63,7 @@ describe('ViewMode', () => {
       global: {
         plugins: [pinia],
         mocks: {
-          $t: (key, params) =>
-            params ? `${key}_${JSON.stringify(params)}` : key,
-          $tc: (key) => key,
+          $t: (key, params) => key,
           $router: mockRouter,
           $route: { query: {} },
         },

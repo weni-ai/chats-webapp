@@ -11,20 +11,20 @@
     ]"
   >
     <section
-      v-if="showBackToOriginal"
-      class="text-box__textarea-row"
+      :class="[
+        'text-box__textarea-wrapper',
+        { 'text-box__textarea-wrapper--with-back': showBackToOriginal },
+      ]"
     >
       <MessageManagerTextBoxTextArea
         ref="textArea"
         @keydown="handleKeyDown"
       />
-      <BackToOriginal @reverted="focus" />
+      <BackToOriginal
+        v-if="showBackToOriginal"
+        @reverted="focus"
+      />
     </section>
-    <MessageManagerTextBoxTextArea
-      v-else
-      ref="textArea"
-      @keydown="handleKeyDown"
-    />
     <MessageManagerTextBoxUploadField ref="uploadField" />
     <MessageManagerTextBoxAudioRecorder ref="audioRecorder" />
     <MessageManagerTextBoxMedias
@@ -33,7 +33,7 @@
     <hr class="text-box__divider" />
     <MessageManagerTextBoxActions
       ref="messageManagerActions"
-      @start-audio-recording="audioRecorderRef.record()"
+      @toggle-audio-recording="toggleAudioRecording"
       @open-upload-files="uploadFieldRef.clickInput()"
       @focus-input="focus"
       @send="handleSend"
@@ -78,7 +78,7 @@ const roomsStore = useRooms();
 const { activeRoom } = storeToRefs(roomsStore);
 
 const messageManager = useMessageManager();
-const { sendRoomMessage, sendMediasMessage } = messageManager;
+const { sendRoomMessage, sendMediasMessage, clearInputs } = messageManager;
 const {
   inputMessage,
   audioMessage,
@@ -149,6 +149,21 @@ const handleImprovementCancelled = () => {
   focus();
 };
 
+const toggleAudioRecording = () => {
+  if (
+    ['recording', 'recorded', 'playing', 'paused'].includes(
+      audioRecorderStatus.value,
+    )
+  ) {
+    audioRecorderRef.value?.discard();
+    clearInputs();
+    return;
+  }
+
+  clearInputs();
+  audioRecorderRef.value?.record();
+};
+
 const clearTextarea = () => {
   inputMessage.value = '';
   audioMessage.value = null;
@@ -194,11 +209,20 @@ defineExpose({
     background-color: $unnnic-color-bg-warning;
     border-color: $unnnic-color-border-warning;
   }
-  &__textarea-row {
-    display: flex;
-    align-items: stretch;
-    gap: $unnnic-space-2;
+
+  &__textarea-wrapper {
     width: 100%;
+
+    &--with-back {
+      display: flex;
+      align-items: stretch;
+      gap: $unnnic-space-2;
+
+      > :first-child {
+        flex: 1;
+        min-width: 0;
+      }
+    }
   }
 
   &__divider {

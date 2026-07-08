@@ -27,9 +27,6 @@ describe('CreateCustomHolidayModal', () => {
         ...props,
       },
       global: {
-        mocks: {
-          $t: (key) => key,
-        },
         stubs: {
           UnnnicInputDatePicker: {
             template: `

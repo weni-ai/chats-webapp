@@ -13,7 +13,7 @@
       :isLoadingTranscription="isLoadingTranscription"
       :transcriptionText="transcriptionText"
       :fluidBar="canShowTranscriptionAudioAction"
-      :locale="i18n.global.locale"
+      :locale="i18n.global.locale.value"
       @update:show-transcription-text="showTranscriptionText = $event"
       @failed-click="emit('failed-click')"
     >
@@ -188,20 +188,27 @@ const canShowAudioDownloadAction = computed(() => {
   return isContactMessage.value;
 });
 
+const showDownloadErrorAlert = () => {
+  UnnnicCallAlert({
+    props: {
+      text: i18n.global.t('chats.audio_download.error'),
+      type: 'error',
+    },
+    seconds: 5,
+  });
+};
+
 const handleDownload = async () => {
+  if (!props.message.uuid) {
+    showDownloadErrorAlert();
+    return;
+  }
+
   try {
-    const url = messageMedia.value.url || messageMedia.value.preview;
-    const filename = url?.split('/').at(-1) || 'audio';
-    await Media.download({ media: url, name: filename });
+    await Media.download({ messageUuid: props.message.uuid });
   } catch (error) {
     console.error('Error downloading audio', error);
-    UnnnicCallAlert({
-      props: {
-        text: i18n.global.t('chats.audio_download.error'),
-        type: 'error',
-      },
-      seconds: 5,
-    });
+    showDownloadErrorAlert();
   }
 };
 

@@ -281,14 +281,13 @@ import SatisfactionSurveySection from './SatisfactionSurveySection.vue';
 import TagGroup from '@/components/TagGroup.vue';
 
 import { useFeatureFlag } from '@/store/modules/featureFlag';
+import { useConfig } from '@/store/modules/config';
 
 import Sector from '@/services/api/resources/settings/sector';
 
 import i18n from '@/plugins/i18n';
 
 import { parseSecondsToMinutes, parseMinutesToSeconds } from '@/utils/time';
-
-const INACTIVITY_TIMEOUT_LOCALES = ['en', 'pt-br', 'es', 'ro'];
 
 export default {
   name: 'SectorExtraOptionsForm',
@@ -322,6 +321,7 @@ export default {
   },
   computed: {
     ...mapState(useFeatureFlag, ['featureFlags']),
+    ...mapState(useConfig, ['project']),
     sector: {
       get() {
         return this.modelValue;
@@ -388,17 +388,26 @@ export default {
       );
     },
     inactivityTimeoutDefaultMessage() {
-      return this.$t(
-        'sector.additional_options.inactivity_timeout.show.field.default_warning_message',
-      );
+      const languageMap = {
+        'en-us': 'en',
+        'pt-br': 'pt-br',
+        es: 'es',
+        ro: 'ro',
+      };
+      return i18n.global.messages.value[languageMap[this.project.language]]
+        .sector.additional_options.inactivity_timeout.show.field
+        .default_warning_message;
     },
     inactivityTimeoutDefaultCloseRoomMessage() {
-      return this.$t(
-        'sector.additional_options.inactivity_timeout.close_room.field.default_close_room_message',
-      );
-    },
-    currentI18nLocale() {
-      return this.$i18n.locale;
+      const languageMap = {
+        'en-us': 'en',
+        'pt-br': 'pt-br',
+        es: 'es',
+        ro: 'ro',
+      };
+      return i18n.global.messages.value[languageMap[this.project.language]]
+        .sector.additional_options.inactivity_timeout.close_room.field
+        .default_close_room_message;
     },
   },
   watch: {
@@ -407,9 +416,6 @@ export default {
       handler(value) {
         this.$emit('changeIsValid', value);
       },
-    },
-    currentI18nLocale() {
-      this.syncInactivityTimeoutMessagesOnLocaleChange();
     },
   },
   mounted() {
@@ -459,50 +465,6 @@ export default {
       } else {
         this.sector.inactivity_timeout.close_room_message_text = '';
         this.sector.inactivity_timeout.close_room_timeout_time = null;
-      }
-    },
-    getInactivityTimeoutDefaultMessages(messageType) {
-      const sectionKey = messageType === 'warning' ? 'show' : 'close_room';
-      const fieldKey =
-        messageType === 'warning'
-          ? 'default_warning_message'
-          : 'default_close_room_message';
-
-      return INACTIVITY_TIMEOUT_LOCALES.map(
-        (locale) =>
-          i18n.global.messages[locale]?.sector?.additional_options
-            ?.inactivity_timeout?.[sectionKey]?.field?.[fieldKey],
-      ).filter(Boolean);
-    },
-    isUntouchedInactivityMessage(text, messageType) {
-      if (!text) return false;
-
-      return this.getInactivityTimeoutDefaultMessages(messageType).includes(
-        text,
-      );
-    },
-    syncInactivityTimeoutMessagesOnLocaleChange() {
-      const { inactivity_timeout: timeout } = this.sector;
-
-      if (
-        timeout.is_message_timeout_enabled &&
-        this.isUntouchedInactivityMessage(
-          timeout.message_timeout_text,
-          'warning',
-        )
-      ) {
-        timeout.message_timeout_text = this.inactivityTimeoutDefaultMessage;
-      }
-
-      if (
-        timeout.is_close_room_enabled &&
-        this.isUntouchedInactivityMessage(
-          timeout.close_room_message_text,
-          'close_room',
-        )
-      ) {
-        timeout.close_room_message_text =
-          this.inactivityTimeoutDefaultCloseRoomMessage;
       }
     },
     handleAutomaticMessageIsActive(value) {

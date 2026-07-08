@@ -87,7 +87,7 @@
                 featureFlags.active_features?.includes('weniChatsContactInfoV2')
               "
               enabled
-              :text="$tc('transfer_contact', 1)"
+              :text="$t('transfer_contact', { count: 1 })"
               side="left"
             >
               <UnnnicIcon
@@ -107,7 +107,7 @@
         v-if="!!discussion"
         class="discussion-header"
         :title="discussion.subject"
-        :subtitle="`${$tc('discussions.title')} ${$t('about')} ${
+        :subtitle="`${$t('discussions.title', { count: 1 })} ${$t('about')} ${
           discussion.contact
         }`"
         avatarIcon="forum"

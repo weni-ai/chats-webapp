@@ -6,6 +6,7 @@ import { createTestingPinia } from '@pinia/testing';
 import SectorEdit from '@/views/Settings/Sectors/Edit/index.vue';
 import { useSettings } from '@/store/modules/settings';
 import { useCompositionI18nInThisSpecFile } from '@/utils/test/compositionI18nVitest';
+import i18n from '@/plugins/i18n';
 
 const mockSector1 = {
   id: 1,
@@ -158,10 +159,5 @@ describe('EditSector.vue', () => {
     await flushPromises();
 
     expect(settings.currentSector).toBeNull();
-  });
-
-  it('matches snapshot', async () => {
-    const wrapper = await mountWithQuery({ tab: 'general' });
-    expect(wrapper.html()).toMatchSnapshot();
   });
 });

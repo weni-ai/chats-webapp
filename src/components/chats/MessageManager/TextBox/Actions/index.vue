@@ -12,7 +12,7 @@
       />
       <EmojiAction @focus-input="emit('focusInput')" />
       <hr class="text-box__actions__divider" />
-      <AudioAction @start-audio-recording="emit('startAudioRecording')" />
+      <AudioAction @toggle-audio-recording="emit('toggleAudioRecording')" />
       <AttachAction @open-upload-files="emit('openUploadFiles')" />
       <hr class="text-box__actions__divider" />
       <InternalNoteAction
@@ -47,7 +47,7 @@ const { activeDiscussion } = storeToRefs(useDiscussions());
 const isInDiscussion = computed(() => !!activeDiscussion.value?.uuid);
 
 const emit = defineEmits<{
-  startAudioRecording: [void];
+  toggleAudioRecording: [void];
   focusInput: [void];
   openUploadFiles: [void];
   send: [void];

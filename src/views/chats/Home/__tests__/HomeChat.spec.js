@@ -16,7 +16,6 @@ import { useDiscussionMessages } from '@/store/modules/chats/discussionMessages'
 import HomeChat from '../HomeChat.vue';
 import HomeChatModals from '../HomeChatModals.vue';
 import RoomMessages from '@/components/chats/chat/RoomMessages.vue';
-import MessageManager from '@/components/chats/MessageManager/index.vue';
 import ChatsDropzone from '@/layouts/ChatsLayout/components/ChatsDropzone/index.vue';
 
 import RoomService from '@/services/api/resources/chats/room';
@@ -120,7 +119,6 @@ describe('HomeChat.vue', () => {
         components: {
           RoomMessages,
           HomeChatModals,
-          MessageManager,
           ChatsDropzone,
         },
         stubs: {
@@ -131,6 +129,10 @@ describe('HomeChat.vue', () => {
           DiscussionHeader: {
             template: '<div data-testid="discussion-header-stub" />',
             props: ['discussionContact', 'discussionSubject', 'clickable'],
+          },
+          MessageManager: {
+            template: '<div data-testid="message-manager" />',
+            props: ['isLoading'],
           },
           HomeChatModals: {
             template: '<div data-testid="home-chat-modals" />',
@@ -248,10 +250,29 @@ describe('HomeChat.vue', () => {
       expect(useMessageManager().inputMessage).toBe('Hello world');
     });
 
-    it('updates uploadFilesProgress  with the given value', () => {
-      wrapper.vm.setUploadFilesProgress('100');
+    it('adds dropped files to message manager store', () => {
+      const messageManagerStore = useMessageManager();
+      const addMediaUploadFilesSpy = vi.spyOn(
+        messageManagerStore,
+        'addMediaUploadFiles',
+      );
+      const fakeFiles = [new File(['content'], 'file1.png', { type: 'image/png' })];
 
-      expect(wrapper.vm.uploadFilesProgress).toBe('100');
+      wrapper.vm.openModalFileUploader(fakeFiles);
+
+      expect(addMediaUploadFilesSpy).toHaveBeenCalledWith(fakeFiles);
+    });
+
+    it('does not add files when openModalFileUploader receives empty list', () => {
+      const messageManagerStore = useMessageManager();
+      const addMediaUploadFilesSpy = vi.spyOn(
+        messageManagerStore,
+        'addMediaUploadFiles',
+      );
+
+      wrapper.vm.openModalFileUploader([]);
+
+      expect(addMediaUploadFilesSpy).not.toHaveBeenCalled();
     });
 
     it('returns the uuid when activeChat has a uuid', () => {
@@ -275,17 +296,6 @@ describe('HomeChat.vue', () => {
       expect(wrapper.emitted('close-room-contact-info')).toBeTruthy();
     });
 
-    it('should update uploadFilesProgress when file-uploader-progress is emitted', async () => {
-      const modals = wrapper.findComponent('[data-testid="home-chat-modals"]');
-
-      const progress = 62;
-      await modals.vm.$emit('file-uploader-progress', progress);
-
-      await wrapper.vm.$nextTick();
-
-      expect(wrapper.vm.uploadFilesProgress).toBe(progress);
-    });
-
     it('should update textBoxMessage when select-quick-message is emitted', async () => {
       const text = 'Hello!';
 
@@ -294,26 +304,6 @@ describe('HomeChat.vue', () => {
 
       await wrapper.vm.$nextTick();
       expect(useMessageManager().inputMessage).toBe(text);
-    });
-
-    it('should call configFileUploader and openModal on home-chat-modals ref', () => {
-      const modals = wrapper.findComponent('[data-testid="home-chat-modals"]');
-
-      const configFileUploaderSpy = vi.spyOn(modals.vm, 'configFileUploader');
-
-      const openModalSpy = vi.spyOn(modals.vm, 'openModal');
-
-      const fakeFiles = [{ name: 'file1.png', type: 'image' }];
-      const fakeType = 'image';
-
-      wrapper.vm.openModalFileUploader(fakeFiles, fakeType);
-
-      expect(configFileUploaderSpy).toHaveBeenCalledWith({
-        files: fakeFiles,
-        filesType: fakeType,
-      });
-
-      expect(openModalSpy).toHaveBeenCalledWith('fileUploader');
     });
 
     it('redirects to home if not on home route and no active chat', async () => {
