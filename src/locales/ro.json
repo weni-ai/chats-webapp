@@ -1,4 +1,24 @@
 {
+  "dark_mode_intro": {
+    "buttons": {
+      "not_now": "Nu acum",
+      "switch": "Comutați la modul întunecat"
+    },
+    "description_1": "Lucrați cu mai mult confort și concentrare pe parcursul zilei. Modul întunecat reduce oboseala ochilor și luminozitatea ecranului, făcând conversațiile mai ușoare de citit. Este ideal dacă lucrați într-o tură lungă de asistență sau într-un spațiu cu lumină slabă.",
+    "description_2": "Cu o oboseală mai redusă a ochilor, câștigați claritate și viteză atunci când răspundeți clienților, menținând un suport de înaltă calitate chiar și în perioadele de vârf.",
+    "tagline": "În acest modul, comutați la modul întunecat și descoperiți o nouă modalitate de a lucra",
+    "title": "Modul întunecat este aici",
+    "toast": {
+      "error": {
+        "action": "Încercați din nou",
+        "title": "Eroare la aplicarea modului întunecat"
+      },
+      "success": {
+        "action": "Reveniți la modul luminos",
+        "title": "Modul întunecat a fost aplicat cu succes"
+      }
+    }
+  },
   "view_options": {
     "new_badge": "Nou"
   },
