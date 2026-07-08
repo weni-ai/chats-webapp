@@ -4,7 +4,7 @@ import {
   getRoomType,
   parseUrn,
   sanitizeDocument,
-  buildHistorySearchTerm,
+  buildHistoryContactQuery,
 } from '@/utils/room';
 
 describe('room utils', () => {
@@ -72,64 +72,64 @@ describe('room utils', () => {
     });
   });
 
-  describe('buildHistorySearchTerm', () => {
-    it('returns empty string when room has no identifiers', () => {
-      expect(buildHistorySearchTerm({ contact: {} })).toBe('');
-      expect(buildHistorySearchTerm({})).toBe('');
+  describe('buildHistoryContactQuery', () => {
+    it('returns empty object when room has no identifiers', () => {
+      expect(buildHistoryContactQuery({ contact: {} })).toEqual({});
+      expect(buildHistoryContactQuery({})).toEqual({});
     });
 
-    it('returns only contactUrn when only urn is present', () => {
+    it('returns only contact when only external_id is present', () => {
       const room = {
-        urn: 'whatsapp:5511999998888',
-        contact: {},
+        contact: { external_id: 'abc-123' },
       };
-      expect(buildHistorySearchTerm(room)).toBe('5511999998888');
+      expect(buildHistoryContactQuery(room)).toEqual({ contact: 'abc-123' });
     });
 
     it('returns only email when only email is present', () => {
       const room = {
         contact: { email: 'test@example.com' },
       };
-      expect(buildHistorySearchTerm(room)).toBe('test@example.com');
+      expect(buildHistoryContactQuery(room)).toEqual({
+        email: 'test@example.com',
+      });
     });
 
     it('returns only sanitized document when only document is present', () => {
       const room = {
         contact: { document: '234.234.243-20' },
       };
-      expect(buildHistorySearchTerm(room)).toBe('23423424320');
+      expect(buildHistoryContactQuery(room)).toEqual({
+        document: '23423424320',
+      });
     });
 
-    it('returns comma-separated values when multiple identifiers exist', () => {
+    it('returns separate params when multiple identifiers exist', () => {
       const room = {
-        urn: 'whatsapp:5511999998888',
         contact: {
+          external_id: 'abc-123',
           email: 'test@example.com',
           document: '123.456.789-00',
         },
       };
-      expect(buildHistorySearchTerm(room)).toBe(
-        '5511999998888,test@example.com,12345678900',
-      );
+      expect(buildHistoryContactQuery(room)).toEqual({
+        contact: 'abc-123',
+        email: 'test@example.com',
+        document: '12345678900',
+      });
     });
 
-    it('returns urn and email without document when document is empty', () => {
+    it('returns contact and email without document when document is empty', () => {
       const room = {
-        urn: 'telegram:123456',
         contact: {
+          external_id: 'abc-123',
           email: 'user@mail.com',
           document: '',
         },
       };
-      expect(buildHistorySearchTerm(room)).toBe('123456,user@mail.com');
-    });
-
-    it('handles non-whatsapp platforms without removing +', () => {
-      const room = {
-        urn: 'telegram:+999888',
-        contact: {},
-      };
-      expect(buildHistorySearchTerm(room)).toBe('+999888');
+      expect(buildHistoryContactQuery(room)).toEqual({
+        contact: 'abc-123',
+        email: 'user@mail.com',
+      });
     });
   });
 });
