@@ -180,6 +180,8 @@
           "label": "Filtrare după coadă"
         }
       }
+    }
+  },
   "dashboard": {
     "view-mode": {
       "assume_chat_question": "Preiei chatul cu {contact}?",
@@ -230,14 +232,6 @@
         "contact_urn": "Telefon de contact",
         "agent_name": "Numele reprezentantului",
         "agent_email": "E-mail reprezentant"
-      }
-    }
-  },
-  "config_chats": {
-    "project_configs": {
-      "restrict_offline_agents": {
-        "switch_label": "Permite interacțiuni doar pentru reprezentanții online",
-        "hint": "Dacă această opțiune este activată, reprezentanții care sunt offline sau în pauză nu vor putea răspunde la conversațiile în curs"
       }
     }
   },
