@@ -1253,51 +1253,51 @@
       "hint": "The Co-pilot is your agent's intelligent assistant; it can be activated later."
     },
     "representatives": {
-      "title": "Representatives Management",
-      "description": "Define the representatives for the sectors and queues, as well as the maximum number of chats per representative. Changes made here will also be updated in the sector and queue settings.",
+      "title": "Representative management",
+      "description": "Define the representatives for the departments and queues, as well as the maximum number of chats per representative. Changes made here will also be updated in the department and queue settings.",
       "select_all": "Select all representatives",
       "select_count": "{count} selected",
-      "empty_list": "There are no members with permission for human support in this project yet. Invite a new member or update an existing member’s permissions in Member Management to see them here.",
-      "not_found_list": "No representative found. Try another filter.",
-      "save_success": "Changes saved successfully!",
+      "empty_list": "There are no members with human support permissions in this project yet. Invite a new member or update the permissions of an existing member in Member management to see them here.",
+      "not_found_list": "No representatives found. Try another filter.",
+      "save_success": "Changes saved successfully",
       "save_error": "Unable to save changes.",
       "bulk_chats_limit_modal": {
         "title": "Limit of simultaneous chats",
-        "disclaimer": "The limit will be applied to the {count} selected representatives.",
+        "disclaimer": "The limit will be applied to the selected representatives ({count}).",
         "input": {
           "label": "Define the limit of simultaneous chats",
-          "tooltip": "A limit set for a specific representative overrides the sector-level limit.",
+          "tooltip": "A limit set for a specific representative overrides the department-level limit.",
           "helper": "Set to 0 to have representatives pick up chats from the queue.",
           "placeholder": "Example: 4"
         }
       },
       "queue_manager": {
         "title": "Manage {representativeName}",
-        "bulk_title": "Change sectors and queues",
-        "bulk_disclaimer_description": "The change will be applied to the {count} selected representatives.",
-        "bulk_add_action": "Add to a sector/queue",
-        "bulk_remove_action": "Remove from a sector/queue",
-        "bulk_select_action_description": "Select the bulk action you want to take with the selected representatives:",
+        "bulk_title": "Change departments and queues",
+        "bulk_disclaimer_description": "The change will be applied to the selected representatives ({count}).",
+        "bulk_add_action": "Add to a department/queue",
+        "bulk_remove_action": "Remove from department/queue",
+        "bulk_select_action_description": "Select the bulk action you want to apply to the selected representatives:",
         "chats_limit": {
-          "switch_label": "Define a limit on the number of simultaneous chats for this representative",
-          "switch_helper": "A limit set for a specific representative overrides the sector-level limit.",
+          "switch_label": "Define the limit of simultaneous chats for this representative",
+          "switch_helper": "A limit set for a specific representative overrides the department-level limit.",
           "input_label": "Number of simultaneous chats",
           "input_placeholder": "Example: 4",
           "input_helper": "Set to 0 to have representatives pick up chats from the queue."
         },
         "sector_queues_checkbox": {
-          "title": "Sectors and queues",
-          "bulk_description": "Select the sectors and queues for the change:"
+          "title": "Departments and queues",
+          "bulk_description": "Select the departments and queues for the change:"
         }
       },
       "chats_limit": {
         "label": "{count} simultaneous chats"
       },
       "sectors": {
-        "empty": "Representative is not added to any sector"
+        "empty": "Representative is not added to any department"
       },
       "actions": {
-        "queue-management_tooltip": "Change selected representatives from sectors/queues.",
+        "queue-management_tooltip": "Change selected representatives from departments/queues.",
         "chats-limit-management_tooltip": "Define the limit of simultaneous chats for the selected representatives."
       },
       "filter": {
@@ -1305,14 +1305,14 @@
           "label": "Filter by status"
         },
         "representatives": {
-          "label": "Filter by representatives"
+          "label": "Filter by representative"
         },
         "sectors": {
-          "label": "Filter by sectors",
-          "all": "All sectors"
+          "label": "Filter by department",
+          "all": "All departments"
         },
         "queues": {
-          "label": "Filter by queues"
+          "label": "Filter by queue"
         }
       }
     },
