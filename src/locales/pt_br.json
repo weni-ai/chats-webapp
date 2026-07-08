@@ -805,11 +805,11 @@
       "title": "CSAT",
       "no_comment": "Nenhum comentário",
       "rating_label": {
-        "5": "Muito satisfeito",
-        "4": "Satisfeito",
-        "3": "Neutro",
-        "2": "Insatisfeito",
-        "1": "Muito insatisfeito",
+        "5": "🤩 Muito satisfeito",
+        "4": "😁 Satisfeito",
+        "3": "😐 Neutro",
+        "2": "☹️ Insatisfeito",
+        "1": "😡 Muito insatisfeito",
         "no_response": "Sem resposta"
       }
     }

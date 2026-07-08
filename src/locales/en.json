@@ -800,11 +800,11 @@
       "title": "CSAT",
       "no_comment": "No comment",
       "rating_label": {
-        "5": "Very satisfied",
-        "4": "Satisfied",
-        "3": "Neutral",
-        "2": "Dissatisfied",
-        "1": "Very dissatisfied",
+        "5": "🤩 Very satisfied",
+        "4": "😁 Satisfied",
+        "3": "😐 Neutral",
+        "2": "☹️ Dissatisfied",
+        "1": "😡 Very dissatisfied",
         "no_response": "No response"
       }
     }

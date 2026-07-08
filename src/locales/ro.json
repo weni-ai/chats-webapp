@@ -213,11 +213,11 @@
       "title": "CSAT",
       "no_comment": "Niciun comentariu",
       "rating_label": {
-        "5": "Foarte mulțumit",
-        "4": "Mulțumit",
-        "3": "Neutru",
-        "2": "Nemulțumit",
-        "1": "Foarte nemulțumit",
+        "5": "🤩 Foarte mulțumit",
+        "4": "😁 Mulțumit",
+        "3": "😐 Neutru",
+        "2": "☹️ Nemulțumit",
+        "1": "😡 Foarte nemulțumit",
         "no_response": "Fără răspuns"
       }
     }

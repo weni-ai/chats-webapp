@@ -803,11 +803,11 @@
       "title": "CSAT",
       "no_comment": "Ningún comentario",
       "rating_label": {
-        "5": "Muy satisfecho",
-        "4": "Satisfecho",
-        "3": "Neutral",
-        "2": "Insatisfecho",
-        "1": "Muy insatisfecho",
+        "5": "🤩 Muy satisfecho",
+        "4": "😁 Satisfecho",
+        "3": "😐 Neutral",
+        "2": "☹️ Insatisfecho",
+        "1": "😡 Muy insatisfecho",
         "no_response": "Sin respuesta"
       }
     }
