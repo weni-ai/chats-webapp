@@ -201,7 +201,7 @@ import ViewModeHeader from './components/ViewModeHeader.vue';
 import ContactHeader from '@/components/chats/ContactHeader.vue';
 import ChatsHeader from '@/components/chats/ChatHeader.vue';
 
-import { buildHistorySearchTerm } from '@/utils/room';
+import { buildHistoryContactQuery } from '@/utils/room';
 
 export default {
   name: 'ViewMode',
@@ -340,9 +340,6 @@ export default {
     openHistory() {
       if (!this.room?.has_history) return;
 
-      const contactUrn = buildHistorySearchTerm(this.room);
-      const protocol = this.room.protocol;
-
       const A_YEAR_AGO = dateFnsFormat(
         dateFnsSubYears(new Date(), 1),
         'yyyy-MM-dd',
@@ -351,8 +348,8 @@ export default {
       this.$router.push({
         name: 'closed-rooms',
         query: {
-          contactUrn,
-          protocol,
+          ...buildHistoryContactQuery(this.room),
+          protocol: this.room.protocol,
           startDate: A_YEAR_AGO,
           from: this.room.uuid,
         },
