@@ -1,1246 +1,28 @@
 {
-  "human_service_dashboard": {
-    "title": "Asistență umană",
-    "peaks_in_human_service": "Chaturi deschise pe oră",
-    "closed": "Închis",
-    "in_progress": "În curs",
-    "response_time": "Timp de răspuns",
-    "waiting_time": "Timp de așteptare",
-    "awaiting_service": "Se așteaptă chatul de asistență",
-    "interaction_time": "Timp interacțiune",
-    "all_agents": "Toți agenții",
-    "tooltips": {
-      "in_progress": "Total chaturi în desfășurare",
-      "response_time": "Timpul mediu în care un contact așteaptă un răspuns pentru fiecare mesaj",
-      "interaction_time": "Durata medie a conversației în chat",
-      "waiting_time": "Timpul mediu de așteptare pentru începerea chatului de asistență",
-      "awaiting_service": "Contacte în așteptarea începerii chatului de asistență",
-      "closeds": "Total chaturi finalizate"
+  "view_options": {
+    "new_badge": "Nou"
+  },
+  "preferences": {
+    "appearance": {
+      "title": "Aspect",
+      "dark_mode": "Mod întunecat",
+      "live_desk_theme": "Temă Live Desk",
+      "light": "Luminos",
+      "dark": "Întunecat"
+    },
+    "notifications": {
+      "sound_notifications": "Notificări cu sunet",
+      "on": "Activ",
+      "off": "Dezactivat"
     }
   },
-  "conversations_dashboard": {
-    "title": "Conversațional",
-    "conversations": "conversații",
-    "artificial_intelligence": "IA",
-    "human_support": "Asistență umană",
-    "others": "Altele",
-    "unclassified": "Neclasificate",
-    "info": {
-      "description": "As of {date}, conversational data includes closed windows up to 23h59m59s of the start day, considering the timezone configured in the project. Conversations from the current day are still being processed and will be displayed after the period is closed.",
-      "mock_description": "These numbers are for demonstration purposes only. Once the first widget is configured, real data will be displayed here."
-    },
-    "mock": {
-      "custom_widget_title": "Order status",
-      "crosstab_widget_title": "Satisfaction by conversation category",
-      "topics": {
-        "delayed_delivery": "Delayed delivery",
-        "defective_product": "Defective product",
-        "price_questions": "Price questions",
-        "cancellation": "Cancellation",
-        "unclassified": "Unclassified",
-        "others": "Others"
-      },
-      "custom_labels": {
-        "delivered": "Delivered",
-        "awaiting_payment": "Awaiting payment",
-        "in_preparation": "In preparation",
-        "payment_confirmed": "Payment confirmed",
-        "in_transit": "In transit",
-        "returned": "Returned"
-      },
-      "crosstab_labels": {
-        "order_status": "Order status",
-        "product_inquiries": "Product inquiries",
-        "payments": "Payments",
-        "technical_support": "Technical support",
-        "shipping_info": "Shipping info",
-        "satisfied": "Satisfied",
-        "dissatisfied": "Dissatisfied"
-      }
-    },
-    "header": {
-      "total": "Conversații totale",
-      "resolved": "Gestionat de IA",
-      "unresolved": "Nu este gestionat de IA",
-      "unengaged": "Neimplicat",
-      "transferred": "Transferat la asistență umană",
-      "tooltips": {
-        "total": "Total of conversations closed in the period. A conversation is counted from the first message of the contact until 23h59m59s of the start day. Messages sent after this time start a new conversation on the following day.",
-        "resolved": "Când agentul demonstrează competență și oferă un serviciu util",
-        "unresolved": "Când chatul de asistență nu a fost eficient (saluturi, în afara domeniului, erori ale agentului)",
-        "unengaged": "Conversație fără implicare utilă. Aceasta include doar saluturi sau emoticoane, ori cazuri închise fără interacțiune relevantă.",
-        "transferred": "Conversații care necesită asistență umană. Numerele pot diferi de cele din dashboard-ul de asistență umană, deoarece aici se numără conversațiile (nu camerele) care au fost deschise și au trecut prin IA. Deoarece aceeași conversație poate genera mai multe camere, dintre care unele pot fi deschise direct de asistența umană, compararea dashboard-urilor nu este recomandată."
-      }
-    },
-    "sections": {
-      "conversations": "Conversații",
-      "contacts": "Contacte"
-    },
-    "contacts_header": {
-      "unique": "Contacte unice",
-      "returning": "Contacte recurente",
-      "avg": "Conversații medii per contact",
-      "returning_description_suffix": "din totalul contactelor unice",
-      "tooltips": {
-        "unique": "Numărul de contacte distincte care au inițiat conversații în perioada selectată",
-        "returning": "Contacte care au început mai mult de o conversație în perioada selectată",
-        "avg": "Conversații medii luând în considerare toate contactele unice în perioada respectivă"
-      }
-    },
-    "form_topic": {
-      "add_topic": "Adaugă subiect",
-      "add_sub_topic": "Adaugă subiect secundar",
-      "title": "Editează subiecte și subiecte secundare",
-      "cancel": "Anulează",
-      "save": "Salvează modificările",
-      "new_topic": "Subiect nou",
-      "topic_name": "Nume subiect",
-      "context": "Context",
-      "context_description": "Adaugă context pentru a îmbunătăți clasificarea IA",
-      "sub_topics": "Subiecte secundare",
-      "new_sub_topic": "Subiect secundar nou",
-      "sub_topics_added": "{sub_topics} subiecte secundare adăugate",
-      "success_save_topics_or_subtopics": "Subiecte sau subiecte secundare adăugate cu succes",
-      "error_save_topics_or_subtopics": "Eroare la salvarea subiectelor sau subiectelor secundare",
-      "success_remove_topic": "Subiect șters cu succes",
-      "error_remove_topic": "Eroare la ștergerea subiectului",
-      "success_remove_subtopic": "Subiect secundar șters cu succes",
-      "error_remove_subtopic": "Eroare la ștergerea subiectului secundar",
-      "remove_modal": {
-        "title_remove_topic": "Șterge subiectul",
-        "title_remove_sub_topic": "Șterge subiectul secundar",
-        "description_remove_topic": "Sigur vrei să ștergi subiectul {topic}? Aceasta va șterge de asemenea toate subiectele secundare. Datele asociate anterior cu acest subiect vor fi eliminate din această clasificare și nu vor mai fi accesibile prin intermediul acesteia.",
-        "description_remove_sub_topic": "Sigur vrei să ștergi subiectul secundar {sub_topic}? Datele asociate anterior cu acest subiect secundar vor fi eliminate din această clasificare şi nu vor mai fi accesibile prin aceasta.",
-        "remove": "Ștergere",
-        "cancel": "Anulează"
-      },
-      "cancel_modal": {
-        "title": "Anulează editarea subiectului",
-        "description_cancel": "Sigur vrei să anulezi? Vei pierde tot progresul.",
-        "cancel": "Anulează",
-        "continue": "Continuă"
-      },
-      "added_topic": "Adăugat pe {date} la {time}",
-      "disclaimer": "Adăugarea subiectelor permite inteligenței artificiale să clasifice automat conversațiile. Acest lucru va ajuta IA-ul să înțeleagă mai bine conversațiile şi să ofere răspunsuri mai precise."
-    },
-    "most_talked_about_topics": {
-      "title": "Cele mai frecvente subiecte",
-      "see_all": "Vizualizează tot",
-      "subtopics": "Subiecte secundare",
-      "no_topics": "Încă nu există subiecte",
-      "no_topics_description": "Adaugă un subiect pentru a începe analiza conversațiilor",
-      "add_first_topic": "Adaugă primul tău subiect",
-      "edit_topics_and_subtopics": "Editează subiecte și subiecte secundare"
-    },
-    "csat": "CSAT",
-    "nps": "NPS",
-    "sales_funnel": "Canal de vânzări şi date",
-    "custom": "Diagramă cu bare orizontale",
-    "crosstab": "Tabel încrucișat",
-    "absolute_numbers": "Absolute numbers",
-    "abandoned_cart_recovery": "Recuperare coș abandonat",
-    "added_to_cart": "Produsele cele mai adăugate în coș",
-    "added_to_cart_count": "{count, plural, one {# produs} other {# produse}}",
-    "agent_invocation": "Cei mai utilizați agenți",
-    "agent_invocation_description": "Urmărește clasamentul celor mai utilizați agenți",
-    "agent_invocation_count": "{count, plural, one {# agent} other {# agenți}}",
-    "tool_result": "Cele mai utilizate instrumente",
-    "tool_result_description": "Urmărește clasamentul celor mai utilizate instrumente",
-    "tool_result_count": "{count, plural, one {# instrument} other {# instrumente}}",
-    "search_term": "Termenii cei mai căutați",
-    "search_term_count": "{count, plural, one {# produs} other {# produse}}",
-    "auto_widget_no_data": "Nu sunt date disponibile pentru perioada filtrată",
-    "auto_widget_error": "Datele nu au putut fi încărcate. Reîmprospătează dashboard-ul sau contactează suportul",
-    "no_data_available": "Nu sunt date disponibile pentru perioada selectată",
-    "widget_error": {
-      "title": "A apărut o eroare în timpul încărcării datelor",
-      "button": "Verifică configurația widgetului",
-      "crosstab_validation_title": "Problemă de configurare",
-      "crosstab_validation_description": "Cheia sau valoarea nu a fost găsită în baza de date"
-    },
-    "reviews": "recenzii",
-    "csat_widget": {
-      "very_satisfied": "Foarte mulțumit",
-      "satisfied": "Mulțumit",
-      "neutral": "Neutru",
-      "dissatisfied": "Nemulțumit",
-      "very_dissatisfied": "Foarte nemulțumit"
-    },
-    "nps_widget": {
-      "promoters": "Promotori (9 sau 10)",
-      "passive": "Pasivi (7 sau 8)",
-      "detractors": "Detractori (0 până la 6)",
-      "current_score": "Scor curent",
-      "current_score_types": {
-        "low": "Scăzut",
-        "good": "Bun",
-        "great": "Grozav",
-        "excellent": "Excelent"
-      },
-      "tooltips": {
-        "classification": "Evaluare (%promotori - %detractori):",
-        "low": "-100 până la 0: Scăzut (risc reputațional)",
-        "good": "1 până la 30: Bun",
-        "great": "31 până la 70: Grozav",
-        "excellent": "71 până la 100: Excelent"
-      }
-    },
-    "sales_funnel_widget": {
-      "total_orders": "Total comenzi",
-      "total_value": "Sumă totală",
-      "average_ticket": "Preț mediu al comenzilor",
-      "captured_leads": "Lead-uri capturate",
-      "purchases_made": "Achiziții finalizate"
-    },
-    "abandoned_cart_recovery_widget": {
-      "title": "Recuperare coș abandonat",
-      "no_data": "Nu sunt date disponibile pentru perioada filtrată.",
-      "error": "Eroare la încărcarea datelor. Reîmprospătează tabloul de bord sau contactează suportul.",
-      "unavailable_period": "Meta oferă doar datele din ultimele 90 de zile pentru acest widget. Asigură-te că intervalul de date selectat este în această perioadă pentru a putea vizualiza informațiile.",
-      "chart": {
-        "sent": "Trimise",
-        "delivered": "Livrate",
-        "read": "Citite",
-        "read_help": "Mesajele care au fost deschise și citite de destinatar. Această metrică depinde de setările individuale de confidențialitate ale destinatarului și poate să nu fie urmărită dacă confirmările de citire sunt dezactivate.",
-        "clicks": "Clickuri"
-      },
-      "info_card": {
-        "recovery_revenue": "Venit recuperat",
-        "total_sends": "Total trimiteri",
-        "converted_sales": "Vânzări convertite",
-        "conversion_rate": "Rată de conversie",
-        "average_order_value": "Valoare medie a comenzii",
-        "roas_tooltip": "Rentabilitatea investiției în reclame măsoară cât venit generezi pentru fiecare $xxx cheltuit pe mesaje. De ce este atât de mare? > Recuperarea automată este foarte eficientă pentru că costul unui mesaj este minim comparativ cu valoarea medie a comenzii din magazinul tău."
-      }
-    },
-    "customize_your_dashboard": {
-      "title": "Personalizează-ți dashboard-ul",
-      "description": "Personalizează dashboard-ul cu metricile tale cheie",
-      "add_widget": "Adaugă widget",
-      "add_first_widget": "Adaugă primul tău widget",
-      "csat_description": "Scorul de satisfacție a clientului (CSAT) măsoară cât de mulțumite sunt contactele de serviciul primit",
-      "nps_description": "Scorul Net Promoter (NPS) măsoară cât de probabil este ca aceste contacte să recomande serviciul tău",
-      "config_csat_or_nps_description": "Setează ce {type} vrei să monitorizezi",
-      "sales_funnel_description": "Monitorizează-ți vânzările: Total comenzi, Tichet mediu, Sumă totală și Canal de conversie",
-      "absolute_numbers_description": "Evidențiază o singură metrică cheie, afișând valoarea exactă pentru vizualizare rapidă și directă",
-      "abandoned_cart_recovery_description": "Urmărește metricile de recuperare a coșului abandonat: venit recuperat, vânzări convertite, rată de conversie, avarege order value, etc.",
-      "added_to_cart_description": "Urmărește clasamentul produselor cele mai adăugate în coș.",
-      "search_term_description": "Urmărește clasamentul termenilor cei mai căutați.",
-      "human_support": "Asistență umană",
-      "ai_support": "IA",
-      "activate_agent": "Activează agent",
-      "select_agent": "Alege un agent",
-      "select_key": "Introdu cheia",
-      "enter_field_name": "Completează numele câmpului",
-      "set_widget_name": "Completează numele widgetului",
-      "label_widget_name": "Nume widget",
-      "widget_name_description": "Introdu numele widgetului aici",
-      "your_agent_is_active": "Agentul tău este activ!",
-      "return": "Înapoi",
-      "save_changes": "Salvează modificările",
-      "modal_attention": {
-        "title_return": "Înapoi la pasul anterior",
-        "description_return": "Sigur vrei să te întorci? Dacă confirmi, tot progresul va fi pierdut.",
-        "title_cancel": "Anulează configurarea",
-        "description_cancel": "Sigur vrei să anulezi? Dacă confirmi, tot progresul va fi pierdut.",
-        "keep_configuring": "Continuă configurarea",
-        "return": "Înapoi",
-        "cancel": "Anulează"
-      },
-      "edit_csat_or_nps": "Editează {type}",
-      "remove_widget": "Șterge widget-ul",
-      "modal_remove_widget": {
-        "title": "Șterge widget-ul",
-        "description": "Sigur vrei să ștergi widget-ul {type}?",
-        "remove": "Eliminare",
-        "cancel": "Anulează",
-        "success_message": "{widget} a fost eliminat",
-        "remove_success": "{widget} eliminat cu succes",
-        "remove_error": "Nu s-a putut elimina {widget}. Încearcă din nou."
-      },
-      "tabs": {
-        "sentiment_analysis": "Analiza opiniilor",
-        "customized": "Personalizare",
-        "native": "Nativ"
-      },
-      "select_chart_type": "Selectează tipul diagramei",
-      "select_data": "Selectează datele pe care vrei să le monitorizezi",
-      "horizontal_bar_chart": {
-        "title": "Diagramă cu bare orizontale",
-        "description": "Vizualizare cu bare orizontale, unde lungimea barei indică magnitudinea valorii."
-      },
-      "crosstab": {
-        "title": "Tabel încrucișat",
-        "description": "Combină și compară două puncte de date diferite pentru a descoperi insight-uri.",
-        "drawer": {
-          "description": "Completează numele widgetului:",
-          "disclaimer": "<b>Cheie:</b> Un identificator unic folosit pentru a monitoriza un eveniment specific în fluxul de date.<br/><b>Numele câmpului:</b> Numele câmpului pentru valoarea pe care vrei să o afișezi. Dacă este lăsat necompletat, sistemul va folosi o valoare implicită.",
-          "first_data_label": "Setează <b>primul</b> punct de date pe care vrei să-l monitorizezi:",
-          "second_data_label": "Setează <b>al doilea</b> punct de date pe care vrei să-l monitorizezi:",
-          "reference_field_label": "Define the reference field to be used to link the events:"
-        }
-      },
-      "absolute_numbers": {
-        "drawer": {
-          "description": "Set a name for the widget:",
-          "add_child": "Add metric",
-          "metric_name": {
-            "label": "Metric name",
-            "placeholder": "Enter the metric name here"
-          },
-          "select_agent": {
-            "label": "Select an agent",
-            "placeholder": "Select or search"
-          },
-          "key": {
-            "label": "Key",
-            "placeholder": "Enter the selected agent key here",
-            "hint": " A unique identifier used to track a specific event in the data flow."
-          },
-          "value_field_name": {
-            "label": "Event metadata (opțional)",
-            "placeholder": "Enter the event metadata here",
-            "hint": "Metadata's field name for performing operations. If left blank, the system will use the default field (value)."
-          },
-          "currency": {
-            "switch": "Value with currency"
-          },
-          "operation": {
-            "label": "Operation",
-            "placeholder": "Select or search",
-            "options": {
-              "sum": "Sum",
-              "average": "Average",
-              "highest": "Highest",
-              "lowest": "Lowest",
-              "total": "Total"
-            }
-          }
-        },
-        "remove_modal": {
-          "description": "Are you sure you want to delete the {widget_name} widget?",
-          "info": "The {widget_name} widget will be deleted with all added metrics."
-        },
-        "remove_child_modal": {
-          "title": "Remove metric",
-          "description": "Are you sure you want to delete the {metric_name}?",
-          "info": "The {widget_name} widget will not be deleted. Only the {metric_name}."
-        }
-      }
-    },
-    "setup_csat_or_nps_widget": {
-      "title": "{type} {tab} neconfigurat",
-      "description": "Configurează {type} {tab} pentru a monitoriza metricile tale",
-      "action_text": "Configurează acum"
-    }
+  "discussion_about": "Discuție despre {discussionGoal}",
+  "you_message_prefix": "Tu:",
+  "automatic_message": {
+    "automatic_opening_message": "Mesaj de deschidere automat"
   },
-  "template_messages_dashboard": {
-    "title": "Mesaje meta șablon",
-    "favorites": "Favorite",
-    "select_favorite": "Selectează un template favorit",
-    "add_to_favorites": "Adaugă la favorite",
-    "empty_templates": "Încă nu există date. Odată ce va fi activitate, acestea vor fi afișate aici.",
-    "favorite_limit_reached": "Limita de favorite a fost atinsă. Elimină un favorit și încearcă din nou.",
-    "all_data": "Toate datele",
-    "data_source": "Sursa datelor: {source}",
-    "all_data_table": {
-      "title": "Numărul de mesaje",
-      "header": {
-        "category": "Categorie",
-        "qtd": "Total"
-      },
-      "row": {
-        "SERVICE": "Service",
-        "MARKETING": "Marketing",
-        "UTILITY": "Utilitate",
-        "AUTHENTICATION": "Autentificare"
-      }
-    },
-    "active_contacts": {
-      "title": "Contacte active",
-      "tooltip": "Contactele care au interacționat cu template-ul"
-    },
-    "blocks": {
-      "title": "Blocuri"
-    },
-    "templates_modal": {
-      "title": "Căutare template",
-      "table": {
-        "header": {
-          "name": "Denumire template",
-          "last_edited": "Ultima editare"
-        }
-      }
-    },
-    "quality": {
-      "high": "Calitate ridicată",
-      "medium": "Calitate medie",
-      "low": "Calitate scăzută",
-      "more_info_tooltip": "Află mai multe în <a style='color: white;' href='https://developers.facebook.com/docs/whatsapp/message-templates/guidelines?locale=en_US' target='_blank'>documentația Meta</a>"
-    },
-    "messages_graph": {
-      "sent_messages": "Mesaje trimise",
-      "delivered_messages": "Mesaje livrate",
-      "read_messages": "Mesaje citite",
-      "clicks": "Clicuri"
-    },
-    "button_clicks_table": {
-      "title": "Clicuri pe buton",
-      "header": {
-        "label": "Text buton",
-        "type": "Tip",
-        "total": "Total",
-        "clicks_in_relation_to_the_shot": "Clicuri pe mesaj declanșat",
-        "click_rate": "Rată de clicuri"
-      },
-      "button_type": {
-        "PHONE_NUMBER": "Telefon",
-        "URL": "Link",
-        "COPY_CODE": "Copiază și lipește",
-        "FLOW": "Flux",
-        "QUICK_REPLY": "Răspuns rapid"
-      }
-    },
-    "template": {
-      "preview": "Previzualizează",
-      "edit_template": "Modificare template"
-    },
-    "filter": {
-      "shortcut": {
-        "last_7_days": "Ultimele 7 zile",
-        "last_14_days": "Ultimele 14 zile",
-        "last_30_days": "Ultimele 30 zile",
-        "last_60_days": "Ultimele 60 de zile",
-        "last_90_days": "Ultimele 90 de zile",
-        "current_month": "Luna curentă",
-        "previous_month": "Luna anterioară"
-      }
-    }
-  },
-  "table_dynamic_by_filter": {
-    "status": "Stare",
-    "chats_in_period": "Chaturi în această perioadă"
-  },
-  "table_group": {
-    "contact": "Contact",
-    "urn": "URN",
-    "agent": "Agent",
-    "created_on": "Inițiere",
-    "ended_at": "Sfârșit",
-    "sector": "Sector",
-    "queue": "Coadă",
-    "tags": "Etichete"
-  },
-  "contact_list_modal": {
-    "title": "Lista de contacte a {label}",
-    "header": {
-      "contact_name": "Nume contact",
-      "start": "Inițiere"
-    },
-    "message": {
-      "get_data_fail": "Eroare la preluarea datelor despre contactele care au răspuns acestui flux"
-    }
-  },
-  "filter": {
-    "agent": {
-      "label": "Agent",
-      "placeholder": "Alege un agent"
-    },
-    "contact": {
-      "label": "Contact",
-      "placeholder": "Nume contact sau URN"
-    },
-    "created_on": {
-      "label": "Dată",
-      "placeholder": ""
-    },
-    "queue": {
-      "label": "Coadă",
-      "placeholder": "Selectează o coadă"
-    },
-    "sector": {
-      "label": "Sector de activitate",
-      "placeholder": "Selectează un sector de activitate"
-    },
-    "tags": {
-      "label": "Etichete",
-      "placeholder": "Alege o etichetă"
-    }
-  },
-  "key": "Cheie",
-  "field_name": "Denumire câmp",
-  "optional": "Opțional",
-  "filter-by": "Perioadă:",
-  "see_more": "Arată mai mult",
-  "see_all": "Vizualizează tot",
-  "lines_count": "{count, plural, one {# rând} other {# rânduri}}",
-  "reload": "Reîncarcă",
-  "agent": "Agent",
-  "online_agents": "Agenți online",
-  "chats_per_agents": "Chaturi per agent",
-  "closeds": "Închise",
-  "finished": "Finalizat",
-  "in_progress": "În curs",
-  "waiting": "În așteptare",
-  "awaiting": "În așteptare",
-  "in-service": "Chat de asistență în desfășurare",
-  "status": "Stare",
-  "metric": "Metric",
-  "edit_metric": "Edit metric",
-  "remove_metric": "Remove metric",
-  "edit_widget": "Edit widget",
-  "metrics": "Metrici",
-  "flow": "Flux",
-  "flows": "Fluxuri",
-  "select": "Selectare",
-  "multiple_without_selects_message": "Nu s-au selectat opțiuni",
-  "report": "Raport",
-  "you": "Tu",
-  "none": "Niciunul",
-  "currency": "Monedă",
-  "funnel": "Canal",
-  "select_layout": "Selectează un layout",
-  "dashboard_name": "Denumire dasboard",
-  "add": "Adăugare",
-  "view_more": "Vezi mai multe",
-  "ex": "Exemplu:",
-  "cancel": "Anulează",
-  "save": "Salvare",
-  "delete": "Ștergere",
-  "confirmation": "Confirmare",
-  "clear_fields": "Golește câmpurile",
-  "today": "Astăzi",
-  "now": "Acum",
-  "date_format": "LL/ZZ/AAAA",
-  "search": "Căutare",
-  "category": "Categorie",
-  "language": "Limbă",
-  "pending": "În așteptare",
-  "rejected": "Respinse",
-  "active": "Activ",
-  "disabled": "Dezactivat",
-  "enable": "Enable",
-  "alert_added": "{name} adăugat",
-  "alert_edited": "{name} editat",
-  "select_date": {
-    "yesterday": "Ieri ({date})",
-    "last_days": "Ultimele {value} zile ({date})",
-    "previous_month": "Luna precedentă ({date})",
-    "last_7_days_conversational": "Last 7 days (up to {date})",
-    "last_14_days_conversational": "Last 14 days (up to {date})",
-    "last_30_days_conversational": "Last 30 days (up to {date})",
-    "last_12_months_conversational": "Last 12 months (up to {date})",
-    "current_month_conversational": "Current month (up to {date})",
-    "previous_month_conversational": "Previous month",
-    "custom_conversational": "Custom"
-  },
-  "data_period": {
-    "label": "Perioadă",
-    "until": "până",
-    "range": "{start} – {end}"
-  },
-  "save_error": "Eroare la salvare. Încearcă din nou.",
-  "get_data_error": "Eroare la preluarea datelor. Încearcă din nou.",
-  "reset": "Resetează",
-  "onboarding": {
-    "welcome_modal": {
-      "title": "Funcționalitate nouă disponibilă: Insights",
-      "text": "Introducem un nou instrument pentru a te ajuta să monitorizezi succesul operațiunilor pe Weni",
-      "button": {
-        "go": "Începe",
-        "ignore": "Ignoră"
-      }
-    },
-    "complete_modal": {
-      "title": "Finalizează turul!",
-      "text": "Acum ești mai aproape să îmbunătățești operațiunea bazându-te pe date!"
-    }
-  },
-  "widgets": {
-    "reset": "Resetează widgetul",
-    "info_reset": "Dacă resetezi widgetul, datele configurate se vor pierde.",
-    "success_reset": "Widget resetat cu succes",
-    "error_reset": "Nu s-a putut reseta widgetul. Încearcă din nou.",
-    "metric_error": "Eroare la preluarea metric",
-    "card": {
-      "error_description": "Resetează sursa flux pentru a prelua date valide",
-      "metric_empty": "Configurează",
-      "metric_set": "Setează metric"
-    },
-    "graph_funnel": {
-      "title": "Pâlnie",
-      "not_configured_description": "Selectează fluxuri pe care vrei să le mapezi pentru a construi vizualizarea pâlniei pentru proiectul tău",
-      "select_flows": "Selectare fluxuri",
-      "flow_executions": "Rulări flux",
-      "error": {
-        "title": "A apărut o problemă la încărcarea datelor",
-        "description": "Reîncarcă"
-      }
-    },
-    "empty_widget": {
-      "title": "Configurație necesară. Personalizează widgetul pentru a începe.",
-      "config_btn": "Configurează"
-    },
-    "recurrence": {
-      "title": "Recurență",
-      "see_more": "Vezi mai multe",
-      "empty_data": {
-        "title": "Încă nu există date. Odată ce va exista activitate,",
-        "sub_title": "va apărea aici."
-      }
-    },
-    "vtex_order": {
-      "title": "Vânzări VTEX",
-      "orders": "Comenzi",
-      "total_value": "Sumă totală",
-      "average_ticket": "Preț mediu al comenzilor",
-      "empty_data": {
-        "title": "Nu s-au găsit date",
-        "sub_title": "Verifică dacă UTM-ul furnizat este corect sau așteaptă date noi",
-        "verify_btn": "Verifică UTM"
-      }
-    },
-    "vtex_conversions": {
-      "label": {
-        "sent": "Mesaje trimise",
-        "delivered": "Mesaje livrate",
-        "read": "Mesaje citite",
-        "clicked": "Clicuri",
-        "orders": "Comenzi",
-        "total_value": "Sumă totală",
-        "average_ticket": "Preț mediu al comenzilor"
-      }
-    },
-    "treemap": {
-      "no_data": "Nu există date de afișat",
-      "no_data_description": "Nu există conversații clasificate încă"
-    }
-  },
-  "drawers": {
-    "metric_saved": "Metric salvat cu succes",
-    "reset_widget": "Resetează widgetul",
-    "clear_all_fields": "Șterge toate câmpurile",
-    "config_gallery": {
-      "title": "Galerie widget",
-      "description": "Alege tipul widgetului pe care vrei să îl configurezi",
-      "options": {
-        "executions": {
-          "title": "Rulări",
-          "description": "Vizualizează numărul total de rulări ale unui flux"
-        },
-        "flow_result": {
-          "title": "rezultat flux",
-          "description": "Returnează un rezultat flux și permite operațiuni de bază"
-        },
-        "data_crossing": {
-          "title": "Încrucișarea datelor",
-          "description": "Combină două valori pentru a obține un metric"
-        },
-        "funnel": {
-          "title": "Pâlnie",
-          "description": "Selectează datele pentru vizualizarea diagramei pâlniei"
-        },
-        "vtex": {
-          "title": "VTEX",
-          "description": "Vizualizează-ți datele de vânzări pe VTEX",
-          "form": {
-            "name": {
-              "label": "Nume widget",
-              "placeholder": "Introdu numele widgetului aici"
-            },
-            "utm": {
-              "label": "UTM",
-              "placeholder": "Copiază UTM VTEX și lipește-l aici"
-            }
-          }
-        },
-        "vtex_conversions": {
-          "title": "Conversie template",
-          "description": "Monitorizează rata de conversie dintre mesajele cu template trimise şi vânzările finalizate",
-          "form": {
-            "define_meta_data": "Setează metadatele",
-            "define_vtex_data": "Setează datele VTEX",
-            "input": {
-              "name": {
-                "label": "Nume widget",
-                "placeholder": "Exemplu: Vânzări"
-              },
-              "waba": {
-                "label": "Selectează un număr de cont",
-                "placeholder": "Selectează un număr de telefon"
-              },
-              "template": {
-                "label": "Selectează un mesaj șablon",
-                "placeholder": "Selectează un mesaj șablon"
-              },
-              "utm": {
-                "label": "Introdu UTM",
-                "placeholder": "Copiază UTM VTEX și lipește-l aici"
-              }
-            }
-          }
-        },
-        "recurrence": {
-          "title": "Recurență",
-          "description": "Vizualizează rezultatele recurente în diagrame, cum ar fi sondajele de satisfacție sau CSAT."
-        }
-      }
-    },
-    "config_card": {
-      "title": "Configurează metric pentru card",
-      "name_card": {
-        "label": "Introdu un nume pentru card",
-        "placeholder": "Exemplu: fluxuri de proiect"
-      },
-      "select_origin_flow": "Selectare flux sursă",
-      "result_type": "Tipul rezultatului",
-      "flow_result": {
-        "label": "Rezultat flux",
-        "placeholder": "Caută sau selectează un rezultat"
-      },
-      "operation": "Operațiune",
-      "format": "Format",
-      "checkbox": {
-        "currency": "Monedă"
-      },
-      "radios": {
-        "executions": "Rulări",
-        "results": "Rezultat flux",
-        "total": "Total",
-        "highest_value": "Valoarea maximă",
-        "avg": "Medie",
-        "lowest_value": "Valoarea minimă",
-        "recurrence": "Recurență",
-        "multiply": "Multiplică",
-        "sum": "Sumă",
-        "min": "Minimum",
-        "max": "Maximum",
-        "difference": "Diferență",
-        "percentage": "Procent"
-      },
-      "total_flow_executions": "Total rulări flux",
-      "first_value": "Prima valoare",
-      "second_value": "A doua valoare"
-    },
-    "config_funnel": {
-      "title": "Configurează metrici pentru diagramă",
-      "description": "Selectează cel puțin trei fluxuri pentru a prelua vizualizarea diagramei pâlniei",
-      "add_metric": "Adăugare metric",
-      "first_metric": "Primul metric",
-      "second_metric": "Al doilea metric",
-      "third_metric": "Al treilea metric",
-      "fourth_metric": "Al patrulea metric",
-      "fifth_metric": "Al cincilea metric",
-      "select_flow": "Selectare flux"
-    },
-    "config_recurrence": {
-      "name_metric": "Nume metric"
-    }
-  },
-  "metric_accordion": {
-    "name_metric": {
-      "label": "Introdu un nume pentru metric",
-      "placeholder": "Exemplu: fluxuri proiect"
-    },
-    "select_origin_flow": "Selectare flux sursă"
-  },
-  "insights_header": {
-    "auto_refresh": "Actualizare automată: {status}",
-    "auto_refresh_on": "Acest dashboard este actualizat în fiecare minut. Folosește butonul de reîmprospătare pentru a actualiza acum sau butonul de pauză pentru a întrerupe actualizările automate.",
-    "auto_refresh_off": "Pentru a actualiza dashboard-ul, folosește butonul de reîmprospătare. Poți relua actualizările automate folosind butonul de pornire.",
-    "auto_refresh_alert": "Actualizarea automată este {status}.",
-    "refresh": "Reîncarcă",
-    "refresh_button_tooltip": "Sunt disponibile actualizări noi. Apasă Reîmprospătare pentru a le aplica.",
-    "filters": "Filtre",
-    "filtrate": "Filtrare",
-    "dynamic_columns": "Coloane personalizabile",
-    "placeholder_dynamic_columns": "Selectează coloanele",
-    "last_updated_at": "Ultima actualizare",
-    "clear_filters": "Elimină filtrele",
-    "add_new_dashboard": "Dashboard nou",
-    "set_default_dashboard_success": "Acum, dashboard-ul {dashboard} este pagina ta principală",
-    "set_default_dashboard_error": "Eroare la setarea dashboard-ului {dashboard} ca pagină principală",
-    "generate_insight": {
-      "title": "Generează insight",
-      "generating_insights": "Se generează insight-uri",
-      "input": {
-        "placeholder_positive": "Împărtășește-ți experiența",
-        "placeholder_negative": "Cum ne putem îmbunătăți?"
-      },
-      "feedback": {
-        "question": "A fost util insight-ul generat?",
-        "complete": "Îți mulțumim pentru feedback!"
-      },
-      "button": {
-        "yes": "Da",
-        "no": "Nu",
-        "send": "Trimite"
-      },
-      "by_ai": "de Meta Llama",
-      "error": "Nu s-au putut genera insight-uri. Verifică conexiunea la internet și încearcă din nou mai târziu.",
-      "prompt": "Analizează performanța unui dashboard care afișează rezultatele asistenței umane. Dashboard-ul prezintă trei categorii principale: în curs, închis și în așteptare. De asemenea, evaluează aceste metrici: primul răspuns, timpul de așteptare și timpul de interacțiune. Identifică modelele de eficiență și posibilele blocaje în fluxul de asistență și oferă sugestii pentru optimizarea timpului de răspuns și a productivității echipei. Date: {values}",
-      "prompt_language": "Răspuns în engleză"
-    }
-  },
-  "new_dashboard": {
-    "title": "Dashboard nou",
-    "create_dashboard": "Creează dashboard",
-    "creating_new_dashboard": "Se creează un dashboard nou",
-    "dashboard_name_placeholder": "Exemplu: Vânzări",
-    "alert": {
-      "success": "Dashboard creat cu succes",
-      "error": "Eroare la crearea dashboard-ului"
-    }
-  },
-  "edit_dashboard": {
-    "title": "Editează dashboard-ul",
-    "delete_dashboard": "Șterge dashboard-ul",
-    "delete_dashboard_notice": "Această acțiune nu poate fi anulată. Pentru confirmare, introdu numele dashboard-ului.",
-    "alert": {
-      "success": "Dashboard-ul a fost actualizat cu succes",
-      "error": "Eroare la actualizarea dashboard-ului"
-    }
-  },
-  "delete_dashboard": {
-    "title": "Șterge dashboard-ul",
-    "notice": "Această acțiune nu poate fi anulată. Pentru confirmare, introdu numele dashboard-ului.",
-    "alert": {
-      "success": "Dashboard-ul a fost șters cu succes",
-      "error": "Eroare la ștergerea dashboard-ului"
-    }
-  },
-  "currency_options": {
-    "BRL": "R$ - Real brazilian",
-    "USD": "$ - dolar american",
-    "EUR": "€ - Euro",
-    "ARS": "$ - Peso"
-  },
-  "dashboard_onboarding": {
-    "step": {
-      "create_dashboard": {
-        "title": "Creează un dashboard personalizat",
-        "description": "Creează câte dashboard-uri dorești. Apasă pe <b>Dashboard nou</b> pentru a începe."
-      }
-    }
-  },
-  "widgets_onboarding": {
-    "card": {
-      "step": {
-        "define_metric": {
-          "title": "Setează metric",
-          "description": "Fă clic aici pentru a selecta metricul pe care vrei să îl vizualizezi"
-        },
-        "select_widget_type": {
-          "title": "Selectează widget",
-          "description": "Selectează tipul de metric pe care vrei să îl configurezi. Dacă ai întrebări, începe prin a testa în Rulări.",
-          "general_description": "Selectează tipul de metric pe care vrei să îl configurezi"
-        },
-        "set_metric": {
-          "title": "Setează metric",
-          "description": "După selectarea tipului de metric, selectează un flux care oferă date relevante pentru operațiunea ta. Completează câmpurile rămase și salvează."
-        }
-      }
-    },
-    "empty_widget": {
-      "step": {
-        "define_metric": {
-          "title": "Continuă să explorezi posibilitățile",
-          "description": "Vizualizează principalele date de vânzări VTEX sau monitorizează parcursul contactelor tale"
-        },
-        "select_widget_type": {
-          "title": "Selectează widgetul ideal",
-          "description": "Vizualizează principalele date de vânzări VTEX sau monitorizează parcursul contactelor tale"
-        },
-        "fill_metric": {
-          "title": "Configurare widget",
-          "description": "Completează câmpurile pentru a configura widget-ul tău și a obține date valoroase"
-        }
-      }
-    }
-  },
-  "charts": {
-    "hours": "Ore",
-    "attendances": "Chaturi de asistență"
-  },
-  "dashboard_commerce": {
-    "title": "Vezi ce se întâmplă în: Coș abandonat",
-    "errors": {
-      "title": "Nu s-au putut încărca datele",
-      "description": "Nu s-au putut încărca datele. Încearcă din nou mai târziu."
-    },
-    "titles": {
-      "send-message": "Mesaje trimise",
-      "delivered-messages": "Mesaje livrate",
-      "read-messages": "Mesaje citite",
-      "interactions": "Interacțiuni",
-      "utm-revenue": "Venituri UTM",
-      "orders-placed": "Comenzi realizate"
-    },
-    "filters": {
-      "today": "Astăzi",
-      "last_7_days": "Ultimele 7 zile",
-      "last_14_days": "Ultimele 14 zile",
-      "last_30_days": "Ultimele 30 zile",
-      "last_45_days": "Ultimele 45 de zile",
-      "last_90_days": "Ultimele 90 de zile"
-    },
-    "infos": {
-      "send-message": "De câte ori agentul a trimis un mesaj care a inițiat o interacțiune",
-      "delivered-messages": "De câte ori au fost livrate mesajele",
-      "read-messages": "De câte ori au fost citite mesajele",
-      "interactions": "De câte ori contactul a interacționat cu mesajul",
-      "utm-revenue": "Total vânzări",
-      "orders-placed": "Număr de vânzări"
-    }
-  },
-  "export_data": {
-    "title": "Exportă datele",
-    "tooltip": "Exportul este în curs. Vei putea crea un nou raport pentru acest proiect când acest export va fi complet.",
-    "description": "Selectează informația pe care vrei să o exporți. Vei primi fișierul complet pe e-mail, după confirmare.",
-    "feedback": "Vei primi fișierul prin e-mail în scurt timp. Nu uita să verifici dosarul de spam.",
-    "feedback_title": "Se exportă",
-    "model_labels": {
-      "sectors": "Sectoare de activitate",
-      "queues": "Cozi",
-      "rooms": "Camere",
-      "users": "Agenți",
-      "sector_tags": "Etichete",
-      "contacts": "Contacte",
-      "resolutions": "Rezoluții de conversație",
-      "tool_result": "Cele mai utilizate instrumente",
-      "agent_invocation": "Cei mai utilizați agenți",
-      "search_terms": "Termenii cei mai căutați",
-      "added_to_cart": "Produsele cele mai adăugate în coș",
-      "topics": "Subiecte",
-      "csat": "CSAT",
-      "nps": "NPS",
-      "agent_status_logs": "Agent"
-    },
-    "field_labels": {
-      "config": "Configurare",
-      "name": "Denumire",
-      "rooms_limit": "Limită cameră",
-      "is_delete": "Este șters",
-      "user": "Utilizator",
-      "ended_at": "Data de încheiere a chatului de asistență",
-      "ended_by": "Finalizat de",
-      "is_active": "Stare",
-      "is_wating": "Așteaptă",
-      "protocol": "Protocol",
-      "urn": "URN de contact",
-      "full_transfer_history": "Istoric complet al transferurilor",
-      "transfer_history": "Istoricul transferurilor",
-      "service_chat": "Chat de asistență",
-      "custom_fields": "Câmpuri personalizate",
-      "contact": "Contact",
-      "tags": "Etichete",
-      "last_name": "Nume",
-      "email": "E-mail",
-      "first_name": "Prenume",
-      "phone": "Telefon",
-      "status": "Stare",
-      "ai": "IA",
-      "human": "Asistență umană",
-      "user__first_name": "Numele reprezentantului",
-      "user__last_name": "Numele de familie al reprezentantului",
-      "user__email": "E-mail",
-      "contact__name": "Nume contact",
-      "contact__uuid": "ID contact",
-      "queue__name": "Coadă",
-      "queue__uuid": "ID coadă",
-      "queue__sector__name": "Sector de activitate",
-      "created_on": "Data de începere",
-      "duration": "Durată",
-      "awaiting_time": "Timp de așteptare",
-      "first_response_time": "Timp până la primul răspuns",
-      "agent__email": "E-mail",
-      "agent__first_name": "Prenume",
-      "agent__last_name": "Nume",
-      "project__name": "Denumire proiect",
-      "project__uuid": "ID proiect",
-      "status_changes": "Stare",
-      "log_date": "Data jurnalului",
-      "metric__first_response_time": "Timp până la primul răspuns",
-      "metric__message_response_time": "Timp mediu de răspuns",
-      "metric__interaction_time": "Durată",
-      "metric__waiting_time": "Timp de așteptare"
-    },
-    "select_data": {
-      "label": "Selectează intervalul de date pentru a prelua datele (maximum 92 de zile între data de început și data de încheiere)",
-      "placeholder": "LL/ZZ/AAAA",
-      "shortcuts": {
-        "last_7_days": "Ultimele 7 zile",
-        "last_14_days": "Ultimele 14 zile",
-        "last_30_days": "Ultimele 30 zile",
-        "last_60_days": "Ultimele 60 de zile",
-        "last_90_days": "Ultimele 90 de zile",
-        "current_month": "Luna curentă",
-        "previous_month": "Luna anterioară"
-      }
-    },
-    "chats_open": "Include chaturile deschise în această perioadă",
-    "chats_closed": "Include chaturile închise în această perioadă",
-    "filters": {
-      "sector": "Sector de activitate",
-      "select_sector": "Selectează un sector de activitate",
-      "agent": "Agent",
-      "select_agent": "Alege un agent",
-      "queue": "Coadă",
-      "select_queue": "Selectează o coadă",
-      "tag": "Etichetă",
-      "select_tag": "Alege o etichetă",
-      "all_sectors": "Toate sectoarele de activitate",
-      "all_agents": "Toți agenții",
-      "all_queues": "Toate cozile",
-      "all_tags": "Toate etichetele"
-    },
-    "select_format": "Selectează formatul pentru exportul datelor",
-    "warning_terms": "În timpul procesului de export, crearea unor exporturi noi va fi blocată pentru toate rolurile din proiect. Confirmă pentru a continua.",
-    "accept_terms": "Sunt de acord cu condițiile",
-    "save_btn": "Exportă datele",
-    "cancel_btn": "Anulează",
-    "error_pending_export": "Un raport este deja în curs de desfășurare pentru acest proiect. Încearcă din nou mai târziu.",
-    "error_default": "A intervenit o eroare"
-  },
-  "disconnectAgent": {
-    "title": "Deconectează agentul",
-    "description": "Sigur vrei să deconectezi agentul {agent}?",
-    "description_confirm": "Agentul {agent} va fi offline după confirmare.",
-    "tooltip": "Deconectează agentul",
-    "save_btn": "Deconectare",
-    "cancel_btn": "Anulează",
-    "sucess_message": "{agent} este offline.",
-    "error_message": "Eroare la deconectarea agentului {agent}",
-    "tooltip_disabled": "Acest reprezentant nu poate fi deconectat deoarece este offline"
-  },
-  "human_support_dashboard": {
-    "title": "Asistență umană",
-    "monitoring": "Monitorizare",
-    "monitoring_tooltip": "Monitorizează în timp real interacțiunile din chatul de asistență ale zilei. Identifică blocajele şi ia decizii rapide pentru a optimiza operațiunea.",
-    "analysis": "Analiză",
-    "analysis_tooltip": "Explorează performanța camerelor închise pe diferite perioade de timp. Descoperă tipare, tendințe și oportunități pentru a-ți îmbunătăți echipa.",
-    "support_status": {
-      "title": "Starea chaturilor de asistență",
-      "is_waiting": "În așteptare",
-      "is_in_progress": "În curs",
-      "is_closed": "Finalizat",
-      "tooltips": {
-        "is_waiting": "Numărul de contacte care așteaptă începerea chatului de asistență",
-        "is_in_progress": "Numărul de contacte aflate în prezent într-un chat de asistență",
-        "is_closed": "Numărul de chaturi de asistență finalizate astăzi",
-        "is_closed_by_date": "Numărul de chaturi de asistență finalizate în perioada selectată"
-      }
-    },
-    "time_metrics": {
-      "title": "Metrici oră curentă",
-      "average_time_is_waiting": "Timpul mediu de așteptare",
-      "average_time_first_response": "Timpul mediu până la primul răspuns",
-      "average_response_time": "Timpul mediu de răspuns",
-      "average_time_chat": "Durata medie a conversației în chat",
-      "max": "Maximum",
-      "tooltips": {
-        "average_time_is_waiting": "Timpul mediu de așteptare al contactelor în coadă înainte de începerea chatului de asistență",
-        "average_time_first_response": "Timpul mediu înainte ca reprezentantul să trimită primul mesaj după ce camera este atribuită",
-        "average_response_time": "Timpul mediu în care un contact așteaptă un răspuns pentru fiecare mesaj trimis",
-        "average_time_chat": "Timpul mediu total al conversației de la începutul chatului de asistență cu reprezentantul până la închiderea acestuia"
-      }
-    },
-    "services_open_by_hour": {
-      "title": "Chaturi de asistență deschise pe oră"
-    },
-    "detailed_monitoring": {
-      "title": "Monitorizare detaliată",
-      "tabs": {
-        "in_awaiting": "În așteptare",
-        "in_progress": "În curs",
-        "attendant": "Reprezentant",
-        "pauses": "Pauze personalizate"
-      },
-      "in_progress": {
-        "duration": "Durată",
-        "awaiting_time": "Timp de așteptare",
-        "first_response_time": "Timp până la primul răspuns",
-        "pending_response_tooltip": "Ultimul mesaj din chat a fost trimis de contact",
-        "attendant": "Reprezentant",
-        "sector": "Sector de activitate",
-        "queue": "Coadă",
-        "contact": "Contact"
-      },
-      "pauses": {
-        "status": "Stare",
-        "attendant": "Reprezentant",
-        "opened": "Deschise",
-        "closed": "Închise"
-      },
-      "in_awaiting": {
-        "awaiting_time": "Timp de așteptare",
-        "contact": "Contact",
-        "sector": "Sector de activitate",
-        "queue": "Coadă"
-      },
-      "attendant": {
-        "agent": "Reprezentant",
-        "status": "Stare",
-        "ongoing": "În curs",
-        "finished": "Finalizat",
-        "average_first_response_time": "Timp mediu până la primul răspuns",
-        "average_response_time": "Timpul mediu de răspuns",
-        "average_duration": "Durata medie",
-        "time_in_service": "Timp în chatul de asistență",
-        "action": "Acțiune"
-      },
-      "agents_count": {
-        "online": "{count, plural, one {# online} other {# online}}",
-        "custom_breaks": "{count, plural, one {# în pauză} other {# în pauză}}",
-        "offline": "{count, plural, one {# offline} other {# offline}}"
-      }
-    },
-    "filters": {
-      "common": {
-        "placeholder": "Scrie pentru a filtra",
-        "clear": "Șterge selecția"
-      },
-      "attendant": {
-        "label": "Reprezentant"
-      },
-      "contact": {
-        "label": "Contact"
-      },
-      "ticket_id": {
-        "label": "Protocol"
-      },
-      "status": {
-        "label": "Stare"
-      }
-    },
-    "columns": {
-      "common": {
-        "duration": "Durată",
-        "awaiting_time": "Timp de așteptare",
-        "first_response_time": "Timp până la primul răspuns",
-        "response_time": "Timp de răspuns",
-        "agent": "Reprezentant",
-        "sector": "Sector de activitate",
-        "queue": "Coadă",
-        "contact": "Contact",
-        "ticket_id": "Protocol",
-        "total_attendances": "Total chaturi de asistență",
-        "average_first_response_time": "Timpul mediu până la primul răspuns",
-        "average_response_time": "Timpul mediu de răspuns",
-        "average_duration": "Durata medie",
-        "time_in_service": "Timp în chatul de asistență",
-        "csat_note": "CSAT"
-      }
-    },
-    "analyze": {
-      "title": "În curând: Noua interfață de Analiză",
-      "description": "Aici poți explora date istorice cu filtre de timp pentru a identifica modele și a lua decizii strategice. Pregătim această nouă funcționalitate pentru tine!",
-      "detailed_analysis": {
-        "title": "Analiză detaliată",
-        "tabs": {
-          "finished": "Finalizat",
-          "attendant": "Reprezentant",
-          "pauses": "Pauze personalizate"
-        },
-        "not_handled": {
-          "title": "Not handled",
-          "description": "Conversation ended while still in queue"
-        },
-        "duration": {
-          "automatic_closed_tooltip": "Încheiat automat din cauza lipsei de interacțiune din partea contactului"
-        }
-      }
-    },
-    "csat": {
-      "title": "CSAT",
-      "agents_ratings_general_title": "Evaluare generală",
-      "agents_ratings_general_tooltip": "Acest scor reflectă performanța generală a proiectului. Dacă se aplică filtre pentru acest dashboard, scorul se va ajusta automat pentru a arăta media elementelor filtrate.",
-      "agents_ratings_subtitle": "{rooms} chaturi de asistență • {reviews} evaluări",
-      "review_rating": {
-        "very_satisfied": "Foarte mulțumit",
-        "satisfied": "Mulțumit",
-        "neutral": "Neutru",
-        "dissatisfied": "Nemulțumit",
-        "very_dissatisfied": "Foarte nemulțumit",
-        "not_answered": "Niciun răspuns"
-      },
-      "disabled_text": "Activează CSAT pentru a monitoriza evaluările generale pe sector de activitate, coadă și reprezentant"
-    },
-    "setup": {
-      "title": "No sector created",
-      "description": "Create a sector for this project and start monitoring your team's support data in real time.",
-      "action_text": "Create sector",
-      "disclaimer": "These numbers are for demonstration purposes only. Once your project has a sector configured and begins receiving conversations, your real data will be displayed here."
-    },
-    "common": {
-      "no_response": "Niciun răspuns"
-    },
-    "deleted_tooltips": {
-      "queue_and_sector": "Coada și departamentul au fost eliminate din proiect",
-      "queue": "Coada a fost eliminată din proiect",
-      "tag_and_sector": "Eticheta și departamentul au fost eliminate din proiect",
-      "tag": "Eticheta a fost eliminată din proiect",
-      "sector": "Departamentul a fost eliminat din proiect",
-      "representative": "Reprezentantul a fost eliminat din proiect"
-    },
-    "volume_per_queue": {
-      "title": "Volum per coadă",
-      "monitoring_count": "{count, plural, one {# coadă cu {status} chaturi} other {# cozi cu {status} chaturi}}",
-      "analysis_count": "{count, plural, one {# coadă cu chaturi finalizate} other {# cozi cu chaturi finalizate}}",
-      "setup_description": "Creează cozi pe sector de activitate pentru a monitoriza mai multe date",
-      "empty_data": {
-        "monitoring": {
-          "waiting": "Nu există cozi cu chaturi care să aștepte asistență",
-          "ongoing": "Nu există cozi cu chaturi în curs de desfășurare",
-          "closed": "Nu există chaturi finalizate astăzi"
-        },
-        "analysis": {
-          "closed": "Nu există chaturi finalizate în perioada selectată"
-        }
-      }
-    },
-    "volume_per_tag": {
-      "title": "Volum per etichetă",
-      "setup_description": "Adaugă etichete pentru sectoare de activitate pentru a monitoriza mai multe date",
-      "count": {
-        "ongoing": "{count, plural, one {# etichetă în uz} other {# etichete în uz}}",
-        "closed": "{count, plural, one {# etichetă atribuită} other {# etichete atribuite}}"
-      },
-      "empty_data": {
-        "monitoring": {
-          "ongoing": "Nicio etichetă utilizată pentru chaturile în curs de desfășurare",
-          "closed": "Nu sunt etichete atribuite chaturilor finalizate astăzi"
-        },
-        "analysis": {
-          "closed": "Nu există etichete atribuite la chaturile finalizate în perioada selectată"
-        }
-      }
-    }
-  },
-  "on": "Activ",
-  "off": "Inactive",
-  "paused": "Pus în pauză",
-  "data_feedback": {
-    "title": "Împărtășește-ți experiența folosind dashboard-ul IA conversațional",
-    "description": "Având în vedere experiența ta cu acest dashboard, indică cât de mult ești de acord cu afirmațiile de mai jos:",
-    "q1": "Am încredere în datele prezentate în acest dashboard.",
-    "q2": "Datele din acest dashboard mă ajută să iau decizii.",
-    "q3": "Cu acest dashboard, pot înțelege impactul (ROI) conversațiilor IA asupra rezultatelor business-ului.",
-    "textarea_label": "Ce am putea îmbunătăți la acest dashboard? (opțional)",
-    "textarea_placeholder": "Împărtășește sugestii pentru a îmbunătăți claritatea, încrederea sau utilitatea datelor.",
-    "strongly_agree": "Complet de acord",
-    "partially_agree": "Parțial de acord",
-    "neutral": "Neutru",
-    "partially_disagree": "Dezacord parțial",
-    "strongly_disagree": "Complet dezacord",
-    "postpone": "Mai târziu",
-    "submit": "Oferă feedback",
-    "toast_success": "Feedbackul a fost trimis cu succes. Mulțumim!",
-    "toast_error": "Nu am putut trimite feedbackul tău.",
-    "toast_error_retry": "Încearcă din nou",
-    "toast_postponed": "Feedbackul a fost salvat pentru mai târziu. Poți răspunde altă dată.",
-    "toast_postponed_respond": "Răspunde acum"
-  },
+  "reply": "Răspuns",
+  "internal_note_with_attachment_tooltip": "Notă internă cu atașament",
   "sector": {
     "additional_options": {
       "inactivity_timeout": {
@@ -1254,22 +36,239 @@
             "default_close_room_message": "Această sesiune s-a încheiat din cauza inactivității. Poți începe un chat nou oricând."
           }
         }
+      },
+      "csat": {
+        "custom": {
+          "flow_disclaimer": "Fluxul selectat trebuie să utilizeze o evaluare a satisfacției de la 1 la 5 pentru a asigura rezultate corecte ale sondajului."
+        },
+        "label": "Trimite automat un sondaj de satisfacție după încheierea asistenței Live Desk",
+        "section_title": "Sondaj de satisfacție",
+        "type": {
+          "custom": "Fluxuri personalizate",
+          "default": "Sondaj CSAT implicit (recomandat)",
+          "label": "Tip de sondaj",
+          "tooltip": "Alege între sondajul CSAT implicit și un flux personalizat deja configurat în modulul Fluxuri."
+        }
+      },
+      "additional_options": {
+        "automated_message": {
+          "switch_when_waiting_label": "Trimite mesaj automat contactelor care așteaptă",
+          "switch_when_start_label": "Trimite mesaj automat când începe asistența",
+          "hint_when_waiting": "Trimite automat un mesaj contactelor în timp ce acestea așteaptă asistență umană în coadă.",
+          "hint_when_start": "Trimite automat un mesaj atunci când un chat este atribuit unui reprezentant. Mesajul va apărea ca și cum ar fi fost trimis de reprezentantul atribuit."
+        }
       }
     }
   },
-  "without_results": "No results found",
-  "mcp_news": {
-    "modal_title": "Analytics este acum disponibilă în instrumentele IA!",
-    "modal_description": "MCP conectează în siguranță datele Analytics la instrumente IA precum ChatGPT, Claude, Cursor \u0002și altele, pentru a explora informații folosind limbaj natural.",
-    "flow_analytics": "ANALYTICS",
-    "flow_mcp_connection": "CONEXIUNE MCP",
-    "flow_ai_tools": "INSTRUMENTE IA",
-    "flow_prompt": "\"Cu ce subiecte a avut cele mai mari dificultăți IA-ul?\"",
-    "feature_ask_questions": "Pune\u0002 întrebări despre datele tale \u0000în limbaj natural",
-    "feature_track_metrics": "Monitorizează instantaneu performanța CSAT, NPS și a conversațiilor",
-    "feature_prepare_reports": "Pregătește rapoarte și generează tablouri de bord personalizate",
-    "privacy_note": "Doar datele la care ai acces sunt disponibile prin MCP.",
-    "not_now": "Poate mai târziu",
-    "view_setup_guide": "Vezi ghidul de configurare"
+  "export_conversation": {
+    "button": "Exportă conversația",
+    "title": "Exportă conversația",
+    "select_format": "Selectează formatul pentru exportul conversației",
+    "disclaimer": "Exporturile noi vor fi blocate temporar pentru această conversație în timp ce acest export este procesat",
+    "accept_terms": "Accept termenii și înțeleg limitările de export.",
+    "success_title": "Export în desfășurare",
+    "success_description": "Vei primi fișierul prin e-mail în scurt timp. Nu uita să verifici dosarul de spam.",
+    "error": "Exportul nu a putut fi procesat. Încearcă din nou."
+  },
+  "chats": {
+    "feedback": {
+      "transfer_to_agent": "{agent1} a transferat conversația către {agent2}",
+      "transfer_to_agent_by_other": "{requestedBy} a transferat conversația lui {agent1} către {agent2}"
+    },
+    "message_input_disabled_description": "Schimbă-ți statusul în online pentru a continua această conversație",
+    "chat_take_over": {
+      "by_another_representative": {
+        "title": "Chat assumido por outro atendente",
+        "description": "Seu chat com {contact} foi assumido por {representative}"
+      },
+      "transfer_to_another_representative": {
+        "title": "Chat transferido para outro atendente",
+        "description": "Seu chat com {contact} foi transferido por um moderador para {representative}"
+      },
+      "transfer_to_queue": {
+        "title": "Chat transferido para a fila",
+        "description": "Seu chat com {contact} foi transferido por um moderador para a fila {queue}"
+      }
+    },
+    "your_chat_assumed": "Chatul a fost preluat de un alt reprezentant",
+    "your_chat_assumed_description": "Chatul cu {contact} a fost preluat de {representative}",
+    "closed_chats": {
+      "general_history": "Istoric general",
+      "history_description": "Istoricul tuturor înregistrărilor de asistență pentru proiectul {projectName}"
+    },
+    "assigned_queues": "Cozi atribuite",
+    "select_queues": "Selectează cozi",
+    "select_services_queues": "Setează cozile pentru a primi chat-uri",
+    "select_at_least": "Trebuie selectată cel puțin o coadă pentru a salva modificările.",
+    "define_the_queues": "Definește cozile",
+    "select_queues_priorization_hint": "Vei primi doar chat-uri noi din cozile selectate.",
+    "select_your_queues": "Selectează cozile tale",
+    "no_queue_selected": "Nicio coadă selectată",
+    "success_update_queues": "Cozile tale de serviciu au fost actualizate",
+    "error_update_queues": "Nu s-au putut actualiza cozile de serviciu"
+  },
+  "config_chats": {
+    "project_configs": {
+      "restrict_offline_agents": {
+        "switch_label": "Permite interacțiuni doar pentru reprezentanții online",
+        "hint": "Dacă această opțiune este activată, reprezentanții care sunt offline sau în pauză nu vor putea răspunde la conversațiile în curs"
+      }
+    },
+    "tabs": {
+      "representatives": "Reprezentanți"
+    },
+    "representatives": {
+      "title": "Gestionarea reprezentanților",
+      "description": "Definește reprezentanții pentru departamente şi cozi, precum şi numărul maxim de chaturi per reprezentant. Modificările făcute aici vor fi actualizate şi în setările departamentelor şi cozilor.",
+      "select_all": "Selectează toți reprezentanții",
+      "select_count": "{count} selectați",
+      "empty_list": "Nu există încă membri cu permisiuni de asistență umană în acest proiect. Invită un nou membru sau actualizează permisiunile unui membru existent în Gestionarea membrilor pentru a-i vedea aici.",
+      "not_found_list": "Niciun reprezentant găsit. Încearcă un alt filtru.",
+      "save_success": "Modificările au fost salvate cu succes",
+      "save_error": "Nu s-a reușit salvarea modificărilor.",
+      "bulk_chats_limit_modal": {
+        "title": "Limită a chaturilor simultane",
+        "disclaimer": "Limita va fi aplicată reprezentanților selectați ({count}).",
+        "input": {
+          "label": "Definește limita pentru chaturi simultane",
+          "tooltip": "O limită setată pentru un anumit reprezentant înlocuiește limita la nivel de departament.",
+          "helper": "Setează la 0 pentru ca reprezentanții să preia discuțiile din coadă.",
+          "placeholder": "Exemplu: 4"
+        }
+      },
+      "queue_manager": {
+        "title": "Gestionează {representativeName}",
+        "bulk_title": "Modifică departamentele și cozile",
+        "bulk_disclaimer_description": "Modificarea va fi aplicată reprezentanților selectați ({count}).",
+        "bulk_add_action": "Adaugă la un departament/coadă",
+        "bulk_remove_action": "Elimină din departament/coadă",
+        "bulk_select_action_description": "Selectează acțiunea în masă pe care dorești să o aplici reprezentanților selectați:",
+        "chats_limit": {
+          "switch_label": "Definește limita de chaturi simultane pentru acest reprezentant",
+          "switch_helper": "O limită setată pentru un anumit reprezentant înlocuiește limita la nivel de departament.",
+          "input_label": "Numărul de chaturi simultane",
+          "input_placeholder": "Exemplu: 4",
+          "input_helper": "Setează la 0 pentru ca reprezentantul să preia discuțiile din coadă."
+        },
+        "sector_queues_checkbox": {
+          "title": "Departamente și cozi",
+          "bulk_description": "Selectează departamentele și cozile pentru modificare:"
+        }
+      },
+      "chats_limit": {
+        "label": "{count} chaturi simultane"
+      },
+      "sectors": {
+        "empty": "Reprezentantul nu este adăugat în niciun departament"
+      },
+      "actions": {
+        "queue-management_tooltip": "Modifică reprezentanții selectați din departamente/cozi.",
+        "chats-limit-management_tooltip": "Definește limita de chaturi simultane pentru reprezentanții selectați."
+      },
+      "filter": {
+        "status": {
+          "label": "Filtrare după stare"
+        },
+        "representatives": {
+          "label": "Filtrare după reprezentant"
+        },
+        "sectors": {
+          "label": "Filtrare după departament",
+          "all": "Toate departamentele"
+        },
+        "queues": {
+          "label": "Filtrare după coadă"
+        }
+      }
+    }
+  },
+  "dashboard": {
+    "view-mode": {
+      "assume_chat_question": "Preiei chatul cu {contact}?",
+      "assume_chat_question_description": "Sigur dorești să preiei chatul cu {contact}?<br /><br />Dacă confirmi, vei elimina chatul de la reprezentantul actual și vei fi responsabil pentru acesta."
+    }
+  },
+  "unread_messages": "{count, plural, one {{count} mesaj necitit} other {{count} mesaje necitite}}",
+  "representative": "Reprezentant",
+  "ai_text_improvement": {
+    "tooltip_disabled": "Scrie un răspuns în câmpul de text pentru a activa răspunsuri îmbunătățite cu AI",
+    "tooltip_enabled": "Îmbunătățește răspunsul cu AI",
+    "tooltip_cancel": "Anulează îmbunătățirea răspunsului cu AI",
+    "fix_grammar_and_spelling": "Corectează ortografia și gramatica",
+    "make_more_empathetic": "Fă-l mai empatic",
+    "rewrite_for_clarity": "Rescrie pentru claritate",
+    "improving_response": "Îmbunătățește-ți răspunsul",
+    "improvement": "Îmbunătățire",
+    "error": "Eroare la îmbunătățirea răspunsului cu AI. Încearcă din nou.",
+    "new": "New",
+    "back_to_original": "Original",
+    "back_to_original_tooltip": "Revenire la versiunea originală (Ctrl+Z)"
+  },
+  "yesterday": "Ieri",
+  "contact_info": {
+    "copy_value": "Copiază valoarea",
+    "value_copied": "Valoare copiată cu succes",
+    "error_copying_value": "Nu s-a putut copia valoarea. Încearcă din nou.",
+    "csat": {
+      "title": "CSAT",
+      "no_comment": "Niciun comentariu",
+      "rating_label": {
+        "5": "Foarte mulțumit",
+        "4": "Mulțumit",
+        "3": "Neutru",
+        "2": "Nemulțumit",
+        "1": "Foarte nemulțumit",
+        "no_response": "Fără răspuns"
+      }
+    }
+  },
+  "select_representative": "Selectează un reprezentant",
+  "flows_trigger": {
+    "variable_mapping": {
+      "title": "Maparea variabilelor",
+      "title_tag": "Șablonul {current} din {total}",
+      "description": "Variabilele care fac referire la câmpurile de contact vor afișa valorile din contactele selectate în previzualizarea de mai jos",
+      "define_variables": "Definește variabilele",
+      "define_variables_ordinal": "Definiți variabilele pentru {ordinal} șablon",
+      "variable_label": "Variabilă {name}",
+      "input_placeholder": "Introdu valoarea pentru această variabilă",
+      "preview_title": "Previzualizare șablon",
+      "preview_title_ordinal": "Previzualizarea {ordinal} șablonului",
+      "preview_variable_tooltip": "Variabilă {placeholder}",
+      "confirmation_helper": "Asigură-te că fiecare câmp este mapat corect. Mesajul tău va fi personalizat pentru fiecare contact selectat pe baza acestor mapări.",
+      "confirmation_checkbox": "Am verificat și sunt gata să o trimit",
+      "next_template": "Șablonul următor",
+      "send_templates": "{count, plural, one {Trimite ({count} șablon)} other {Trimite ({count} șabloane)}}",
+      "local_variables": {
+        "contact_name": "Nume contact",
+        "contact_urn": "Telefon de contact",
+        "agent_name": "Numele reprezentantului",
+        "agent_email": "E-mail reprezentant"
+      }
+    }
+  },
+  "delete_modal": {
+    "title": "Șterge {name}",
+    "description_sector": "Sistemul a detectat {count} conversații în departamentul {name} care sunt în curs de desfășurare sau așteaptă să fie gestionate. Alege ce dorești să faci cu ele.",
+    "description_queue": "Sistemul a detectat {count} conversații în coada {name} care sunt în curs de desfășurare sau în așteptare pentru a fi preluate. Alege ce dorești să faci cu ele.",
+    "transfer_chats": "Transferă conversațiile către un alt departament/coadă",
+    "end_all_chats": "Încheie toate conversațiile",
+    "select_sector": "Selectează un departament",
+    "select_queue": "Selectează o coadă",
+    "type_name_sector": "Introdu numele departamentului care urmează să fie șters",
+    "type_name_queue": "Introdu numele cozii care urmează să fie ștersă",
+    "cannot_be_reversed": "Această acțiune nu poate fi refăcută",
+    "delete_button": "Șterge",
+    "sector_success": "Departamentul a fost șters cu succes",
+    "sector_error": "Nu s-a putut șterge departamentul",
+    "queue_success": "Coada a fost ștearsă cu succes",
+    "queue_error": "Nu s-a putut șterge coada",
+    "transfer_error_sector": "Nu s-au putut transfera chaturile. Ștergerea departamentului a fost anulată.",
+    "transfer_error_queue": "Nu s-au putut transfera conversațiile. Ștergerea cozii a fost anulată."
+  },
+  "room_card": {
+    "new_chat_received": {
+      "tooltip": "Conversații noi primite"
+    }
   }
 }
