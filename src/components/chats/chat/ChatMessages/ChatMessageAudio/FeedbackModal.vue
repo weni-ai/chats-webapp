@@ -111,7 +111,7 @@ const open = computed({
 });
 
 watch(
-  () => i18n.global.locale,
+  () => i18n.global.locale.value,
   () => {
     getFeedbackCategory();
   },

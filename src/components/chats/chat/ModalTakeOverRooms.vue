@@ -75,11 +75,9 @@ const { selectedWaitingRooms, activeTab } = storeToRefs(roomsStore);
 const currentSelectedRooms = computed(() => selectedWaitingRooms.value);
 
 const disclaimerDescription = computed(() =>
-  i18n.global.tc(
-    'bulk_take.selected_chats_count',
-    currentSelectedRooms.value.length,
-    { count: currentSelectedRooms.value.length },
-  ),
+  i18n.global.t('bulk_take.selected_chats_count', {
+    count: currentSelectedRooms.value.length,
+  }),
 );
 
 const isLoadingBulkTake = ref(false);
@@ -129,7 +127,7 @@ const executeBulkTake = async () => {
   if (totalFailed === 0 && totalSuccess > 0) {
     unnnicCallAlert({
       props: {
-        text: i18n.global.tc('bulk_take.success_message', totalSuccess, {
+        text: i18n.global.t('bulk_take.success_message', {
           count: totalSuccess,
         }),
         type: 'success',
@@ -141,11 +139,10 @@ const executeBulkTake = async () => {
   } else if (totalFailed > 0 && totalSuccess > 0) {
     unnnicCallAlert({
       props: {
-        text: i18n.global.tc(
-          'bulk_take.partial_success_message',
-          totalSuccess,
-          { success: totalSuccess, failed: totalFailed },
-        ),
+        text: i18n.global.t('bulk_take.partial_success_message', {
+          success: totalSuccess,
+          failed: totalFailed,
+        }),
         type: 'attention',
       },
       seconds: 5,

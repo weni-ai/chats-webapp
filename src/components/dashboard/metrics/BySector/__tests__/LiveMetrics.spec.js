@@ -22,7 +22,7 @@ const mockTranslations = {
   response_time: 'Response time',
   interaction_time: 'Interaction time',
   agent: 'Agent',
-  agents_online: 'Agents online',
+  agents_online: 'Online agents',
   'queues.title': 'Queues',
   active_chats_tooltip: 'Number of active chats',
   wait_time_tooltip: 'Average wait time',

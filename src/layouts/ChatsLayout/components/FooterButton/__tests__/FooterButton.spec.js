@@ -63,7 +63,12 @@ describe('FooterButton', () => {
       global: {
         plugins: [pinia],
         mocks: {
-          $tc: (key, count) => `${key}_${count}`,
+          $t: (key, params) => {
+            if (key === 'transfer_contact' && params?.count === 1) {
+              return 'transfer_contact_1';
+            }
+            return key;
+          },
         },
         stubs: {
           UnnnicButton: true,
@@ -186,7 +191,7 @@ describe('FooterButton', () => {
       );
       expect(wrapperMultiple.vm.currentSelectedRooms).toHaveLength(4);
 
-      expect(wrapperSingle.vm.$tc('transfer_contact', 1)).toBe(
+      expect(wrapperSingle.vm.$t('transfer_contact', { count: 1 })).toBe(
         'transfer_contact_1',
       );
     });

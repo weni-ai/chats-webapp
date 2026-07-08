@@ -21,7 +21,7 @@ const mockTranslations = {
   wait_time: 'Wait time',
   response_time: 'Response time',
   interaction_time: 'Interaction time',
-  agents_online: 'Agents online',
+  agents_online: 'Online agents',
   in_queues: 'in queues',
   wait_time_tooltip: 'Average wait time',
   average_response_time: 'Average response time',

@@ -125,7 +125,7 @@ const queuesOptionsFiltered = computed(() => {
     .map((queue) => {
       return {
         ...queue,
-        label: `${queue.label} (${i18n.global.tc('chats_count', queue.count, { count: queue.count })})`,
+        label: `${queue.label} (${i18n.global.t('chats_count', { count: queue.count })})`,
       };
     });
 });

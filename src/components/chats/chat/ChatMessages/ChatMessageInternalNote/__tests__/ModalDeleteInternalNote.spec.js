@@ -133,8 +133,8 @@ describe('ModalDeleteInternalNote.vue', () => {
       expect(
         wrapper.find('[data-testid="modal-delete-internal-note"]').exists(),
       ).toBe(true);
-      expect(wrapper.text()).toContain(t('delete_internal_note.title'));
-      expect(wrapper.text()).toContain(t('delete_internal_note.description'));
+      expect(wrapper.text()).toContain('delete_internal_note.title');
+      expect(wrapper.text()).toContain('delete_internal_note.description');
     });
 
     it('should not render modal when modelValue is false', () => {
