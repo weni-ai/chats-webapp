@@ -1,24 +1,4 @@
 {
-  "dark_mode_intro": {
-    "buttons": {
-      "not_now": "Nu acum",
-      "switch": "Comutați la modul întunecat"
-    },
-    "description_1": "Lucrați cu mai mult confort și concentrare pe parcursul zilei. Modul întunecat reduce oboseala ochilor și luminozitatea ecranului, făcând conversațiile mai ușoare de citit. Este ideal dacă lucrați într-o tură lungă de asistență sau într-un spațiu cu lumină slabă.",
-    "description_2": "Cu o oboseală mai redusă a ochilor, câștigați claritate și viteză atunci când răspundeți clienților, menținând un suport de înaltă calitate chiar și în perioadele de vârf.",
-    "tagline": "În acest modul, comutați la modul întunecat și descoperiți o nouă modalitate de a lucra",
-    "title": "Modul întunecat este aici",
-    "toast": {
-      "error": {
-        "action": "Încercați din nou",
-        "title": "Eroare la aplicarea modului întunecat"
-      },
-      "success": {
-        "action": "Reveniți la modul luminos",
-        "title": "Modul întunecat a fost aplicat cu succes"
-      }
-    }
-  },
   "view_options": {
     "new_badge": "Nou"
   },
@@ -127,6 +107,81 @@
     "success_update_queues": "Cozile tale de serviciu au fost actualizate",
     "error_update_queues": "Nu s-au putut actualiza cozile de serviciu"
   },
+  "config_chats": {
+    "project_configs": {
+      "restrict_offline_agents": {
+        "switch_label": "Permite interacțiuni doar pentru reprezentanții online",
+        "hint": "Dacă această opțiune este activată, reprezentanții care sunt offline sau în pauză nu vor putea răspunde la conversațiile în curs"
+      }
+    },
+    "tabs": {
+      "representatives": "Reprezentanți"
+    },
+    "representatives": {
+      "title": "Gestionarea reprezentanților",
+      "description": "Definește reprezentanții pentru departamente şi cozi, precum şi numărul maxim de chaturi per reprezentant. Modificările făcute aici vor fi actualizate şi în setările departamentelor şi cozilor.",
+      "select_all": "Selectează toți reprezentanții",
+      "select_count": "{count} selectați",
+      "empty_list": "Nu există încă membri cu permisiuni de asistență umană în acest proiect. Invită un nou membru sau actualizează permisiunile unui membru existent în Gestionarea membrilor pentru a-i vedea aici.",
+      "not_found_list": "Niciun reprezentant găsit. Încearcă un alt filtru.",
+      "save_success": "Modificările au fost salvate cu succes",
+      "save_error": "Nu s-a reușit salvarea modificărilor.",
+      "bulk_chats_limit_modal": {
+        "title": "Limită a chaturilor simultane",
+        "disclaimer": "Limita va fi aplicată reprezentanților selectați ({count}).",
+        "input": {
+          "label": "Definește limita pentru chaturi simultane",
+          "tooltip": "O limită setată pentru un anumit reprezentant înlocuiește limita la nivel de departament.",
+          "helper": "Setează la 0 pentru ca reprezentanții să preia discuțiile din coadă.",
+          "placeholder": "Exemplu: 4"
+        }
+      },
+      "queue_manager": {
+        "title": "Gestionează {representativeName}",
+        "bulk_title": "Modifică departamentele și cozile",
+        "bulk_disclaimer_description": "Modificarea va fi aplicată reprezentanților selectați ({count}).",
+        "bulk_add_action": "Adaugă la un departament/coadă",
+        "bulk_remove_action": "Elimină din departament/coadă",
+        "bulk_select_action_description": "Selectează acțiunea în masă pe care dorești să o aplici reprezentanților selectați:",
+        "chats_limit": {
+          "switch_label": "Definește limita de chaturi simultane pentru acest reprezentant",
+          "switch_helper": "O limită setată pentru un anumit reprezentant înlocuiește limita la nivel de departament.",
+          "input_label": "Numărul de chaturi simultane",
+          "input_placeholder": "Exemplu: 4",
+          "input_helper": "Setează la 0 pentru ca reprezentantul să preia discuțiile din coadă."
+        },
+        "sector_queues_checkbox": {
+          "title": "Departamente și cozi",
+          "bulk_description": "Selectează departamentele și cozile pentru modificare:"
+        }
+      },
+      "chats_limit": {
+        "label": "{count} chaturi simultane"
+      },
+      "sectors": {
+        "empty": "Reprezentantul nu este adăugat în niciun departament"
+      },
+      "actions": {
+        "queue-management_tooltip": "Modifică reprezentanții selectați din departamente/cozi.",
+        "chats-limit-management_tooltip": "Definește limita de chaturi simultane pentru reprezentanții selectați."
+      },
+      "filter": {
+        "status": {
+          "label": "Filtrare după stare"
+        },
+        "representatives": {
+          "label": "Filtrare după reprezentant"
+        },
+        "sectors": {
+          "label": "Filtrare după departament",
+          "all": "Toate departamentele"
+        },
+        "queues": {
+          "label": "Filtrare după coadă"
+        }
+      }
+    }
+  },
   "dashboard": {
     "view-mode": {
       "assume_chat_question": "Preiei chatul cu {contact}?",
@@ -153,38 +208,42 @@
   "contact_info": {
     "copy_value": "Copiază valoarea",
     "value_copied": "Valoare copiată cu succes",
-    "error_copying_value": "Nu s-a putut copia valoarea. Încearcă din nou."
+    "error_copying_value": "Nu s-a putut copia valoarea. Încearcă din nou.",
+    "csat": {
+      "title": "CSAT",
+      "no_comment": "Niciun comentariu",
+      "rating_label": {
+        "5": "Foarte mulțumit",
+        "4": "Mulțumit",
+        "3": "Neutru",
+        "2": "Nemulțumit",
+        "1": "Foarte nemulțumit",
+        "no_response": "Fără răspuns"
+      }
+    }
   },
   "select_representative": "Selectează un reprezentant",
   "flows_trigger": {
     "variable_mapping": {
       "title": "Maparea variabilelor",
-      "title_tag": "Template {current} din {total}",
+      "title_tag": "Șablonul {current} din {total}",
       "description": "Variabilele care fac referire la câmpurile de contact vor afișa valorile din contactele selectate în previzualizarea de mai jos",
       "define_variables": "Definește variabilele",
-      "define_variables_ordinal": "Definește variabilele template-ului {ordinal}",
+      "define_variables_ordinal": "Definiți variabilele pentru {ordinal} șablon",
       "variable_label": "Variabilă {name}",
       "input_placeholder": "Introdu valoarea pentru această variabilă",
       "preview_title": "Previzualizare șablon",
-      "preview_title_ordinal": "Previzualizarea template-ului {ordinal}",
+      "preview_title_ordinal": "Previzualizarea {ordinal} șablonului",
       "preview_variable_tooltip": "Variabilă {placeholder}",
       "confirmation_helper": "Asigură-te că fiecare câmp este mapat corect. Mesajul tău va fi personalizat pentru fiecare contact selectat pe baza acestor mapări.",
       "confirmation_checkbox": "Am verificat și sunt gata să o trimit",
-      "next_template": "Template următor",
-      "send_templates": "{count, plural, one {Trimite ({count} template)} other {Trimite ({count} template-uri)}}",
+      "next_template": "Șablonul următor",
+      "send_templates": "{count, plural, one {Trimite ({count} șablon)} other {Trimite ({count} șabloane)}}",
       "local_variables": {
         "contact_name": "Nume contact",
         "contact_urn": "Telefon de contact",
         "agent_name": "Numele reprezentantului",
         "agent_email": "E-mail reprezentant"
-      }
-    }
-  },
-  "config_chats": {
-    "project_configs": {
-      "restrict_offline_agents": {
-        "switch_label": "Permite interacțiuni doar pentru reprezentanții online",
-        "hint": "Dacă această opțiune este activată, reprezentanții care sunt offline sau în pauză nu vor putea răspunde la conversațiile în curs"
       }
     }
   },
