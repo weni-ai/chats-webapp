@@ -60,7 +60,6 @@ describe('RoomsTableFilters.vue', () => {
     return mount(RoomsTableFilters, {
       global: {
         mocks: {
-          $t: (key) => key,
           $i18n: { locale: 'en' },
           $route: { query: currentRouteQuery },
         },

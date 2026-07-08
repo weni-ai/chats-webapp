@@ -6,6 +6,8 @@ import en from '@/locales/en.json';
 import es from '@/locales/es.json';
 import ro from '@/locales/ro.json';
 
+import { icuMessageCompiler } from '@/utils/i18n/icuMessageCompiler';
+
 import('moment/dist/locale/es.js');
 import('moment/dist/locale/pt-br.js');
 import('moment/dist/locale/ro.js');
@@ -18,12 +20,13 @@ const messages = {
 };
 
 const i18n = createI18n({
-  legacy: true,
-  globalInjection: true,
+  legacy: false,
   locale: 'en',
   fallbackLocale: 'en',
   warnHtmlInMessage: 'off',
   messages,
+  messageCompiler: icuMessageCompiler,
+  globalInjection: true, // Enable $t in templates
   dateTimeFormats: {
     'pt-br': {
       short: {
@@ -70,6 +73,10 @@ const i18n = createI18n({
       },
     },
   },
+  silentTranslationWarn: true,
+  silentFallbackWarn: true,
+  missingWarn: false,
+  fallbackWarn: false,
 });
 
 export default i18n;

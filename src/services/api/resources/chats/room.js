@@ -54,7 +54,7 @@ export default {
       '/ai_features/history_summary/feedback/tags/',
       {
         headers: {
-          'Accept-Language': i18n.global.locale,
+          'Accept-Language': i18n.global.locale.value,
         },
       },
     );

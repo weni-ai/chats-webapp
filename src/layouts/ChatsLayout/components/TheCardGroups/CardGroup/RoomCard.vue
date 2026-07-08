@@ -254,7 +254,7 @@ export default {
     waitingTimeComputed() {
       const { waitingTime } = this;
       if (waitingTime !== 0) {
-        return this.$t('waiting_for.minutes', waitingTime);
+        return this.$t('waiting_for.minutes', { count: waitingTime });
       }
       return 0;
     },

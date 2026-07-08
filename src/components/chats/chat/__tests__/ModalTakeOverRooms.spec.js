@@ -81,7 +81,7 @@ describe('ModalTakeOverRooms', () => {
   describe('rendering', () => {
     it('should render the modal with correct title', () => {
       const wrapper = createWrapper();
-      expect(wrapper.text()).toContain('bulk_take.title');
+      expect(wrapper.text()).toContain(i18n.global.t('bulk_take.title'));
     });
 
     it('should render the disclaimer', () => {
@@ -92,7 +92,9 @@ describe('ModalTakeOverRooms', () => {
 
     it('should render confirmation description', () => {
       const wrapper = createWrapper();
-      expect(wrapper.text()).toContain('bulk_take.confirm_take_over_selected');
+      expect(wrapper.text()).toContain(
+        i18n.global.t('bulk_take.confirm_take_over_selected'),
+      );
     });
 
     it('should render the take over button', () => {

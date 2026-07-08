@@ -1,5 +1,5 @@
 // tests for ChatMessagesFeedbackMessage component
-import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest';
+import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { mount } from '@vue/test-utils';
 import ChatMessagesFeedbackMessage from '../ChatMessagesFeedbackMessage.vue';
 import i18n from '@/plugins/i18n.js';
@@ -15,12 +15,6 @@ describe('ChatMessagesFeedbackMessage', () => {
     return mount(ChatMessagesFeedbackMessage, {
       props: defaultProps,
       global: {
-        mocks: {
-          $t: vi.fn(
-            (key, params) =>
-              `${key}${params ? `_${JSON.stringify(params)}` : ''}`,
-          ),
-        },
         stubs: {
           ChatFeedback: true,
         },
@@ -127,12 +121,12 @@ describe('ChatMessagesFeedbackMessage', () => {
     let previousLocale;
 
     beforeAll(() => {
-      previousLocale = i18n.global.locale;
-      i18n.global.locale = 'pt-br';
+      previousLocale = i18n.global.locale.value;
+      i18n.global.locale.value = 'pt-br';
     });
 
     afterAll(() => {
-      i18n.global.locale = previousLocale;
+      i18n.global.locale.value = previousLocale;
     });
 
     it('should handle all transfer combinations', () => {

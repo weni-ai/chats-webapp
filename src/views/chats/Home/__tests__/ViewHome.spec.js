@@ -139,7 +139,7 @@ describe('ViewHome.vue', () => {
       global: {
         plugins: [pinia, UnnnicSystem, router],
         mocks: {
-          $tc: (msg) => msg,
+          $t: (msg) => msg,
         },
       },
     });

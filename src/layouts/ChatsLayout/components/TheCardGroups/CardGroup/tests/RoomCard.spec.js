@@ -83,9 +83,11 @@ describe('RoomCard.vue', () => {
       global: {
         plugins: [pinia],
         mocks: {
-          $t: (key, waitingTime) => {
+          $t: (key, arg) => {
             if (key === 'waiting_for.minutes') {
-              return `${waitingTime} minute waiting`;
+              const count =
+                typeof arg === 'number' ? arg : (arg?.count ?? arg?.n);
+              return `${count} minute waiting`;
             }
             return key;
           },
