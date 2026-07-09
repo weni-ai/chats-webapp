@@ -679,6 +679,7 @@
     "tooltip_disabled": "Escreva uma resposta no campo de texto para habilitar respostas aprimoradas com IA",
     "tooltip_enabled": "Melhorar resposta com IA",
     "tooltip_cancel": "Cancelar resposta aprimorada com IA",
+    "tooltip_internal_note": "Esta função não está disponível para notas internas",
     "fix_grammar_and_spelling": "Corrigir gramática e ortografia",
     "make_more_empathetic": "Tornar mais empática",
     "rewrite_for_clarity": "Reescrever com clareza",
