@@ -101,11 +101,14 @@ const isDisabled = computed(
   () => !inputMessage.value.trim() || isInternalNote.value,
 );
 
-const tooltipText = computed(() =>
-  isDisabled.value
+const tooltipText = computed(() => {
+  if (isInternalNote.value) {
+    return t('ai_text_improvement.tooltip_internal_note');
+  }
+  return isDisabled.value
     ? t('ai_text_improvement.tooltip_disabled')
-    : t('ai_text_improvement.tooltip_enabled'),
-);
+    : t('ai_text_improvement.tooltip_enabled');
+});
 
 const improvementOptions = computed(() => [
   {

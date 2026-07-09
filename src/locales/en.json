@@ -676,6 +676,7 @@
     "tooltip_disabled": "Write a response in the text field to enable improved responses with AI",
     "tooltip_enabled": "Improve response with AI",
     "tooltip_cancel": "Cancel AI response improvement",
+    "tooltip_internal_note": "This feature is not available for internal notes",
     "fix_grammar_and_spelling": "Fix spelling and grammar",
     "make_more_empathetic": "Make more empathetic",
     "rewrite_for_clarity": "Rewrite for clarity",
