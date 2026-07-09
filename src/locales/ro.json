@@ -194,6 +194,7 @@
     "tooltip_disabled": "Scrie un răspuns în câmpul de text pentru a activa răspunsuri îmbunătățite cu AI",
     "tooltip_enabled": "Îmbunătățește răspunsul cu AI",
     "tooltip_cancel": "Anulează îmbunătățirea răspunsului cu AI",
+    "tooltip_internal_note": "Această funcționalitate nu este disponibilă pentru note interne",
     "fix_grammar_and_spelling": "Corectează ortografia și gramatica",
     "make_more_empathetic": "Fă-l mai empatic",
     "rewrite_for_clarity": "Rescrie pentru claritate",
