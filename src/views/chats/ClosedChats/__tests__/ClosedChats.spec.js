@@ -222,7 +222,7 @@ describe('ClosedChats.vue', () => {
       const header = wrapper.find('[data-testid="closed-chats-page-header"]');
       expect(header.exists()).toBe(true);
       expect(header.find('[data-testid="page-title"]').text()).toBe(
-        'General history',
+        'chats.closed_chats.general_history',
       );
       expect(header.find('[data-testid="page-description"]').exists()).toBe(
         true,

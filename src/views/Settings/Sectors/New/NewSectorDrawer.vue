@@ -174,6 +174,7 @@ export default {
         {
           name: '',
           queue_limit: { is_active: false, limit: null },
+          queue_purpose: '',
           currentAgents: [],
           agents: 0,
         },
@@ -215,6 +216,11 @@ export default {
     },
     enableQueueLimitFeature() {
       return this.featureFlags.active_features?.includes('weniChatsQueueLimit');
+    },
+    enableQueuePurposeFeature() {
+      return this.featureFlags.active_features?.includes(
+        'weniChatsQueuePurpose',
+      );
     },
   },
   mounted() {
@@ -305,6 +311,9 @@ export default {
           queue_limit: this.enableQueueLimitFeature
             ? sectorQueue.queue_limit
             : { is_active: false, limit: null },
+          queue_purpose: this.enableQueuePurposeFeature
+            ? sectorQueue.queue_purpose
+            : undefined,
           agents: sectorQueue.currentAgents.map((agent) => agent.user.email),
         }));
 

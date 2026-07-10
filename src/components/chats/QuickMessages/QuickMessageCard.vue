@@ -31,7 +31,7 @@
             <UnnnicIconSvg
               icon="more_vert"
               size="sm"
-              scheme="neutral-darkest"
+              scheme="fg-base"
               @click="togglePopover"
             />
           </UnnnicPopoverTrigger>

@@ -48,7 +48,7 @@ vi.mock('../Actions/index.vue', () => ({
       <button data-testid="improvement-cancelled-btn" @click="$emit('improvementCancelled')" />
     </div>`,
     emits: [
-      'startAudioRecording',
+      'toggleAudioRecording',
       'openUploadFiles',
       'focusInput',
       'send',
@@ -183,17 +183,21 @@ describe('TextBox (index.vue)', () => {
       );
     });
 
-    it('should show textarea-row wrapper when BackToOriginal is visible', () => {
+    it('should show textarea wrapper with back modifier when BackToOriginal is visible', () => {
       const wrapper = createWrapper({
         improvedText: 'improved',
         originalText: 'original',
       });
-      expect(wrapper.find('.text-box__textarea-row').exists()).toBe(true);
+      expect(
+        wrapper.find('.text-box__textarea-wrapper--with-back').exists(),
+      ).toBe(true);
     });
 
-    it('should not show textarea-row wrapper when BackToOriginal is hidden', () => {
+    it('should not show textarea wrapper with back modifier when BackToOriginal is hidden', () => {
       const wrapper = createWrapper({ improvedText: '' });
-      expect(wrapper.find('.text-box__textarea-row').exists()).toBe(false);
+      expect(
+        wrapper.find('.text-box__textarea-wrapper--with-back').exists(),
+      ).toBe(false);
     });
   });
 

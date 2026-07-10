@@ -17,7 +17,7 @@ export const useMessageManager = defineStore('messageManager', () => {
   const inputMessageFocused = ref(false);
   const inputMessage = ref('');
   const audioMessage = ref<HTMLAudioElement | null>(null);
-  const audioRecorderStatus = ref('');
+  const audioRecorderStatus = ref('idle');
   const isLoadingSendAudioMessage = ref(false);
   const mediaUploadFiles = ref<File[]>([]);
   const isInternalNote = ref(false);
@@ -52,6 +52,11 @@ export const useMessageManager = defineStore('messageManager', () => {
       clearInputs();
     },
   );
+
+  function copyInputMessageToClipboard() {
+    if (!inputMessage.value) return;
+    navigator.clipboard.writeText(inputMessage.value);
+  }
 
   function clearInputs() {
     inputMessage.value = '';
@@ -236,5 +241,6 @@ export const useMessageManager = defineStore('messageManager', () => {
     sendMediasMessage,
     addMediaUploadFiles,
     clearInputs,
+    copyInputMessageToClipboard,
   };
 });

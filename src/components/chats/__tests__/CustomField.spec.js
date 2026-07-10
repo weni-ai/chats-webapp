@@ -6,6 +6,11 @@ import defaultProps from './mocks/customFieldMock.js';
 function createWrapper(propsData) {
   const wrapper = mount(CustomField, {
     propsData,
+    global: {
+      stubs: {
+        CopyValueButton: true,
+      },
+    },
   });
 
   return wrapper;

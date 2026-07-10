@@ -66,9 +66,9 @@
       "not_now": "Not now",
       "switch": "Switch to dark mode"
     },
-    "description_1": "Work with greater comfort and focus throughout the day. Dark mode reduces eye strain, lowers screen brightness, and makes conversations easier to read — ideal for long support shifts and low-light environments.",
-    "description_2": "With less visual fatigue, you gain clarity and speed when responding to customers, maintaining high-quality support even during peak times.",
-    "tagline": "Switch to dark mode in this module and experience a new way to work!",
+    "description_1": "Work with greater comfort and focus throughout the day. Dark mode reduces eye strain and screen brightness, making conversations easier to read. It's ideal if you're on a long support shift or working in a low-light space.",
+    "description_2": "With less eye strain, you gain clarity and speed when responding to customers, maintaining high-quality support even during peak times.",
+    "tagline": "Switch to dark mode in this module and discover a new way to work",
     "title": "Dark mode is here",
     "toast": {
       "error": {
@@ -135,7 +135,7 @@
     "description": "Drop your file here to send"
   },
   "waiting_for": {
-    "minutes": "1 minute waiting | {n} minutes waiting"
+    "minutes": "{count, plural, one {1 minute waiting} other {{count} minutes waiting}}"
   },
   "chat_message": {
     "reply_message": {
@@ -168,13 +168,13 @@
     "inactive_close_message": "Closing message"
   },
   "inactive": "Inactive",
-  "inactive_room_tooltip": "The conversation has reached the {minutes}-minute inactivity limit. | The conversation has reached the {minutes}-minutes inactivity limit.",
+  "inactive_room_tooltip": "{minutes, plural, one {The conversation has reached the {minutes}-minute inactivity limit.} other {The conversation has reached the {minutes}-minutes inactivity limit.}}",
   "reply": "Reply",
   "step_of": "Step {step} of {total}",
   "type_to_filter": "Type to filter",
-  "chats_count": "{count} chat | {count} chats",
-  "attention": "Warning",
-  "updates_saved": "Saved updates",
+  "chats_count": "{count, plural, one {{count} chat} other {{count} chats}}",
+  "attention": "Attention",
+  "updates_saved": "Updates saved",
   "updated_info": "Updated information",
   "active_chats": "Active chats",
   "active_chats_tooltip": "Number of ongoing chats",
@@ -196,8 +196,20 @@
   "transfer_all_selected_chats": "Transfer all selected chats",
   "take_over_all_selected_chats_tooltip": "Take over all selected chats",
   "end_all_selected_chats_tooltip": "End all selected chats",
-  "number_of_chats_selected": "{count} chat selected | {count} chats selected",
+  "number_of_chats_selected": "{count, plural, one {{count} chat selected} other {{count} chats selected}}",
   "image": "Image",
+  "image_preview": {
+    "count": "Image {current} of {total}",
+    "tooltip": {
+      "close": "Close image (esc)",
+      "previous": "Previous",
+      "next": "Next",
+      "rotate": "Rotate 90°",
+      "zoom_in": "Zoom in",
+      "zoom_out": "Zoom out",
+      "export": "Export"
+    }
+  },
   "video": "Video",
   "audio_message": "Audio message",
   "audio_recorder": {
@@ -362,7 +374,15 @@
     "queue_name_placeholder": "Example: Payments",
     "queue_title": "Queues in",
     "queue_table_name": "Name",
-    "quantity_agents": "Number of representatives"
+    "quantity_agents": "Number of representatives",
+    "search": "Search a queue",
+    "queue_purpose": {
+      "field": {
+        "label": "Queue purpose (optional)",
+        "placeholder": "Example: conversations related to billing, invoices, payment issues, or subscription questions.",
+        "helper": "This information helps the AI route chats to the most appropriate queue."
+      }
+    }
   },
   "export": {
     "metrics": "Export metrics as {filetype}",
@@ -372,11 +392,11 @@
     "button": "Export conversation",
     "title": "Export conversation",
     "select_format": "Select the format to export the conversation",
-    "disclaimer": "While this export is being processed, new exports will be temporarily blocked for this conversation",
+    "disclaimer": "New exports will be temporarily blocked for this conversation while this export is being processed",
     "accept_terms": "I accept the terms and understand the export limitations.",
-    "success_title": "Processing export!",
-    "success_description": "You will receive it by email shortly. Remember to check your spam folder.",
-    "error": "The export could not be processed. Try again"
+    "success_title": "Export in progress",
+    "success_description": "You will receive the file by email shortly. Remember to check your spam folder.",
+    "error": "The export couldn't be processed. Try again."
   },
   "name": "Name",
   "addition_date": "Date added",
@@ -501,6 +521,12 @@
     },
     "message_input_placeholder": "Type your message or / to activate quick messages",
     "message_input_disabled_description": "Change your status to online to continue this conversation",
+    "message_input_floating_actions": {
+      "copy": "Copy typed content",
+      "copy_alert_success": "Content copied!",
+      "clear": "Clear typed content",
+      "clear_alert_success": "Typed content removed!"
+    },
     "search_contact": "Search contact",
     "search_contact_placeholder": "Search contact by name, phone, or ticket ID",
     "tags": "Chat tags",
@@ -515,7 +541,7 @@
     "tags_help": "Tags help you find chats and generate better reports",
     "chat_with_contact_ended": "Chat with {contact} was closed",
     "see_history": "General history",
-    "tag_request": "Tag the chat",
+    "tag_request": "Please tag the chat",
     "closed_in": "Chat closed in",
     "closed": "Closed chat",
     "transfer": {
@@ -572,8 +598,8 @@
       "title": "{viewedAgent} live view mode",
       "close": "Close view",
       "assume_chat": "Take over only this chat",
-      "assume_chat_question": "Take over chat?",
-      "assume_chat_question_description": "Are you sure you want to take over chat with {contact}?<br><br>If you confirm, you will remove the chat from the current representative and you will be responsible for it.",
+      "assume_chat_question": "Take over chat with {contact}?",
+      "assume_chat_question_description": "Are you sure you want to take over chat with {contact}?<br /><br />If you confirm, you will remove the chat from the current representative and you will be responsible for it.",
       "assume_chat_confirmation": "If you confirm, this chat will be transferred from {viewedAgent} to you"
     }
   },
@@ -621,7 +647,7 @@
     "by_tag": "Filter by tag",
     "by_tags": "Filter by tags",
     "by_agent": "Filter by representative",
-    "by_date": "Filter by @.lower:date",
+    "by_date": "Filter by date",
     "by_queue": "Filter by queue",
     "clear_all": "Clear filters",
     "dates": {
@@ -638,7 +664,7 @@
   },
   "pagination": "{from} – {to} of {total}",
   "contact": "Contact",
-  "unread_messages": "{count} unread message | {count} unread messages",
+  "unread_messages": "{count, plural, one {{count} unread message} other {{count} unread messages}}",
   "automatically_ended": "Automatically ended",
   "unnamed_contact": "Unnamed contact",
   "unnamed_agent": "Unnamed representative",
@@ -651,6 +677,7 @@
     "tooltip_disabled": "Write a response in the text field to enable improved responses with AI",
     "tooltip_enabled": "Improve response with AI",
     "tooltip_cancel": "Cancel AI response improvement",
+    "tooltip_internal_note": "This feature is not available for internal notes",
     "fix_grammar_and_spelling": "Fix spelling and grammar",
     "make_more_empathetic": "Make more empathetic",
     "rewrite_for_clarity": "Rewrite for clarity",
@@ -713,17 +740,17 @@
   "chat_closed_by": {
     "agent": "Chat closed by representative"
   },
-  "transfer_contact": "Transfer contact | Transfer contacts",
+  "transfer_contact": "{count, plural, one {Transfer contact} other {Transfer contacts}}",
   "bulk_transfer": {
     "transfer_selected_contacts": "Transfer selected contacts",
-        "transfer_all": "Transfer all",
-    "selected_chats_count": "{count} chat is selected for transfer. | {count} chats are selected for transfer.",
-    "success_message": "{count} chat transferred successfully! | {count} chats transferred successfully!",
-    "partial_success_message": "{success} chat transferred, {failed} failed. Please try again. | {success} chats transferred, {failed} failed. Please try again.",
+    "transfer_all": "Transfer all",
+    "selected_chats_count": "{count, plural, one {{count} chat is selected for transfer.} other {{count} chats are selected for transfer.}}",
+    "success_message": "{count, plural, one {{count} chat transferred successfully!} other {{count} chats transferred successfully!}}",
+    "partial_success_message": "{success, plural, one {{success} chat transferred, {failed} failed. Please try again.} other {{success} chats transferred, {failed} failed. Please try again.}}",
     "error_message": "Unable to transfer chats, please try again",
-    "agent_transfer_success": "Contact transferred to representative {agent} successfully | Contacts transferred to representative {agent} successfully",
-    "queue_transfer_success": "Contact transferred to queue {queue} successfully | Contacts transferred to queue {queue} successfully",
-    "error": "Error transferring contacts. Try again.",
+    "agent_transfer_success": "{count, plural, one {Contact successfully transferred to representative {agent}} other {Contacts successfully transferred to representative {agent}}}",
+    "queue_transfer_success": "{count, plural, one {Contact successfully transferred to queue {queue}} other {Contacts successfully transferred to queue {queue}}}",
+    "error": "It was not possible to transfer the contacts, try again",
     "disclaimer": {
       "transfer_to_other_sector": "When transferring the chat to a queue in another department, tags will be removed.",
       "selected_agent_offline": "The selected representative is currently offline",
@@ -733,19 +760,19 @@
   "bulk_close": {
     "close_selected_contacts": "Close selected contacts",
     "confirm_close_selected": "Are you sure you want to close the selected contacts?",
-    "success_message": "{count} chat ended successfully | {count} chats ended successfully",
-    "partial_success_message": "{success} chat ended, {failed} failed. Try again. | {success} chats ended, {failed} failed. Try again.",
-    "error_message": "Error closing chats. Try again.",
+    "success_message": "{count, plural, one {{count} chat ended successfully!} other {{count} chats ended successfully!}}",
+    "partial_success_message": "{success, plural, one {{success} chat ended, {failed} failed. Please try again.} other {{success} chats ended, {failed} failed. Please try again.}}",
+    "error_message": "Unable to close chats, please try again",
     "end_all_selected_chats": "End all selected chats",
     "sector_tag": "Department {current} of {total}",
-    "chats_count_sector": "{count} chat · {sector} department | {count} chats · {sector} department",
+    "chats_count_sector": "{count, plural, one {{count} chat · {sector} department} other {{count} chats · {sector} department}}",
     "required_tags_title": "Tags are required to end chats in the {sector} department",
-    "required_tags_description": "If you select one or more tags below, they will be applied to {count} chat and replace any existing tags. | If you select one or more tags below, they will be applied to {count} chats and replace any existing tags.",
+    "required_tags_description": "{count, plural, one {If you select any tag below, it will be applied to the {count} chat and will replace any existing tags.} other {If you select any tag below, it will be applied to the {count} chats and will replace any existing tags.}}",
     "next_sector": "Next department",
     "end_all_chats": "End all ({count} chats)",
     "back": "Back",
     "optional_tags_title": "Tags aren't required to end chats in the {sector} department",
-    "optional_tags_description": "If you select one or more tags below, they will be applied to {count} chat and replace any existing tags. | If you select one or more tags below, they will be applied to {count} chats and replace any existing tags.",
+    "optional_tags_description": "{count, plural, one {If you select any tag below, it will be applied to the {count} chat and will replace any existing tags.} other {If you select any tag below, it will be applied to the {count} chats and will replace any existing tags.}}",
     "no_tags_in_sector": "No tags to select in this department"
   },
   "close_chat": {
@@ -753,12 +780,12 @@
   },
   "bulk_take": {
     "title": "Take over all selected chats",
-    "selected_chats_count": "{count} chat is selected for takeover. | {count} chats are selected for takeover.",
+    "selected_chats_count": "{count, plural, one {{count} chat is selected for takeover.} other {{count} chats are selected for takeover.}}",
     "confirm_take_over_selected": "Are you sure you want to take over all selected chats?",
     "take_over_all": "Take over all",
-    "success_message": "{count} chat taken over successfully | {count} chats taken over successfully",
-    "partial_success_message": "{success} chat taken over, {failed} failed. Try again. | {success} chats taken over, {failed} failed. Try again.",
-    "error_message": "Error taking over chats. Try again."
+    "success_message": "{count, plural, one {{count} chat taken over successfully!} other {{count} chats taken over successfully!}}",
+    "partial_success_message": "{success, plural, one {{success} chat taken over, {failed} failed. Please try again.} other {{success} chats taken over, {failed} failed. Please try again.}}",
+    "error_message": "Unable to take over chats, please try again"
   },
   "contact_info": {
     "title": "About the contact",
@@ -774,11 +801,26 @@
     "audio_tooltip": "{agent} {date} at {time}",
     "transfering_chat": "Transferring chat",
     "ticket": "Ticket ID",
-    "copy_protocol": "Click to copy the ticket ID",
-    "protocol_copied": "Ticket ID copied to clipboard"
+    "copy_protocol": "Click to copy the Ticket ID",
+    "protocol_copied": "Ticket ID copied to clipboard!",
+    "copy_value": "Copy value",
+    "value_copied": "Value copied successfully!",
+    "error_copying_value": "Unable to copy value. Please try again.",
+    "csat": {
+      "title": "CSAT",
+      "no_comment": "No comment",
+      "rating_label": {
+        "5": "🤩 Very satisfied",
+        "4": "😁 Satisfied",
+        "3": "😐 Neutral",
+        "2": "☹️ Dissatisfied",
+        "1": "😡 Very dissatisfied",
+        "no_response": "No response"
+      }
+    }
   },
   "discussions": {
-    "title": "Discussion | Discussions",
+    "title": "Discussion",
     "start_discussion": {
       "title": "Start discussion",
       "form": {
@@ -883,9 +925,9 @@
   "send_media": "Send media",
   "send_photo_or_video": "Send photo or video",
   "photo_or_video": "Photo or video",
-  "send_docs": "Send doc | Send doc | Send docs",
+  "send_docs": "{count, plural, =0 {Send doc} one {Send doc} other {Send docs}}",
   "doc": "Doc",
-  "send_images": "Send image | Send images",
+  "send_images": "{count, plural, =0 {Send image} one {Send image} other {Send images}}",
   "quick_message": "Quick messages",
   "flows": "Flows",
   "flows_trigger": {
@@ -897,7 +939,7 @@
       "trigger_time": "Trigger time"
     },
     "groups": "Groups ({length})",
-    "group_contacts": "{n} contact | {n} contacts",
+    "group_contacts": "{n, plural, one {{n} contact} other {{n} contacts}}",
     "letter_group": "{letter} ({length})",
     "letter_group_unnamed": "Unnamed ({length})",
     "unnamed_contact": "Unnamed contact",
@@ -923,18 +965,18 @@
     "variable_mapping": {
       "title": "Variable mapping",
       "title_tag": "Template {current} of {total}",
-      "description": "Variables will be populated in the preview below using values from the selected contacts whenever they reference contact fields.",
+      "description": "Variables that reference contact fields will display values from the selected contacts in the preview below",
       "define_variables": "Define the variables",
-      "define_variables_ordinal": "Define the variables of the {ordinal} template",
+      "define_variables_ordinal": "Define the variables for the {ordinal} template",
       "variable_label": "Variable {name}",
-      "input_placeholder": "Type the value for this variable",
+      "input_placeholder": "Enter the value for this variable",
       "preview_title": "Template preview",
       "preview_title_ordinal": "Preview of the {ordinal} template",
       "preview_variable_tooltip": "Variable {placeholder}",
-      "confirmation_helper": "Check if each field is correctly mapped, this is how your message will look to each selected contact.",
+      "confirmation_helper": "Make sure each field is correctly mapped. Your message will be customized for each selected contact based on these mappings.",
       "confirmation_checkbox": "I've checked it and I'm ready to send it",
       "next_template": "Next template",
-      "send_templates": "Send ({count} template) | Send ({count} templates)",
+      "send_templates": "{count, plural, one {Send ({count} template)} other {Send ({count} templates)}}",
       "local_variables": {
         "contact_name": "Contact name",
         "contact_urn": "Contact phone",
@@ -1239,51 +1281,51 @@
       "hint": "Copilot is your intelligent assistant. You can activate it later."
     },
     "representatives": {
-      "title": "Representatives Management",
-      "description": "Define the representatives for the sectors and queues, as well as the maximum number of chats per representative. Changes made here will also be updated in the sector and queue settings.",
+      "title": "Representative management",
+      "description": "Define the representatives for the departments and queues, as well as the maximum number of chats per representative. Changes made here will also be updated in the department and queue settings.",
       "select_all": "Select all representatives",
       "select_count": "{count} selected",
-      "empty_list": "There are no members with permission for human support in this project yet. Invite a new member or update an existing member’s permissions in Member Management to see them here.",
-      "not_found_list": "No representative found. Try another filter.",
-      "save_success": "Changes saved successfully!",
+      "empty_list": "There are no members with human support permissions in this project yet. Invite a new member or update the permissions of an existing member in Member management to see them here.",
+      "not_found_list": "No representatives found. Try another filter.",
+      "save_success": "Changes saved successfully",
       "save_error": "Unable to save changes.",
       "bulk_chats_limit_modal": {
         "title": "Limit of simultaneous chats",
-        "disclaimer": "The limit will be applied to the {count} selected representatives.",
+        "disclaimer": "The limit will be applied to the selected representatives ({count}).",
         "input": {
           "label": "Define the limit of simultaneous chats",
-          "tooltip": "A limit set for a specific representative overrides the sector-level limit.",
+          "tooltip": "A limit set for a specific representative overrides the department-level limit.",
           "helper": "Set to 0 to have representatives pick up chats from the queue.",
           "placeholder": "Example: 4"
         }
       },
       "queue_manager": {
         "title": "Manage {representativeName}",
-        "bulk_title": "Change sectors and queues",
-        "bulk_disclaimer_description": "The change will be applied to the {count} selected representatives.",
-        "bulk_add_action": "Add to a sector/queue",
-        "bulk_remove_action": "Remove from a sector/queue",
-        "bulk_select_action_description": "Select the bulk action you want to take with the selected representatives:",
+        "bulk_title": "Change departments and queues",
+        "bulk_disclaimer_description": "The change will be applied to the selected representatives ({count}).",
+        "bulk_add_action": "Add to a department/queue",
+        "bulk_remove_action": "Remove from department/queue",
+        "bulk_select_action_description": "Select the bulk action you want to apply to the selected representatives:",
         "chats_limit": {
-          "switch_label": "Define a limit on the number of simultaneous chats for this representative",
-          "switch_helper": "A limit set for a specific representative overrides the sector-level limit.",
+          "switch_label": "Define the limit of simultaneous chats for this representative",
+          "switch_helper": "A limit set for a specific representative overrides the department-level limit.",
           "input_label": "Number of simultaneous chats",
           "input_placeholder": "Example: 4",
           "input_helper": "Set to 0 to have representatives pick up chats from the queue."
         },
         "sector_queues_checkbox": {
-          "title": "Sectors and queues",
-          "bulk_description": "Select the sectors and queues for the change:"
+          "title": "Departments and queues",
+          "bulk_description": "Select the departments and queues for the change:"
         }
       },
       "chats_limit": {
         "label": "{count} simultaneous chats"
       },
       "sectors": {
-        "empty": "Representative is not added to any sector"
+        "empty": "Representative is not added to any department"
       },
       "actions": {
-        "queue-management_tooltip": "Change selected representatives from sectors/queues.",
+        "queue-management_tooltip": "Change selected representatives from departments/queues.",
         "chats-limit-management_tooltip": "Define the limit of simultaneous chats for the selected representatives."
       },
       "filter": {
@@ -1291,14 +1333,14 @@
           "label": "Filter by status"
         },
         "representatives": {
-          "label": "Filter by representatives"
+          "label": "Filter by representative"
         },
         "sectors": {
-          "label": "Filter by sectors",
-          "all": "All sectors"
+          "label": "Filter by department",
+          "all": "All departments"
         },
         "queues": {
-          "label": "Filter by queues"
+          "label": "Filter by queue"
         }
       }
     },

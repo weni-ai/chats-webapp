@@ -64,16 +64,16 @@
   "dark_mode_intro": {
     "buttons": {
       "not_now": "Agora não",
-      "switch": "Ativar modo escuro"
+      "switch": "Mudar para modo escuro"
     },
-    "description_1": "Trabalhe com mais conforto e foco durante todo o dia. O modo escuro reduz a fadiga visual, diminui o brilho da tela e facilita a leitura das conversas — ideal para longas jornadas de atendimento e ambientes com pouca luz.",
-    "description_2": "Com menos fadiga visual, você ganha clareza e agilidade ao responder aos clientes, mantendo um atendimento de alta qualidade mesmo nos horários de pico.",
-    "tagline": "Ative o modo escuro neste módulo e experimente uma nova forma de trabalhar!",
-    "title": "O modo escuro chegou",
+    "description_1": "Trabalhe com mais conforto e foco ao longo do dia. O modo escuro reduz o cansaço visual e diminui o brilho da tela, facilitando a leitura. É ideal para longos períodos de atendimento ou para ambientes com pouca iluminação.",
+    "description_2": "Com menos cansaço visual, você responde aos clientes com mais agilidade e mantém a qualidade do atendimento mesmo nos momentos de maior demanda.",
+    "tagline": "Altere este módulo para o modo escuro e descubra uma nova forma de trabalhar",
+    "title": "Modo escuro disponível",
     "toast": {
       "error": {
         "action": "Tentar novamente",
-        "title": "Erro ao aplicar o modo escuro"
+        "title": "Erro ao mudar para modo escuro"
       },
       "success": {
         "action": "Voltar ao modo claro",
@@ -135,7 +135,7 @@
     "description": "Solte seu arquivo aqui para enviar"
   },
   "waiting_for": {
-    "minutes": "1 minuto aguardando | {n} minutos aguardando"
+    "minutes": "{count, plural, one {Aguardando há 1 minuto} other {Aguardando há {count} minutos}}"
   },
   "chat_message": {
     "reply_message": {
@@ -168,11 +168,11 @@
     "inactive_close_message": "Mensagem de encerramento"
   },
   "inactive": "Inativo",
-  "inactive_room_tooltip": "A conversa atingiu o limite de inatividade de {minutes} minuto. | A conversa atingiu o limite de inatividade de {minutes} minutos.",
+  "inactive_room_tooltip": "{minutes, plural, one {A conversa atingiu o limite de inatividade de {minutes} minuto.} other {A conversa atingiu o limite de inatividade de {minutes} minutos.}}",
   "reply": "Responder",
   "step_of": "Etapa {step} de {total}",
   "type_to_filter": "Digite para filtrar",
-  "chats_count": "{count} chat | {count} chats",
+  "chats_count": "{count, plural, one {{count} chat} other {{count} chats}}",
   "attention": "Atenção",
   "updates_saved": "Atualizações salvas",
   "updated_info": "Informações atualizadas",
@@ -196,8 +196,20 @@
   "transfer_all_selected_chats": "Transferir todos os chats selecionados",
   "take_over_all_selected_chats_tooltip": "Assumir todos os chats selecionados",
   "end_all_selected_chats_tooltip": "Encerrar todos os chats selecionados",
-  "number_of_chats_selected": "{count} chat selecionado | {count} chats selecionados",
+  "number_of_chats_selected": "{count, plural, one {{count} chat selecionado} other {{count} chats selecionados}}",
   "image": "Imagem",
+  "image_preview": {
+    "count": "Imagem {current} de {total}",
+    "tooltip": {
+      "close": "Fechar imagem (esc)",
+      "previous": "Anterior",
+      "next": "Próxima",
+      "rotate": "Girar 90°",
+      "zoom_in": "Ampliar",
+      "zoom_out": "Reduzir",
+      "export": "Exportar"
+    }
+  },
   "video": "Vídeo",
   "audio_message": "Mensagem de áudio",
   "audio_recorder": {
@@ -370,7 +382,14 @@
     "queue_title": "Filas em",
     "queue_table_name": "Nome",
     "quantity_agents": "Número de atendentes",
-    "search": "Buscar uma fila"
+    "search": "Buscar uma fila",
+    "queue_purpose": {
+      "field": {
+        "label": "Finalidade da fila (opcional)",
+        "placeholder": "Exemplo: conversas relacionadas a cobrança, faturas, problemas de pagamento ou dúvidas sobre assinatura.",
+        "helper": "Esta informação ajuda a IA a direcionar os chats para a fila mais adequada."
+      }
+    }
   },
   "export": {
     "metrics": "Exportar métricas como {filetype}",
@@ -380,11 +399,11 @@
     "button": "Exportar conversa",
     "title": "Exportar conversa",
     "select_format": "Selecione o formato para exportar a conversa",
-    "disclaimer": "Enquanto esta exportação está sendo processada, novas exportações ficarão temporariamente bloqueadas para esta conversa",
-    "accept_terms": "Aceito os termos e entendo as limitações da exportação.",
-    "success_title": "Processando exportação!",
-    "success_description": "O resultado será enviado por email em breve. Verifique também a pasta de spam.",
-    "error": "Não foi possível processar a exportação. Tente novamente"
+    "disclaimer": "Enquanto esta exportação estiver em andamento, novas exportações ficarão temporariamente bloqueadas para esta conversa.",
+    "accept_terms": "Eu aceito os termos e entendo as limitações de exportação.",
+    "success_title": "Exportação em andamento",
+    "success_description": "Você receberá o arquivo por email em breve. Lembre-se de verificar sua pasta de spam.",
+    "error": "Não foi possível processar a exportação. Tente novamente."
   },
   "name": "Nome",
   "addition_date": "Data de cadastro",
@@ -512,6 +531,12 @@
     },
     "message_input_placeholder": "Digite sua mensagem aqui ou / para ativar mensagens rápidas",
     "message_input_disabled_description": "Altere seu status para online para continuar esta conversa",
+    "message_input_floating_actions": {
+      "copy": "Copiar conteúdo digitado",
+      "copy_alert_success": "Conteúdo copiado!",
+      "clear": "Limpar conteúdo digitado",
+      "clear_alert_success": "Conteúdo removido!"
+    },
     "search_contact": "Buscar contato",
     "search_contact_placeholder": "Buscar contato por nome, telefone ou ID do ticket",
     "tags": "Tags do chat",
@@ -583,8 +608,8 @@
       "title": "Modo de visualização ao vivo de {viewedAgent}",
       "close": "Fechar visualização",
       "assume_chat": "Assumir apenas este chat",
-      "assume_chat_question": "Assumir o chat?",
-      "assume_chat_question_description": "Tem certeza de que deseja assumir o chat com {contact}?<br><br>Ao confirmar, você removerá o chat do atendente atual e será responsável pelo chat.",
+      "assume_chat_question": "Assumir o chat com {contact}?",
+      "assume_chat_question_description": "Tem certeza de que deseja assumir o chat com {contact}?<br /><br />Ao confirmar, você removerá o chat do atendente atual e será responsável pelo chat.",
       "assume_chat_confirmation": "Se confirmar, este chat será transferido de {viewedAgent} para você"
     }
   },
@@ -632,7 +657,7 @@
     "by_tag": "Filtrar por tag",
     "by_tags": "Filtrar por tags",
     "by_agent": "Filtrar por atendente",
-    "by_date": "Filtrar por @.lower:date",
+    "by_date": "Filtrar por data",
     "by_queue": "Filtrar por fila",
     "clear_all": "Limpar filtros",
     "dates": {
@@ -649,7 +674,7 @@
   },
   "pagination": "{from} – {to} de {total}",
   "contact": "Contato",
-  "unread_messages": "{count} mensagem não lida | {count} mensagens não lidas",
+  "unread_messages": "{count, plural, one {{count} mensagem não lida} other {{count} mensagens não lidas}}",
   "automatically_ended": "Encerrado automaticamente",
   "unnamed_contact": "Contato sem nome",
   "unnamed_agent": "Atendente sem nome",
@@ -657,11 +682,12 @@
   "no_tags_assigned": "Nenhuma tag atribuída",
   "contact_await_for_you": "Um contato está aguardando suporte",
   "agent": "Atendente",
-  "representative": "Representante",
+  "representative": "Atendente",
   "ai_text_improvement": {
     "tooltip_disabled": "Escreva uma resposta no campo de texto para habilitar respostas aprimoradas com IA",
     "tooltip_enabled": "Melhorar resposta com IA",
     "tooltip_cancel": "Cancelar resposta aprimorada com IA",
+    "tooltip_internal_note": "Esta função não está disponível para notas internas",
     "fix_grammar_and_spelling": "Corrigir gramática e ortografia",
     "make_more_empathetic": "Tornar mais empática",
     "rewrite_for_clarity": "Reescrever com clareza",
@@ -724,17 +750,17 @@
   "chat_closed_by": {
     "agent": "Chat encerrado pelo atendente"
   },
-  "transfer_contact": "Transferir contato | Transferir contatos",
+  "transfer_contact": "{count, plural, one {Transferir contato} other {Transferir contatos}}",
   "bulk_transfer": {
     "transfer_selected_contacts": "Transferir contatos selecionados",
-    "agent_transfer_success": "Contato transferido para atendente {agent} com sucesso | Contatos transferidos para atendente {agent} com sucesso",
     "transfer_all": "Transferir todos",
-    "selected_chats_count": "{count} chat selecionado para transferência. | {count} chats selecionados para transferência.",
-    "success_message": "{count} chat transferido com sucesso! | {count} chats transferidos com sucesso!",
-    "partial_success_message": "{success} chat transferido, {failed} falhou. Tente novamente. | {success} chats transferidos, {failed} falharam. Tente novamente.",
+    "selected_chats_count": "{count, plural, one {{count} chat selecionado para transferência.} other {{count} chats selecionados para transferência.}}",
+    "success_message": "{count, plural, one {{count} chat transferido com sucesso!} other {{count} chats transferidos com sucesso!}}",
+    "partial_success_message": "{success, plural, one {{success} chat transferido, {failed} falhou. Tente novamente.} other {{success} chats transferidos, {failed} falharam. Tente novamente.}}",
     "error_message": "Não foi possível transferir os chats, tente novamente",
-    "queue_transfer_success": "Contato transferido para a fila {queue} com sucesso | Contatos transferidos para a fila {queue} com sucesso",
-    "error": "Erro ao transferir contatos. Tente novamente.",
+    "agent_transfer_success": "{count, plural, one {Contato transferido com sucesso para atendente {agent}} other {Contatos transferidos com sucesso para atendente {agent}}}",
+    "queue_transfer_success": "{count, plural, one {Contato transferido com sucesso para fila {queue}} other {Contatos transferidos com sucesso para fila {queue}}}",
+    "error": "Não foi possível transferir os contatos, tente novamente",
     "disclaimer": {
       "transfer_to_other_sector": "Ao transferir o chat para uma fila de outro setor, as tags serão removidas.",
       "selected_agent_offline": "O atendente selecionado está offline no momento",
@@ -742,34 +768,34 @@
     }
   },
   "bulk_close": {
-    "close_selected_contacts": "Fechar contatos selecionados",
-    "confirm_close_selected": "Tem certeza de que deseja fechar os contatos selecionados?",
-    "success_message": "{count} chat encerrado com sucesso | {count} chats encerrados com sucesso",
-    "partial_success_message": "{success} chat encerrado, {failed} falhou. Tente novamente. | {success} chats encerrados, {failed} falharam. Tente novamente.",
-    "error_message": "Erro ao fechar chats. Tente novamente.",
+    "close_selected_contacts": "Encerrar contatos selecionados",
+    "confirm_close_selected": "Tem certeza que deseja encerrar os contatos selecionados?",
+    "success_message": "{count, plural, one {{count} chat encerrado com sucesso!} other {{count} chats encerrados com sucesso!}}",
+    "partial_success_message": "{success, plural, one {{success} chat encerrado, {failed} falhou. Tente novamente.} other {{success} chats encerrados, {failed} falharam. Tente novamente.}}",
+    "error_message": "Não foi possível encerrar os chats, tente novamente",
     "end_all_selected_chats": "Encerrar todos os chats selecionados",
     "sector_tag": "Setor {current} de {total}",
-    "chats_count_sector": "{count} chat · setor {sector} | {count} chats · setor {sector}",
-    "required_tags_title": "As tags são obrigatórias para encerrar chats no setor {sector}",
-    "required_tags_description": "Se você selecionar uma ou mais tags abaixo, elas serão aplicadas a {count} chat e substituirão as tags existentes. | Se você selecionar uma ou mais tags abaixo, elas serão aplicadas a {count} chats e substituirão as tags existentes.",
+    "chats_count_sector": "{count, plural, one {{count} chat · setor {sector}} other {{count} chats · setor {sector}}}",
+    "required_tags_title": "Tags são obrigatórias para finalizar chats no setor {sector}",
+    "required_tags_description": "{count, plural, one {Se você selecionar alguma tag abaixo, ela será aplicada ao {count} chat e substituirá quaisquer tags existentes.} other {Se você selecionar alguma tag abaixo, ela será aplicada aos {count} chats e substituirá quaisquer tags existentes.}}",
     "next_sector": "Próximo setor",
     "end_all_chats": "Encerrar todos ({count} chats)",
     "back": "Voltar",
-    "optional_tags_title": "As tags não são obrigatórias para encerrar chats no setor {sector}",
-    "optional_tags_description": "Se você selecionar uma ou mais tags abaixo, elas serão aplicadas a {count} chat e substituirão as tags existentes. | Se você selecionar uma ou mais tags abaixo, elas serão aplicadas a {count} chats e substituirão as tags existentes.",
-    "no_tags_in_sector": "Nenhuma tag para selecionar neste setor"
+    "optional_tags_title": "Tags não são obrigatórias para finalizar chats no setor {sector}",
+    "optional_tags_description": "{count, plural, one {Se você selecionar alguma tag abaixo, ela será aplicada ao {count} chat e substituirá quaisquer tags existentes.} other {Se você selecionar alguma tag abaixo, ela será aplicada aos {count} chats e substituirá quaisquer tags existentes.}}",
+    "no_tags_in_sector": "Não há tags cadastradas neste setor para serem selecionadas."
   },
   "close_chat": {
     "confirm_end": "Tem certeza de que deseja encerrar este chat?"
   },
   "bulk_take": {
     "title": "Assumir todos os chats selecionados",
-    "selected_chats_count": "{count} chat selecionado para assumir. | {count} chats selecionados para assumir.",
-    "confirm_take_over_selected": "Tem certeza de que deseja assumir todos os chats selecionados?",
+    "selected_chats_count": "{count, plural, one {{count} chat está selecionado para assumir.} other {{count} chats estão selecionados para assumir.}}",
+    "confirm_take_over_selected": "Tem certeza que deseja assumir todos os chats selecionados?",
     "take_over_all": "Assumir todos",
-    "success_message": "{count} chat assumido com sucesso | {count} chats assumidos com sucesso",
-    "partial_success_message": "{success} chat assumido, {failed} falhou. Tente novamente. | {success} chats assumidos, {failed} falharam. Tente novamente.",
-    "error_message": "Erro ao assumir chats. Tente novamente."
+    "success_message": "{count, plural, one {{count} chat assumido com sucesso!} other {{count} chats assumidos com sucesso!}}",
+    "partial_success_message": "{success, plural, one {{success} chat assumido, {failed} falhou. Tente novamente.} other {{success} chats assumidos, {failed} falharam. Tente novamente.}}",
+    "error_message": "Não foi possível assumir os chats, tente novamente"
   },
   "close_contact": "Encerrar contato",
   "close_contact_confirmation": "Tem certeza que deseja encerrar este contato?",
@@ -785,13 +811,28 @@
     "see_contact_history": "Ver histórico",
     "no_contact_history": "Sem histórico",
     "audio_tooltip": "{agent} {date} às {time}",
-    "transfering_chat": "Transferindo chat",
-    "ticket": "ID do ticket",
-    "copy_protocol": "Clique para copiar o ID do ticket",
-    "protocol_copied": "ID do ticket copiado para a área de transferência"
+    "transfering_chat": "Transferindo o chat ​📬",
+    "ticket": "Protocolo",
+    "copy_protocol": "Clique para copiar o protocolo",
+    "protocol_copied": "Protocolo copiado para a área de transferência!",
+    "copy_value": "Copiar valor",
+    "value_copied": "Valor copiado com sucesso!",
+    "error_copying_value": "Não foi possível copiar o valor. Tente novamente.",
+    "csat": {
+      "title": "CSAT",
+      "no_comment": "Nenhum comentário",
+      "rating_label": {
+        "5": "🤩 Muito satisfeito",
+        "4": "😁 Satisfeito",
+        "3": "😐 Neutro",
+        "2": "☹️ Insatisfeito",
+        "1": "😡 Muito insatisfeito",
+        "no_response": "Sem resposta"
+      }
+    }
   },
   "discussions": {
-    "title": "Discussão | Discussões",
+    "title": "Discussão",
     "start_discussion": {
       "title": "Iniciar discussão",
       "form": {
@@ -891,14 +932,14 @@
   },
   "select_agent": "Selecionar atendente",
   "select_queue": "Selecionar fila",
-  "select_representative": "Selecionar um representante",
+  "select_representative": "Selecionar um atendente",
   "select_sector": "Selecionar setor",
   "send_media": "Enviar mídia",
   "send_photo_or_video": "Enviar foto ou vídeo",
   "photo_or_video": "Foto ou vídeo",
-  "send_docs": "Enviar documento | Enviar documento | Enviar documentos",
+  "send_docs": "{count, plural, =0 {Enviar documento} one {Enviar documento} other {Enviar documentos}}",
   "doc": "Documento",
-  "send_images": "Enviar imagem | Enviar imagens",
+  "send_images": "{count, plural, =0 {Enviar imagem} one {Enviar imagem} other {Enviar imagens}}",
   "quick_message": "Mensagens rápidas",
   "flows": "Fluxos",
   "flows_trigger": {
@@ -910,7 +951,7 @@
       "trigger_time": "Hora do disparo"
     },
     "groups": "Grupos ({length})",
-    "group_contacts": "{n} contato | {n} contatos",
+    "group_contacts": "{n, plural, one {{n} contato} other {{n} contatos}}",
     "letter_group": "{letter} ({length})",
     "letter_group_unnamed": "Sem nome ({length})",
     "unnamed_contact": "Contato sem nome",
@@ -936,23 +977,23 @@
     "variable_mapping": {
       "title": "Mapeamento de variáveis",
       "title_tag": "Template {current} de {total}",
-      "description": "As variáveis serão preenchidas na pré-visualização abaixo usando valores dos contatos selecionados sempre que fizerem referência a campos do contato.",
-      "define_variables": "Definir as variáveis",
+      "description": "Na pré-visualização abaixo, as variáveis que fazem referência a campos de contato serão preenchidas com dados dos contatos selecionados",
+      "define_variables": "Defina as variáveis",
       "define_variables_ordinal": "Definir as variáveis do {ordinal} template",
       "variable_label": "Variável {name}",
-      "input_placeholder": "Digite o valor para esta variável",
+      "input_placeholder": "Insira o valor para esta variável",
       "preview_title": "Pré-visualização do template",
       "preview_title_ordinal": "Pré-visualização do {ordinal} template",
       "preview_variable_tooltip": "Variável {placeholder}",
-      "confirmation_helper": "Verifique se cada campo está mapeado corretamente; é assim que a mensagem será exibida para cada contato selecionado.",
-      "confirmation_checkbox": "Verifiquei e estou pronto para enviar",
+      "confirmation_helper": "Verifique se todos os campos estão mapeados corretamente. Sua mensagem será personalizada para cada contato selecionado com base nesses mapeamentos.",
+      "confirmation_checkbox": "Verifiquei e quero enviar",
       "next_template": "Próximo template",
-      "send_templates": "Enviar ({count} template) | Enviar ({count} templates)",
+      "send_templates": "{count, plural, one {Enviar ({count} template)} other {Enviar ({count} templates)}}",
       "local_variables": {
         "contact_name": "Nome do contato",
         "contact_urn": "Telefone do contato",
         "agent_name": "Nome do atendente",
-        "agent_email": "E-mail do atendente"
+        "agent_email": "Email do atendente"
       }
     }
   },
@@ -1250,20 +1291,20 @@
       "hint": "O Copilot é o seu assistente inteligente. Você pode ativá-lo mais tarde."
     },
     "representatives": {
-      "title": "Gestão de Atendentes",
-      "description": "Defina os atendentes para os setores e filas, além do número máximo de chats por atendente. As alterações feitas aqui também serão atualizadas nas configurações de setor e de fila",
+      "title": "Gerenciamento de atendentes",
+      "description": "Defina os atendentes para os setores e filas, bem como o número máximo de chats por atendente. As alterações feitas aqui também serão atualizadas nas configurações do setor e da fila.",
       "select_all": "Selecionar todos os atendentes",
       "select_count": "{count} selecionados",
-      "empty_list": "Ainda não há membros com permissão para atendimento humano neste projeto. Convide um membro ou atualize as permissões de um membro em Gestão de membros para vê-los aqui.",
-      "not_found_list": "Nenhum atendente encontrado. Tente outro filtro.",
+      "empty_list": "Ainda não há membros com permissão para atendimento humano neste projeto. Convide um novo membro ou atualize as permissões de um membro cadastrado em Gerenciamento de membros para visualizá-lo aqui.",
+      "not_found_list": "Nenhum atendente encontrado. Tente usar outro filtro.",
       "save_success": "Alterações salvas com sucesso",
       "save_error": "Não foi possível salvar as alterações",
       "bulk_chats_limit_modal": {
         "title": "Limite de chats simultâneos",
-        "disclaimer": "O limite será aplicado aos {count} atendentes selecionados.",
+        "disclaimer": "O limite será aplicado aos {count} atendentes selecionados",
         "input": {
-          "label": "Definir o limite de chats simultâneos",
-          "tooltip": "Um limite definido para um atendente específico substitui o limite a nível de setor",
+          "label": "Defina o limite de chats simultâneos",
+          "tooltip": "Um limite definido para um atendente específico substitui o limite no nível do setor",
           "helper": "Defina 0 para que os atendentes puxem chats a partir da fila",
           "placeholder": "Exemplo: 4"
         }
@@ -1271,15 +1312,15 @@
       "queue_manager": {
         "title": "Gerenciar {representativeName}",
         "bulk_title": "Alterar setores e filas",
-        "bulk_disclaimer_description": "A alteração será aplicada aos {count} atendentes selecionados.",
+        "bulk_disclaimer_description": "A alteração será aplicada aos {count} atendentes selecionados",
         "bulk_add_action": "Adicionar a setor/fila",
         "bulk_remove_action": "Remover de setor/fila",
-        "bulk_select_action_description": "Selecione a ação em lote que deseja aplicar aos atendentes selecionados:",
+        "bulk_select_action_description": "Selecione a ação em massa que deseja realizar com os atendentes selecionados:",
         "chats_limit": {
           "switch_label": "Definir limite no número de chats simultâneos para este atendente",
-          "switch_helper": "Um limite definido para um atendente específico substitui o limite a nível de setor",
+          "switch_helper": "Um limite definido para um atendente específico substitui o limite no nível do setor",
           "input_label": "Número de chats simultâneos",
-          "input_placeholder": "Ex.: 4",
+          "input_placeholder": "Exemplo: 4",
           "input_helper": "Defina 0 para o atendente puxar chats a partir da fila"
         },
         "sector_queues_checkbox": {
@@ -1291,11 +1332,11 @@
         "label": "{count} chats simultâneos"
       },
       "sectors": {
-        "empty": "Não adicionado a nenhum setor"
+        "empty": "Atendente não adicionado a nenhum setor"
       },
       "actions": {
-        "queue-management_tooltip": "Alterar atendentes selecionados de setores/filas.",
-        "chats-limit-management_tooltip": "Definir o limite de chats simultâneos para os atendentes selecionados."
+        "queue-management_tooltip": "Alterar atendentes selecionados dos setores/filas",
+        "chats-limit-management_tooltip": "Defina o limite de chats simultâneos para os atendentes selecionados"
       },
       "filter": {
         "status": {
