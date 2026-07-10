@@ -163,8 +163,8 @@
     "title": "Mensaje automático",
     "info": "Define una respuesta automática para enviar al contacto mientras espera asistencia, déjalo en blanco si no deseas ningún mensaje.",
     "placeholder": "Aún no has definido un mensaje automático. Por favor, define un mensaje para tus contactos que están esperando.",
-    "automatic_opening_message": "Mensaje de apertura automático",
-    "inactive_warning_message": "Mensaje de aviso",
+    "automatic_opening_message": "Mensaje automático de bienvenida",
+    "inactive_warning_message": "Mensaje de inactividad",
     "inactive_close_message": "Mensaje de cierre"
   },
   "inactive": "Inactivo",
@@ -306,24 +306,24 @@
       "inactivity_timeout": {
         "title": "Inactividad en la conversación",
         "show": {
-          "switch_label": "Mostrar alerta de inactividad al representante y notificar al contacto",
-          "hint": "La alerta se muestra solo en chats en curso y considera el tiempo desde el último mensaje del representante.",
+          "switch_label": "Mostrar aviso de inactividad al representante y notificar al contacto",
+          "hint": "El aviso se muestra solo en chats en curso y considera el tiempo desde el último mensaje del representante.",
           "field": {
-            "timeout_time_label": "Definir después de cuántos minutos sin respuesta del contacto el sistema debe enviar el mensaje de aviso",
-            "timeout_time_tooltip": "En ese momento, el representante también verá la conversación marcada con una alerta de inactividad.",
-            "warning_message_label": "Mensaje de aviso",
-            "warning_message_tooltip": "El mensaje aparecerá como si lo hubiera enviado el representante asignado.",
-            "default_warning_message": "¿Sigues ahí? Si no hay respuesta, esta sesión se cerrará pronto."
+            "timeout_time_label": "Define cuántos minutos debe esperar el sistema sin respuesta del contacto antes de enviar el mensaje de inactividad",
+            "timeout_time_tooltip": "En ese momento, el representante también verá la conversación marcada con un aviso de inactividad.",
+            "warning_message_label": "Mensaje de inactividad",
+            "warning_message_tooltip": "El mensaje se mostrará como si lo hubiera enviado el representante asignado.",
+            "default_warning_message": "¿Continúas ahí? Si no hay respuesta, esta sesión se cerrará pronto."
           }
         },
         "close_room": {
           "switch_label": "Finalizar chats inactivos automáticamente",
-          "hint": "Los chats se finalizan automáticamente si el contacto no envía mensajes en el período posterior al envío de la alerta.",
+          "hint": "Los chats se finalizan automáticamente si el contacto no envía mensajes en el periodo posterior al envío del mensaje de aviso.",
           "field": {
-            "close_room_time_label": "Definir cuántos minutos después de enviar el mensaje de aviso el sistema debe finalizar el chat",
+            "close_room_time_label": "Define cuántos minutos debe esperar el sistema para cerrar el chat después de enviar el mensaje de inactividad",
             "close_room_message_label": "Mensaje de cierre",
-            "close_room_message_tooltip": "El mensaje aparecerá como si lo hubiera enviado el representante asignado.",
-            "default_close_room_message": "Esta sesión finalizó por inactividad. Inicia un nuevo chat cuando quieras."
+            "close_room_message_tooltip": "El mensaje se mostrará como si lo hubiera enviado el representante asignado.",
+            "default_close_room_message": "Esta sesión finalizó por inactividad. Puedes iniciar un nuevo chat cuando quieras."
           }
         }
       },
