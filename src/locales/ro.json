@@ -60,6 +60,15 @@
       }
     }
   },
+  "queues": {
+    "queue_purpose": {
+      "field": {
+        "label": "Scopul cozii (opțional)",
+        "placeholder": "Exemplu: conversații legate de facturare, facturi, probleme de plată sau întrebări despre abonament.",
+        "helper": "Această informație ajută IA să direcționeze conversațiile către coada potrivită."
+      }
+    }
+  },
   "export_conversation": {
     "button": "Exportă conversația",
     "title": "Exportă conversația",
@@ -71,6 +80,10 @@
     "error": "Exportul nu a putut fi procesat. Încearcă din nou."
   },
   "chats": {
+    "audio_download": {
+      "tooltip": "Exportare",
+      "error": "Nu s-a putut exporta fișierul audio din cauza unei probleme tehnice"
+    },
     "feedback": {
       "transfer_to_agent": "{agent1} a transferat conversația către {agent2}",
       "transfer_to_agent_by_other": "{requestedBy} a transferat conversația lui {agent1} către {agent2}"
@@ -106,81 +119,6 @@
     "no_queue_selected": "Nicio coadă selectată",
     "success_update_queues": "Cozile tale de serviciu au fost actualizate",
     "error_update_queues": "Nu s-au putut actualiza cozile de serviciu"
-  },
-  "config_chats": {
-    "project_configs": {
-      "restrict_offline_agents": {
-        "switch_label": "Permite interacțiuni doar pentru reprezentanții online",
-        "hint": "Dacă această opțiune este activată, reprezentanții care sunt offline sau în pauză nu vor putea răspunde la conversațiile în curs"
-      }
-    },
-    "tabs": {
-      "representatives": "Reprezentanți"
-    },
-    "representatives": {
-      "title": "Gestionarea reprezentanților",
-      "description": "Definește reprezentanții pentru departamente şi cozi, precum şi numărul maxim de chaturi per reprezentant. Modificările făcute aici vor fi actualizate şi în setările departamentelor şi cozilor.",
-      "select_all": "Selectează toți reprezentanții",
-      "select_count": "{count} selectați",
-      "empty_list": "Nu există încă membri cu permisiuni de asistență umană în acest proiect. Invită un nou membru sau actualizează permisiunile unui membru existent în Gestionarea membrilor pentru a-i vedea aici.",
-      "not_found_list": "Niciun reprezentant găsit. Încearcă un alt filtru.",
-      "save_success": "Modificările au fost salvate cu succes",
-      "save_error": "Nu s-a reușit salvarea modificărilor.",
-      "bulk_chats_limit_modal": {
-        "title": "Limită a chaturilor simultane",
-        "disclaimer": "Limita va fi aplicată reprezentanților selectați ({count}).",
-        "input": {
-          "label": "Definește limita pentru chaturi simultane",
-          "tooltip": "O limită setată pentru un anumit reprezentant înlocuiește limita la nivel de departament.",
-          "helper": "Setează la 0 pentru ca reprezentanții să preia discuțiile din coadă.",
-          "placeholder": "Exemplu: 4"
-        }
-      },
-      "queue_manager": {
-        "title": "Gestionează {representativeName}",
-        "bulk_title": "Modifică departamentele și cozile",
-        "bulk_disclaimer_description": "Modificarea va fi aplicată reprezentanților selectați ({count}).",
-        "bulk_add_action": "Adaugă la un departament/coadă",
-        "bulk_remove_action": "Elimină din departament/coadă",
-        "bulk_select_action_description": "Selectează acțiunea în masă pe care dorești să o aplici reprezentanților selectați:",
-        "chats_limit": {
-          "switch_label": "Definește limita de chaturi simultane pentru acest reprezentant",
-          "switch_helper": "O limită setată pentru un anumit reprezentant înlocuiește limita la nivel de departament.",
-          "input_label": "Numărul de chaturi simultane",
-          "input_placeholder": "Exemplu: 4",
-          "input_helper": "Setează la 0 pentru ca reprezentantul să preia discuțiile din coadă."
-        },
-        "sector_queues_checkbox": {
-          "title": "Departamente și cozi",
-          "bulk_description": "Selectează departamentele și cozile pentru modificare:"
-        }
-      },
-      "chats_limit": {
-        "label": "{count} chaturi simultane"
-      },
-      "sectors": {
-        "empty": "Reprezentantul nu este adăugat în niciun departament"
-      },
-      "actions": {
-        "queue-management_tooltip": "Modifică reprezentanții selectați din departamente/cozi.",
-        "chats-limit-management_tooltip": "Definește limita de chaturi simultane pentru reprezentanții selectați."
-      },
-      "filter": {
-        "status": {
-          "label": "Filtrare după stare"
-        },
-        "representatives": {
-          "label": "Filtrare după reprezentant"
-        },
-        "sectors": {
-          "label": "Filtrare după departament",
-          "all": "Toate departamentele"
-        },
-        "queues": {
-          "label": "Filtrare după coadă"
-        }
-      }
-    }
   },
   "dashboard": {
     "view-mode": {
@@ -248,6 +186,81 @@
       }
     }
   },
+  "config_chats": {
+    "tabs": {
+      "representatives": "Reprezentanți"
+    },
+    "project_configs": {
+      "restrict_offline_agents": {
+        "switch_label": "Permite interacțiuni doar pentru reprezentanții online",
+        "hint": "Dacă această opțiune este activată, reprezentanții care sunt offline sau în pauză nu vor putea răspunde la conversațiile în curs"
+      }
+    },
+    "representatives": {
+      "title": "Gestionarea reprezentanților",
+      "description": "Definește reprezentanții pentru departamente şi cozi, precum şi numărul maxim de chaturi per reprezentant. Modificările făcute aici vor fi actualizate şi în setările departamentelor şi cozilor.",
+      "select_all": "Selectează toți reprezentanții",
+      "select_count": "{count} selectați",
+      "empty_list": "Nu există încă membri cu permisiuni de asistență umană în acest proiect. Invită un nou membru sau actualizează permisiunile unui membru existent în Gestionarea membrilor pentru a-i vedea aici.",
+      "not_found_list": "Niciun reprezentant găsit. Încearcă un alt filtru.",
+      "save_success": "Modificările au fost salvate cu succes",
+      "save_error": "Nu s-a reușit salvarea modificărilor.",
+      "bulk_chats_limit_modal": {
+        "title": "Limită a chaturilor simultane",
+        "disclaimer": "Limita va fi aplicată reprezentanților selectați ({count}).",
+        "input": {
+          "label": "Definește limita pentru chaturi simultane",
+          "tooltip": "O limită setată pentru un anumit reprezentant înlocuiește limita la nivel de departament.",
+          "helper": "Setează la 0 pentru ca reprezentanții să preia discuțiile din coadă.",
+          "placeholder": "Exemplu: 4"
+        }
+      },
+      "queue_manager": {
+        "title": "Gestionează {representativeName}",
+        "bulk_title": "Modifică departamentele și cozile",
+        "bulk_disclaimer_description": "Modificarea va fi aplicată reprezentanților selectați ({count}).",
+        "bulk_add_action": "Adaugă la un departament/coadă",
+        "bulk_remove_action": "Elimină din departament/coadă",
+        "bulk_select_action_description": "Selectează acțiunea în masă pe care dorești să o aplici reprezentanților selectați:",
+        "chats_limit": {
+          "switch_label": "Definește limita de chaturi simultane pentru acest reprezentant",
+          "switch_helper": "O limită setată pentru un anumit reprezentant înlocuiește limita la nivel de departament.",
+          "input_label": "Numărul de chaturi simultane",
+          "input_placeholder": "Exemplu: 4",
+          "input_helper": "Setează la 0 pentru ca reprezentantul să preia discuțiile din coadă."
+        },
+        "sector_queues_checkbox": {
+          "title": "Departamente și cozi",
+          "bulk_description": "Selectează departamentele și cozile pentru modificare:"
+        }
+      },
+      "chats_limit": {
+        "label": "{count} chaturi simultane"
+      },
+      "sectors": {
+        "empty": "Reprezentantul nu este adăugat în niciun departament"
+      },
+      "actions": {
+        "queue-management_tooltip": "Modifică reprezentanții selectați din departamente/cozi.",
+        "chats-limit-management_tooltip": "Definește limita de chaturi simultane pentru reprezentanții selectați."
+      },
+      "filter": {
+        "status": {
+          "label": "Filtrare după stare"
+        },
+        "representatives": {
+          "label": "Filtrare după reprezentant"
+        },
+        "sectors": {
+          "label": "Filtrare după departament",
+          "all": "Toate departamentele"
+        },
+        "queues": {
+          "label": "Filtrare după coadă"
+        }
+      }
+    }
+  },
   "delete_modal": {
     "title": "Șterge {name}",
     "description_sector": "Sistemul a detectat {count} conversații în departamentul {name} care sunt în curs de desfășurare sau așteaptă să fie gestionate. Alege ce dorești să faci cu ele.",
@@ -266,15 +279,6 @@
     "queue_error": "Nu s-a putut șterge coada",
     "transfer_error_sector": "Nu s-au putut transfera chaturile. Ștergerea departamentului a fost anulată.",
     "transfer_error_queue": "Nu s-au putut transfera conversațiile. Ștergerea cozii a fost anulată."
-  },
-  "queues": {
-    "queue_purpose": {
-      "field": {
-        "label": "Scopul cozii (opțional)",
-        "placeholder": "Exemplu: conversații legate de facturare, facturi, probleme de plată sau întrebări despre abonament.",
-        "helper": "Această informație ajută IA să direcționeze conversațiile către coada potrivită."
-      }
-    }
   },
   "room_card": {
     "new_chat_received": {
