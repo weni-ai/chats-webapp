@@ -436,7 +436,7 @@
     },
     "audio_download": {
       "tooltip": "Export",
-      "error": "Audio couldn't be exported due to a technical issue"
+      "error": "Couldn't export audio due to a technical issue"
     },
     "search_messages": {
       "title": "Search in conversation",
