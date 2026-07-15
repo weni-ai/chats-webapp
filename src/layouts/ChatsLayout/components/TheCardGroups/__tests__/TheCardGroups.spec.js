@@ -283,7 +283,7 @@ describe('TheCardGroups.vue', () => {
       await flushPromises();
 
       expect(wrapper.text()).toContain(
-        'All wrapped up! You’ll be notified when new chats are assigned and they’ll appear in this list.',
+        "All set! You'll be notified when new chats are assigned, and they'll appear in this list.",
       );
     });
 
@@ -303,7 +303,7 @@ describe('TheCardGroups.vue', () => {
       await flushPromises();
 
       expect(wrapper.text()).toContain(
-        'Queue cleared! All contacts have been assigned to an agent',
+        'Queue cleared! All contacts are now assigned to representatives.',
       );
     });
   });
