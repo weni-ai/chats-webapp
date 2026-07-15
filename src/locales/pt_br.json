@@ -164,7 +164,7 @@
     "info": "Defina uma resposta automática para ser enviada ao contato enquanto está aguardando atendimento, deixe em branco caso não queira nenhuma mensagem.",
     "placeholder": "Por enquanto você não definiu uma mensagem automática, defina uma mensagem para seus contatos que estão aguardando",
     "automatic_opening_message": "Mensagem de abertura automática",
-    "inactive_warning_message": "Mensagem de aviso",
+    "inactive_warning_message": "Mensagem de inatividade",
     "inactive_close_message": "Mensagem de encerramento"
   },
   "inactive": "Inativo",
@@ -304,25 +304,25 @@
     "additional_options": {
       "title": "Opções extras",
       "inactivity_timeout": {
-        "title": "Inatividade na conversa",
+        "title": "Inatividade da conversa",
         "show": {
           "switch_label": "Exibir alerta de inatividade ao atendente e notificar o contato",
           "hint": "O alerta é exibido apenas em chats em andamento e considera o tempo desde a última mensagem do atendente.",
           "field": {
             "timeout_time_label": "Definir após quantos minutos sem resposta do contato o sistema deve enviar a mensagem de aviso",
             "timeout_time_tooltip": "Nesse momento, o atendente também verá a conversa marcada com um alerta de inatividade.",
-            "warning_message_label": "Mensagem de aviso",
-            "warning_message_tooltip": "A mensagem aparecerá como se tivesse sido enviada pelo atendente designado.",
+            "warning_message_label": "Mensagem de inatividade",
+            "warning_message_tooltip": "A mensagem aparecerá como se tivesse sido enviada pelo atendente atribuído.",
             "default_warning_message": "Você ainda está aí? Se não houver resposta, este atendimento será encerrado em breve."
           }
         },
         "close_room": {
           "switch_label": "Encerrar chats inativos automaticamente",
-          "hint": "Os chats são encerrados automaticamente se o contato não enviar mensagens no período após o envio do alerta.",
+          "hint": "Os chats são encerrados automaticamente se o contato não enviar nenhuma mensagem no período de inatividade após o envio do alerta.",
           "field": {
             "close_room_time_label": "Definir quantos minutos após o envio da mensagem de aviso o sistema deve encerrar o chat",
             "close_room_message_label": "Mensagem de encerramento",
-            "close_room_message_tooltip": "A mensagem aparecerá como se tivesse sido enviada pelo atendente designado.",
+            "close_room_message_tooltip": "A mensagem aparecerá como se tivesse sido enviada pelo atendente atribuído.",
             "default_close_room_message": "Este atendimento foi encerrado por inatividade. Inicie um novo chat quando quiser."
           }
         }
