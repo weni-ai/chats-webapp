@@ -20,7 +20,12 @@
         @focus-input="emit('focusInput')"
       />
     </section>
-    <SendAction @send="emit('send')" />
+
+    <DictationAction v-if="shouldShowDictationAction" />
+    <SendAction
+      v-else
+      @send="emit('send')"
+    />
   </section>
 </template>
 
@@ -29,6 +34,8 @@ import { computed } from 'vue';
 import { storeToRefs } from 'pinia';
 
 import { useDiscussions } from '@/store/modules/chats/discussions';
+import { useMessageManager } from '@/store/modules/chats/messageManager';
+import { useFeatureFlag } from '@/store/modules/featureFlag';
 
 import QuickMessageAction from './QuickMessageAction.vue';
 import AiTextImprovementAction from './AiTextImprovementAction.vue';
@@ -36,15 +43,36 @@ import EmojiAction from './EmojiAction.vue';
 import AudioAction from './AudioAction.vue';
 import AttachAction from './AttachAction.vue';
 import InternalNoteAction from './InternalNoteAction.vue';
+import DictationAction from './DictationAction.vue';
 import SendAction from './SendAction.vue';
 
 defineOptions({
   name: 'MessageManagerTextBoxActions',
 });
 
+const { isDictationListening, inputMessage } = storeToRefs(useMessageManager());
 const { activeDiscussion } = storeToRefs(useDiscussions());
+const { featureFlags } = storeToRefs(useFeatureFlag());
 
 const isInDiscussion = computed(() => !!activeDiscussion.value?.uuid);
+
+const enabledDictationFeatureFlag = computed(() => {
+  return featureFlags.value.active_features.includes(
+    'weniChatsMessageDictation',
+  );
+});
+
+const shouldShowDictationAction = computed(() => {
+  if (!enabledDictationFeatureFlag.value) {
+    return false;
+  }
+
+  if (isDictationListening.value) {
+    return true;
+  }
+
+  return !inputMessage.value;
+});
 
 const emit = defineEmits<{
   toggleAudioRecording: [void];
