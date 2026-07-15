@@ -56,7 +56,7 @@ const csatLabel = computed(() => {
     gap: $unnnic-space-1;
 
     &__note {
-      font: $unnnic-font-action;
+      font: $unnnic-font-body;
       color: $unnnic-color-fg-base;
     }
   }

@@ -607,7 +607,7 @@ describe('StatusBar', () => {
 
       expect(UnnnicCallAlert).toHaveBeenCalledWith({
         props: {
-          text: 'Unable to update status, please try again.',
+          text: 'Failed to update the status. Try again.',
           icon: 'indicator',
           scheme: 'feedback-red',
           closeText: 'Close',
@@ -632,7 +632,7 @@ describe('StatusBar', () => {
 
       expect(UnnnicCallAlert).toHaveBeenCalledWith({
         props: {
-          text: 'Unable to update status, please try again.',
+          text: 'Failed to update the status. Try again.',
           icon: 'indicator',
           scheme: 'feedback-red',
           closeText: 'Close',
@@ -656,7 +656,7 @@ describe('StatusBar', () => {
 
       expect(UnnnicCallAlert).toHaveBeenCalledWith({
         props: {
-          text: 'Unable to update status, please try again.',
+          text: 'Failed to update the status. Try again.',
           icon: 'indicator',
           scheme: 'feedback-red',
           closeText: 'Close',
