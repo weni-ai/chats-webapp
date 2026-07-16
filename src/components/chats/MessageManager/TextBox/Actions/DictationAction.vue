@@ -15,7 +15,7 @@
   </UnnnicToolTip>
 </template>
 <script setup lang="ts">
-import { computed, watch } from 'vue';
+import { computed, onMounted, onUnmounted, watch } from 'vue';
 import { storeToRefs } from 'pinia';
 
 import { useSpeechRecognition } from '@/composables/useSpeechRecognition';
@@ -38,15 +38,47 @@ const voiceRecognition = useSpeechRecognition({
   interimResults: true,
 });
 
-const handleClick = () => {
-  if (isDictationListening.value) {
-    voiceRecognition.stop();
-    isDictationListening.value = false;
-    return;
-  }
+const startDictation = () => {
+  if (isDisabledInput.value || isDictationListening.value) return;
 
   voiceRecognition.start();
   isDictationListening.value = true;
+};
+
+const stopDictation = () => {
+  if (!isDictationListening.value) return;
+
+  voiceRecognition.stop();
+  isDictationListening.value = false;
+};
+
+const handleClick = () => {
+  if (isDictationListening.value) {
+    stopDictation();
+    return;
+  }
+
+  startDictation();
+};
+
+const handleKeyDown = (event: KeyboardEvent) => {
+  if (event.key === 'Escape' && isDictationListening.value) {
+    event.preventDefault();
+    stopDictation();
+    return;
+  }
+
+  const isShiftV =
+    event.shiftKey &&
+    !event.ctrlKey &&
+    !event.metaKey &&
+    !event.altKey &&
+    event.code === 'KeyV';
+
+  if (isShiftV && !isDictationListening.value) {
+    event.preventDefault();
+    startDictation();
+  }
 };
 
 const buttonIcon = computed(() => {
@@ -85,6 +117,14 @@ watch(
     }
   },
 );
+
+onMounted(() => {
+  window.addEventListener('keydown', handleKeyDown);
+});
+
+onUnmounted(() => {
+  window.removeEventListener('keydown', handleKeyDown);
+});
 </script>
 
 <style scoped lang="scss"></style>
