@@ -272,13 +272,16 @@
       "title": "Opțiuni suplimentare",
       "template_message": {
         "switch_active": "Declanșare șabloane mesaj",
-        "switch_disabled": "Declanșare șabloane mesaj"
+        "switch_disabled": "Declanșare șabloane mesaj",
+        "switch_label": "Declanșare șabloane de mesaje"
       },
       "edit_custom_fields": "Permite reprezentanților să editeze câmpurile personalizate",
       "agents_signature": {
         "tooltip": "Fiecare mesaj va afișa numele reprezentantului care a răspuns",
         "switch_active": "Afișează numele reprezentativ în mesaje",
-        "switch_disabled": "Afișează numele reprezentativ în mesaje"
+        "switch_disabled": "Afișează numele reprezentativ în mesaje",
+        "hint": "Fiecare mesaj schimbat va avea numele reprezentantului care răspunde.",
+        "switch_label": "Folosește semnătura"
       },
       "csat": {
         "custom": {
@@ -302,7 +305,12 @@
         "switch_when_waiting_label": "Trimite mesaj automat contactelor care așteaptă",
         "switch_when_start_label": "Trimite mesaj automat când începe asistența",
         "hint_when_waiting": "Trimite automat un mesaj contactelor în timp ce acestea așteaptă asistență umană în coadă.",
-        "hint_when_start": "Trimite automat un mesaj atunci când un chat este atribuit unui reprezentant. Mesajul va apărea ca și cum ar fi fost trimis de reprezentantul atribuit."
+        "hint_when_start": "Trimite automat un mesaj atunci când un chat este atribuit unui reprezentant. Mesajul va apărea ca și cum ar fi fost trimis de reprezentantul atribuit.",
+        "title": "Mesaje automate",
+        "field": {
+          "title": "Mesaj automat",
+          "placeholder": "Exemplu: Salut! Cum te pot ajuta astăzi?"
+        }
       },
       "automatic_message": {
         "switch_active": "Deschide automat mesajele",
@@ -316,7 +324,8 @@
       "required_tags": {
         "switch_active": "Solicită etichetă la sfârșitul chatului de asistență",
         "switch_disabled": "Solicită etichetă la sfârșitul chatului de asistență",
-        "tooltip": "Adaugă cel puțin o etichetă pentru a activa"
+        "tooltip": "Adaugă cel puțin o etichetă pentru a activa",
+        "switch_label": "Solicită etichete la sfârșitul asistenței umane"
       },
       "inactivity_timeout": {
         "show": {
@@ -935,7 +944,10 @@
     "successfully_updated": "Mesaj rapid actualizat",
     "error": "Eroare la setarea mesajului rapid",
     "no_suggestions": "Nu s-au găsit rezultate pentru comanda rapidă introdusă",
-    "disclaimer": "Tastează / (slash) în câmpul mesaj pentru a vedea mesajele rapide"
+    "disclaimer": "Tastează / (slash) în câmpul mesaj pentru a vedea mesajele rapide",
+    "description_new": "Mesaj rapid în sectorul {sector}",
+    "error_deleting": "Nu s-a putut șterge mesajul rapid.",
+    "successfully_deleted": "Mesaj rapid șters cu succes"
   },
   "discard": "Șterge",
   "on_boarding": {
@@ -1007,7 +1019,8 @@
     "tabs": {
       "settings": "Setări",
       "groups": "Grupuri de proiect",
-      "representatives": "Reprezentanți"
+      "representatives": "Reprezentanți",
+      "general": "General"
     },
     "custom_breaks": {
       "title": "Pauze personalizate",
@@ -1374,5 +1387,6 @@
     }
   },
   "representative": "Reprezentant",
-  "select_representative": "Selectează un reprezentant"
+  "select_representative": "Selectează un reprezentant",
+  "select": "Selectează"
 }
