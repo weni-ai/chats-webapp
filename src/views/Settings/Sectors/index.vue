@@ -26,7 +26,7 @@
     class="settings-sectors"
   >
     <p class="settings-sectors__title">
-      {{ $t('config_chats.section_sectors_title') }}
+      {{ $t('config_chats.section_sectors_title', { project: project.name }) }}
     </p>
     <section class="settings-sectors__container">
       <section class="settings-sectors__filters">
@@ -91,7 +91,7 @@ import SectorCard from './SectorCard.vue';
 
 import Rooms from '@/services/api/resources/settings/rooms';
 import { useSettings } from '@/store/modules/settings';
-
+import { useConfig } from '@/store/modules/config';
 import { handleConnectOverlay } from '@/utils/overlay';
 import { UnnnicCallAlert } from '@weni/unnnic-system';
 
@@ -107,6 +107,9 @@ const router = useRouter();
 const emit = defineEmits<{
   'open-new-sector-modal': [void];
 }>();
+
+const configStore = useConfig();
+const { project } = storeToRefs(configStore);
 
 const showDeleteSectorModal = ref(false);
 const sectorNameFilter = ref('');

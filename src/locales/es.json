@@ -57,7 +57,8 @@
     "message": {
       "save": {
         "error": "Error al eliminar fechas no laborales. Vuelve a intentarlo.",
-        "success": "Fechas no laborables eliminadas con éxito"      }
+        "success": "Fechas no laborables eliminadas con éxito"
+      }
     }
   },
   "dark_mode_intro": {
@@ -328,7 +329,8 @@
       },
       "template_message": {
         "switch_active": "Activar plantillas de mensajes",
-        "switch_disabled": "Activar plantillas de mensajes"
+        "switch_disabled": "Activar plantillas de mensajes",
+        "switch_label": "Envío de plantillas de mensajes"
       },
       "edit_custom_fields": {
         "label": "Permitir a los representantes editar campos personalizables",
@@ -337,7 +339,9 @@
       "agents_signature": {
         "tooltip": "Cada mensaje mostrará el nombre del representante que respondió",
         "switch_active": "Mostrar el nombre del representante en los mensajes",
-        "switch_disabled": "Mostrar el nombre del representante en los mensajes"
+        "switch_disabled": "Mostrar el nombre del representante en los mensajes",
+        "hint": "Cada mensaje intercambiado tendrá el nombre del agente que responde.",
+        "switch_label": "Usar firma"
       },
       "csat": {
         "custom": {
@@ -361,7 +365,12 @@
         "title": "Mensajes automatizados",
         "switch_when_waiting_label": "Enviar mensaje automático a los contactos en espera",
         "switch_when_start_label": "Enviar mensaje automático al iniciar el soporte",
-        "hint_when_waiting": "Se envía un mensaje automático a los contactos que están en la cola esperando soporte humano."
+        "hint_when_waiting": "Se envía un mensaje automático a los contactos que están en la cola esperando soporte humano.",
+        "hint_when_start": "Se envía un mensaje automático cuando un chat se asigna a un representante. En el chat, el mensaje aparece como enviado por el representante asignado.",
+        "field": {
+          "title": "Mensaje automático",
+          "placeholder": "Ejemplo: ¡Hola! ¿Cómo puedo ayudarte hoy?"
+        }
       },
       "automatic_message": {
         "switch_active": "Abrir mensajes automáticamente",
@@ -375,7 +384,8 @@
       "required_tags": {
         "switch_active": "Exigir tag al finalizar el chat de soporte",
         "switch_disabled": "Exigir tag al finalizar el chat de soporte",
-        "tooltip": "Agrega al menos una tag para activar"
+        "tooltip": "Agrega al menos una tag para activar",
+        "switch_label": "Exigir etiquetas al final del soporte humano"
       }
     }
   },
@@ -1026,7 +1036,10 @@
     "successfully_updated": "Mensaje rápido actualizado",
     "error": "Error al configurar mensaje rápido",
     "no_suggestions": "No se encontraron resultados para el atajo ingresado",
-    "disclaimer": "Escribe / (barra) en el campo de mensaje para ver los mensajes rápidos"
+    "disclaimer": "Escribe / (barra) en el campo de mensaje para ver los mensajes rápidos",
+    "description_new": "Mensaje rápido en el sector {sector}",
+    "error_deleting": "No se pudo eliminar el mensaje rápido.",
+    "successfully_deleted": "Mensaje rápido eliminado con éxito"
   },
   "discard": "Descartar",
   "on_boarding": {
@@ -1073,7 +1086,8 @@
   },
   "config_chats": {
     "title": "Configuración",
-    "section_sectors_title": "Departamentos en {project}",    "section_groups_title": "Gestión de grupos de proyectos",
+    "section_sectors_title": "Departamentos en {project}",
+    "section_groups_title": "Gestión de grupos de proyectos",
     "filter_by_sector_name": "Filtrar por nombre del sector",
     "filter_by_group_name": "Filtrar por nombre del grupo",
     "section_sectors_subtitle": "Agrega, consulta y gestiona departamentos, colas, managers y representantes dentro de tu organización.",
@@ -1081,7 +1095,8 @@
       "settings": "Configuración",
       "groups": "Grupos de proyectos",
       "sectors": "Sectores",
-      "representatives": "Representantes"
+      "representatives": "Representantes",
+      "general": "General"
     },
     "custom_breaks": {
       "title": "Pausas personalizadas",
@@ -1129,8 +1144,8 @@
         "switch_inactive": "Transferir chats en masa a otra cola o representante"
       },
       "block_transfer_to_off_agents": {
-        "switch_active": "Bloquear transferencia de chat a representantes offline",
-        "switch_inactive": "Bloquear transferencia de chat a representantes offline"
+        "switch_active": "Bloquear transferencia de chats a representantes offline",
+        "switch_inactive": "Bloquear transferencia de chats a representantes offline"
       },
       "bulk_close": {
         "switch_active": "Finalizar chats en masa",
@@ -1146,8 +1161,8 @@
       },
       "queue_prioritization": {
         "tooltip": "Esta configuración permite a los agentes definir las colas del departamento que recibirán contactos",
-        "switch_active": "Permitir que los representantes elijan sus colas dentro del departamento",
-        "switch_inactive": "Permitir que los representantes elijan sus colas dentro del departamento"
+        "switch_label": "Permitir que los representantes elijan sus colas dentro del departamento",
+        "hint": "Si está activo, el recurso será visible solo para los representantes en el módulo Live Desk."
       },
       "show_agent_status_count_timer": {
         "switch_active": "Mostrar temporizador de status para pausas personalizadas",
@@ -1499,5 +1514,6 @@
     "pending_response": {
       "tooltip": "No respondiste a este contacto"
     }
-  }
+  },
+  "select": "Seleccionar"
 }
