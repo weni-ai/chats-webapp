@@ -93,7 +93,7 @@ describe('SocketAlertBanner', () => {
                 ' to continue assisting.',
               'socket_alert_banner.connecting': 'Loading...',
               'socket_alert_banner.connected':
-                'Update completed successfully! You can continue your support.',
+                'Update completed successfully. You can now continue with your support.',
             };
             return translations[key] || key;
           },
@@ -216,7 +216,7 @@ describe('SocketAlertBanner', () => {
       expect(unnnic.unnnicCallAlert).toHaveBeenCalledWith({
         props: {
           type: 'success',
-          text: 'Update completed successfully! You can continue your support.',
+          text: 'Update completed successfully. You can now continue with your support.',
         },
       });
     });
@@ -233,7 +233,7 @@ describe('SocketAlertBanner', () => {
       expect(unnnic.unnnicCallAlert).toHaveBeenCalledWith({
         props: {
           type: 'success',
-          text: 'Update completed successfully! You can continue your support.',
+          text: 'Update completed successfully. You can now continue with your support.',
         },
       });
     });

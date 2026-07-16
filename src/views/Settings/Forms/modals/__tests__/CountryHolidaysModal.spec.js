@@ -92,7 +92,7 @@ describe('CountryHolidaysModal', () => {
       wrapper = createWrapper();
       const body = wrapper.find('.country-holidays-modal__body');
       expect(body.text()).toContain(
-        'If necessary, you can disable each of the holidays and they will be considered as a business day',
+        'If necessary, you can disable individual holidays to treat them as workdays.',
       );
     });
 
@@ -240,7 +240,7 @@ describe('CountryHolidaysModal', () => {
 
       expect(unnnic.unnnicCallAlert).toHaveBeenCalledWith({
         props: {
-          text: 'Country holidays updated successfully.',
+          text: 'Country holidays updated successfully',
           type: 'success',
         },
       });
@@ -301,7 +301,7 @@ describe('CountryHolidaysModal', () => {
 
       expect(unnnic.unnnicCallAlert).toHaveBeenCalledWith({
         props: {
-          text: 'Failed to update country holidays, please try again.',
+          text: 'Error updating country holidays. Try again.',
           type: 'error',
         },
       });
