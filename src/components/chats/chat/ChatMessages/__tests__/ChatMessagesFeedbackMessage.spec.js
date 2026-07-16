@@ -172,7 +172,7 @@ describe('ChatMessagesFeedbackMessage', () => {
       const wrapper = createWrapper({ message });
       const result = wrapper.vm.createFeedbackLabel(message);
 
-      expect(result).toBe('Eduardo transferiu o chat para Marcus');
+      expect(result).toBe('Eduardo transferido para Marcus');
     });
 
     it('should render the "by other" transfer message when requested_by differs from "from"', () => {
@@ -199,7 +199,7 @@ describe('ChatMessagesFeedbackMessage', () => {
       const wrapper = createWrapper({ message });
       const result = wrapper.vm.createFeedbackLabel(message);
 
-      expect(result).toBe('Agent1 transferiu o chat para Agent2');
+      expect(result).toBe('Agent1 transferido para Agent2');
     });
 
     it('should render the standard transfer message when requested_by is not a user', () => {
@@ -213,7 +213,7 @@ describe('ChatMessagesFeedbackMessage', () => {
       const wrapper = createWrapper({ message });
       const result = wrapper.vm.createFeedbackLabel(message);
 
-      expect(result).toBe('Agent1 transferiu o chat para Agent2');
+      expect(result).toBe('Agent1 transferido para Agent2');
     });
 
     it('should compare ids as strings (number vs string)', () => {
@@ -227,7 +227,7 @@ describe('ChatMessagesFeedbackMessage', () => {
       const wrapper = createWrapper({ message });
       const result = wrapper.vm.createFeedbackLabel(message);
 
-      expect(result).toBe('Agent1 transferiu o chat para Agent2');
+      expect(result).toBe('Agent1 transferido para Agent2');
     });
 
     it('should render the user→queue "by other" message when requested_by is a different user', () => {
@@ -257,7 +257,7 @@ describe('ChatMessagesFeedbackMessage', () => {
       const wrapper = createWrapper({ message });
       const result = wrapper.vm.createFeedbackLabel(message);
 
-      expect(result).toBe('Renata transferiu o chat para a fila Dúvidas');
+      expect(result).toBe('Renata transferido para a fila Dúvidas');
     });
 
     it('should render the standard user→queue message when requested_by is missing', () => {
@@ -270,7 +270,7 @@ describe('ChatMessagesFeedbackMessage', () => {
       const wrapper = createWrapper({ message });
       const result = wrapper.vm.createFeedbackLabel(message);
 
-      expect(result).toBe('Renata transferiu o chat para a fila Dúvidas');
+      expect(result).toBe('Renata transferido para a fila Dúvidas');
     });
 
     it('should render the queue→queue "by other" message when requested_by is a user', () => {
@@ -300,7 +300,7 @@ describe('ChatMessagesFeedbackMessage', () => {
       const result = wrapper.vm.createFeedbackLabel(message);
 
       expect(result).toBe(
-        'Foi transferido da fila Financeiro para fila Dúvidas',
+        'Transferido da fila Financeiro para a fila Dúvidas',
       );
     });
 
@@ -330,7 +330,7 @@ describe('ChatMessagesFeedbackMessage', () => {
       const wrapper = createWrapper({ message });
       const result = wrapper.vm.createFeedbackLabel(message);
 
-      expect(result).toBe('Foi transferido da fila Financeiro para Renata');
+      expect(result).toBe('Transferido da fila Financeiro para Renata');
     });
 
     it('should ignore requested_by on queue-originated transfers when it is not a user', () => {
@@ -345,7 +345,7 @@ describe('ChatMessagesFeedbackMessage', () => {
       const result = wrapper.vm.createFeedbackLabel(message);
 
       expect(result).toBe(
-        'Foi transferido da fila Financeiro para fila Dúvidas',
+        'Transferido da fila Financeiro para a fila Dúvidas',
       );
     });
   });
