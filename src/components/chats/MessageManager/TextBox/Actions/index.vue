@@ -51,7 +51,14 @@ defineOptions({
   name: 'MessageManagerTextBoxActions',
 });
 
-const { isDictationListening, inputMessage } = storeToRefs(useMessageManager());
+const {
+  isDictationListening,
+  inputMessage,
+  mediaUploadFiles,
+  audioMessage,
+  audioRecorderStatus,
+  isInternalNote,
+} = storeToRefs(useMessageManager());
 const { activeDiscussion } = storeToRefs(useDiscussions());
 const { featureFlags } = storeToRefs(useFeatureFlag());
 
@@ -74,7 +81,13 @@ const shouldShowDictationAction = computed(() => {
     return true;
   }
 
-  return !inputMessage.value;
+  return (
+    !inputMessage.value &&
+    !mediaUploadFiles.value.length &&
+    !audioMessage.value &&
+    audioRecorderStatus.value !== 'recording' &&
+    !isInternalNote.value
+  );
 });
 
 const emit = defineEmits<{
