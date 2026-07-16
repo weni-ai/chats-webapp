@@ -9,6 +9,7 @@
       type="primary"
       size="small"
       :text="buttonText"
+      :disabled="isDisabledInput"
       @click="handleClick"
     />
   </UnnnicToolTip>
@@ -29,7 +30,8 @@ defineOptions({
 const { t } = i18n.global;
 
 const messageManagerStore = useMessageManager();
-const { isDictationListening, inputMessage } = storeToRefs(messageManagerStore);
+const { isDictationListening, inputMessage, isDisabledInput } =
+  storeToRefs(messageManagerStore);
 
 const voiceRecognition = useSpeechRecognition({
   continuous: true,
