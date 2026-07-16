@@ -207,7 +207,7 @@ describe('ModalFeedback.vue', () => {
       );
       expect(callUnnnicAlert).toHaveBeenCalledWith({
         props: {
-          text: 'An error occurred while submitting feedback, please try again later!',
+          text: 'An error occurred while submitting feedback. Try again later.',
           type: 'error',
         },
         seconds: 5,

@@ -17,7 +17,7 @@ exports[`DiscartChangesModal.vue > to match snapshot 1`] = `
       </button><button data-v-d7396b6a="" data-v-7a1d255d="" class="unnnic-button unnnic-button--size-large unnnic-button--primary">
         <!---->
         <!---->
-        <!----><span data-v-d7396b6a="" class="unnnic-button__label" style="visibility: visible;" data-testid="button-label"> Discart</span>
+        <!----><span data-v-d7396b6a="" class="unnnic-button__label" style="visibility: visible;" data-testid="button-label"> Discard</span>
         <!---->
       </button></div>
   </div>
