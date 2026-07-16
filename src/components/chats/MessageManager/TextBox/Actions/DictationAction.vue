@@ -32,8 +32,6 @@ const messageManagerStore = useMessageManager();
 const { isDictationListening, inputMessage } = storeToRefs(messageManagerStore);
 
 const voiceRecognition = useSpeechRecognition({
-  // TODO: Get the language from project
-  lang: 'pt-BR',
   continuous: true,
   interimResults: true,
 });

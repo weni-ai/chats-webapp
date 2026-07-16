@@ -93,7 +93,7 @@ export function isSpeechRecognitionSupported(): boolean {
 export function useSpeechRecognition(
   options: UseSpeechRecognitionOptions = {},
 ): UseSpeechRecognitionReturn {
-  const { lang = 'en-US', continuous = true, interimResults = true } = options;
+  const { continuous = true, interimResults = true } = options;
 
   const SpeechRecognitionAPI = getSpeechRecognitionAPI();
 
@@ -203,7 +203,7 @@ export function useSpeechRecognition(
     if (!SpeechRecognitionAPI) return null;
 
     const instance = new SpeechRecognitionAPI();
-    instance.lang = lang;
+
     instance.continuous = continuous;
     instance.interimResults = interimResults;
 
