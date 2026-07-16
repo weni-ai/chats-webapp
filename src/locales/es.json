@@ -57,7 +57,8 @@
     "message": {
       "save": {
         "error": "Error al eliminar fechas no laborales. Vuelve a intentarlo.",
-        "success": "Fechas no laborables eliminadas con éxito"      }
+        "success": "Fechas no laborables eliminadas con éxito"
+      }
     }
   },
   "dark_mode_intro": {
@@ -1073,7 +1074,8 @@
   },
   "config_chats": {
     "title": "Configuración",
-    "section_sectors_title": "Departamentos en {project}",    "section_groups_title": "Gestión de grupos de proyectos",
+    "section_sectors_title": "Departamentos en {project}",
+    "section_groups_title": "Gestión de grupos de proyectos",
     "filter_by_sector_name": "Filtrar por nombre del sector",
     "filter_by_group_name": "Filtrar por nombre del grupo",
     "section_sectors_subtitle": "Agrega, consulta y gestiona departamentos, colas, managers y representantes dentro de tu organización.",
@@ -1146,8 +1148,8 @@
       },
       "queue_prioritization": {
         "tooltip": "Esta configuración permite a los agentes definir las colas del departamento que recibirán contactos",
-        "switch_active": "Permitir que los representantes elijan sus colas dentro del departamento",
-        "switch_inactive": "Permitir que los representantes elijan sus colas dentro del departamento"
+        "switch_label": "Permitir que los representantes elijan sus colas dentro del departamento",
+        "hint": "Si está activo, el recurso será visible solo para los representantes en el módulo Live Desk."
       },
       "show_agent_status_count_timer": {
         "switch_active": "Mostrar temporizador de status para pausas personalizadas",

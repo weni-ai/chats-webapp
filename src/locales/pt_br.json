@@ -1148,8 +1148,8 @@
       },
       "queue_prioritization": {
         "tooltip": "Esta configuração permite que os atendentes escolham quais das filas selecionadas do setor receberão contatos",
-        "switch_active": "Permitir que atendentes escolham suas filas dentro do setor",
-        "switch_inactive": "Permitir que atendentes escolham suas filas dentro do setor"
+        "switch_label": "Permitir que atendentes escolham suas filas dentro do setor",
+        "hint": "Se ativado, o recurso será visível apenas para os atendentes no módulo Live Desk."
       },
       "show_agent_status_count_timer": {
         "switch_active": "Mostrar temporizador de status para intervalos personalizados",

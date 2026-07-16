@@ -1056,8 +1056,8 @@
       },
       "queue_prioritization": {
         "tooltip": "Această setare permite agenților să aleagă care dintre cozile selectate ale departamentului vor primi contactele",
-        "switch_active": "Permite reprezentanților să aleagă cozile lor din cadrul departamentului",
-        "switch_inactive": "Permite reprezentanților să aleagă cozile lor din cadrul departamentului"
+        "switch_label": "Permite reprezentanților să aleagă cozile lor din cadrul departamentului",
+        "hint": "Dacă este activat, resursa va fi vizibilă doar pentru reprezentanții din modulul Live Desk."
       },
       "restrict_offline_agents": {
         "switch_label": "Permite interacțiuni doar pentru reprezentanții online",
