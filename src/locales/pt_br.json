@@ -1143,12 +1143,12 @@
       },
       "bulk_transfer": {
         "tooltip": "Esta função permite que os atendentes transfiram diferentes contatos de uma só vez",
-        "switch_active": "Transferir chat em massa para outra fila ou atendente",
-        "switch_inactive": "Transferir chat em massa para outra fila ou atendente"
+        "switch_active": "Transferir chats em massa para outra fila ou atendente",
+        "switch_inactive": "Transferir chats em massa para outra fila ou atendente"
       },
       "block_transfer_to_off_agents": {
-        "switch_active": "Bloquear transferência de chat para atendentes offline",
-        "switch_inactive": "Bloquear transferência de chat para atendentes offline"
+        "switch_active": "Bloquear transferência de chats para atendentes offline",
+        "switch_inactive": "Bloquear transferência de chats para atendentes offline"
       },
       "bulk_close": {
         "switch_active": "Encerrar chats em massa",
