@@ -33,6 +33,7 @@
 import { computed } from 'vue';
 import { storeToRefs } from 'pinia';
 
+import { isSpeechRecognitionSupported } from '@/composables/useSpeechRecognition';
 import { useDiscussions } from '@/store/modules/chats/discussions';
 import { useMessageManager } from '@/store/modules/chats/messageManager';
 import { useFeatureFlag } from '@/store/modules/featureFlag';
@@ -56,6 +57,8 @@ const { featureFlags } = storeToRefs(useFeatureFlag());
 
 const isInDiscussion = computed(() => !!activeDiscussion.value?.uuid);
 
+const isSupportedVoiceRecognition = isSpeechRecognitionSupported();
+
 const enabledDictationFeatureFlag = computed(() => {
   return featureFlags.value.active_features.includes(
     'weniChatsMessageDictation',
@@ -63,7 +66,7 @@ const enabledDictationFeatureFlag = computed(() => {
 });
 
 const shouldShowDictationAction = computed(() => {
-  if (!enabledDictationFeatureFlag.value) {
+  if (!enabledDictationFeatureFlag.value || !isSupportedVoiceRecognition) {
     return false;
   }
 

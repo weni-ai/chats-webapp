@@ -14,8 +14,10 @@
   </UnnnicToolTip>
 </template>
 <script setup lang="ts">
-import { computed } from 'vue';
+import { computed, watch } from 'vue';
 import { storeToRefs } from 'pinia';
+
+import { useSpeechRecognition } from '@/composables/useSpeechRecognition';
 import { useMessageManager } from '@/store/modules/chats/messageManager';
 
 import i18n from '@/plugins/i18n';
@@ -27,10 +29,24 @@ defineOptions({
 const { t } = i18n.global;
 
 const messageManagerStore = useMessageManager();
-const { isDictationListening } = storeToRefs(messageManagerStore);
+const { isDictationListening, inputMessage } = storeToRefs(messageManagerStore);
+
+const voiceRecognition = useSpeechRecognition({
+  // TODO: Get the language from project
+  lang: 'pt-BR',
+  continuous: true,
+  interimResults: true,
+});
 
 const handleClick = () => {
-  isDictationListening.value = !isDictationListening.value;
+  if (isDictationListening.value) {
+    voiceRecognition.stop();
+    isDictationListening.value = false;
+    return;
+  }
+
+  voiceRecognition.start();
+  isDictationListening.value = true;
 };
 
 const buttonIcon = computed(() => {
@@ -53,6 +69,22 @@ const buttonText = computed(() => {
   }
   return t('message_dictation.button.activate');
 });
+
+watch(
+  () => voiceRecognition.result.value,
+  (newResult) => {
+    inputMessage.value = newResult;
+  },
+);
+
+watch(
+  () => voiceRecognition.error.value,
+  (recognitionError) => {
+    if (recognitionError) {
+      isDictationListening.value = false;
+    }
+  },
+);
 </script>
 
 <style scoped lang="scss"></style>
