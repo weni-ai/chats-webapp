@@ -1374,5 +1374,15 @@
     }
   },
   "representative": "Reprezentant",
-  "select_representative": "Selectează un reprezentant"
+  "select_representative": "Selectează un reprezentant",
+  "message_dictation": {
+    "tooltip": {
+      "activate": "Activare mod vocal (shift + V)",
+      "stop": "Oprire mod vocal (esc)"
+    },
+    "button": {
+      "activate": "Mod vocal",
+      "stop": "Oprire"
+    }
+  }
 }

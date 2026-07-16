@@ -36,6 +36,7 @@ const {
   isSuggestionBoxOpen,
   audioRecorderStatus,
   mediaUploadFiles,
+  isDictationListening,
 } = storeToRefs(useMessageManager());
 
 const { isLoading: isAiLoading } = storeToRefs(useAiTextImprovement());
@@ -50,7 +51,8 @@ const isDisabled = computed(
   () =>
     isValidInputMessage.value ||
     mediaUploadFiles.value.length > 0 ||
-    isInternalNote.value,
+    isInternalNote.value ||
+    isDictationListening.value,
 );
 
 const isPressed = computed(() =>

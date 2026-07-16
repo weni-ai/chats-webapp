@@ -1490,5 +1490,15 @@
     "pending_response": {
       "tooltip": "You did not respond to this contact"
     }
+  },
+  "message_dictation": {
+    "tooltip": {
+      "activate": "Activate voice mode (shift + V)",
+      "stop": "Stop voice mode (esc)"
+    },
+    "button": {
+      "activate": "Voice mode",
+      "stop": "Stop"
+    }
   }
 }
