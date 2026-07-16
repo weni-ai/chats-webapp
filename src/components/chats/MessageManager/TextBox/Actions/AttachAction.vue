@@ -51,6 +51,7 @@ const {
   audioMessage,
   mediaUploadFiles,
   uploadFilesLimit,
+  isDictationListening,
 } = storeToRefs(messageManager);
 
 const { activeDiscussion } = storeToRefs(useDiscussions());
@@ -65,7 +66,10 @@ const isValidInputMessage = computed(() =>
 );
 
 const isDisabled = computed(() => {
-  if (!isEnabledInternalNotesMedias.value && isInternalNote.value) {
+  if (
+    (!isEnabledInternalNotesMedias.value && isInternalNote.value) ||
+    isDictationListening.value
+  ) {
     return true;
   }
 
