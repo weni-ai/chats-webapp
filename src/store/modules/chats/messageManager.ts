@@ -10,6 +10,8 @@ import { useConfig } from '../config';
 
 import i18n from '@/plugins/i18n';
 
+import moduleStorage from '@/utils/storage';
+
 export const useMessageManager = defineStore('messageManager', () => {
   const LIMIT_UPLOAD_FILES = 5;
   const LIMIT_UPLOAD_FILES_INTERNAL_NOTE = 10;
@@ -37,12 +39,14 @@ export const useMessageManager = defineStore('messageManager', () => {
   const { activeDiscussion } = storeToRefs(discussionsStore);
   const discussionMessagesStore = useDiscussionMessages();
   const configStore = useConfig();
-  const { project, status: agentStatus } = storeToRefs(configStore);
+  const { project } = storeToRefs(configStore);
 
   const isDisabledInput = computed(() => {
     return (
       project.value.config?.restrict_offline_agents &&
-      agentStatus.value !== 'ONLINE'
+      moduleStorage.getItem(`statusAgent-${project.value.uuid}`, '', {
+        useSession: true,
+      }) === 'ONLINE'
     );
   });
 
