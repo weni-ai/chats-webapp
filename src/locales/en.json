@@ -1512,5 +1512,8 @@
     "pending_response": {
       "tooltip": "You did not respond to this contact"
     }
+  },
+  "mass_message": {
+    "title": "Mass message"
   }
 }

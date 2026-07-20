@@ -48,6 +48,17 @@
           />
 
           <UnnnicButton
+            v-if="showBulkMessageButton || !isViewMode"
+            class="view-options__item"
+            type="tertiary"
+            size="small"
+            iconLeft="brand_awareness"
+            :text="$t('mass_message.title')"
+            @mousedown.prevent
+            @click="openBulkMessage"
+          />
+
+          <UnnnicButton
             v-if="!isViewMode"
             class="view-options__item"
             type="tertiary"
@@ -144,9 +155,13 @@ import { useRouter } from 'vue-router';
 
 import ViewButton from './ViewButton.vue';
 
+import { useProfile } from '@/store/modules/profile';
+import { useFeatureFlag } from '@/store/modules/featureFlag';
+
 import { PREFERENCES_SOUND } from '@/services/api/websocket/soundNotification.js';
 import { moduleStorage } from '@/utils/storage';
 import { useTheme } from '@weni/unnnic-system';
+import { storeToRefs } from 'pinia';
 
 defineOptions({
   name: 'ViewOptions',
@@ -168,9 +183,15 @@ withDefaults(
 const emit = defineEmits<{
   'open-flows-trigger': [void];
   'show-quick-messages': [void];
+  'open-bulk-message': [void];
 }>();
 
 const { push } = useRouter();
+
+const profileStore = useProfile();
+const { me } = storeToRefs(profileStore);
+const featureFlagStore = useFeatureFlag();
+const { featureFlags } = storeToRefs(featureFlagStore);
 
 const VIEW_OPTIONS_NEW_SEEN_KEY = 'viewOptionsNewSeen';
 
@@ -180,6 +201,19 @@ const showNewBadge = ref(false);
 
 const { resolvedTheme, setTheme } = useTheme();
 const isDark = computed(() => resolvedTheme.value === 'dark');
+
+const showBulkMessageButton = computed(() => {
+  const ADMIN_ROLE = 1;
+  return (
+    me.value?.project_permission_role === ADMIN_ROLE &&
+    featureFlags.value.active_features.includes('weniChatsBulkMessage')
+  );
+});
+
+function openBulkMessage() {
+  emit('open-bulk-message');
+  isOpen.value = false;
+}
 
 function handleTriggerClick() {
   if (!isOpen.value && showNewBadge.value) {
