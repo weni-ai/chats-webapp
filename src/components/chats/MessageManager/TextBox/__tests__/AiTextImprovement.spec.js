@@ -12,6 +12,7 @@ import { createPinia, setActivePinia } from 'pinia';
 
 import { useAiTextImprovement } from '@/store/modules/chats/aiTextImprovement';
 import { useMessageManager } from '@/store/modules/chats/messageManager';
+import { useConfig } from '@/store/modules/config';
 import i18n from '@/plugins/i18n';
 
 vi.mock('@/services/api/resources/chats/aiTextImprovement', () => ({
@@ -97,6 +98,8 @@ const createWrapper = (options = {}) => {
     isInternalNote = false,
     isLoading = false,
     showNewTag = true,
+    restrictOfflineAgents = false,
+    agentStatus = 'ONLINE',
   } = options;
 
   const pinia = createPinia();
@@ -109,6 +112,14 @@ const createWrapper = (options = {}) => {
   const msgStore = useMessageManager();
   msgStore.inputMessage = inputMessage;
   msgStore.isInternalNote = isInternalNote;
+
+  const configStore = useConfig();
+  configStore.project = {
+    name: '',
+    config: { restrict_offline_agents: restrictOfflineAgents },
+    uuid: '',
+  };
+  configStore.status = agentStatus;
 
   return mount(AiTextImprovement, {
     global: {
@@ -162,11 +173,27 @@ describe('AiTextImprovement', () => {
       expect(button.attributes('data-disabled')).toBe('true');
     });
 
-    it('should show disabled tooltip when isInternalNote is true and has text', () => {
+    it('should show internal note tooltip when isInternalNote is true and has text', () => {
       const wrapper = createWrapper({
         inputMessage: 'hello',
         isInternalNote: true,
       });
+
+      expect(wrapper.vm.tooltipText).toBe(
+        'ai_text_improvement.tooltip_internal_note',
+      );
+    });
+
+    it('should show enabled tooltip when inputMessage has text', () => {
+      const wrapper = createWrapper({ inputMessage: 'hello' });
+
+      expect(wrapper.vm.tooltipText).toBe(
+        'ai_text_improvement.tooltip_enabled',
+      );
+    });
+
+    it('should show disabled tooltip when inputMessage is empty', () => {
+      const wrapper = createWrapper({ inputMessage: '' });
 
       expect(wrapper.vm.tooltipText).toBe(
         'ai_text_improvement.tooltip_disabled',
