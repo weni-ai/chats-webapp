@@ -199,7 +199,7 @@ section.chats-layout {
     position: relative;
 
     padding-top: $viewModeHeaderHeight;
-    grid-template-rows: calc(100% - $viewModeHeaderHeight);
+    grid-template-rows: calc(100%);
   }
 
   .sidebar {

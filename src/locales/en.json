@@ -1142,8 +1142,8 @@
         "switch_inactive": "Transfer chats in bulk to another queue or representative"
       },
       "block_transfer_to_off_agents": {
-        "switch_active": "Block chat transfer to offline representatives",
-        "switch_inactive": "Block chat transfer to offline representatives"
+        "switch_active": "Block chats transfer to offline representatives",
+        "switch_inactive": "Block chats transfer to offline representatives"
       },
       "bulk_close": {
         "switch_active": "End chats in bulk",

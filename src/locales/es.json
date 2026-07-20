@@ -1144,8 +1144,8 @@
         "switch_inactive": "Transferir chats en masa a otra cola o representante"
       },
       "block_transfer_to_off_agents": {
-        "switch_active": "Bloquear transferencia de chat a representantes offline",
-        "switch_inactive": "Bloquear transferencia de chat a representantes offline"
+        "switch_active": "Bloquear transferencia de chats a representantes offline",
+        "switch_inactive": "Bloquear transferencia de chats a representantes offline"
       },
       "bulk_close": {
         "switch_active": "Finalizar chats en masa",
