@@ -33,6 +33,12 @@ vi.spyOn(Sector, 'update').mockResolvedValue({
 
 vi.spyOn(QuickMessage, 'delete').mockResolvedValue({});
 
+vi.mock('@/utils/hostBridge', () => ({
+  emitToHost: vi.fn(),
+}));
+
+import { emitToHost } from '@/utils/hostBridge';
+
 const createWrapper = (props = {}) => {
   return mount(QuickMessageList, {
     props: {
@@ -108,5 +114,13 @@ describe('ListSectorMessages', () => {
     await saveSector();
     await flushPromises();
     expect(Sector.update).toHaveBeenCalled();
+  });
+
+  it('redirectToIntegrations emits redirect event to the host', () => {
+    wrapper.vm.redirectToIntegrations();
+
+    expect(emitToHost).toHaveBeenCalledWith('redirect', {
+      path: 'integrations:apps/chatgpt/details',
+    });
   });
 });

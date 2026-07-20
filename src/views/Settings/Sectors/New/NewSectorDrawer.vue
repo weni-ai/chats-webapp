@@ -106,6 +106,7 @@ import isMobile from 'is-mobile';
 import Unnnic from '@weni/unnnic-system';
 
 import { handleConnectOverlay } from '@/utils/overlay';
+import { emitToHost } from '@/utils/hostBridge';
 
 export default {
   name: 'NewSectorDrawer',
@@ -282,10 +283,7 @@ export default {
 
         this.sectors.unshift(createdSector);
 
-        window.parent.postMessage(
-          { event: 'addSector', data: createdSector },
-          '*',
-        );
+        emitToHost('addSector', { data: createdSector });
 
         this.sector = { ...this.sector, ...createdSector };
 

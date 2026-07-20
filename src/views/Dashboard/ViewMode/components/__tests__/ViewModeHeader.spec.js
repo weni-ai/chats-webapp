@@ -116,6 +116,7 @@ describe('ViewModeHeader', () => {
 
       await wrapper.vm.closeViewMode();
 
+      expect(wrapper.vm.$router.push).not.toHaveBeenCalled();
       expect(postMessageSpy).toHaveBeenCalledWith(
         { event: 'redirect', path: 'insights:init' },
         '*',

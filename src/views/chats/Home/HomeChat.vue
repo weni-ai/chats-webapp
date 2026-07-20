@@ -415,16 +415,16 @@ export default {
 
 <style lang="scss" scoped>
 .home-chat {
-  padding-bottom: $unnnic-spacing-xs;
+  padding-bottom: $unnnic-space-2;
 
   display: flex;
   flex-direction: column;
 
   height: 100%;
-  max-height: 100vh;
+  max-height: 100%;
 
   .get-chat-button {
-    margin: auto $unnnic-spacing-inline-sm 0;
+    margin: auto $unnnic-space-4 0;
   }
 }
 </style>
