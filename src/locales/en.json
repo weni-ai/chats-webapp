@@ -1519,6 +1519,23 @@
       "title": "Send mass message",
       "shipping_history": "Shipping history",
       "no_shipping_history": "No message was sent",
+      "recipients": {
+        "title": "Recipients",
+        "title_tooltip": "This message will be delivered to all contacts matching the selected filters. Use this feature for operational communications such as delays, incidents, updates.",
+        "select_the_contacts_status": "Select the contacts status",
+        "contacts_in_service": "Contacts in service",
+        "contacts_waiting_for_service": "Contacts waiting for service",
+        "filters": {
+          "queues": {
+            "label": "Select a queue",
+            "all": "All queues"
+          },
+          "representatives": {
+            "label": "Select a representative",
+            "all": "All representatives"
+          }
+        }
+      },
       "send": "{count, plural, =0 {Send to all (0 contacts)} one {Send to all ({count} contact)} other {Send to all ({count} contacts)}}"
     }
   }

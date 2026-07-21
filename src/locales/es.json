@@ -1522,6 +1522,23 @@
       "title": "Enviar mensaje en masa",
       "shipping_history": "Historial de envíos",
       "no_shipping_history": "No se envió ningún mensaje",
+      "recipients": {
+        "title": "Destinatarios",
+        "title_tooltip": "Este mensaje se entregará a todos los contactos que coincidan con los filtros seleccionados. Usa esta función para comunicaciones operativas como retrasos, incidentes, actualizaciones.",
+        "select_the_contacts_status": "Selecciona el estado de los contactos",
+        "contacts_in_service": "Contactos en atención",
+        "contacts_waiting_for_service": "Contactos esperando atención",
+        "filters": {
+          "queues": {
+            "label": "Selecciona una cola",
+            "all": "Todas las colas"
+          },
+          "representatives": {
+            "label": "Selecciona un representante",
+            "all": "Todos los representantes"
+          }
+        }
+      },
       "send": "{count, plural, =0 {Enviar a todos (0 contactos)} one {Enviar a todos ({count} contacto)} other {Enviar a todos ({count} contactos)}}"
     }
   }

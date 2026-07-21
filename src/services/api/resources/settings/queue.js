@@ -55,12 +55,13 @@ export default {
     return response.data;
   },
 
-  async listByProject() {
+  async listByProject({ limit, offset } = {}) {
     const response = await http.get('/queue/', {
       params: {
         project: getProject(),
         ordering: '-created_on',
-        limit: 1000,
+        offset: offset || 0,
+        limit: limit || 1000,
       },
     });
     return response.data;
