@@ -1390,6 +1390,12 @@
   "select_representative": "Selectează un reprezentant",
   "select": "Selectează",
   "mass_message": {
-    "title": "Mesaj în masă"
+    "title": "Mesaj în masă",
+    "form": {
+      "title": "Trimite mesaj în masă",
+      "shipping_history": "Istoric trimiteri",
+      "no_shipping_history": "Niciun mesaj nu a fost trimis",
+      "send": "{count, plural, =0 {Trimite tuturor (0 contacte)} one {Trimite tuturor ({count} contact)} few {Trimite tuturor ({count} contacte)} other {Trimite tuturor ({count} de contacte)}}"
+    }
   }
 }

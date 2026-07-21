@@ -1517,6 +1517,12 @@
   },
   "select": "Seleccionar",
   "mass_message": {
-    "title": "Mensaje en masa"
+    "title": "Mensaje en masa",
+    "form": {
+      "title": "Enviar mensaje en masa",
+      "shipping_history": "Historial de envíos",
+      "no_shipping_history": "No se envió ningún mensaje",
+      "send": "{count, plural, =0 {Enviar a todos (0 contactos)} one {Enviar a todos ({count} contacto)} other {Enviar a todos ({count} contactos)}}"
+    }
   }
 }
