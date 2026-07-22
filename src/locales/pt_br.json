@@ -329,7 +329,8 @@
       },
       "template_message": {
         "switch_active": "Disparar templates de mensagens",
-        "switch_disabled": "Disparar templates de mensagens"
+        "switch_disabled": "Disparar templates de mensagens",
+        "switch_label": "Disparo de modelos de mensagens"
       },
       "edit_custom_fields": {
         "label": "Permitir que atendentes editem campos customizáveis",
@@ -338,7 +339,9 @@
       "agents_signature": {
         "tooltip": "Cada mensagem exibirá o nome do atendente que respondeu",
         "switch_active": "Exibir nome do atendente nas mensagens",
-        "switch_disabled": "Exibir nome do atendente nas mensagens"
+        "switch_disabled": "Exibir nome do atendente nas mensagens",
+        "hint": "Cada mensagem trocada terá o nome do agente que está respondendo.",
+        "switch_label": "Usar assinatura"
       },
       "csat": {
         "custom": {
@@ -370,7 +373,19 @@
       "required_tags": {
         "switch_active": "Exigir tag ao finalizar o suporte",
         "switch_disabled": "Exigir tag ao finalizar o suporte",
-        "tooltip": "Adicione pelo menos uma tag para ativar"
+        "tooltip": "Adicione pelo menos uma tag para ativar",
+        "switch_label": "Exigir tags ao final do atendimento humano"
+      },
+      "automated_message": {
+        "title": "Mensagens automatizadas",
+        "switch_when_waiting_label": "Enviar mensagem automática para contatos na fila de espera",
+        "switch_when_start_label": "Enviar mensagem automática quando o atendimento começar",
+        "hint_when_waiting": "Envia automaticamente uma mensagem para os contatos enquanto aguardam atendimento humano na fila.",
+        "hint_when_start": "Envia automaticamente uma mensagem quando um chat é atribuído a um atendente. A mensagem aparece como se tivesse sido enviada pelo atendente.",
+        "field": {
+          "title": "Mensagem automática",
+          "placeholder": "Exemplo: Olá! Como posso ajudar você hoje?"
+        }
       }
     }
   },
@@ -1083,7 +1098,8 @@
       "settings": "Configurações",
       "groups": "Grupos do projeto",
       "sectors": "Setores",
-      "representatives": "Atendentes"
+      "representatives": "Atendentes",
+      "general": "Geral"
     },
     "custom_breaks": {
       "title": "Pausas personalizadas",
@@ -1127,12 +1143,12 @@
       },
       "bulk_transfer": {
         "tooltip": "Esta função permite que os atendentes transfiram diferentes contatos de uma só vez",
-        "switch_active": "Transferir chat em massa para outra fila ou atendente",
-        "switch_inactive": "Transferir chat em massa para outra fila ou atendente"
+        "switch_active": "Transferir chats em massa para outra fila ou atendente",
+        "switch_inactive": "Transferir chats em massa para outra fila ou atendente"
       },
       "block_transfer_to_off_agents": {
-        "switch_active": "Bloquear transferência de chat para atendentes offline",
-        "switch_inactive": "Bloquear transferência de chat para atendentes offline"
+        "switch_active": "Bloquear transferência de chats para atendentes offline",
+        "switch_inactive": "Bloquear transferência de chats para atendentes offline"
       },
       "bulk_close": {
         "switch_active": "Encerrar chats em massa",
@@ -1148,8 +1164,8 @@
       },
       "queue_prioritization": {
         "tooltip": "Esta configuração permite que os atendentes escolham quais das filas selecionadas do setor receberão contatos",
-        "switch_active": "Permitir que atendentes escolham suas filas dentro do setor",
-        "switch_inactive": "Permitir que atendentes escolham suas filas dentro do setor"
+        "switch_label": "Permitir que atendentes escolham suas filas dentro do setor",
+        "hint": "Se ativado, o recurso será visível apenas para os atendentes no módulo Live Desk."
       },
       "show_agent_status_count_timer": {
         "switch_active": "Mostrar temporizador de status para intervalos personalizados",
