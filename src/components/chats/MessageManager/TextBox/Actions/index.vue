@@ -33,6 +33,7 @@
 import { computed } from 'vue';
 import { storeToRefs } from 'pinia';
 
+import { isSpeechRecognitionSupported } from '@/composables/useSpeechRecognition';
 import { useDiscussions } from '@/store/modules/chats/discussions';
 import { useMessageManager } from '@/store/modules/chats/messageManager';
 import { useFeatureFlag } from '@/store/modules/featureFlag';
@@ -50,11 +51,20 @@ defineOptions({
   name: 'MessageManagerTextBoxActions',
 });
 
-const { isDictationListening, inputMessage } = storeToRefs(useMessageManager());
+const {
+  isDictationListening,
+  inputMessage,
+  mediaUploadFiles,
+  audioMessage,
+  audioRecorderStatus,
+  isInternalNote,
+} = storeToRefs(useMessageManager());
 const { activeDiscussion } = storeToRefs(useDiscussions());
 const { featureFlags } = storeToRefs(useFeatureFlag());
 
 const isInDiscussion = computed(() => !!activeDiscussion.value?.uuid);
+
+const isSupportedVoiceRecognition = isSpeechRecognitionSupported();
 
 const enabledDictationFeatureFlag = computed(() => {
   return featureFlags.value.active_features.includes(
@@ -63,7 +73,7 @@ const enabledDictationFeatureFlag = computed(() => {
 });
 
 const shouldShowDictationAction = computed(() => {
-  if (!enabledDictationFeatureFlag.value) {
+  if (!enabledDictationFeatureFlag.value || !isSupportedVoiceRecognition) {
     return false;
   }
 
@@ -71,7 +81,13 @@ const shouldShowDictationAction = computed(() => {
     return true;
   }
 
-  return !inputMessage.value;
+  return (
+    !inputMessage.value &&
+    !mediaUploadFiles.value.length &&
+    !audioMessage.value &&
+    audioRecorderStatus.value !== 'recording' &&
+    !isInternalNote.value
+  );
 });
 
 const emit = defineEmits<{

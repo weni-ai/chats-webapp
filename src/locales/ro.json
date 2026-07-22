@@ -492,6 +492,7 @@
       "default": "A apărut o eroare. Încearcă mai târziu."
     },
     "message_input_placeholder": "Scrie mesajul tău sau / pentru a activa mesajele rapide",
+    "message_input_placeholder_with_voice_mode": "Scrie sau folosește modul vocal",
     "message_input_disabled_description": "Schimbă-ți statusul în online pentru a continua această conversație",
     "search_contact": "Caută contact",
     "search_contact_placeholder": "Caută contact după nume, telefon sau ID tichet",
@@ -945,6 +946,8 @@
     "error": "Eroare la setarea mesajului rapid",
     "no_suggestions": "Nu s-au găsit rezultate pentru comanda rapidă introdusă",
     "disclaimer": "Tastează / (slash) în câmpul mesaj pentru a vedea mesajele rapide",
+    "action_open": "Deschide mesajele rapide (/)",
+    "action_close": "Închide mesajele rapide",
     "description_new": "Mesaj rapid în sectorul {sector}",
     "error_deleting": "Nu s-a putut șterge mesajul rapid.",
     "successfully_deleted": "Mesaj rapid șters cu succes"
