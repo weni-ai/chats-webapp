@@ -1515,5 +1515,15 @@
       "tooltip": "No respondiste a este contacto"
     }
   },
+  "message_dictation": {
+    "tooltip": {
+      "activate": "Activar modo de voz (shift + V)",
+      "stop": "Detener modo de voz (esc)"
+    },
+    "button": {
+      "activate": "Modo de voz",
+      "stop": "Detener"
+    }
+  },
   "select": "Seleccionar"
 }

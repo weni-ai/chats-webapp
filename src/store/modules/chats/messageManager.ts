@@ -25,6 +25,8 @@ export const useMessageManager = defineStore('messageManager', () => {
   const isCopilotOpen = ref(false);
   const isEmojiPickerOpen = ref(false);
 
+  const isDictationListening = ref(false);
+
   // This could be implemented in the future; the code addresses the scenario, but the feature is currently disabled.
   const replyMessage = ref(null);
 
@@ -236,6 +238,8 @@ export const useMessageManager = defineStore('messageManager', () => {
     isAudioRecorderVisible,
     uploadFilesLimit,
     isDisabledInput,
+
+    isDictationListening,
 
     sendRoomMessage,
     sendMediasMessage,
