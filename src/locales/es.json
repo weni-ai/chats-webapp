@@ -545,6 +545,7 @@
       "default": "Se produjo un error. Vuelve a intentarlo más tarde."
     },
     "message_input_placeholder": "Escribe tu mensaje o / para activar mensajes rápidos",
+    "message_input_placeholder_with_voice_mode": "Escribe o usa el modo de voz",
     "message_input_disabled_description": "Cambia tu status a online para continuar esta conversación",
     "message_input_floating_actions": {
       "copy": "Copiar contenido escrito",
@@ -1039,7 +1040,9 @@
     "disclaimer": "Escribe / (barra) en el campo de mensaje para ver los mensajes rápidos",
     "description_new": "Mensaje rápido en el sector {sector}",
     "error_deleting": "No se pudo eliminar el mensaje rápido.",
-    "successfully_deleted": "Mensaje rápido eliminado con éxito"
+    "successfully_deleted": "Mensaje rápido eliminado con éxito",
+    "action_open": "Abrir mensajes rápidos (/)",
+    "action_close": "Cerrar mensajes rápidos"
   },
   "discard": "Descartar",
   "on_boarding": {

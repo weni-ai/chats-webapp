@@ -10,6 +10,7 @@
       size="small"
       :text="buttonText"
       :disabled="isDisabledInput"
+      :pressed="isDictationListening"
       @click="handleClick"
     />
   </UnnnicToolTip>
