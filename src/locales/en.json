@@ -1519,6 +1519,8 @@
       "title": "Send mass message",
       "shipping_history": "Shipping history",
       "no_shipping_history": "No message was sent",
+      "no_contacts_filtered_alert": "No contacts match the selected filters. Try adjusting your filters.",
+      "contacts_count_disclaimer": "{count, plural, one {This message will be sent to {count} contact. The number of recipients may change during delivery due to conversation transfers, conversation closures, or interactions taking place simultaneously.} other {This message will be sent to {count} contacts. The number of recipients may change during delivery due to conversation transfers, conversation closures, or interactions taking place simultaneously.}}",
       "recipients": {
         "title": "Recipients",
         "title_tooltip": "This message will be delivered to all contacts matching the selected filters. Use this feature for operational communications such as delays, incidents, updates.",

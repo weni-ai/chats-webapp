@@ -27,34 +27,25 @@
           :tooltip="{ text: $t('mass_message.form.recipients.title_tooltip') }"
         />
 
-        <UnnnicCheckboxGroup
-          :label="$t('mass_message.form.recipients.select_the_contacts_status')"
-        >
-          <section class="bulk-message-form__recipients-status">
-            <UnnnicCheckbox
-              :label="$t('mass_message.form.recipients.contacts_in_service')"
-              :modelValue="selectedContactsStatus.includes('ongoing')"
-              @update:model-value="
-                handleSelectedContactsStatusUpdate('ongoing')
-              "
-            />
-            <UnnnicCheckbox
-              :label="
-                $t('mass_message.form.recipients.contacts_waiting_for_service')
-              "
-              :modelValue="selectedContactsStatus.includes('waiting')"
-              @update:model-value="
-                handleSelectedContactsStatusUpdate('waiting')
-              "
-            />
-          </section>
-        </UnnnicCheckboxGroup>
+        <ContactsStatus
+          :status="selectedContactsStatus"
+          @update:status="selectedContactsStatus = $event"
+        />
 
         <SelectFilters
           :queues="selectedQueues"
           :representatives="selectedRepresentatives"
           @update:queues="selectedQueues = $event"
           @update:representatives="selectedRepresentatives = $event"
+        />
+
+        <UnnnicDisclaimer
+          v-if="contactsCount > 0"
+          :description="
+            $t('mass_message.form.contacts_count_disclaimer', {
+              count: contactsCount,
+            })
+          "
         />
       </section>
     </main>
@@ -68,7 +59,7 @@
       />
       <UnnnicButton
         class="bulk-message-form__footer-button"
-        :text="$t('mass_message.form.send', { count: 0 })"
+        :text="$t('mass_message.form.send', { count: contactsCount })"
         :disabled="!validForm"
         @click="handleSend"
       />
@@ -77,10 +68,16 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref } from 'vue';
+import { computed, onMounted, ref, watch } from 'vue';
 import { watchDebounced } from '@vueuse/core';
+import { UnnnicCallAlert, UnnnicDisclaimer } from '@weni/unnnic-system';
 
+import ContactsStatus from './ContactsStatus.vue';
 import SelectFilters from './SelectFilters.vue';
+
+import BulkMessageService from '@/services/api/resources/chats/bulkMessage';
+
+import i18n from '@/plugins/i18n';
 
 defineOptions({
   name: 'BulkMessage',
@@ -89,6 +86,8 @@ defineOptions({
 const emit = defineEmits<{
   close: [void];
 }>();
+
+const { t } = i18n.global;
 
 const selectedContactsStatus = ref<string[]>(['ongoing', 'waiting']);
 const selectedQueues = ref<string[]>(['all']);
@@ -100,13 +99,7 @@ const filtersForm = computed(() => ({
   agents: selectedRepresentatives.value,
 }));
 
-watchDebounced(
-  filtersForm,
-  (newFilters) => {
-    console.log('TODO: handle filters form change');
-  },
-  { debounce: 2000, deep: true },
-);
+const contactsCount = ref<number>(0);
 
 const validForm = computed(() => {
   // TODO: Implement form validation
@@ -118,21 +111,42 @@ const handleShippingHistory = () => {
   console.log('TODO:handleShippingHistory');
 };
 
-const handleSelectedContactsStatusUpdate = (status: string) => {
-  if (selectedContactsStatus.value.includes(status)) {
-    selectedContactsStatus.value = selectedContactsStatus.value.filter(
-      (s) => s !== status,
-    );
-  } else {
-    selectedContactsStatus.value.push(status);
-  }
-};
-
 const handleSend = () => {
   console.log('TODO: handleSend');
 };
 
-const getContactsCount = () => {};
+const getContactsCount = async () => {
+  try {
+    console.log('filtersForm', filtersForm.value);
+    const { count } = await BulkMessageService.countRooms(filtersForm.value);
+    contactsCount.value = count;
+  } catch (error) {
+    console.error('Error getting contacts count', error);
+  }
+};
+
+watchDebounced(
+  filtersForm,
+  () => {
+    getContactsCount();
+  },
+  { debounce: 1500, deep: true },
+);
+
+watch(contactsCount, () => {
+  if (contactsCount.value === 0) {
+    UnnnicCallAlert({
+      props: {
+        text: t('mass_message.form.no_contacts_filtered_alert'),
+        type: 'error',
+      },
+    });
+  }
+});
+
+onMounted(() => {
+  getContactsCount();
+});
 </script>
 <style scoped lang="scss">
 .bulk-message-form {
@@ -173,13 +187,6 @@ const getContactsCount = () => {};
       :deep(.unnnic-label__label) {
         font: $unnnic-font-display-4;
       }
-    }
-
-    &-status {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      flex: 1;
-      gap: $unnnic-space-6;
     }
   }
 

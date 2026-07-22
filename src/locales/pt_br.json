@@ -1524,6 +1524,8 @@
       "title": "Enviar mensagem em massa",
       "shipping_history": "Histórico de envios",
       "no_shipping_history": "Nenhuma mensagem foi enviada",
+      "no_contacts_filtered_alert": "Nenhum contato corresponde aos filtros selecionados. Tente ajustar os filtros.",
+      "contacts_count_disclaimer": "{count, plural, one {Esta mensagem será enviada para {count} contato. O número de destinatários pode mudar durante a entrega devido a transferências de conversa, encerramentos de conversa ou interações ocorrendo simultaneamente.} other {Esta mensagem será enviada para {count} contatos. O número de destinatários pode mudar durante a entrega devido a transferências de conversa, encerramentos de conversa ou interações ocorrendo simultaneamente.}}",
       "recipients": {
         "title": "Destinatários",
         "title_tooltip": "Esta mensagem será entregue a todos os contatos que correspondem aos filtros selecionados. Use este recurso para comunicações operacionais como atrasos, incidentes, atualizações.",
