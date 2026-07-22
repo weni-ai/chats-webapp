@@ -1515,5 +1515,8 @@
       "tooltip": "No respondiste a este contacto"
     }
   },
-  "select": "Seleccionar"
+  "select": "Seleccionar",
+  "mass_message": {
+    "title": "Mensaje en masa"
+  }
 }

@@ -34,6 +34,7 @@
           :showFlowsTriggerButton="canTriggerFlows"
           @open-flows-trigger="openFlowsTrigger"
           @show-quick-messages="$emit('show-quick-messages')"
+          @open-bulk-message="openBulkMessage"
         />
       </div>
     </slot>
@@ -49,15 +50,19 @@
       />
     </slot>
 
-    <main>
-      <slot />
-    </main>
-    <section
-      v-if="isAsideVisible"
-      class="aside"
-    >
-      <slot name="aside" />
-    </section>
+    <BulkMessage v-if="showBulkMessage" />
+
+    <template v-else>
+      <main>
+        <slot />
+      </main>
+      <section
+        v-if="isAsideVisible"
+        class="aside"
+      >
+        <slot name="aside" />
+      </section>
+    </template>
   </section>
 </template>
 
@@ -67,10 +72,11 @@ import TheCardGroups from './components/TheCardGroups/index.vue';
 import LayoutFlowsTrigger from './components/FlowsTrigger/index.vue';
 import ChatsLayoutFooterButton from './components/FooterButton/index.vue';
 import ViewOptions from './components/ViewOptions/index.vue';
+import BulkMessage from '@/components/chats/BulkMessage/index.vue';
+import StatusBar from '@/components/StatusBar.vue';
 
 import Sector from '@/services/api/resources/settings/sector.js';
 import FlowsTrigger from '@/services/api/resources/chats/flowsTrigger.js';
-import StatusBar from '@/components/StatusBar.vue';
 
 export default {
   name: 'ChatsLayout',
@@ -82,6 +88,7 @@ export default {
     ChatsLayoutFooterButton,
     ViewOptions,
     StatusBar,
+    BulkMessage,
   },
 
   props: {
@@ -98,6 +105,7 @@ export default {
     isLoadingSidebar: true,
     canTriggerFlows: false,
     canAccessDashboard: false,
+    showBulkMessage: false,
     showFlowsTrigger: false,
     showQuickMessages: false,
     flowsTriggerContact: null,
@@ -129,6 +137,9 @@ export default {
   },
 
   methods: {
+    openBulkMessage() {
+      this.showBulkMessage = true;
+    },
     openFlowsTrigger({ contact = null } = {}) {
       if (contact) {
         this.flowsTriggerContact = contact;

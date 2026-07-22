@@ -1388,5 +1388,8 @@
   },
   "representative": "Reprezentant",
   "select_representative": "Selectează un reprezentant",
-  "select": "Selectează"
+  "select": "Selectează",
+  "mass_message": {
+    "title": "Mesaj în masă"
+  }
 }
