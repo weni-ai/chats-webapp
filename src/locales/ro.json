@@ -1390,6 +1390,31 @@
   "select_representative": "Selectează un reprezentant",
   "select": "Selectează",
   "mass_message": {
-    "title": "Mesaj în masă"
+    "title": "Mesaj în masă",
+    "form": {
+      "title": "Trimite mesaj în masă",
+      "shipping_history": "Istoric trimiteri",
+      "no_shipping_history": "Niciun mesaj nu a fost trimis",
+      "no_contacts_filtered_alert": "Niciun contact nu corespunde filtrelor selectate. Încearcă să ajustezi filtrele.",
+      "contacts_count_disclaimer": "{count, plural, one {Acest mesaj va fi trimis către {count} contact. Numărul de destinatari se poate schimba în timpul livrării din cauza transferurilor de conversație, închiderilor de conversație sau interacțiunilor care au loc simultan.} few {Acest mesaj va fi trimis către {count} contacte. Numărul de destinatari se poate schimba în timpul livrării din cauza transferurilor de conversație, închiderilor de conversație sau interacțiunilor care au loc simultan.} other {Acest mesaj va fi trimis către {count} de contacte. Numărul de destinatari se poate schimba în timpul livrării din cauza transferurilor de conversație, închiderilor de conversație sau interacțiunilor care au loc simultan.}}",
+      "recipients": {
+        "title": "Destinatari",
+        "title_tooltip": "Acest mesaj va fi livrat tuturor contactelor care corespund filtrelor selectate. Folosește această funcție pentru comunicări operaționale precum întârzieri, incidente, actualizări.",
+        "select_the_contacts_status": "Selectează statusul contactelor",
+        "contacts_in_service": "Contacte în curs de deservire",
+        "contacts_waiting_for_service": "Contacte în așteptare",
+        "filters": {
+          "queues": {
+            "label": "Selectează o coadă",
+            "all": "Toate cozile"
+          },
+          "representatives": {
+            "label": "Selectează un reprezentant",
+            "all": "Toți reprezentanții"
+          }
+        }
+      },
+      "send": "{count, plural, =0 {Trimite tuturor (0 contacte)} one {Trimite tuturor ({count} contact)} few {Trimite tuturor ({count} contacte)} other {Trimite tuturor ({count} de contacte)}}"
+    }
   }
 }

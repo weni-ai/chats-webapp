@@ -2,7 +2,7 @@
   <section
     :class="[
       'chats-layout',
-      isAsideVisible && 'has-aside',
+      isAsideVisible && !showBulkMessage && 'has-aside',
       isViewMode && 'view-mode',
     ]"
   >
@@ -50,7 +50,10 @@
       />
     </slot>
 
-    <BulkMessage v-if="showBulkMessage" />
+    <BulkMessage
+      v-if="showBulkMessage"
+      @close="closeBulkMessage"
+    />
 
     <template v-else>
       <main>
@@ -139,6 +142,9 @@ export default {
   methods: {
     openBulkMessage() {
       this.showBulkMessage = true;
+    },
+    closeBulkMessage() {
+      this.showBulkMessage = false;
     },
     openFlowsTrigger({ contact = null } = {}) {
       if (contact) {
