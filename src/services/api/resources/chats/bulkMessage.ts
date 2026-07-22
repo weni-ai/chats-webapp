@@ -33,22 +33,24 @@ export default {
 
     return response.data;
   },
-  async sendMessage({ text, status, queues, agents }: SendMessageParams) {
+  async sendMessage({
+    text,
+    status,
+    queues,
+    agents,
+  }: SendMessageParams): Promise<{ status: string; uuid: string }> {
     const endpoint = '/msg/bulk-send/';
 
     const bodyData = {
       project: getProject(),
       text,
       status,
-      queues,
-      agents,
+      queues: queues?.includes('all') ? [] : queues,
+      agents: agents?.includes('all') ? [] : agents,
     };
 
-    const response = (await http.post(endpoint, bodyData)) as {
-      status: string;
-      uuid: string;
-    };
+    const response = await http.post(endpoint, bodyData);
 
-    return response;
+    return response.data;
   },
 };
