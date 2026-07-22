@@ -165,7 +165,8 @@
     "placeholder": "You haven't set an automatic message yet. Add one for contacts waiting in the queue.",
     "automatic_opening_message": "Automatic Opening Message",
     "inactive_warning_message": "Warning message",
-    "inactive_close_message": "Closing message"
+    "inactive_close_message": "Closing message",
+    "bulk_message": "Mass message sent by {sender}"
   },
   "inactive": "Inactive",
   "inactive_room_tooltip": "{minutes, plural, one {The conversation has reached the {minutes}-minute inactivity limit.} other {The conversation has reached the {minutes}-minutes inactivity limit.}}",

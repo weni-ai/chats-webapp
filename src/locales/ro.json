@@ -158,7 +158,10 @@
     "title": "Mesaj automat",
     "info": "Definește un răspuns automat pentru contactele care așteaptă asistență. Lasă câmpul necompletat dacă nu vrei niciun mesaj.",
     "placeholder": "Nu ai setat încă un mesaj automat. Adaugă unul pentru contactele care așteaptă în coadă.",
-    "automatic_opening_message": "Mesaj de deschidere automat"
+    "automatic_opening_message": "Mesaj de deschidere automat",
+    "inactive_warning_message": "Mesaj de avertisment",
+    "inactive_close_message": "Mesaj de încheiere",
+    "bulk_message": "Mesaj în masă trimis de {sender}"
   },
   "attention": "Avertisment",
   "updates_saved": "Actualizări salvate",

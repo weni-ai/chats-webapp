@@ -165,7 +165,8 @@
     "placeholder": "Aún no has configurado un mensaje automático. Agrega uno para los contactos que esperan en la cola.",
     "automatic_opening_message": "Mensaje de apertura automático",
     "inactive_warning_message": "Mensaje de aviso",
-    "inactive_close_message": "Mensaje de cierre"
+    "inactive_close_message": "Mensaje de cierre",
+    "bulk_message": "Mensaje en masa enviado por {sender}"
   },
   "inactive": "Inactivo",
   "inactive_room_tooltip": "{minutes, plural, one {La conversación ha alcanzado el límite de inactividad de {minutes} minuto.} other {La conversación ha alcanzado el límite de inactividad de {minutes} minutos.}}",
