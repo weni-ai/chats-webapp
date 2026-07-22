@@ -7,6 +7,13 @@ interface CountRoomsParams {
   status?: string[];
 }
 
+interface SendMessageParams {
+  text: string;
+  status: string[];
+  queues: string[];
+  agents: string[];
+}
+
 export default {
   async countRooms({
     agents,
@@ -25,5 +32,23 @@ export default {
     const response = await http.get(endpoint, { params });
 
     return response.data;
+  },
+  async sendMessage({ text, status, queues, agents }: SendMessageParams) {
+    const endpoint = '/msg/bulk-send/';
+
+    const bodyData = {
+      project: getProject(),
+      text,
+      status,
+      queues,
+      agents,
+    };
+
+    const response = (await http.post(endpoint, bodyData)) as {
+      status: string;
+      uuid: string;
+    };
+
+    return response;
   },
 };

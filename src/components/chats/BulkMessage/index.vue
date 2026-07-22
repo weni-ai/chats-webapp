@@ -48,19 +48,45 @@
           "
         />
       </section>
+      <section class="bulk-message-form__message">
+        <p class="bulk-message-form__message-title">
+          {{ $t('mass_message.form.message.title') }}
+        </p>
+        <UnnnicTextArea
+          v-model="message"
+          :label="$t('mass_message.form.message.input_label')"
+          :placeholder="$t('mass_message.form.message.input_placeholder')"
+          :message="$t('mass_message.form.message.input_helper')"
+          :maxLength="1000"
+        />
+      </section>
+      <section
+        v-if="validForm"
+        class="bulk-message-form__confirmation"
+      >
+        <UnnnicCheckboxGroup
+          :label="$t('mass_message.form.confirmation.title')"
+        >
+          <UnnnicCheckbox
+            v-model="agreeToSend"
+            :label="$t('mass_message.form.confirmation.checkbox_label')"
+          />
+        </UnnnicCheckboxGroup>
+      </section>
     </main>
-    <!-- TODO: Implement button count and validations -->
     <footer class="bulk-message-form__footer">
       <UnnnicButton
         class="bulk-message-form__footer-button"
         :text="$t('cancel')"
         type="tertiary"
+        :disabled="isSending"
         @click="emit('close')"
       />
       <UnnnicButton
         class="bulk-message-form__footer-button"
         :text="$t('mass_message.form.send', { count: contactsCount })"
-        :disabled="!validForm"
+        :disabled="!validForm || !agreeToSend"
+        :loading="isSending"
         @click="handleSend"
       />
     </footer>
@@ -70,7 +96,9 @@
 <script setup lang="ts">
 import { computed, onMounted, ref, watch } from 'vue';
 import { watchDebounced } from '@vueuse/core';
-import { UnnnicCallAlert, UnnnicDisclaimer } from '@weni/unnnic-system';
+import { UnnnicCallAlert } from '@weni/unnnic-system';
+
+import { useBulkMessageSend } from '@/store/modules/chats/bulkMessageSend';
 
 import ContactsStatus from './ContactsStatus.vue';
 import SelectFilters from './SelectFilters.vue';
@@ -78,6 +106,7 @@ import SelectFilters from './SelectFilters.vue';
 import BulkMessageService from '@/services/api/resources/chats/bulkMessage';
 
 import i18n from '@/plugins/i18n';
+import { storeToRefs } from 'pinia';
 
 defineOptions({
   name: 'BulkMessage',
@@ -89,9 +118,14 @@ const emit = defineEmits<{
 
 const { t } = i18n.global;
 
+const bulkMessageSendStore = useBulkMessageSend();
+const { isSending } = storeToRefs(bulkMessageSendStore);
+
 const selectedContactsStatus = ref<string[]>(['ongoing', 'waiting']);
 const selectedQueues = ref<string[]>(['all']);
 const selectedRepresentatives = ref<string[]>(['all']);
+const message = ref<string>('');
+const agreeToSend = ref<boolean>(false);
 
 const filtersForm = computed(() => ({
   status: selectedContactsStatus.value,
@@ -102,17 +136,30 @@ const filtersForm = computed(() => ({
 const contactsCount = ref<number>(0);
 
 const validForm = computed(() => {
-  // TODO: Implement form validation
-
-  return false;
+  return message.value.trim().length > 0 && contactsCount.value > 0;
 });
 
 const handleShippingHistory = () => {
   console.log('TODO:handleShippingHistory');
 };
 
-const handleSend = () => {
-  console.log('TODO: handleSend');
+const handleSend = async () => {
+  try {
+    isSending.value = true;
+    const { status, uuid } = await BulkMessageService.sendMessage({
+      text: message.value,
+      status: selectedContactsStatus.value,
+      queues: selectedQueues.value,
+      agents: selectedRepresentatives.value,
+    });
+    if (status === 'PROCESSING') {
+      bulkMessageSendStore.sendingUuid = uuid;
+    }
+  } catch (error) {
+    console.error('Error sending message', error);
+  } finally {
+    isSending.value = false;
+  }
 };
 
 const getContactsCount = async () => {
@@ -185,7 +232,19 @@ onMounted(() => {
     &-label {
       :deep(.unnnic-label__label) {
         font: $unnnic-font-display-4;
+        color: $unnnic-color-fg-emphasized;
       }
+    }
+  }
+
+  &__message {
+    display: flex;
+    flex-direction: column;
+    gap: $unnnic-space-4;
+
+    &-title {
+      font: $unnnic-font-display-4;
+      color: $unnnic-color-fg-emphasized;
     }
   }
 

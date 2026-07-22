@@ -1543,6 +1543,16 @@
           }
         }
       },
+      "message": {
+        "title": "Mensagem",
+        "input_label": "Defina o conteúdo da mensagem",
+        "input_placeholder": "Exemplo: Estamos com instabilidade no sistema, por isso está demorando um pouco mais para responder.",
+        "input_helper": "A mensagem será enviada exatamente como digitada"
+      },
+      "confirmation": {
+        "title": "Garanta que todos os campos estejam preenchidos corretamente e confirme a verificação",
+        "checkbox_label": "Verifiquei e estou pronto para enviar"
+      },
       "send": "{count, plural, =0 {Enviar para todos (0 contatos)} one {Enviar para todos ({count} contato)} other {Enviar para todos ({count} contatos)}}"
     }
   }
