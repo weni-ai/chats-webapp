@@ -329,7 +329,8 @@
       },
       "template_message": {
         "switch_active": "Trigger message templates",
-        "switch_disabled": "Trigger message templates"
+        "switch_disabled": "Trigger message templates",
+        "switch_label": "Triggering message templates"
       },
       "edit_custom_fields": {
         "label": "Allow representatives to edit custom fields",
@@ -338,7 +339,9 @@
       "agents_signature": {
         "tooltip": "Each message will display the name of the representative who answered",
         "switch_active": "Display the representative name in messages",
-        "switch_disabled": "Display the representative name in messages"
+        "switch_disabled": "Display the representative name in messages",
+        "hint": "Each message exchanged will have the name of the agent who is answering.",
+        "switch_label": "Use signature"
       },
       "csat": {
         "custom": {
@@ -349,6 +352,13 @@
         "confirm_modal": {
           "content_1": "If an active flow in the Flows module is configured to trigger a survey after support ends, this setting may conflict with that flow and affect survey delivery.",
           "content_2": "Do you want to continue anyway?"
+        },
+        "section_title": "Satisfaction survey",
+        "type": {
+          "custom": "Custom flows",
+          "default": "Default CSAT survey (recommended)",
+          "label": "Survey type",
+          "tooltip": "Choose between the default CSAT survey and a custom flow already configured in the Flows module."
         }
       },
       "automatic_message": {
@@ -363,7 +373,19 @@
       "required_tags": {
         "switch_active": "Require tag at the end of the support chat",
         "switch_disabled": "Require tag at the end of the support chat",
-        "tooltip": "Add at least one tag to activate"
+        "tooltip": "Add at least one tag to activate",
+        "switch_label": "Require tags at the end of human support"
+      },
+      "automated_message": {
+        "title": "Automated messages",
+        "switch_when_waiting_label": "Send automatic message to waiting contacts",
+        "switch_when_start_label": "Send automatic message when support starts",
+        "hint_when_waiting": "Automatically send a message to contacts while they wait for human support in the queue.",
+        "hint_when_start": "Automatically send a message when a chat is assigned to a representative. The message will appear as if sent by the assigned representative.",
+        "field": {
+          "title": "Automatic message",
+          "placeholder": "Example: Hello! How can I help you today?"
+        }
       }
     }
   },
@@ -1123,8 +1145,8 @@
         "switch_inactive": "Transfer chats in bulk to another queue or representative"
       },
       "block_transfer_to_off_agents": {
-        "switch_active": "Block chat transfer to offline representatives",
-        "switch_inactive": "Block chat transfer to offline representatives"
+        "switch_active": "Block chats transfer to offline representatives",
+        "switch_inactive": "Block chats transfer to offline representatives"
       },
       "bulk_close": {
         "switch_active": "End chats in bulk",
@@ -1140,9 +1162,7 @@
       },
       "queue_prioritization": {
         "tooltip": "This setting allows agents to choose which of the department's selected queues will receive contacts",
-        "switch_active": "Allow representatives to choose their queues within the department",
-        "switch_inactive": "Allow representatives to choose their queues within the department",
-        "switch_label": "Allows agents to choose which queues they receive chats from",
+        "switch_label": "Allow representatives to choose their queues within the department",
         "hint": "If active, the resource will be visible only to the representatives in the Live Desk module."
       },
       "show_agent_status_count_timer": {
