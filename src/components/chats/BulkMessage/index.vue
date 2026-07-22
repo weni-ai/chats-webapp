@@ -117,7 +117,6 @@ const handleSend = () => {
 
 const getContactsCount = async () => {
   try {
-    console.log('filtersForm', filtersForm.value);
     const { count } = await BulkMessageService.countRooms(filtersForm.value);
     contactsCount.value = count;
   } catch (error) {

@@ -8,7 +8,11 @@ interface CountRoomsParams {
 }
 
 export default {
-  async countRooms({ agents, queues, status }: CountRoomsParams) {
+  async countRooms({
+    agents,
+    queues,
+    status,
+  }: CountRoomsParams): Promise<{ count: number }> {
     const endpoint = '/msg/bulk-send/rooms/';
 
     const params = {
@@ -18,10 +22,8 @@ export default {
       status: status?.join(','),
     };
 
-    const response = (await http.get(endpoint, { params })) as {
-      count: number;
-    };
+    const response = await http.get(endpoint, { params });
 
-    return response;
+    return response.data;
   },
 };
