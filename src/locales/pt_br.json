@@ -530,6 +530,7 @@
       "default": "Ocorreu um erro. Tente novamente mais tarde."
     },
     "message_input_placeholder": "Digite sua mensagem aqui ou / para ativar mensagens rápidas",
+    "message_input_placeholder_with_voice_mode": "Digite ou use o modo de voz",
     "message_input_disabled_description": "Altere seu status para online para continuar esta conversa",
     "message_input_floating_actions": {
       "copy": "Copiar conteúdo digitado",
@@ -1027,7 +1028,9 @@
     "error_deleting": "Não foi possível excluir a mensagem rápida.",
     "error": "Erro ao configurar mensagem rápida",
     "no_suggestions": "Nenhum resultado encontrado para o atalho informado",
-    "disclaimer": "Digite / (barra) no campo de mensagem para ver mensagens rápidas"
+    "disclaimer": "Digite / (barra) no campo de mensagem para ver mensagens rápidas",
+    "action_open": "Abrir mensagens rápidas (/)",
+    "action_close": "Fechar mensagens rápidas"
   },
   "discard": "Descartar",
   "on_boarding": {

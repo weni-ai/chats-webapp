@@ -535,6 +535,7 @@
       "default": "Se produjo un error. Vuelve a intentarlo más tarde."
     },
     "message_input_placeholder": "Escribe tu mensaje o / para activar mensajes rápidos",
+    "message_input_placeholder_with_voice_mode": "Escribe o usa el modo de voz",
     "message_input_disabled_description": "Cambia tu status a online para continuar esta conversación",
     "message_input_floating_actions": {
       "copy": "Copiar contenido escrito",
@@ -1026,7 +1027,9 @@
     "successfully_updated": "Mensaje rápido actualizado",
     "error": "Error al configurar mensaje rápido",
     "no_suggestions": "No se encontraron resultados para el atajo ingresado",
-    "disclaimer": "Escribe / (barra) en el campo de mensaje para ver los mensajes rápidos"
+    "disclaimer": "Escribe / (barra) en el campo de mensaje para ver los mensajes rápidos",
+    "action_open": "Abrir mensajes rápidos (/)",
+    "action_close": "Cerrar mensajes rápidos"
   },
   "discard": "Descartar",
   "on_boarding": {

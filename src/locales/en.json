@@ -232,7 +232,7 @@
   "without_chats": {
     "in_progress": "All set! You'll be notified when new chats are assigned, and they'll appear in this list.",
     "waiting": "Queue cleared! All contacts are now assigned to representatives.",
-        "filtered": "No chats {roomType} in the filtered queues. Remove the filter to see all chats."
+    "filtered": "No chats {roomType} in the filtered queues. Remove the filter to see all chats."
   },
   "other": "Other",
   "select_smart": {
@@ -331,7 +331,7 @@
         "switch_active": "Trigger message templates",
         "switch_disabled": "Trigger message templates"
       },
-            "edit_custom_fields": {
+      "edit_custom_fields": {
         "label": "Allow representatives to edit custom fields",
         "hint": "When active, it allows representatives to edit the custom fields of the contact in the \"All Information\" section."
       },
@@ -520,6 +520,7 @@
       "default": "An error occurred. Try again later."
     },
     "message_input_placeholder": "Type your message or / to activate quick messages",
+    "message_input_placeholder_with_voice_mode": "Type or use voice mode",
     "message_input_disabled_description": "Change your status to online to continue this conversation",
     "message_input_floating_actions": {
       "copy": "Copy typed content",
@@ -1011,10 +1012,13 @@
     "message_field_placeholder": "Example: Hello! How are you? I'll be assisting you today.",
     "successfully_added": "Quick message added",
     "successfully_updated": "Quick message updated",
-    "successfully_deleted": "Quick message deleted successfully!",    "error_deleting": "Unable to delete the quick message.",
+    "successfully_deleted": "Quick message deleted successfully!",
+    "error_deleting": "Unable to delete the quick message.",
     "error": "Error setting quick message",
     "no_suggestions": "No results found for the entered shortcut",
-    "disclaimer": "Type / (slash) shortcut in the message field to view quick messages"
+    "disclaimer": "Type / (slash) shortcut in the message field to view quick messages",
+    "action_open": "Open quick messages (/)",
+    "action_close": "Close quick messages"
   },
   "discard": "Discard",
   "on_boarding": {
@@ -1456,7 +1460,8 @@
     "content_3": {
       "text_1": "To make the information drawer more organized and easier to use, we've made some improvements. The information is now divided into <b>About the contact</b> and <b>About the service</b>.",
       "text_2": "In addition, <b>custom fields</b> can now be collapsed and expanded, so you can focus on what matters most without scrolling.",
-      "text_3": "To make the interface cleaner, we've updated the <b>Start discussion</b> button's appearance."    }
+      "text_3": "To make the interface cleaner, we've updated the <b>Start discussion</b> button's appearance."
+    }
   },
   "modal_confirm_delete": {
     "action_cannot_be_reversed": "This action cannot be reversed"
