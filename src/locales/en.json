@@ -165,7 +165,8 @@
     "placeholder": "You haven't set an automatic message yet. Add one for contacts waiting in the queue.",
     "automatic_opening_message": "Automatic Opening Message",
     "inactive_warning_message": "Warning message",
-    "inactive_close_message": "Closing message"
+    "inactive_close_message": "Closing message",
+    "bulk_message": "Mass message sent by {sender}"
   },
   "inactive": "Inactive",
   "inactive_room_tooltip": "{minutes, plural, one {The conversation has reached the {minutes}-minute inactivity limit.} other {The conversation has reached the {minutes}-minutes inactivity limit.}}",
@@ -1537,6 +1538,16 @@
             "all": "All representatives"
           }
         }
+      },
+      "message": {
+        "title": "Message",
+        "input_label": "Define the message content",
+        "input_placeholder": "Example: We are experiencing system instability, which is why it is taking us a little longer to respond.",
+        "input_helper": "The message will be sent exactly as typed"
+      },
+      "confirmation": {
+        "title": "Please ensure all fields are filled out correctly and confirm the verification",
+        "checkbox_label": "I've checked it and I'm ready to send it"
       },
       "send": "{count, plural, =0 {Send to all (0 contacts)} one {Send to all ({count} contact)} other {Send to all ({count} contacts)}}"
     }

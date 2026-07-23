@@ -165,7 +165,8 @@
     "placeholder": "Você ainda não configurou uma mensagem automática. Adicione uma para contatos aguardando na fila.",
     "automatic_opening_message": "Mensagem de abertura automática",
     "inactive_warning_message": "Mensagem de aviso",
-    "inactive_close_message": "Mensagem de encerramento"
+    "inactive_close_message": "Mensagem de encerramento",
+    "bulk_message": "Mensagem em massa enviada por {sender}"
   },
   "inactive": "Inativo",
   "inactive_room_tooltip": "{minutes, plural, one {A conversa atingiu o limite de inatividade de {minutes} minuto.} other {A conversa atingiu o limite de inatividade de {minutes} minutos.}}",
@@ -1542,6 +1543,16 @@
             "all": "Todos os representantes"
           }
         }
+      },
+      "message": {
+        "title": "Mensagem",
+        "input_label": "Defina o conteúdo da mensagem",
+        "input_placeholder": "Exemplo: Estamos com instabilidade no sistema, por isso está demorando um pouco mais para responder.",
+        "input_helper": "A mensagem será enviada exatamente como digitada"
+      },
+      "confirmation": {
+        "title": "Garanta que todos os campos estejam preenchidos corretamente e confirme a verificação",
+        "checkbox_label": "Verifiquei e estou pronto para enviar"
       },
       "send": "{count, plural, =0 {Enviar para todos (0 contatos)} one {Enviar para todos ({count} contato)} other {Enviar para todos ({count} contatos)}}"
     }

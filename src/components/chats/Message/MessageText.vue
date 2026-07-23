@@ -33,13 +33,24 @@ export default {
       type: String,
       default: 'automatic_open',
     },
+    bulkMessageSender: {
+      type: String,
+      default: '',
+    },
   },
   computed: {
     automaticMessageLabel() {
+      const senderIsEmail = this.bulkMessageSender.includes('@');
+      const treatedSender = senderIsEmail
+        ? this.bulkMessageSender.split('@')[0]
+        : this.bulkMessageSender;
       const labelsByType = {
         automatic_open: this.$t('automatic_message.automatic_opening_message'),
         inactive_warning: this.$t('automatic_message.inactive_warning_message'),
         inactive_close: this.$t('automatic_message.inactive_close_message'),
+        bulk_message: this.$t('automatic_message.bulk_message', {
+          sender: treatedSender,
+        }),
       };
       return labelsByType[this.automaticType];
     },

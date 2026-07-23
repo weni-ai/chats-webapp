@@ -158,7 +158,10 @@
     "title": "Mesaj automat",
     "info": "Definește un răspuns automat pentru contactele care așteaptă asistență. Lasă câmpul necompletat dacă nu vrei niciun mesaj.",
     "placeholder": "Nu ai setat încă un mesaj automat. Adaugă unul pentru contactele care așteaptă în coadă.",
-    "automatic_opening_message": "Mesaj de deschidere automat"
+    "automatic_opening_message": "Mesaj de deschidere automat",
+    "inactive_warning_message": "Mesaj de avertisment",
+    "inactive_close_message": "Mesaj de încheiere",
+    "bulk_message": "Mesaj în masă trimis de {sender}"
   },
   "attention": "Avertisment",
   "updates_saved": "Actualizări salvate",
@@ -1413,6 +1416,16 @@
             "all": "Toți reprezentanții"
           }
         }
+      },
+      "message": {
+        "title": "Mesaj",
+        "input_label": "Definește conținutul mesajului",
+        "input_placeholder": "Exemplu: Experimentăm o instabilitate a sistemului, de aceea ne ia puțin mai mult să răspundem.",
+        "input_helper": "Mesajul va fi trimis exact așa cum a fost scris"
+      },
+      "confirmation": {
+        "title": "Asigură-te că toate câmpurile sunt completate corect și confirmă verificarea",
+        "checkbox_label": "Am verificat și sunt gata să trimit"
       },
       "send": "{count, plural, =0 {Trimite tuturor (0 contacte)} one {Trimite tuturor ({count} contact)} few {Trimite tuturor ({count} contacte)} other {Trimite tuturor ({count} de contacte)}}"
     }
