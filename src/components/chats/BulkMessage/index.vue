@@ -190,6 +190,12 @@ watch(contactsCount, () => {
   }
 });
 
+watch(validForm, () => {
+  if (!validForm.value) {
+    agreeToSend.value = false;
+  }
+});
+
 onMounted(() => {
   getContactsCount();
 });
