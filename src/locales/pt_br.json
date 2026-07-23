@@ -548,9 +548,9 @@
     "message_input_disabled_description": "Altere seu status para online para continuar esta conversa",
     "message_input_floating_actions": {
       "copy": "Copiar conteúdo digitado",
-      "copy_alert_success": "Conteúdo copiado!",
+      "copy_alert_success": "Conteúdo copiado",
       "clear": "Limpar conteúdo digitado",
-      "clear_alert_success": "Conteúdo removido!"
+      "clear_alert_success": "Conteúdo removido"
     },
     "search_contact": "Buscar contato",
     "search_contact_placeholder": "Buscar contato por nome, telefone ou ID do ticket",
