@@ -1553,6 +1553,9 @@
         "checkbox_label": "Lo revisé y estoy listo para enviarlo"
       },
       "send": "{count, plural, =0 {Enviar a todos (0 contactos)} one {Enviar a todos ({count} contacto)} other {Enviar a todos ({count} contactos)}}"
+    },
+    "history": {
+      "last_message_disclaimer": "El mensaje \"{text}\" se envió en la última hora - a las {time}."
     }
   }
 }

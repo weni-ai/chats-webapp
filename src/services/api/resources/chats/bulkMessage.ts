@@ -14,6 +14,12 @@ interface SendMessageParams {
   agents: string[];
 }
 
+interface MessageSent {
+  uuid: string;
+  text: string;
+  sent_at: string;
+}
+
 export default {
   async countRooms({
     agents,
@@ -52,5 +58,27 @@ export default {
     const response = await http.post(endpoint, bodyData);
 
     return response.data;
+  },
+  async getLastSentMessages(): Promise<Array<MessageSent>> {
+    const endpoint = '/msg/bulk-send/recent-history/';
+
+    const params = {
+      project: getProject(),
+    };
+
+    const response = await http.get(endpoint, { params });
+
+    return response.data.results;
+  },
+  async checkIfHasShippingHistory(): Promise<boolean> {
+    const endpoint = '/msg/bulk-send/has-past-messages/';
+
+    const params = {
+      project: getProject(),
+    };
+
+    const response = await http.get(endpoint, { params });
+
+    return response.data.status;
   },
 };
