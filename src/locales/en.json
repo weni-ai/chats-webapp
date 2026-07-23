@@ -201,7 +201,7 @@
   "image_preview": {
     "count": "Image {current} of {total}",
     "tooltip": {
-      "close": "Close image (esc)",
+      "close": "Close image (Esc)",
       "previous": "Previous",
       "next": "Next",
       "rotate": "Rotate 90°",
