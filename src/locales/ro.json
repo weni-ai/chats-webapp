@@ -273,12 +273,12 @@
       "inactivity_timeout": {
         "show": {
           "field": {
-            "default_warning_message": "Mai ești acolo? Dacă nu există răspuns, această sesiune se va închide în curând."
+            "default_warning_message": "Mai ești aici? Dacă nu există niciun răspuns, această sesiune va fi închisă în curând."
           }
         },
         "close_room": {
           "field": {
-            "default_close_room_message": "Această sesiune s-a încheiat din cauza inactivității. Poți începe un chat nou oricând."
+            "default_close_room_message": "Această sesiune s-a încheiat din cauza inactivității. Poți începe o nouă conversație oricând!"
           }
         }
       },

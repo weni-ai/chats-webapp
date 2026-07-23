@@ -313,7 +313,7 @@
             "timeout_time_tooltip": "At this moment, the representative will also see the chat marked with an inactivity alert.",
             "warning_message_label": "Warning message",
             "warning_message_tooltip": "The message will appear as if sent by the assigned representative.",
-            "default_warning_message": "Are you still there? If there's no response, this session will be closed soon."
+            "default_warning_message": "Are you still there? This session will end soon if there's no response."
           }
         },
         "close_room": {
