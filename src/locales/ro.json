@@ -170,6 +170,18 @@
   "end_all_selected_chats_tooltip": "Închide toate chaturile selectate",
   "number_of_chats_selected": "{count} chat selectat | {count} chaturi selectate",
   "image": "Imagine",
+  "image_preview": {
+    "count": "Imaginea {current} din {total}",
+    "tooltip": {
+      "close": "Închide imaginea (Esc)",
+      "previous": "Anterior",
+      "next": "Următor",
+      "rotate": "Rotește 90°",
+      "zoom_in": "Mărește",
+      "zoom_out": "Micșorează",
+      "export": "Exportă"
+    }
+  },
   "video": "Video",
   "audio_message": "Mesaj audio",
   "audio_recorder": {
@@ -481,6 +493,12 @@
     },
     "message_input_placeholder": "Scrie mesajul tău sau / pentru a activa mesajele rapide",
     "message_input_disabled_description": "Schimbă-ți statusul în online pentru a continua această conversație",
+    "message_input_floating_actions": {
+      "copy": "Copiază conținutul tastat",
+      "copy_alert_success": "Conținutul a fost copiat",
+      "clear": "Șterge conținutul tastat",
+      "clear_alert_success": "Conținutul tastat a fost eliminat"
+    },
     "search_contact": "Caută contact",
     "search_contact_placeholder": "Caută contact după nume, telefon sau ID tichet",
     "tags": "Etichete chat",

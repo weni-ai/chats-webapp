@@ -204,7 +204,7 @@
       "close": "Cerrar imagen (esc)",
       "previous": "Anterior",
       "next": "Siguiente",
-      "rotate": "Rotar 90°",
+      "rotate": "Girar 90°",
       "zoom_in": "Acercar",
       "zoom_out": "Alejar",
       "export": "Exportar"
@@ -547,10 +547,10 @@
     "message_input_placeholder": "Escribe tu mensaje o / para activar mensajes rápidos",
     "message_input_disabled_description": "Cambia tu status a online para continuar esta conversación",
     "message_input_floating_actions": {
-      "copy": "Copiar contenido escrito",
-      "copy_alert_success": "Contenido copiado!",
-      "clear": "Limpiar contenido escrito",
-      "clear_alert_success": "Contenido eliminado!"
+      "copy": "Copiar contenido ingresado",
+      "copy_alert_success": "Contenido copiado",
+      "clear": "Limpiar contenido ingresado",
+      "clear_alert_success": "Contenido removido"
     },
     "search_contact": "Buscar contacto",
     "search_contact_placeholder": "Buscar contacto por nombre, teléfono o ID de ticket",
@@ -828,7 +828,7 @@
     "copy_protocol": "Haga clic para copiar el Ticket ID",
     "protocol_copied": "¡Ticket ID copiado al portapapeles!",
     "copy_value": "Copiar valor",
-    "value_copied": "¡Valor copiado con éxito!",
+    "value_copied": "Valor copiado",
     "error_copying_value": "No se pudo copiar el valor. Inténtalo de nuevo.",
     "csat": {
       "title": "CSAT",
