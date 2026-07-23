@@ -1428,6 +1428,9 @@
         "checkbox_label": "Am verificat și sunt gata să trimit"
       },
       "send": "{count, plural, =0 {Trimite tuturor (0 contacte)} one {Trimite tuturor ({count} contact)} few {Trimite tuturor ({count} contacte)} other {Trimite tuturor ({count} de contacte)}}"
+    },
+    "history": {
+      "last_message_disclaimer": "Mesajul \"{text}\" a fost trimis în ultima oră - la {time}."
     }
   }
 }

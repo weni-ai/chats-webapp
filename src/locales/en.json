@@ -1550,6 +1550,9 @@
         "checkbox_label": "I've checked it and I'm ready to send it"
       },
       "send": "{count, plural, =0 {Send to all (0 contacts)} one {Send to all ({count} contact)} other {Send to all ({count} contacts)}}"
+    },
+    "history": {
+      "last_message_disclaimer": "The message \"{text}\" was sent in the last hour - at {time}."
     }
   }
 }
