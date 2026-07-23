@@ -313,7 +313,7 @@
             "timeout_time_tooltip": "En ese momento, el representante también verá la conversación marcada con una alerta de inactividad.",
             "warning_message_label": "Mensaje de aviso",
             "warning_message_tooltip": "El mensaje aparecerá como si lo hubiera enviado el representante asignado.",
-            "default_warning_message": "¿Sigues ahí? Si no hay respuesta, esta sesión se cerrará pronto."
+            "default_warning_message": "¿Sigues ahí? Esta sesión finalizará pronto si no hay respuesta."
           }
         },
         "close_room": {
@@ -323,7 +323,7 @@
             "close_room_time_label": "Definir cuántos minutos después de enviar el mensaje de aviso el sistema debe finalizar el chat",
             "close_room_message_label": "Mensaje de cierre",
             "close_room_message_tooltip": "El mensaje aparecerá como si lo hubiera enviado el representante asignado.",
-            "default_close_room_message": "Esta sesión finalizó por inactividad. Inicia un nuevo chat cuando quieras."
+            "default_close_room_message": "Esta sesión finalizó por inactividad. Puedes iniciar un nuevo chat cuando quieras."
           }
         }
       },
