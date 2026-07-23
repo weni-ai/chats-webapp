@@ -547,10 +547,10 @@
     "message_input_placeholder": "Escribe tu mensaje o / para activar mensajes rápidos",
     "message_input_disabled_description": "Cambia tu status a online para continuar esta conversación",
     "message_input_floating_actions": {
-      "copy": "Copiar contenido escrito",
-      "copy_alert_success": "Contenido copiado!",
-      "clear": "Limpiar contenido escrito",
-      "clear_alert_success": "Contenido eliminado!"
+      "copy": "Copiar contenido ingresado",
+      "copy_alert_success": "Contenido copiado",
+      "clear": "Limpiar contenido ingresado",
+      "clear_alert_success": "Contenido removido"
     },
     "search_contact": "Buscar contacto",
     "search_contact_placeholder": "Buscar contacto por nombre, teléfono o ID de ticket",
