@@ -201,7 +201,7 @@
   "image_preview": {
     "count": "Imagem {current} de {total}",
     "tooltip": {
-      "close": "Fechar imagem (esc)",
+      "close": "Fechar imagem (Esc)",
       "previous": "Anterior",
       "next": "Próxima",
       "rotate": "Girar 90°",
@@ -831,7 +831,7 @@
     "copy_protocol": "Clique para copiar o protocolo",
     "protocol_copied": "Protocolo copiado para a área de transferência!",
     "copy_value": "Copiar valor",
-    "value_copied": "Valor copiado com sucesso!",
+    "value_copied": "Valor copiado",
     "error_copying_value": "Não foi possível copiar o valor. Tente novamente.",
     "csat": {
       "title": "CSAT",
