@@ -826,8 +826,8 @@
     "copy_protocol": "Click to copy the Ticket ID",
     "protocol_copied": "Ticket ID copied to clipboard!",
     "copy_value": "Copy value",
-    "value_copied": "Value copied successfully!",
-    "error_copying_value": "Unable to copy value. Please try again.",
+    "value_copied": "Value copied",
+    "error_copying_value": "Couldn't copy value. Try again.",
     "csat": {
       "title": "CSAT",
       "no_comment": "No comment",
