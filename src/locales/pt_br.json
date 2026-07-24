@@ -246,7 +246,7 @@
     "general": "Geral",
     "extra_options": "Opções adicionais",
     "queues": "Filas",
-    "tags": "Tags",
+    "tags": "Etiquetas",
     "add_name_and_managers": "Defina um nome para o setor e seus gerentes",
     "add_queue": "Adicionar nova fila",
     "name": "Nome do setor",
@@ -349,16 +349,16 @@
         },
         "hint": "Se um fluxo ativo no módulo Fluxos estiver configurado para disparar uma pesquisa após o fim do suporte, esta configuração pode conflitar com o fluxo e afetar a entrega da pesquisa.",
         "label": "Enviar automaticamente uma pesquisa de satisfação após o fim do suporte no Live Desk",
+        "confirm_modal": {
+          "content_1": "Se um fluxo ativo no módulo Fluxos estiver configurado para disparar uma pesquisa após o fim do suporte, esta configuração pode conflitar com o fluxo e afetar a entrega da pesquisa.",
+          "content_2": "Deseja continuar mesmo assim?"
+        },
         "section_title": "Pesquisa de satisfação",
         "type": {
           "custom": "Fluxos personalizados",
           "default": "Pesquisa CSAT padrão (recomendado)",
           "label": "Tipo de pesquisa",
           "tooltip": "Escolha entre a pesquisa CSAT padrão ou um fluxo personalizado já configurado no módulo Fluxos."
-        },
-        "confirm_modal": {
-          "content_1": "Se um fluxo ativo no módulo Fluxos estiver configurado para disparar uma pesquisa após o fim do suporte, esta configuração pode conflitar com o fluxo e afetar a entrega da pesquisa.",
-          "content_2": "Deseja continuar mesmo assim?"
         }
       },
       "automatic_message": {
@@ -424,9 +424,6 @@
   "addition_date": "Data de cadastro",
   "in_queues": "nas filas",
   "in_progress": "Em andamento",
-  "waiting": "Aguardando",
-  "sent_flows": "Fluxos enviados",
-  "discussion": "Discussões",
   "in_progress_tooltip": "Número de chats sendo atendidos por um atendente",
   "in_progress_tooltip_filtered": "Número de chats que foram atendidos por um atendente",
   "closed": "Encerrados",
@@ -496,24 +493,24 @@
       }
     },
     "feedback": {
-      "agent_took_chat": "O chat com o contato {contact} já foi assumido por outro atendente",
-      "automatic_transfer_from_queue": "Sala atribuída a {agent}",
-      "chat_ended_by": "Chat encerrado por {agent}",
-      "discussion_created": "{agent} iniciou uma discussão na fila {queue}",
-      "discussion_joined": "{agent} entrou na discussão",
-      "edit_custom_field": "Campo customizável editado",
       "forwarded_to_agent": "Contato transferido para o atendente {agent}",
       "forwarded_to_queue": "Contato transferido para a fila {queue}",
-      "pick_of_agent": "{manager} assumiu o chat de {agent}",
-      "pick_of_queue": "{agent} assumiu o chat da fila {queue}",
-      "see_all_internal_notes": "<b style='color: white;'>Ver notas internas</b>",
+      "transfer_to_agent": "{agent1} transferido para {agent2}",
+      "transfer_to_queue": "{agent} transferido para a fila {queue}",
+      "transfer_from_queue_to_queue": "Transferido da fila {queue1} para a fila {queue2}",
       "transfer_from_queue_to_agent": "Transferido da fila {queue} para {agent}",
       "transfer_from_queue_to_agent_by_other": "{requestedBy} transferiu o chat da fila {queue} para {agent}",
-      "transfer_from_queue_to_queue": "Transferido da fila {queue1} para a fila {queue2}",
+      "pick_of_queue": "{agent} assumiu o chat da fila {queue}",
+      "pick_of_agent": "{manager} assumiu o chat de {agent}",
+      "edit_custom_field": "Campo customizável editado",
+      "discussion_created": "{agent} iniciou uma discussão na fila {queue}",
+      "discussion_joined": "{agent} entrou na discussão",
+      "agent_took_chat": "O chat com o contato {contact} já foi assumido por outro atendente",
+      "automatic_transfer_from_queue": "Sala atribuída a {agent}",
+      "see_all_internal_notes": "<b style='color: white;'>Ver notas internas</b>",
+      "chat_ended_by": "Chat encerrado por {agent}",
       "transfer_from_queue_to_queue_by_other": "{requestedBy} transferiu o chat da fila {queue1} para a fila {queue2}",
-      "transfer_to_agent": "{agent1} transferido para {agent2}",
       "transfer_to_agent_by_other": "{requestedBy} transferiu o chat de {agent1} para {agent2}",
-      "transfer_to_queue": "{agent} transferido para a fila {queue}",
       "transfer_to_queue_by_other": "{requestedBy} transferiu o chat de {agent} para a fila {queue}",
       "automatic_close_room": "Encerrado automaticamente por falta de interação do contato"
     },
@@ -706,7 +703,7 @@
     "fix_grammar_and_spelling": "Corrigir gramática e ortografia",
     "make_more_empathetic": "Tornar mais empática",
     "rewrite_for_clarity": "Reescrever com clareza",
-    "improving_response": "Melhorando sua resposta",
+    "improving_response": "Melhorar resposta",
     "improvement": "Resposta aprimorada",
     "error": "Erro ao aprimorar resposta com IA. Tente novamente.",
     "new": "Novo",
@@ -812,8 +809,6 @@
     "partial_success_message": "{success, plural, one {{success} chat assumido, {failed} falhou. Tente novamente.} other {{success} chats assumidos, {failed} falharam. Tente novamente.}}",
     "error_message": "Não foi possível assumir os chats, tente novamente"
   },
-  "close_contact": "Encerrar contato",
-  "close_contact_confirmation": "Tem certeza que deseja encerrar este contato?",
   "contact_info": {
     "title": "Sobre o contato",
     "about_support": "Sobre o atendimento",
@@ -1095,11 +1090,11 @@
     "filter_by_group_name": "Filtrar por nome do grupo",
     "section_sectors_subtitle": "Adicione, visualize e gerencie setores, filas, gerentes e atendentes na sua organização.",
     "tabs": {
+      "general": "Geral",
       "settings": "Configurações",
       "groups": "Grupos do projeto",
       "sectors": "Setores",
-      "representatives": "Atendentes",
-      "general": "Geral"
+      "representatives": "Atendentes"
     },
     "custom_breaks": {
       "title": "Pausas personalizadas",
@@ -1115,11 +1110,11 @@
       "status_remove_success": "Status {status} removido",
       "status_error": "Erro ao salvar alterações. Tente novamente.",
       "delete_modal": {
+        "title": "Excluir pausa personalizada",
         "description_1": "Tem certeza de que deseja excluir a pausa personalizada “{name}”?",
         "description_2": "Depois de excluir, os dados não aparecerão mais no painel do Live Desk e não poderão ser recuperados.",
-        "error": "Não foi possível excluir a pausa personalizada.",
         "success": "Pausa personalizada excluída com sucesso",
-        "title": "Excluir pausa personalizada"
+        "error": "Não foi possível excluir a pausa personalizada."
       }
     },
     "changes_saved": "Alterações salvas com sucesso",
@@ -1143,8 +1138,8 @@
       },
       "bulk_transfer": {
         "tooltip": "Esta função permite que os atendentes transfiram diferentes contatos de uma só vez",
-        "switch_active": "Transferir chats em massa para outra fila ou atendente",
-        "switch_inactive": "Transferir chats em massa para outra fila ou atendente"
+        "switch_active": "Transferir chat em massa para outra fila ou atendente",
+        "switch_inactive": "Transferir chat em massa para outra fila ou atendente"
       },
       "block_transfer_to_off_agents": {
         "switch_active": "Bloquear transferência de chats para atendentes offline",
@@ -1198,8 +1193,8 @@
     "queues": {
       "in_sector": "Fila no setor {sector}",
       "new": "Nova fila",
-      "info": "Filas são grupos de suporte dentro de um setor. Você pode direcionar os contatos de um fluxo para uma fila específica.",
       "title": "Gestão de filas",
+      "info": "Filas são grupos de suporte dentro de um setor. Você pode direcionar os contatos de um fluxo para uma fila específica.",
       "hint": "Filas são grupos de suporte dentro de um setor. Você pode criar ou editar uma fila a qualquer momento.",
       "filter_by_name": "Filtrar por nome da fila",
       "add_queue": "Adicionar fila",
