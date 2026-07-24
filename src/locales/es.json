@@ -82,8 +82,8 @@
     }
   },
   "status": {
-    "online": "Online",
-    "offline": "Offline",
+    "online": "En línea",
+    "offline": "Desconectada",
     "set_status": "Definir status"
   },
   "status-bar": {
@@ -140,7 +140,7 @@
   "chat_message": {
     "reply_message": {
       "you": "Tú",
-      "video": "Video",
+      "video": "Vídeo",
       "image": "Imagen",
       "audio": "Mensaje de audio"
     }
@@ -246,7 +246,7 @@
     "general": "General",
     "extra_options": "Opciones adicionales",
     "queues": "Colas",
-    "tags": "Tags",
+    "tags": "Etiquetas",
     "add_name_and_managers": "Define un nombre para el departamento y sus gerentes",
     "add_queue": "Agregar nueva cola",
     "name": "Nombre del departamento",
@@ -347,29 +347,18 @@
         "custom": {
           "flow_disclaimer": "El flujo seleccionado debe usar una calificación de satisfacción de 1 a 5 para garantizar resultados correctos en la encuesta."
         },
-        "label": "Enviar automáticamente una encuesta de satisfacción después de finalizar el chat de soporte en Live Desk",
         "hint": "Si un flujo activo en el módulo Flujos está configurado para disparar una encuesta tras finalizar el soporte, esta configuración podría entrar en conflicto y afectar la entrega de la encuesta.",
+        "label": "Enviar automáticamente una encuesta de satisfacción después de finalizar el chat de soporte en Live Desk",
+        "confirm_modal": {
+          "content_1": "Si un flujo activo en el módulo Flujos está configurado para disparar una encuesta tras finalizar el soporte, esta configuración podría entrar en conflicto y afectar la entrega de la encuesta.",
+          "content_2": "¿Deseas continuar de todas formas?"
+        },
         "section_title": "Encuesta de satisfacción",
         "type": {
           "custom": "Flujos personalizados",
           "default": "Encuesta CSAT predeterminada (recomendado)",
           "label": "Tipo de encuesta",
           "tooltip": "Elige entre la encuesta CSAT predeterminada o un flujo personalizado ya configurado en el módulo Flujos."
-        },
-        "confirm_modal": {
-          "content_1": "Si un flujo activo en el módulo Flujos está configurado para disparar una encuesta tras finalizar el soporte, esta configuración podría entrar en conflicto y afectar la entrega de la encuesta.",
-          "content_2": "¿Deseas continuar de todas formas?"
-        }
-      },
-      "automated_message": {
-        "title": "Mensajes automatizados",
-        "switch_when_waiting_label": "Enviar mensaje automático a los contactos en espera",
-        "switch_when_start_label": "Enviar mensaje automático al iniciar el soporte",
-        "hint_when_waiting": "Se envía un mensaje automático a los contactos que están en la cola esperando soporte humano.",
-        "hint_when_start": "Se envía un mensaje automático cuando un chat se asigna a un representante. En el chat, el mensaje aparece como enviado por el representante asignado.",
-        "field": {
-          "title": "Mensaje automático",
-          "placeholder": "Ejemplo: ¡Hola! ¿Cómo puedo ayudarte hoy?"
         }
       },
       "automatic_message": {
@@ -386,6 +375,17 @@
         "switch_disabled": "Exigir tag al finalizar el chat de soporte",
         "tooltip": "Agrega al menos una tag para activar",
         "switch_label": "Exigir etiquetas al final del soporte humano"
+      },
+      "automated_message": {
+        "title": "Mensajes automatizados",
+        "switch_when_waiting_label": "Enviar mensaje automático a los contactos en espera",
+        "switch_when_start_label": "Enviar mensaje automático al iniciar el soporte",
+        "hint_when_waiting": "Se envía un mensaje automático a los contactos que están en la cola esperando soporte humano.",
+        "hint_when_start": "Se envía un mensaje automático cuando un chat se asigna a un representante. En el chat, el mensaje aparece como enviado por el representante asignado.",
+        "field": {
+          "title": "Mensaje automático",
+          "placeholder": "Ejemplo: ¡Hola! ¿Cómo puedo ayudarte hoy?"
+        }
       }
     }
   },
@@ -424,9 +424,6 @@
   "addition_date": "Fecha de registro",
   "in_queues": "en cola",
   "in_progress": "En curso",
-  "waiting": "Esperando",
-  "sent_flows": "Flujos enviados",
-  "discussion": "Discusiones",
   "in_progress_tooltip": "Número de chats atendidos por un representante actualmente",
   "in_progress_tooltip_filtered": "Número de chats atendidos por un representante",
   "closed": "Cerrados",
@@ -502,6 +499,7 @@
       "transfer_to_queue": "{agent} transferido a la cola {queue}",
       "transfer_from_queue_to_queue": "Transferido de la cola {queue1} a la cola {queue2}",
       "transfer_from_queue_to_agent": "Transferido de la cola {queue} a {agent}",
+      "transfer_from_queue_to_agent_by_other": "{requestedBy} transfirió el chat de la cola {queue} a {agent}",
       "pick_of_queue": "{agent} lo recibió de la cola {queue}",
       "pick_of_agent": "{manager} se asignó el chat de {agent}",
       "edit_custom_field": "Campo personalizable editado",
@@ -511,7 +509,6 @@
       "automatic_transfer_from_queue": "Sala asignada a {agent}",
       "see_all_internal_notes": "<b style='color: white;'>Ver observaciones internas</b>",
       "chat_ended_by": "Chat cerrado por {agent}",
-      "transfer_from_queue_to_agent_by_other": "{requestedBy} transfirió el chat de la cola {queue} a {agent}",
       "transfer_from_queue_to_queue_by_other": "{requestedBy} transfirió el chat de la cola {queue1} a la cola {queue2}",
       "transfer_to_agent_by_other": "{requestedBy} transfirió el chat de {agent1} a {agent2}",
       "transfer_to_queue_by_other": "{requestedBy} transfirió el chat de {agent} a la cola {queue}",
@@ -596,11 +593,11 @@
     "your_chat_assumed": "Este chat se lo ha asignado otro representante",
     "your_chat_assumed_description": "El chat con {contact} se lo ha asignado {representative}",
     "closed_chats": {
+      "contact_history": "Historial del contacto",
       "general_history": "Historial general",
       "history": "Historial",
       "history_description": "Historial de todos los registros de chat de soporte del proyecto {projectName}",
-      "project_history": "Historial del proyecto",
-      "contact_history": "Historial del contacto"
+      "project_history": "Historial del proyecto"
     },
     "assigned_queues": "Colas asignadas",
     "select_queues": "Seleccionar colas",
@@ -628,6 +625,7 @@
       "assume_chat_confirmation": "Si confirmas, este chat se transferirá de {viewedAgent} a ti"
     }
   },
+  "select": "Seleccionar",
   "history": "Historial",
   "close_view": "Cerrar vista",
   "logout": "Cerrar sesión",
@@ -705,14 +703,14 @@
     "fix_grammar_and_spelling": "Corregir gramática y ortografía",
     "make_more_empathetic": "Hacerla más empática",
     "rewrite_for_clarity": "Reescribir con claridad",
-    "improving_response": "Mejorando tu respuesta",
+    "improving_response": "Mejorando respuesta",
     "improvement": "Respuesta mejorada",
     "error": "Error al mejorar respuesta con IA. Vuelve a intentarlo.",
     "new": "Nueva",
     "back_to_original": "Original",
     "back_to_original_tooltip": "Volver a la versión original (Ctrl+Z)"
   },
-  "manager": "Manager",
+  "manager": "Gerente",
   "yesterday": "Ayer",
   "you": "Tú",
   "queue": "Cola",
@@ -1025,6 +1023,7 @@
     "delete_description": "¿Realmente deseas eliminar el mensaje rápido {shortcut}?",
     "shortcut_tooltip": "Escribe /{shortcut} para usarlo",
     "new": "Nuevo mensaje rápido",
+    "description_new": "Mensaje rápido en el sector {sector}",
     "add": "Agregar mensaje rápido",
     "edit": "Editar mensaje rápido",
     "available_shortcuts": "Atajos disponibles",
@@ -1034,12 +1033,11 @@
     "message_field_placeholder": "Ejemplo: Hola, ¿cómo estás? ¿En qué puedo ayudarte hoy?",
     "successfully_added": "Mensaje rápido agregado",
     "successfully_updated": "Mensaje rápido actualizado",
+    "successfully_deleted": "Mensaje rápido eliminado con éxito",
+    "error_deleting": "No se pudo eliminar el mensaje rápido.",
     "error": "Error al configurar mensaje rápido",
     "no_suggestions": "No se encontraron resultados para el atajo ingresado",
-    "disclaimer": "Escribe / (barra) en el campo de mensaje para ver los mensajes rápidos",
-    "description_new": "Mensaje rápido en el sector {sector}",
-    "error_deleting": "No se pudo eliminar el mensaje rápido.",
-    "successfully_deleted": "Mensaje rápido eliminado con éxito"
+    "disclaimer": "Escribe / (barra) en el campo de mensaje para ver los mensajes rápidos"
   },
   "discard": "Descartar",
   "on_boarding": {
@@ -1092,11 +1090,11 @@
     "filter_by_group_name": "Filtrar por nombre del grupo",
     "section_sectors_subtitle": "Agrega, consulta y gestiona departamentos, colas, managers y representantes dentro de tu organización.",
     "tabs": {
+      "general": "General",
       "settings": "Configuración",
       "groups": "Grupos de proyectos",
       "sectors": "Sectores",
-      "representatives": "Representantes",
-      "general": "General"
+      "representatives": "Representantes"
     },
     "custom_breaks": {
       "title": "Pausas personalizadas",
@@ -1112,11 +1110,11 @@
       "status_remove_success": "Status {status} removido",
       "status_error": "Error al guardar cambios. Vuelve a intentarlo.",
       "delete_modal": {
+        "title": "Eliminar pausa personalizada",
         "description_1": "¿Realmente deseas eliminar la pausa personalizada “{name}”?",
         "description_2": "Una vez eliminada, sus datos ya no aparecerán en el panel de Live Desk y no podrán recuperarse.",
-        "error": "No se pudo eliminar la pausa personalizada.",
         "success": "Pausa personalizada eliminada con éxito",
-        "title": "Eliminar pausa personalizada"
+        "error": "No se pudo eliminar la pausa personalizada."
       }
     },
     "changes_saved": "Cambios guardados con éxito",
@@ -1195,10 +1193,9 @@
     "queues": {
       "in_sector": "Cola en el departamento {sector}",
       "new": "Nueva cola",
-      "info": "Las colas son grupos de soporte dentro de un departamento. Puedes dirigir contactos desde un flujo a una cola específica.",
       "title": "Gestión de colas",
+      "info": "Las colas son grupos de soporte dentro de un departamento. Puedes dirigir contactos desde un flujo a una cola específica.",
       "hint": "Las colas son grupos de soporte dentro de un departamento. Puedes crearlas o editarlas en cualquier momento.",
-      "queue_definitions": "Configuración de la cola",
       "filter_by_name": "Filtrar por nombre de la cola",
       "add_queue": "Agregar cola",
       "delete_this_queue": "Escribe el nombre de la cola a eliminar",
@@ -1207,6 +1204,7 @@
         "title": "Configurar cola",
         "tooltip": "Las colas son grupos de atención dentro del sector. Puedes crear nuevas colas o editarlas cuando quieras después de crear el sector."
       },
+      "queue_definitions": "Configuración de la cola",
       "delete_or_edit": "Eliminar o editar",
       "limit_chats": {
         "title": "Límite de chats esperando soporte",
@@ -1514,6 +1512,5 @@
     "pending_response": {
       "tooltip": "No respondiste a este contacto"
     }
-  },
-  "select": "Seleccionar"
+  }
 }
