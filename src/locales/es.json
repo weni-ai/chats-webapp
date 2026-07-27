@@ -205,7 +205,7 @@
       "close": "Cerrar imagen (esc)",
       "previous": "Anterior",
       "next": "Siguiente",
-      "rotate": "Rotar 90°",
+      "rotate": "Girar 90°",
       "zoom_in": "Acercar",
       "zoom_out": "Alejar",
       "export": "Exportar"
@@ -314,7 +314,7 @@
             "timeout_time_tooltip": "En ese momento, el representante también verá la conversación marcada con una alerta de inactividad.",
             "warning_message_label": "Mensaje de aviso",
             "warning_message_tooltip": "El mensaje aparecerá como si lo hubiera enviado el representante asignado.",
-            "default_warning_message": "¿Sigues ahí? Si no hay respuesta, esta sesión se cerrará pronto."
+            "default_warning_message": "¿Sigues ahí? Esta sesión finalizará pronto si no hay respuesta."
           }
         },
         "close_room": {
@@ -324,7 +324,7 @@
             "close_room_time_label": "Definir cuántos minutos después de enviar el mensaje de aviso el sistema debe finalizar el chat",
             "close_room_message_label": "Mensaje de cierre",
             "close_room_message_tooltip": "El mensaje aparecerá como si lo hubiera enviado el representante asignado.",
-            "default_close_room_message": "Esta sesión finalizó por inactividad. Inicia un nuevo chat cuando quieras."
+            "default_close_room_message": "Esta sesión finalizó por inactividad. Puedes iniciar un nuevo chat cuando quieras."
           }
         }
       },
@@ -548,10 +548,10 @@
     "message_input_placeholder": "Escribe tu mensaje o / para activar mensajes rápidos",
     "message_input_disabled_description": "Cambia tu status a online para continuar esta conversación",
     "message_input_floating_actions": {
-      "copy": "Copiar contenido escrito",
-      "copy_alert_success": "Contenido copiado!",
-      "clear": "Limpiar contenido escrito",
-      "clear_alert_success": "Contenido eliminado!"
+      "copy": "Copiar contenido ingresado",
+      "copy_alert_success": "Contenido copiado",
+      "clear": "Limpiar contenido ingresado",
+      "clear_alert_success": "Contenido removido"
     },
     "search_contact": "Buscar contacto",
     "search_contact_placeholder": "Buscar contacto por nombre, teléfono o ID de ticket",
@@ -829,7 +829,7 @@
     "copy_protocol": "Haga clic para copiar el Ticket ID",
     "protocol_copied": "¡Ticket ID copiado al portapapeles!",
     "copy_value": "Copiar valor",
-    "value_copied": "¡Valor copiado con éxito!",
+    "value_copied": "Valor copiado",
     "error_copying_value": "No se pudo copiar el valor. Inténtalo de nuevo.",
     "csat": {
       "title": "CSAT",
@@ -1556,7 +1556,13 @@
       "sending": "{count, plural, one {Enviando el mensaje a {count} contacto} other {Enviando el mensaje a {count} contactos}}"
     },
     "history": {
-      "last_message_disclaimer": "El mensaje \"{text}\" se envió en la última hora - a las {time}."
+      "filter_by_sender": "Filtrar por remitente",
+      "filter_by_status": "Filtrar por estado",
+      "last_message_disclaimer": "El mensaje \"{text}\" se envió en la última hora - a las {time}.",
+      "sent_by": "Enviado por",
+      "status": "Estado",
+      "status_failed": "Error al enviar",
+      "status_sent": "Enviado"
     },
     "toast": {
       "error": {

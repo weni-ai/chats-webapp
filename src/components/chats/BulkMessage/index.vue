@@ -101,6 +101,10 @@
         $t('mass_message.form.sending', { count: totalToSend || contactsCount })
       "
     />
+    <ShippingHistoryModal
+      v-if="showShippingModal"
+      @close="showShippingModal = false"
+    />
   </section>
 </template>
 
@@ -115,6 +119,7 @@ import ContactsStatus from './ContactsStatus.vue';
 import SelectFilters from './SelectFilters.vue';
 import LastMessages from './LastMessages.vue';
 import ModalProgressBar from './ModalProgressBar.vue';
+import ShippingHistoryModal from './ShippingHistoryModal.vue';
 
 import BulkMessageService from '@/services/api/resources/chats/bulkMessage';
 
@@ -138,8 +143,13 @@ const emit = defineEmits<{
 const { t } = i18n.global;
 
 const bulkMessageSendStore = useBulkMessageSend();
-const { isSending, sendingUuid, percentageSent, totalToSend } =
-  storeToRefs(bulkMessageSendStore);
+const {
+  isSending,
+  sendingUuid,
+  percentageSent,
+  totalToSend,
+  showShippingModal,
+} = storeToRefs(bulkMessageSendStore);
 
 const selectedContactsStatus = ref<string[]>(['ongoing', 'waiting']);
 const selectedQueues = ref<string[]>(['all']);
@@ -162,7 +172,7 @@ const validForm = computed(() => {
 });
 
 const handleShippingHistory = () => {
-  console.log('TODO:handleShippingHistory');
+  showShippingModal.value = true;
 };
 
 const handleSend = async () => {

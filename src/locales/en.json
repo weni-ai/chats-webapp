@@ -202,7 +202,7 @@
   "image_preview": {
     "count": "Image {current} of {total}",
     "tooltip": {
-      "close": "Close image (esc)",
+      "close": "Close image (Esc)",
       "previous": "Previous",
       "next": "Next",
       "rotate": "Rotate 90°",
@@ -314,7 +314,7 @@
             "timeout_time_tooltip": "At this moment, the representative will also see the chat marked with an inactivity alert.",
             "warning_message_label": "Warning message",
             "warning_message_tooltip": "The message will appear as if sent by the assigned representative.",
-            "default_warning_message": "Are you still there? If there's no response, this session will be closed soon."
+            "default_warning_message": "Are you still there? This session will end soon if there's no response."
           }
         },
         "close_room": {
@@ -546,9 +546,9 @@
     "message_input_disabled_description": "Change your status to online to continue this conversation",
     "message_input_floating_actions": {
       "copy": "Copy typed content",
-      "copy_alert_success": "Content copied!",
+      "copy_alert_success": "Content copied",
       "clear": "Clear typed content",
-      "clear_alert_success": "Typed content removed!"
+      "clear_alert_success": "Content cleared"
     },
     "search_contact": "Search contact",
     "search_contact_placeholder": "Search contact by name, phone, or ticket ID",
@@ -827,8 +827,8 @@
     "copy_protocol": "Click to copy the Ticket ID",
     "protocol_copied": "Ticket ID copied to clipboard!",
     "copy_value": "Copy value",
-    "value_copied": "Value copied successfully!",
-    "error_copying_value": "Unable to copy value. Please try again.",
+    "value_copied": "Value copied",
+    "error_copying_value": "Couldn't copy value. Try again.",
     "csat": {
       "title": "CSAT",
       "no_comment": "No comment",
@@ -1553,7 +1553,13 @@
       "sending": "{count, plural, one {Sending the message to {count} contact} other {Sending the message to {count} contacts}}"
     },
     "history": {
-      "last_message_disclaimer": "The message \"{text}\" was sent in the last hour - at {time}."
+      "filter_by_sender": "Filter by sender",
+      "filter_by_status": "Filter by status",
+      "last_message_disclaimer": "The message \"{text}\" was sent in the last hour - at {time}.",
+      "sent_by": "Sent by",
+      "status": "Status",
+      "status_failed": "Failed to send",
+      "status_sent": "Sent"
     },
     "toast": {
       "error": {
