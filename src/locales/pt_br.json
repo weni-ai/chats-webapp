@@ -1559,6 +1559,18 @@
     },
     "history": {
       "last_message_disclaimer": "A mensagem \"{text}\" foi enviada na última hora - às {time}."
+    },
+    "toast": {
+      "error": {
+        "message": "Não foi possível enviar a mensagem. Tente novamente."
+      },
+      "partial_success": {
+        "button": "Ver envios",
+        "message": "{success, plural, one {{failed, plural, one {Mensagem enviada para {success} contato, {failed} falhou.} other {Mensagem enviada para {success} contato, {failed} falharam.}}} other {{failed, plural, one {Mensagem enviada para {success} contatos, {failed} falhou.} other {Mensagem enviada para {success} contatos, {failed} falharam.}}}}"
+      },
+      "success": {
+        "message": "{count, plural, one {Mensagem enviada para {count} contato} other {Mensagem enviada para {count} contatos}}"
+      }
     }
   }
 }

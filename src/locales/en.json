@@ -1554,6 +1554,18 @@
     },
     "history": {
       "last_message_disclaimer": "The message \"{text}\" was sent in the last hour - at {time}."
+    },
+    "toast": {
+      "error": {
+        "message": "Couldn't send the message. Try again."
+      },
+      "partial_success": {
+        "button": "View shipments",
+        "message": "{success, plural, one {Message sent to {success} contact, {failed} failed.} other {Message sent to {success} contacts, {failed} failed.}}"
+      },
+      "success": {
+        "message": "{count, plural, one {Message sent to {count} contact} other {Message sent to {count} contacts}}"
+      }
     }
   }
 }

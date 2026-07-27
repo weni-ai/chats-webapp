@@ -97,7 +97,9 @@
     <ModalProgressBar
       v-if="isSending || !!sendingUuid"
       :modelValue="percentageSent"
-      :title="$t('mass_message.form.sending', { count: contactsCount })"
+      :title="
+        $t('mass_message.form.sending', { count: totalToSend || contactsCount })
+      "
     />
   </section>
 </template>
@@ -136,7 +138,7 @@ const emit = defineEmits<{
 const { t } = i18n.global;
 
 const bulkMessageSendStore = useBulkMessageSend();
-const { isSending, sendingUuid, percentageSent } =
+const { isSending, sendingUuid, percentageSent, totalToSend } =
   storeToRefs(bulkMessageSendStore);
 
 const selectedContactsStatus = ref<string[]>(['ongoing', 'waiting']);

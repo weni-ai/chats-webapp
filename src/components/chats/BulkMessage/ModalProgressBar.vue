@@ -9,59 +9,32 @@
       <UnnnicProgressBar
         class="modal-progress-bar__progress"
         :modelValue="modelValue"
-        :type="type"
-        :title="title"
-        :subtitle="subtitle"
-        :canClose="canClose"
-        @close="handleClose"
+        :type="type || 'primary'"
+        :title="title || ''"
+        :subtitle="subtitle || ''"
       />
     </UnnnicDialogContent>
   </UnnnicDialog>
 </template>
 
 <script setup lang="ts">
-import { ref, watch } from 'vue';
+import { ref } from 'vue';
 
 defineOptions({
   name: 'ModalProgressBar',
 });
 
-const props = withDefaults(
-  defineProps<{
-    modelValue: number;
-    title?: string;
-    subtitle?: string;
-    type?: 'primary' | 'secondary';
-    canClose?: boolean;
-  }>(),
-  {
-    title: '',
-    subtitle: '',
-    type: 'primary',
-    canClose: false,
-  },
-);
-
-const emit = defineEmits<{
-  close: [];
+defineProps<{
+  modelValue: number;
+  title?: string;
+  subtitle?: string;
+  type?: 'primary' | 'secondary';
 }>();
 
 const isOpen = ref(true);
 
-watch(isOpen, (value) => {
-  if (!value) {
-    emit('close');
-  }
-});
-
 function preventDismiss(event: Event) {
-  if (!props.canClose) {
-    event.preventDefault();
-  }
-}
-
-function handleClose() {
-  isOpen.value = false;
+  event.preventDefault();
 }
 </script>
 
