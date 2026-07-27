@@ -1085,6 +1085,10 @@
         "switch_active": "Blochează transferul chaturilor către reprezentanți offline",
         "switch_inactive": "Blochează transferul chaturilor către reprezentanți offline"
       },
+      "hide_moderators_from_transfer": {
+        "switch_active": "Ascunde moderatorii din transferul de chaturi",
+        "switch_inactive": "Ascunde moderatorii din transferul de chaturi"
+      },
       "bulk_close": {
         "switch_active": "Închide chaturile în masă",
         "switch_inactive": "Închide chaturile în masă"

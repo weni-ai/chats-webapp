@@ -1150,6 +1150,10 @@
         "switch_active": "Bloquear transferência de chats para atendentes offline",
         "switch_inactive": "Bloquear transferência de chats para atendentes offline"
       },
+      "hide_moderators_from_transfer": {
+        "switch_active": "Ocultar moderadores na transferência de chats",
+        "switch_inactive": "Ocultar moderadores na transferência de chats"
+      },
       "bulk_close": {
         "switch_active": "Encerrar chats em massa",
         "switch_inactive": "Encerrar chats em massa"

@@ -1147,6 +1147,10 @@
         "switch_active": "Bloquear transferencia de chats a representantes offline",
         "switch_inactive": "Bloquear transferencia de chats a representantes offline"
       },
+      "hide_moderators_from_transfer": {
+        "switch_active": "Ocultar moderadores en la transferencia de chats",
+        "switch_inactive": "Ocultar moderadores en la transferencia de chats"
+      },
       "bulk_close": {
         "switch_active": "Finalizar chats en masa",
         "switch_inactive": "Finalizar chats en masa"
