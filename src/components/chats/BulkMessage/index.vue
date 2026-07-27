@@ -93,6 +93,12 @@
         @click="handleSend"
       />
     </footer>
+
+    <ModalProgressBar
+      v-if="isSending || !!sendingUuid"
+      :modelValue="percentageSent"
+      :title="$t('mass_message.form.sending', { count: contactsCount })"
+    />
   </section>
 </template>
 
@@ -106,6 +112,7 @@ import { useBulkMessageSend } from '@/store/modules/chats/bulkMessageSend';
 import ContactsStatus from './ContactsStatus.vue';
 import SelectFilters from './SelectFilters.vue';
 import LastMessages from './LastMessages.vue';
+import ModalProgressBar from './ModalProgressBar.vue';
 
 import BulkMessageService from '@/services/api/resources/chats/bulkMessage';
 
@@ -129,7 +136,8 @@ const emit = defineEmits<{
 const { t } = i18n.global;
 
 const bulkMessageSendStore = useBulkMessageSend();
-const { isSending } = storeToRefs(bulkMessageSendStore);
+const { isSending, sendingUuid, percentageSent } =
+  storeToRefs(bulkMessageSendStore);
 
 const selectedContactsStatus = ref<string[]>(['ongoing', 'waiting']);
 const selectedQueues = ref<string[]>(['all']);
@@ -169,7 +177,6 @@ const handleSend = async () => {
     }
   } catch (error) {
     console.error('Error sending message', error);
-  } finally {
     isSending.value = false;
   }
 };
