@@ -30,6 +30,7 @@ vi.mock('@/services/api/resources/settings/agentBuilder', () => ({
 const defaultConfig = {
   can_use_bulk_transfer: false,
   filter_offline_agents: false,
+  filter_moderators: false,
   can_use_bulk_close: false,
   can_close_chats_in_queue: false,
   can_use_bulk_take: false,
@@ -191,6 +192,7 @@ describe('SettingsProjectOptions.vue', () => {
       const alwaysVisibleKeys = [
         'can_use_bulk_transfer',
         'filter_offline_agents',
+        'filter_moderators',
         'can_close_chats_in_queue',
         'can_use_queue_prioritization',
         'can_see_waiting_rooms_count',
@@ -222,6 +224,7 @@ describe('SettingsProjectOptions.vue', () => {
       'restrict_offline_agents',
       'can_use_bulk_transfer',
       'filter_offline_agents',
+      'filter_moderators',
       'can_use_bulk_close',
       'can_close_chats_in_queue',
       'can_use_queue_prioritization',
