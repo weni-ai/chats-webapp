@@ -95,8 +95,8 @@
     </footer>
 
     <ShippingHistoryModal
-      v-if="showShippingHistoryModal"
-      @close="showShippingHistoryModal = false"
+      v-if="showShippingModal"
+      @close="showShippingModal = false"
     />
   </section>
 </template>
@@ -135,7 +135,7 @@ const emit = defineEmits<{
 const { t } = i18n.global;
 
 const bulkMessageSendStore = useBulkMessageSend();
-const { isSending } = storeToRefs(bulkMessageSendStore);
+const { isSending, showShippingModal } = storeToRefs(bulkMessageSendStore);
 
 const selectedContactsStatus = ref<string[]>(['ongoing', 'waiting']);
 const selectedQueues = ref<string[]>(['all']);
@@ -144,7 +144,6 @@ const message = ref<string>('');
 const agreeToSend = ref<boolean>(false);
 const lastMessages = ref<Array<MessageSent>>([]);
 const hasShippingHistory = ref<boolean>(false);
-const showShippingHistoryModal = ref<boolean>(false);
 
 const filtersForm = computed(() => ({
   status: selectedContactsStatus.value,
@@ -159,7 +158,7 @@ const validForm = computed(() => {
 });
 
 const handleShippingHistory = () => {
-  showShippingHistoryModal.value = true;
+  showShippingModal.value = true;
 };
 
 const handleSend = async () => {
