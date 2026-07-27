@@ -93,6 +93,11 @@
         @click="handleSend"
       />
     </footer>
+
+    <ShippingHistoryModal
+      v-if="showShippingHistoryModal"
+      @close="showShippingHistoryModal = false"
+    />
   </section>
 </template>
 
@@ -106,6 +111,7 @@ import { useBulkMessageSend } from '@/store/modules/chats/bulkMessageSend';
 import ContactsStatus from './ContactsStatus.vue';
 import SelectFilters from './SelectFilters.vue';
 import LastMessages from './LastMessages.vue';
+import ShippingHistoryModal from './ShippingHistoryModal.vue';
 
 import BulkMessageService from '@/services/api/resources/chats/bulkMessage';
 
@@ -138,6 +144,7 @@ const message = ref<string>('');
 const agreeToSend = ref<boolean>(false);
 const lastMessages = ref<Array<MessageSent>>([]);
 const hasShippingHistory = ref<boolean>(false);
+const showShippingHistoryModal = ref<boolean>(false);
 
 const filtersForm = computed(() => ({
   status: selectedContactsStatus.value,
@@ -152,7 +159,7 @@ const validForm = computed(() => {
 });
 
 const handleShippingHistory = () => {
-  console.log('TODO:handleShippingHistory');
+  showShippingHistoryModal.value = true;
 };
 
 const handleSend = async () => {
