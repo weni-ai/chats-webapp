@@ -99,6 +99,7 @@ export default {
       projectConfig: {
         can_use_bulk_transfer: false,
         filter_offline_agents: false,
+        filter_moderators: false,
         can_use_bulk_close: false,
         can_close_chats_in_queue: false,
         can_use_bulk_take: false,
@@ -159,6 +160,14 @@ export default {
       return this.$t(
         `config_chats.project_configs.block_transfer_to_off_agents.switch_${
           filterOfflineAgents ? 'active' : 'inactive'
+        }`,
+      );
+    },
+    configHideModeratorsFromTransferTranslation() {
+      const filterModerators = this.projectConfig.filter_moderators;
+      return this.$t(
+        `config_chats.project_configs.hide_moderators_from_transfer.switch_${
+          filterModerators ? 'active' : 'inactive'
         }`,
       );
     },
@@ -238,6 +247,12 @@ export default {
           type: 'flag',
           visible: !this.isSecondaryProject,
           name: this.configBlockTransferToOffAgentsTranslation,
+        },
+        {
+          key: 'filter_moderators',
+          type: 'flag',
+          visible: !this.isSecondaryProject,
+          name: this.configHideModeratorsFromTransferTranslation,
         },
         {
           key: 'can_use_bulk_close',
@@ -381,6 +396,7 @@ export default {
       const {
         can_use_bulk_transfer,
         filter_offline_agents,
+        filter_moderators,
         can_use_bulk_close,
         can_close_chats_in_queue,
         can_use_bulk_take,
@@ -394,6 +410,7 @@ export default {
       await Project.update({
         can_use_bulk_transfer,
         filter_offline_agents,
+        filter_moderators,
         can_use_bulk_close,
         can_close_chats_in_queue,
         can_use_bulk_take,
