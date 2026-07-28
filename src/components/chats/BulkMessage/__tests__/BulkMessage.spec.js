@@ -84,7 +84,7 @@ describe('BulkMessage', () => {
           ModalProgressBar: {
             name: 'ModalProgressBar',
             props: ['modelValue', 'title'],
-            template: '<div data-testid="modal-progress-bar" />',
+            template: '<div data-testid="modal-progress-bar-wrapper" />',
           },
           ShippingHistoryModal: {
             name: 'ShippingHistoryModal',
@@ -131,8 +131,9 @@ describe('BulkMessage', () => {
               'iconLeft',
             ],
             emits: ['click'],
+            inheritAttrs: false,
             template:
-              '<button type="button" data-testid="unnnic-button" :disabled="disabled" @click="$emit(\'click\')">{{ text }}</button>',
+              '<button type="button" v-bind="$attrs" :disabled="disabled" @click="$emit(\'click\')">{{ text }}</button>',
           },
           UnnnicLabel: true,
           UnnnicToolTip: {
@@ -225,12 +226,9 @@ describe('BulkMessage', () => {
     wrapper = createWrapper();
     await flushPromises();
 
-    const cancelButton = wrapper
-      .findAll('button')
-      .find((button) => button.text().includes('Cancel'));
-
-    expect(cancelButton).toBeTruthy();
-    await cancelButton.trigger('click');
+    await wrapper
+      .find('[data-testid="bulk-message-cancel-button"]')
+      .trigger('click');
 
     expect(wrapper.emitted('close')).toHaveLength(1);
   });
@@ -294,7 +292,7 @@ describe('BulkMessage', () => {
     store.percentageSent = 30;
     await flushPromises();
 
-    expect(wrapper.find('[data-testid="modal-progress-bar"]').exists()).toBe(
+    expect(wrapper.find('[data-testid="modal-progress-bar-wrapper"]').exists()).toBe(
       true,
     );
   });

@@ -24,7 +24,9 @@ describe('ModalProgressBar', () => {
   it('should render progress bar with provided props', () => {
     wrapper = createWrapper({ modelValue: 75 });
 
-    expect(wrapper.find('.unnnic-progress-bar').exists()).toBe(true);
+    expect(wrapper.find('[data-testid="modal-progress-bar"]').exists()).toBe(
+      true,
+    );
     expect(wrapper.text()).toContain('Please wait');
     expect(wrapper.text()).toContain('75');
   });

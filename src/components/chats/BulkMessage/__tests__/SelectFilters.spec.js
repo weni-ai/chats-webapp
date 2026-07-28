@@ -133,8 +133,10 @@ describe('SelectFilters', () => {
     wrapper = createWrapper({ queues: [] });
     await flushPromises();
 
-    const selects = wrapper.findAllComponents({ name: 'UnnnicMultiSelect' });
-    await selects[0].vm.$emit('update:model-value', ['all', 'queue-1']);
+    const queuesSelect = wrapper.findComponent(
+      '[data-testid="select-filters-queues"]',
+    );
+    await queuesSelect.vm.$emit('update:model-value', ['all', 'queue-1']);
 
     expect(wrapper.emitted('update:queues')[0][0]).toEqual(['all']);
   });
@@ -143,8 +145,12 @@ describe('SelectFilters', () => {
     wrapper = createWrapper({ representatives: [] });
     await flushPromises();
 
-    const selects = wrapper.findAllComponents({ name: 'UnnnicMultiSelect' });
-    await selects[1].vm.$emit('update:model-value', ['jane@test.com']);
+    const representativesSelect = wrapper.findComponent(
+      '[data-testid="select-filters-representatives"]',
+    );
+    await representativesSelect.vm.$emit('update:model-value', [
+      'jane@test.com',
+    ]);
 
     expect(wrapper.emitted('update:representatives')[0][0]).toEqual([
       'jane@test.com',

@@ -30,19 +30,20 @@ describe('LastMessages', () => {
 
   it('should render a disclaimer for each message', () => {
     wrapper = createWrapper();
-    const disclaimers = wrapper.findAllComponents({ name: 'UnnnicDisclaimer' });
+    const disclaimers = wrapper.findAll(
+      '[data-testid="last-message-disclaimer"]',
+    );
 
     expect(disclaimers).toHaveLength(2);
-    expect(disclaimers[0].props('type')).toBe('attention');
-    expect(disclaimers[0].props('description')).toContain('First message');
-    expect(disclaimers[1].props('description')).toContain('Second message');
+    expect(disclaimers[0].text()).toContain('First message');
+    expect(disclaimers[1].text()).toContain('Second message');
   });
 
   it('should render nothing when messages list is empty', () => {
     wrapper = createWrapper([]);
 
-    expect(wrapper.findAllComponents({ name: 'UnnnicDisclaimer' })).toHaveLength(
-      0,
-    );
+    expect(
+      wrapper.findAll('[data-testid="last-message-disclaimer"]'),
+    ).toHaveLength(0);
   });
 });

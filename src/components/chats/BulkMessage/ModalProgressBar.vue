@@ -8,6 +8,7 @@
     >
       <UnnnicProgressBar
         class="modal-progress-bar__progress"
+        data-testid="modal-progress-bar"
         :modelValue="modelValue"
         :type="type || 'primary'"
         :title="title || ''"

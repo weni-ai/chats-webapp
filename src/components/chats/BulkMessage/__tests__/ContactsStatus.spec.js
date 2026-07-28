@@ -18,7 +18,12 @@ describe('ContactsStatus', () => {
   it('should render both status checkboxes', () => {
     wrapper = createWrapper();
 
-    expect(wrapper.findAll('.unnnic-checkbox')).toHaveLength(2);
+    expect(
+      wrapper.find('[data-testid="contacts-status-ongoing"]').exists(),
+    ).toBe(true);
+    expect(
+      wrapper.find('[data-testid="contacts-status-waiting"]').exists(),
+    ).toBe(true);
     expect(wrapper.text()).toContain('Contacts in service');
     expect(wrapper.text()).toContain('Contacts waiting for service');
   });
@@ -44,9 +49,15 @@ describe('ContactsStatus', () => {
 
   it('should mark checkboxes according to status prop', () => {
     wrapper = createWrapper(['ongoing']);
-    const inputs = wrapper.findAll('input[type="checkbox"]');
 
-    expect(inputs[0].element.checked).toBe(true);
-    expect(inputs[1].element.checked).toBe(false);
+    const ongoing = wrapper.findComponent(
+      '[data-testid="contacts-status-ongoing"]',
+    );
+    const waiting = wrapper.findComponent(
+      '[data-testid="contacts-status-waiting"]',
+    );
+
+    expect(ongoing.props('modelValue')).toBe(true);
+    expect(waiting.props('modelValue')).toBe(false);
   });
 });
