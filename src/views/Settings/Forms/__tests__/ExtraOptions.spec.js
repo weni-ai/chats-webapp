@@ -347,7 +347,7 @@ describe('SectorExtraOptions', () => {
       wrapper.vm.handleInactivityTimeoutIsMessageTimeoutEnabled(true);
 
       expect(wrapper.vm.sector.inactivity_timeout.message_timeout_text).toBe(
-        'Você ainda está aí? Se não houver resposta, este atendimento será encerrado em breve.',
+        'Você ainda está aí? Esta sessão será encerrada em breve se não houver resposta.',
       );
     });
 
@@ -358,7 +358,7 @@ describe('SectorExtraOptions', () => {
       wrapper.vm.handleInactivityTimeoutIsCloseRoomEnabled(true);
 
       expect(wrapper.vm.sector.inactivity_timeout.close_room_message_text).toBe(
-        'Este atendimento foi encerrado por inatividade. Inicie um novo chat quando quiser.',
+        'Esta sessão foi encerrada por inatividade. Fique à vontade para iniciar um novo chat a qualquer momento!',
       );
     });
 
@@ -372,7 +372,7 @@ describe('SectorExtraOptions', () => {
       expect(
         localWrapper.vm.sector.inactivity_timeout.message_timeout_text,
       ).toBe(
-        "Are you still there? If there's no response, this session will be closed soon.",
+        "Are you still there? This session will end soon if there's no response.",
       );
       expect(
         localWrapper.vm.sector.inactivity_timeout.close_room_message_text,
@@ -393,7 +393,7 @@ describe('SectorExtraOptions', () => {
       expect(
         localWrapper.vm.sector.inactivity_timeout.message_timeout_text,
       ).toBe(
-        'Você ainda está aí? Se não houver resposta, este atendimento será encerrado em breve.',
+        'Você ainda está aí? Esta sessão será encerrada em breve se não houver resposta.',
       );
     });
 
@@ -423,12 +423,12 @@ describe('SectorExtraOptions', () => {
       expect(
         localWrapper.vm.sector.inactivity_timeout.message_timeout_text,
       ).toBe(
-        'Mai ești acolo? Dacă nu există răspuns, această sesiune se va închide în curând.',
+        'Mai ești aici? Dacă nu există niciun răspuns, această sesiune va fi închisă în curând.',
       );
       expect(
         localWrapper.vm.sector.inactivity_timeout.close_room_message_text,
       ).toBe(
-        'Această sesiune s-a încheiat din cauza inactivității. Poți începe un chat nou oricând.',
+        'Această sesiune s-a încheiat din cauza inactivității. Poți începe o nouă conversație oricând!',
       );
     });
   });
