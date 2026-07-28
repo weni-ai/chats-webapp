@@ -206,6 +206,39 @@ describe('SettingsProjectOptions.vue', () => {
       });
     });
 
+    it('should place filter_moderators after filter_offline_agents and before bulk close', () => {
+      wrapper = createWrapper({ activeFeatures: ['weniChatsBulkClose'] });
+
+      const keys = wrapper.vm.optionsItems.map((item) => item.key);
+      const offlineAgentsIndex = keys.indexOf('filter_offline_agents');
+      const moderatorsIndex = keys.indexOf('filter_moderators');
+      const bulkCloseIndex = keys.indexOf('can_use_bulk_close');
+
+      expect(offlineAgentsIndex).toBeGreaterThan(-1);
+      expect(moderatorsIndex).toBeGreaterThan(-1);
+      expect(moderatorsIndex).toBe(offlineAgentsIndex + 1);
+      expect(bulkCloseIndex).toBeGreaterThan(moderatorsIndex);
+    });
+
+    it('should include hint text on filter_moderators item', () => {
+      wrapper = createWrapper({ activeFeatures: [] });
+
+      const item = wrapper.vm.optionsItems.find(
+        (option) => option.key === 'filter_moderators',
+      );
+
+      expect(item.name).toBe(
+        wrapper.vm.$t(
+          'config_chats.project_configs.hide_moderators_from_transfer.switch_label',
+        ),
+      );
+      expect(item.hint).toBe(
+        wrapper.vm.$t(
+          'config_chats.project_configs.hide_moderators_from_transfer.hint',
+        ),
+      );
+    });
+
     it('should have prompt config on flag-prompt items', async () => {
       await flushPromises();
 
