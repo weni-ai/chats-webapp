@@ -23,6 +23,7 @@ export const useBulkMessageSend = defineStore('bulkMessageSend', () => {
     totalToSend.value = 0;
     percentageSent.value = 0;
     showBulkSendView.value = false;
+    showShippingModal.value = false;
   };
 
   const showFinishedAlert = () => {
@@ -51,7 +52,10 @@ export const useBulkMessageSend = defineStore('bulkMessageSend', () => {
         {
           button: {
             text: i18n.global.t('mass_message.toast.partial_success.button'),
-            action: () => (showShippingModal.value = true),
+            action: () => {
+              showBulkSendView.value = true;
+              showShippingModal.value = true;
+            },
           },
         },
       );
