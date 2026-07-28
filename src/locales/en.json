@@ -1145,6 +1145,10 @@
         "switch_active": "Block chats transfer to offline representatives",
         "switch_inactive": "Block chats transfer to offline representatives"
       },
+      "hide_moderators_from_transfer": {
+        "hint": "When enabled, only users assigned to the queue as representatives are shown. Moderators are only displayed if they are also assigned to the queue as representatives. When disabled, all users, including moderators, are shown.",
+        "switch_label": "Hide moderator profiles when transferring chats"
+      },
       "bulk_close": {
         "switch_active": "End chats in bulk",
         "switch_inactive": "End chats in bulk"

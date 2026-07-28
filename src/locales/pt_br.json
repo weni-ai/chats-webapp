@@ -1150,6 +1150,10 @@
         "switch_active": "Bloquear transferência de chats para atendentes offline",
         "switch_inactive": "Bloquear transferência de chats para atendentes offline"
       },
+      "hide_moderators_from_transfer": {
+        "hint": "Quando ativada, apenas usuários atribuídos à fila como atendentes são exibidos. Moderadores só aparecem se também estiverem atribuídos à fila como atendentes. Quando desativada, todos os usuários, incluindo moderadores, são exibidos.",
+        "switch_label": "Ocultar perfis moderadores ao transferir chats"
+      },
       "bulk_close": {
         "switch_active": "Encerrar chats em massa",
         "switch_inactive": "Encerrar chats em massa"
