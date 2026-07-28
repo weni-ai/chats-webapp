@@ -23,6 +23,7 @@ import http from '@/services/api/http';
 import Profile from '@/services/api/resources/profile';
 import Project from './services/api/resources/settings/project';
 import WS from '@/services/api/websocket/setup';
+import { setActiveConnection } from '@/services/api/websocket/connectionRegistry';
 import KeycloakService from '@/services/keycloak';
 import * as notifications from '@/utils/notifications';
 
@@ -464,6 +465,7 @@ export default {
       if (isWSConnectionValid) {
         this.ws = new WS({ app: this });
         this.ws.connect();
+        setActiveConnection(this.ws);
       }
     },
 
