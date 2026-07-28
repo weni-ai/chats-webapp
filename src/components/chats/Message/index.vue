@@ -6,6 +6,7 @@
       sent: type === 'sent',
       automatic: automatic,
       sending: status === 'sending',
+      failed: status === 'failed',
       'is-document': isDocument,
       'is-media': isMedia,
       'is-image': isImage,
@@ -15,6 +16,7 @@
     }"
     @mouseover="isHovering = true"
     @mouseleave="isHovering = false"
+    @click="status === 'failed' ? $emit('click') : undefined"
   >
     <ReplyMessage
       v-if="replyMessage"
@@ -265,6 +267,7 @@ export default {
     },
     messageStatusIcon() {
       if (this.status === 'sending') return 'history';
+      if (this.status === 'failed') return 'error';
 
       return this.status === 'received' || this.status === 'read'
         ? 'done_all'
@@ -287,8 +290,7 @@ $defaultLineHeight: $unnnic-font-size-body-gt + $unnnic-line-height-medium;
 
 .is-media .unnnic-chats-message__reply-message {
   cursor: pointer;
-  margin: (-$unnnic-spacing-nano) (-$unnnic-spacing-nano) 0px
-    (-$unnnic-spacing-nano);
+  margin: (-$unnnic-space-1) (-$unnnic-space-1) 0px (-$unnnic-space-1);
 }
 
 .unnnic-chats-message {
@@ -297,17 +299,21 @@ $defaultLineHeight: $unnnic-font-size-body-gt + $unnnic-line-height-medium;
   max-width: 500px;
 
   display: grid;
-  gap: $unnnic-spacing-nano;
+  gap: $unnnic-space-1;
 
   border-radius: $unnnic-border-radius-md;
 
-  padding: $unnnic-spacing-xs $unnnic-spacing-ant;
+  padding: $unnnic-space-2 $unnnic-space-3;
 
   background-color: $unnnic-color-bg-base;
 
   font: $unnnic-font-body;
 
   box-shadow: 0px 2px 5px 0px rgba(0, 0, 0, 0.1);
+
+  &.failed {
+    cursor: pointer;
+  }
 
   &__tooltip {
     display: flex;
@@ -317,8 +323,7 @@ $defaultLineHeight: $unnnic-font-size-body-gt + $unnnic-line-height-medium;
 
   &__reply-message {
     cursor: pointer;
-    margin: (-$unnnic-spacing-nano) (-$unnnic-spacing-xs) 0px
-      (-$unnnic-spacing-xs);
+    margin: (-$unnnic-space-1) (-$unnnic-space-2) 0px (-$unnnic-space-2);
   }
 
   &.highlighted {
@@ -340,14 +345,14 @@ $defaultLineHeight: $unnnic-font-size-body-gt + $unnnic-line-height-medium;
   }
 
   &.is-media {
-    padding: $unnnic-spacing-xs;
+    padding: $unnnic-space-2;
   }
 
   &__main {
     display: flex;
     align-items: flex-end;
     justify-content: space-between;
-    gap: $unnnic-spacing-sm;
+    gap: $unnnic-space-4;
 
     & > * {
       margin: 0;
@@ -395,7 +400,7 @@ $defaultLineHeight: $unnnic-font-size-body-gt + $unnnic-line-height-medium;
   &__document {
     display: flex;
     align-items: center;
-    gap: $unnnic-spacing-xs;
+    gap: $unnnic-space-2;
 
     &__text {
       &:hover {
@@ -411,7 +416,7 @@ $defaultLineHeight: $unnnic-font-size-body-gt + $unnnic-line-height-medium;
   &__signature {
     margin: 0;
 
-    padding: $unnnic-spacing-nano 0;
+    padding: $unnnic-space-1 0;
 
     font-size: $unnnic-font-size-body-gt;
     color: $unnnic-color-fg-emphasized;
@@ -429,7 +434,7 @@ $defaultLineHeight: $unnnic-font-size-body-gt + $unnnic-line-height-medium;
     display: flex;
     align-items: center;
     justify-content: end;
-    gap: $unnnic-spacing-nano;
+    gap: $unnnic-space-1;
     min-width: 51px;
   }
 
@@ -442,7 +447,7 @@ $defaultLineHeight: $unnnic-font-size-body-gt + $unnnic-line-height-medium;
     &-container {
       display: flex;
       align-items: center;
-      gap: $unnnic-spacing-nano;
+      gap: $unnnic-space-1;
     }
   }
 
@@ -455,6 +460,7 @@ $defaultLineHeight: $unnnic-font-size-body-gt + $unnnic-line-height-medium;
       cursor: pointer;
     }
   }
+
   .geolocation-icon {
     align-self: center;
   }
