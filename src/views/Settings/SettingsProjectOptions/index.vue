@@ -163,14 +163,6 @@ export default {
         }`,
       );
     },
-    configHideModeratorsFromTransferTranslation() {
-      const filterModerators = this.projectConfig.filter_moderators;
-      return this.$t(
-        `config_chats.project_configs.hide_moderators_from_transfer.switch_${
-          filterModerators ? 'active' : 'inactive'
-        }`,
-      );
-    },
     configBulkCloseTranslation() {
       const canBulkClose = this.projectConfig.can_use_bulk_close;
       return this.$t(
@@ -252,7 +244,12 @@ export default {
           key: 'filter_moderators',
           type: 'flag',
           visible: !this.isSecondaryProject,
-          name: this.configHideModeratorsFromTransferTranslation,
+          name: this.$t(
+            'config_chats.project_configs.hide_moderators_from_transfer.switch_label',
+          ),
+          hint: this.$t(
+            'config_chats.project_configs.hide_moderators_from_transfer.hint',
+          ),
         },
         {
           key: 'can_use_bulk_close',
