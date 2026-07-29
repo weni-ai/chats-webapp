@@ -127,7 +127,9 @@ const getContactsCount = async () => {
 watchDebounced(
   filtersForm,
   () => {
-    getContactsCount();
+    if (filtersForm.value.status.length > 0) {
+      getContactsCount();
+    }
   },
   { debounce: 1500, deep: true },
 );
