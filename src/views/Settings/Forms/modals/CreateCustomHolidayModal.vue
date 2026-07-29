@@ -41,7 +41,7 @@
         <UnnnicButton
           class="create-custom-holiday-modal__add-button"
           data-testid="add-button"
-          iconCenter="add-1"
+          iconLeft="add-1"
           type="tertiary"
           :text="$t('sector.managers.working_day.add_more_dates_or_periods')"
           @click="addForm"
@@ -150,7 +150,7 @@ export default {
 };
 </script>
 
-<style lang="scss" scoped>
+<style scoped lang="scss">
 .create-custom-holiday-modal {
   &__form {
     display: flex;
@@ -162,6 +162,9 @@ export default {
       }
     }
   }
+  &__add-button {
+    align-self: flex-start;
+  }
   &__body {
     display: flex;
     flex-direction: column;
@@ -169,8 +172,5 @@ export default {
     padding: $unnnic-space-6;
     overflow-y: auto;
   }
-}
-:deep(.unnnic-button--size-large.create-custom-holiday-modal__add-button) {
-  width: 50%;
 }
 </style>
