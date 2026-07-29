@@ -97,14 +97,14 @@ export default async function mountChatsApp({
 
     // Federated: the legacy getLanguage/setLanguage postMessage handshake can't
     // reach the host (same document, no iframe). Mirror the host's account
-    // language from the shared store instead. `legacy: true` makes
-    // `i18n.global.locale` the single source consumed everywhere (Accept-Language
-    // headers, $i18n.locale watchers, moment dates).
+    // language from the shared store instead. Composition mode (`legacy: false`)
+    // exposes `i18n.global.locale` as a Ref — assign `.value` so Accept-Language
+    // headers, `$i18n.locale` watchers, and moment dates stay in sync.
     watch(
       () => sharedStore.user?.language,
       (language) => {
         const locale = normalizeLocale(language);
-        i18n.global.locale = locale;
+        i18n.global.locale.value = locale;
         moment.locale(locale);
       },
       { immediate: true },
