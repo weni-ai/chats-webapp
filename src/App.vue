@@ -425,10 +425,12 @@ export default {
         if (!isLocaleChangeMessage) return;
 
         const locale = (message?.language || 'en').toLowerCase(); // 'en', 'pt-br', 'es'
+        const normalized = locale === 'en-us' ? 'en' : locale;
 
-        moment.locale(locale);
+        moment.locale(normalized);
 
-        this.$i18n.locale = locale;
+        // Composition API mode: locale is a Ref — assign `.value`.
+        this.$i18n.locale.value = normalized;
       });
     },
 
