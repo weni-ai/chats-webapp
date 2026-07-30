@@ -10,6 +10,10 @@ vi.mock('@/services/api/websocket/listeners/room', () => ({
     message: {
       create: vi.fn(),
       update: vi.fn(),
+      createAck: {
+        success: vi.fn(),
+        error: vi.fn(),
+      },
     },
     roomInternalNote: {
       delete: vi.fn(),
@@ -59,6 +63,14 @@ describe('setupWSListeners', () => {
     expect(wsMock.on).toHaveBeenCalledWith('rooms.close', expect.any(Function));
     expect(wsMock.on).toHaveBeenCalledWith('msg.create', expect.any(Function));
     expect(wsMock.on).toHaveBeenCalledWith('msg.update', expect.any(Function));
+    expect(wsMock.on).toHaveBeenCalledWith(
+      'msg.create.success',
+      expect.any(Function),
+    );
+    expect(wsMock.on).toHaveBeenCalledWith(
+      'msg.create.error',
+      expect.any(Function),
+    );
   });
 
   it('should register all discussion listeners', () => {
