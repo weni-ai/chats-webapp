@@ -174,14 +174,14 @@ section.chats-layout {
 
   padding: 0;
 
-  height: 100vh;
-  max-height: 100vh;
-  width: 100vw;
-  max-width: 100vw;
+  height: 100%;
+  max-height: 100%;
+  width: 100%;
+  max-width: 100%;
 
   display: grid;
   grid-template-columns: 3fr 9fr;
-  grid-template-rows: 100vh;
+  grid-template-rows: 100%;
 
   overflow: hidden;
 
@@ -199,7 +199,7 @@ section.chats-layout {
     position: relative;
 
     padding-top: $viewModeHeaderHeight;
-    grid-template-rows: calc(100vh - $viewModeHeaderHeight);
+    grid-template-rows: calc(100%);
   }
 
   .sidebar {
@@ -217,7 +217,7 @@ section.chats-layout {
     }
 
     & > * {
-      padding-right: $unnnic-spacing-xs;
+      padding-right: $unnnic-space-2;
     }
   }
 
