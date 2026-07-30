@@ -41,6 +41,9 @@ describe('useRoomMessages Store', () => {
   let roomMessagesStore;
   beforeEach(() => {
     vi.restoreAllMocks();
+    vi.stubGlobal('crypto', {
+      randomUUID: vi.fn(),
+    });
     setActivePinia(createPinia());
 
     useRooms.mockReturnValue({
@@ -160,7 +163,7 @@ describe('useRoomMessages Store', () => {
     useFeatureFlag.mockReturnValue({
       featureFlags: { active_features: ['weniChatsSocketMessageSend'] },
     });
-    vi.spyOn(crypto, 'randomUUID').mockReturnValue('req-socket-1');
+    crypto.randomUUID.mockReturnValue('req-socket-1');
     sendRoomMessageBySocket.mockResolvedValue({
       uuid: 'server-1',
       text: 'Hello',
@@ -187,7 +190,7 @@ describe('useRoomMessages Store', () => {
     useFeatureFlag.mockReturnValue({
       featureFlags: { active_features: ['weniChatsSocketMessageSend'] },
     });
-    vi.spyOn(crypto, 'randomUUID').mockReturnValue('req-fail-1');
+    crypto.randomUUID.mockReturnValue('req-fail-1');
     sendRoomMessageBySocket.mockRejectedValue(new Error('timeout'));
     const errorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
 
@@ -210,7 +213,7 @@ describe('useRoomMessages Store', () => {
     useFeatureFlag.mockReturnValue({
       featureFlags: { active_features: ['weniChatsSocketMessageSend'] },
     });
-    vi.spyOn(crypto, 'randomUUID').mockReturnValue('req-resend-1');
+    crypto.randomUUID.mockReturnValue('req-resend-1');
     sendRoomMessageBySocket.mockResolvedValue({
       uuid: 'server-2',
       text: 'Resend',
