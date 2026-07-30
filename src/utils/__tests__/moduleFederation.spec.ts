@@ -1,9 +1,4 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import * as Sentry from '@sentry/vue';
-
-vi.mock('@sentry/vue', () => ({
-  captureException: vi.fn(),
-}));
 
 async function loadModuleFederation({
   publicPathUrl,
@@ -100,7 +95,7 @@ describe('moduleFederation', () => {
       );
     });
 
-    it('returns an empty object and reports to Sentry when federated import fails', async () => {
+    it('returns an empty object and logs when federated import fails', async () => {
       const consoleError = vi
         .spyOn(console, 'error')
         .mockImplementation(() => {});
@@ -119,9 +114,6 @@ describe('moduleFederation', () => {
         '[Module Federation] connect/sharedStore unavailable:',
         'remote unavailable',
       );
-      expect(Sentry.captureException).toHaveBeenCalledWith(error, {
-        tags: { module_federation: true, import_path: 'connect/sharedStore' },
-      });
 
       consoleError.mockRestore();
     });
