@@ -4,6 +4,8 @@ import { useRoomMessages } from '../roomMessages';
 import { useRooms } from '../rooms';
 import Message from '@/services/api/resources/chats/message';
 import RoomNotes from '@/services/api/resources/chats/roomNotes';
+import { useFeatureFlag } from '@/store/modules/featureFlag';
+import { sendRoomMessageBySocket } from '@/services/api/websocket/messages';
 
 vi.mock('../rooms');
 vi.mock('@/store/modules/profile', () => ({
@@ -26,6 +28,14 @@ vi.mock('@/services/api/resources/chats/roomNotes', () => ({
     createInternalNote: vi.fn(),
   },
 }));
+vi.mock('@/store/modules/featureFlag', () => ({
+  useFeatureFlag: vi.fn(() => ({
+    featureFlags: { active_features: [] },
+  })),
+}));
+vi.mock('@/services/api/websocket/messages', () => ({
+  sendRoomMessageBySocket: vi.fn(),
+}));
 
 describe('useRoomMessages Store', () => {
   let roomMessagesStore;
@@ -35,6 +45,9 @@ describe('useRoomMessages Store', () => {
 
     useRooms.mockReturnValue({
       activeRoom: { uuid: 'room-123', user: { email: 'test@test.com' } },
+    });
+    useFeatureFlag.mockReturnValue({
+      featureFlags: { active_features: [] },
     });
 
     roomMessagesStore = useRoomMessages();
@@ -139,6 +152,89 @@ describe('useRoomMessages Store', () => {
   it('should not resend a room message when roomUuid is missing', async () => {
     await roomMessagesStore.resendRoomMessage({
       message: { uuid: '123', text: 'Resend' },
+    });
+    expect(Message.sendRoomMessage).not.toHaveBeenCalled();
+  });
+
+  it('should send a room message via socket when the feature flag is enabled', async () => {
+    useFeatureFlag.mockReturnValue({
+      featureFlags: { active_features: ['weniChatsSocketMessageSend'] },
+    });
+    vi.spyOn(crypto, 'randomUUID').mockReturnValue('req-socket-1');
+    sendRoomMessageBySocket.mockResolvedValue({
+      uuid: 'server-1',
+      text: 'Hello',
+      room: 'room-123',
+    });
+
+    await roomMessagesStore.sendRoomMessage(
+      'Hello',
+      undefined,
+      { status: 'USED', type: 'GRAMMAR_AND_SPELLING' },
+      'room-123',
+    );
+
+    expect(sendRoomMessageBySocket).toHaveBeenCalledWith({
+      room: 'room-123',
+      text: 'Hello',
+      aiTextImprovement: { status: 'USED', type: 'GRAMMAR_AND_SPELLING' },
+      requestId: 'req-socket-1',
+    });
+    expect(Message.sendRoomMessage).not.toHaveBeenCalled();
+  });
+
+  it('should mark the message as failed when socket send rejects', async () => {
+    useFeatureFlag.mockReturnValue({
+      featureFlags: { active_features: ['weniChatsSocketMessageSend'] },
+    });
+    vi.spyOn(crypto, 'randomUUID').mockReturnValue('req-fail-1');
+    sendRoomMessageBySocket.mockRejectedValue(new Error('timeout'));
+    const errorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+
+    await roomMessagesStore.sendRoomMessage(
+      'Hello',
+      undefined,
+      null,
+      'room-123',
+    );
+
+    expect(roomMessagesStore.roomMessagesFailedUuids).toContain('req-fail-1');
+    expect(roomMessagesStore.roomMessagesSendingUuids).not.toContain(
+      'req-fail-1',
+    );
+
+    errorSpy.mockRestore();
+  });
+
+  it('should resend a room message via socket when the feature flag is enabled', async () => {
+    useFeatureFlag.mockReturnValue({
+      featureFlags: { active_features: ['weniChatsSocketMessageSend'] },
+    });
+    vi.spyOn(crypto, 'randomUUID').mockReturnValue('req-resend-1');
+    sendRoomMessageBySocket.mockResolvedValue({
+      uuid: 'server-2',
+      text: 'Resend',
+      room: 'room-123',
+    });
+
+    const message = {
+      uuid: 'old-temp',
+      text: 'Resend',
+      room: 'room-123',
+      user: { email: 'test@test.com' },
+    };
+    roomMessagesStore.roomMessagesFailedUuids = ['old-temp'];
+
+    await roomMessagesStore.resendRoomMessage({
+      message,
+      roomUuid: 'room-123',
+    });
+
+    expect(roomMessagesStore.roomMessagesFailedUuids).not.toContain('old-temp');
+    expect(sendRoomMessageBySocket).toHaveBeenCalledWith({
+      room: 'room-123',
+      text: 'Resend',
+      requestId: 'req-resend-1',
     });
     expect(Message.sendRoomMessage).not.toHaveBeenCalled();
   });
