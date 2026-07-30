@@ -492,6 +492,7 @@
       "default": "A apărut o eroare. Încearcă mai târziu."
     },
     "message_input_placeholder": "Scrie mesajul tău sau / pentru a activa mesajele rapide",
+    "message_input_placeholder_with_voice_mode": "Scrie sau folosește modul vocal",
     "message_input_disabled_description": "Schimbă-ți statusul în online pentru a continua această conversație",
     "message_input_floating_actions": {
       "copy": "Copiază conținutul tastat",
@@ -973,7 +974,9 @@
     "error_deleting": "Nu s-a putut șterge mesajul rapid.",
     "error": "Eroare la setarea mesajului rapid",
     "no_suggestions": "Nu s-au găsit rezultate pentru comanda rapidă introdusă",
-    "disclaimer": "Tastează / (slash) în câmpul mesaj pentru a vedea mesajele rapide"
+    "disclaimer": "Tastează / (slash) în câmpul mesaj pentru a vedea mesajele rapide",
+    "action_open": "Deschide mesajele rapide (/)",
+    "action_close": "Închide mesajele rapide"
   },
   "discard": "Șterge",
   "on_boarding": {
@@ -1084,6 +1087,10 @@
       "block_transfer_to_off_agents": {
         "switch_active": "Blochează transferul chaturilor către reprezentanți offline",
         "switch_inactive": "Blochează transferul chaturilor către reprezentanți offline"
+      },
+      "hide_moderators_from_transfer": {
+        "hint": "Când este activată, sunt afișați doar utilizatorii atribuiți cozii ca reprezentanți. Moderatorii sunt afișați doar dacă sunt și atribuiți cozii ca reprezentanți. Când este dezactivată, sunt afișați toți utilizatorii, inclusiv moderatorii.",
+        "switch_label": "Ascunde profilurile moderatorilor la transferul chaturilor"
       },
       "bulk_close": {
         "switch_active": "Închide chaturile în masă",
@@ -1405,6 +1412,16 @@
   "room_card": {
     "new_chat_received": {
       "tooltip": "Conversații noi primite"
+    }
+  },
+  "message_dictation": {
+    "tooltip": {
+      "activate": "Activare mod vocal (shift + V)",
+      "stop": "Oprire mod vocal (esc)"
+    },
+    "button": {
+      "activate": "Mod vocal",
+      "stop": "Oprire"
     }
   }
 }
