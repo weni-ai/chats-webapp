@@ -1,4 +1,3 @@
-import * as Sentry from '@sentry/vue';
 import env from './env';
 
 /**
@@ -55,12 +54,6 @@ export async function safeImport(
       `[Module Federation] ${importPath} unavailable:`,
       error?.message,
     );
-
-    if (isFederatedModule) {
-      Sentry.captureException(error, {
-        tags: { module_federation: true, import_path: importPath },
-      });
-    }
 
     return {};
   }
