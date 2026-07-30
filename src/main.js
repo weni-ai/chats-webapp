@@ -1,6 +1,5 @@
 import { createApp, watch } from 'vue';
 import { createPinia } from 'pinia';
-import * as Sentry from '@sentry/vue';
 import moment from 'moment';
 import env from './utils/env';
 
@@ -112,24 +111,6 @@ export default async function mountChatsApp({
   }
 
   if (isFederatedModule && initialRoute) await router.replace(initialRoute);
-
-  if (env('CHATS_ENVIRONMENT') === 'production') {
-    Sentry.init({
-      app,
-      dsn: env('SENTRY_DSN'),
-      integrations: [
-        Sentry.browserTracingIntegration({ router }),
-        Sentry.replayIntegration(),
-      ],
-      tracesSampleRate: 1.0,
-      replaysSessionSampleRate: 0.1,
-      replaysOnErrorSampleRate: 1.0,
-      environment: env('CHATS_ENVIRONMENT'),
-      initialScope: {
-        tags: { federated: isFederatedModule },
-      },
-    });
-  }
 
   const containerEl = document.getElementById(containerId);
   containerEl?.classList.add('chats-webapp');
