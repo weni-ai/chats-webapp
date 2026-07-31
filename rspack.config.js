@@ -210,11 +210,6 @@ module.exports = defineConfig({
           requiredVersion: pkg.dependencies['vue-i18n'],
           eager: true,
         },
-        pinia: {
-          singleton: true,
-          requiredVersion: pkg.dependencies['pinia'],
-          eager: true,
-        },
         'vue-router': {
           singleton: true,
           requiredVersion: pkg.dependencies['vue-router'],
