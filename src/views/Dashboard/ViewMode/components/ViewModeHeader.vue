@@ -61,7 +61,6 @@ export default {
   },
 
   unmounted() {
-    console.log('unmounted ViewModeHeader - setViewedAgent to empty object');
     this.setViewedAgent({ email: '', name: '' });
   },
 
