@@ -42,6 +42,7 @@
 import { mapActions } from 'pinia';
 import { useRooms } from '@/store/modules/chats/rooms';
 import { emitToHost } from '@/utils/hostBridge';
+import { useDashboard } from '@/store/modules/dashboard';
 
 export default {
   name: 'ViewModeHeader',
@@ -59,8 +60,13 @@ export default {
     };
   },
 
+  unmounted() {
+    this.setViewedAgent({ email: '', name: '' });
+  },
+
   methods: {
     ...mapActions(useRooms, ['setActiveRoom']),
+    ...mapActions(useDashboard, ['setViewedAgent']),
     async closeViewMode() {
       await this.setActiveRoom(null);
 
