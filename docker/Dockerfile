@@ -1,7 +1,7 @@
 # syntax = docker/dockerfile:1
 
-ARG NODE_VERSION="18.17.0"
-ARG BASE_VERSION="alpine3.17"
+ARG NODE_VERSION="24"
+ARG BASE_VERSION="alpine3.22"
 ARG OLD_IMAGE="chats-webapp:latest"
 ARG KEEP_DAYS=60
 
