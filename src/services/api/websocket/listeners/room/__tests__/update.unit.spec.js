@@ -450,6 +450,33 @@ describe('Room update', () => {
       });
     });
 
+    it('keeps dropping known waiting rooms outside the filter when not in view-mode', async () => {
+      useDashboard.mockReturnValue({
+        viewedAgent: { email: '' },
+      });
+      roomsStoreMock.rooms = [
+        {
+          uuid: 'known-waiting',
+          user: null,
+          is_waiting: false,
+          queue: { uuid: filteredQueueUuid },
+        },
+      ];
+
+      const room = {
+        uuid: 'known-waiting',
+        user: null,
+        is_waiting: false,
+        queue: { uuid: otherQueueUuid },
+      };
+
+      await wsRoomUpdate(room, { app: appMock });
+      flushPendingUpdates();
+
+      expect(roomsStoreMock.updateRoom).not.toHaveBeenCalled();
+      expect(countersMock.handleRoomUpdate).not.toHaveBeenCalled();
+    });
+
     it('moves ongoing → waiting counters when a known room is transferred to a filtered queue', async () => {
       roomsStoreMock.rooms = [
         {
