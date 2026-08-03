@@ -449,5 +449,46 @@ describe('Room update', () => {
         roomUuid: 'known-room',
       });
     });
+
+    it('moves ongoing → waiting counters when a known room is transferred to a filtered queue', async () => {
+      roomsStoreMock.rooms = [
+        {
+          uuid: 'known-in-filter',
+          user: { email: viewedAgentEmail },
+          is_waiting: false,
+          queue: { uuid: filteredQueueUuid },
+        },
+      ];
+      roomsStoreMock.updateRoom.mockReturnValue({
+        wasInArray: true,
+        isNowInArray: true,
+        oldType: 'ongoing',
+        newType: 'waiting',
+        roomUuid: 'known-in-filter',
+      });
+
+      const room = {
+        uuid: 'known-in-filter',
+        user: null,
+        is_waiting: false,
+        queue: { uuid: filteredQueueUuid },
+        transfer_history: {
+          action: 'transfer',
+          to: { type: 'queue' },
+          from: { type: 'user', email: viewedAgentEmail },
+        },
+      };
+
+      await wsRoomUpdate(room, { app: appMock });
+      flushPendingUpdates();
+
+      expect(countersMock.handleRoomUpdate).toHaveBeenCalledWith({
+        wasInArray: true,
+        isNowInArray: true,
+        oldType: 'ongoing',
+        newType: 'waiting',
+        roomUuid: 'known-in-filter',
+      });
+    });
   });
 });
