@@ -80,6 +80,7 @@ const {
   mediaUploadFiles,
   inputMessageFocused,
   isDisabledInput,
+  isDictationListening,
 } = storeToRefs(messageManager);
 
 const keyboardEvent = ref<KeyboardEvent | null>(null);
@@ -88,7 +89,12 @@ const messageManagerTextBoxRef = useTemplateRef('messageManagerTextBox');
 const showFloatingActions = computed(() => {
   const validInput =
     inputMessage.value.trim() !== '' && !inputMessage.value.startsWith('/');
-  return !isInternalNote.value && validInput && !isDisabledInput.value;
+  return (
+    !isInternalNote.value &&
+    validInput &&
+    !isDisabledInput.value &&
+    !isDictationListening.value
+  );
 });
 
 const suggestionBoxIgnoreClickOutside = [messageManagerTextBoxRef];
