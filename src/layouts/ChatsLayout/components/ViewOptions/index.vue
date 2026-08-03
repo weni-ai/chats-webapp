@@ -48,7 +48,7 @@
           />
 
           <UnnnicButton
-            v-if="showBulkMessageButton || !isViewMode"
+            v-if="showBulkMessageButton && !isViewMode"
             class="view-options__item"
             type="tertiary"
             size="small"
