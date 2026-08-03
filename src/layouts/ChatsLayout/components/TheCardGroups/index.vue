@@ -157,6 +157,7 @@ import isMobile from 'is-mobile';
 import { mapActions, mapState, mapWritableState } from 'pinia';
 import unnnic from '@weni/unnnic-system';
 import env from '@/utils/env';
+import { emitToHost } from '@/utils/hostBridge';
 
 import { useRooms } from '@/store/modules/chats/rooms';
 import { useRoomCounters } from '@/store/modules/chats/roomCounters';
@@ -472,13 +473,9 @@ export default {
     totalUnreadMessages: {
       immediate: true,
       handler() {
-        window.parent.postMessage(
-          {
-            event: 'chats:update-unread-messages',
-            unreadMessages: this.totalUnreadMessages,
-          },
-          '*',
-        );
+        emitToHost('chats:update-unread-messages', {
+          unreadMessages: this.totalUnreadMessages,
+        });
       },
     },
     nameOfContact: {

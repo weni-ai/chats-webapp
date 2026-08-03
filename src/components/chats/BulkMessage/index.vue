@@ -222,13 +222,17 @@ const checkIfHasShippingHistory = async () => {
 watchDebounced(
   filtersForm,
   () => {
-    getContactsCount();
+    if (filtersForm.value.status.length > 0) {
+      getContactsCount();
+    } else {
+      contactsCount.value = 0;
+    }
   },
   { debounce: 1500, deep: true },
 );
 
 watch(contactsCount, () => {
-  if (contactsCount.value === 0) {
+  if (contactsCount.value === 0 && filtersForm.value.status.length > 0) {
     UnnnicCallAlert({
       props: {
         text: t('mass_message.form.no_contacts_filtered_alert'),
