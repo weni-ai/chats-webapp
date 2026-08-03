@@ -282,11 +282,14 @@ export default async (room, { app }) => {
 
   const isRoomForMe = room.user?.email === app.me.email;
 
-  // Known rooms must still be processed so they can leave the list and update
-  // counters (e.g. view-mode transfer to a queue outside the active filter).
-  // Only drop unknown rooms that do not match the queue filter.
-  if (!isKnown && !isValidRoomFilterQueue && (isWaitingRoom || isViewMode)) {
-    return;
+  // Queue-filter drop must stay identical outside view-mode.
+  // Only in view-mode we still process known rooms so transfers can leave the
+  // list and update counters when the destination queue is outside the filter.
+  if (!isValidRoomFilterQueue && (isWaitingRoom || isViewMode)) {
+    const shouldProcessKnownViewModeRoom = isViewMode && isKnown;
+    if (!shouldProcessKnownViewModeRoom) {
+      return;
+    }
   }
 
   if (!isKnown && !notifiedRoomUuids.has(room.uuid)) {
