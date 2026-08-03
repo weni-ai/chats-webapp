@@ -43,11 +43,14 @@
         />
 
         <UnnnicDisclaimer
-          v-if="contactsCount > 0"
+          v-if="contactsCount > 0 || filtersForm.status.length > 0"
+          :type="contactsCount === 0 ? 'error' : 'informational'"
           :description="
-            $t('mass_message.form.contacts_count_disclaimer', {
-              count: contactsCount,
-            })
+            contactsCount === 0
+              ? $t('mass_message.form.no_contacts_filtered_alert')
+              : $t('mass_message.form.contacts_count_disclaimer', {
+                  count: contactsCount,
+                })
           "
         />
       </section>
@@ -111,7 +114,6 @@
 <script setup lang="ts">
 import { computed, onMounted, ref, watch } from 'vue';
 import { watchDebounced } from '@vueuse/core';
-import { UnnnicCallAlert } from '@weni/unnnic-system';
 
 import { useBulkMessageSend } from '@/store/modules/chats/bulkMessageSend';
 
@@ -123,7 +125,6 @@ import ShippingHistoryModal from './ShippingHistoryModal.vue';
 
 import BulkMessageService from '@/services/api/resources/chats/bulkMessage';
 
-import i18n from '@/plugins/i18n';
 import { storeToRefs } from 'pinia';
 
 interface MessageSent {
@@ -139,8 +140,6 @@ defineOptions({
 const emit = defineEmits<{
   close: [void];
 }>();
-
-const { t } = i18n.global;
 
 const bulkMessageSendStore = useBulkMessageSend();
 const {
@@ -230,17 +229,6 @@ watchDebounced(
   },
   { debounce: 1500, deep: true },
 );
-
-watch(contactsCount, () => {
-  if (contactsCount.value === 0 && filtersForm.value.status.length > 0) {
-    UnnnicCallAlert({
-      props: {
-        text: t('mass_message.form.no_contacts_filtered_alert'),
-        type: 'error',
-      },
-    });
-  }
-});
 
 watch(validForm, () => {
   if (!validForm.value) {
