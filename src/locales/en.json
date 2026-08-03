@@ -543,6 +543,7 @@
       "default": "An error occurred. Try again later."
     },
     "message_input_placeholder": "Type your message or / to activate quick messages",
+    "message_input_placeholder_with_voice_mode": "Type or use voice mode",
     "message_input_disabled_description": "Change your status to online to continue this conversation",
     "message_input_floating_actions": {
       "copy": "Copy typed content",
@@ -1038,7 +1039,9 @@
     "error_deleting": "Unable to delete the quick message.",
     "error": "Error setting quick message",
     "no_suggestions": "No results found for the entered shortcut",
-    "disclaimer": "Type / (slash) shortcut in the message field to view quick messages"
+    "disclaimer": "Type / (slash) shortcut in the message field to view quick messages",
+    "action_open": "Open quick messages (/)",
+    "action_close": "Close quick messages"
   },
   "discard": "Discard",
   "on_boarding": {
@@ -1145,6 +1148,10 @@
       "block_transfer_to_off_agents": {
         "switch_active": "Block chats transfer to offline representatives",
         "switch_inactive": "Block chats transfer to offline representatives"
+      },
+      "hide_moderators_from_transfer": {
+        "hint": "When enabled, only users assigned to the queue as representatives are shown. Moderators are only displayed if they are also assigned to the queue as representatives. When disabled, all users, including moderators, are shown.",
+        "switch_label": "Hide moderator profiles when transferring chats"
       },
       "bulk_close": {
         "switch_active": "End chats in bulk",
@@ -1559,6 +1566,16 @@
       "status": "Status",
       "status_failed": "Failed to send",
       "status_sent": "Sent"
+    }
+  },
+  "message_dictation": {
+    "tooltip": {
+      "activate": "Activate voice mode (shift + V)",
+      "stop": "Stop voice mode (esc)"
+    },
+    "button": {
+      "activate": "Voice mode",
+      "stop": "Stop"
     }
   }
 }
