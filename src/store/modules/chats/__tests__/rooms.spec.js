@@ -712,7 +712,7 @@ describe('State Rooms', () => {
       roomsStore = useRooms();
     });
 
-    it('removes the room and returns leave-array metadata so counters can decrement', () => {
+    it('keeps the room as waiting and returns type-change metadata when the queue is visible', () => {
       const initialRoom = {
         uuid: 'vm-transfer',
         user: { email: viewedAgentEmail, first_name: 'Agent', last_name: '' },
@@ -722,6 +722,7 @@ describe('State Rooms', () => {
       roomsStore.$patch({
         rooms: [initialRoom],
         activeRoom: { ...initialRoom },
+        filterQueues: [],
       });
 
       const result = roomsStore.updateRoom({
@@ -742,14 +743,62 @@ describe('State Rooms', () => {
         viewedAgentEmail,
       });
 
-      expect(existRoomByUuid(roomsStore, 'vm-transfer')).toBe(false);
+      expect(existRoomByUuid(roomsStore, 'vm-transfer')).toBe(true);
+      expect(
+        roomsStore.waitingQueue.some((r) => r.uuid === 'vm-transfer'),
+      ).toBe(true);
+      expect(roomsStore.agentRooms.some((r) => r.uuid === 'vm-transfer')).toBe(
+        false,
+      );
+      expect(roomsStore.activeRoom).toBeNull();
+      expect(result).toEqual({
+        wasInArray: true,
+        isNowInArray: true,
+        oldType: 'ongoing',
+        newType: 'waiting',
+        roomUuid: 'vm-transfer',
+      });
+    });
+
+    it('removes the room when the destination queue is outside the active filter', () => {
+      const initialRoom = {
+        uuid: 'vm-transfer-filtered',
+        user: { email: viewedAgentEmail, first_name: 'Agent', last_name: '' },
+        is_waiting: false,
+        queue: { uuid: 'queue-a', name: 'Queue A' },
+      };
+      roomsStore.$patch({
+        rooms: [initialRoom],
+        activeRoom: { ...initialRoom },
+        filterQueues: ['queue-a'],
+      });
+
+      const result = roomsStore.updateRoom({
+        room: {
+          uuid: 'vm-transfer-filtered',
+          user: null,
+          is_waiting: false,
+          queue: { uuid: 'queue-outside', name: 'Outside' },
+          transfer_history: {
+            action: 'transfer',
+            to: { type: 'queue' },
+            from: { type: 'user', email: viewedAgentEmail },
+            requested_by: { email: managerEmail },
+          },
+        },
+        userEmail: managerEmail,
+        routerReplace: vi.fn(),
+        viewedAgentEmail,
+      });
+
+      expect(existRoomByUuid(roomsStore, 'vm-transfer-filtered')).toBe(false);
       expect(roomsStore.activeRoom).toBeNull();
       expect(result).toEqual({
         wasInArray: true,
         isNowInArray: false,
         oldType: 'ongoing',
         newType: 'waiting',
-        roomUuid: 'vm-transfer',
+        roomUuid: 'vm-transfer-filtered',
       });
     });
   });
