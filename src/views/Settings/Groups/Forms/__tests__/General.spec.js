@@ -52,17 +52,6 @@ const createWrapper = (props = {}) => {
       modelValue: emptyGroup(),
       ...props,
     },
-    global: {
-      stubs: {
-        SelectedMember: {
-          name: 'SelectedMember',
-          template:
-            '<div data-testid="selected-member" @click="$emit(\'remove\')">{{ name }}</div>',
-          props: ['name', 'email', 'avatarUrl', 'roleName'],
-          emits: ['remove'],
-        },
-      },
-    },
   });
 };
 

@@ -47,17 +47,6 @@ const createWrapper = (props = {}) => {
       queuesOptions,
       ...props,
     },
-    global: {
-      stubs: {
-        SelectedMemberExpanded: {
-          name: 'SelectedMemberExpanded',
-          template:
-            '<div data-testid="selected-agent" @click="$emit(\'remove\')">{{ agentName }}</div>',
-          props: ['agentName', 'agentEmail', 'queuesOptions', 'agentQueues'],
-          emits: ['remove', 'update:agent-queues'],
-        },
-      },
-    },
   });
 };
 

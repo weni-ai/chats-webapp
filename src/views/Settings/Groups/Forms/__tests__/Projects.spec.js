@@ -204,9 +204,7 @@ describe('ProjectGroupProjectsForm', () => {
       };
       await flushPromises();
 
-      expect(wrapper.vm.group.sectors).toEqual([
-        { ...sectorMock, new: true },
-      ]);
+      expect(wrapper.vm.group.sectors).toEqual([{ ...sectorMock, new: true }]);
       expect(wrapper.vm.selectedSector).toBeNull();
     });
 
