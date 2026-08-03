@@ -160,6 +160,7 @@ import { useFeatureFlag } from '@/store/modules/featureFlag';
 
 import { PREFERENCES_SOUND } from '@/services/api/websocket/soundNotification.js';
 import { moduleStorage } from '@/utils/storage';
+import { emitToHost } from '@/utils/hostBridge';
 import { useTheme } from '@weni/unnnic-system';
 import { storeToRefs } from 'pinia';
 
@@ -242,13 +243,7 @@ function navigate(name: string) {
 }
 
 function navigateToHumanServiceDashboard() {
-  window.parent.postMessage(
-    {
-      event: 'redirect',
-      path: 'insights:init/humanServiceDashboard',
-    },
-    '*',
-  );
+  emitToHost('redirect', { path: 'insights:init/humanServiceDashboard' });
   isOpen.value = false;
 }
 

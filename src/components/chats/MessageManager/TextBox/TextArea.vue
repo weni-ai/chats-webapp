@@ -39,9 +39,7 @@
       <textarea
         ref="textInput"
         :value="inputMessage"
-        :placeholder="
-          isInternalNote ? '' : $t('chats.message_input_placeholder')
-        "
+        :placeholder="textAreaPlaceholder"
         rows="1"
         :class="['text-box__textarea', { 'internal-note': isInternalNote }]"
         data-testid="text-area"
@@ -68,6 +66,9 @@ import { storeToRefs } from 'pinia';
 import MessageManagerTextBoxMedias from './Medias.vue';
 import { useMessageManager } from '@/store/modules/chats/messageManager';
 import { useAiTextImprovement } from '@/store/modules/chats/aiTextImprovement';
+import { useFeatureFlag } from '@/store/modules/featureFlag';
+
+import i18n from '@/plugins/i18n';
 
 defineOptions({
   name: 'MessageManagerTextBoxTextArea',
@@ -76,6 +77,11 @@ defineOptions({
 const emit = defineEmits<{
   keydown: [KeyboardEvent];
 }>();
+
+const { t } = i18n.global;
+
+const featureFlagStore = useFeatureFlag();
+const { featureFlags } = storeToRefs(featureFlagStore);
 
 const messageManager = useMessageManager();
 const {
@@ -106,6 +112,22 @@ const showTextareaInput = computed(() => {
   }
 
   return true;
+});
+
+const enabledDictationFeatureFlag = computed(() => {
+  return featureFlags.value.active_features.includes(
+    'weniChatsMessageDictation',
+  );
+});
+
+const textAreaPlaceholder = computed(() => {
+  if (isInternalNote.value) {
+    return '';
+  }
+  if (enabledDictationFeatureFlag.value) {
+    return t('chats.message_input_placeholder_with_voice_mode');
+  }
+  return t('chats.message_input_placeholder');
 });
 
 function getLineHeightPx(el: HTMLTextAreaElement): number {

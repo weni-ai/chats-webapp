@@ -1,3 +1,5 @@
+import { emitToHost } from '@/utils/hostBridge';
+
 export function handleConnectOverlay(active: boolean) {
-  window.parent.postMessage({ event: 'changeOverlay', data: active }, '*');
+  emitToHost('changeOverlay', { data: active });
 }
