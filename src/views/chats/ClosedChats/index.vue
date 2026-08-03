@@ -296,8 +296,13 @@ export default {
   gap: $unnnic-space-4;
   padding: $unnnic-space-4 $unnnic-space-4 0 $unnnic-space-4;
 
-  height: 100vh;
-  width: 100vw;
+  // Fill the parent (`#app`) instead of the browser viewport. `100vh/100vw`
+  // ignore the host chrome (sidebar + topbar) when running as a federated
+  // module and produce phantom scrollbars. In iframe/standalone the parent
+  // already spans the full viewport (`html, body, #app { height: 100% }`),
+  // so `100%` is equivalent there.
+  height: 100%;
+  width: 100%;
 
   overflow: hidden;
 

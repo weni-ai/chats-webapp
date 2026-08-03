@@ -49,6 +49,7 @@ import { useConfig } from '@/store/modules/config';
 import Sector from '@/services/api/resources/settings/sector';
 
 import { handleConnectOverlay } from '@/utils/overlay';
+import { emitToHost } from '@/utils/hostBridge';
 
 import isMobile from 'is-mobile';
 
@@ -126,10 +127,7 @@ export default {
     },
 
     redirectToIntegrations() {
-      window.parent.postMessage(
-        { event: 'redirect', path: 'integrations:apps/chatgpt/details' },
-        '*',
-      );
+      emitToHost('redirect', { path: 'integrations:apps/chatgpt/details' });
     },
 
     async saveSector() {

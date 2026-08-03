@@ -178,6 +178,7 @@
     :enableHolidays="enableCountryHolidays"
     :isEditing="isEditing"
     :sectorUuid="modelValue.uuid"
+    :countryCode="countryCode"
     @update:enable-holidays="enableCountryHolidays = $event"
     @update:disabled-holidays="disabledCountryHolidays = $event"
     @close="handleModal('showCountryHolidaysModal', false)"
