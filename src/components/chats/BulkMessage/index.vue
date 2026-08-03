@@ -43,7 +43,10 @@
         />
 
         <UnnnicDisclaimer
-          v-if="contactsCount > 0 || filtersForm.status.length > 0"
+          v-if="
+            (contactsCount > 0 || filtersForm.status.length > 0) &&
+            !isLoadingContactsCount
+          "
           :type="contactsCount === 0 ? 'error' : 'informational'"
           :description="
             contactsCount === 0
@@ -157,6 +160,7 @@ const message = ref<string>('');
 const agreeToSend = ref<boolean>(false);
 const lastMessages = ref<Array<MessageSent>>([]);
 const hasShippingHistory = ref<boolean>(false);
+const isLoadingContactsCount = ref<boolean>(false);
 
 const filtersForm = computed(() => ({
   status: selectedContactsStatus.value,
@@ -194,10 +198,13 @@ const handleSend = async () => {
 
 const getContactsCount = async () => {
   try {
+    isLoadingContactsCount.value = true;
     const { count } = await BulkMessageService.countRooms(filtersForm.value);
     contactsCount.value = count;
   } catch (error) {
     console.error('Error getting contacts count', error);
+  } finally {
+    isLoadingContactsCount.value = false;
   }
 };
 
@@ -227,7 +234,7 @@ watchDebounced(
       contactsCount.value = 0;
     }
   },
-  { debounce: 1500, deep: true },
+  { debounce: 500, deep: true },
 );
 
 watch(validForm, () => {
