@@ -19,6 +19,6 @@
     "jsx": "preserve",
     "types": ["vitest/globals"]
   },
-  "include": ["src/**/*.ts", "src/**/*.d.ts", "src/**/*.vue"],
+  "include": ["src/**/*.ts", "src/**/*.d.ts", "src/**/*.vue", "types/**/*.d.ts"],
   "exclude": ["node_modules", "dist"]
 }
