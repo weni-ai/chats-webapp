@@ -702,6 +702,58 @@ describe('State Rooms', () => {
     });
   });
 
+  describe('updateRoom (view-mode transfer to queue)', () => {
+    let roomsStore;
+    const managerEmail = 'manager@weni.ai';
+    const viewedAgentEmail = 'agent@weni.ai';
+
+    beforeEach(() => {
+      mocks.useProfile.mockReturnValue(mockProfileAdminState);
+      roomsStore = useRooms();
+    });
+
+    it('removes the room and returns leave-array metadata so counters can decrement', () => {
+      const initialRoom = {
+        uuid: 'vm-transfer',
+        user: { email: viewedAgentEmail, first_name: 'Agent', last_name: '' },
+        is_waiting: false,
+        queue: { uuid: 'queue-a', name: 'Queue A' },
+      };
+      roomsStore.$patch({
+        rooms: [initialRoom],
+        activeRoom: { ...initialRoom },
+      });
+
+      const result = roomsStore.updateRoom({
+        room: {
+          uuid: 'vm-transfer',
+          user: null,
+          is_waiting: false,
+          queue: { uuid: 'queue-b', name: 'Queue B' },
+          transfer_history: {
+            action: 'transfer',
+            to: { type: 'queue' },
+            from: { type: 'user', email: viewedAgentEmail },
+            requested_by: { email: managerEmail },
+          },
+        },
+        userEmail: managerEmail,
+        routerReplace: vi.fn(),
+        viewedAgentEmail,
+      });
+
+      expect(existRoomByUuid(roomsStore, 'vm-transfer')).toBe(false);
+      expect(roomsStore.activeRoom).toBeNull();
+      expect(result).toEqual({
+        wasInArray: true,
+        isNowInArray: false,
+        oldType: 'ongoing',
+        newType: 'waiting',
+        roomUuid: 'vm-transfer',
+      });
+    });
+  });
+
   describe('isNewChatReceived flag', () => {
     let roomsStore;
 
