@@ -1,7 +1,7 @@
 <template>
   <ActionItem
     icon="bolt"
-    :tooltip="t('quick_message')"
+    :tooltip="tooltipLabel"
     :pressed="isSuggestionBoxOpen"
     :disabled="isDisabled"
     :disableFromParent="isAiLoading"
@@ -15,6 +15,7 @@ import { storeToRefs } from 'pinia';
 
 import { useMessageManager } from '@/store/modules/chats/messageManager';
 import { useAiTextImprovement } from '@/store/modules/chats/aiTextImprovement';
+import { useFeatureFlag } from '@/store/modules/featureFlag';
 
 import ActionItem from './ActionItem.vue';
 
@@ -30,6 +31,9 @@ const emit = defineEmits<{
   focusInput: [void];
 }>();
 
+const featureFlagStore = useFeatureFlag();
+const { featureFlags } = storeToRefs(featureFlagStore);
+
 const messageManager = useMessageManager();
 const {
   inputMessage,
@@ -38,6 +42,7 @@ const {
   audioRecorderStatus,
   audioMessage,
   mediaUploadFiles,
+  isDictationListening,
 } = storeToRefs(messageManager);
 
 const { isLoading: isAiLoading } = storeToRefs(useAiTextImprovement());
@@ -54,8 +59,24 @@ const isDisabled = computed(
     !!audioMessage.value ||
     mediaUploadFiles.value.length > 0 ||
     audioRecorderStatus.value !== 'idle' ||
-    isInternalNote.value,
+    isInternalNote.value ||
+    isDictationListening.value,
 );
+
+const enabledDictationFeatureFlag = computed(() => {
+  return featureFlags.value.active_features.includes(
+    'weniChatsMessageDictation',
+  );
+});
+
+const tooltipLabel = computed(() => {
+  if (enabledDictationFeatureFlag.value) {
+    return isSuggestionBoxOpen.value
+      ? t('quick_messages.action_close')
+      : t('quick_messages.action_open');
+  }
+  return t('quick_message');
+});
 
 function handleClick() {
   const inQuickMessageMode =
