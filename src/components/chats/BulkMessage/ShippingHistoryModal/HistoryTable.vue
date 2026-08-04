@@ -32,7 +32,7 @@
         </template>
 
         <template #date>
-          {{ new Date(item.date).toLocaleDateString() }}
+          {{ $d(new Date(item.date)) }}
         </template>
 
         <template #status>
@@ -56,7 +56,6 @@
 </template>
 
 <script setup lang="ts">
-import { format as dateFnsFormat } from 'date-fns';
 import { statusLabel, statusScheme } from './status';
 import type { ShippingHistoryItem, TableHeader } from './types';
 
