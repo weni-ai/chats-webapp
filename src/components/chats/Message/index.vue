@@ -53,6 +53,7 @@
         :text="slotText"
         :isAutomatic="automatic"
         :automaticType="automaticType"
+        :bulkMessageSender="bulkMessageSender"
       />
       <div
         v-if="isDocument"
@@ -177,6 +178,10 @@ export default {
     automaticType: {
       type: String,
       default: 'automatic_open',
+    },
+    bulkMessageSender: {
+      type: String,
+      default: '',
     },
     time: {
       type: Date,
