@@ -187,6 +187,22 @@ describe('useRoomCounters', () => {
         expect(counters.counts.ongoing).toBe(4);
       });
 
+      it('should move count from ongoing to waiting on view-mode transfer to queue', () => {
+        counters.syncFromApi('ongoing', 3, 3);
+        counters.syncFromApi('waiting', 1, 1);
+
+        counters.handleRoomUpdate({
+          wasInArray: true,
+          isNowInArray: true,
+          oldType: 'ongoing',
+          newType: 'waiting',
+          roomUuid: 'vm-transfer',
+        });
+
+        expect(counters.counts.ongoing).toBe(2);
+        expect(counters.counts.waiting).toBe(2);
+      });
+
       it('should clamp count to 0', () => {
         counters.handleRoomUpdate({
           wasInArray: true,
