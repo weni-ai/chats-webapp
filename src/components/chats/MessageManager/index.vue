@@ -195,6 +195,7 @@ onMounted(() => {
   grid-template-rows: auto auto;
   gap: $unnnic-space-2;
   margin-right: $unnnic-space-2;
+  margin-left: $unnnic-space-2;
   align-items: end;
 
   &__input-area {
