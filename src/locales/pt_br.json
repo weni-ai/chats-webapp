@@ -1525,6 +1525,9 @@
       "tooltip": "Você não respondeu a este contato"
     }
   },
+  "mass_message": {
+    "title": "Mensagem em massa"
+  },
   "message_dictation": {
     "tooltip": {
       "activate": "Ativar modo de voz (shift + V)",

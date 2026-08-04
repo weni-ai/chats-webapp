@@ -1520,6 +1520,9 @@
       "tooltip": "You did not respond to this contact"
     }
   },
+  "mass_message": {
+    "title": "Mass message"
+  },
   "message_dictation": {
     "tooltip": {
       "activate": "Activate voice mode (shift + V)",

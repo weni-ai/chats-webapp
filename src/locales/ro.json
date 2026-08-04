@@ -1414,6 +1414,9 @@
       "tooltip": "Conversații noi primite"
     }
   },
+  "mass_message": {
+    "title": "Mesaj în masă"
+  },
   "message_dictation": {
     "tooltip": {
       "activate": "Activare mod vocal (shift + V)",
