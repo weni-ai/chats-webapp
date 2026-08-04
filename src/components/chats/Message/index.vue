@@ -320,8 +320,6 @@ $defaultLineHeight: $unnnic-font-size-body-gt + $unnnic-line-height-medium;
 
 .is-media .unnnic-chats-message__reply-message {
   cursor: pointer;
-  margin: (-$unnnic-spacing-nano) (-$unnnic-spacing-nano) 0px
-    (-$unnnic-spacing-nano);
 }
 
 .unnnic-chats-message-wrapper {
@@ -354,7 +352,7 @@ $defaultLineHeight: $unnnic-font-size-body-gt + $unnnic-line-height-medium;
   max-width: 460px;
 
   display: grid;
-  gap: $unnnic-spacing-nano;
+  gap: $unnnic-space-1;
 
   border-radius: $unnnic-radius-2;
 
@@ -364,7 +362,7 @@ $defaultLineHeight: $unnnic-font-size-body-gt + $unnnic-line-height-medium;
 
   font: $unnnic-font-body;
 
-  box-shadow: 0px 2px 5px 0px rgba(0, 0, 0, 0.1);
+  box-shadow: $unnnic-shadow-1;
 
   &__reply-action {
     display: flex;
@@ -392,7 +390,7 @@ $defaultLineHeight: $unnnic-font-size-body-gt + $unnnic-line-height-medium;
 
   &__reply-message {
     cursor: pointer;
-    margin: (-$unnnic-spacing-nano) (-$unnnic-space-4) 0px (-$unnnic-space-4);
+    width: 100%;
   }
 
   &.highlighted {

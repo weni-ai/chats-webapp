@@ -217,9 +217,9 @@ onUpdated(() => {
 .reply-message {
   display: flex;
   align-items: flex-start;
-  padding: $unnnic-spacing-xs;
-  gap: $unnnic-spacing-nano;
-  border-radius: $unnnic-border-radius-sm;
+  padding: $unnnic-space-2 $unnnic-spacing-xs;
+  gap: $unnnic-space-1;
+  border-radius: $unnnic-radius-2;
   width: 100%;
   box-sizing: border-box;
 
@@ -229,18 +229,28 @@ onUpdated(() => {
   &.sent:not(.reply-message--composer) {
     background: rgba(8, 103, 102, 0.1);
   }
-  &--you:not(.reply-message--composer) {
-    border-left: 2px solid $unnnic-color-bg-teal-strong;
-  }
+  &--you:not(.reply-message--composer),
   &--contact:not(.reply-message--composer) {
-    border-left: 2px solid $unnnic-color-bg-purple-strong;
+    border-left: 3px solid $unnnic-color-border-info;
+  }
+
+  &:not(.reply-message--composer) {
+    .reply-message__contact-name--you,
+    .reply-message__contact-name--contact {
+      color: $unnnic-color-fg-info;
+    }
+
+    .reply-message__content,
+    .reply-message__content-text {
+      color: $unnnic-color-fg-emphasized;
+    }
   }
 
   &--composer {
     background: $unnnic-color-bg-base;
     border-radius: $unnnic-radius-2;
     padding: $unnnic-space-2 $unnnic-spacing-xs;
-    box-shadow: 0 4px 16px 0 rgba(0, 0, 0, 0.16);
+    box-shadow: $unnnic-shadow-1;
 
     &.reply-message--you {
       border-left: 3px solid $unnnic-color-border-info;
@@ -254,6 +264,10 @@ onUpdated(() => {
       color: $unnnic-color-fg-info;
     }
 
+    .reply-message__contact-name--contact {
+      color: $unnnic-color-bg-purple-strong;
+    }
+
     .reply-message__content,
     .reply-message__content-text {
       color: $unnnic-color-fg-emphasized;
@@ -263,7 +277,7 @@ onUpdated(() => {
   &__message-container {
     display: flex;
     flex-direction: column;
-    gap: $unnnic-spacing-nano;
+    gap: $unnnic-space-1;
     flex: 1;
     min-width: 0;
   }

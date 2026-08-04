@@ -924,16 +924,13 @@ export default {
   overflow: hidden;
   position: relative;
   height: 100%;
-
-  &--view-mode {
-    padding-left: $unnnic-space-4;
-  }
 }
 
 .chat-messages {
   overflow: hidden auto;
 
   padding-right: $unnnic-space-4;
+  padding-left: $unnnic-space-4;
 
   height: 100%;
 
