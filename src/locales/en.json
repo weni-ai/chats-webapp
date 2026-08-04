@@ -1558,15 +1558,24 @@
       },
       "send": "{count, plural, =0 {Send to all (0 contacts)} one {Send to all ({count} contact)} other {Send to all ({count} contacts)}}"
     },
-    "message_dictation": {
-      "tooltip": {
-        "activate": "Activate voice mode (shift + V)",
-        "stop": "Stop voice mode (esc)"
-      },
-      "button": {
-        "activate": "Voice mode",
-        "stop": "Stop"
-      }
+    "history": {
+      "filter_by_sender": "Filter by sender",
+      "filter_by_status": "Filter by status",
+      "last_message_disclaimer": "The message \"{text}\" was sent in the last hour - at {time}.",
+      "sent_by": "Sent by",
+      "status": "Status",
+      "status_failed": "Failed to send",
+      "status_sent": "Sent"
+    }
+  },
+  "message_dictation": {
+    "tooltip": {
+      "activate": "Activate voice mode (shift + V)",
+      "stop": "Stop voice mode (esc)"
+    },
+    "button": {
+      "activate": "Voice mode",
+      "stop": "Stop"
     }
   }
 }

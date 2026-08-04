@@ -9,6 +9,8 @@ export const useBulkMessageSend = defineStore('bulkMessageSend', () => {
   const totalToSend = ref<number>(0);
   const percentageSent = ref<number>(0);
 
+  const showShippingModal = ref<boolean>(false);
+
   const clearData = () => {
     sendingUuid.value = null;
     isSending.value = false;
@@ -26,5 +28,6 @@ export const useBulkMessageSend = defineStore('bulkMessageSend', () => {
     failedTotal,
     totalToSend,
     percentageSent,
+    showShippingModal,
   };
 });

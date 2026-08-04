@@ -4,9 +4,8 @@
       <p class="bulk-message-form__title">
         {{ $t('mass_message.form.title') }}
       </p>
-      <!-- TODO: Implement history check -->
       <UnnnicToolTip
-        enabled
+        :enabled="!hasShippingHistory"
         :text="$t('mass_message.form.no_shipping_history')"
       >
         <UnnnicButton
@@ -14,12 +13,16 @@
           :text="$t('mass_message.form.shipping_history')"
           type="secondary"
           size="small"
-          disabled
+          :disabled="!hasShippingHistory"
           @click="handleShippingHistory"
         />
       </UnnnicToolTip>
     </header>
     <main class="bulk-message-form__main">
+      <LastMessages
+        v-if="lastMessages.length > 0"
+        :messages="lastMessages"
+      />
       <section class="bulk-message-form__recipients">
         <UnnnicLabel
           class="bulk-message-form__recipients-label"
@@ -90,6 +93,11 @@
         @click="handleSend"
       />
     </footer>
+
+    <ShippingHistoryModal
+      v-if="showShippingModal"
+      @close="showShippingModal = false"
+    />
   </section>
 </template>
 
@@ -102,11 +110,19 @@ import { useBulkMessageSend } from '@/store/modules/chats/bulkMessageSend';
 
 import ContactsStatus from './ContactsStatus.vue';
 import SelectFilters from './SelectFilters.vue';
+import LastMessages from './LastMessages.vue';
+import ShippingHistoryModal from './ShippingHistoryModal/index.vue';
 
 import BulkMessageService from '@/services/api/resources/chats/bulkMessage';
 
 import i18n from '@/plugins/i18n';
 import { storeToRefs } from 'pinia';
+
+interface MessageSent {
+  uuid: string;
+  text: string;
+  sent_at: string;
+}
 
 defineOptions({
   name: 'BulkMessage',
@@ -119,13 +135,15 @@ const emit = defineEmits<{
 const { t } = i18n.global;
 
 const bulkMessageSendStore = useBulkMessageSend();
-const { isSending } = storeToRefs(bulkMessageSendStore);
+const { isSending, showShippingModal } = storeToRefs(bulkMessageSendStore);
 
 const selectedContactsStatus = ref<string[]>(['ongoing', 'waiting']);
 const selectedQueues = ref<string[]>(['all']);
 const selectedRepresentatives = ref<string[]>(['all']);
 const message = ref<string>('');
 const agreeToSend = ref<boolean>(false);
+const lastMessages = ref<Array<MessageSent>>([]);
+const hasShippingHistory = ref<boolean>(false);
 
 const filtersForm = computed(() => ({
   status: selectedContactsStatus.value,
@@ -140,7 +158,7 @@ const validForm = computed(() => {
 });
 
 const handleShippingHistory = () => {
-  console.log('TODO:handleShippingHistory');
+  showShippingModal.value = true;
 };
 
 const handleSend = async () => {
@@ -171,6 +189,23 @@ const getContactsCount = async () => {
   }
 };
 
+const getLastSentMessages = async () => {
+  try {
+    const messages = await BulkMessageService.getLastSentMessages();
+    lastMessages.value = messages;
+  } catch (error) {
+    console.error('Error getting last sent messages', error);
+  }
+};
+
+const checkIfHasShippingHistory = async () => {
+  try {
+    const hasHistory = await BulkMessageService.checkIfHasShippingHistory();
+    hasShippingHistory.value = hasHistory;
+  } catch (error) {
+    console.error('Error checking if has shipping history', error);
+  }
+};
 watchDebounced(
   filtersForm,
   () => {
@@ -202,6 +237,8 @@ watch(validForm, () => {
 
 onMounted(() => {
   getContactsCount();
+  getLastSentMessages();
+  checkIfHasShippingHistory();
 });
 </script>
 <style scoped lang="scss">
