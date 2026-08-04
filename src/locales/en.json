@@ -1556,7 +1556,8 @@
         "title": "Please ensure all fields are filled out correctly and confirm the verification",
         "checkbox_label": "I've checked it and I'm ready to send it"
       },
-      "send": "{count, plural, =0 {Send to all (0 contacts)} one {Send to all ({count} contact)} other {Send to all ({count} contacts)}}"
+      "send": "{count, plural, =0 {Send to all (0 contacts)} one {Send to all ({count} contact)} other {Send to all ({count} contacts)}}",
+      "sending": "{count, plural, one {Sending the message to {count} contact} other {Sending the message to {count} contacts}}"
     },
     "history": {
       "filter_by_sender": "Filter by sender",
@@ -1566,6 +1567,18 @@
       "status": "Status",
       "status_failed": "Failed to send",
       "status_sent": "Sent"
+    },
+    "toast": {
+      "error": {
+        "message": "Couldn't send the message. Try again."
+      },
+      "partial_success": {
+        "button": "View shipments",
+        "message": "{success, plural, one {Message sent to {success} contact, {failed} failed.} other {Message sent to {success} contacts, {failed} failed.}}"
+      },
+      "success": {
+        "message": "{count, plural, one {Message sent to {count} contact} other {Message sent to {count} contacts}}"
+      }
     }
   },
   "message_dictation": {

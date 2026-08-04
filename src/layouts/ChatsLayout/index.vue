@@ -2,7 +2,7 @@
   <section
     :class="[
       'chats-layout',
-      isAsideVisible && !showBulkMessage && 'has-aside',
+      isAsideVisible && !showBulkSendView && 'has-aside',
       isViewMode && 'view-mode',
     ]"
   >
@@ -51,7 +51,7 @@
     </slot>
 
     <BulkMessage
-      v-if="showBulkMessage"
+      v-if="showBulkSendView"
       @close="closeBulkMessage"
     />
 
@@ -70,6 +70,10 @@
 </template>
 
 <script>
+import { mapWritableState } from 'pinia';
+
+import { useBulkMessageSend } from '@/store/modules/chats/bulkMessageSend';
+
 import SidebarLoading from '@/views/loadings/HomeSidebar.vue';
 import TheCardGroups from './components/TheCardGroups/index.vue';
 import LayoutFlowsTrigger from './components/FlowsTrigger/index.vue';
@@ -108,7 +112,6 @@ export default {
     isLoadingSidebar: true,
     canTriggerFlows: false,
     canAccessDashboard: false,
-    showBulkMessage: false,
     showFlowsTrigger: false,
     showQuickMessages: false,
     flowsTriggerContact: null,
@@ -116,6 +119,7 @@ export default {
   }),
 
   computed: {
+    ...mapWritableState(useBulkMessageSend, ['showBulkSendView']),
     isAsideVisible() {
       const asideSlot = this.$slots.aside ? this.$slots.aside() : [];
       return asideSlot.some(
@@ -141,10 +145,10 @@ export default {
 
   methods: {
     openBulkMessage() {
-      this.showBulkMessage = true;
+      this.showBulkSendView = true;
     },
     closeBulkMessage() {
-      this.showBulkMessage = false;
+      this.showBulkSendView = false;
     },
     openFlowsTrigger({ contact = null } = {}) {
       if (contact) {

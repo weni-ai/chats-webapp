@@ -3,6 +3,7 @@ import discussionListener from './discussion';
 import statusListener from './status';
 import customStatusListener from './customStatus';
 import mediaListener from './media';
+import bulkMessageListener from './bulkMessage';
 
 export default ({ ws, app }) => {
   const createListener = (callback) => (payload) => {
@@ -49,5 +50,10 @@ export default ({ ws, app }) => {
   ws.on(
     'room_note.delete',
     createListener(roomListener.roomInternalNote.delete),
+  );
+
+  ws.on(
+    'bulk_message_progress_update',
+    createListener(bulkMessageListener.progressUpdate),
   );
 };

@@ -1452,7 +1452,8 @@
         "title": "Asigură-te că toate câmpurile sunt completate corect și confirmă verificarea",
         "checkbox_label": "Am verificat și sunt gata să trimit"
       },
-      "send": "{count, plural, =0 {Trimite tuturor (0 contacte)} one {Trimite tuturor ({count} contact)} few {Trimite tuturor ({count} contacte)} other {Trimite tuturor ({count} de contacte)}}"
+      "send": "{count, plural, =0 {Trimite tuturor (0 contacte)} one {Trimite tuturor ({count} contact)} few {Trimite tuturor ({count} contacte)} other {Trimite tuturor ({count} de contacte)}}",
+      "sending": "{count, plural, one {Se trimite mesajul către {count} contact} few {Se trimite mesajul către {count} contacte} other {Se trimite mesajul către {count} de contacte}}"
     },
     "history": {
       "filter_by_sender": "Filtrează după expeditor",
@@ -1462,6 +1463,18 @@
       "status": "Status",
       "status_failed": "Eșec la trimitere",
       "status_sent": "Trimis"
+    },
+    "toast": {
+      "error": {
+        "message": "Nu s-a putut trimite mesajul. Încearcă din nou."
+      },
+      "partial_success": {
+        "button": "Vezi trimiteri",
+        "message": "{success, plural, one {{failed, plural, one {Mesaj trimis către {success} contact, {failed} a eșuat.} few {Mesaj trimis către {success} contact, {failed} au eșuat.} other {Mesaj trimis către {success} contact, {failed} au eșuat.}}} few {{failed, plural, one {Mesaj trimis către {success} contacte, {failed} a eșuat.} few {Mesaj trimis către {success} contacte, {failed} au eșuat.} other {Mesaj trimis către {success} contacte, {failed} au eșuat.}}} other {{failed, plural, one {Mesaj trimis către {success} de contacte, {failed} a eșuat.} few {Mesaj trimis către {success} de contacte, {failed} au eșuat.} other {Mesaj trimis către {success} de contacte, {failed} au eșuat.}}}}"
+      },
+      "success": {
+        "message": "{count, plural, one {Mesaj trimis către {count} contact} few {Mesaj trimis către {count} contacte} other {Mesaj trimis către {count} de contacte}}"
+      }
     }
   },
   "message_dictation": {
