@@ -33,7 +33,7 @@
         :total="historyCount"
         :max="historyCountPages"
         :show="historyLimit"
-        @update:currentPage="handlePageChange"
+        @update:current-page="handlePageChange"
       />
     </UnnnicDialogContent>
   </UnnnicDialog>

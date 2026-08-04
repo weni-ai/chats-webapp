@@ -32,7 +32,9 @@
         </template>
 
         <template #date>
-          {{ $d(new Date(item.date)) }}
+          {{
+            dateFnsFormat(new Date(item.date), $t('date_format').toLowerCase())
+          }}
         </template>
 
         <template #status>
@@ -56,6 +58,7 @@
 </template>
 
 <script setup lang="ts">
+import { format as dateFnsFormat } from 'date-fns';
 import { statusLabel, statusScheme } from './status';
 import type { ShippingHistoryItem, TableHeader } from './types';
 
