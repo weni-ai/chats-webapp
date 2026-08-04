@@ -25,11 +25,12 @@ export function createTemporaryMessage({
   medias = [],
   repliedMessage = null,
   internalNote = null,
+  uuid,
 }) {
   const internalNoteMedia = internalNote?.media || [];
 
   return {
-    uuid: Date.now().toString(),
+    uuid: uuid || Date.now().toString(),
     text: internalNote ? '' : message,
     created_on: new Date().toISOString(),
     media: internalNote ? [] : medias || [],
@@ -192,6 +193,8 @@ export async function sendMessage({
   addSortedMessage,
   updateMessage,
   internalNote,
+  uuid,
+  addFailedMessage,
 }) {
   if (!itemUuid) {
     return;
@@ -205,6 +208,7 @@ export async function sendMessage({
     message,
     repliedMessage,
     internalNote,
+    uuid,
   });
 
   addMessage(temporaryMessage);
@@ -219,6 +223,7 @@ export async function sendMessage({
     });
   } catch (error) {
     console.error('An error occurred while sending the message', error);
+    addFailedMessage?.(temporaryMessage);
   }
 }
 
@@ -229,6 +234,7 @@ export async function resendMessage({
   updateMessage,
   messagesInPromiseUuids,
   removeInPromiseMessage,
+  addFailedMessage,
 }) {
   if (!itemUuid || messagesInPromiseUuids.includes(message.uuid)) return;
 
@@ -246,6 +252,7 @@ export async function resendMessage({
     removeInPromiseMessage(message.uuid);
 
     console.error('An error occurred while sending the message', error);
+    addFailedMessage?.(message);
   }
 }
 
