@@ -90,6 +90,7 @@
                 @reply="
                   handlerMessageReply({ ...message, content_type: 'text' })
                 "
+                @click="handleFailedTextClick(message)"
               >
                 {{
                   isGeolocation(message.media?.[0])
@@ -348,6 +349,10 @@ export default {
       type: Function,
       required: true,
     },
+    resendMessage: {
+      type: Function,
+      default: () => {},
+    },
 
     tags: {
       type: Array,
@@ -586,6 +591,12 @@ export default {
             );
           }
         }
+      }
+    },
+
+    handleFailedTextClick(message) {
+      if (this.messageStatus({ message }) === 'failed') {
+        this.resendMessage({ message, roomUuid: message.room });
       }
     },
 
