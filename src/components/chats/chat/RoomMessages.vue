@@ -26,6 +26,7 @@
       :messagesFailedUuids="roomMessagesFailedUuids"
       :resendMessages="roomResendMessages"
       :resendMedia="roomResendMedia"
+      :resendMessage="roomResendMessage"
       :isLoading="isLoadingMessages || isLoadingInternalNotes"
       :isClosedChat="!!room?.ended_at"
       :enableReply="!isDisabledInput"
@@ -189,6 +190,7 @@ export default {
     ...mapActions(useRoomMessages, {
       roomResendMessages: 'resendRoomMessages',
       roomResendMedia: 'resendRoomMedia',
+      roomResendMessage: 'resendRoomMessage',
       getRoomMessages: 'getRoomMessages',
       resetRoomMessages: 'resetRoomMessages',
       addSortedMessage: 'addRoomMessageSorted',

@@ -61,6 +61,7 @@
           :text="slotText"
           :isAutomatic="automatic"
           :automaticType="automaticType"
+          :bulkMessageSender="bulkMessageSender"
         />
         <div
           v-if="isDocument"
@@ -187,6 +188,10 @@ export default {
       type: String,
       default: 'automatic_open',
     },
+    bulkMessageSender: {
+      type: String,
+      default: '',
+    },
     time: {
       type: Date,
       required: true,
@@ -282,6 +287,7 @@ export default {
     },
     messageStatusIcon() {
       if (this.status === 'sending') return 'history';
+      if (this.status === 'failed') return 'error';
 
       return this.status === 'received' || this.status === 'read'
         ? 'done_all'
@@ -467,7 +473,7 @@ $defaultLineHeight: $unnnic-font-size-body-gt + $unnnic-line-height-medium;
   &__document {
     display: flex;
     align-items: center;
-    gap: $unnnic-spacing-xs;
+    gap: $unnnic-space-2;
 
     &__text {
       &:hover {
@@ -483,7 +489,7 @@ $defaultLineHeight: $unnnic-font-size-body-gt + $unnnic-line-height-medium;
   &__signature {
     margin: 0;
 
-    padding: $unnnic-spacing-nano 0;
+    padding: $unnnic-space-1 0;
 
     font-size: $unnnic-font-size-body-gt;
     color: $unnnic-color-fg-emphasized;
@@ -501,7 +507,7 @@ $defaultLineHeight: $unnnic-font-size-body-gt + $unnnic-line-height-medium;
     display: flex;
     align-items: center;
     justify-content: end;
-    gap: $unnnic-spacing-nano;
+    gap: $unnnic-space-1;
     min-width: 51px;
   }
 
@@ -528,6 +534,7 @@ $defaultLineHeight: $unnnic-font-size-body-gt + $unnnic-line-height-medium;
       cursor: pointer;
     }
   }
+
   .geolocation-icon {
     align-self: center;
   }

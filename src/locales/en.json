@@ -1521,6 +1521,66 @@
       "tooltip": "You did not respond to this contact"
     }
   },
+  "mass_message": {
+    "title": "Mass message",
+    "form": {
+      "title": "Send mass message",
+      "shipping_history": "Shipping history",
+      "no_shipping_history": "No message was sent",
+      "no_contacts_filtered_alert": "No contacts match the selected filters. Try adjusting your filters.",
+      "contacts_count_disclaimer": "{count, plural, one {This message will be sent to {count} contact. The number of recipients may change during delivery due to conversation transfers, conversation closures, or interactions taking place simultaneously.} other {This message will be sent to {count} contacts. The number of recipients may change during delivery due to conversation transfers, conversation closures, or interactions taking place simultaneously.}}",
+      "recipients": {
+        "title": "Recipients",
+        "title_tooltip": "This message will be delivered to all contacts matching the selected filters. Use this feature for operational communications such as delays, incidents, updates.",
+        "select_the_contacts_status": "Select the contacts status",
+        "contacts_in_service": "Contacts in service",
+        "contacts_waiting_for_service": "Contacts waiting for service",
+        "filters": {
+          "queues": {
+            "label": "Select a queue",
+            "all": "All queues"
+          },
+          "representatives": {
+            "label": "Select a representative",
+            "all": "All representatives"
+          }
+        }
+      },
+      "message": {
+        "title": "Message",
+        "input_label": "Define the message content",
+        "input_placeholder": "Example: We are experiencing system instability, which is why it is taking us a little longer to respond.",
+        "input_helper": "The message will be sent exactly as typed"
+      },
+      "confirmation": {
+        "title": "Please ensure all fields are filled out correctly and confirm the verification",
+        "checkbox_label": "I've checked it and I'm ready to send it"
+      },
+      "send": "{count, plural, =0 {Send to all (0 contacts)} one {Send to all ({count} contact)} other {Send to all ({count} contacts)}}",
+      "sending": "{count, plural, one {Sending the message to {count} contact} other {Sending the message to {count} contacts}}"
+    },
+    "history": {
+      "filter_by_sender": "Filter by sender",
+      "filter_by_status": "Filter by status",
+      "last_message_disclaimer": "The message \"{text}\" was sent in the last hour - at {time}.",
+      "sent_by": "Sent by",
+      "status": "Status",
+      "status_failed": "Failed to send",
+      "status_sent": "Sent"
+    },
+    "toast": {
+      "error": {
+        "message": "Couldn't send the message. Try again."
+      },
+      "partial_success": {
+        "button": "View shipments",
+        "message": "{success, plural, one {Message sent to {success} contact, {failed} failed.} other {Message sent to {success} contacts, {failed} failed.}}"
+      },
+      "success": {
+        "message": "{count, plural, one {Message sent to {count} contact} other {Message sent to {count} contacts}}"
+      }
+    }
+  },
   "message_dictation": {
     "tooltip": {
       "activate": "Activate voice mode (shift + V)",

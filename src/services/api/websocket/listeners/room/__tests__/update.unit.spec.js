@@ -8,6 +8,7 @@ import wsRoomUpdate, {
 import wsDeleteRoom from '@/services/api/websocket/listeners/room/delete';
 import { useRooms } from '@/store/modules/chats/rooms';
 import { useRoomCounters } from '@/store/modules/chats/roomCounters';
+import { useDashboard } from '@/store/modules/dashboard';
 import SoundNotification from '@/services/api/websocket/soundNotification';
 
 vi.mock('@/store/modules/dashboard', () => ({
@@ -372,5 +373,149 @@ describe('Room update', () => {
     flushPendingUpdates();
 
     expect(roomsStoreMock.markNewChatReceived).not.toHaveBeenCalled();
+  });
+
+  describe('view-mode queue filter', () => {
+    const viewedAgentEmail = 'agent@example.com';
+    const filteredQueueUuid = 'queue-in-filter';
+    const otherQueueUuid = 'queue-outside-filter';
+
+    beforeEach(() => {
+      useDashboard.mockReturnValue({
+        viewedAgent: { email: viewedAgentEmail },
+      });
+      roomsStoreMock.filterQueues = [filteredQueueUuid];
+    });
+
+    it('drops unknown rooms outside the active queue filter in view-mode', async () => {
+      const room = {
+        uuid: 'unknown-room',
+        user: null,
+        is_waiting: false,
+        queue: { uuid: otherQueueUuid },
+        transfer_history: { action: 'transfer' },
+      };
+
+      await wsRoomUpdate(room, { app: appMock });
+      flushPendingUpdates();
+
+      expect(roomsStoreMock.updateRoom).not.toHaveBeenCalled();
+      expect(countersMock.handleRoomUpdate).not.toHaveBeenCalled();
+    });
+
+    it('still processes known rooms transferred outside the filter so counters update', async () => {
+      roomsStoreMock.rooms = [
+        {
+          uuid: 'known-room',
+          user: { email: viewedAgentEmail },
+          is_waiting: false,
+          queue: { uuid: filteredQueueUuid },
+        },
+      ];
+      roomsStoreMock.updateRoom.mockReturnValue({
+        wasInArray: true,
+        isNowInArray: false,
+        oldType: 'ongoing',
+        newType: 'waiting',
+        roomUuid: 'known-room',
+      });
+
+      const room = {
+        uuid: 'known-room',
+        user: null,
+        is_waiting: false,
+        queue: { uuid: otherQueueUuid },
+        transfer_history: {
+          action: 'transfer',
+          to: { type: 'queue' },
+          from: { type: 'user', email: viewedAgentEmail },
+        },
+      };
+
+      await wsRoomUpdate(room, { app: appMock });
+      flushPendingUpdates();
+
+      expect(roomsStoreMock.updateRoom).toHaveBeenCalledWith(
+        expect.objectContaining({
+          room,
+          viewedAgentEmail,
+        }),
+      );
+      expect(countersMock.handleRoomUpdate).toHaveBeenCalledWith({
+        wasInArray: true,
+        isNowInArray: false,
+        oldType: 'ongoing',
+        newType: 'waiting',
+        roomUuid: 'known-room',
+      });
+    });
+
+    it('keeps dropping known waiting rooms outside the filter when not in view-mode', async () => {
+      useDashboard.mockReturnValue({
+        viewedAgent: { email: '' },
+      });
+      roomsStoreMock.rooms = [
+        {
+          uuid: 'known-waiting',
+          user: null,
+          is_waiting: false,
+          queue: { uuid: filteredQueueUuid },
+        },
+      ];
+
+      const room = {
+        uuid: 'known-waiting',
+        user: null,
+        is_waiting: false,
+        queue: { uuid: otherQueueUuid },
+      };
+
+      await wsRoomUpdate(room, { app: appMock });
+      flushPendingUpdates();
+
+      expect(roomsStoreMock.updateRoom).not.toHaveBeenCalled();
+      expect(countersMock.handleRoomUpdate).not.toHaveBeenCalled();
+    });
+
+    it('moves ongoing → waiting counters when a known room is transferred to a filtered queue', async () => {
+      roomsStoreMock.rooms = [
+        {
+          uuid: 'known-in-filter',
+          user: { email: viewedAgentEmail },
+          is_waiting: false,
+          queue: { uuid: filteredQueueUuid },
+        },
+      ];
+      roomsStoreMock.updateRoom.mockReturnValue({
+        wasInArray: true,
+        isNowInArray: true,
+        oldType: 'ongoing',
+        newType: 'waiting',
+        roomUuid: 'known-in-filter',
+      });
+
+      const room = {
+        uuid: 'known-in-filter',
+        user: null,
+        is_waiting: false,
+        queue: { uuid: filteredQueueUuid },
+        transfer_history: {
+          action: 'transfer',
+          to: { type: 'queue' },
+          from: { type: 'user', email: viewedAgentEmail },
+        },
+      };
+
+      await wsRoomUpdate(room, { app: appMock });
+      flushPendingUpdates();
+
+      expect(countersMock.handleRoomUpdate).toHaveBeenCalledWith({
+        wasInArray: true,
+        isNowInArray: true,
+        oldType: 'ongoing',
+        newType: 'waiting',
+        roomUuid: 'known-in-filter',
+      });
+    });
   });
 });
