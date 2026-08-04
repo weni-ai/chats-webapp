@@ -120,6 +120,26 @@ describe('Socket', () => {
 
       expect(callback).not.toHaveBeenCalled();
     });
+
+    it('should accept content as a plain object without double-encoding', () => {
+      const callback = vi.fn();
+      socket.on('msg.create.success', callback);
+
+      const mockEvent = {
+        data: JSON.stringify({
+          type: 'notify',
+          action: 'msg.create.success',
+          content: { request_id: 'req-1', uuid: 'msg-1' },
+        }),
+      };
+
+      socket.ws.onmessage(mockEvent);
+
+      expect(callback).toHaveBeenCalledWith({
+        request_id: 'req-1',
+        uuid: 'msg-1',
+      });
+    });
   });
 
   describe('send', () => {

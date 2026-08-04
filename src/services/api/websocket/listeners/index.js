@@ -20,6 +20,14 @@ export default ({ ws, app }) => {
   ws.on('msg.create', createListener(roomListener.message.create));
   ws.on('msg.update', createListener(roomListener.message.update)); // Used when sending media in the room
   ws.on(
+    'msg.create.success',
+    createListener(roomListener.message.createAck.success),
+  );
+  ws.on(
+    'msg.create.error',
+    createListener(roomListener.message.createAck.error),
+  );
+  ws.on(
     'message.status_update',
     createListener(roomListener.message.changeStatus),
   );
