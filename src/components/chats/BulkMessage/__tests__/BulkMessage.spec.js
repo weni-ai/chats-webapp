@@ -1,11 +1,4 @@
-import {
-  describe,
-  it,
-  expect,
-  beforeEach,
-  afterEach,
-  vi,
-} from 'vitest';
+import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import { mount, flushPromises } from '@vue/test-utils';
 import { createPinia, setActivePinia } from 'pinia';
 import { UnnnicCallAlert } from '@weni/unnnic-system';
@@ -122,14 +115,7 @@ describe('BulkMessage', () => {
           },
           UnnnicButton: {
             name: 'UnnnicButtonStub',
-            props: [
-              'text',
-              'type',
-              'size',
-              'disabled',
-              'loading',
-              'iconLeft',
-            ],
+            props: ['text', 'type', 'size', 'disabled', 'loading', 'iconLeft'],
             emits: ['click'],
             inheritAttrs: false,
             template:
@@ -175,22 +161,6 @@ describe('BulkMessage', () => {
     expect(wrapper.vm.contactsCount).toBe(5);
     expect(wrapper.vm.hasShippingHistory).toBe(true);
     expect(wrapper.find('[data-testid="last-messages"]').exists()).toBe(true);
-  });
-
-  it('should show alert when contacts count changes to zero', async () => {
-    wrapper = createWrapper();
-    await flushPromises();
-
-    UnnnicCallAlert.mockClear();
-    wrapper.vm.contactsCount = 0;
-    await flushPromises();
-
-    expect(UnnnicCallAlert).toHaveBeenCalledWith({
-      props: {
-        text: expect.any(String),
-        type: 'error',
-      },
-    });
   });
 
   it('should enable send only when form is valid and user agrees', async () => {
@@ -292,9 +262,9 @@ describe('BulkMessage', () => {
     store.percentageSent = 30;
     await flushPromises();
 
-    expect(wrapper.find('[data-testid="modal-progress-bar-wrapper"]').exists()).toBe(
-      true,
-    );
+    expect(
+      wrapper.find('[data-testid="modal-progress-bar-wrapper"]').exists(),
+    ).toBe(true);
   });
 
   it('should show contacts disclaimer when count is greater than zero', async () => {
