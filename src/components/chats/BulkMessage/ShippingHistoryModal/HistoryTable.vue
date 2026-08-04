@@ -32,9 +32,7 @@
         </template>
 
         <template #date>
-          {{
-            dateFnsFormat(new Date(item.date), $t('date_format').toLowerCase())
-          }}
+          {{ new Date(item.date).toLocaleDateString() }}
         </template>
 
         <template #status>
