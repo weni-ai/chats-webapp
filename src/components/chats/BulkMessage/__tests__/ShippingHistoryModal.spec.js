@@ -2,7 +2,8 @@ import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import { mount, flushPromises } from '@vue/test-utils';
 import moment from 'moment';
 
-import ShippingHistoryModal from '../ShippingHistoryModal.vue';
+import ShippingHistoryModal from '../ShippingHistoryModal/index.vue';
+import { statusLabel, statusScheme } from '../ShippingHistoryModal/status';
 import BulkMessageService from '@/services/api/resources/chats/bulkMessage';
 import ProjectService from '@/services/api/resources/settings/project';
 
@@ -140,13 +141,10 @@ describe('ShippingHistoryModal', () => {
     );
   });
 
-  it('should map status labels and schemes', async () => {
-    wrapper = createWrapper();
-    await flushPromises();
-
-    expect(wrapper.vm.statusLabel('FAILED')).toContain('Failed');
-    expect(wrapper.vm.statusScheme('FAILED')).toBe('red');
-    expect(wrapper.vm.statusScheme('SUCCESS')).toBe('green');
+  it('should map status labels and schemes', () => {
+    expect(statusLabel('FAILED')).toContain('Failed');
+    expect(statusScheme('FAILED')).toBe('red');
+    expect(statusScheme('SUCCESS')).toBe('green');
   });
 
   it('should compute pagination range', async () => {
