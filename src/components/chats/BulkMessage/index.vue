@@ -111,7 +111,7 @@ import { useBulkMessageSend } from '@/store/modules/chats/bulkMessageSend';
 import ContactsStatus from './ContactsStatus.vue';
 import SelectFilters from './SelectFilters.vue';
 import LastMessages from './LastMessages.vue';
-import ShippingHistoryModal from './ShippingHistoryModal.vue';
+import ShippingHistoryModal from './ShippingHistoryModal/index.vue';
 
 import BulkMessageService from '@/services/api/resources/chats/bulkMessage';
 
