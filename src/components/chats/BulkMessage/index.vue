@@ -9,6 +9,7 @@
         :text="$t('mass_message.form.no_shipping_history')"
       >
         <UnnnicButton
+          data-testid="bulk-message-shipping-history-button"
           iconLeft="history"
           :text="$t('mass_message.form.shipping_history')"
           type="secondary"
@@ -21,6 +22,7 @@
     <main class="bulk-message-form__main">
       <LastMessages
         v-if="lastMessages.length > 0"
+        data-testid="last-messages"
         :messages="lastMessages"
       />
       <section class="bulk-message-form__recipients">
@@ -86,6 +88,7 @@
     <footer class="bulk-message-form__footer">
       <UnnnicButton
         class="bulk-message-form__footer-button"
+        data-testid="bulk-message-cancel-button"
         :text="$t('cancel')"
         type="tertiary"
         :disabled="isSending"
@@ -93,6 +96,7 @@
       />
       <UnnnicButton
         class="bulk-message-form__footer-button"
+        data-testid="bulk-message-send-button"
         :text="$t('mass_message.form.send', { count: contactsCount })"
         :disabled="!validForm || !agreeToSend"
         :loading="isSending"
@@ -102,6 +106,7 @@
 
     <ModalProgressBar
       v-if="isSending || !!sendingUuid"
+      data-testid="modal-progress-bar-wrapper"
       :modelValue="percentageSent"
       :title="
         $t('mass_message.form.sending', { count: totalToSend || contactsCount })
@@ -109,6 +114,7 @@
     />
     <ShippingHistoryModal
       v-if="showShippingModal"
+      data-testid="shipping-history-modal"
       @close="showShippingModal = false"
     />
   </section>

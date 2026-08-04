@@ -4,11 +4,13 @@
   >
     <section class="bulk-message-form__recipients-status">
       <UnnnicCheckbox
+        data-testid="contacts-status-ongoing"
         :label="$t('mass_message.form.recipients.contacts_in_service')"
         :modelValue="props.status.includes('ongoing')"
         @update:model-value="toggleStatus('ongoing')"
       />
       <UnnnicCheckbox
+        data-testid="contacts-status-waiting"
         :label="$t('mass_message.form.recipients.contacts_waiting_for_service')"
         :modelValue="props.status.includes('waiting')"
         @update:model-value="toggleStatus('waiting')"

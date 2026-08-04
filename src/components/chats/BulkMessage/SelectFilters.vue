@@ -1,7 +1,11 @@
 <template>
-  <section class="bulk-message-form__select-filters">
+  <section
+    class="bulk-message-form__select-filters"
+    data-testid="select-filters"
+  >
     <UnnnicMultiSelect
       class="bulk-message-form__select-filter"
+      data-testid="select-filters-queues"
       :options="queuesOptions"
       :modelValue="props.queues"
       :label="$t('mass_message.form.recipients.filters.queues.label')"
@@ -11,6 +15,7 @@
     />
     <UnnnicMultiSelect
       class="bulk-message-form__select-filter"
+      data-testid="select-filters-representatives"
       :options="representativesOptions"
       :modelValue="props.representatives"
       :label="$t('mass_message.form.recipients.filters.representatives.label')"

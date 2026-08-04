@@ -1,9 +1,13 @@
 <template>
-  <section class="last-messages">
+  <section
+    class="last-messages"
+    data-testid="last-messages"
+  >
     <UnnnicDisclaimer
       v-for="message in props.messages"
       :key="message.uuid"
       type="attention"
+      data-testid="last-message-disclaimer"
       :description="
         $t('mass_message.history.last_message_disclaimer', {
           text: message.text,
