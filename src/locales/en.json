@@ -1223,6 +1223,12 @@
           "input_placeholder": "Example: 50"
         }
       },
+      "bond_flows_queue": {
+        "switch": {
+          "label": "Restrict broadcast flows",
+          "helper": "Select which flows representatives in this queue can use to send broadcasts. If no flows are selected, they can use any flow."
+        }
+      },
       "message": {
         "create": "Queue created successfully",
         "update": "Queue updated successfully",

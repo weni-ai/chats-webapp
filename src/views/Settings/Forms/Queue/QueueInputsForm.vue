@@ -36,6 +36,11 @@
             $t('config_chats.queues.limit_chats.switch.input_placeholder')
           "
         />
+        <UnnnicSwitch
+          v-model="queueForm.bond_flows_queue"
+          :textRight="$t('config_chats.queues.bond_flows_queue.switch.label')"
+          :helper="$t('config_chats.queues.bond_flows_queue.switch.helper')"
+        />
       </section>
     </section>
 
