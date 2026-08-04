@@ -28,7 +28,7 @@
       :resendMedia="roomResendMedia"
       :isLoading="isLoadingMessages || isLoadingInternalNotes"
       :isClosedChat="!!room?.ended_at"
-      :enableReply="false"
+      :enableReply="!isDisabledInput"
       @scroll-top="searchForMoreMessages"
       @open-room-contact-info="$emit('open-room-contact-info')"
     />
@@ -41,6 +41,7 @@ import { useRooms } from '@/store/modules/chats/rooms';
 import { useRoomMessages } from '@/store/modules/chats/roomMessages';
 import { useConfig } from '@/store/modules/config';
 import { useFeatureFlag } from '@/store/modules/featureFlag';
+import { useMessageManager } from '@/store/modules/chats/messageManager';
 
 import ChatMessages from '@/components/chats/chat/ChatMessages/index.vue';
 import ChatSummary from '@/layouts/ChatsLayout/components/ChatSummary/index.vue';
@@ -109,6 +110,7 @@ export default {
     ...mapState(useConfig, {
       enableRoomSummary: (store) => store.project?.config?.has_chats_summary,
     }),
+    ...mapWritableState(useMessageManager, ['isDisabledInput', 'replyMessage']),
 
     messagesReady() {
       return (
@@ -171,6 +173,11 @@ export default {
           }
         }
       },
+    },
+    isDisabledInput() {
+      if (this.isDisabledInput) {
+        this.replyMessage = null;
+      }
     },
   },
 
