@@ -157,7 +157,19 @@ export const useRooms = defineStore('rooms', {
         const isProjectAdmin = profileStore.me.project_permission_role === 1;
 
         if (viewedAgentEmail) {
-          return room.user?.email === viewedAgentEmail;
+          if (room.user?.email === viewedAgentEmail) return true;
+
+          // Waiting rooms (no agent) remain visible in view-mode when they match
+          // the active queue filter, so ongoing → queue transfers update the
+          // waiting list and counter instead of only removing the room.
+          if (!room.user && !room.is_waiting) {
+            const emptyQueuesFilter = this.filterQueues.length === 0;
+            return (
+              emptyQueuesFilter || this.filterQueues.includes(room.queue?.uuid)
+            );
+          }
+
+          return false;
         }
 
         if (isProjectAdmin && !room.user) return true;
@@ -512,6 +524,12 @@ export const useRooms = defineStore('rooms', {
           if (!viewedAgentEmail && routerReplace) {
             routerReplace();
           }
+          return;
+        }
+        // View-mode: room moved to the waiting queue (no agent). Keep it in the
+        // waiting list/counter, but close the open chat since it left the agent.
+        if (viewedAgentEmail && !room.user) {
+          this.setActiveRoom(null);
           return;
         }
         this.setActiveRoom({ ...room });
