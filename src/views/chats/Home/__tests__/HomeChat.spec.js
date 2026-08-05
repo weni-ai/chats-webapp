@@ -480,11 +480,14 @@ describe('HomeChat.vue', () => {
     });
 
     it('should render get-chat button as primary when bulk actions are disabled', async () => {
-      const featureFlagStore = useFeatureFlag();
-      featureFlagStore.featureFlags = { active_features: [] };
-
       const configStore = useConfig();
-      configStore.project = { config: { can_use_bulk_take: false } };
+      configStore.project = {
+        config: {
+          can_use_bulk_take: false,
+          can_use_bulk_close: false,
+          can_use_bulk_transfer: false,
+        },
+      };
 
       await wrapper.vm.$nextTick();
 
@@ -492,31 +495,12 @@ describe('HomeChat.vue', () => {
     });
 
     it('should render get-chat button as secondary when bulk take is enabled', async () => {
-      const featureFlagStore = useFeatureFlag();
-      featureFlagStore.featureFlags = {
-        active_features: ['weniChatsBulkTake'],
-      };
-
       const configStore = useConfig();
       configStore.project = { config: { can_use_bulk_take: true } };
 
       await wrapper.vm.$nextTick();
 
       expect(wrapper.vm.getChatButtonType).toBe('secondary');
-    });
-
-    it('should render get-chat button as primary when feature flag is active but config is off', async () => {
-      const featureFlagStore = useFeatureFlag();
-      featureFlagStore.featureFlags = {
-        active_features: ['weniChatsBulkTake'],
-      };
-
-      const configStore = useConfig();
-      configStore.project = { config: { can_use_bulk_take: false } };
-
-      await wrapper.vm.$nextTick();
-
-      expect(wrapper.vm.getChatButtonType).toBe('primary');
     });
 
     it('calls Room.updateReadMessages if room is valid and belongs to the user', async () => {
