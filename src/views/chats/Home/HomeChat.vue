@@ -75,7 +75,6 @@ import { parseUrn } from '@/utils/room';
 import HomeChatHeaders from './HomeChatHeaders.vue';
 import HomeChatModals from './HomeChatModals.vue';
 
-import { useFeatureFlag } from '@/store/modules/featureFlag';
 import { useMessageManager } from '@/store/modules/chats/messageManager';
 
 export default {
@@ -116,7 +115,6 @@ export default {
       isCanSendMessageActiveRoom: 'isCanSendMessageActiveRoom',
       isLoadingCanSendMessageStatus: 'isLoadingCanSendMessageStatus',
     }),
-    ...mapState(useFeatureFlag, ['featureFlags']),
     ...mapState(useConfig, ['project']),
     ...mapState(useProfile, ['me']),
     ...mapState(useDiscussions, {
@@ -124,11 +122,6 @@ export default {
       discussions: 'discussions',
       getDiscussionById: 'getDiscussionById',
     }),
-    isActiveFeatureIs24hValidOptimization() {
-      return this.featureFlags.active_features?.includes(
-        'weniChatsIs24hValidOptimization',
-      );
-    },
     isBulkActionsEnabled() {
       const hasBulkTake = this.project.config?.can_use_bulk_take;
       const hasBulkClose = this.project.config?.can_use_bulk_close;
@@ -139,9 +132,9 @@ export default {
       return this.isBulkActionsEnabled ? 'secondary' : 'primary';
     },
     isCanSendMessage() {
-      return this.isActiveFeatureIs24hValidOptimization
-        ? this.isCanSendMessageActiveRoom && !this.isLoadingCanSendMessageStatus
-        : this.room?.is_24h_valid;
+      return (
+        this.isCanSendMessageActiveRoom && !this.isLoadingCanSendMessageStatus
+      );
     },
     isRenderChatsDropzoneVisible() {
       return (
@@ -189,8 +182,7 @@ export default {
         if (
           newRoom &&
           newRoom.uuid !== oldRoom?.uuid &&
-          parseUrn(newRoom).plataform === 'whatsapp' &&
-          this.isActiveFeatureIs24hValidOptimization
+          parseUrn(newRoom).plataform === 'whatsapp'
         ) {
           this.setIsLoadingCanSendMessageStatus(true);
           try {
