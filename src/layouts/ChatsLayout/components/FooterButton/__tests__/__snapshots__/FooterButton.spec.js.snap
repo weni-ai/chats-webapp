@@ -63,7 +63,57 @@ exports[`FooterButton > Snapshot > should match snapshot 1`] = `
     
     
     
-    <!--v-if-->
+    
+    
+    
+    
+    <div
+      class="unnnic-tooltip-trigger unnnic-tooltip tooltip"
+      data-grace-area-trigger=""
+      data-state="closed"
+      data-testid="tooltip-trigger"
+      data-v-03fa3548=""
+      data-v-61269528=""
+    >
+      
+      
+      
+      <unnnic-button-stub
+        class="chats-layout-footer-button__button chats-layout-footer-button__button--end"
+        data-testid="end-button"
+        data-v-944d9ccc=""
+        disabled="false"
+        float="false"
+        iconcenter=""
+        iconleft=""
+        iconright=""
+        iconsfilled="false"
+        loading="false"
+        pressed="false"
+        size="large"
+        text="end"
+        type="secondary"
+      />
+      
+      
+      
+    </div>
+    <div
+      data-v-61269528=""
+      defer="false"
+      disabled="false"
+      forcemount="false"
+    >
+      
+      
+      <!---->
+      
+      
+    </div>
+    
+    
+    
+    
     <!--v-if-->
     <!--v-if-->
     <!--v-if-->
