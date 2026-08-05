@@ -1,5 +1,4 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { sendWindowNotification, requestPermission } from '../notifications';
 import i18n from '@/plugins/i18n';
 import iframessa from 'iframessa';
 import isMobile from 'is-mobile';
@@ -21,6 +20,10 @@ vi.mock('is-mobile', () => ({
   default: vi.fn(),
 }));
 
+vi.mock('@/utils/hostBridge', () => ({
+  emitToHost: vi.fn(),
+}));
+
 Object.defineProperty(global, 'Notification', {
   value: {
     permission: 'default',
@@ -40,15 +43,30 @@ Object.defineProperty(global, 'navigator', {
   writable: true,
 });
 
-const mockLogo = '/src/assets/weni-logo.svg';
+const logoMatcher = expect.stringContaining('vtex-logo.svg');
+
+async function loadNotifications({ federated = false } = {}) {
+  vi.resetModules();
+
+  vi.doMock('@/utils/moduleFederation', () => ({
+    isFederatedModule: federated,
+  }));
+
+  const notifications = await import('../notifications');
+  const { emitToHost } = await import('@/utils/hostBridge');
+
+  return { ...notifications, emitToHost };
+}
 
 describe('sendWindowNotification', () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    Notification.permission = 'default';
   });
 
-  it('should emit a notification event via iframessa if not on mobile', () => {
+  it('should emit a notification event via iframessa if not on mobile', async () => {
     vi.mocked(isMobile).mockReturnValue(false);
+    const { sendWindowNotification, emitToHost } = await loadNotifications();
 
     sendWindowNotification({
       title: 'Test Title',
@@ -59,17 +77,20 @@ describe('sendWindowNotification', () => {
       'Test Title',
       {
         silent: true,
-        badge: expect.stringContaining('weni-logo.svg'),
-        icon: expect.stringContaining('weni-logo.svg'),
+        badge: logoMatcher,
+        icon: logoMatcher,
         body: 'Test Message',
         tag: 'Test Title',
+        requireInteraction: true,
       },
     ]);
+    expect(emitToHost).not.toHaveBeenCalled();
   });
 
   it('should show a notification via serviceWorker on mobile with granted permission', async () => {
     vi.mocked(isMobile).mockReturnValue(true);
     Notification.permission = 'granted';
+    const { sendWindowNotification } = await loadNotifications();
 
     sendWindowNotification({
       title: 'Mobile Notification',
@@ -81,16 +102,18 @@ describe('sendWindowNotification', () => {
       'Mobile Notification',
       {
         silent: true,
-        badge: expect.stringContaining('weni-logo.svg'),
-        icon: expect.stringContaining('weni-logo.svg'),
+        badge: logoMatcher,
+        icon: logoMatcher,
         body: 'Mobile Message',
         tag: 'Mobile Notification',
+        requireInteraction: true,
       },
     );
   });
 
-  it('should use image prefix for body when image is provided', () => {
+  it('should use image prefix for body when image is provided', async () => {
     vi.mocked(isMobile).mockReturnValue(false);
+    const { sendWindowNotification } = await loadNotifications();
 
     sendWindowNotification({
       title: 'Test Title',
@@ -103,12 +126,36 @@ describe('sendWindowNotification', () => {
       'Test Title',
       {
         silent: true,
-        badge: expect.stringContaining('weni-logo.svg'),
-        icon: expect.stringContaining('weni-logo.svg'),
+        badge: logoMatcher,
+        icon: logoMatcher,
         body: 'media\nTest Message',
         tag: 'Test Title',
+        requireInteraction: true,
       },
     ]);
+  });
+
+  it('should emit via hostBridge when federated', async () => {
+    vi.mocked(isMobile).mockReturnValue(false);
+    const { sendWindowNotification, emitToHost } = await loadNotifications({
+      federated: true,
+    });
+
+    sendWindowNotification({
+      title: 'Federated Title',
+      message: 'Federated Message',
+    });
+
+    expect(emitToHost).toHaveBeenCalledWith('chats:notification', {
+      title: 'Federated Title',
+      options: {
+        silent: true,
+        body: 'Federated Message',
+        tag: 'Federated Title',
+        requireInteraction: true,
+      },
+    });
+    expect(iframessa.emit).not.toHaveBeenCalled();
   });
 });
 
@@ -118,8 +165,9 @@ describe('requestPermission', () => {
     Notification.permission = 'default';
   });
 
-  it('should request permission if not granted and on mobile', () => {
+  it('should request permission if not granted and on mobile', async () => {
     vi.mocked(isMobile).mockReturnValue(true);
+    const { requestPermission } = await loadNotifications();
 
     requestPermission();
 
@@ -129,9 +177,10 @@ describe('requestPermission', () => {
     );
   });
 
-  it('should not request permission if already granted', () => {
+  it('should not request permission if already granted', async () => {
     vi.mocked(isMobile).mockReturnValue(true);
     Notification.permission = 'granted';
+    const { requestPermission } = await loadNotifications();
 
     requestPermission();
 
@@ -141,8 +190,9 @@ describe('requestPermission', () => {
     );
   });
 
-  it('should emit notification.requestPermission regardless of permission state', () => {
+  it('should emit notification.requestPermission regardless of permission state', async () => {
     vi.mocked(isMobile).mockReturnValue(false);
+    const { requestPermission } = await loadNotifications();
 
     requestPermission();
 
@@ -150,5 +200,20 @@ describe('requestPermission', () => {
     expect(iframessa.emit).toHaveBeenCalledWith(
       'notification.requestPermission',
     );
+  });
+
+  it('should request permission via hostBridge when federated', async () => {
+    vi.mocked(isMobile).mockReturnValue(false);
+    const { requestPermission, emitToHost } = await loadNotifications({
+      federated: true,
+    });
+
+    requestPermission();
+
+    expect(emitToHost).toHaveBeenCalledWith(
+      'chats:notification-request-permission',
+    );
+    expect(iframessa.emit).not.toHaveBeenCalled();
+    expect(Notification.requestPermission).not.toHaveBeenCalled();
   });
 });
