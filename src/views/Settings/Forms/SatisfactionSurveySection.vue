@@ -1,8 +1,5 @@
 <template>
-  <section
-    v-if="enableAutomaticCsatFeature"
-    class="satisfaction-survey-section"
-  >
+  <section class="satisfaction-survey-section">
     <h2
       class="satisfaction-survey-section__title"
       data-testid="satisfaction-survey-title"
@@ -84,11 +81,8 @@
 
 <script setup lang="ts">
 import { computed, ref, watch } from 'vue';
-import { storeToRefs } from 'pinia';
 
 import SelectFlow from '@/components/chats/FlowsTrigger/SelectFlow.vue';
-
-import { useFeatureFlag } from '@/store/modules/featureFlag';
 
 import type { Sector } from '@/types/Sector';
 
@@ -107,16 +101,10 @@ const emit = defineEmits<{
   'change-is-valid': [value: boolean];
 }>();
 
-const { featureFlags } = storeToRefs(useFeatureFlag());
-
 const sector = computed<Sector>({
   get: () => props.modelValue,
   set: (value: Sector) => emit('update:modelValue', value),
 });
-
-const enableAutomaticCsatFeature = computed<boolean>(() =>
-  Boolean(featureFlags.value.active_features?.includes('weniChatsCSAT')),
-);
 
 const csatType = ref<CsatType>(
   props.modelValue.custom_csat_flow_uuid ? 'custom' : 'default',
@@ -180,7 +168,6 @@ const handleFlowChange = (value: string): void => {
 
 defineExpose({
   csatType,
-  enableAutomaticCsatFeature,
   isValid,
   handleEnabledChange,
   handleTypeChange,
