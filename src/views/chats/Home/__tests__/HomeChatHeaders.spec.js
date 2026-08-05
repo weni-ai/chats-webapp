@@ -74,8 +74,8 @@ describe('HomeChatHeaders.vue', () => {
     roomStore.activeRoom = {
       id: '1',
       contact: { name: 'John Doe' },
-      is_24h_valid: true,
     };
+    roomStore.isCanSendMessageActiveRoom = true;
 
     await wrapper.vm.$nextTick();
 
@@ -105,9 +105,9 @@ describe('HomeChatHeaders.vue', () => {
 
   it('renders send flow header when room is active and not a discussion', async () => {
     roomStore.activeRoom = {
-      is_24h_valid: false,
       contact: { name: 'John Doe' },
     };
+    roomStore.isCanSendMessageActiveRoom = false;
 
     await wrapper.vm.$nextTick();
 
@@ -133,8 +133,8 @@ describe('HomeChatHeaders.vue', () => {
           activeRoom: {
             uuid: 'room-42',
             contact: { name: 'John Doe' },
-            is_24h_valid: true,
           },
+          isCanSendMessageActiveRoom: true,
           openActiveRoomSummary: false,
         },
         discussions: { activeDiscussion: null },
