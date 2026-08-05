@@ -1228,6 +1228,16 @@
           "input_placeholder": "Exemplo: 50"
         }
       },
+      "bond_flows_queue": {
+        "switch": {
+          "label": "Restringir fluxos de disparo",
+          "helper": "Selecione quais fluxos os representantes desta fila podem usar para enviar disparos. Se nenhum fluxo for selecionado, eles poderão usar qualquer fluxo."
+        },
+        "select": {
+          "label": "Selecionar fluxos",
+          "placeholder": "Digite o nome para buscar"
+        }
+      },
       "message": {
         "create": "Fila criada com sucesso",
         "update": "Fila atualizada com sucesso",

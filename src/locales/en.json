@@ -1227,6 +1227,10 @@
         "switch": {
           "label": "Restrict broadcast flows",
           "helper": "Select which flows representatives in this queue can use to send broadcasts. If no flows are selected, they can use any flow."
+        },
+        "select": {
+          "label": "Select the flows",
+          "placeholder": "Enter the name to search"
         }
       },
       "message": {

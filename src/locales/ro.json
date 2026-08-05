@@ -1152,6 +1152,16 @@
           "input_placeholder": "Exemplu: 50"
         }
       },
+      "bond_flows_queue": {
+        "switch": {
+          "label": "Restricționează fluxurile de difuzare",
+          "helper": "Selectează ce fluxuri pot folosi reprezentanții din această coadă pentru a trimite difuzări. Dacă nu este selectat niciun flux, pot folosi orice flux."
+        },
+        "select": {
+          "label": "Selectează fluxuri",
+          "placeholder": "Introdu numele pentru a căuta"
+        }
+      },
       "message": {
         "create": "Coada a fost creată cu succes",
         "update": "Coada a fost actualizată cu succes",

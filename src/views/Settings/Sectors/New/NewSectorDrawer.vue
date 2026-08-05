@@ -223,6 +223,11 @@ export default {
         'weniChatsQueuePurpose',
       );
     },
+    enableQueueFlowsFeature() {
+      return this.featureFlags.active_features?.includes(
+        'weniChatsFilterFlowsByQueue',
+      );
+    },
   },
   mounted() {
     handleConnectOverlay(true);
@@ -312,6 +317,12 @@ export default {
           queue_purpose: this.enableQueuePurposeFeature
             ? sectorQueue.queue_purpose
             : undefined,
+          bond_flows_queue: this.enableQueueFlowsFeature
+            ? sectorQueue.bond_flows_queue
+            : false,
+          selected_flows: this.enableQueueFlowsFeature
+            ? sectorQueue.selected_flows
+            : [],
           agents: sectorQueue.currentAgents.map((agent) => agent.user.email),
         }));
 

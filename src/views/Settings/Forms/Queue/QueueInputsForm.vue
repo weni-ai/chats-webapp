@@ -36,12 +36,23 @@
             $t('config_chats.queues.limit_chats.switch.input_placeholder')
           "
         />
-        <UnnnicSwitch
-          v-model="queueForm.bond_flows_queue"
-          :textRight="$t('config_chats.queues.bond_flows_queue.switch.label')"
-          :helper="$t('config_chats.queues.bond_flows_queue.switch.helper')"
-        />
       </section>
+    </section>
+
+    <section
+      v-if="enableQueueFlowsFeature"
+      class="sector-queues-form__bond-flows"
+      data-testid="queue-bond-flows"
+    >
+      <UnnnicSwitch
+        v-model="queueForm.bond_flows_queue"
+        :textRight="$t('config_chats.queues.bond_flows_queue.switch.label')"
+        :helper="$t('config_chats.queues.bond_flows_queue.switch.helper')"
+      />
+      <SelectQueueFlows
+        v-if="queueForm.bond_flows_queue"
+        v-model="queueForm.selected_flows"
+      />
     </section>
 
     <UnnnicDisclaimer
@@ -68,6 +79,7 @@
 <script>
 import { mapState } from 'pinia';
 import AgentsForm from '../Agent.vue';
+import SelectQueueFlows from './SelectQueueFlows.vue';
 
 import { useFeatureFlag } from '@/store/modules/featureFlag';
 import { useProfile } from '@/store/modules/profile';
@@ -77,6 +89,7 @@ export default {
   name: 'QueueInputsForm',
   components: {
     AgentsForm,
+    SelectQueueFlows,
   },
   props: {
     modelValue: {
@@ -105,6 +118,11 @@ export default {
     isEditing() {
       return !!this.queueForm.uuid;
     },
+    enableQueueFlowsFeature() {
+      return this.featureFlags.active_features?.includes(
+        'weniChatsFilterFlowsByQueue',
+      );
+    },
     enableQueuePurposeFeature() {
       return this.featureFlags.active_features?.includes(
         'weniChatsQueuePurpose',
@@ -127,6 +145,13 @@ export default {
       handler(value) {
         if (!value) {
           this.queueForm.queue_limit.limit = null;
+        }
+      },
+    },
+    'queueForm.bond_flows_queue': {
+      handler(value) {
+        if (!value) {
+          this.queueForm.selected_flows = [];
         }
       },
     },
@@ -217,6 +242,12 @@ export default {
       flex-direction: column;
       gap: $unnnic-space-2;
     }
+  }
+
+  &__bond-flows {
+    display: flex;
+    flex-direction: column;
+    gap: $unnnic-space-2;
   }
 }
 </style>

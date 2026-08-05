@@ -127,6 +127,11 @@ export default {
         'weniChatsQueuePurpose',
       );
     },
+    enableQueueFlowsFeature() {
+      return this.featureFlags.active_features?.includes(
+        'weniChatsFilterFlowsByQueue',
+      );
+    },
     enableQueueLimitFeature() {
       return this.featureFlags.active_features?.includes('weniChatsQueueLimit');
     },
@@ -254,6 +259,8 @@ export default {
                 : String(queue?.queue_limit?.limit),
             },
             queue_purpose: queue?.queue_purpose || '',
+            bond_flows_queue: queue?.bond_flows_queue || false,
+            selected_flows: queue?.selected_flows || [],
           },
         ];
       } else {
@@ -265,6 +272,8 @@ export default {
             default_message: '',
             queue_limit: { is_active: false, limit: null },
             queue_purpose: '',
+            bond_flows_queue: false,
+            selected_flows: [],
           },
         ];
       }
@@ -301,6 +310,8 @@ export default {
           toAddAgentsUuids,
           toRemoveAgentsUuids,
           queue_purpose,
+          bond_flows_queue,
+          selected_flows,
         } = this.queueToConfig[0];
 
         if (this.queueToConfig[0].uuid) {
@@ -322,6 +333,10 @@ export default {
             queue_purpose: this.enableQueuePurposeFeature
               ? queue_purpose
               : undefined,
+            bond_flows_queue: this.enableQueueFlowsFeature
+              ? bond_flows_queue
+              : false,
+            selected_flows: this.enableQueueFlowsFeature ? selected_flows : [],
           });
 
           this.queues = this.queues.map((queue) =>
@@ -345,6 +360,10 @@ export default {
             queue_purpose: this.enableQueuePurposeFeature
               ? queue_purpose
               : undefined,
+            bond_flows_queue: this.enableQueueFlowsFeature
+              ? bond_flows_queue
+              : false,
+            selected_flows: this.enableQueueFlowsFeature ? selected_flows : [],
           });
           await Promise.all(
             this.queueToConfig[0].currentAgents.map((agent) => {

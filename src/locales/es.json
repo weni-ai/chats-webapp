@@ -1225,6 +1225,16 @@
           "input_placeholder": "Ejemplo: 50"
         }
       },
+      "bond_flows_queue": {
+        "switch": {
+          "label": "Restringir flujos de difusión",
+          "helper": "Selecciona qué flujos pueden usar los representantes de esta cola para enviar difusiones. Si no se selecciona ningún flujo, podrán usar cualquiera."
+        },
+        "select": {
+          "label": "Seleccionar flujos",
+          "placeholder": "Ingresa el nombre para buscar"
+        }
+      },
       "message": {
         "create": "Cola creada con éxito",
         "update": "Cola actualizada con éxito",
