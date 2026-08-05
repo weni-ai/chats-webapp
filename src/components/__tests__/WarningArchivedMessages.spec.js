@@ -59,7 +59,7 @@ describe('WarningArchivedMessages', () => {
       const disclaimer = wrapper.findComponent({ name: 'UnnnicDisclaimer' });
       const description = disclaimer.props('description');
       expect(description).toContain('support request was closed');
-      expect(description).toContain('messages have been moved');
+      expect(description).toContain('messages have been archived');
       expect(description).toContain('Download messages');
     });
 

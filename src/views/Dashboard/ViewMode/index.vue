@@ -384,16 +384,6 @@ export default {
 
     &--open {
       background-color: $unnnic-color-bg-purple-plain;
-      &::after {
-        content: '';
-        position: fixed;
-        top: 106px; // This distance corresponds to the positioning of the summary balloon point.
-        transform: rotate(-45deg);
-        width: $unnnic-space-3;
-        height: $unnnic-space-3;
-        background-color: $unnnic-color-bg-purple-plain;
-        border-radius: $unnnic-space-1;
-      }
     }
   }
   &__active-chat {
@@ -402,10 +392,10 @@ export default {
 
     height: 100%;
 
-    padding-bottom: $unnnic-spacing-xs;
+    padding-bottom: $unnnic-space-2;
 
     .chat-messages__container {
-      padding-left: $unnnic-spacing-sm;
+      padding-left: $unnnic-space-4;
     }
 
     .discussion-header {
@@ -422,7 +412,7 @@ export default {
   }
 
   .assume-chat {
-    margin: $unnnic-spacing-nano $unnnic-spacing-inline-sm 0;
+    margin: $unnnic-space-1 $unnnic-space-4 0;
   }
 }
 </style>

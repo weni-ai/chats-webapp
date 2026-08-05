@@ -21,7 +21,10 @@ export default class Socket {
       this.pongData = data;
       if (!data.content) return;
       const { action } = data;
-      const content = JSON.parse(data.content);
+      const content =
+        typeof data.content === 'string'
+          ? JSON.parse(data.content)
+          : data.content;
 
       this.#handlers.forEach(({ message, callback }) => {
         if (message === action) callback(content);

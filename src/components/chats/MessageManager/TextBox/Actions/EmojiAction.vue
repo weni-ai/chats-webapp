@@ -43,6 +43,7 @@ const {
   audioMessage,
   mediaUploadFiles,
   isInternalNote,
+  isDictationListening,
 } = storeToRefs(useMessageManager());
 
 const { isLoading: isAiLoading } = storeToRefs(useAiTextImprovement());
@@ -53,6 +54,7 @@ const isDisabled = computed(() => {
   }
 
   return (
+    isDictationListening.value ||
     audioRecorderStatus.value !== 'idle' ||
     !!audioMessage.value ||
     mediaUploadFiles.value.length > 0 ||

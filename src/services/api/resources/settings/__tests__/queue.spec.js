@@ -72,6 +72,7 @@ describe('Queue', () => {
       params: {
         project: expect.anything(),
         ordering: '-created_on',
+        offset: 0,
         limit: 1000,
       },
     });

@@ -106,6 +106,7 @@ import isMobile from 'is-mobile';
 import Unnnic from '@weni/unnnic-system';
 
 import { handleConnectOverlay } from '@/utils/overlay';
+import { emitToHost } from '@/utils/hostBridge';
 
 export default {
   name: 'NewSectorDrawer',
@@ -174,6 +175,7 @@ export default {
         {
           name: '',
           queue_limit: { is_active: false, limit: null },
+          queue_purpose: '',
           currentAgents: [],
           agents: 0,
         },
@@ -215,6 +217,11 @@ export default {
     },
     enableQueueLimitFeature() {
       return this.featureFlags.active_features?.includes('weniChatsQueueLimit');
+    },
+    enableQueuePurposeFeature() {
+      return this.featureFlags.active_features?.includes(
+        'weniChatsQueuePurpose',
+      );
     },
   },
   mounted() {
@@ -276,10 +283,7 @@ export default {
 
         this.sectors.unshift(createdSector);
 
-        window.parent.postMessage(
-          { event: 'addSector', data: createdSector },
-          '*',
-        );
+        emitToHost('addSector', { data: createdSector });
 
         this.sector = { ...this.sector, ...createdSector };
 
@@ -305,6 +309,9 @@ export default {
           queue_limit: this.enableQueueLimitFeature
             ? sectorQueue.queue_limit
             : { is_active: false, limit: null },
+          queue_purpose: this.enableQueuePurposeFeature
+            ? sectorQueue.queue_purpose
+            : undefined,
           agents: sectorQueue.currentAgents.map((agent) => agent.user.email),
         }));
 

@@ -24,6 +24,18 @@
         @close="closeModalProgress"
       />
     </div>
+    <Teleport to=".chats-webapp">
+      <ModalVariableMapping
+        v-if="showVariableModal && cachedTemplate"
+        :template="cachedTemplate.data"
+        :variables="cachedTemplate.variables"
+        :localVariables="localVariables"
+        :isLoading="isSendingFlow"
+        data-testid="send-flow-variable-mapping"
+        @close="onCancelVariableMapping"
+        @confirm="onConfirmVariableMapping"
+      />
+    </Teleport>
     <footer class="send-flow__handlers">
       <UnnnicButton
         class="send-flow__handlers__button"

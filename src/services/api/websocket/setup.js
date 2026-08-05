@@ -2,6 +2,8 @@ import WS from '@/services/api/websocket/socket';
 import env from '@/utils/env';
 
 import listeners from './listeners';
+import { rejectAllPendingRequests } from './pendingRequests';
+import { SocketDisconnectedError } from './errors';
 import { useDashboard } from '@/store/modules/dashboard';
 import { useRooms } from '@/store/modules/chats/rooms';
 import { useDiscussions } from '@/store/modules/chats/discussions';
@@ -104,6 +106,7 @@ export default class WebSocketSetup {
     this.ws = ws;
 
     this.ws.ws.onclose = () => {
+      rejectAllPendingRequests(new SocketDisconnectedError());
       configStore.socketStatus = 'closed';
       if (this.ws.ws.readyState === this.ws.ws.OPEN) return;
 
@@ -196,6 +199,8 @@ export default class WebSocketSetup {
       );
       return;
     }
+
+    rejectAllPendingRequests(new SocketDisconnectedError());
 
     if (ignoreRetryCount) this.isFirstReconnectAttempt = true;
 

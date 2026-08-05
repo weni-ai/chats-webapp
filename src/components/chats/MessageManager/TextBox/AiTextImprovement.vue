@@ -94,18 +94,24 @@ const aiTextImprovement = useAiTextImprovement();
 const { isLoading, isPopoverOpen, showNewTag } = storeToRefs(aiTextImprovement);
 
 const messageManager = useMessageManager();
-const { inputMessage, isDisabledInput, isInternalNote } =
+const { inputMessage, isDisabledInput, isInternalNote, isDictationListening } =
   storeToRefs(messageManager);
 
 const isDisabled = computed(
-  () => !inputMessage.value.trim() || isInternalNote.value,
+  () =>
+    !inputMessage.value.trim() ||
+    isInternalNote.value ||
+    isDictationListening.value,
 );
 
-const tooltipText = computed(() =>
-  isDisabled.value
+const tooltipText = computed(() => {
+  if (isInternalNote.value) {
+    return t('ai_text_improvement.tooltip_internal_note');
+  }
+  return isDisabled.value
     ? t('ai_text_improvement.tooltip_disabled')
-    : t('ai_text_improvement.tooltip_enabled'),
-);
+    : t('ai_text_improvement.tooltip_enabled');
+});
 
 const improvementOptions = computed(() => [
   {
