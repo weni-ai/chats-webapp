@@ -80,7 +80,6 @@ import { useRouter, useRoute } from 'vue-router';
 
 import { useConfig } from '@/store/modules/config';
 import { useSettings } from '@/store/modules/settings';
-import { useFeatureFlag } from '@/store/modules/featureFlag';
 
 import SettingsProjectOptions from '@/views/Settings/SettingsProjectOptions/index.vue';
 import CustomBreaks from '@/views/Settings/CustomBreaks/index.vue';
@@ -107,15 +106,6 @@ const { isSecondaryProject, enableGroupsMode } = storeToRefs(configStore);
 const settingsStore = useSettings();
 const { sectors, groups } = storeToRefs(settingsStore);
 
-const featureFlagStore = useFeatureFlag();
-const { featureFlags } = storeToRefs(featureFlagStore);
-
-const enableRepresentativesManagement = computed(() => {
-  return featureFlags.value.active_features?.includes(
-    'weniChatsRepresentativesManagement',
-  );
-});
-
 const activeTab = ref('');
 const settingsTabs = computed(() => {
   if (isSecondaryProject.value) {
@@ -131,7 +121,7 @@ const settingsTabs = computed(() => {
     tabs.push({ label: t('config_chats.tabs.groups'), value: 'groups' });
   }
 
-  if (enableRepresentativesManagement.value && !enableGroupsMode.value) {
+  if (!enableGroupsMode.value) {
     tabs.push({
       label: t('config_chats.tabs.representatives'),
       value: 'representatives',
