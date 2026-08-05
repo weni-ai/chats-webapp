@@ -12,10 +12,7 @@ import {
 import SendFlowButton from '../SendFlowButton.vue';
 import FlowsTrigger from '@/services/api/resources/chats/flowsTrigger';
 
-import {
-  createFlowsTriggerPinia,
-  enableVariableMappingFlag,
-} from './testHelpers';
+import { createFlowsTriggerPinia } from './testHelpers';
 
 let savedGlobalMocks;
 
@@ -71,7 +68,6 @@ describe('SendFlowButton', () => {
       global: { plugins: [createFlowsTriggerPinia()] },
       props: { selectedFlow: '' },
     });
-    enableVariableMappingFlag();
     vi.clearAllMocks();
   });
 
@@ -272,7 +268,6 @@ describe('SendFlowButton', () => {
         cachedTemplate: cachedTemplateWithVariables,
       },
     });
-    enableVariableMappingFlag();
 
     await wrapper.vm.doSendFlow({
       nomecontato: 'Hi {{contact.name}}',
