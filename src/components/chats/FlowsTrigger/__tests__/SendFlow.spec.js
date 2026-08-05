@@ -17,8 +17,6 @@ import FlowsTrigger from '@/services/api/resources/chats/flowsTrigger';
 
 import {
   createFlowsTriggerPinia,
-  disableVariableMappingFlag,
-  enableVariableMappingFlag,
 } from './testHelpers';
 
 vi.mock('@/utils/callUnnnicAlert');
@@ -82,7 +80,6 @@ describe('SendFlow', () => {
       },
       props: { contacts: [], selectedContact: {} },
     });
-    disableVariableMappingFlag();
   });
 
   it('renders correctly with initial state', async () => {
@@ -146,10 +143,6 @@ describe('SendFlow', () => {
   });
 
   describe('template check on flow selection', () => {
-    beforeEach(() => {
-      enableVariableMappingFlag();
-    });
-
     it('does not check templates when isProjectPrincipal=true', async () => {
       await wrapper.setProps({ isProjectPrincipal: true });
       await wrapper
