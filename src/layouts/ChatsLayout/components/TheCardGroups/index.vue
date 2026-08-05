@@ -326,7 +326,7 @@ export default {
       const blockCloseInQueue = this.project.config?.can_close_chats_in_queue;
 
       if (this.activeTab === 'waiting') {
-        return (
+        return !!(
           canBulkTake ||
           canBulkTransfer ||
           (canBulkClose && !blockCloseInQueue)
@@ -334,7 +334,7 @@ export default {
       }
 
       if (this.activeTab === 'ongoing') {
-        return canBulkTransfer || canBulkClose;
+        return !!(canBulkTransfer || canBulkClose);
       }
 
       return false;
@@ -397,14 +397,14 @@ export default {
       if (this.isMobile) return false;
 
       if (this.activeTab === 'waiting') {
-        return (
+        return !!(
           canBulkTake ||
           canBulkTransfer ||
           (canBulkClose && !blockCloseInQueue)
         );
       }
 
-      return canBulkTransfer || canBulkClose;
+      return !!(canBulkTransfer || canBulkClose);
     },
   },
   watch: {
