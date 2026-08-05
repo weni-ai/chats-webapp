@@ -17,16 +17,9 @@ const sectorMock = {
   custom_csat_flow_uuid: null,
 };
 
-function createWrapper({ modelValue = sectorMock, csatEnabled = true } = {}) {
+function createWrapper({ modelValue = sectorMock } = {}) {
   const pinia = createTestingPinia({
     createSpy: vi.fn,
-    initialState: {
-      featureFlag: {
-        featureFlags: {
-          active_features: csatEnabled ? ['weniChatsCSAT'] : [],
-        },
-      },
-    },
     stubActions: false,
   });
 
@@ -51,14 +44,7 @@ describe('SatisfactionSurveySection', () => {
     vi.clearAllMocks();
   });
 
-  it('should not render the section when feature flag weniChatsCSAT is disabled', () => {
-    const wrapper = createWrapper({ csatEnabled: false });
-    expect(
-      wrapper.find('[data-testid="satisfaction-survey-title"]').exists(),
-    ).toBe(false);
-  });
-
-  it('should render the section title and switch when feature flag is enabled', () => {
+  it('should render the section title and switch', () => {
     const wrapper = createWrapper();
     expect(
       wrapper.find('[data-testid="satisfaction-survey-title"]').exists(),
