@@ -45,15 +45,21 @@
       data-testid="queue-bond-flows"
     >
       <UnnnicSwitch
-        v-model="queueForm.bond_flows_queue"
+        :modelValue="bondFlowsSwitchValue"
         :textRight="$t('config_chats.queues.bond_flows_queue.switch.label')"
         :helper="$t('config_chats.queues.bond_flows_queue.switch.helper')"
+        @update:model-value="handleBondFlowsToggle"
       />
       <SelectQueueFlows
         v-if="queueForm.bond_flows_queue"
         v-model="queueForm.selected_flows"
       />
     </section>
+
+    <DisableBondFlowsModal
+      v-model="showDisableBondFlowsModal"
+      @confirm="confirmDisableBondFlows"
+    />
 
     <UnnnicDisclaimer
       v-if="enableGroupsMode"
@@ -80,6 +86,7 @@
 import { mapState } from 'pinia';
 import AgentsForm from '../Agent.vue';
 import SelectQueueFlows from './SelectQueueFlows.vue';
+import DisableBondFlowsModal from './DisableBondFlowsModal.vue';
 
 import { useFeatureFlag } from '@/store/modules/featureFlag';
 import { useProfile } from '@/store/modules/profile';
@@ -90,6 +97,7 @@ export default {
   components: {
     AgentsForm,
     SelectQueueFlows,
+    DisableBondFlowsModal,
   },
   props: {
     modelValue: {
@@ -109,6 +117,8 @@ export default {
   data() {
     return {
       editingAutomaticMessage: false,
+      showDisableBondFlowsModal: false,
+      bondFlowsSwitchValue: false,
     };
   },
   computed: {
@@ -149,10 +159,9 @@ export default {
       },
     },
     'queueForm.bond_flows_queue': {
+      immediate: true,
       handler(value) {
-        if (!value) {
-          this.queueForm.selected_flows = [];
-        }
+        this.bondFlowsSwitchValue = value;
       },
     },
     queueForm: {
@@ -179,6 +188,30 @@ export default {
     },
   },
   methods: {
+    handleBondFlowsToggle(value) {
+      if (!value && this.queueForm.selected_flows?.length > 0) {
+        this.showDisableBondFlowsModal = true;
+        this.bondFlowsSwitchValue = false;
+        this.$nextTick(() => {
+          this.bondFlowsSwitchValue = true;
+        });
+        return;
+      }
+
+      this.queueForm.bond_flows_queue = value;
+      this.bondFlowsSwitchValue = value;
+      if (!value) {
+        this.queueForm.selected_flows = [];
+      }
+    },
+
+    confirmDisableBondFlows() {
+      this.queueForm.bond_flows_queue = false;
+      this.bondFlowsSwitchValue = false;
+      this.queueForm.selected_flows = [];
+      this.showDisableBondFlowsModal = false;
+    },
+
     async handlerRemoveAgent(agentUuid) {
       if (this.isEditing) {
         this.queueForm.toRemoveAgentsUuids.push(agentUuid);

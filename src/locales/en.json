@@ -1231,6 +1231,10 @@
         "select": {
           "label": "Select the flows",
           "placeholder": "Enter the name to search"
+        },
+        "disable_modal": {
+          "description": "Disabling this will remove all selected flows. You'll need to select them again if you want to turn this back on.",
+          "confirm": "Disable anyway"
         }
       },
       "message": {

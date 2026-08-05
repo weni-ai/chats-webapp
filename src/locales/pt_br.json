@@ -1236,6 +1236,10 @@
         "select": {
           "label": "Selecionar fluxos",
           "placeholder": "Digite o nome para buscar"
+        },
+        "disable_modal": {
+          "description": "Desativar isso removerá todos os fluxos selecionados. Será necessário selecioná-los novamente se quiser reativar.",
+          "confirm": "Desativar mesmo assim"
         }
       },
       "message": {

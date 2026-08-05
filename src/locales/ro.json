@@ -1160,6 +1160,10 @@
         "select": {
           "label": "Selectează fluxuri",
           "placeholder": "Introdu numele pentru a căuta"
+        },
+        "disable_modal": {
+          "description": "Dezactivarea acestei opțiuni va elimina toate fluxurile selectate. Va trebui să le selectezi din nou dacă vrei să reactivezi opțiunea.",
+          "confirm": "Dezactivează oricum"
         }
       },
       "message": {

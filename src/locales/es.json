@@ -1233,6 +1233,10 @@
         "select": {
           "label": "Seleccionar flujos",
           "placeholder": "Ingresa el nombre para buscar"
+        },
+        "disable_modal": {
+          "description": "Desactivar esto eliminará todos los flujos seleccionados. Tendrás que seleccionarlos de nuevo si quieres volver a activarlo.",
+          "confirm": "Desactivar de todos modos"
         }
       },
       "message": {
