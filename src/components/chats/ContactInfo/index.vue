@@ -150,86 +150,12 @@
             </section>
           </section>
         </AsideSlotTemplateSection>
-        <AsideSlotTemplateSection class="contact-info__section">
-          <section class="contact-info__about-support">
-            <header class="contact-info__about-support-header">
-              <h3 class="contact-info__about-support-title">
-                {{ $t('contact_info.about_support') }}
-              </h3>
-              <section class="contact-info__about-support-header__buttons">
-                <UnnnicPopover
-                  v-if="
-                    !isHistory && !isViewMode && allTags.length > 0 && room.user
-                  "
-                  :open="openDropdownTags"
-                  @update:open="openDropdownTags = $event"
-                >
-                  <UnnnicPopoverTrigger>
-                    <UnnnicButton
-                      iconLeft="add-1"
-                      type="secondary"
-                      size="small"
-                    >
-                      {{ $t('tag') }}
-                    </UnnnicButton>
-                  </UnnnicPopoverTrigger>
-                  <UnnnicPopoverContent align="end">
-                    <UnnnicInput
-                      v-model="tagsFilter"
-                      iconLeft="search"
-                      :placeholder="$t('tags.search')"
-                      class="contact-info__about-support-header__buttons__dropdown__input"
-                    />
-                    <section
-                      class="contact-info__about-support-header__buttons__dropdown"
-                    >
-                      <UnnnicCheckbox
-                        v-for="tag in filteredTags"
-                        :key="tag.uuid"
-                        :modelValue="
-                          roomTags.some((roomTag) => roomTag.uuid === tag.uuid)
-                        "
-                        :textRight="tag.name"
-                        @change="handleTagClick(tag)"
-                      />
-                    </section>
-                  </UnnnicPopoverContent>
-                </UnnnicPopover>
-                <UnnnicToolTip
-                  enabled
-                  :text="$t('discussions.start_discussion.title')"
-                  side="left"
-                >
-                  <UnnnicButton
-                    v-if="!isViewMode && !isMobile"
-                    iconCenter="communication"
-                    size="small"
-                    type="secondary"
-                    @click="handleModalStartDiscussion()"
-                  />
-                </UnnnicToolTip>
-              </section>
-            </header>
-            <section class="contact-info__about-support-content">
-              <TagGroup
-                v-if="roomTags?.length > 0"
-                class="contact-info__about-support-content__tag-group"
-                :modelValue="roomTags"
-                :tags="roomTags"
-                selectable
-                :useCloseClick="tagUseCloseOnClick"
-                @close="handleTagClick"
-              />
-              <ProtocolText :protocol="contactProtocol" />
-              <CsatInfo
-                v-if="closedRoom?.uuid"
-                :note="closedRoom?.csat_note"
-                :commentary="closedRoom?.csat_commentary"
-              />
-              <DiscussionsSession v-if="isHistory" />
-            </section>
-          </section>
-        </AsideSlotTemplateSection>
+
+        <AboutSupport
+          :closedRoom="closedRoom"
+          :isHistory="isHistory"
+          :isViewMode="isViewMode"
+        />
 
         <AsideSlotTemplateSection class="contact-info__section">
           <ContactMedia
@@ -241,12 +167,6 @@
           />
         </AsideSlotTemplateSection>
       </section>
-
-      <ModalStartDiscussion
-        v-if="isShowModalStartDiscussion"
-        v-model="isShowModalStartDiscussion"
-        @close="handleModalStartDiscussion()"
-      />
 
       <FullscreenPreview
         v-if="isFullscreen && currentMedia"
@@ -279,7 +199,7 @@
 <script>
 import isMobile from 'is-mobile';
 
-import { mapActions, mapState, mapWritableState } from 'pinia';
+import { mapActions, mapState } from 'pinia';
 import { useRooms } from '@/store/modules/chats/rooms';
 import { useRoomMessages } from '@/store/modules/chats/roomMessages';
 
@@ -298,13 +218,7 @@ import CopyValueButton from './CopyValueButton.vue';
 import ContactMedia from './Media.vue';
 import VideoPreview from '../MediaMessage/Previews/Video.vue';
 import FullscreenPreview from '../MediaMessage/Previews/Fullscreen.vue';
-import ModalStartDiscussion from './ModalStartDiscussion.vue';
-import DiscussionsSession from './DiscussionsSession.vue';
-import ProtocolText from './ProtocolText.vue';
-import CsatInfo from './CsatInfo.vue';
-
-import Queues from '@/services/api/resources/settings/queue';
-import TagGroup from '@/components/TagGroup.vue';
+import AboutSupport from './AboutSupport.vue';
 
 import moment from 'moment';
 import { parseUrn } from '@/utils/room';
@@ -323,11 +237,7 @@ export default {
     ContactMedia,
     FullscreenPreview,
     VideoPreview,
-    ModalStartDiscussion,
-    DiscussionsSession,
-    ProtocolText,
-    TagGroup,
-    CsatInfo,
+    AboutSupport,
   },
   props: {
     closedRoom: {
@@ -363,12 +273,7 @@ export default {
     customFields: {},
     currentCustomField: {},
     isRefreshContactDisabled: false,
-    isShowModalStartDiscussion: false,
     openCustomFields: true,
-    openDropdownTags: false,
-    allTags: [],
-    tagsPageSize: 20,
-    tagsFilter: '',
   }),
 
   computed: {
@@ -376,10 +281,6 @@ export default {
       room: (store) => store.activeRoom,
       activeRoomSummary: 'activeRoomSummary',
       isLoadingActiveRoomSummary: 'isLoadingActiveRoomSummary',
-    }),
-    ...mapWritableState(useRooms, {
-      roomTags: 'activeRoomTags',
-      roomTagsNext: 'activeRoomTagsNext',
     }),
 
     hasCustomFields() {
@@ -395,21 +296,6 @@ export default {
       return customFields;
     },
 
-    tagUseCloseOnClick() {
-      return !this.isViewMode && !this.isHistory && !!this.room.user;
-    },
-
-    hideTagCloseIcon() {
-      return this.isViewMode || this.isHistory || !this.room.user
-        ? 'none'
-        : 'flex';
-    },
-
-    filteredTags() {
-      return this.allTags.filter((tag) =>
-        tag.name.toLowerCase().includes(this.tagsFilter.toLowerCase()),
-      );
-    },
     currentMediaIndex() {
       if (!this.currentMedia?.url) {
         return 0;
@@ -446,9 +332,6 @@ export default {
 
       return parseUrn(room);
     },
-    contactProtocol() {
-      return (this.closedRoom || this.room).protocol || '';
-    },
     contactService() {
       return (this.closedRoom || this.room).service_chat;
     },
@@ -460,8 +343,6 @@ export default {
       handler(newRoom) {
         if (newRoom) {
           this.customFields = this.room.custom_fields;
-          this.loadAllTags();
-          this.loadRoomTags();
         }
       },
     },
@@ -496,82 +377,11 @@ export default {
     }
   },
 
-  unmounted() {
-    this.roomTags = [];
-  },
-
   methods: {
     moment,
     ...mapActions(useRooms, ['updateRoomContact']),
-    async loadAllTags() {
-      try {
-        const { queue } = this.room || {};
-
-        if (!queue) return;
-
-        const { results, next } = await Queues.tags(queue.uuid, {
-          limit: this.tagsPageSize,
-          next: this.allTagsNext,
-        });
-        this.allTags = this.allTags.concat(results);
-        this.allTagsNext = next;
-      } catch (error) {
-        console.error('Error loading all tags', error);
-      } finally {
-        if (this.allTagsNext) this.loadAllTags();
-      }
-    },
-    async loadRoomTags() {
-      try {
-        const roomUuid = this.closedRoom?.uuid || this.room?.uuid;
-        const { results, next } = await Room.getRoomTags(roomUuid, {
-          next: this.roomTagsNext,
-          limit: this.tagsPageSize,
-        });
-        this.roomTags = this.roomTags.concat(results);
-        this.roomTagsNext = next;
-      } catch (error) {
-        console.error('Error loading room tags', error);
-      } finally {
-        if (this.roomTagsNext) this.loadRoomTags();
-      }
-    },
-    async removeRoomTag(tag) {
-      try {
-        await Room.removeRoomTag(this.room.uuid, tag.uuid);
-        this.roomTags = this.roomTags.filter(
-          (roomTag) => roomTag.uuid !== tag.uuid,
-        );
-      } catch (error) {
-        console.log(error);
-      }
-    },
-    async addRoomTag(tag) {
-      try {
-        await Room.addRoomTag(this.room.uuid, tag.uuid);
-        this.roomTags.push(tag);
-      } catch (error) {
-        console.log(error);
-      }
-    },
-
-    handleTagClick(tag) {
-      if (!this.room.user) return;
-      const hasSelectedTag = this.roomTags.some(
-        (roomTag) => roomTag.uuid === tag.uuid,
-      );
-      if (hasSelectedTag) {
-        this.removeRoomTag(tag);
-      } else {
-        this.addRoomTag(tag);
-      }
-    },
     emitClose() {
       this.$emit('close');
-    },
-
-    handleModalStartDiscussion() {
-      this.isShowModalStartDiscussion = !this.isShowModalStartDiscussion;
     },
 
     getCurrentCustomFieldKey() {
@@ -787,59 +597,6 @@ export default {
     font: $unnnic-font-display-4;
     color: $unnnic-color-fg-emphasized;
     border-bottom: 1px solid $unnnic-color-border-soft;
-  }
-
-  &__about-support {
-    &-content {
-      display: flex;
-      flex-direction: column;
-      gap: $unnnic-space-2;
-      // This is required to remove the tag icon
-      :deep(.contact-info__about-support-content__tag-group) {
-        .unnnic-icon {
-          display: v-bind(hideTagCloseIcon);
-        }
-      }
-    }
-    &-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      &__buttons {
-        display: flex;
-        align-items: center;
-        gap: $unnnic-space-1;
-        :deep(.unnnic-dropdown__content) {
-          padding: $unnnic-space-2;
-        }
-        &__dropdown {
-          display: flex;
-          flex-direction: column;
-          gap: $unnnic-space-6;
-          width: 100%;
-          height: 204px;
-          overflow-y: auto;
-          padding-right: $unnnic-space-2;
-
-          &__input {
-            margin-bottom: $unnnic-space-6;
-          }
-        }
-      }
-    }
-    &-title {
-      font: $unnnic-font-display-4;
-      color: $unnnic-color-fg-emphasized;
-      &-container {
-        display: flex;
-        flex-direction: column;
-        gap: $unnnic-space-1;
-      }
-    }
-
-    :deep(.unnnic-tooltip) {
-      display: flex;
-    }
   }
 
   .scrollable {
