@@ -5,6 +5,8 @@ import {
   parseUrn,
   sanitizeDocument,
   buildHistoryContactQuery,
+  formatHistoryContactFilter,
+  parseHistoryContactFilter,
 } from '@/utils/room';
 
 describe('room utils', () => {
@@ -129,6 +131,81 @@ describe('room utils', () => {
       expect(buildHistoryContactQuery(room)).toEqual({
         contact: 'abc-123',
         email: 'user@mail.com',
+      });
+    });
+  });
+
+  describe('formatHistoryContactFilter', () => {
+    it('returns empty string when no identifiers', () => {
+      expect(formatHistoryContactFilter({})).toBe('');
+      expect(formatHistoryContactFilter()).toBe('');
+    });
+
+    it('formats only present keys in stable order', () => {
+      expect(
+        formatHistoryContactFilter({
+          document: '123.456.789-00',
+          email: 'kallil@gmail.com',
+          contact: 'abc-123',
+        }),
+      ).toBe('contact=abc-123 email=kallil@gmail.com document=12345678900');
+    });
+
+    it('formats partial identifiers', () => {
+      expect(formatHistoryContactFilter({ email: 'a@b.com' })).toBe(
+        'email=a@b.com',
+      );
+      expect(formatHistoryContactFilter({ contact: 'abc-123' })).toBe(
+        'contact=abc-123',
+      );
+    });
+  });
+
+  describe('parseHistoryContactFilter', () => {
+    it('returns empty object for empty input', () => {
+      expect(parseHistoryContactFilter('')).toEqual({});
+      expect(parseHistoryContactFilter('   ')).toEqual({});
+      expect(parseHistoryContactFilter(null)).toEqual({});
+    });
+
+    it('parses full structured tokens', () => {
+      expect(
+        parseHistoryContactFilter(
+          'contact=abc-123 email=kallil@gmail.com document=12345678900',
+        ),
+      ).toEqual({
+        contact: 'abc-123',
+        email: 'kallil@gmail.com',
+        document: '12345678900',
+      });
+    });
+
+    it('parses partial tokens and sanitizes document', () => {
+      expect(
+        parseHistoryContactFilter('document=123.456.789-00 email=a@b.com'),
+      ).toEqual({
+        email: 'a@b.com',
+        document: '12345678900',
+      });
+    });
+
+    it('treats free text as search', () => {
+      expect(parseHistoryContactFilter('João Silva')).toEqual({
+        search: 'João Silva',
+      });
+    });
+
+    it('treats legacy comma-separated value as search', () => {
+      expect(
+        parseHistoryContactFilter('558486065742,kallil@gmail.com'),
+      ).toEqual({
+        search: '558486065742,kallil@gmail.com',
+      });
+    });
+
+    it('treats mixed free text and tokens as search', () => {
+      expect(parseHistoryContactFilter('João contact=abc-123')).toEqual({
+        search: 'João contact=abc-123',
       });
     });
   });
