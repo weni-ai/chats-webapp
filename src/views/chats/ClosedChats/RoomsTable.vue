@@ -146,6 +146,8 @@ import History from '@/services/api/resources/chats/history';
 import TagGroup from '@/components/TagGroup.vue';
 import ModalClosedChatsFilters from '@/components/chats/Mobile/ModalClosedChatsFilters.vue';
 
+import { parseHistoryContactFilter } from '@/utils/room';
+
 import ClosedChatsRoomsTableFilters from './RoomsTableFilters.vue';
 
 export default {
@@ -259,7 +261,14 @@ export default {
       };
 
       if (contact) {
-        historyParams.search = contact;
+        const parsed = parseHistoryContactFilter(contact);
+        if (parsed.search) {
+          historyParams.search = parsed.search;
+        } else {
+          if (parsed.contact) historyParams.contact = parsed.contact;
+          if (parsed.email) historyParams.email = parsed.email;
+          if (parsed.document) historyParams.document = parsed.document;
+        }
       } else if (legacyContactUrn?.includes(',')) {
         historyParams.search = legacyContactUrn;
       } else {
