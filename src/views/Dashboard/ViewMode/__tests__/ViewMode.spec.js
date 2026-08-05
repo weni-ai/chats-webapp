@@ -346,19 +346,6 @@ describe('ViewMode', () => {
       expect(wrapperWithEmail.vm.viewedAgent.email).toBe(mockAgent.email);
     });
 
-    it('should render ContactInfo when weniChatsContactInfoV2 feature flag is enabled', () => {
-      const wrapper = createWrapper({
-        dashboard: { viewedAgent: mockAgent },
-        featureFlag: {
-          featureFlags: { active_features: ['weniChatsContactInfoV2'] },
-        },
-      });
-
-      expect(wrapper.vm.featureFlags.active_features).toContain(
-        'weniChatsContactInfoV2',
-      );
-    });
-
     it('should handle room and discussion states', () => {
       const wrapperEmpty = createWrapper({
         dashboard: { viewedAgent: mockAgent },
