@@ -75,7 +75,6 @@ import { mapState, mapWritableState } from 'pinia';
 
 import { useConfig } from '@/store/modules/config';
 import { useProfile } from '@/store/modules/profile';
-import { useFeatureFlag } from '@/store/modules/featureFlag';
 
 import Project from '@/services/api/resources/settings/project';
 import agentBuilder from '@/services/api/resources/settings/agentBuilder';
@@ -124,15 +123,6 @@ export default {
     ...mapWritableState(useConfig, ['project']),
     ...mapState(useConfig, ['isSecondaryProject', 'isMainGroupsProject']),
     ...mapState(useProfile, ['me']),
-    ...mapState(useFeatureFlag, ['featureFlags']),
-
-    isBulkCloseFeatureEnabled() {
-      return this.featureFlags.active_features?.includes('weniChatsBulkClose');
-    },
-
-    isBulkTakeFeatureEnabled() {
-      return this.featureFlags.active_features?.includes('weniChatsBulkTake');
-    },
 
     isUserManager() {
       const ROLE_MANAGER = 1;
@@ -254,7 +244,7 @@ export default {
         {
           key: 'can_use_bulk_close',
           type: 'flag',
-          visible: this.isBulkCloseFeatureEnabled && !this.isSecondaryProject,
+          visible: !this.isSecondaryProject,
           name: this.configBulkCloseTranslation,
         },
         {
@@ -266,7 +256,7 @@ export default {
         {
           key: 'can_use_bulk_take',
           type: 'flag',
-          visible: this.isBulkTakeFeatureEnabled && !this.isSecondaryProject,
+          visible: !this.isSecondaryProject,
           name: this.configBulkTakeTranslation,
         },
         {
