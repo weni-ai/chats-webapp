@@ -37,68 +37,62 @@
       <h2 class="switchs__title">
         {{ $t('sector.additional_options.automated_message.title') }}
       </h2>
-      <template
-        v-if="
-          featureFlags.active_features?.includes('weniChatsAutomaticMessage')
+      <section class="switchs__container">
+        <UnnnicSwitch
+          :modelValue="sector.automatic_message_queue.is_active"
+          class="margin-y-space-1"
+          :textRight="
+            $t(
+              'sector.additional_options.automated_message.switch_when_waiting_label',
+            )
+          "
+          :helper="
+            $t(
+              'sector.additional_options.automated_message.hint_when_waiting',
+            )
+          "
+          size="small"
+          data-testid="config-switch"
+          @update:model-value="handleAutomaticMessageQueueIsActive"
+        />
+      </section>
+      <UnnnicInput
+        v-if="sector.automatic_message_queue.is_active"
+        v-model="sector.automatic_message_queue.text"
+        :maxlength="160"
+        showMaxlengthCounter
+        :label="$t('sector.additional_options.automated_message.field.title')"
+        :placeholder="
+          $t('sector.additional_options.automated_message.field.placeholder')
         "
-      >
-        <section class="switchs__container">
-          <UnnnicSwitch
-            :modelValue="sector.automatic_message_queue.is_active"
-            class="margin-y-space-1"
-            :textRight="
-              $t(
-                'sector.additional_options.automated_message.switch_when_waiting_label',
-              )
-            "
-            :helper="
-              $t(
-                'sector.additional_options.automated_message.hint_when_waiting',
-              )
-            "
-            size="small"
-            data-testid="config-switch"
-            @update:model-value="handleAutomaticMessageQueueIsActive"
-          />
-        </section>
-        <UnnnicInput
-          v-if="sector.automatic_message_queue.is_active"
-          v-model="sector.automatic_message_queue.text"
-          :maxlength="160"
-          showMaxlengthCounter
-          :label="$t('sector.additional_options.automated_message.field.title')"
-          :placeholder="
-            $t('sector.additional_options.automated_message.field.placeholder')
+      />
+      <section class="switchs__container">
+        <UnnnicSwitch
+          :modelValue="sector.automatic_message.is_active"
+          class="margin-y-space-1"
+          :textRight="
+            $t(
+              'sector.additional_options.automated_message.switch_when_start_label',
+            )
           "
-        />
-        <section class="switchs__container">
-          <UnnnicSwitch
-            :modelValue="sector.automatic_message.is_active"
-            class="margin-y-space-1"
-            :textRight="
-              $t(
-                'sector.additional_options.automated_message.switch_when_start_label',
-              )
-            "
-            :helper="
-              $t('sector.additional_options.automated_message.hint_when_start')
-            "
-            size="small"
-            data-testid="config-switch"
-            @update:model-value="handleAutomaticMessageIsActive"
-          />
-        </section>
-        <UnnnicInput
-          v-if="sector.automatic_message.is_active"
-          v-model="sector.automatic_message.text"
-          :maxlength="160"
-          showMaxlengthCounter
-          :label="$t('sector.additional_options.automated_message.field.title')"
-          :placeholder="
-            $t('sector.additional_options.automated_message.field.placeholder')
+          :helper="
+            $t('sector.additional_options.automated_message.hint_when_start')
           "
+          size="small"
+          data-testid="config-switch"
+          @update:model-value="handleAutomaticMessageIsActive"
         />
-      </template>
+      </section>
+      <UnnnicInput
+        v-if="sector.automatic_message.is_active"
+        v-model="sector.automatic_message.text"
+        :maxlength="160"
+        showMaxlengthCounter
+        :label="$t('sector.additional_options.automated_message.field.title')"
+        :placeholder="
+          $t('sector.additional_options.automated_message.field.placeholder')
+        "
+      />
     </section>
 
     <section
