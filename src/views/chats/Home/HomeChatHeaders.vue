@@ -42,9 +42,6 @@
             </section>
           </UnnnicToolTip>
           <UnnnicToolTip
-            v-if="
-              featureFlags.active_features?.includes('weniChatsSearchMessages')
-            "
             enabled
             :text="$t('chats.search_messages.title')"
             side="left"
@@ -67,9 +64,6 @@
             </section>
           </UnnnicToolTip>
           <UnnnicToolTip
-            v-if="
-              featureFlags.active_features?.includes('weniChatsContactInfoV2')
-            "
             enabled
             :text="
               room?.has_history
@@ -89,9 +83,6 @@
             </section>
           </UnnnicToolTip>
           <UnnnicToolTip
-            v-if="
-              featureFlags.active_features?.includes('weniChatsContactInfoV2')
-            "
             enabled
             :text="$t('transfer_contact', { count: 1 })"
             side="left"
@@ -160,7 +151,6 @@ import isMobile from 'is-mobile';
 
 import { useRooms } from '@/store/modules/chats/rooms';
 import { useDiscussions } from '@/store/modules/chats/discussions';
-import { useFeatureFlag } from '@/store/modules/featureFlag';
 import { useConfig } from '@/store/modules/config';
 import { useProfile } from '@/store/modules/profile';
 import { useRoomMessages } from '@/store/modules/chats/roomMessages';
@@ -209,7 +199,6 @@ export default {
   },
 
   computed: {
-    ...mapState(useFeatureFlag, ['featureFlags']),
     ...mapState(useRooms, {
       room: (store) => store.activeRoom,
       isLoadingCanSendMessageStatus: (store) =>
@@ -252,15 +241,10 @@ export default {
       const { discussion, isLoading } = this;
       return discussion && !isLoading;
     },
-    isActiveFeatureIs24hValidOptimization() {
-      return this.featureFlags.active_features?.includes(
-        'weniChatsIs24hValidOptimization',
-      );
-    },
     isCanSendMessage() {
-      return this.isActiveFeatureIs24hValidOptimization
-        ? this.isCanSendMessageActiveRoom && !this.isLoadingCanSendMessageStatus
-        : this.room?.is_24h_valid;
+      return (
+        this.isCanSendMessageActiveRoom && !this.isLoadingCanSendMessageStatus
+      );
     },
     isShowingSendFlowHeader() {
       const { room, discussion, isLoading } = this;

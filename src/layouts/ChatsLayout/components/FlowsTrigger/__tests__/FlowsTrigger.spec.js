@@ -9,7 +9,6 @@ import callUnnnicAlert from '@/utils/callUnnnicAlert';
 import Group from '@/services/api/resources/settings/group';
 import FlowsTriggerService from '@/services/api/resources/chats/flowsTrigger.js';
 import FlowsAPI from '@/services/api/resources/flows/flowsTrigger.js';
-import { FLOW_TRIGGER_VARIABLE_MAPPING_FLAG } from '@/components/chats/FlowsTrigger/types';
 import i18n from '@/plugins/i18n';
 
 vi.mock('is-mobile', () => ({
@@ -577,20 +576,6 @@ describe('FlowsTrigger/index.vue', () => {
       expect(message).toContain('Alice');
       expect(message).toContain('Support');
       expect(message).not.toContain('John');
-    });
-
-    it('should expose variable mapping flag from feature flags', async () => {
-      const wrapper = await createWrapper({
-        piniaState: {
-          featureFlag: {
-            featureFlags: {
-              active_features: [FLOW_TRIGGER_VARIABLE_MAPPING_FLAG],
-            },
-          },
-        },
-      });
-
-      expect(wrapper.vm.isVariableMappingEnabled).toBe(true);
     });
 
     it('should open send flow when selectedContact prop is provided', async () => {

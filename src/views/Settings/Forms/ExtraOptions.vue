@@ -37,74 +37,65 @@
       <h2 class="switchs__title">
         {{ $t('sector.additional_options.automated_message.title') }}
       </h2>
-      <template
-        v-if="
-          featureFlags.active_features?.includes('weniChatsAutomaticMessage')
+      <section class="switchs__container">
+        <UnnnicSwitch
+          :modelValue="sector.automatic_message_queue.is_active"
+          class="margin-y-space-1"
+          :textRight="
+            $t(
+              'sector.additional_options.automated_message.switch_when_waiting_label',
+            )
+          "
+          :helper="
+            $t(
+              'sector.additional_options.automated_message.hint_when_waiting',
+            )
+          "
+          size="small"
+          data-testid="config-switch"
+          @update:model-value="handleAutomaticMessageQueueIsActive"
+        />
+      </section>
+      <UnnnicInput
+        v-if="sector.automatic_message_queue.is_active"
+        v-model="sector.automatic_message_queue.text"
+        :maxlength="160"
+        showMaxlengthCounter
+        :label="$t('sector.additional_options.automated_message.field.title')"
+        :placeholder="
+          $t('sector.additional_options.automated_message.field.placeholder')
         "
-      >
-        <section class="switchs__container">
-          <UnnnicSwitch
-            :modelValue="sector.automatic_message_queue.is_active"
-            class="margin-y-space-1"
-            :textRight="
-              $t(
-                'sector.additional_options.automated_message.switch_when_waiting_label',
-              )
-            "
-            :helper="
-              $t(
-                'sector.additional_options.automated_message.hint_when_waiting',
-              )
-            "
-            size="small"
-            data-testid="config-switch"
-            @update:model-value="handleAutomaticMessageQueueIsActive"
-          />
-        </section>
-        <UnnnicInput
-          v-if="sector.automatic_message_queue.is_active"
-          v-model="sector.automatic_message_queue.text"
-          :maxlength="160"
-          showMaxlengthCounter
-          :label="$t('sector.additional_options.automated_message.field.title')"
-          :placeholder="
-            $t('sector.additional_options.automated_message.field.placeholder')
+      />
+      <section class="switchs__container">
+        <UnnnicSwitch
+          :modelValue="sector.automatic_message.is_active"
+          class="margin-y-space-1"
+          :textRight="
+            $t(
+              'sector.additional_options.automated_message.switch_when_start_label',
+            )
           "
-        />
-        <section class="switchs__container">
-          <UnnnicSwitch
-            :modelValue="sector.automatic_message.is_active"
-            class="margin-y-space-1"
-            :textRight="
-              $t(
-                'sector.additional_options.automated_message.switch_when_start_label',
-              )
-            "
-            :helper="
-              $t('sector.additional_options.automated_message.hint_when_start')
-            "
-            size="small"
-            data-testid="config-switch"
-            @update:model-value="handleAutomaticMessageIsActive"
-          />
-        </section>
-        <UnnnicInput
-          v-if="sector.automatic_message.is_active"
-          v-model="sector.automatic_message.text"
-          :maxlength="160"
-          showMaxlengthCounter
-          :label="$t('sector.additional_options.automated_message.field.title')"
-          :placeholder="
-            $t('sector.additional_options.automated_message.field.placeholder')
+          :helper="
+            $t('sector.additional_options.automated_message.hint_when_start')
           "
+          size="small"
+          data-testid="config-switch"
+          @update:model-value="handleAutomaticMessageIsActive"
         />
-      </template>
+      </section>
+      <UnnnicInput
+        v-if="sector.automatic_message.is_active"
+        v-model="sector.automatic_message.text"
+        :maxlength="160"
+        showMaxlengthCounter
+        :label="$t('sector.additional_options.automated_message.field.title')"
+        :placeholder="
+          $t('sector.additional_options.automated_message.field.placeholder')
+        "
+      />
     </section>
 
-    <section
-      v-if="enableInactivityTimeoutFeature"
-      class="switchs"
-    >
+    <section class="switchs">
       <h2 class="switchs__title">
         {{ $t('sector.additional_options.inactivity_timeout.title') }}
       </h2>
@@ -280,7 +271,6 @@ import unnnic from '@weni/unnnic-system';
 import SatisfactionSurveySection from './SatisfactionSurveySection.vue';
 import TagGroup from '@/components/TagGroup.vue';
 
-import { useFeatureFlag } from '@/store/modules/featureFlag';
 import { useConfig } from '@/store/modules/config';
 
 import Sector from '@/services/api/resources/settings/sector';
@@ -320,7 +310,6 @@ export default {
     };
   },
   computed: {
-    ...mapState(useFeatureFlag, ['featureFlags']),
     ...mapState(useConfig, ['project']),
     sector: {
       get() {
@@ -377,14 +366,6 @@ export default {
       return (
         !this.tagName.trim() ||
         this.tags.some((tag) => tag.name === this.tagName.trim())
-      );
-    },
-    enableAutomaticCsatFeature() {
-      return this.featureFlags.active_features?.includes('weniChatsCSAT');
-    },
-    enableInactivityTimeoutFeature() {
-      return this.featureFlags.active_features?.includes(
-        'weniChatsInactivityTimeout',
       );
     },
     inactivityTimeoutDefaultMessage() {
@@ -546,29 +527,18 @@ export default {
       } = this.sector;
 
       const inactivityTimeoutFields = {
-        is_message_timeout_enabled: this.enableInactivityTimeoutFeature
-          ? inactivity_timeout.is_message_timeout_enabled
-          : false,
-        message_timeout_text: this.enableInactivityTimeoutFeature
-          ? inactivity_timeout.message_timeout_text
-          : '',
-        message_timeout_time:
-          this.enableInactivityTimeoutFeature &&
-          inactivity_timeout.is_message_timeout_enabled
-            ? parseMinutesToSeconds(inactivity_timeout.message_timeout_time)
-            : null,
+        is_message_timeout_enabled:
+          inactivity_timeout.is_message_timeout_enabled,
+        message_timeout_text: inactivity_timeout.message_timeout_text,
+        message_timeout_time: inactivity_timeout.is_message_timeout_enabled
+          ? parseMinutesToSeconds(inactivity_timeout.message_timeout_time)
+          : null,
 
-        is_close_room_enabled: this.enableInactivityTimeoutFeature
-          ? inactivity_timeout.is_close_room_enabled
-          : false,
-        close_room_message_text: this.enableInactivityTimeoutFeature
-          ? inactivity_timeout.close_room_message_text
-          : '',
-        close_room_timeout_time:
-          this.enableInactivityTimeoutFeature &&
-          inactivity_timeout.is_close_room_enabled
-            ? parseMinutesToSeconds(inactivity_timeout.close_room_timeout_time)
-            : null,
+        is_close_room_enabled: inactivity_timeout.is_close_room_enabled,
+        close_room_message_text: inactivity_timeout.close_room_message_text,
+        close_room_timeout_time: inactivity_timeout.is_close_room_enabled
+          ? parseMinutesToSeconds(inactivity_timeout.close_room_timeout_time)
+          : null,
       };
 
       const fieldsToUpdate = {

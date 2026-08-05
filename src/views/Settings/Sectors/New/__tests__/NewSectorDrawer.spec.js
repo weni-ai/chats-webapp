@@ -77,7 +77,7 @@ describe('NewSectorDrawer', () => {
               profile: { me: { email: 'tests@weni.ai' } },
               featureFlag: {
                 featureFlags: {
-                  active_features: ['weniChatsAutomaticMessage'],
+                  active_features: [],
                 },
               },
             },
