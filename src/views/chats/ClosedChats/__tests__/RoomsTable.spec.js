@@ -350,7 +350,31 @@ describe('RoomsTable.vue', () => {
       );
     });
 
-    it('manual search takes precedence over unified query params', async () => {
+    it('parses token filter into typed params without search', async () => {
+      wrapper = createWrapper();
+
+      await wrapper.setData({
+        filters: {
+          ...wrapper.vm.filters,
+          contact:
+            'contact=abc-123 email=kallil@gmail.com document=12345678900',
+        },
+      });
+
+      History.getHistoryRooms.mockClear();
+      await wrapper.vm.getHistoryRooms();
+
+      expect(History.getHistoryRooms).toHaveBeenCalledWith(
+        expect.objectContaining({
+          contact: 'abc-123',
+          email: 'kallil@gmail.com',
+          document: '12345678900',
+        }),
+      );
+      expect(History.getHistoryRooms.mock.calls[0][0].search).toBeUndefined();
+    });
+
+    it('manual free-text search takes precedence over unified query params', async () => {
       wrapper = createWrapper(
         {},
         {},
@@ -373,6 +397,35 @@ describe('RoomsTable.vue', () => {
         }),
       );
       expect(History.getHistoryRooms.mock.calls[0][0].contact).toBeUndefined();
+    });
+
+    it('token filter takes precedence over route query params', async () => {
+      wrapper = createWrapper(
+        {},
+        {},
+        {
+          contact: 'route-contact',
+          email: 'route@example.com',
+        },
+      );
+
+      await wrapper.setData({
+        filters: {
+          ...wrapper.vm.filters,
+          contact: 'contact=typed-id email=typed@example.com',
+        },
+      });
+
+      History.getHistoryRooms.mockClear();
+      await wrapper.vm.getHistoryRooms();
+
+      expect(History.getHistoryRooms).toHaveBeenCalledWith(
+        expect.objectContaining({
+          contact: 'typed-id',
+          email: 'typed@example.com',
+        }),
+      );
+      expect(History.getHistoryRooms.mock.calls[0][0].search).toBeUndefined();
     });
 
     it('calls getHistoryRooms with correct filter parameters', async () => {
