@@ -16,7 +16,6 @@ import { storeToRefs } from 'pinia';
 
 import { useMessageManager } from '@/store/modules/chats/messageManager';
 import { useAiTextImprovement } from '@/store/modules/chats/aiTextImprovement';
-import { useFeatureFlag } from '@/store/modules/featureFlag.js';
 
 import ActionItem from './ActionItem.vue';
 
@@ -28,14 +27,6 @@ const emit = defineEmits<{
   focusInput: [void];
 }>();
 
-const featureFlagStore = useFeatureFlag();
-const { featureFlags } = storeToRefs(featureFlagStore);
-
-const isEnabledInternalNotesMedias = computed(() =>
-  featureFlags.value.active_features?.includes(
-    'weniChatsEnableInternalNoteMedias',
-  ),
-);
 const {
   isEmojiPickerOpen,
   inputMessage,
@@ -49,7 +40,7 @@ const {
 const { isLoading: isAiLoading } = storeToRefs(useAiTextImprovement());
 
 const isDisabled = computed(() => {
-  if (isInternalNote.value && isEnabledInternalNotesMedias.value) {
+  if (isInternalNote.value) {
     return false;
   }
 
