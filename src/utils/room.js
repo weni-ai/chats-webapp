@@ -34,3 +34,46 @@ export const buildHistoryContactQuery = (room) => {
 
   return query;
 };
+
+const HISTORY_CONTACT_TOKEN_KEYS = ['contact', 'email', 'document'];
+const HISTORY_CONTACT_TOKEN_REGEX = /^(contact|email|document)=(.+)$/;
+
+export const formatHistoryContactFilter = ({
+  contact = '',
+  email = '',
+  document = '',
+} = {}) => {
+  const sanitizedDocument = sanitizeDocument(document);
+  const parts = [];
+
+  if (contact) parts.push(`contact=${contact}`);
+  if (email) parts.push(`email=${email}`);
+  if (sanitizedDocument) parts.push(`document=${sanitizedDocument}`);
+
+  return parts.join(' ');
+};
+
+export const parseHistoryContactFilter = (text) => {
+  const trimmed = text?.trim();
+  if (!trimmed) return {};
+
+  const parts = trimmed.split(/\s+/);
+  const parsed = {};
+
+  const isStructured = parts.every((part) => {
+    const match = part.match(HISTORY_CONTACT_TOKEN_REGEX);
+    if (!match) return false;
+
+    const [, key, value] = match;
+    if (!HISTORY_CONTACT_TOKEN_KEYS.includes(key) || !value) return false;
+
+    parsed[key] = key === 'document' ? sanitizeDocument(value) : value;
+    return true;
+  });
+
+  if (!isStructured || Object.keys(parsed).length === 0) {
+    return { search: trimmed };
+  }
+
+  return parsed;
+};
