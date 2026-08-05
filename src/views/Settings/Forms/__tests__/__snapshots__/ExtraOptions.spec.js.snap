@@ -12,6 +12,13 @@ exports[`SectorExtraOptions > Should match the snapshot 1`] = `
   </section>
   <section data-v-8e9664ba="" class="switchs">
     <h2 data-v-8e9664ba="" class="switchs__title">Automated messages</h2>
+    <section data-v-8e9664ba="" class="switchs__container">
+      <unnnic-switch-stub data-v-8e9664ba="" size="small" label="" option="" helper="Automatically send a message to contacts while they wait for human support in the queue." textleft="" textright="Send automatic message to waiting contacts" disabled="false" modelvalue="false" class="margin-y-space-1" data-testid="config-switch"></unnnic-switch-stub>
+    </section>
+    <!--v-if-->
+    <section data-v-8e9664ba="" class="switchs__container">
+      <unnnic-switch-stub data-v-8e9664ba="" size="small" label="" option="" helper="Automatically send a message when a chat is assigned to a representative. The message will appear as if sent by the assigned representative." textleft="" textright="Send automatic message when support starts" disabled="false" modelvalue="false" class="margin-y-space-1" data-testid="config-switch"></unnnic-switch-stub>
+    </section>
     <!--v-if-->
   </section>
   <!--v-if-->
