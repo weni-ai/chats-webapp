@@ -3,7 +3,6 @@ import { mount, config } from '@vue/test-utils';
 import { createPinia, setActivePinia } from 'pinia';
 import { useQuickMessages } from '@/store/modules/chats/quickMessages';
 import { useQuickMessageShared } from '@/store/modules/chats/quickMessagesShared';
-import { useFeatureFlag } from '@/store/modules/featureFlag';
 import isMobile from 'is-mobile';
 
 import QuickMessages from '../index.vue';
@@ -87,13 +86,8 @@ describe('QuickMessages.vue', () => {
     ]);
   });
 
-  it('lazy loads personal and project shared messages on open when v2 flag is on', () => {
+  it('lazy loads personal and project shared messages on open', () => {
     setActivePinia(createPinia());
-
-    const featureFlagStore = useFeatureFlag();
-    featureFlagStore.featureFlags = {
-      active_features: ['weniChatsQuickMessagesV2'],
-    };
 
     const personalStore = useQuickMessages();
     const sharedStore = useQuickMessageShared();
