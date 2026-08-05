@@ -490,7 +490,29 @@ describe('RoomsTableFilters.vue', () => {
   });
 
   describe('Query params and filters value tests', () => {
-    it('does not set filterContact from contact without commas (new format)', async () => {
+    it('sets filterContact from contact/email/document as token string', async () => {
+      isMobile.mockReturnValue(false);
+      wrapper = createWrapper(
+        {},
+        {},
+        {
+          contact: 'abc-123',
+          email: 'test@example.com',
+          document: '12345678900',
+          startDate: '2023-01-01',
+          endDate: '2023-01-07',
+        },
+      );
+      await flushPromises();
+
+      expect(wrapper.vm.filterContact).toBe(
+        'contact=abc-123 email=test@example.com document=12345678900',
+      );
+      expect(wrapper.vm.filterDate.start).toBe('2023-01-01');
+      expect(wrapper.vm.filterDate.end).toBe('2023-01-07');
+    });
+
+    it('sets filterContact from contact query param as token string', async () => {
       isMobile.mockReturnValue(false);
       wrapper = createWrapper(
         {},
@@ -503,7 +525,7 @@ describe('RoomsTableFilters.vue', () => {
       );
       await flushPromises();
 
-      expect(wrapper.vm.filterContact).toBe('');
+      expect(wrapper.vm.filterContact).toBe('contact=test-contact');
       expect(wrapper.vm.filterDate.start).toBe('2023-01-01');
       expect(wrapper.vm.filterDate.end).toBe('2023-01-07');
     });
@@ -524,7 +546,7 @@ describe('RoomsTableFilters.vue', () => {
       expect(wrapper.vm.filterContact).toBe('558486065742,kallil@gmail.com');
     });
 
-    it('does not set filterContact from contact without commas on mobile', async () => {
+    it('sets filterContact from contact query param on mobile', async () => {
       isMobile.mockReturnValue(true);
       wrapper = createWrapper(
         {},
@@ -543,7 +565,7 @@ describe('RoomsTableFilters.vue', () => {
 
       await flushPromises();
 
-      expect(wrapper.vm.filterContact).toBe('');
+      expect(wrapper.vm.filterContact).toBe('contact=test-contact');
       const expectedDateObject = wrapper.vm.datesToFilter.find(
         (d) => d.value === 'last_12_months',
       );
@@ -581,7 +603,7 @@ describe('RoomsTableFilters.vue', () => {
       );
       await flushPromises();
 
-      expect(wrapper.vm.filterContact).toBe('Model Contact');
+      expect(wrapper.vm.filterContact).toBe('contact=query-contact');
       expect(wrapper.vm.filterDate.start).toBe('2023-06-01');
       expect(wrapper.vm.filterDate.end).toBe('2023-06-30');
     });
