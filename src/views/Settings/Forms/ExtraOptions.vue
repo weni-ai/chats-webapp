@@ -231,7 +231,9 @@
           :placeholder="$t('tags.add.placeholder')"
           data-testid="tags-input-tag-name"
           :maxlength="120"
-          @keypress.enter.stop="!!tagName.trim() && addTag(tagName)"
+          @keypress.enter.stop="
+            !disabledAddTag && !!tagName.trim() && addTag(tagName)
+          "
         />
         <UnnnicButton
           type="secondary"
@@ -242,24 +244,28 @@
         />
       </section>
       <section
-        v-if="tags.length > 0"
+        v-if="showTagsList"
         class="form-tags__section"
         data-testid="tags-group-section"
       >
         <TagGroup
           v-model="tags"
           class="form-tags__tag-group"
-          :tags="filteredTags"
+          :tags="displayedTags"
+          :infiniteScroll="isEditing"
+          :canLoadMore="!!tagsNext && !isLoadingTags"
+          :loadingMore="isLoadingTags && tags.length > 0"
           data-testid="sector-tag-group"
           disabledTag
           hasCloseIcon
           @close="removeTag($event)"
+          @load-more="getTags()"
         />
       </section>
       <section class="switchs__container required-tags">
         <UnnnicSwitch
           v-model="sector.required_tags"
-          :disabled="tags.length === 0"
+          :disabled="!canRequireTags"
           class="margin-y-space-1"
           :textRight="
             $t('sector.additional_options.required_tags.switch_label')
@@ -274,6 +280,7 @@
 
 <script>
 import { mapState } from 'pinia';
+import { debounce } from 'lodash';
 
 import unnnic from '@weni/unnnic-system';
 
@@ -288,6 +295,8 @@ import Sector from '@/services/api/resources/settings/sector';
 import i18n from '@/plugins/i18n';
 
 import { parseSecondsToMinutes, parseMinutesToSeconds } from '@/utils/time';
+
+const TAGS_PAGE_SIZE = 20;
 
 export default {
   name: 'SectorExtraOptionsForm',
@@ -309,14 +318,14 @@ export default {
   data() {
     return {
       tagName: '',
-      currentTags: [],
       toAddTags: [],
       tags: [],
       isLoading: false,
-      tagsNext: null,
-      tagsPrevious: null,
+      tagsNext: '',
       isLoadingTags: false,
+      hasAvailableTags: false,
       csatValid: true,
+      loadTagsRequestId: 0,
     };
   },
   computed: {
@@ -370,11 +379,25 @@ export default {
     translationSignMessages() {
       return this.$t('sector.additional_options.agents_signature.switch_label');
     },
-    filteredTags() {
-      return this.tags.filter((tag) => tag.name.includes(this.tagName.trim()));
+    displayedTags() {
+      if (this.isEditing) return this.tags;
+
+      const filter = this.tagName.trim().toLowerCase();
+      if (!filter) return this.tags;
+
+      return this.tags.filter((tag) => tag.name.toLowerCase().includes(filter));
+    },
+    showTagsList() {
+      return (
+        this.hasAvailableTags || this.tags.length > 0 || this.isLoadingTags
+      );
+    },
+    canRequireTags() {
+      return this.hasAvailableTags || this.tags.length > 0;
     },
     disabledAddTag() {
       return (
+        this.isLoadingTags ||
         !this.tagName.trim() ||
         this.tags.some((tag) => tag.name === this.tagName.trim())
       );
@@ -417,12 +440,24 @@ export default {
         this.$emit('changeIsValid', value);
       },
     },
+    tagName() {
+      this.debouncedSearchTags();
+    },
+  },
+  created() {
+    this.debouncedSearchTags = debounce(() => {
+      if (!this.isEditing) return;
+      this.getTags({ reset: true });
+    }, 400);
   },
   mounted() {
     if (this.isEditing) {
       this.parseInactivityTimeoutTimesFromSeconds();
-      this.getTags();
+      this.getTags({ reset: true });
     }
+  },
+  beforeUnmount() {
+    this.debouncedSearchTags?.cancel?.();
   },
   methods: {
     parseInactivityTimeoutTimesFromSeconds() {
@@ -475,22 +510,39 @@ export default {
       this.sector.automatic_message_queue.is_active = value;
       if (!value) this.sector.automatic_message_queue.text = '';
     },
-    async getTags() {
+    async getTags({ reset = false } = {}) {
+      if (!this.isEditing || !this.sector?.uuid) return;
+      if (!reset && (this.isLoadingTags || !this.tagsNext)) return;
+
+      const requestId = ++this.loadTagsRequestId;
+      this.isLoadingTags = true;
+
+      if (reset) {
+        this.tags = [];
+        this.tagsNext = '';
+      }
+
       try {
-        this.isLoadingTags = true;
-        const { next, previous, results } = await Sector.tags(
-          this.sector.uuid,
-          { next: this.tagsNext },
-        );
-        this.tagsNext = next;
-        this.tagsPrevious = previous;
-        const tags = this.currentTags.concat(...results);
-        this.currentTags = this.tags = tags;
+        const { next, results } = await Sector.tags(this.sector.uuid, {
+          limit: TAGS_PAGE_SIZE,
+          next: reset ? '' : this.tagsNext,
+          search: this.tagName.trim(),
+        });
+
+        if (requestId !== this.loadTagsRequestId) return;
+
+        this.tags = reset ? results : this.tags.concat(results);
+        this.tagsNext = next || '';
+
+        if (!this.tagName.trim()) {
+          this.hasAvailableTags = this.tags.length > 0 || !!this.tagsNext;
+        }
       } catch (error) {
         console.error('Error getting tags', error);
       } finally {
-        if (this.tagsNext) this.getTags();
-        else this.isLoadingTags = false;
+        if (requestId === this.loadTagsRequestId) {
+          this.isLoadingTags = false;
+        }
       }
     },
     async addTag(tagNameToAdd) {
@@ -518,6 +570,7 @@ export default {
       }
 
       this.tags.push(tag);
+      this.hasAvailableTags = true;
       this.tagName = '';
     },
     async removeTag(tag) {
@@ -528,7 +581,9 @@ export default {
         );
       }
       this.tags = this.tags.filter((addedTag) => addedTag.uuid !== tag.uuid);
-      if (this.tags.length === 0) {
+
+      if (this.tags.length === 0 && !this.tagsNext && !this.tagName.trim()) {
+        this.hasAvailableTags = false;
         this.sector.required_tags = false;
       }
     },
@@ -680,6 +735,14 @@ export default {
       &__input {
         flex: 1 1;
       }
+    }
+  }
+
+  .form-tags {
+    &__section {
+      display: flex;
+      flex-direction: column;
+      gap: $unnnic-space-3;
     }
   }
 }

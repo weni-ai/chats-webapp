@@ -181,8 +181,8 @@ describe('SectorExtraOptions', () => {
     await flushPromises();
     expect(getTagsSpy).toHaveBeenCalled();
     await flushPromises();
-    expect(wrapper.vm.currentTags).toEqual(defaultTags);
     expect(wrapper.vm.tags).toEqual(defaultTags);
+    expect(wrapper.vm.hasAvailableTags).toBe(true);
 
     await getTagsSpy.mockReset();
   });
