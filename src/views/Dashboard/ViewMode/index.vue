@@ -63,9 +63,6 @@
               </section>
             </UnnnicToolTip>
             <UnnnicToolTip
-              v-if="
-                featureFlags.active_features?.includes('weniChatsContactInfoV2')
-              "
               enabled
               :text="
                 room?.has_history
@@ -83,9 +80,6 @@
               />
             </UnnnicToolTip>
             <UnnnicToolTip
-              v-if="
-                featureFlags.active_features?.includes('weniChatsContactInfoV2')
-              "
               enabled
               :text="$t('transfer_contact', { count: 1 })"
               side="left"

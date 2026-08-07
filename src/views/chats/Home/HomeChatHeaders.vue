@@ -42,9 +42,6 @@
             </section>
           </UnnnicToolTip>
           <UnnnicToolTip
-            v-if="
-              featureFlags.active_features?.includes('weniChatsSearchMessages')
-            "
             enabled
             :text="$t('chats.search_messages.title')"
             side="left"
@@ -67,9 +64,6 @@
             </section>
           </UnnnicToolTip>
           <UnnnicToolTip
-            v-if="
-              featureFlags.active_features?.includes('weniChatsContactInfoV2')
-            "
             enabled
             :text="
               room?.has_history
@@ -89,9 +83,6 @@
             </section>
           </UnnnicToolTip>
           <UnnnicToolTip
-            v-if="
-              featureFlags.active_features?.includes('weniChatsContactInfoV2')
-            "
             enabled
             :text="$t('transfer_contact', { count: 1 })"
             side="left"

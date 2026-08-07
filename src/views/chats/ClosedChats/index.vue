@@ -67,11 +67,6 @@
         >
           <template #actions>
             <UnnnicToolTip
-              v-if="
-                featureFlags.active_features?.includes(
-                  'weniChatsSearchMessages',
-                )
-              "
               enabled
               :text="$t('chats.search_messages.title')"
               side="left"
@@ -141,7 +136,6 @@ import SearchMessages from '@/components/chats/SearchMessages/index.vue';
 import WarningArchivedMessages from '@/components/WarningArchivedMessages.vue';
 import ModalExportConversation from '@/components/chats/ClosedChats/ModalExportConversation.vue';
 
-import { useFeatureFlag } from '@/store/modules/featureFlag';
 import { useProfile } from '@/store/modules/profile';
 import { isUserAdmin } from '@/utils/permissions';
 
@@ -185,7 +179,6 @@ export default {
     ...mapState(useConfig, ['project']),
     ...mapState(useRoomMessages, ['roomMessagesNext']),
     ...mapWritableState(useRooms, ['activeRoomSummary']),
-    ...mapState(useFeatureFlag, ['featureFlags']),
     ...mapState(useProfile, ['me']),
     contactName() {
       return this.selectedRoom?.contact?.name?.trim() || '';
