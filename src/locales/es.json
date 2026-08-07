@@ -135,7 +135,7 @@
     "description": "Suelta tu archivo aquí para enviar"
   },
   "waiting_for": {
-    "minutes": "{count, plural, one {Esperando por un minuto} other {Esperando por {count} minutos}}"
+    "minutes": "{count, plural, one {1 minuto esperando} other {{count} minutos esperando}}"
   },
   "chat_message": {
     "reply_message": {
@@ -169,7 +169,7 @@
     "bulk_message": "Mensaje en masa enviado por {sender}"
   },
   "inactive": "Inactivo",
-  "inactive_room_tooltip": "{minutes, plural, one {La conversación ha alcanzado el límite de inactividad de {minutes} minuto.} other {La conversación ha alcanzado el límite de inactividad de {minutes} minutos.}}",
+  "inactive_room_tooltip": "{minutes, plural, one {La conversación alcanzó el límite de inactividad de {minutes} minuto.} other {La conversación alcanzó el límite de inactividad de {minutes} minutos.}}",
   "reply": "Responder",
   "step_of": "Paso {step} de {total}",
   "type_to_filter": "Escribe para filtrar",
@@ -568,7 +568,7 @@
     "tags_help": "Las tags te ayudan a encontrar chats y generar mejores informes",
     "chat_with_contact_ended": "El chat con {contact} se cerró",
     "see_history": "Historial general",
-    "tag_request": "Agregar tag al chat",
+    "tag_request": "Agrega una tag al chat",
     "closed_in": "Chat cerrado en",
     "closed": "Chat cerrado",
     "transfer": {
@@ -626,7 +626,7 @@
       "close": "Cerrar vista",
       "assume_chat": "Asignarme solamente este chat",
       "assume_chat_question": "¿Asignarse el chat con {contact}?",
-      "assume_chat_question_description": "¿Seguro de que deseas asignarte el chat con {contact}?<br /><br />Al confirmar, el chat se removerá del representante actual y quedará bajo tu responsabilidad.",
+      "assume_chat_question_description": "¿Realmente deseas asignarte el chat con {contact}?<br /><br />Si confirmas, el chat se removerá del representante actual y quedará bajo tu responsabilidad.",
       "assume_chat_confirmation": "Si confirmas, este chat se transferirá de {viewedAgent} a ti"
     }
   },
@@ -666,7 +666,7 @@
   "close": "Cerrar",
   "ended_by": "Finalizado por",
   "all": "Todos",
-  "back_to_chats": "Volver a los chats",
+  "back_to_chats": "Atrás a chats",
   "filter": {
     "label": "Filtro",
     "empty_tags": "No hay tags disponibles",
@@ -771,10 +771,10 @@
     "transfer_selected_contacts": "Transferir contactos seleccionados",
     "transfer_all": "Transferir todos",
     "selected_chats_count": "{count, plural, one {{count} chat seleccionado para transferencia.} other {{count} chats seleccionados para transferencia.}}",
-    "success_message": "{count, plural, one {¡{count} chat transferido con éxito!} other {¡{count} chats transferidos con éxito!}}",
-    "partial_success_message": "{success, plural, one {{success} chat transferido, {failed} falló. Intente nuevamente.} other {{success} chats transferidos, {failed} fallaron. Intente nuevamente.}}",
+    "success_message": "{count, plural, one {{count} chat transferido con éxito} other {{count} chats transferidos con éxito}}",
+    "partial_success_message": "{success, plural, one {{success} chat transferido; {failed} sin transferir. Vuelve a intentarlo.} other {{success} chats transferidos; {failed} sin transferir. Vuelve a intentarlo.}}",
     "error_message": "No fue posible transferir los chats, intente nuevamente",
-    "agent_transfer_success": "{count, plural, one {Contacto transferido con éxito al representante {agent}} other {Contactos transferidos con éxito al representante {agent}}}",
+    "agent_transfer_success": "{count, plural, one {Contacto transferido con éxito al agente {agent}} other {Contactos transferidos con éxito al agente {agent}}}",
     "queue_transfer_success": "{count, plural, one {Contacto transferido con éxito a la cola {queue}} other {Contactos transferidos con éxito a la cola {queue}}}",
     "error": "No fue posible transferir los contactos, intente nuevamente",
     "disclaimer": {
@@ -786,19 +786,19 @@
   "bulk_close": {
     "close_selected_contacts": "Cerrar contactos seleccionados",
     "confirm_close_selected": "¿Está seguro de que desea cerrar los contactos seleccionados?",
-    "success_message": "{count, plural, one {¡{count} chat finalizado con éxito!} other {¡{count} chats finalizados con éxito!}}",
-    "partial_success_message": "{success, plural, one {{success} chat finalizado, {failed} falló. Intente nuevamente.} other {{success} chats finalizados, {failed} fallaron. Intente nuevamente.}}",
+    "success_message": "{count, plural, one {{count} chat finalizado con éxito} other {{count} chats finalizados con éxito}}",
+    "partial_success_message": "{success, plural, one {{success} chat finalizado; {failed} falló. Vuelve a intentarlo.} other {{success} chats finalizados; {failed} fallaron. Vuelve a intentarlo.}}",
     "error_message": "No fue posible cerrar los chats, intente nuevamente",
     "end_all_selected_chats": "Finalizar todos los chats seleccionados",
     "sector_tag": "Departamento {current} de {total}",
     "chats_count_sector": "{count, plural, one {{count} chat · departamento {sector}} other {{count} chats · departamento {sector}}}",
     "required_tags_title": "Las tags son obligatorias para finalizar chats en el departamento {sector}",
-    "required_tags_description": "{count, plural, one {Si selecciona alguna tag a continuación, se aplicará al {count} chat y reemplazará cualquier tag existente.} other {Si selecciona alguna tag a continuación, se aplicará a los {count} chats y reemplazará cualquier tag existente.}}",
+    "required_tags_description": "{count, plural, one {Si seleccionas alguna de las tags a continuación, se aplicará a {count} chat y reemplazará las tags existentes.} other {Si seleccionas alguna de las tags a continuación, se aplicará a los {count} chats y reemplazará las tags existentes.}}",
     "next_sector": "Siguiente departamento",
     "end_all_chats": "Finalizar todos ({count} chats)",
     "back": "Volver",
     "optional_tags_title": "Las tags no son obligatorias para finalizar chats en el departamento {sector}",
-    "optional_tags_description": "{count, plural, one {Si selecciona alguna tag a continuación, se aplicará al {count} chat y reemplazará cualquier tag existente.} other {Si selecciona alguna tag a continuación, se aplicará a los {count} chats y reemplazará cualquier tag existente.}}",
+    "optional_tags_description": "{count, plural, one {Si seleccionas alguna de las tags a continuación, se aplicará a {count} chat y reemplazará cualquier tag existente.} other {Si seleccionas alguna de las tags a continuación, se aplicará a los {count} chats y reemplazará cualquier tag existente.}}",
     "no_tags_in_sector": "No hay tags registradas en este departamento para ser seleccionadas."
   },
   "close_chat": {
@@ -806,11 +806,11 @@
   },
   "bulk_take": {
     "title": "Asignarme todos los chats seleccionados",
-    "selected_chats_count": "{count, plural, one {{count} chat está seleccionado para asumir.} other {{count} chats están seleccionados para asumir.}}",
+    "selected_chats_count": "{count, plural, one {{count} chat seleccionado para asignártelo} other {{count} chats seleccionados para asignártelos}}",
     "confirm_take_over_selected": "¿Está seguro de que desea asumir todos los chats seleccionados?",
     "take_over_all": "Asumir todos",
-    "success_message": "{count, plural, one {¡{count} chat asumido con éxito!} other {¡{count} chats asumidos con éxito!}}",
-    "partial_success_message": "{success, plural, one {{success} chat asumido, {failed} falló. Intente nuevamente.} other {{success} chats asumidos, {failed} fallaron. Intente nuevamente.}}",
+    "success_message": "{count, plural, one {{count} chat asignado con éxito} other {{count} chats asignados con éxito}}",
+    "partial_success_message": "{success, plural, one {{success} chat asignado; {failed} falló. Vuelve a intentarlo.} other {{success} chats asignados; {failed} fallaron. Vuelve a intentarlo.}}",
     "error_message": "No fue posible asumir los chats, intente nuevamente"
   },
   "contact_info": {
