@@ -1,6 +1,3 @@
-export const FLOW_TRIGGER_VARIABLE_MAPPING_FLAG =
-  'weniChatsFlowTriggerVariableMapping';
-
 export type MetaTemplateComponentType =
   | 'HEADER'
   | 'BODY'
