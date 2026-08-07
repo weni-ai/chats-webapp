@@ -11,7 +11,6 @@ import { mount, flushPromises, config } from '@vue/test-utils';
 import { createPinia, setActivePinia } from 'pinia';
 import ChatMessageAudio from '../ChatMessageAudio.vue';
 import { useRoomMessages } from '@/store/modules/chats/roomMessages';
-import { useFeatureFlag } from '@/store/modules/featureFlag';
 import audioTranscriptionService from '@/services/api/resources/chats/audioTranscription';
 import { UnnnicCallAlert, UnnnicAudioRecorder } from '@weni/unnnic-system';
 import Media from '@/services/api/resources/chats/media';
@@ -108,10 +107,6 @@ describe('ChatMessageAudio', () => {
     pinia = createPinia();
     setActivePinia(pinia);
     roomMessagesStore = useRoomMessages();
-    useFeatureFlag().featureFlags.active_features = [
-      'weniChatsTranscriptAudioMessage',
-      'weniChatsDownloadAudioMessage',
-    ];
     vi.spyOn(roomMessagesStore, 'updateMessage').mockImplementation(() => {});
   });
 
@@ -146,7 +141,7 @@ describe('ChatMessageAudio', () => {
   });
 
   describe('canShowTranscriptionAudioAction', () => {
-    it('shows transcription action when message has contact and feature flag is active', () => {
+    it('shows transcription action when message has contact', () => {
       wrapper = mountComponent({
         message: createMessage({ contact: { uuid: 'c1' } }),
       });
@@ -334,18 +329,6 @@ describe('ChatMessageAudio', () => {
     it('does not render download button when message has no contact', () => {
       wrapper = mountComponent({
         message: createMessage({ contact: null }),
-      });
-      expect(wrapper.find('[data-testid="download-button"]').exists()).toBe(
-        false,
-      );
-    });
-
-    it('does not render download button when feature flag is disabled', () => {
-      useFeatureFlag().featureFlags.active_features = [
-        'weniChatsTranscriptAudioMessage',
-      ];
-      wrapper = mountComponent({
-        message: createMessage({ contact: { uuid: 'c1' } }),
       });
       expect(wrapper.find('[data-testid="download-button"]').exists()).toBe(
         false,
