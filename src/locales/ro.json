@@ -295,7 +295,7 @@
         "tooltip": "Fiecare mesaj va afișa numele reprezentantului care a răspuns",
         "switch_active": "Afișează numele reprezentativ în mesaje",
         "switch_disabled": "Afișează numele reprezentativ în mesaje",
-        "hint": "Fiecare mesaj schimbat va avea numele reprezentantului care răspunde.",
+        "hint": "Fiecare mesaj trimis va avea numele reprezentantului care răspunde.",
         "switch_label": "Folosește semnătura"
       },
       "csat": {
@@ -868,6 +868,9 @@
     "text": "Șterge coada {queue}",
     "description": "Coada {queue} va fi ștearsă definitiv"
   },
+  "delete_sector_modal": {
+    "text": "Introdu numele departamentului care urmează să fie șters"
+  },
   "cant_revert": "Această acțiune nu poate fi refăcută",
   "confirm_typing": "Confirmă prin tastare",
   "sector_deleted_success": "Departament șters cu succes",
@@ -963,7 +966,7 @@
     "delete_description": "Ești sigur că dorești să ștergi mesajul rapid {shortcut}?",
     "shortcut_tooltip": "Scrie /{shortcut} pentru a folosi",
     "new": "Mesaj rapid nou",
-    "description_new": "Mesaj rapid în sectorul {sector}",
+    "description_new": "Mesaj rapid în departamentul {sector}",
     "add": "Adăugare mesaj rapid",
     "edit": "Editează mesaj rapid",
     "available_shortcuts": "Comenzi rapide disponibile",
@@ -1047,11 +1050,13 @@
   "config_chats": {
     "title": "Setări",
     "section_sectors_title": "Sectoare în {project}",
+    "filter_by_sector_name": "Filtrează după numele departamentului",
     "section_sectors_subtitle": "Adaugă, vizualizează și gestionează sectoare, cozi, manageri și reprezentanți în cadrul organizației tale.",
     "tabs": {
       "general": "General",
       "settings": "Setări",
       "groups": "Grupuri de proiect",
+      "sectors": "Departamente",
       "representatives": "Reprezentanți"
     },
     "custom_breaks": {
@@ -1118,6 +1123,10 @@
       },
       "show_waiting_rooms_count": {
         "switch_label": "Afișează contorul cu numărul de chaturi care așteaptă asistența umană"
+      },
+      "use_name_sector_in_rooms": {
+        "switch_label": "Afișează departamentul chatului în lista de conversații",
+        "hint": "Când este activată, o etichetă cu departamentul chatului va fi afișată lângă numele contactului."
       }
     },
     "custom_sector": "Personalizează noul departament (recomandat)",
@@ -1131,7 +1140,7 @@
       "invalid_hours": "Ora de început nu poate fi mai mare sau egală cu ora de sfârșit",
       "invalid_start_second_hour": "Ora de început a celei de-a doua perioade trebuie să fie mai mare sau egală cu ora de sfârșit a primei perioade."
     },
-    "custom_queue": "Creează o coadă personalizată",
+    "custom_queue": "Creează o coadă personalizată (recomandat)",
     "default_queue": {
       "title": "Creează coadă implicită (mai rapid)",
       "name": "Coada implicită"
@@ -1141,6 +1150,9 @@
       "new": "Coadă nouă",
       "info": "Cozile sunt grupuri de asistență în cadrul unui departament. Poți direcționa contactele dintr-un flux către o anumită coadă.",
       "hint": "Cozile sunt grupuri de asistență într-un departament. Le poți crea sau modifica în orice moment.",
+      "configure_queue": {
+        "tooltip": "Cozile sunt grupuri de asistență în cadrul departamentului. Poți crea cozi noi sau le poți edita oricând în departamentul creat."
+      },
       "queue_definitions": "Setările cozii",
       "delete_or_edit": "Șterge sau editează",
       "limit_chats": {
@@ -1160,6 +1172,14 @@
         "delete_error": "Eroare la ștergerea cozii",
         "add_new_queue": "Această coadă nouă va fi adăugată pentru toți reprezentanții. O poți elimina în <b>Setări Live Desk > Grupuri > Agenți</b>.",
         "config_agents_group": "Adaugă sau elimină reprezentanți din această coadă în <b>Setări chat > Grupuri de proiect</b>"
+      }
+    },
+    "quick_messages": {
+      "empty": {
+        "title": "Nu există mesaje rapide în acest departament"
+      },
+      "title": {
+        "tooltip": "Mesajele rapide sunt texte gata pregătite care ajută la standardizarea serviciului pentru clienți. Toți reprezentanții din acest departament vor putea utiliza aceste mesaje, iar tu poți adăuga mesaje noi mai jos."
       }
     },
     "groups": {
@@ -1292,7 +1312,12 @@
     "new_group": "Grup nou",
     "agent_title": "Reprezentanți",
     "contacts": "Contacte",
-    "open": "Deschise"
+    "open": "Deschise",
+    "empty_sectors": {
+      "title": "Nu există departamente în acest proiect",
+      "subtitle": "Creează primul departament pentru a începe să folosești modulul Live Desk",
+      "action": "Creează departament"
+    }
   },
   "new_sector": {
     "sector_tip": "Creează un departament pentru a gestiona operațiunile tale de asistență, inclusiv roluri, agenți și programul de lucru",
