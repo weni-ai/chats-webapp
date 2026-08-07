@@ -7,7 +7,6 @@ import { createI18n } from 'vue-i18n';
 import { useRooms } from '@/store/modules/chats/rooms';
 import { useDiscussions } from '@/store/modules/chats/discussions';
 import { useProfile } from '@/store/modules/profile';
-import { useFeatureFlag } from '@/store/modules/featureFlag';
 import { useConfig } from '@/store/modules/config';
 import { useMessageManager } from '@/store/modules/chats/messageManager';
 import { useRoomMessages } from '@/store/modules/chats/roomMessages';
@@ -521,12 +520,7 @@ describe('HomeChat.vue', () => {
       expect(updateReadMessagesSpy).toHaveBeenCalledWith('1', true);
     });
 
-    it('calls getCanSendMessageStatus when feature flag is active and platform is whatsapp', async () => {
-      const featureFlagStore = useFeatureFlag();
-      featureFlagStore.featureFlags = {
-        active_features: ['weniChatsIs24hValidOptimization'],
-      };
-
+    it('calls getCanSendMessageStatus when platform is whatsapp', async () => {
       const roomsStore = useRooms();
       roomsStore.activeRoom = null;
       roomsStore.setIsLoadingCanSendMessageStatus = vi.fn();
@@ -570,11 +564,6 @@ describe('HomeChat.vue', () => {
     });
 
     it('handles error when getCanSendMessageStatus fails', async () => {
-      const featureFlagStore = useFeatureFlag();
-      featureFlagStore.featureFlags = {
-        active_features: ['weniChatsIs24hValidOptimization'],
-      };
-
       const roomsStore = useRooms();
       roomsStore.activeRoom = null;
       roomsStore.setIsLoadingCanSendMessageStatus = vi.fn();

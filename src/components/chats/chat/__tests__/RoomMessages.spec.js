@@ -6,7 +6,6 @@ import RoomMessages from '../RoomMessages.vue';
 import { useRooms } from '@/store/modules/chats/rooms';
 import { useRoomMessages } from '@/store/modules/chats/roomMessages';
 import { useConfig } from '@/store/modules/config';
-import { useFeatureFlag } from '@/store/modules/featureFlag';
 import RoomService from '@/services/api/resources/chats/room';
 import RoomNotes from '@/services/api/resources/chats/roomNotes';
 import i18n from '@/plugins/i18n';
@@ -80,7 +79,6 @@ const createWrapper = (props = {}, piniaState = {}) => {
   const roomsStore = useRooms();
   const roomMessagesStore = useRoomMessages();
   const configStore = useConfig();
-  const featureFlagStore = useFeatureFlag();
 
   roomsStore.$patch({
     activeRoom: mockRoom,
@@ -102,7 +100,6 @@ const createWrapper = (props = {}, piniaState = {}) => {
   roomMessagesStore.addRoomMessageSorted = vi.fn();
 
   configStore.project = { config: { has_chats_summary: false } };
-  featureFlagStore.featureFlags = { active_features: [] };
 
   if (piniaState.rooms) {
     roomsStore.$patch(piniaState.rooms);
@@ -119,9 +116,6 @@ const createWrapper = (props = {}, piniaState = {}) => {
   }
   if (piniaState.config) {
     Object.assign(configStore, piniaState.config);
-  }
-  if (piniaState.featureFlag) {
-    Object.assign(featureFlagStore, piniaState.featureFlag);
   }
 
   return mount(RoomMessages, {
