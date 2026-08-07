@@ -1,7 +1,6 @@
 import { vi, describe, it, expect, beforeEach, afterEach } from 'vitest';
 import messageService from '../message';
 import http from '@/services/api/http';
-import { useFeatureFlag } from '@/store/modules/featureFlag';
 
 vi.mock('@/services/api/http', () => ({
   default: {
@@ -18,22 +17,9 @@ vi.mock('@/utils/config', () => ({
   getProject: vi.fn(() => 'mocked-project-id'),
 }));
 
-vi.mock('@/store/modules/featureFlag', () => ({
-  useFeatureFlag: vi.fn(() => ({
-    featureFlags: {
-      active_features: [],
-    },
-  })),
-}));
-
 describe('Message service', () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    useFeatureFlag.mockReturnValue({
-      featureFlags: {
-        active_features: [],
-      },
-    });
   });
 
   afterEach(() => {
@@ -62,6 +48,7 @@ describe('Message service', () => {
           ordering: '-created_on',
           reverse_results: true,
         },
+        baseURL: 'https://api.example.com/v2',
       });
       expect(result).toEqual(mockResponse.data);
     });
@@ -85,7 +72,9 @@ describe('Message service', () => {
 
       expect(http.get).toHaveBeenCalledWith(
         '/msg/?offset=20&limit=20&room=room-123',
-        {},
+        {
+          baseURL: 'https://api.example.com/v2',
+        },
       );
       expect(result).toEqual(mockResponse.data);
     });
@@ -100,13 +89,7 @@ describe('Message service', () => {
       ).rejects.toThrow('Room not found');
     });
 
-    it('should use v2 API when feature flag is active', async () => {
-      useFeatureFlag.mockReturnValue({
-        featureFlags: {
-          active_features: ['weniChatsV2Message'],
-        },
-      });
-
+    it('should use v2 API endpoint', async () => {
       const mockResponse = {
         data: {
           results: [{ id: 1, text: 'v2 message' }],
@@ -125,58 +108,6 @@ describe('Message service', () => {
           reverse_results: true,
         },
         baseURL: 'https://api.example.com/v2',
-      });
-    });
-
-    it('should use v1 API when feature flag is not active', async () => {
-      useFeatureFlag.mockReturnValue({
-        featureFlags: {
-          active_features: [],
-        },
-      });
-
-      const mockResponse = {
-        data: {
-          results: [{ id: 1, text: 'v1 message' }],
-          count: 1,
-        },
-      };
-      http.get.mockResolvedValue(mockResponse);
-
-      const params = { nextReq: null };
-      await messageService.getByRoom(params, 'room-123');
-
-      expect(http.get).toHaveBeenCalledWith('/msg/', {
-        params: {
-          room: 'room-123',
-          ordering: '-created_on',
-          reverse_results: true,
-        },
-      });
-    });
-
-    it('should use v1 API when featureFlags is undefined', async () => {
-      useFeatureFlag.mockReturnValue({
-        featureFlags: undefined,
-      });
-
-      const mockResponse = {
-        data: {
-          results: [{ id: 1, text: 'v1 message' }],
-          count: 1,
-        },
-      };
-      http.get.mockResolvedValue(mockResponse);
-
-      const params = { nextReq: null };
-      await messageService.getByRoom(params, 'room-123');
-
-      expect(http.get).toHaveBeenCalledWith('/msg/', {
-        params: {
-          room: 'room-123',
-          ordering: '-created_on',
-          reverse_results: true,
-        },
       });
     });
   });
