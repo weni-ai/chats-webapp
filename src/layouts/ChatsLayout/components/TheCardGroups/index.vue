@@ -314,10 +314,6 @@ export default {
     },
 
     showQueueFilter() {
-      const enableQueueFilterFeature =
-        this.featureFlags.active_features?.includes('weniChatsFilterQueues');
-      if (!enableQueueFilterFeature) return false;
-
       return (
         (this.isViewMode || this.activeTab === 'waiting') &&
         this.activeTab !== 'discussions'
