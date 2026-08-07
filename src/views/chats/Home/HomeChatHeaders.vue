@@ -173,7 +173,7 @@ import DiscussionHeader from '@/components/chats/DiscussionHeader.vue';
 import ModalCloseDiscussion from '@/views/chats/Home/ModalCloseDiscussion.vue';
 
 import { formatContactName } from '@/utils/chats';
-import { buildHistorySearchTerm } from '@/utils/room';
+import { buildHistoryContactQuery } from '@/utils/room';
 import { isUserAdmin } from '@/utils/permissions';
 
 export default {
@@ -314,9 +314,6 @@ export default {
     openHistory() {
       if (!this.room?.has_history) return;
 
-      const contactUrn = buildHistorySearchTerm(this.room);
-      const protocol = this.room.protocol;
-
       const A_YEAR_AGO = dateFnsFormat(
         dateFnsSubYears(new Date(), 1),
         'yyyy-MM-dd',
@@ -325,8 +322,8 @@ export default {
       this.$router.push({
         name: 'closed-rooms',
         query: {
-          contactUrn,
-          protocol,
+          ...buildHistoryContactQuery(this.room),
+          protocol: this.room.protocol,
           startDate: A_YEAR_AGO,
           from: this.room.uuid,
         },
