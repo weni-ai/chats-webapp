@@ -174,7 +174,7 @@ describe('Queue', () => {
     const result = await Queue.tags(queueUuid, { limit, next });
 
     expect(http.get).toHaveBeenCalledWith('/tag/', {
-      params: { queue: queueUuid, limit },
+      params: { queue: queueUuid, limit, search: '' },
     });
 
     expect(result).toEqual(expectedData);
