@@ -63,9 +63,6 @@
               </section>
             </UnnnicToolTip>
             <UnnnicToolTip
-              v-if="
-                featureFlags.active_features?.includes('weniChatsContactInfoV2')
-              "
               enabled
               :text="
                 room?.has_history
@@ -83,9 +80,6 @@
               />
             </UnnnicToolTip>
             <UnnnicToolTip
-              v-if="
-                featureFlags.active_features?.includes('weniChatsContactInfoV2')
-              "
               enabled
               :text="$t('transfer_contact', { count: 1 })"
               side="left"
@@ -185,7 +179,6 @@ import { useDiscussions } from '@/store/modules/chats/discussions';
 import { useDashboard } from '@/store/modules/dashboard';
 import { useProfile } from '@/store/modules/profile';
 import { useRoomMessages } from '@/store/modules/chats/roomMessages';
-import { useFeatureFlag } from '@/store/modules/featureFlag';
 import { useConfig } from '@/store/modules/config';
 
 import ChatsLayout from '@/layouts/ChatsLayout/index.vue';
@@ -229,7 +222,6 @@ export default {
   }),
 
   computed: {
-    ...mapState(useFeatureFlag, ['featureFlags']),
     ...mapState(useRooms, {
       room: (store) => store.activeRoom,
       rooms: (store) => store.rooms,
@@ -251,12 +243,8 @@ export default {
 
     isBulkActionsEnabled() {
       const canBulkTransfer = this.project?.config?.can_use_bulk_transfer;
-      const canBulkClose =
-        this.featureFlags.active_features?.includes('weniChatsBulkClose') &&
-        this.project?.config?.can_use_bulk_close;
-      const canBulkTake =
-        this.featureFlags.active_features?.includes('weniChatsBulkTake') &&
-        this.project?.config?.can_use_bulk_take;
+      const canBulkClose = this.project?.config?.can_use_bulk_close;
+      const canBulkTake = this.project?.config?.can_use_bulk_take;
       return canBulkTransfer || canBulkClose || canBulkTake;
     },
   },

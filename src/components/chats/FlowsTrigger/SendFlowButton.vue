@@ -15,12 +15,10 @@
 <script>
 import { mapState } from 'pinia';
 import { useRooms } from '@/store/modules/chats/rooms';
-import { useFeatureFlag } from '@/store/modules/featureFlag';
 import { useProfile } from '@/store/modules/profile';
 
 import FlowsTrigger from '@/services/api/resources/chats/flowsTrigger';
 
-import { FLOW_TRIGGER_VARIABLE_MAPPING_FLAG } from './types';
 import { resolveAllValues } from '@/utils/localVariables';
 import { hasTemplateVariables } from '@/utils/flowTemplates';
 
@@ -71,18 +69,12 @@ export default {
     ...mapState(useRooms, {
       room: (store) => store.activeRoom,
     }),
-    ...mapState(useFeatureFlag, ['featureFlags']),
     ...mapState(useProfile, ['me']),
     noHasContacts() {
       return !this.selectedContact && this.contacts.length === 0;
     },
-    isVariableMappingEnabled() {
-      return !!this.featureFlags?.active_features?.includes(
-        FLOW_TRIGGER_VARIABLE_MAPPING_FLAG,
-      );
-    },
     hasTemplateVariables() {
-      if (this.isProjectPrincipal || !this.isVariableMappingEnabled) {
+      if (this.isProjectPrincipal) {
         return false;
       }
 
@@ -97,11 +89,6 @@ export default {
 
     async startSendFlow() {
       if (this.hasTemplateVariables) return;
-
-      if (this.isProjectPrincipal || !this.isVariableMappingEnabled) {
-        await this.doSendFlow();
-        return;
-      }
 
       await this.doSendFlow();
     },

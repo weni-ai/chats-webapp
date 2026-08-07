@@ -50,7 +50,6 @@
 <script>
 import { mapState } from 'pinia';
 
-import { useFeatureFlag } from '@/store/modules/featureFlag';
 import { useProfile } from '@/store/modules/profile';
 import { useRooms } from '@/store/modules/chats/rooms';
 
@@ -61,7 +60,6 @@ import FlowsTriggerAPI from '@/services/api/resources/chats/flowsTrigger';
 import SelectFlow from './SelectFlow.vue';
 import SendFlowButton from './SendFlowButton.vue';
 import ModalVariableMapping from './ModalVariableMapping.vue';
-import { FLOW_TRIGGER_VARIABLE_MAPPING_FLAG } from './types';
 import { getAvailableLocalVariables } from '@/utils/localVariables';
 import { hasTemplateVariables } from '@/utils/flowTemplates';
 
@@ -98,17 +96,10 @@ export default {
   },
 
   computed: {
-    ...mapState(useFeatureFlag, ['featureFlags']),
     ...mapState(useProfile, ['me']),
     ...mapState(useRooms, {
       activeRoom: (store) => store.activeRoom,
     }),
-
-    isVariableMappingEnabled() {
-      return !!this.featureFlags?.active_features?.includes(
-        FLOW_TRIGGER_VARIABLE_MAPPING_FLAG,
-      );
-    },
 
     localVariables() {
       return getAvailableLocalVariables({
@@ -166,7 +157,7 @@ export default {
       this.setCachedTemplate(null);
 
       if (!flowUuid) return;
-      if (this.isProjectPrincipal || !this.isVariableMappingEnabled) return;
+      if (this.isProjectPrincipal) return;
 
       this.isCheckingTemplate = true;
       try {
