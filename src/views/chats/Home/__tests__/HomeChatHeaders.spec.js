@@ -198,11 +198,11 @@ describe('HomeChatHeaders.vue', () => {
       expect(mockRouter.push).not.toHaveBeenCalled();
     });
 
-    it('navigates with only URN when email and document are absent', async () => {
+    it('navigates with only contact when email and document are absent', async () => {
       roomStore.activeRoom = {
         uuid: 'room-1',
         urn: 'whatsapp:5511999998888',
-        contact: { name: 'John Doe' },
+        contact: { name: 'John Doe', external_id: 'abc-123' },
         protocol: 'whatsapp',
         has_history: true,
       };
@@ -214,19 +214,20 @@ describe('HomeChatHeaders.vue', () => {
         expect.objectContaining({
           name: 'closed-rooms',
           query: expect.objectContaining({
-            contactUrn: '5511999998888',
+            contact: 'abc-123',
             from: 'room-1',
           }),
         }),
       );
     });
 
-    it('navigates with URN, email, and sanitized document comma-separated', async () => {
+    it('navigates with contact, email, and sanitized document as separate params', async () => {
       roomStore.activeRoom = {
         uuid: 'room-2',
         urn: 'whatsapp:5511999998888',
         contact: {
           name: 'Jane Doe',
+          external_id: 'abc-123',
           email: 'jane@example.com',
           document: '234.234.243-20',
         },
@@ -241,14 +242,16 @@ describe('HomeChatHeaders.vue', () => {
         expect.objectContaining({
           name: 'closed-rooms',
           query: expect.objectContaining({
-            contactUrn: '5511999998888,jane@example.com,23423424320',
+            contact: 'abc-123',
+            email: 'jane@example.com',
+            document: '23423424320',
             from: 'room-2',
           }),
         }),
       );
     });
 
-    it('navigates with only email when URN is absent', async () => {
+    it('navigates with only email when external_id is absent', async () => {
       roomStore.activeRoom = {
         uuid: 'room-3',
         urn: '',
@@ -267,11 +270,12 @@ describe('HomeChatHeaders.vue', () => {
         expect.objectContaining({
           name: 'closed-rooms',
           query: expect.objectContaining({
-            contactUrn: 'only@email.com',
+            email: 'only@email.com',
             from: 'room-3',
           }),
         }),
       );
+      expect(mockRouter.push.mock.calls[0][0].query.contact).toBeUndefined();
     });
 
     it('sanitizes document with various special characters', async () => {
@@ -293,7 +297,7 @@ describe('HomeChatHeaders.vue', () => {
         expect.objectContaining({
           name: 'closed-rooms',
           query: expect.objectContaining({
-            contactUrn: '12345678000190',
+            document: '12345678000190',
             from: 'room-4',
           }),
         }),

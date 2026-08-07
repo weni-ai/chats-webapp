@@ -17,7 +17,7 @@ vi.mock('@/utils/room', async (importOriginal) => {
   const actual = await importOriginal();
   return {
     ...actual,
-    buildHistorySearchTerm: vi.fn(() => ''),
+    buildHistoryContactQuery: vi.fn(() => ({})),
   };
 });
 
@@ -26,7 +26,7 @@ describe('ViewMode', () => {
 
   beforeEach(() => {
     vi.clearAllMocks();
-    vi.mocked(roomUtils.buildHistorySearchTerm).mockReturnValue('');
+    vi.mocked(roomUtils.buildHistoryContactQuery).mockReturnValue({});
   });
 
   const createWrapper = (storeState = {}) => {
@@ -211,8 +211,10 @@ describe('ViewMode', () => {
       expect(wrapper.vm.isModalTransferRoomsOpened).toBe(false);
     });
 
-    it('should handle openHistory correctly with URN only', () => {
-      vi.mocked(roomUtils.buildHistorySearchTerm).mockReturnValue('1234567890');
+    it('should handle openHistory correctly with contact only', () => {
+      vi.mocked(roomUtils.buildHistoryContactQuery).mockReturnValue({
+        contact: 'abc-123',
+      });
 
       const wrapper = createWrapper({
         dashboard: { viewedAgent: mockAgent },
@@ -225,7 +227,7 @@ describe('ViewMode', () => {
         expect.objectContaining({
           name: 'closed-rooms',
           query: expect.objectContaining({
-            contactUrn: '1234567890',
+            contact: 'abc-123',
             protocol: 'whatsapp',
             from: mockRoom.uuid,
           }),
@@ -233,15 +235,18 @@ describe('ViewMode', () => {
       );
     });
 
-    it('should handle openHistory with URN, email, and document', () => {
-      vi.mocked(roomUtils.buildHistorySearchTerm).mockReturnValue(
-        '1234567890,test@example.com,12345678900',
-      );
+    it('should handle openHistory with contact, email, and document', () => {
+      vi.mocked(roomUtils.buildHistoryContactQuery).mockReturnValue({
+        contact: 'abc-123',
+        email: 'test@example.com',
+        document: '12345678900',
+      });
 
       const roomWithContactInfo = {
         ...mockRoom,
         contact: {
           name: 'John Doe',
+          external_id: 'abc-123',
           email: 'test@example.com',
           document: '123.456.789-00',
         },
@@ -258,7 +263,9 @@ describe('ViewMode', () => {
         expect.objectContaining({
           name: 'closed-rooms',
           query: expect.objectContaining({
-            contactUrn: '1234567890,test@example.com,12345678900',
+            contact: 'abc-123',
+            email: 'test@example.com',
+            document: '12345678900',
             from: roomWithContactInfo.uuid,
           }),
         }),
@@ -723,12 +730,12 @@ describe('ViewMode', () => {
       expect(wrapper.vm.room.contact.name).toBe('');
     });
 
-    it('should handle openHistory with only email when URN is empty', () => {
-      vi.mocked(roomUtils.buildHistorySearchTerm).mockReturnValue(
-        'contact@mail.com',
-      );
+    it('should handle openHistory with only email when external_id is absent', () => {
+      vi.mocked(roomUtils.buildHistoryContactQuery).mockReturnValue({
+        email: 'contact@mail.com',
+      });
 
-      const roomWithoutUrn = {
+      const roomWithoutExternalId = {
         ...mockRoom,
         urn: '',
         contact: { name: 'John Doe', email: 'contact@mail.com' },
@@ -736,7 +743,7 @@ describe('ViewMode', () => {
 
       const wrapper = createWrapper({
         dashboard: { viewedAgent: mockAgent },
-        rooms: { activeRoom: roomWithoutUrn },
+        rooms: { activeRoom: roomWithoutExternalId },
       });
 
       wrapper.vm.openHistory();
@@ -745,8 +752,8 @@ describe('ViewMode', () => {
         expect.objectContaining({
           name: 'closed-rooms',
           query: expect.objectContaining({
-            contactUrn: 'contact@mail.com',
-            from: roomWithoutUrn.uuid,
+            email: 'contact@mail.com',
+            from: roomWithoutExternalId.uuid,
           }),
         }),
       );

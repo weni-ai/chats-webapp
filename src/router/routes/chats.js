@@ -73,7 +73,7 @@ const routes = [
     name: 'closed-rooms',
     component: () => import('@/views/chats/ClosedChats/index.vue'),
     props: (route) => ({
-      contactUrn: route.query.contactUrn,
+      contact: route.query.contact,
       sector: route.query.sector,
       tags: route.query.tags,
       startDate: route.query.startDate,
