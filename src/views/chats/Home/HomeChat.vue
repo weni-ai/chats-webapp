@@ -130,12 +130,8 @@ export default {
       );
     },
     isBulkActionsEnabled() {
-      const hasBulkTake =
-        this.featureFlags.active_features?.includes('weniChatsBulkTake') &&
-        this.project.config?.can_use_bulk_take;
-      const hasBulkClose =
-        this.featureFlags.active_features?.includes('weniChatsBulkClose') &&
-        this.project.config?.can_use_bulk_close;
+      const hasBulkTake = this.project.config?.can_use_bulk_take;
+      const hasBulkClose = this.project.config?.can_use_bulk_close;
       const hasBulkTransfer = this.project.config?.can_use_bulk_transfer;
       return !!hasBulkTake || !!hasBulkClose || !!hasBulkTransfer;
     },

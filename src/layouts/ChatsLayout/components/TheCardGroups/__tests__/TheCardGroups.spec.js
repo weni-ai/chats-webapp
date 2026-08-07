@@ -8,7 +8,6 @@ import { useRoomCounters } from '@/store/modules/chats/roomCounters';
 import { useConfig } from '@/store/modules/config';
 import { useProfile } from '@/store/modules/profile';
 import { useDiscussions } from '@/store/modules/chats/discussions';
-import { useFeatureFlag } from '@/store/modules/featureFlag';
 
 import TheCardGroups from '../index.vue';
 import i18n from '@/plugins/i18n';
@@ -1021,7 +1020,6 @@ describe('TheCardGroups.vue', () => {
     it('should show select-all checkbox on waiting tab when bulk take is enabled', () => {
       const roomsStore = useRooms();
       const configStore = useConfig();
-      const featureFlagStore = useFeatureFlag();
 
       roomsStore.waitingQueue = mockRooms;
       roomsStore.activeTab = 'waiting';
@@ -1030,9 +1028,6 @@ describe('TheCardGroups.vue', () => {
           can_use_bulk_take: true,
           can_use_queue_prioritization: true,
         },
-      };
-      featureFlagStore.featureFlags = {
-        active_features: ['weniChatsBulkTake'],
       };
 
       wrapper = createWrapper({ isViewMode: false });
@@ -1040,20 +1035,18 @@ describe('TheCardGroups.vue', () => {
       expect(wrapper.vm.showSelectAllCheckbox).toBe(true);
     });
 
-    it('should not show select-all checkbox on waiting tab when bulk take flag is inactive', () => {
+    it('should not show select-all checkbox on waiting tab when bulk take config is off', () => {
       const roomsStore = useRooms();
       const configStore = useConfig();
-      const featureFlagStore = useFeatureFlag();
 
       roomsStore.waitingQueue = mockRooms;
       roomsStore.activeTab = 'waiting';
       configStore.project = {
         config: {
-          can_use_bulk_take: true,
+          can_use_bulk_take: false,
           can_use_queue_prioritization: true,
         },
       };
-      featureFlagStore.featureFlags = { active_features: [] };
 
       wrapper = createWrapper({ isViewMode: false });
 
@@ -1063,7 +1056,6 @@ describe('TheCardGroups.vue', () => {
     it('should not show select-all checkbox on waiting tab in view mode', () => {
       const roomsStore = useRooms();
       const configStore = useConfig();
-      const featureFlagStore = useFeatureFlag();
 
       roomsStore.waitingQueue = mockRooms;
       roomsStore.activeTab = 'waiting';
@@ -1072,9 +1064,6 @@ describe('TheCardGroups.vue', () => {
           can_use_bulk_take: true,
           can_use_queue_prioritization: true,
         },
-      };
-      featureFlagStore.featureFlags = {
-        active_features: ['weniChatsBulkTake'],
       };
 
       wrapper = createWrapper({ isViewMode: true });
@@ -1085,7 +1074,6 @@ describe('TheCardGroups.vue', () => {
     it('should enable selection on waiting tab when bulk take is enabled', () => {
       const roomsStore = useRooms();
       const configStore = useConfig();
-      const featureFlagStore = useFeatureFlag();
 
       roomsStore.waitingQueue = mockRooms;
       roomsStore.activeTab = 'waiting';
@@ -1094,9 +1082,6 @@ describe('TheCardGroups.vue', () => {
           can_use_bulk_take: true,
           can_use_queue_prioritization: true,
         },
-      };
-      featureFlagStore.featureFlags = {
-        active_features: ['weniChatsBulkTake'],
       };
 
       wrapper = createWrapper({ isViewMode: false });
@@ -1107,7 +1092,6 @@ describe('TheCardGroups.vue', () => {
     it('should disable selection on waiting tab in view mode even with bulk take enabled', () => {
       const roomsStore = useRooms();
       const configStore = useConfig();
-      const featureFlagStore = useFeatureFlag();
 
       roomsStore.waitingQueue = mockRooms;
       roomsStore.activeTab = 'waiting';
@@ -1116,9 +1100,6 @@ describe('TheCardGroups.vue', () => {
           can_use_bulk_take: true,
           can_use_queue_prioritization: true,
         },
-      };
-      featureFlagStore.featureFlags = {
-        active_features: ['weniChatsBulkTake'],
       };
 
       wrapper = createWrapper({ isViewMode: true });
@@ -1128,10 +1109,9 @@ describe('TheCardGroups.vue', () => {
   });
 
   describe('bulk transfer selection logic on waiting tab', () => {
-    it('should show select-all checkbox when bulk transfer feature flag is active', () => {
+    it('should show select-all checkbox when bulk transfer config is enabled', () => {
       const roomsStore = useRooms();
       const configStore = useConfig();
-      const featureFlagStore = useFeatureFlag();
 
       roomsStore.waitingQueue = mockRooms;
       roomsStore.activeTab = 'waiting';
@@ -1140,9 +1120,6 @@ describe('TheCardGroups.vue', () => {
           can_use_bulk_transfer: true,
           can_use_queue_prioritization: true,
         },
-      };
-      featureFlagStore.featureFlags = {
-        active_features: ['weniChatsBulkTransfer'],
       };
 
       wrapper = createWrapper({ isViewMode: false });
@@ -1150,30 +1127,27 @@ describe('TheCardGroups.vue', () => {
       expect(wrapper.vm.showSelectAllCheckbox).toBe(true);
     });
 
-    it('should not show select-all checkbox when bulk transfer feature flag is inactive', () => {
+    it('should not show select-all checkbox when bulk transfer config is off', () => {
       const roomsStore = useRooms();
       const configStore = useConfig();
-      const featureFlagStore = useFeatureFlag();
 
       roomsStore.waitingQueue = mockRooms;
       roomsStore.activeTab = 'waiting';
       configStore.project = {
         config: {
-          can_use_bulk_transfer: true,
+          can_use_bulk_transfer: false,
           can_use_queue_prioritization: true,
         },
       };
-      featureFlagStore.featureFlags = { active_features: [] };
 
       wrapper = createWrapper({ isViewMode: false });
 
       expect(wrapper.vm.showSelectAllCheckbox).toBe(false);
     });
 
-    it('should enable selection on waiting tab when bulk transfer feature flag is active', () => {
+    it('should enable selection on waiting tab when bulk transfer config is enabled', () => {
       const roomsStore = useRooms();
       const configStore = useConfig();
-      const featureFlagStore = useFeatureFlag();
 
       roomsStore.waitingQueue = mockRooms;
       roomsStore.activeTab = 'waiting';
@@ -1182,9 +1156,6 @@ describe('TheCardGroups.vue', () => {
           can_use_bulk_transfer: true,
           can_use_queue_prioritization: true,
         },
-      };
-      featureFlagStore.featureFlags = {
-        active_features: ['weniChatsBulkTransfer'],
       };
 
       wrapper = createWrapper({ isViewMode: false });
@@ -1192,20 +1163,18 @@ describe('TheCardGroups.vue', () => {
       expect(wrapper.vm.isWithSelection).toBe(true);
     });
 
-    it('should not enable selection on waiting tab when bulk transfer feature flag is inactive', () => {
+    it('should not enable selection on waiting tab when bulk transfer config is off', () => {
       const roomsStore = useRooms();
       const configStore = useConfig();
-      const featureFlagStore = useFeatureFlag();
 
       roomsStore.waitingQueue = mockRooms;
       roomsStore.activeTab = 'waiting';
       configStore.project = {
         config: {
-          can_use_bulk_transfer: true,
+          can_use_bulk_transfer: false,
           can_use_queue_prioritization: true,
         },
       };
-      featureFlagStore.featureFlags = { active_features: [] };
 
       wrapper = createWrapper({ isViewMode: false });
 
@@ -1215,7 +1184,6 @@ describe('TheCardGroups.vue', () => {
     it('should show select-all checkbox when both bulk take and bulk transfer are enabled', () => {
       const roomsStore = useRooms();
       const configStore = useConfig();
-      const featureFlagStore = useFeatureFlag();
 
       roomsStore.waitingQueue = mockRooms;
       roomsStore.activeTab = 'waiting';
@@ -1225,9 +1193,6 @@ describe('TheCardGroups.vue', () => {
           can_use_bulk_transfer: true,
           can_use_queue_prioritization: true,
         },
-      };
-      featureFlagStore.featureFlags = {
-        active_features: ['weniChatsBulkTake', 'weniChatsBulkTransfer'],
       };
 
       wrapper = createWrapper({ isViewMode: false });
