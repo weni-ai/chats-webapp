@@ -14,11 +14,6 @@ import { setActivePinia } from 'pinia';
 import SuggestionBox from '../index.vue';
 import i18n from '@/plugins/i18n';
 
-vi.mock('@/composables/useQuickMessagesShortcuts', () => ({
-  useQuickMessagesShortcuts: ({ quickMessagesShared }) =>
-    quickMessagesShared || [],
-}));
-
 beforeAll(() => {
   config.global.plugins = (config.global.plugins || []).filter(
     (plugin) => plugin !== i18n,
@@ -47,7 +42,8 @@ const createWrapper = (options = {}) => {
     copilot = false,
     keyboardEvent = null,
     quickMessages = personalMessages,
-    quickMessagesShared = sharedMessages,
+    sharedBySectorMessages = sharedMessages,
+    sectorUuid = 'sector-1',
   } = options;
 
   const pinia = createTestingPinia({
@@ -56,11 +52,12 @@ const createWrapper = (options = {}) => {
     initialState: {
       quickMessages: { quickMessages },
       quickMessagesShared: {
-        quickMessagesShared,
+        quickMessagesSharedBySector: {
+          [sectorUuid]: sharedBySectorMessages,
+        },
       },
       messageManager: { inputMessageFocused: true },
-      rooms: { activeRoom: { queue: { sector: 'sector-1' } } },
-      featureFlag: { featureFlags: { active_features: [] } },
+      rooms: { activeRoom: { queue: { sector: sectorUuid } } },
     },
   });
   setActivePinia(pinia);
