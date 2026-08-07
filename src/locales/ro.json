@@ -715,7 +715,7 @@
   "chat_closed_by": {
     "agent": "Chat închis de reprezentant"
   },
-  "transfer_contact": "Transferă contact | Transferă contacte",
+  "transfer_contact": "{count, plural, one {Transferă contactul} few {Transferă contactele} other {Transferă contactele}}",
   "bulk_transfer": {
     "transfer_selected_contacts": "Transferă contactele selectate",
     "selected_chats_count": "{count, plural, one {{count} chat este selectat pentru transfer} few {{count} chaturi sunt selectate pentru transfer} other {{count} de chaturi sunt selectate pentru transfer}}",
