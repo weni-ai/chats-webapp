@@ -360,7 +360,7 @@ describe('Message service', () => {
       );
 
       expect(result).toEqual({
-        message_response: mockMessageResponse.data,
+        message_response: { ...mockMessageResponse.data, media: [] },
         media_response: mockMediaResponse.data,
       });
     });
@@ -417,7 +417,7 @@ describe('Message service', () => {
       const result = await messageService.sendRoomMedia('room-789', mediaData);
 
       expect(result).toEqual({
-        message_response: mockMessageResponse.data,
+        message_response: { ...mockMessageResponse.data, media: [] },
         media_response: mockMediaResponse.data,
       });
     });
@@ -461,6 +461,53 @@ describe('Message service', () => {
       await expect(
         messageService.sendRoomMedia('room-error', mediaData),
       ).rejects.toThrow('Media upload failed');
+    });
+
+    it('should create the message via createMessage when provided and still upload media via REST', async () => {
+      const mockMessage = {
+        uuid: 'socket-msg-uuid',
+        text: '',
+        room: 'room-socket',
+      };
+      const mockMediaResponse = {
+        data: { id: 460, media_file: 'file.jpg', message: 'socket-msg-uuid' },
+      };
+      const createMessage = vi.fn().mockResolvedValue(mockMessage);
+
+      http.postForm.mockResolvedValue(mockMediaResponse);
+
+      const updateLoadingFiles = vi.fn();
+      const mediaFile = new File(['content'], 'test.jpg', {
+        type: 'image/jpeg',
+      });
+
+      const result = await messageService.sendRoomMedia('room-socket', {
+        user_email: 'user@example.com',
+        media: mediaFile,
+        updateLoadingFiles,
+        repliedMessageId: 'replied-msg-123',
+        createMessage,
+      });
+
+      expect(createMessage).toHaveBeenCalled();
+      expect(http.post).not.toHaveBeenCalled();
+      expect(updateLoadingFiles).toHaveBeenCalledWith('socket-msg-uuid', 0);
+      expect(http.postForm).toHaveBeenCalledWith(
+        '/media/',
+        {
+          content_type: 'image/jpeg',
+          message: 'socket-msg-uuid',
+          media_file: mediaFile,
+          replied_message_id: 'replied-msg-123',
+        },
+        {
+          onUploadProgress: expect.any(Function),
+        },
+      );
+      expect(result).toEqual({
+        message_response: { ...mockMessage, media: [] },
+        media_response: mockMediaResponse.data,
+      });
     });
   });
 
