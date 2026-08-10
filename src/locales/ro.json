@@ -1057,6 +1057,7 @@
     "example_message_description": "Mesajele rapide sunt răspunsuri predefinite care ajută la standardizarea serviciului pentru clienți. Toți reprezentanții din acest departament le pot utiliza, iar tu poți adăuga altele noi mai jos.",
     "personal": "Mesajele tale",
     "shared": "Mesaje distribuite",
+    "send_in_bulk": "Trimite în masă",
     "delete": "Șterge mesaj rapid",
     "delete_your_quick_message": "Șterge mesajul tău rapid",
     "delete_confirm": "Ești sigur că dorești să ștergi mesajul rapid?",

@@ -1088,6 +1088,7 @@
     "example_message_description": "Mensagens rápidas são respostas pré-definidas que ajudam a padronizar o atendimento ao cliente. Todos os atendentes deste setor podem usá-las, e você pode adicionar novas abaixo.",
     "personal": "Suas mensagens",
     "shared": "Mensagens compartilhadas",
+    "send_in_bulk": "Enviar em massa",
     "delete": "Excluir mensagem rápida",
     "delete_your_quick_message": "Excluir sua mensagem rápida",
     "delete_confirm": "Tem certeza de que deseja excluir a mensagem rápida?",
