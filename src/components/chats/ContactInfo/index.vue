@@ -343,7 +343,6 @@ export default {
       handler(newRoom) {
         if (newRoom) {
           this.customFields = { ...(this.room.custom_fields || {}) };
-          this.loadRoomTags();
         }
       },
     },
