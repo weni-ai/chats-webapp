@@ -1020,6 +1020,7 @@
     "example_message_description": "Los mensajes rápidos son respuestas predefinidas que ayudan a estandarizar el servicio de atención al cliente. Todos los representantes de este departamento pueden usarlos, y puedes agregar nuevos a continuación.",
     "personal": "Tus mensajes",
     "shared": "Mensajes compartidos",
+    "send_in_bulk": "Enviar en masa",
     "delete": "Eliminar mensaje rápido",
     "delete_your_quick_message": "Eliminar tu mensaje rápido",
     "delete_confirm": "¿Realmente deseas eliminar el mensaje rápido?",
