@@ -118,6 +118,7 @@ import Sector from '@/services/api/resources/settings/sector';
 import RoomsTableFiltersLoading from '@/views/loadings/ClosedChats/RoomsTableFiltersLoading.vue';
 
 import { removeDuplicatedItems } from '@/utils/array';
+import { formatHistoryContactFilter } from '@/utils/room';
 
 export default {
   name: 'ClosedChatsRoomsTableFilters',
@@ -503,9 +504,16 @@ export default {
     },
 
     setFiltersByQueryParams() {
-      const { contactUrn, startDate, endDate } = this.$route.query;
+      const { contact, email, document, contactUrn, startDate, endDate } =
+        this.$route.query;
 
-      if (contactUrn) {
+      if (contact || email || document) {
+        this.filterContact = formatHistoryContactFilter({
+          contact,
+          email,
+          document,
+        });
+      } else if (contactUrn?.includes(',')) {
         this.filterContact = contactUrn;
       }
 

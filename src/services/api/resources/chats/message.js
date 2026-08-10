@@ -1,6 +1,5 @@
 import http from '@/services/api/http';
 import { getProject } from '@/utils/config';
-import { useFeatureFlag } from '@/store/modules/featureFlag';
 import { getURLParams } from '@/utils/requests';
 
 export default {
@@ -15,18 +14,9 @@ export default {
 
     let response;
 
-    const featureFlagStore = useFeatureFlag();
-
-    const useV2 =
-      featureFlagStore.featureFlags?.active_features?.includes(
-        'weniChatsV2Message',
-      );
-
-    const config = useV2
-      ? {
-          baseURL: http.defaults.baseURL.replace('/v1', '/v2'),
-        }
-      : {};
+    const config = {
+      baseURL: http.defaults.baseURL.replace('/v1', '/v2'),
+    };
 
     if (nextReq && paramsNextReq) {
       response = await http.get(`${endpoint}${paramsNextReq}`, config);

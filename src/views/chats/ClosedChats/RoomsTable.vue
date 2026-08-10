@@ -146,6 +146,8 @@ import History from '@/services/api/resources/chats/history';
 import TagGroup from '@/components/TagGroup.vue';
 import ModalClosedChatsFilters from '@/components/chats/Mobile/ModalClosedChatsFilters.vue';
 
+import { parseHistoryContactFilter } from '@/utils/room';
+
 import ClosedChatsRoomsTableFilters from './RoomsTableFilters.vue';
 
 export default {
@@ -242,16 +244,41 @@ export default {
       const tagsToReq = tag.map((tag) => tag.label).join(',');
       const sectionToReq = sector[0]?.value === 'all' ? '' : sector[0]?.value;
 
+      const {
+        contact: routeContact,
+        email,
+        document,
+        contactUrn: legacyContactUrn,
+      } = this.$route.query;
+
+      const historyParams = {
+        offset,
+        limit: roomsLimit,
+        ended_at_before: date?.end,
+        ended_at_after: date?.start,
+        sector: sectionToReq,
+        tag: tagsToReq,
+      };
+
+      if (contact) {
+        const parsed = parseHistoryContactFilter(contact);
+        if (parsed.search) {
+          historyParams.search = parsed.search;
+        } else {
+          if (parsed.contact) historyParams.contact = parsed.contact;
+          if (parsed.email) historyParams.email = parsed.email;
+          if (parsed.document) historyParams.document = parsed.document;
+        }
+      } else if (legacyContactUrn?.includes(',')) {
+        historyParams.search = legacyContactUrn;
+      } else {
+        if (routeContact) historyParams.contact = routeContact;
+        if (email) historyParams.email = email;
+        if (document) historyParams.document = document;
+      }
+
       try {
-        const response = await History.getHistoryRooms({
-          offset,
-          limit: roomsLimit,
-          ended_at_before: date?.end,
-          ended_at_after: date?.start,
-          search: contact,
-          sector: sectionToReq,
-          tag: tagsToReq,
-        });
+        const response = await History.getHistoryRooms(historyParams);
         this.rooms = response.results;
         this.roomsCount = response.count;
         this.roomsCountPages = Math.ceil(response.count / roomsLimit);

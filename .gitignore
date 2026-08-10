@@ -27,3 +27,6 @@ pnpm-debug.log*
 # **/locales/*.json
 # !**/locales/translations.json
 
+# Temporary files
+tmp/
+

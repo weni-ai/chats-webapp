@@ -5,7 +5,6 @@ import { setActivePinia } from 'pinia';
 
 import { useRooms } from '@/store/modules/chats/rooms';
 import { useConfig } from '@/store/modules/config';
-import { useFeatureFlag } from '@/store/modules/featureFlag';
 import { useProfile } from '@/store/modules/profile';
 import { useDashboard } from '@/store/modules/dashboard';
 
@@ -125,9 +124,6 @@ describe('RoomCard.vue', () => {
 
     const configStore = useConfig();
     configStore.enableAutomaticRoomRouting = false;
-
-    const featureFlagStore = useFeatureFlag();
-    featureFlagStore.featureFlags = { active_features: [] };
 
     const profileStore = useProfile();
     profileStore.me = { email: 'agent@weni.ai' };
@@ -806,16 +802,7 @@ describe('RoomCard.vue', () => {
     });
   });
 
-  const enablePendingResponseFlag = () => {
-    const featureFlagStore = useFeatureFlag();
-    featureFlagStore.featureFlags = {
-      active_features: ['weniChatsPendingResponse'],
-    };
-  };
-
-  describe('pending response feature flag tests', () => {
-    const enableFlag = enablePendingResponseFlag;
-
+  describe('pending response tests', () => {
     const resolveLastMessageUser = (fromAgent, lastMessageUser) => {
       if (lastMessageUser !== undefined) return lastMessageUser;
       if (!fromAgent) return null;
@@ -843,28 +830,12 @@ describe('RoomCard.vue', () => {
       },
     });
 
-    it('does not enable pending response or You: prefix when flag is off', () => {
-      const wrapper = createWrapper({
-        roomType: 'in_progress',
-        room: buildRoom({ fromAgent: false, unreadCount: 0 }),
-      });
-
-      expect(wrapper.vm.isPendingResponseFeatureEnabled).toBe(false);
-      expect(wrapper.vm.showPendingResponse).toBe(false);
-      expect(wrapper.vm.displayedLastMessage.text).toBe('Hello message');
-
-      wrapper.unmount();
-    });
-
-    it('flag on + contact + unread > 0: keeps badge and does not show pendingResponse', () => {
-      enableFlag();
-
+    it('contact + unread > 0: keeps badge and does not show pendingResponse', () => {
       const wrapper = createWrapper({
         roomType: 'in_progress',
         room: buildRoom({ fromAgent: false, unreadCount: 3 }),
       });
 
-      expect(wrapper.vm.isPendingResponseFeatureEnabled).toBe(true);
       expect(wrapper.vm.isLastMessageFromContact).toBe(true);
       expect(wrapper.vm.unreadMessages).toBe(3);
       expect(wrapper.vm.showPendingResponse).toBe(false);
@@ -873,9 +844,7 @@ describe('RoomCard.vue', () => {
       wrapper.unmount();
     });
 
-    it('flag on + contact + unread === 0: shows pendingResponse with tooltip', () => {
-      enableFlag();
-
+    it('contact + unread === 0: shows pendingResponse with tooltip', () => {
       const wrapper = createWrapper({
         roomType: 'in_progress',
         room: buildRoom({ fromAgent: false, unreadCount: 0 }),
@@ -888,9 +857,7 @@ describe('RoomCard.vue', () => {
       wrapper.unmount();
     });
 
-    it('flag on + contact + unread === 0 + room owned by another agent: shows pendingResponse (view-mode)', () => {
-      enableFlag();
-
+    it('contact + unread === 0 + room owned by another agent: shows pendingResponse (view-mode)', () => {
       const wrapper = createWrapper({
         roomType: 'in_progress',
         room: buildRoom({
@@ -907,9 +874,7 @@ describe('RoomCard.vue', () => {
       wrapper.unmount();
     });
 
-    it('flag on + contact + unread === 0 + room without owner: shows pendingResponse', () => {
-      enableFlag();
-
+    it('contact + unread === 0 + room without owner: shows pendingResponse', () => {
       const wrapper = createWrapper({
         roomType: 'in_progress',
         room: buildRoom({
@@ -924,9 +889,7 @@ describe('RoomCard.vue', () => {
       wrapper.unmount();
     });
 
-    it('flag on + last message from another agent + unread === 0: shows pendingResponse', () => {
-      enableFlag();
-
+    it('last message from another agent + unread === 0: shows pendingResponse', () => {
       const wrapper = createWrapper({
         roomType: 'in_progress',
         room: buildRoom({
@@ -942,9 +905,7 @@ describe('RoomCard.vue', () => {
       wrapper.unmount();
     });
 
-    it('flag on + last message from another agent + unread > 0: does not show pendingResponse', () => {
-      enableFlag();
-
+    it('last message from another agent + unread > 0: does not show pendingResponse', () => {
       const wrapper = createWrapper({
         roomType: 'in_progress',
         room: buildRoom({
@@ -960,9 +921,7 @@ describe('RoomCard.vue', () => {
       wrapper.unmount();
     });
 
-    it('flag on + last message from bot + unread === 0: shows pendingResponse', () => {
-      enableFlag();
-
+    it('last message from bot + unread === 0: shows pendingResponse', () => {
       const room = {
         ...mockRoom,
         unread_msgs: 0,
@@ -981,9 +940,7 @@ describe('RoomCard.vue', () => {
       wrapper.unmount();
     });
 
-    it('flag on + last message from bot + unread > 0: does not show pendingResponse', () => {
-      enableFlag();
-
+    it('last message from bot + unread > 0: does not show pendingResponse', () => {
       const room = {
         ...mockRoom,
         unread_msgs: 5,
@@ -1002,9 +959,7 @@ describe('RoomCard.vue', () => {
       wrapper.unmount();
     });
 
-    it('flag on + lastMessage.user is an object whose email equals me.email (real API shape): prefixes lastMessage.text with You:', () => {
-      enableFlag();
-
+    it('lastMessage.user is an object whose email equals me.email (real API shape): prefixes lastMessage.text with You:', () => {
       const wrapper = createWrapper({
         roomType: 'in_progress',
         room: buildRoom({ fromAgent: true, unreadCount: 0 }),
@@ -1019,9 +974,7 @@ describe('RoomCard.vue', () => {
       wrapper.unmount();
     });
 
-    it('flag on + lastMessage.user is an object with a different email: does not prefix', () => {
-      enableFlag();
-
+    it('lastMessage.user is an object with a different email: does not prefix', () => {
       const wrapper = createWrapper({
         roomType: 'in_progress',
         room: buildRoom({
@@ -1042,9 +995,7 @@ describe('RoomCard.vue', () => {
       wrapper.unmount();
     });
 
-    it('flag on + lastMessage.user is an object without email field: does not prefix', () => {
-      enableFlag();
-
+    it('lastMessage.user is an object without email field: does not prefix', () => {
       const wrapper = createWrapper({
         roomType: 'in_progress',
         room: buildRoom({
@@ -1064,9 +1015,7 @@ describe('RoomCard.vue', () => {
       wrapper.unmount();
     });
 
-    it('flag on + lastMessage.user equals me.email (string): prefixes lastMessage.text with You:', () => {
-      enableFlag();
-
+    it('lastMessage.user equals me.email (string): prefixes lastMessage.text with You:', () => {
       const wrapper = createWrapper({
         roomType: 'in_progress',
         room: buildRoom({
@@ -1086,9 +1035,7 @@ describe('RoomCard.vue', () => {
       wrapper.unmount();
     });
 
-    it('flag on + lastMessage.user is a different email string: does not prefix', () => {
-      enableFlag();
-
+    it('lastMessage.user is a different email string: does not prefix', () => {
       const wrapper = createWrapper({
         roomType: 'in_progress',
         room: buildRoom({
@@ -1103,9 +1050,7 @@ describe('RoomCard.vue', () => {
       wrapper.unmount();
     });
 
-    it('flag on but roomType !== in_progress: leaves lastMessage untouched', () => {
-      enableFlag();
-
+    it('roomType !== in_progress: leaves lastMessage untouched', () => {
       const room = buildRoom({
         fromAgent: true,
         unreadCount: 0,
@@ -1122,9 +1067,7 @@ describe('RoomCard.vue', () => {
       wrapper.unmount();
     });
 
-    it('flag on + lastMessage.user equals me.email + missing text: still prefixes with You:', () => {
-      enableFlag();
-
+    it('lastMessage.user equals me.email + missing text: still prefixes with You:', () => {
       const room = {
         ...mockRoom,
         unread_msgs: 0,
@@ -1143,9 +1086,7 @@ describe('RoomCard.vue', () => {
       wrapper.unmount();
     });
 
-    it('flag on + last_message is null: returns null for displayedLastMessage and shows pendingResponse (isLastMessageFromBot is true)', () => {
-      enableFlag();
-
+    it('last_message is null: returns null for displayedLastMessage and shows pendingResponse (isLastMessageFromBot is true)', () => {
       const room = {
         ...mockRoom,
         unread_msgs: 0,
@@ -1162,8 +1103,6 @@ describe('RoomCard.vue', () => {
   });
 
   describe('media isFromUser tests', () => {
-    const enableFlag = enablePendingResponseFlag;
-
     const buildMediaRoom = ({
       lastMessageUser = null,
       contact = mockRoom.last_message.contact,
@@ -1187,9 +1126,7 @@ describe('RoomCard.vue', () => {
       },
     });
 
-    it('flag on + media + last message from current user: sets isFromUser true and keeps text untouched', () => {
-      enableFlag();
-
+    it('media + last message from current user: sets isFromUser true and keeps text untouched', () => {
       const wrapper = createWrapper({
         roomType: 'in_progress',
         room: buildMediaRoom({
@@ -1205,9 +1142,7 @@ describe('RoomCard.vue', () => {
       wrapper.unmount();
     });
 
-    it('flag on + media + last message from current user (email as string): sets isFromUser true', () => {
-      enableFlag();
-
+    it('media + last message from current user (email as string): sets isFromUser true', () => {
       const wrapper = createWrapper({
         roomType: 'in_progress',
         room: buildMediaRoom({
@@ -1221,9 +1156,7 @@ describe('RoomCard.vue', () => {
       wrapper.unmount();
     });
 
-    it('flag on + media + last message from contact: does not set isFromUser', () => {
-      enableFlag();
-
+    it('media + last message from contact: does not set isFromUser', () => {
       const wrapper = createWrapper({
         roomType: 'in_progress',
         room: buildMediaRoom({ lastMessageUser: null }),
@@ -1235,9 +1168,7 @@ describe('RoomCard.vue', () => {
       wrapper.unmount();
     });
 
-    it('flag on + media + last message from another agent: does not set isFromUser', () => {
-      enableFlag();
-
+    it('media + last message from another agent: does not set isFromUser', () => {
       const wrapper = createWrapper({
         roomType: 'in_progress',
         room: buildMediaRoom({
@@ -1252,24 +1183,7 @@ describe('RoomCard.vue', () => {
       wrapper.unmount();
     });
 
-    it('flag off + media + last message from current user: does not set isFromUser', () => {
-      const wrapper = createWrapper({
-        roomType: 'in_progress',
-        room: buildMediaRoom({
-          lastMessageUser: { email: 'agent@weni.ai' },
-          contact: null,
-        }),
-      });
-
-      expect(wrapper.vm.isPendingResponseFeatureEnabled).toBe(false);
-      expect(wrapper.vm.displayedLastMessage.isFromUser).toBeUndefined();
-
-      wrapper.unmount();
-    });
-
-    it('flag on but roomType !== in_progress + media from current user: does not set isFromUser', () => {
-      enableFlag();
-
+    it('roomType !== in_progress + media from current user: does not set isFromUser', () => {
       const wrapper = createWrapper({
         roomType: 'waiting',
         room: buildMediaRoom({
@@ -1283,9 +1197,7 @@ describe('RoomCard.vue', () => {
       wrapper.unmount();
     });
 
-    it('flag on + media from current user + caption text: keeps caption untouched (no manual You: prefix)', () => {
-      enableFlag();
-
+    it('media from current user + caption text: keeps caption untouched (no manual You: prefix)', () => {
       const wrapper = createWrapper({
         roomType: 'in_progress',
         room: buildMediaRoom({
@@ -1299,9 +1211,7 @@ describe('RoomCard.vue', () => {
       expect(wrapper.vm.displayedLastMessage.text).toBe('Photo caption');
     });
 
-    it('flag on + empty media array + last message from current user: applies text prefix flow (no media branch)', () => {
-      enableFlag();
-
+    it('empty media array + last message from current user: applies text prefix flow (no media branch)', () => {
       const room = {
         ...mockRoom,
         unread_msgs: 0,
@@ -1425,8 +1335,6 @@ describe('RoomCard.vue', () => {
     });
 
     it('takes precedence over pending response when both would be eligible', () => {
-      enablePendingResponseFlag();
-
       const wrapper = createWrapper({
         roomType: 'in_progress',
         room: {
@@ -1441,7 +1349,6 @@ describe('RoomCard.vue', () => {
         },
       });
 
-      expect(wrapper.vm.isPendingResponseFeatureEnabled).toBe(true);
       expect(wrapper.vm.isLastMessageFromContact).toBe(true);
       expect(wrapper.vm.showNewChatReceivedIndicator).toBe(true);
       expect(wrapper.vm.showPendingResponse).toBe(false);
