@@ -48,6 +48,12 @@ export const useMessageManager = defineStore('messageManager', () => {
     );
   });
 
+  watch(audioMessage, (newAudioMessage) => {
+    if (!newAudioMessage) {
+      audioRecorderStatus.value = 'idle';
+    }
+  });
+
   watch(
     [() => activeRoom.value?.uuid, () => activeDiscussion.value?.uuid],
     () => {
