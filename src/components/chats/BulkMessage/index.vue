@@ -286,6 +286,8 @@ onMounted(() => {
     flex-direction: column;
     gap: $unnnic-space-6;
     padding: $unnnic-space-2;
+    min-width: 0;
+    overflow-x: hidden;
     overflow-y: auto;
   }
 
