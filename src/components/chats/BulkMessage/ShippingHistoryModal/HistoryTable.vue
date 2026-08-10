@@ -35,6 +35,10 @@
           {{ $d(new Date(item.date)) }}
         </template>
 
+        <template #message>
+          <p :title="item.message">{{ item.message }}</p>
+        </template>
+
         <template #status>
           <UnnnicTag
             :text="statusLabel(item.status)"
