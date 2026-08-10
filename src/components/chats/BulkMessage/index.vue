@@ -177,7 +177,11 @@ const filtersForm = computed(() => ({
 const contactsCount = ref<number>(0);
 
 const validForm = computed(() => {
-  return message.value.trim().length > 0 && contactsCount.value > 0;
+  return (
+    selectedContactsStatus.value.length > 0 &&
+    message.value.trim().length > 0 &&
+    contactsCount.value > 0
+  );
 });
 
 const handleShippingHistory = () => {
