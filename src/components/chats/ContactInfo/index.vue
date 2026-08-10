@@ -288,7 +288,7 @@ export default {
     },
 
     computedCustomFields() {
-      const customFields = this.room?.custom_fields || {};
+      const customFields = { ...(this.customFields || {}) };
       const roomService = this.contactService;
       if (roomService?.length > 0) {
         customFields[this.$t('service')] = roomService;
@@ -342,7 +342,16 @@ export default {
       immediate: true,
       handler(newRoom) {
         if (newRoom) {
-          this.customFields = this.room.custom_fields;
+          this.customFields = { ...(this.room.custom_fields || {}) };
+          this.loadAllTags();
+          this.loadRoomTags();
+        }
+      },
+    },
+    'room.custom_fields': {
+      handler(newCustomFields) {
+        if (newCustomFields) {
+          this.customFields = { ...newCustomFields };
         }
       },
     },
@@ -356,15 +365,17 @@ export default {
 
   async created() {
     const { closedRoom, room } = this;
+    const sourceRoom =
+      closedRoom && Object.keys(closedRoom).length > 0 ? closedRoom : room;
 
-    this.customFields = (closedRoom || room)?.custom_fields;
+    this.customFields = { ...(sourceRoom?.custom_fields || {}) };
 
     if (this.isHistory) {
       return;
     }
 
     if (
-      moment((closedRoom || room).contact.created_on).format('YYYY-MM-DD') <
+      moment(sourceRoom.contact.created_on).format('YYYY-MM-DD') <
       moment().format('YYYY-MM-DD')
     ) {
       this.contactHaveHistory = true;
@@ -404,12 +415,22 @@ export default {
 
       if (currentCustomFieldValue) {
         if (
-          currentCustomFieldValue !== this.customFields[currentCustomFieldKey]
+          currentCustomFieldValue !== this.customFields?.[currentCustomFieldKey]
         ) {
           Room.updateCustomFields(this.room.uuid, this.currentCustomField);
         }
 
-        this.customFields[currentCustomFieldKey] = currentCustomFieldValue;
+        this.customFields = {
+          ...(this.customFields || {}),
+          [currentCustomFieldKey]: currentCustomFieldValue,
+        };
+
+        if (this.room) {
+          this.room.custom_fields = {
+            ...(this.room.custom_fields || {}),
+            [currentCustomFieldKey]: currentCustomFieldValue,
+          };
+        }
       }
 
       this.updateCurrentCustomField({});
