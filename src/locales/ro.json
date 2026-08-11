@@ -144,7 +144,7 @@
     "info": "Definește un răspuns automat pentru contactele care așteaptă asistență. Lasă câmpul necompletat dacă nu vrei niciun mesaj.",
     "placeholder": "Nu ai setat încă un mesaj automat. Adaugă unul pentru contactele care așteaptă în coadă.",
     "automatic_opening_message": "Mesaj de deschidere automat",
-    "inactive_warning_message": "Mesaj de avertisment",
+    "inactive_warning_message": "Mesaj de inactivitate",
     "inactive_close_message": "Mesaj de încheiere",
     "bulk_message": "Mesaj în masă trimis de {sender}"
   },
@@ -278,14 +278,26 @@
       "inactivity_timeout": {
         "show": {
           "field": {
-            "default_warning_message": "Mai ești aici? Dacă nu există niciun răspuns, această sesiune va fi închisă în curând."
-          }
+            "default_warning_message": "Mai ești aici? Dacă nu există niciun răspuns, această sesiune va fi închisă în curând.",
+            "timeout_time_label": "Definește câte minute fără un răspuns din partea contactului ar trebui să aștepte sistemul înainte de a trimite un mesaj de inactivitate",
+            "timeout_time_tooltip": "În acest moment, reprezentantul va vedea, de asemenea, chatul marcat cu o alertă de inactivitate.",
+            "warning_message_label": "Mesaj de inactivitate",
+            "warning_message_tooltip": "Mesajul va apărea ca și cum ar fi fost trimis de reprezentantul atribuit."
+          },
+          "switch_label": "Afișează alerta de inactivitate reprezentantului și notifică contactul",
+          "hint": "Alerta este afișată doar pentru chaturile în desfășurare și ia în considerare timpul de la ultimul mesaj al reprezentantului."
         },
         "close_room": {
           "field": {
-            "default_close_room_message": "Această sesiune s-a încheiat din cauza inactivității. Poți începe o nouă conversație oricând!"
-          }
-        }
+            "default_close_room_message": "Această sesiune s-a încheiat din cauza inactivității. Poți începe o nouă conversație oricând!",
+            "close_room_time_label": "Definește câte minute trebuie să aștepte sistemul pentru a încheia conversația după trimiterea mesajului de inactivitate",
+            "close_room_message_label": "Mesaj de închidere",
+            "close_room_message_tooltip": "Mesajul va apărea ca și cum ar fi fost trimis de reprezentantul atribuit."
+          },
+          "switch_label": "Închide automat chaturile inactive",
+          "hint": "Chaturile sunt închise automat dacă contactul nu trimite niciun mesaj în perioada de după trimiterea alertei."
+        },
+        "title": "Inactivitate conversație"
       },
       "template_message": {
         "switch_active": "Declanșare șabloane mesaj",
@@ -470,6 +482,7 @@
       "discussion_joined": "{agent} s-a alăturat discuției",
       "agent_took_chat": "Ups! Chatul cu contactul {contact} a fost deja preluat de un alt agent",
       "automatic_transfer_from_queue": "Cameră atribuită lui {agent}",
+      "automatic_close_room": "Închis automat din cauza lipsei de interacțiune din partea contactului",
       "see_all_internal_notes": "<b style='color: white;'>Vedeți notele interne</b>",
       "transfer_to_agent_by_other": "{requestedBy} a transferat conversația lui {agent1} către {agent2}",
       "chat_ended_by": "Conversație încheiată de {agent}",
@@ -1524,5 +1537,7 @@
       "activate": "Mod vocal",
       "stop": "Oprire"
     }
-  }
+  },
+  "inactive": "Inactiv",
+  "automatically_ended": "Închis automat"
 }
