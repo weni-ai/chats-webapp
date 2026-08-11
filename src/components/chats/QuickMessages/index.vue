@@ -19,7 +19,6 @@
       <QuickMessageBulkForm
         :quickMessage="messageToSendInBulk"
         @close="closeBulkForm"
-        @send="handleBulkSend"
       />
     </AsideSlotTemplateSection>
 
@@ -101,8 +100,6 @@ import QuickMessageBulkForm from './QuickMessageBulkForm.vue';
 
 import { useQuickMessages } from '@/store/modules/chats/quickMessages';
 import { useQuickMessageShared } from '@/store/modules/chats/quickMessagesShared';
-
-import QuickMessageService from '@/services/api/resources/chats/quickMessage';
 
 export default {
   name: 'QuickMessages',
@@ -258,13 +255,6 @@ export default {
     closeBulkForm() {
       this.showBulkForm = false;
       this.messageToSendInBulk = null;
-    },
-    handleBulkSend({ rooms }) {
-      QuickMessageService.sendBulk({
-        text: this.messageToSendInBulk.text,
-        contacts: rooms,
-      });
-      // TODO: handle success and open progress
     },
   },
 };

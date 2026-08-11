@@ -1052,7 +1052,19 @@
         "helper": "Only contacts in service can receive this message",
         "label": "Contacts"
       },
-      "send": "{count, plural, =0 {Send to all (0 contacts)} one {Send to all ({count} contact)} other {Send to all ({count} contacts)}}"
+      "send": "{count, plural, =0 {Send to all (0 contacts)} one {Send to all ({count} contact)} other {Send to all ({count} contacts)}}",
+      "sending": "{count, plural, one {Sending the message to {count} contact} other {Sending the message to {count} contacts}}",
+      "toast": {
+        "error": {
+          "message": "Couldn't send the message. Try again."
+        },
+        "partial_success": {
+          "message": "{success, plural, one {Message sent to {success} contact, {failed} failed.} other {Message sent to {success} contacts, {failed} failed.}}"
+        },
+        "success": {
+          "message": "{count, plural, one {Message sent to {count} contact} other {Message sent to {count} contacts}}"
+        }
+      }
     }
   },
   "discard": "Discard",

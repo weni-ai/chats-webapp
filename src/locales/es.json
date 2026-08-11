@@ -1054,7 +1054,19 @@
         "helper": "Solo los contactos en atención pueden recibir este mensaje",
         "label": "Contactos"
       },
-      "send": "{count, plural, =0 {Enviar a todos (0 contactos)} one {Enviar a todos ({count} contacto)} other {Enviar a todos ({count} contactos)}}"
+      "send": "{count, plural, =0 {Enviar a todos (0 contactos)} one {Enviar a todos ({count} contacto)} other {Enviar a todos ({count} contactos)}}",
+      "sending": "{count, plural, one {Enviando el mensaje a {count} contacto} other {Enviando el mensaje a {count} contactos}}",
+      "toast": {
+        "error": {
+          "message": "No se pudo enviar el mensaje. Inténtalo de nuevo."
+        },
+        "partial_success": {
+          "message": "{success, plural, one {Mensaje enviado a {success} contacto, {failed} falló.} other {Mensaje enviado a {success} contactos, {failed} fallaron.}}"
+        },
+        "success": {
+          "message": "{count, plural, one {Mensaje enviado a {count} contacto} other {Mensaje enviado a {count} contactos}}"
+        }
+      }
     }
   },
   "discard": "Descartar",
