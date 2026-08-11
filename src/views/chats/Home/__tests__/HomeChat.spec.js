@@ -7,7 +7,6 @@ import { createI18n } from 'vue-i18n';
 import { useRooms } from '@/store/modules/chats/rooms';
 import { useDiscussions } from '@/store/modules/chats/discussions';
 import { useProfile } from '@/store/modules/profile';
-import { useFeatureFlag } from '@/store/modules/featureFlag';
 import { useConfig } from '@/store/modules/config';
 import { useMessageManager } from '@/store/modules/chats/messageManager';
 import { useRoomMessages } from '@/store/modules/chats/roomMessages';
@@ -480,11 +479,14 @@ describe('HomeChat.vue', () => {
     });
 
     it('should render get-chat button as primary when bulk actions are disabled', async () => {
-      const featureFlagStore = useFeatureFlag();
-      featureFlagStore.featureFlags = { active_features: [] };
-
       const configStore = useConfig();
-      configStore.project = { config: { can_use_bulk_take: false } };
+      configStore.project = {
+        config: {
+          can_use_bulk_take: false,
+          can_use_bulk_close: false,
+          can_use_bulk_transfer: false,
+        },
+      };
 
       await wrapper.vm.$nextTick();
 
@@ -492,31 +494,12 @@ describe('HomeChat.vue', () => {
     });
 
     it('should render get-chat button as secondary when bulk take is enabled', async () => {
-      const featureFlagStore = useFeatureFlag();
-      featureFlagStore.featureFlags = {
-        active_features: ['weniChatsBulkTake'],
-      };
-
       const configStore = useConfig();
       configStore.project = { config: { can_use_bulk_take: true } };
 
       await wrapper.vm.$nextTick();
 
       expect(wrapper.vm.getChatButtonType).toBe('secondary');
-    });
-
-    it('should render get-chat button as primary when feature flag is active but config is off', async () => {
-      const featureFlagStore = useFeatureFlag();
-      featureFlagStore.featureFlags = {
-        active_features: ['weniChatsBulkTake'],
-      };
-
-      const configStore = useConfig();
-      configStore.project = { config: { can_use_bulk_take: false } };
-
-      await wrapper.vm.$nextTick();
-
-      expect(wrapper.vm.getChatButtonType).toBe('primary');
     });
 
     it('calls Room.updateReadMessages if room is valid and belongs to the user', async () => {
@@ -537,12 +520,7 @@ describe('HomeChat.vue', () => {
       expect(updateReadMessagesSpy).toHaveBeenCalledWith('1', true);
     });
 
-    it('calls getCanSendMessageStatus when feature flag is active and platform is whatsapp', async () => {
-      const featureFlagStore = useFeatureFlag();
-      featureFlagStore.featureFlags = {
-        active_features: ['weniChatsIs24hValidOptimization'],
-      };
-
+    it('calls getCanSendMessageStatus when platform is whatsapp', async () => {
       const roomsStore = useRooms();
       roomsStore.activeRoom = null;
       roomsStore.setIsLoadingCanSendMessageStatus = vi.fn();
@@ -586,11 +564,6 @@ describe('HomeChat.vue', () => {
     });
 
     it('handles error when getCanSendMessageStatus fails', async () => {
-      const featureFlagStore = useFeatureFlag();
-      featureFlagStore.featureFlags = {
-        active_features: ['weniChatsIs24hValidOptimization'],
-      };
-
       const roomsStore = useRooms();
       roomsStore.activeRoom = null;
       roomsStore.setIsLoadingCanSendMessageStatus = vi.fn();

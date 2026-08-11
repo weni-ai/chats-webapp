@@ -5,6 +5,8 @@ import {
   isMessageFromCurrentUser,
   treatMessages,
   createTemporaryMessage,
+  sendMessage,
+  resendMessage,
 } from '@/utils/messages';
 import { useRooms } from '@/store/modules/chats/rooms';
 import { useDiscussions } from '@/store/modules/chats/discussions';
@@ -86,6 +88,16 @@ describe('Messages utils', () => {
       });
 
       expect(result.user).toEqual(itemUser);
+    });
+
+    it('should use the provided uuid override when available', () => {
+      const result = createTemporaryMessage({
+        uuid: 'custom-request-id',
+        message: 'Hello',
+      });
+
+      expect(result.uuid).toBe('custom-request-id');
+      expect(result.text).toBe('Hello');
     });
   });
 
@@ -262,6 +274,90 @@ describe('Messages utils', () => {
       ]);
       expect(mockSetMessagesNext).toHaveBeenCalledWith('next-token');
       expect(mockSetMessagesPrevious).toHaveBeenCalledWith('previous-token');
+    });
+  });
+
+  describe('sendMessage', () => {
+    it('should call addFailedMessage when sendItemMessage rejects', async () => {
+      const addFailedMessage = vi.fn();
+      const addMessage = vi.fn();
+      const addSortedMessage = vi.fn();
+      const updateMessage = vi.fn();
+      const errorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+
+      await sendMessage({
+        itemType: 'room',
+        itemUuid: 'room-1',
+        itemUser: { email: 'user@example.com' },
+        message: 'Hello',
+        uuid: 'req-1',
+        sendItemMessage: vi.fn().mockRejectedValue(new Error('fail')),
+        addMessage,
+        addSortedMessage,
+        updateMessage,
+        addFailedMessage,
+      });
+
+      expect(addMessage).toHaveBeenCalledWith(
+        expect.objectContaining({ uuid: 'req-1', text: 'Hello' }),
+      );
+      expect(updateMessage).not.toHaveBeenCalled();
+      expect(addFailedMessage).toHaveBeenCalledWith(
+        expect.objectContaining({ uuid: 'req-1', text: 'Hello' }),
+      );
+
+      errorSpy.mockRestore();
+    });
+
+    it('should update the temporary message on success', async () => {
+      const addMessage = vi.fn();
+      const addSortedMessage = vi.fn();
+      const updateMessage = vi.fn();
+
+      await sendMessage({
+        itemType: 'room',
+        itemUuid: 'room-1',
+        itemUser: { email: 'user@example.com' },
+        message: 'Hello',
+        uuid: 'req-1',
+        sendItemMessage: vi
+          .fn()
+          .mockResolvedValue({ uuid: 'server-1', text: 'Hello' }),
+        addMessage,
+        addSortedMessage,
+        updateMessage,
+      });
+
+      expect(updateMessage).toHaveBeenCalledWith({
+        message: { uuid: 'server-1', text: 'Hello' },
+        toUpdateMessageUuid: 'req-1',
+      });
+    });
+  });
+
+  describe('resendMessage', () => {
+    it('should call addFailedMessage when resend fails', async () => {
+      const addFailedMessage = vi.fn();
+      const updateMessage = vi.fn();
+      const removeInPromiseMessage = vi.fn();
+      const errorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+      const message = { uuid: 'msg-1', text: 'Hello' };
+
+      await resendMessage({
+        itemUuid: 'room-1',
+        message,
+        sendItemMessage: vi.fn().mockRejectedValue(new Error('fail')),
+        updateMessage,
+        messagesInPromiseUuids: [],
+        removeInPromiseMessage,
+        addFailedMessage,
+      });
+
+      expect(updateMessage).not.toHaveBeenCalled();
+      expect(removeInPromiseMessage).toHaveBeenCalledWith('msg-1');
+      expect(addFailedMessage).toHaveBeenCalledWith(message);
+
+      errorSpy.mockRestore();
     });
   });
 });

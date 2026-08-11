@@ -79,8 +79,18 @@
                 :mediaType="isGeolocation(message.media?.[0]) ? 'geo' : ''"
                 :enableReply="enableReply"
                 :replyMessage="message.replied_message"
-                :automatic="message.is_automatic_message"
-                :automaticType="message.automatic_message_type"
+                :automatic="
+                  !!message.bulk_message || message.is_automatic_message
+                "
+                :automaticType="
+                  !!message.bulk_message
+                    ? 'bulk_message'
+                    : message.automatic_message_type || ''
+                "
+                :bulkMessageSender="
+                  message.bulk_message?.sent_by?.name ||
+                  message.bulk_message?.sent_by?.email
+                "
                 :locale="$i18n.locale"
                 data-testid="chat-message"
                 :highlighted="message.uuid === toScrollMessage?.uuid"
@@ -90,6 +100,7 @@
                 @reply="
                   handlerMessageReply({ ...message, content_type: 'text' })
                 "
+                @click="handleFailedTextClick(message)"
               >
                 {{
                   isGeolocation(message.media?.[0])
@@ -348,6 +359,10 @@ export default {
       type: Function,
       required: true,
     },
+    resendMessage: {
+      type: Function,
+      default: () => {},
+    },
 
     tags: {
       type: Array,
@@ -589,6 +604,12 @@ export default {
       }
     },
 
+    handleFailedTextClick(message) {
+      if (this.messageStatus({ message }) === 'failed') {
+        this.resendMessage({ message, roomUuid: message.room });
+      }
+    },
+
     // roomEndedChatFeedback(room) {
     //   return `${this.$t('chats.closed')} ${moment(room.ended_at).format('LT')}h ${moment(
     //     room.ended_at,
@@ -749,6 +770,11 @@ export default {
 
     handleSeenRoomMessages() {
       if (!this.room) return;
+
+      // Tab in background: keep unread (favicon/title + OS toast). Marking as
+      // read here was clearing the badge immediately after each WS message.
+      if (typeof document !== 'undefined' && document.hidden) return;
+
       const newMessages =
         this.newMessagesByRoom[this.room.uuid]?.messages || [];
 

@@ -30,6 +30,7 @@ vi.mock('@/services/api/resources/settings/agentBuilder', () => ({
 const defaultConfig = {
   can_use_bulk_transfer: false,
   filter_offline_agents: false,
+  filter_moderators: false,
   can_use_bulk_close: false,
   can_close_chats_in_queue: false,
   can_use_bulk_take: false,
@@ -40,7 +41,6 @@ const defaultConfig = {
 
 const createWrapper = ({
   storeOverrides = {},
-  activeFeatures = ['weniChatsBulkClose'],
   projectConfig = {},
 } = {}) => {
   return mount(SettingsProjectOptions, {
@@ -54,18 +54,13 @@ const createWrapper = ({
                 config: { ...defaultConfig, ...projectConfig },
                 ...storeOverrides.project,
               },
+              ...storeOverrides.config,
             },
             profile: {
               me: {
                 project_permission_role: 1,
               },
               ...storeOverrides.profile,
-            },
-            featureFlag: {
-              featureFlags: {
-                active_features: activeFeatures,
-              },
-              ...storeOverrides.featureFlag,
             },
           },
         }),
@@ -149,8 +144,8 @@ describe('SettingsProjectOptions.vue', () => {
       expect(aiItem).toBeUndefined();
     });
 
-    it('should include bulk_close when feature flag is active', () => {
-      wrapper = createWrapper({ activeFeatures: ['weniChatsBulkClose'] });
+    it('should include bulk_close when not secondary project', () => {
+      wrapper = createWrapper();
 
       const item = wrapper.vm.optionsItems.find(
         (i) => i.key === 'can_use_bulk_close',
@@ -158,17 +153,8 @@ describe('SettingsProjectOptions.vue', () => {
       expect(item).toBeTruthy();
     });
 
-    it('should exclude bulk_close when feature flag is inactive', () => {
-      wrapper = createWrapper({ activeFeatures: [] });
-
-      const item = wrapper.vm.optionsItems.find(
-        (i) => i.key === 'can_use_bulk_close',
-      );
-      expect(item).toBeUndefined();
-    });
-
-    it('should include bulk_take when feature flag is active', () => {
-      wrapper = createWrapper({ activeFeatures: ['weniChatsBulkTake'] });
+    it('should include bulk_take when not secondary project', () => {
+      wrapper = createWrapper();
 
       const item = wrapper.vm.optionsItems.find(
         (i) => i.key === 'can_use_bulk_take',
@@ -176,22 +162,16 @@ describe('SettingsProjectOptions.vue', () => {
       expect(item).toBeTruthy();
     });
 
-    it('should exclude bulk_take when feature flag is inactive', () => {
-      wrapper = createWrapper({ activeFeatures: [] });
-
-      const item = wrapper.vm.optionsItems.find(
-        (i) => i.key === 'can_use_bulk_take',
-      );
-      expect(item).toBeUndefined();
-    });
-
-    it('should always include simple flag items without feature flags', () => {
-      wrapper = createWrapper({ activeFeatures: [] });
+    it('should always include simple flag items', () => {
+      wrapper = createWrapper();
 
       const alwaysVisibleKeys = [
         'can_use_bulk_transfer',
         'filter_offline_agents',
+        'filter_moderators',
+        'can_use_bulk_close',
         'can_close_chats_in_queue',
+        'can_use_bulk_take',
         'can_use_queue_prioritization',
         'can_see_waiting_rooms_count',
         'can_use_name_sector_in_rooms',
@@ -202,6 +182,39 @@ describe('SettingsProjectOptions.vue', () => {
         expect(item).toBeTruthy();
         expect(item.type).toBe('flag');
       });
+    });
+
+    it('should place filter_moderators after filter_offline_agents and before bulk close', () => {
+      wrapper = createWrapper();
+
+      const keys = wrapper.vm.optionsItems.map((item) => item.key);
+      const offlineAgentsIndex = keys.indexOf('filter_offline_agents');
+      const moderatorsIndex = keys.indexOf('filter_moderators');
+      const bulkCloseIndex = keys.indexOf('can_use_bulk_close');
+
+      expect(offlineAgentsIndex).toBeGreaterThan(-1);
+      expect(moderatorsIndex).toBeGreaterThan(-1);
+      expect(moderatorsIndex).toBe(offlineAgentsIndex + 1);
+      expect(bulkCloseIndex).toBeGreaterThan(moderatorsIndex);
+    });
+
+    it('should include hint text on filter_moderators item', () => {
+      wrapper = createWrapper();
+
+      const item = wrapper.vm.optionsItems.find(
+        (option) => option.key === 'filter_moderators',
+      );
+
+      expect(item.name).toBe(
+        wrapper.vm.$t(
+          'config_chats.project_configs.hide_moderators_from_transfer.switch_label',
+        ),
+      );
+      expect(item.hint).toBe(
+        wrapper.vm.$t(
+          'config_chats.project_configs.hide_moderators_from_transfer.hint',
+        ),
+      );
     });
 
     it('should have prompt config on flag-prompt items', async () => {
@@ -222,8 +235,10 @@ describe('SettingsProjectOptions.vue', () => {
       'restrict_offline_agents',
       'can_use_bulk_transfer',
       'filter_offline_agents',
+      'filter_moderators',
       'can_use_bulk_close',
       'can_close_chats_in_queue',
+      'can_use_bulk_take',
       'can_use_queue_prioritization',
       'can_see_waiting_rooms_count',
       'can_use_name_sector_in_rooms',
@@ -284,7 +299,6 @@ describe('SettingsProjectOptions.vue', () => {
       expect(aiItem).toBeTruthy();
 
       otherKeys.forEach((key) => {
-        if (key === 'can_use_bulk_take') return;
         const item = wrapper.vm.optionsItems.find((i) => i.key === key);
         expect(item).toBeTruthy();
       });
@@ -589,7 +603,6 @@ describe('SettingsProjectOptions.vue', () => {
 
     it('should return correct bulk take translation based on state', () => {
       wrapper = createWrapper({
-        activeFeatures: ['weniChatsBulkTake'],
         projectConfig: { can_use_bulk_take: true },
       });
 
@@ -599,33 +612,4 @@ describe('SettingsProjectOptions.vue', () => {
     });
   });
 
-  describe('Feature flags', () => {
-    it('should compute isBulkTakeFeatureEnabled correctly', () => {
-      wrapper = createWrapper({
-        activeFeatures: ['weniChatsBulkTake'],
-      });
-
-      expect(wrapper.vm.isBulkTakeFeatureEnabled).toBe(true);
-    });
-
-    it('should compute isBulkTakeFeatureEnabled as false when flag is missing', () => {
-      wrapper = createWrapper({ activeFeatures: [] });
-
-      expect(wrapper.vm.isBulkTakeFeatureEnabled).toBe(false);
-    });
-
-    it('should compute isBulkCloseFeatureEnabled correctly', () => {
-      wrapper = createWrapper({
-        activeFeatures: ['weniChatsBulkClose'],
-      });
-
-      expect(wrapper.vm.isBulkCloseFeatureEnabled).toBe(true);
-    });
-
-    it('should compute isBulkCloseFeatureEnabled as false when flag is missing', () => {
-      wrapper = createWrapper({ activeFeatures: [] });
-
-      expect(wrapper.vm.isBulkCloseFeatureEnabled).toBe(false);
-    });
-  });
 });

@@ -1,6 +1,5 @@
 import http from '@/services/api/http';
 import { getProject } from '@/utils/config';
-import { useFeatureFlag } from '@/store/modules/featureFlag';
 import { getURLParams } from '@/utils/requests';
 
 export default {
@@ -15,18 +14,9 @@ export default {
 
     let response;
 
-    const featureFlagStore = useFeatureFlag();
-
-    const useV2 =
-      featureFlagStore.featureFlags?.active_features?.includes(
-        'weniChatsV2Message',
-      );
-
-    const config = useV2
-      ? {
-          baseURL: http.defaults.baseURL.replace('/v1', '/v2'),
-        }
-      : {};
+    const config = {
+      baseURL: http.defaults.baseURL.replace('/v1', '/v2'),
+    };
 
     if (nextReq && paramsNextReq) {
       response = await http.get(`${endpoint}${paramsNextReq}`, config);
@@ -110,31 +100,42 @@ export default {
 
   async sendRoomMedia(
     roomId,
-    { user_email, media, updateLoadingFiles, repliedMessageId },
+    { user_email, media, updateLoadingFiles, repliedMessageId, createMessage },
   ) {
-    const msg = await this.sendRoomMessage(roomId, {
-      text: '',
-      user_email,
-      seen: true,
-    });
-    updateLoadingFiles?.(msg.uuid, 0);
+    const msg = createMessage
+      ? await createMessage()
+      : await this.sendRoomMessage(roomId, {
+          text: '',
+          user_email,
+          seen: true,
+        });
+
+    const messageResponse = {
+      ...msg,
+      media: Array.isArray(msg.media) ? [...msg.media] : [],
+    };
+
+    updateLoadingFiles?.(messageResponse.uuid, 0);
     const response = await http.postForm(
       '/media/',
       {
         content_type: media.type,
-        message: msg.uuid,
+        message: messageResponse.uuid,
         media_file: media,
         replied_message_id: repliedMessageId,
       },
       {
         onUploadProgress: (event) => {
           const progress = event.loaded / event.total;
-          updateLoadingFiles?.(msg.uuid, progress);
+          updateLoadingFiles?.(messageResponse.uuid, progress);
         },
       },
     );
 
-    return { message_response: msg, media_response: response.data };
+    return {
+      message_response: messageResponse,
+      media_response: response.data,
+    };
   },
 
   async sendDiscussionMedia(discussionUuid, { media, updateLoadingFiles }) {

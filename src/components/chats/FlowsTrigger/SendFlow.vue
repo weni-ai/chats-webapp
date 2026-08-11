@@ -53,10 +53,6 @@
 </template>
 
 <script>
-import { mapState } from 'pinia';
-
-import { useFeatureFlag } from '@/store/modules/featureFlag';
-
 import callUnnnicAlert from '@/utils/callUnnnicAlert';
 
 import ModalProgressBarFalse from '@/components/ModalProgressBarFalse.vue';
@@ -66,7 +62,6 @@ import FlowsTriggerAPI from '@/services/api/resources/chats/flowsTrigger';
 import SelectFlow from './SelectFlow.vue';
 import SendFlowButton from './SendFlowButton.vue';
 import SelectProjects from './SelectProjects.vue';
-import { FLOW_TRIGGER_VARIABLE_MAPPING_FLAG } from './types';
 import { hasTemplateVariables } from '@/utils/flowTemplates';
 
 export default {
@@ -114,16 +109,8 @@ export default {
   },
 
   computed: {
-    ...mapState(useFeatureFlag, ['featureFlags']),
-
     noHasContacts() {
       return !this.selectedContact && this.contacts.length === 0;
-    },
-
-    isVariableMappingEnabled() {
-      return !!this.featureFlags?.active_features?.includes(
-        FLOW_TRIGGER_VARIABLE_MAPPING_FLAG,
-      );
     },
   },
 
@@ -177,7 +164,7 @@ export default {
       this.setCachedTemplate(null);
 
       if (!flowUuid) return;
-      if (this.isProjectPrincipal || !this.isVariableMappingEnabled) return;
+      if (this.isProjectPrincipal) return;
 
       this.isCheckingTemplate = true;
       try {

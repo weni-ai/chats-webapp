@@ -84,7 +84,6 @@ import { mapState } from 'pinia';
 
 import { useRooms } from '@/store/modules/chats/rooms';
 import { useConfig } from '@/store/modules/config';
-import { useFeatureFlag } from '@/store/modules/featureFlag';
 
 import ModalTakeOverRooms from '@/components/chats/chat/ModalTakeOverRooms.vue';
 import ModalTransferRooms from '@/components/chats/chat/ModalTransferRooms.vue';
@@ -121,21 +120,6 @@ export default {
       'activeTab',
     ]),
     ...mapState(useConfig, ['project']),
-    ...mapState(useFeatureFlag, ['featureFlags']),
-
-    isBulkCloseFeatureEnabled() {
-      return this.featureFlags.active_features?.includes('weniChatsBulkClose');
-    },
-
-    isBulkTakeFeatureEnabled() {
-      return this.featureFlags.active_features?.includes('weniChatsBulkTake');
-    },
-
-    isBulkTransferFeatureEnabled() {
-      return this.featureFlags.active_features?.includes(
-        'weniChatsBulkTransfer',
-      );
-    },
 
     currentSelectedRooms() {
       return this.activeTab === 'ongoing'
@@ -145,23 +129,16 @@ export default {
 
     isBulkTakeContactsEnabled() {
       if (this.isViewMode) return false;
-      if (!this.isBulkTakeFeatureEnabled) return false;
       if (!this.project.config?.can_use_bulk_take) return false;
       return this.activeTab === 'waiting';
     },
 
     isTransferContactsEnabled() {
       if (!this.project.config?.can_use_bulk_transfer) return false;
-      if (this.activeTab === 'ongoing') return true;
-      if (this.activeTab === 'waiting' && this.isBulkTransferFeatureEnabled) {
-        return true;
-      }
-      return false;
+      return this.activeTab === 'ongoing' || this.activeTab === 'waiting';
     },
 
     isBulkCloseContactsEnabled() {
-      if (!this.isBulkCloseFeatureEnabled) return false;
-
       const canBulkClose = this.project.config?.can_use_bulk_close;
       const blockCloseInQueue = this.project.config?.can_close_chats_in_queue;
 

@@ -67,11 +67,6 @@
         >
           <template #actions>
             <UnnnicToolTip
-              v-if="
-                featureFlags.active_features?.includes(
-                  'weniChatsSearchMessages',
-                )
-              "
               enabled
               :text="$t('chats.search_messages.title')"
               side="left"
@@ -141,7 +136,6 @@ import SearchMessages from '@/components/chats/SearchMessages/index.vue';
 import WarningArchivedMessages from '@/components/WarningArchivedMessages.vue';
 import ModalExportConversation from '@/components/chats/ClosedChats/ModalExportConversation.vue';
 
-import { useFeatureFlag } from '@/store/modules/featureFlag';
 import { useProfile } from '@/store/modules/profile';
 import { isUserAdmin } from '@/utils/permissions';
 
@@ -185,7 +179,6 @@ export default {
     ...mapState(useConfig, ['project']),
     ...mapState(useRoomMessages, ['roomMessagesNext']),
     ...mapWritableState(useRooms, ['activeRoomSummary']),
-    ...mapState(useFeatureFlag, ['featureFlags']),
     ...mapState(useProfile, ['me']),
     contactName() {
       return this.selectedRoom?.contact?.name?.trim() || '';
@@ -296,8 +289,13 @@ export default {
   gap: $unnnic-space-4;
   padding: $unnnic-space-4 $unnnic-space-4 0 $unnnic-space-4;
 
-  height: 100vh;
-  width: 100vw;
+  // Fill the parent (`#app`) instead of the browser viewport. `100vh/100vw`
+  // ignore the host chrome (sidebar + topbar) when running as a federated
+  // module and produce phantom scrollbars. In iframe/standalone the parent
+  // already spans the full viewport (`html, body, #app { height: 100% }`),
+  // so `100%` is equivalent there.
+  height: 100%;
+  width: 100%;
 
   overflow: hidden;
 

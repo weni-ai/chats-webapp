@@ -16,7 +16,6 @@ import { storeToRefs } from 'pinia';
 import { useMessageManager } from '@/store/modules/chats/messageManager';
 import { useDiscussions } from '@/store/modules/chats/discussions';
 import { useAiTextImprovement } from '@/store/modules/chats/aiTextImprovement';
-import { useFeatureFlag } from '@/store/modules/featureFlag.js';
 
 import ActionItem from './ActionItem.vue';
 
@@ -32,15 +31,6 @@ const emit = defineEmits<{
   openUploadFiles: [void];
 }>();
 
-const featureFlagStore = useFeatureFlag();
-const { featureFlags } = storeToRefs(featureFlagStore);
-
-const isEnabledInternalNotesMedias = computed(() =>
-  featureFlags.value.active_features?.includes(
-    'weniChatsEnableInternalNoteMedias',
-  ),
-);
-
 const messageManager = useMessageManager();
 const { clearInputs } = messageManager;
 const {
@@ -51,6 +41,7 @@ const {
   audioMessage,
   mediaUploadFiles,
   uploadFilesLimit,
+  isDictationListening,
 } = storeToRefs(messageManager);
 
 const { activeDiscussion } = storeToRefs(useDiscussions());
@@ -65,7 +56,7 @@ const isValidInputMessage = computed(() =>
 );
 
 const isDisabled = computed(() => {
-  if (!isEnabledInternalNotesMedias.value && isInternalNote.value) {
+  if (isDictationListening.value) {
     return true;
   }
 

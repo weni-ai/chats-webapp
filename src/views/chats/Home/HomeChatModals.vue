@@ -15,7 +15,7 @@
     />
 
     <HomeChatTakeoverRoom
-      v-if="enableChatTakeoverFeedbackModal && showModalAssumedChat"
+      v-if="showModalAssumedChat"
       v-model="showModalAssumedChat"
       :title="modalAssumedTitle"
       :description="modalAssumedText"
@@ -40,7 +40,6 @@ import ModalGetChat from '@/components/chats/chat/ModalGetChat.vue';
 import HomeChatTakeoverRoom from './HomeChatTakeoverRoom.vue';
 import ModalCloseChat from './ModalCloseChat.vue';
 
-import { useFeatureFlag } from '@/store/modules/featureFlag';
 import { useRooms } from '@/store/modules/chats/rooms';
 import { useDashboard } from '@/store/modules/dashboard';
 
@@ -66,18 +65,12 @@ export default {
   },
 
   computed: {
-    ...mapState(useFeatureFlag, ['featureFlags']),
     ...mapState(useRooms, { room: (store) => store.activeRoom }),
     ...mapWritableState(useDashboard, [
       'showModalAssumedChat',
       'modalAssumedText',
       'modalAssumedTitle',
     ]),
-    enableChatTakeoverFeedbackModal() {
-      return this.featureFlags.active_features?.includes(
-        'weniChatsChatTakeoverFeedbackModal',
-      );
-    },
   },
 
   methods: {

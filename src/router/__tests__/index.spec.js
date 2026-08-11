@@ -44,6 +44,10 @@ vi.mock('../middlewares/afterEach', () => ({
   default: [],
 }));
 
+vi.mock('@/utils/moduleFederation', () => ({
+  isFederatedModule: false,
+}));
+
 import isMobile from 'is-mobile';
 import { useConfig } from '@/store/modules/config';
 
@@ -82,7 +86,8 @@ describe('Router beforeEach guard', () => {
 
     vi.resetModules();
 
-    await import('../index');
+    const { createAppRouter } = await import('../index');
+    createAppRouter();
     configStore = useConfig();
 
     mockKeycloak.token = 'mock-token';
@@ -187,7 +192,8 @@ describe('Router afterEach guard', () => {
     afterEachGuard = null;
 
     vi.resetModules();
-    await import('../index');
+    const { createAppRouter } = await import('../index');
+    createAppRouter();
     configStore = useConfig();
   });
 
