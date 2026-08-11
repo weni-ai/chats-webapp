@@ -1042,7 +1042,18 @@
     "no_suggestions": "No results found for the entered shortcut",
     "disclaimer": "Type / (slash) shortcut in the message field to view quick messages",
     "action_open": "Open quick messages (/)",
-    "action_close": "Close quick messages"
+    "action_close": "Close quick messages",
+    "bulk": {
+      "confirmation": {
+        "checkbox_label": "I've checked all the fields and I'm ready to send it"
+      },
+      "contacts": {
+        "all": "All contacts",
+        "helper": "Only contacts in service can receive this message",
+        "label": "Contacts"
+      },
+      "send": "{count, plural, =0 {Send to all (0 contacts)} one {Send to all ({count} contact)} other {Send to all ({count} contacts)}}"
+    }
   },
   "discard": "Discard",
   "on_boarding": {
