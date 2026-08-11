@@ -300,7 +300,7 @@ describe('ChatMessagesFeedbackMessage', () => {
       const result = wrapper.vm.createFeedbackLabel(message);
 
       expect(result).toBe(
-        'Transferido da fila Financeiro para a fila Dúvidas',
+        'Foi transferido da fila Financeiro para a fila Dúvidas',
       );
     });
 
@@ -345,7 +345,7 @@ describe('ChatMessagesFeedbackMessage', () => {
       const result = wrapper.vm.createFeedbackLabel(message);
 
       expect(result).toBe(
-        'Transferido da fila Financeiro para a fila Dúvidas',
+        'Foi transferido da fila Financeiro para a fila Dúvidas',
       );
     });
   });
