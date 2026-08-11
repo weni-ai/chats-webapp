@@ -290,7 +290,7 @@
         "close_room": {
           "field": {
             "default_close_room_message": "Această sesiune s-a încheiat din cauza inactivității. Poți începe o nouă conversație oricând!",
-            "close_room_time_label": "Definește câte minute trebuie să aștepte sistemul pentru a chatul conversația după trimiterea mesajului de inactivitate",
+            "close_room_time_label": "Definește câte minute trebuie să aștepte sistemul pentru a încheia conversația după trimiterea mesajului de inactivitate",
             "close_room_message_label": "Mesaj de închidere",
             "close_room_message_tooltip": "Mesajul va apărea ca și cum ar fi fost trimis de reprezentantul atribuit."
           },
