@@ -301,6 +301,11 @@ export const useRoomMessages = defineStore('roomMessages', {
       const { activeRoom } = roomsStore;
       if (!activeRoom || !roomUuid) return;
 
+      const featureFlagStore = useFeatureFlag();
+      const useSocket = useSocketMessageFeatureFlag(
+        featureFlagStore.featureFlags,
+      );
+
       await sendMedias({
         itemType: 'room',
         itemUuid: roomUuid,
@@ -313,6 +318,18 @@ export const useRoomMessages = defineStore('roomMessages', {
             media,
             updateLoadingFiles,
             repliedMessageId: repliedMessage?.uuid,
+            ...(useSocket
+              ? {
+                  createMessage: () => {
+                    const requestId = crypto.randomUUID();
+                    return sendRoomMessageBySocket({
+                      room: roomUuid,
+                      text: '',
+                      requestId,
+                    });
+                  },
+                }
+              : {}),
           }),
         addMessage: (message) => this.handlingAddMessage({ message }),
         addSortedMessage: (message) => this.addRoomMessageSorted({ message }),
@@ -519,6 +536,11 @@ export const useRoomMessages = defineStore('roomMessages', {
       const { activeRoom } = roomsStore;
       if (!activeRoom || !roomUuid) return;
 
+      const featureFlagStore = useFeatureFlag();
+      const useSocket = useSocketMessageFeatureFlag(
+        featureFlagStore.featureFlags,
+      );
+
       await resendMedia({
         itemUuid: roomUuid,
         message,
@@ -527,6 +549,18 @@ export const useRoomMessages = defineStore('roomMessages', {
           Message.sendRoomMedia(roomUuid, {
             user_email: activeRoom.user.email,
             media: media.file,
+            ...(useSocket
+              ? {
+                  createMessage: () => {
+                    const requestId = crypto.randomUUID();
+                    return sendRoomMessageBySocket({
+                      room: roomUuid,
+                      text: '',
+                      requestId,
+                    });
+                  },
+                }
+              : {}),
           }),
         addFailedMessage: (message) => this.addFailedMessage({ message }),
         removeFailedMessage: (message) =>
