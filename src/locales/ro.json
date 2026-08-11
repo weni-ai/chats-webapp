@@ -115,7 +115,7 @@
     "description": "Trage fișierul aici pentru a-l trimite"
   },
   "waiting_for": {
-    "minutes": "1 minut de așteptare | {n} minute de așteptare"
+    "minutes": "{count, plural, one {1 minut de așteptare} few {{count} minute de așteptare} other {{count} de minute de așteptare}}"
   },
   "chat_message": {
     "reply_message": {
@@ -148,7 +148,9 @@
     "inactive_close_message": "Mesaj de încheiere",
     "bulk_message": "Mesaj în masă trimis de {sender}"
   },
+  "inactive_room_tooltip": "{minutes, plural, one {Conversația a atins limita de inactivitate de {minutes} minut.} few {Conversația a atins limita de inactivitate de {minutes} minute.} other {Conversația a atins limita de inactivitate de {minutes} de minute.}}",
   "reply": "Răspuns",
+  "chats_count": "{count, plural, one {{count} chat} few {{count} chaturi} other {{count} de chaturi}}",
   "attention": "Avertisment",
   "updates_saved": "Actualizări salvate",
   "updated_info": "Informații actualizate",
@@ -171,7 +173,7 @@
   "transfer_all_selected_chats": "Transferă toate chaturile selectate",
   "take_over_all_selected_chats_tooltip": "Preia toate chaturile selectate",
   "end_all_selected_chats_tooltip": "Închide toate chaturile selectate",
-  "number_of_chats_selected": "{count} chat selectat | {count} chaturi selectate",
+  "number_of_chats_selected": "{count, plural, one {{count} chat selectat} few {{count} chaturi selectate} other {{count} de chaturi selectate}}",
   "image": "Imagine",
   "image_preview": {
     "count": "Imaginea {current} din {total}",
@@ -579,7 +581,7 @@
       "close": "Închide vizualizarea",
       "assume_chat": "Preia doar acest chat",
       "assume_chat_question": "Preiei chatul cu {contact}?",
-      "assume_chat_question_description": "Sigur dorești să preiei chatul cu {contact}?<br /><br />Dacă confirmi, vei elimina chatul de la reprezentantul actual și vei fi responsabil pentru acesta.",
+      "assume_chat_question_description": "Ești sigur că vrei să preiei chatul cu {contact}?<br /><br />Dacă confirmi, vei fi responsabil de acesta și va fi eliminat de la reprezentantul curent.",
       "assume_chat_confirmation": "Dacă confirmi, acest chat va fi transferat de la {viewedAgent} către tine"
     }
   },
@@ -626,7 +628,7 @@
     "by_tag": "Filtrează după etichetă",
     "by_tags": "Filtrează după etichete",
     "by_agent": "Filtrează după reprezentant",
-    "by_date": "Filtrează după @.lower:dată",
+    "by_date": "Filtrează după dată",
     "clear_all": "Elimină filtrele",
     "dates": {
       "today": "Astăzi",
@@ -642,7 +644,7 @@
   },
   "pagination": "{from} – {to} din {total}",
   "contact": "Contact",
-  "unread_messages": "{count, plural, one {{count} mesaj necitit} other {{count} mesaje necitite}}",
+  "unread_messages": "{count, plural, one {{count} mesaj necitit} few {{count} mesaje necitite} other {{count} de mesaje necitite}}",
   "unnamed_contact": "Contact fără nume",
   "unnamed_agent": "Reprezentant fără nume",
   "no_agent_assigned": "Niciun reprezentant atribuit",
@@ -717,11 +719,14 @@
   "chat_closed_by": {
     "agent": "Chat închis de reprezentant"
   },
-  "transfer_contact": "Transferă contact | Transferă contacte",
+  "transfer_contact": "{count, plural, one {Transferă contactul} few {Transferă contactele} other {Transferă contactele}}",
   "bulk_transfer": {
     "transfer_selected_contacts": "Transferă contactele selectate",
-    "agent_transfer_success": "Contactul a fost transferat cu succes reprezentantului {agent} | Contactele au fost transferate cu succes reprezentantului {agent}",
-    "queue_transfer_success": "Contactul a fost transferat cu succes în coada {queue} | Contactele au fost transferate cu succes în coada {queue}",
+    "selected_chats_count": "{count, plural, one {{count} chat este selectat pentru transfer} few {{count} chaturi sunt selectate pentru transfer} other {{count} de chaturi sunt selectate pentru transfer}}",
+    "success_message": "{count, plural, one {{count} chat transferat cu succes} few {{count} chaturi transferate cu succes} other {{count} de chaturi transferate cu succes}}",
+    "partial_success_message": "{success, plural, one {{success} chat transferat, {failed} eșuat. Încearcă din nou.} few {{success} chaturi transferate, {failed} eșuate. Încearcă din nou.} other {{success} de chaturi transferate, {failed} eșuate. Încearcă din nou.}}",
+    "agent_transfer_success": "{count, plural, one {Contactul a fost transferat reprezentantului {agent}} few {Contactele au fost transferate reprezentantului {agent}} other {Contactele au fost transferate reprezentantului {agent}}}",
+    "queue_transfer_success": "{count, plural, one {Contactul a fost transferat cu succes în coada {queue}} few {Contactele au fost transferate cu succes în coada {queue}} other {Contactele au fost transferate cu succes în coada {queue}}}",
     "error": "Eroare la transferul contactelor. Încearcă din nou.",
     "disclaimer": {
       "transfer_to_other_sector": "Când transferi chatul într-o coadă dintr-un alt departament, etichetele vor fi eliminate",
@@ -732,19 +737,19 @@
   "bulk_close": {
     "close_selected_contacts": "Închide contactele selectate",
     "confirm_close_selected": "Sigur vrei să închizi contactele selectate?",
-    "success_message": "{count} chat s-a încheiat cu succes | {count} chaturi s-au încheiat cu succes",
-    "partial_success_message": "{success} chat încheiat, {failed} eșuat. Încearcă din nou. | {success} chaturi încheiate, {failed} eșuate. Încearcă din nou.",
+    "success_message": "{count, plural, one {{count} chat finalizat cu succes} few {{count} chaturi finalizate cu succes} other {{count} de chaturi finalizate cu succes}}",
+    "partial_success_message": "{success, plural, one {{success} chat încheiat, {failed} eșuat. Încearcă din nou.} few {{success} chaturi încheiate, {failed} eșuate. Încearcă din nou.} other {{success} de chaturi încheiate, {failed} eșuate. Încearcă din nou.}}",
     "error_message": "Eroare la închiderea chaturilor. Încearcă din nou.",
     "end_all_selected_chats": "Închide toate chaturile selectate",
     "sector_tag": "Departamentul {current} din {total}",
-    "chats_count_sector": "{count} chat · departament {sector} | {count} chaturi · departament {sector}",
+    "chats_count_sector": "{count, plural, one {{count} chat · departament {sector}} few {{count} chaturi · departament {sector}} other {{count} de chaturi · departament {sector}}}",
     "required_tags_title": "Etichetele sunt necesare pentru a închide chaturile în departamentul {sector}",
-    "required_tags_description": "Dacă selectezi unul sau mai multe etichete de mai jos, acestea vor fi aplicate la {count} chat şi vor înlocui orice etichete existente.",
+    "required_tags_description": "{count, plural, one {Dacă selectezi orice etichetă de mai jos, aceasta va fi aplicată acestui chat și va înlocui orice etichete existente.} few {Dacă selectezi orice etichetă de mai jos, aceasta va fi aplicată la {count} chaturi și va înlocui orice etichete existente.} other {Dacă selectezi orice etichetă de mai jos, aceasta va fi aplicată la {count} de chaturi și va înlocui orice etichete existente.}}",
     "next_sector": "Următorul departament",
     "end_all_chats": "Închide toate ({count} chaturi)",
     "back": "Înapoi",
     "optional_tags_title": "Etichetele nu sunt necesare pentru a închide chaturile în departamentul {sector}",
-    "optional_tags_description": "Dacă selectezi una sau mai multe etichete de mai jos, acestea vor fi aplicate la {count} chat și vor înlocui orice etichete existente. | Dacă selectezi una sau mai multe etichete de mai jos, acestea vor fi aplicate la {count} chaturi și vor înlocui orice etichete existente.",
+    "optional_tags_description": "{count, plural, one {Dacă selectezi orice etichetă de mai jos, aceasta va fi aplicată acestui chat și va înlocui orice etichete existente.} few {Dacă selectezi orice etichetă de mai jos, aceasta va fi aplicată la {count} chaturi și va înlocui orice etichete existente.} other {Dacă selectezi orice etichetă de mai jos, aceasta va fi aplicată la {count} de chaturi și va înlocui orice etichete existente.}}",
     "no_tags_in_sector": "Nu există etichete de selectat în acest departament"
   },
   "close_chat": {
@@ -752,11 +757,11 @@
   },
   "bulk_take": {
     "title": "Preia toate chaturile selectate",
-    "selected_chats_count": "{count} chat este selectat pentru preluare. | {count} chaturi sunt selectate pentru preluare.",
+    "selected_chats_count": "{count, plural, one {{count} chat este selectat pentru preluare} few {{count} chaturi sunt selectate pentru preluare} other {{count} de chaturi sunt selectate pentru preluare}}",
     "confirm_take_over_selected": "Sigur vrei să preiei toate chaturile selectate?",
     "take_over_all": "Preia toate",
-    "success_message": "{count} chat preluat cu succes | {count} chaturi preluate cu succes",
-    "partial_success_message": "{success} chat preluat, {failed} nereușite. Încearcă din nou. | {success} chaturi preluate, {failed} nereușite. Încearcă din nou.",
+    "success_message": "{count, plural, one {{count} chat preluat cu succes} few {{count} chaturi preluate cu succes} other {{count} de chaturi preluate cu succes}}",
+    "partial_success_message": "{success, plural, one {{success} chat preluat, {failed} eșuat. Încearcă din nou.} few {{success} chaturi preluate, {failed} eșuate. Încearcă din nou.} other {{success} de chaturi preluate, {failed} eșuate. Încearcă din nou.}}",
     "error_message": "Eroare la preluarea chaturilor. Încearcă din nou."
   },
   "contact_info": {
@@ -792,7 +797,7 @@
     }
   },
   "discussions": {
-    "title": "Discuție | Discuții",
+    "title": "Discuție",
     "start_discussion": {
       "title": "Începe discuția",
       "form": {
@@ -894,9 +899,9 @@
   "send_media": "Trimite media",
   "send_photo_or_video": "Trimite fotografie sau video",
   "photo_or_video": "Fotografie sau video",
-  "send_docs": "Trimite document | Trimite document | Trimite documente",
+  "send_docs": "",
   "doc": "Document",
-  "send_images": "Trimite imagine | Trimite imagini",
+  "send_images": "",
   "quick_message": "Mesaje rapide",
   "flows": "Fluxuri",
   "flows_trigger": {
@@ -908,7 +913,7 @@
       "trigger_time": "Ora declanșării"
     },
     "groups": "Grupuri ({length})",
-    "group_contacts": "{n} contact | {n} contacte",
+    "group_contacts": "{n, plural, one {{n} contact} few {{n} contacte} other {{n} de contacte}}",
     "letter_group": "{letter} ({length})",
     "letter_group_unnamed": "Fără nume ({length})",
     "unnamed_contact": "Contact fără nume",
@@ -945,7 +950,7 @@
       "confirmation_helper": "Asigură-te că fiecare câmp este mapat corect. Mesajul tău va fi personalizat pentru fiecare contact selectat pe baza acestor mapări.",
       "confirmation_checkbox": "Am verificat și sunt gata să o trimit",
       "next_template": "Șablonul următor",
-      "send_templates": "{count, plural, one {Trimite ({count} șablon)} other {Trimite ({count} șabloane)}}",
+      "send_templates": "{count, plural, one {Trimite ({count} șablon)} few {Trimite ({count} șabloane)} other {Trimite ({count} de șabloane)}}",
       "local_variables": {
         "contact_name": "Nume contact",
         "contact_urn": "Telefon de contact",

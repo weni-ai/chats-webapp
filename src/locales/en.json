@@ -169,7 +169,7 @@
     "bulk_message": "Mass message sent by {sender}"
   },
   "inactive": "Inactive",
-  "inactive_room_tooltip": "{minutes, plural, one {The conversation has reached the {minutes}-minute inactivity limit.} other {The conversation has reached the {minutes}-minutes inactivity limit.}}",
+  "inactive_room_tooltip": "{minutes, plural, one {The conversation has reached the {minutes}-minute inactivity limit.} other {The conversation has reached the {minutes}-minute inactivity limit.}}",
   "reply": "Reply",
   "step_of": "Step {step} of {total}",
   "type_to_filter": "Type to filter",
@@ -565,7 +565,7 @@
     "tags_help": "Tags help you find chats and generate better reports",
     "chat_with_contact_ended": "Chat with {contact} was closed",
     "see_history": "General history",
-    "tag_request": "Please tag the chat",
+    "tag_request": "Tag the chat",
     "closed_in": "Chat closed in",
     "closed": "Closed chat",
     "transfer": {
@@ -623,7 +623,7 @@
       "close": "Close view",
       "assume_chat": "Take over only this chat",
       "assume_chat_question": "Take over chat with {contact}?",
-      "assume_chat_question_description": "Are you sure you want to take over chat with {contact}?<br /><br />If you confirm, you will remove the chat from the current representative and you will be responsible for it.",
+      "assume_chat_question_description": "Are you sure you want to take over the chat with {contact}?<br /><br />If you confirm, you'll be responsible for it and it will be removed from the current representative.",
       "assume_chat_confirmation": "If you confirm, this chat will be transferred from {viewedAgent} to you"
     }
   },
@@ -768,12 +768,12 @@
   "bulk_transfer": {
     "transfer_selected_contacts": "Transfer selected contacts",
     "transfer_all": "Transfer all",
-    "selected_chats_count": "{count, plural, one {{count} chat is selected for transfer.} other {{count} chats are selected for transfer.}}",
-    "success_message": "{count, plural, one {{count} chat transferred successfully!} other {{count} chats transferred successfully!}}",
-    "partial_success_message": "{success, plural, one {{success} chat transferred, {failed} failed. Please try again.} other {{success} chats transferred, {failed} failed. Please try again.}}",
+    "selected_chats_count": "{count, plural, one {{count} chat is selected for transfer} other {{count} chats are selected for transfer}}",
+    "success_message": "{count, plural, one {{count} chat transferred successfully} other {{count} chats transferred successfully}}",
+    "partial_success_message": "{success, plural, one {{success} chat transferred, {failed} failed. Try again.} other {{success} chats transferred, {failed} failed. Try again.}}",
     "error_message": "Unable to transfer chats, please try again",
-    "agent_transfer_success": "{count, plural, one {Contact successfully transferred to representative {agent}} other {Contacts successfully transferred to representative {agent}}}",
-    "queue_transfer_success": "{count, plural, one {Contact successfully transferred to queue {queue}} other {Contacts successfully transferred to queue {queue}}}",
+    "agent_transfer_success": "{count, plural, one {Contact transferred to representative {agent}} other {Contacts transferred to representative {agent}}}",
+    "queue_transfer_success": "{count, plural, one {Contact transferred to queue {queue} successfully} other {Contacts transferred to queue {queue} successfully}}",
     "error": "It was not possible to transfer the contacts, try again",
     "disclaimer": {
       "transfer_to_other_sector": "When transferring the chat to a queue in another department, tags will be removed.",
@@ -784,19 +784,19 @@
   "bulk_close": {
     "close_selected_contacts": "Close selected contacts",
     "confirm_close_selected": "Are you sure you want to close the selected contacts?",
-    "success_message": "{count, plural, one {{count} chat ended successfully!} other {{count} chats ended successfully!}}",
-    "partial_success_message": "{success, plural, one {{success} chat ended, {failed} failed. Please try again.} other {{success} chats ended, {failed} failed. Please try again.}}",
+    "success_message": "{count, plural, one {{count} chat completed successfully} other {{count} chats completed successfully}}",
+    "partial_success_message": "{success, plural, one {{success} chat ended, {failed} failed. Try again.} other {{success} chats ended, {failed} failed. Try again.}}",
     "error_message": "Unable to close chats, please try again",
     "end_all_selected_chats": "End all selected chats",
     "sector_tag": "Department {current} of {total}",
     "chats_count_sector": "{count, plural, one {{count} chat · {sector} department} other {{count} chats · {sector} department}}",
     "required_tags_title": "Tags are required to end chats in the {sector} department",
-    "required_tags_description": "{count, plural, one {If you select any tag below, it will be applied to the {count} chat and will replace any existing tags.} other {If you select any tag below, it will be applied to the {count} chats and will replace any existing tags.}}",
+    "required_tags_description": "{count, plural, one {If you select any tag below, it will apply to this chat and replace any existing tags.} other {If you select any tag below, it will apply to {count} chats and replace any existing tags.}}",
     "next_sector": "Next department",
     "end_all_chats": "End all ({count} chats)",
     "back": "Back",
     "optional_tags_title": "Tags aren't required to end chats in the {sector} department",
-    "optional_tags_description": "{count, plural, one {If you select any tag below, it will be applied to the {count} chat and will replace any existing tags.} other {If you select any tag below, it will be applied to the {count} chats and will replace any existing tags.}}",
+    "optional_tags_description": "{count, plural, one {If you select any tag below, it will apply to this chat and replace any existing tags.} other {If you select any tag below, it will apply to {count} chats and replace any existing tags.}}",
     "no_tags_in_sector": "No tags to select in this department"
   },
   "close_chat": {
@@ -804,11 +804,11 @@
   },
   "bulk_take": {
     "title": "Take over all selected chats",
-    "selected_chats_count": "{count, plural, one {{count} chat is selected for takeover.} other {{count} chats are selected for takeover.}}",
+    "selected_chats_count": "{count, plural, one {{count} chat is selected for takeover} other {{count} chats are selected for takeover}}",
     "confirm_take_over_selected": "Are you sure you want to take over all selected chats?",
     "take_over_all": "Take over all",
-    "success_message": "{count, plural, one {{count} chat taken over successfully!} other {{count} chats taken over successfully!}}",
-    "partial_success_message": "{success, plural, one {{success} chat taken over, {failed} failed. Please try again.} other {{success} chats taken over, {failed} failed. Please try again.}}",
+    "success_message": "{count, plural, one {{count} chat taken over successfully} other {{count} chats taken over successfully}}",
+    "partial_success_message": "{success, plural, one {{success} chat taken over, {failed} failed. Try again.} other {{success} chats taken over, {failed} failed. Try again.}}",
     "error_message": "Unable to take over chats, please try again"
   },
   "contact_info": {

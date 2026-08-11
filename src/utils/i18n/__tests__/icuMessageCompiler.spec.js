@@ -88,13 +88,13 @@ describe('icuMessageCompiler plural messages', () => {
         success: 1,
         failed: 2,
       }),
-    ).toBe('1 chat taken over, 2 failed. Please try again.');
+    ).toBe('1 chat taken over, 2 failed. Try again.');
     expect(
       compileMessage(en.bulk_take.partial_success_message, {
         success: 3,
         failed: 1,
       }),
-    ).toBe('3 chats taken over, 1 failed. Please try again.');
+    ).toBe('3 chats taken over, 1 failed. Try again.');
   });
 
   it('formats plural with named variable n', () => {
@@ -129,7 +129,7 @@ describe('icuMessageCompiler plural messages', () => {
       'The conversation has reached the 1-minute inactivity limit.',
     );
     expect(compileMessage(en.inactive_room_tooltip, { minutes: 30 })).toBe(
-      'The conversation has reached the 30-minutes inactivity limit.',
+      'The conversation has reached the 30-minute inactivity limit.',
     );
   });
 
