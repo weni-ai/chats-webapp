@@ -10,7 +10,6 @@ import ViewHome from '../index.vue';
 
 import { useRoomMessages } from '@/store/modules/chats/roomMessages';
 import { useDiscussionMessages } from '@/store/modules/chats/discussionMessages';
-import { useFeatureFlag } from '@/store/modules/featureFlag';
 
 const roomMock = {
   uuid: '1',
@@ -172,10 +171,6 @@ describe('ViewHome.vue', () => {
   it('should render ContactInfo if room exists and discussion does not', async () => {
     const roomsStore = useRooms();
     roomsStore.activeRoom = roomMock;
-    const featureFlagsStore = useFeatureFlag();
-    featureFlagsStore.featureFlags = {
-      active_features: ['weniChatsContactInfoV2'],
-    };
     const homeChat = wrapper.findComponent('[data-testid="home-chat"]');
     await homeChat.vm.$emit('open-room-contact-info');
     await wrapper.vm.$nextTick();

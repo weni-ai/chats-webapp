@@ -770,6 +770,11 @@ export default {
 
     handleSeenRoomMessages() {
       if (!this.room) return;
+
+      // Tab in background: keep unread (favicon/title + OS toast). Marking as
+      // read here was clearing the badge immediately after each WS message.
+      if (typeof document !== 'undefined' && document.hidden) return;
+
       const newMessages =
         this.newMessagesByRoom[this.room.uuid]?.messages || [];
 

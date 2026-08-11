@@ -10,7 +10,6 @@
     />
 
     <UnnnicTextArea
-      v-if="enableQueuePurposeFeature"
       v-model="queueForm.queue_purpose"
       :label="$t('queues.queue_purpose.field.label')"
       :placeholder="$t('queues.queue_purpose.field.placeholder')"
@@ -18,10 +17,7 @@
       :maxLength="1000"
     />
 
-    <section
-      v-if="enableQueueLimitFeature"
-      class="sector-queues-form__limit-chats"
-    >
+    <section class="sector-queues-form__limit-chats">
       <section class="sector-queues-form__limit-chats__inputs">
         <UnnnicSwitch
           v-model="queueForm.queue_limit.is_active"
@@ -64,7 +60,6 @@
 import { mapState } from 'pinia';
 import AgentsForm from '../Agent.vue';
 
-import { useFeatureFlag } from '@/store/modules/featureFlag';
 import { useProfile } from '@/store/modules/profile';
 import { useConfig } from '@/store/modules/config';
 
@@ -94,19 +89,10 @@ export default {
     };
   },
   computed: {
-    ...mapState(useFeatureFlag, ['featureFlags']),
     ...mapState(useProfile, ['me']),
     ...mapState(useConfig, ['enableGroupsMode']),
     isEditing() {
       return !!this.queueForm.uuid;
-    },
-    enableQueuePurposeFeature() {
-      return this.featureFlags.active_features?.includes(
-        'weniChatsQueuePurpose',
-      );
-    },
-    enableQueueLimitFeature() {
-      return this.featureFlags.active_features?.includes('weniChatsQueueLimit');
     },
     queueForm: {
       get() {
@@ -137,10 +123,9 @@ export default {
           !!this.queueForm.queue_limit.limit &&
           !isNaN(this.queueForm.queue_limit.limit);
 
-        const validQueueLimit =
-          this.enableQueueLimitFeature && this.queueForm.queue_limit.is_active
-            ? validQueueLimitValue
-            : true;
+        const validQueueLimit = this.queueForm.queue_limit.is_active
+          ? validQueueLimitValue
+          : true;
 
         const allValid = validQueue && validQueueLimit;
 
@@ -191,7 +176,7 @@ export default {
 <style lang="scss" scoped>
 .sector-queues-form {
   display: grid;
-  gap: $unnnic-spacing-sm;
+  gap: $unnnic-space-4;
 
   &__divider {
     border: 1px solid $unnnic-color-border-base;

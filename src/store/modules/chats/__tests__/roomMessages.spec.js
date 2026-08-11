@@ -265,6 +265,51 @@ describe('useRoomMessages Store', () => {
         repliedMessageId: undefined,
       }),
     );
+    expect(
+      Message.sendRoomMedia.mock.calls[0][1].createMessage,
+    ).toBeUndefined();
+  });
+
+  it('should create media message via socket when the feature flag is enabled', async () => {
+    globalThis.URL.createObjectURL = vi.fn(() => 'blob:preview');
+    useFeatureFlag.mockReturnValue({
+      featureFlags: { active_features: ['weniChatsSocketMessageSend'] },
+    });
+    crypto.randomUUID.mockReturnValue('req-media-1');
+    sendRoomMessageBySocket.mockResolvedValue({
+      uuid: 'server-media-1',
+      text: '',
+      room: 'room-123',
+    });
+    Message.sendRoomMedia.mockImplementation(async (_roomId, options) => {
+      const messageResponse = await options.createMessage();
+      return {
+        media_response: { content_type: 'image/png' },
+        message_response: { ...messageResponse, media: [] },
+      };
+    });
+    const file = new File(['x'], 'image.png', { type: 'image/png' });
+
+    await roomMessagesStore.sendRoomMedias({
+      files: [file],
+      updateLoadingFiles: vi.fn(),
+      repliedMessage: null,
+      roomUuid: 'room-123',
+    });
+
+    expect(Message.sendRoomMedia).toHaveBeenCalledWith(
+      'room-123',
+      expect.objectContaining({
+        user_email: 'test@test.com',
+        media: file,
+        createMessage: expect.any(Function),
+      }),
+    );
+    expect(sendRoomMessageBySocket).toHaveBeenCalledWith({
+      room: 'room-123',
+      text: '',
+      requestId: 'req-media-1',
+    });
   });
 
   it('should not send room medias when roomUuid is missing', async () => {
@@ -277,6 +322,50 @@ describe('useRoomMessages Store', () => {
     });
 
     expect(Message.sendRoomMedia).not.toHaveBeenCalled();
+  });
+
+  it('should resend room media via socket when the feature flag is enabled', async () => {
+    useFeatureFlag.mockReturnValue({
+      featureFlags: { active_features: ['weniChatsSocketMessageSend'] },
+    });
+    crypto.randomUUID.mockReturnValue('req-resend-media-1');
+    sendRoomMessageBySocket.mockResolvedValue({
+      uuid: 'server-media-2',
+      text: '',
+      room: 'room-123',
+    });
+    Message.sendRoomMedia.mockImplementation(async (_roomId, options) => {
+      await options.createMessage();
+      return { content_type: 'image/png' };
+    });
+
+    const file = new File(['x'], 'image.png', { type: 'image/png' });
+    const message = {
+      uuid: 'old-media',
+      text: '',
+      room: 'room-123',
+      user: { email: 'test@test.com' },
+      media: [{ preview: 'blob:preview', file, content_type: 'image/png' }],
+    };
+
+    await roomMessagesStore.resendRoomMedia({
+      message,
+      media: message.media[0],
+      roomUuid: 'room-123',
+    });
+
+    expect(Message.sendRoomMedia).toHaveBeenCalledWith(
+      'room-123',
+      expect.objectContaining({
+        media: file,
+        createMessage: expect.any(Function),
+      }),
+    );
+    expect(sendRoomMessageBySocket).toHaveBeenCalledWith({
+      room: 'room-123',
+      text: '',
+      requestId: 'req-resend-media-1',
+    });
   });
 
   it('should send a room internal note with roomUuid', async () => {

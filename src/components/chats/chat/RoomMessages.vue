@@ -41,7 +41,6 @@ import { mapActions, mapState, mapWritableState } from 'pinia';
 import { useRooms } from '@/store/modules/chats/rooms';
 import { useRoomMessages } from '@/store/modules/chats/roomMessages';
 import { useConfig } from '@/store/modules/config';
-import { useFeatureFlag } from '@/store/modules/featureFlag';
 import { useMessageManager } from '@/store/modules/chats/messageManager';
 
 import ChatMessages from '@/components/chats/chat/ChatMessages/index.vue';
@@ -93,7 +92,6 @@ export default {
       'isCanSendMessageActiveRoom',
       'isLoadingCanSendMessageStatus',
     ]),
-    ...mapState(useFeatureFlag, ['featureFlags']),
     ...mapState(useRooms, {
       room: (store) => store.activeRoom,
       openChatSummary: (store) => store.openActiveRoomSummary,
@@ -155,15 +153,9 @@ export default {
           }
 
           if (this.enableRoomSummary) {
-            const isActiveFeatureIs24hValidOptimization =
-              this.featureFlags.active_features?.includes(
-                'weniChatsIs24hValidOptimization',
-              );
-
-            const isCanSendMessage = isActiveFeatureIs24hValidOptimization
-              ? this.isCanSendMessageActiveRoom &&
-                !this.isLoadingCanSendMessageStatus
-              : this.room?.is_24h_valid;
+            const isCanSendMessage =
+              this.isCanSendMessageActiveRoom &&
+              !this.isLoadingCanSendMessageStatus;
 
             const wasDismissedByUser = isSummaryDismissed(roomUuid);
 

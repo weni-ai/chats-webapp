@@ -1,9 +1,8 @@
-import { expect, vi } from 'vitest';
-import { mount, config } from '@vue/test-utils';
+import { expect, vi, describe, it, beforeEach } from 'vitest';
+import { mount, config, flushPromises } from '@vue/test-utils';
 import { createPinia, setActivePinia } from 'pinia';
 import { useQuickMessages } from '@/store/modules/chats/quickMessages';
 import { useQuickMessageShared } from '@/store/modules/chats/quickMessagesShared';
-import { useFeatureFlag } from '@/store/modules/featureFlag';
 import isMobile from 'is-mobile';
 
 import QuickMessages from '../index.vue';
@@ -15,7 +14,7 @@ import { createI18n } from 'vue-i18n';
 
 vi.mock('is-mobile');
 
-isMobile.mockResolvedValue(false);
+isMobile.mockReturnValue(false);
 
 const i18n = createI18n({
   legacy: false,
@@ -32,45 +31,56 @@ config.global.mocks = {
   $t: (key) => key,
 };
 
-describe('QuickMessages.vue', () => {
-  let quickMessagesStore;
-  let wrapper;
+const defaultStubs = [
+  'AsideSlotTemplate',
+  'AsideSlotTemplateSection',
+  'QuickMessagesList',
+  'QuickMessageForm',
+  'HeaderQuickMessages',
+  'UnnnicButton',
+  'UnnnicModal',
+  'UnnnicDisclaimer',
+];
 
-  beforeEach(() => {
-    setActivePinia(createPinia());
-    quickMessagesStore = useQuickMessages();
-    wrapper = mount(QuickMessages, {
+describe('QuickMessages.vue', () => {
+  let personalStore;
+  let sharedStore;
+  let loadPersonalSpy;
+  let loadSharedSpy;
+
+  const mountComponent = (options = {}) => {
+    return mount(QuickMessages, {
       global: {
         components: {
           AsideSlotTemplate,
           AsideSlotTemplateSection,
         },
-        stubs: {
-          QuickMessagesList: true,
-          QuickMessageForm: true,
-        },
-      },
-    });
-  });
-
-  it('should emit select-quick-message event when not on mobile', async () => {
-    const wrapper = mount(QuickMessages, {
-      global: {
+        stubs: defaultStubs,
         mocks: {
           $t: (key) => key,
         },
-        stubs: [
-          'AsideSlotTemplate',
-          'AsideSlotTemplateSection',
-          'QuickMessagesList',
-          'QuickMessageForm',
-          'UnnnicButton',
-          'UnnnicModal',
-        ],
+        ...options.global,
       },
+      ...options,
     });
+  };
 
-    // Mocking isMobile for desktop view
+  beforeEach(() => {
+    setActivePinia(createPinia());
+    personalStore = useQuickMessages();
+    sharedStore = useQuickMessageShared();
+    loadPersonalSpy = vi
+      .spyOn(personalStore, 'loadAllV2IfNeeded')
+      .mockResolvedValue();
+    loadSharedSpy = vi
+      .spyOn(sharedStore, 'getByProjectNextPage')
+      .mockResolvedValue();
+  });
+
+  it('should emit select-quick-message event when not on mobile', async () => {
+    const wrapper = mountComponent();
+    await flushPromises();
+
     await wrapper.setData({ isMobile: false });
 
     const quickMessage = {
@@ -87,35 +97,9 @@ describe('QuickMessages.vue', () => {
     ]);
   });
 
-  it('lazy loads personal and project shared messages on open when v2 flag is on', () => {
-    setActivePinia(createPinia());
-
-    const featureFlagStore = useFeatureFlag();
-    featureFlagStore.featureFlags = {
-      active_features: ['weniChatsQuickMessagesV2'],
-    };
-
-    const personalStore = useQuickMessages();
-    const sharedStore = useQuickMessageShared();
-    const loadPersonalSpy = vi
-      .spyOn(personalStore, 'loadAllV2IfNeeded')
-      .mockResolvedValue();
-    const loadSharedSpy = vi
-      .spyOn(sharedStore, 'getByProjectNextPage')
-      .mockResolvedValue();
-
-    mount(QuickMessages, {
-      global: {
-        stubs: [
-          'AsideSlotTemplate',
-          'AsideSlotTemplateSection',
-          'QuickMessagesList',
-          'QuickMessageForm',
-          'UnnnicButton',
-          'UnnnicModal',
-        ],
-      },
-    });
+  it('lazy loads personal and project shared messages on open', async () => {
+    mountComponent();
+    await flushPromises();
 
     expect(loadPersonalSpy).toHaveBeenCalled();
     expect(loadSharedSpy).toHaveBeenCalled();
