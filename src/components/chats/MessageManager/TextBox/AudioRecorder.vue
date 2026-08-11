@@ -38,8 +38,18 @@ const record = () => {
   unnnicAudioRecorderRef.value?.record();
 };
 
+const stop = () => {
+  unnnicAudioRecorderRef.value?.stop();
+};
+
+const discard = () => {
+  unnnicAudioRecorderRef.value?.discard();
+};
+
 defineExpose({
   record,
+  stop,
+  discard,
 });
 </script>
 

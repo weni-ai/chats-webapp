@@ -162,7 +162,7 @@ const unnnicDialogFooterStub = {
 
 config.global.plugins = [i18n, UnnnicSystemPlugin];
 config.global.mocks = {
-  $t: (msg) => msg,
+  $t: (msg, params) => i18n.global.t(msg, params),
 };
 config.global.stubs = {
   ...(config.global.stubs || {}),

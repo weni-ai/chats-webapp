@@ -52,7 +52,7 @@ describe('RoomsTableFilters.vue', () => {
   let wrapper;
 
   const createWrapper = (props = {}, mountOptions = {}, routeQuery = null) => {
-    const defaultRouteQuery = { contactUrn: '', startDate: '', endDate: '' };
+    const defaultRouteQuery = { contact: '', startDate: '', endDate: '' };
     const currentRouteQuery = routeQuery
       ? { ...defaultRouteQuery, ...routeQuery }
       : defaultRouteQuery;
@@ -60,7 +60,6 @@ describe('RoomsTableFilters.vue', () => {
     return mount(RoomsTableFilters, {
       global: {
         mocks: {
-          $t: (key) => key,
           $i18n: { locale: 'en' },
           $route: { query: currentRouteQuery },
         },
@@ -491,31 +490,69 @@ describe('RoomsTableFilters.vue', () => {
   });
 
   describe('Query params and filters value tests', () => {
-    it('sets filter values from query params correctly for desktop', async () => {
+    it('sets filterContact from contact/email/document as token string', async () => {
       isMobile.mockReturnValue(false);
       wrapper = createWrapper(
         {},
         {},
         {
-          contactUrn: 'test-contact',
+          contact: 'abc-123',
+          email: 'test@example.com',
+          document: '12345678900',
           startDate: '2023-01-01',
           endDate: '2023-01-07',
         },
       );
       await flushPromises();
 
-      expect(wrapper.vm.filterContact).toBe('test-contact');
+      expect(wrapper.vm.filterContact).toBe(
+        'contact=abc-123 email=test@example.com document=12345678900',
+      );
       expect(wrapper.vm.filterDate.start).toBe('2023-01-01');
       expect(wrapper.vm.filterDate.end).toBe('2023-01-07');
     });
 
-    it('sets filter values from query params correctly for mobile', async () => {
+    it('sets filterContact from contact query param as token string', async () => {
+      isMobile.mockReturnValue(false);
+      wrapper = createWrapper(
+        {},
+        {},
+        {
+          contact: 'test-contact',
+          startDate: '2023-01-01',
+          endDate: '2023-01-07',
+        },
+      );
+      await flushPromises();
+
+      expect(wrapper.vm.filterContact).toBe('contact=test-contact');
+      expect(wrapper.vm.filterDate.start).toBe('2023-01-01');
+      expect(wrapper.vm.filterDate.end).toBe('2023-01-07');
+    });
+
+    it('sets filterContact from legacy comma-separated contactUrn', async () => {
+      isMobile.mockReturnValue(false);
+      wrapper = createWrapper(
+        {},
+        {},
+        {
+          contactUrn: '558486065742,kallil@gmail.com',
+          startDate: '2023-01-01',
+          endDate: '2023-01-07',
+        },
+      );
+      await flushPromises();
+
+      expect(wrapper.vm.filterContact).toBe('558486065742,kallil@gmail.com');
+    });
+
+    it('sets filterContact from contact query param on mobile', async () => {
       isMobile.mockReturnValue(true);
       wrapper = createWrapper(
         {},
         {},
         {
-          contactUrn: 'test-contact',
+          contact: 'test-contact',
           startDate: '2023-01-01',
         },
       );
@@ -528,7 +565,7 @@ describe('RoomsTableFilters.vue', () => {
 
       await flushPromises();
 
-      expect(wrapper.vm.filterContact).toBe('test-contact');
+      expect(wrapper.vm.filterContact).toBe('contact=test-contact');
       const expectedDateObject = wrapper.vm.datesToFilter.find(
         (d) => d.value === 'last_12_months',
       );
@@ -559,14 +596,14 @@ describe('RoomsTableFilters.vue', () => {
         { modelValue: valueProps },
         {},
         {
-          contactUrn: 'query-contact',
+          contact: 'query-contact',
           startDate: '2023-06-01',
           endDate: '2023-06-30',
         },
       );
       await flushPromises();
 
-      expect(wrapper.vm.filterContact).toBe('query-contact');
+      expect(wrapper.vm.filterContact).toBe('contact=query-contact');
       expect(wrapper.vm.filterDate.start).toBe('2023-06-01');
       expect(wrapper.vm.filterDate.end).toBe('2023-06-30');
     });

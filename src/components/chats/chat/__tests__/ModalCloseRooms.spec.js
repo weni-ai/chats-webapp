@@ -130,7 +130,6 @@ const createWrapper = (tagsMock = tagsResponse, roomOverrides = {}) => {
       plugins: [pinia],
       mocks: {
         $t: (key) => key,
-        $tc: (key) => key,
       },
       stubs: {
         ...createDialogStubs(),
@@ -277,7 +276,6 @@ describe('ModalCloseRooms.vue', () => {
           plugins: [pinia],
           mocks: {
             $t: (key) => key,
-            $tc: (key) => key,
           },
           stubs: {
             ...createDialogStubs(),

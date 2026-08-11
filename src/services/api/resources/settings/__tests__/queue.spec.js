@@ -72,6 +72,7 @@ describe('Queue', () => {
       params: {
         project: expect.anything(),
         ordering: '-created_on',
+        offset: 0,
         limit: 1000,
       },
     });
@@ -173,7 +174,25 @@ describe('Queue', () => {
     const result = await Queue.tags(queueUuid, { limit, next });
 
     expect(http.get).toHaveBeenCalledWith('/tag/', {
-      params: { queue: queueUuid, limit },
+      params: { queue: queueUuid, limit, search: '' },
+    });
+
+    expect(result).toEqual(expectedData);
+  });
+
+  it('should list tags in a queue with search filter', async () => {
+    const queueUuid = '123';
+    const limit = 20;
+    const next = '';
+    const search = 'vip';
+    const expectedData = ['tag1'];
+
+    http.get.mockResolvedValue({ data: expectedData });
+
+    const result = await Queue.tags(queueUuid, { limit, next, search });
+
+    expect(http.get).toHaveBeenCalledWith('/tag/', {
+      params: { queue: queueUuid, limit, search },
     });
 
     expect(result).toEqual(expectedData);

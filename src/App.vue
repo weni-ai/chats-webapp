@@ -11,6 +11,7 @@
 </template>
 
 <script>
+import { unref } from 'vue';
 import { mapActions, mapState } from 'pinia';
 
 import SocketAlertBanner from './layouts/ChatsLayout/components/SocketAlertBanner.vue';
@@ -23,6 +24,7 @@ import http from '@/services/api/http';
 import Profile from '@/services/api/resources/profile';
 import Project from './services/api/resources/settings/project';
 import WS from '@/services/api/websocket/setup';
+import { setActiveConnection } from '@/services/api/websocket/connectionRegistry';
 import KeycloakService from '@/services/keycloak';
 import * as notifications from '@/utils/notifications';
 
@@ -35,8 +37,12 @@ import { useDashboard } from './store/modules/dashboard';
 import { useFeatureFlag } from './store/modules/featureFlag';
 import { useTheme } from '@weni/unnnic-system';
 
-import { applyRouteAwareTheme, notifyParentOfTheme } from '@/utils/theme';
-import { useQuickMessagesFeatureFlag } from '@/composables/useQuickMessagesFeatureFlag';
+import {
+  applyRouteAwareTheme,
+  notifyParentOfTheme,
+  startLightThemeEnforcement,
+  stopLightThemeEnforcement,
+} from '@/utils/theme';
 
 import initHotjar from '@/plugins/Hotjar';
 import {
@@ -45,6 +51,7 @@ import {
 } from '@/utils/config';
 
 import { moduleStorage } from '@/utils/storage';
+import { isFederatedModule } from '@/utils/moduleFederation';
 
 import moment from 'moment';
 
@@ -54,6 +61,11 @@ export default {
     SocketAlertBanner,
     ModalOfflineAgent,
     ModalDarkModeIntro,
+  },
+  inject: {
+    chatsThemeMountContainer: { default: null },
+    chatsForceLightTheme: { default: false },
+    chatsThemeEnforcementActive: { default: null },
   },
   setup() {
     const queryString = window.location.href.split('?')[1];
@@ -117,10 +129,6 @@ export default {
       return [appToken, appProject];
     },
 
-    isQuickMessagesV2Enabled() {
-      return useQuickMessagesFeatureFlag(this.featureFlags);
-    },
-
     quickMessagesBootstrapReady() {
       return !!this.appToken && !!this.appProject && this.featureFlagsLoaded;
     },
@@ -130,7 +138,25 @@ export default {
     },
 
     routeAwareTheme() {
-      return [this.resolvedTheme, this.$route.path];
+      return [
+        this.resolvedTheme,
+        this.$route.path,
+        this.shouldEnforceLightTheme,
+      ];
+    },
+
+    shouldEnforceLightTheme() {
+      if (!this.chatsForceLightTheme) {
+        return false;
+      }
+
+      const activeRef = this.chatsThemeEnforcementActive;
+
+      if (!activeRef) {
+        return true;
+      }
+
+      return !!unref(activeRef);
     },
   },
 
@@ -176,8 +202,6 @@ export default {
     },
     activeRoom: {
       handler(newRoom) {
-        if (!this.isQuickMessagesV2Enabled) return;
-
         const sectorUuid = newRoom?.queue?.sector;
         if (!sectorUuid) return;
 
@@ -215,8 +239,31 @@ export default {
     // even when the stored preference is dark.
     routeAwareTheme: {
       immediate: true,
-      handler([theme, path]) {
-        applyRouteAwareTheme(theme, path);
+      // Run after `useTheme()` (flush `pre`) so applyRouteAwareTheme wins the
+      // final toggle on the mount container.
+      flush: 'post',
+      handler([theme, path, enforceLight]) {
+        applyRouteAwareTheme(
+          theme,
+          path,
+          this.chatsThemeMountContainer,
+          enforceLight,
+        );
+      },
+    },
+
+    // `useTheme()` from unnnic keeps toggling `.dark` on the shared
+    // `document.documentElement` while both live-desk and settings mounts are
+    // alive. A one-shot clear loses the race, so install a MutationObserver
+    // guard while the based (settings) mount is visible.
+    shouldEnforceLightTheme: {
+      immediate: true,
+      handler(active, wasActive) {
+        if (active && !wasActive) {
+          startLightThemeEnforcement();
+        } else if (!active && wasActive) {
+          stopLightThemeEnforcement();
+        }
       },
     },
   },
@@ -238,6 +285,12 @@ export default {
     notifications.requestPermission();
     this.announceThemeToParent();
     this.maybeShowDarkModeIntroModal();
+  },
+
+  beforeUnmount() {
+    if (this.shouldEnforceLightTheme) {
+      stopLightThemeEnforcement();
+    }
   },
 
   methods: {
@@ -311,15 +364,8 @@ export default {
     },
 
     bootstrapQuickMessages() {
-      if (!this.isQuickMessagesV2Enabled) {
-        this.loadQuickMessages();
-        this.loadQuickMessagesShared();
-        return;
-      }
-
-      // Under the v2 flag the live desk loads quick messages lazily (on room
-      // entry / panel open). The legacy eager load is only kept for the
-      // settings routes, which read the v1 store state directly.
+      // Live desk loads quick messages lazily (on room entry / panel open).
+      // Settings still needs the eager getAll/getAllBySector path.
       if (this.$route.path.startsWith('/settings')) {
         this.loadQuickMessages();
         this.loadQuickMessagesShared();
@@ -353,6 +399,10 @@ export default {
     },
 
     handleLocale() {
+      // Federation: locale is mirrored from the host shared store in main.js.
+      // The parent postMessage handshake only works standalone/iframe.
+      if (isFederatedModule) return;
+
       window.parent.postMessage({ event: 'getLanguage' }, '*');
 
       window.addEventListener('message', (ev) => {
@@ -362,10 +412,12 @@ export default {
         if (!isLocaleChangeMessage) return;
 
         const locale = (message?.language || 'en').toLowerCase(); // 'en', 'pt-br', 'es'
+        const normalized = locale === 'en-us' ? 'en' : locale;
 
-        moment.locale(locale);
+        moment.locale(normalized);
 
-        this.$i18n.locale = locale;
+        // Composition API mode: locale is a Ref — assign `.value`.
+        this.$i18n.locale.value = normalized;
       });
     },
 
@@ -464,6 +516,7 @@ export default {
       if (isWSConnectionValid) {
         this.ws = new WS({ app: this });
         this.ws.connect();
+        setActiveConnection(this.ws);
       }
     },
 
@@ -480,7 +533,7 @@ export default {
 
 <style lang="scss" scoped>
 #app {
-  height: 100vh;
+  height: 100%;
 }
 </style>
 

@@ -5,6 +5,7 @@ import { setActivePinia, createPinia } from 'pinia';
 import { useRooms } from '@/store/modules/chats/rooms';
 import { useProfile } from '@/store/modules/profile';
 import { useDashboard } from '@/store/modules/dashboard';
+import { useFeatureFlag } from '@/store/modules/featureFlag';
 
 import { roomsMock } from './mocks/roomsMock';
 import {
@@ -701,6 +702,107 @@ describe('State Rooms', () => {
     });
   });
 
+  describe('updateRoom (view-mode transfer to queue)', () => {
+    let roomsStore;
+    const managerEmail = 'manager@weni.ai';
+    const viewedAgentEmail = 'agent@weni.ai';
+
+    beforeEach(() => {
+      mocks.useProfile.mockReturnValue(mockProfileAdminState);
+      roomsStore = useRooms();
+    });
+
+    it('keeps the room as waiting and returns type-change metadata when the queue is visible', () => {
+      const initialRoom = {
+        uuid: 'vm-transfer',
+        user: { email: viewedAgentEmail, first_name: 'Agent', last_name: '' },
+        is_waiting: false,
+        queue: { uuid: 'queue-a', name: 'Queue A' },
+      };
+      roomsStore.$patch({
+        rooms: [initialRoom],
+        activeRoom: { ...initialRoom },
+        filterQueues: [],
+      });
+
+      const result = roomsStore.updateRoom({
+        room: {
+          uuid: 'vm-transfer',
+          user: null,
+          is_waiting: false,
+          queue: { uuid: 'queue-b', name: 'Queue B' },
+          transfer_history: {
+            action: 'transfer',
+            to: { type: 'queue' },
+            from: { type: 'user', email: viewedAgentEmail },
+            requested_by: { email: managerEmail },
+          },
+        },
+        userEmail: managerEmail,
+        routerReplace: vi.fn(),
+        viewedAgentEmail,
+      });
+
+      expect(existRoomByUuid(roomsStore, 'vm-transfer')).toBe(true);
+      expect(
+        roomsStore.waitingQueue.some((r) => r.uuid === 'vm-transfer'),
+      ).toBe(true);
+      expect(roomsStore.agentRooms.some((r) => r.uuid === 'vm-transfer')).toBe(
+        false,
+      );
+      expect(roomsStore.activeRoom).toBeNull();
+      expect(result).toEqual({
+        wasInArray: true,
+        isNowInArray: true,
+        oldType: 'ongoing',
+        newType: 'waiting',
+        roomUuid: 'vm-transfer',
+      });
+    });
+
+    it('removes the room when the destination queue is outside the active filter', () => {
+      const initialRoom = {
+        uuid: 'vm-transfer-filtered',
+        user: { email: viewedAgentEmail, first_name: 'Agent', last_name: '' },
+        is_waiting: false,
+        queue: { uuid: 'queue-a', name: 'Queue A' },
+      };
+      roomsStore.$patch({
+        rooms: [initialRoom],
+        activeRoom: { ...initialRoom },
+        filterQueues: ['queue-a'],
+      });
+
+      const result = roomsStore.updateRoom({
+        room: {
+          uuid: 'vm-transfer-filtered',
+          user: null,
+          is_waiting: false,
+          queue: { uuid: 'queue-outside', name: 'Outside' },
+          transfer_history: {
+            action: 'transfer',
+            to: { type: 'queue' },
+            from: { type: 'user', email: viewedAgentEmail },
+            requested_by: { email: managerEmail },
+          },
+        },
+        userEmail: managerEmail,
+        routerReplace: vi.fn(),
+        viewedAgentEmail,
+      });
+
+      expect(existRoomByUuid(roomsStore, 'vm-transfer-filtered')).toBe(false);
+      expect(roomsStore.activeRoom).toBeNull();
+      expect(result).toEqual({
+        wasInArray: true,
+        isNowInArray: false,
+        oldType: 'ongoing',
+        newType: 'waiting',
+        roomUuid: 'vm-transfer-filtered',
+      });
+    });
+  });
+
   describe('isNewChatReceived flag', () => {
     let roomsStore;
 
@@ -809,6 +911,254 @@ describe('State Rooms', () => {
         roomsStore.rooms.find((r) => r.uuid === 'transferred')
           ?.isNewChatReceived,
       ).toBe(true);
+    });
+  });
+
+  describe('getAll pinned_rooms', () => {
+    let roomsStore;
+
+    const ongoingRoom = (overrides = {}) =>
+      createRoom({
+        last_interaction: '2024-01-01T00:00:00Z',
+        ...overrides,
+      });
+
+    beforeEach(() => {
+      mocks.useProfile.mockReturnValue(mockProfileHumanServiceState);
+      const featureFlagStore = useFeatureFlag();
+      featureFlagStore.featureFlags = {
+        active_features: ['weniChatsPinRoomsOptimization'],
+      };
+      roomsStore = useRooms();
+      roomsStore.rooms = [];
+      roomsStore.pinnedRooms = [];
+      Room.getAll.mockReset();
+    });
+
+    it('merges pinned_rooms absent from results into agentRooms at the top', async () => {
+      const pinnedOnly = ongoingRoom({
+        uuid: 'pinned-only',
+        is_pinned: true,
+        last_interaction: '2023-01-01T00:00:00Z',
+      });
+      const regularRoom = ongoingRoom({
+        uuid: 'regular',
+        is_pinned: false,
+        last_interaction: '2024-06-01T00:00:00Z',
+      });
+
+      Room.getAll.mockResolvedValue({
+        results: [regularRoom],
+        pinned_rooms: [pinnedOnly],
+        next: false,
+        count: 2,
+        max_pin_limit: 5,
+      });
+
+      await roomsStore.getAll({
+        offset: 0,
+        limit: 30,
+        roomsType: 'ongoing',
+      });
+
+      expect(roomsStore.pinnedRooms).toEqual([pinnedOnly]);
+      expect(roomsStore.agentRooms).toHaveLength(2);
+      expect(roomsStore.agentRooms[0].uuid).toBe('pinned-only');
+      expect(roomsStore.agentRooms[0].is_pinned).toBe(true);
+      expect(roomsStore.agentRooms[1].uuid).toBe('regular');
+      expect(roomsStore.maxPinLimit).toBe(5);
+    });
+
+    it('keeps pinned rooms at the top of rooms after paginated concat without duplicates', async () => {
+      const pinnedRoom = ongoingRoom({
+        uuid: 'pinned',
+        is_pinned: true,
+        last_interaction: '2023-01-01T00:00:00Z',
+      });
+      const pageOneRoom = ongoingRoom({
+        uuid: 'page-one',
+        last_interaction: '2024-05-01T00:00:00Z',
+      });
+
+      Room.getAll.mockResolvedValueOnce({
+        results: [pageOneRoom],
+        pinned_rooms: [pinnedRoom],
+        next: true,
+        count: 3,
+      });
+
+      await roomsStore.getAll({
+        offset: 0,
+        limit: 30,
+        roomsType: 'ongoing',
+      });
+
+      const pageTwoRoom = ongoingRoom({
+        uuid: 'page-two',
+        last_interaction: '2024-06-01T00:00:00Z',
+      });
+      const updatedPinnedRoom = {
+        ...pinnedRoom,
+        last_interaction: '2024-06-02T00:00:00Z',
+      };
+
+      Room.getAll.mockResolvedValueOnce({
+        results: [pageTwoRoom],
+        pinned_rooms: [updatedPinnedRoom],
+        next: false,
+        count: 3,
+      });
+
+      await roomsStore.getAll({
+        offset: 30,
+        limit: 30,
+        roomsType: 'ongoing',
+        concat: true,
+      });
+
+      expect(roomsStore.rooms[0].uuid).toBe('pinned');
+      expect(roomsStore.rooms[0].last_interaction).toBe('2024-06-02T00:00:00Z');
+      expect(
+        roomsStore.rooms.filter((room) => room.uuid === 'pinned'),
+      ).toHaveLength(1);
+      expect(roomsStore.agentRooms[0].uuid).toBe('pinned');
+      expect(roomsStore.agentRooms.map((room) => room.uuid)).toEqual(
+        expect.arrayContaining(['pinned', 'page-one', 'page-two']),
+      );
+    });
+
+    it('does not throw and keeps existing rooms when pinned_rooms is missing or empty', async () => {
+      const existingRoom = ongoingRoom({ uuid: 'existing', is_pinned: false });
+      roomsStore.rooms = [existingRoom];
+
+      Room.getAll.mockResolvedValue({
+        results: [ongoingRoom({ uuid: 'new-room' })],
+        next: false,
+        count: 2,
+      });
+
+      await roomsStore.getAll({
+        offset: 0,
+        limit: 30,
+        roomsType: 'ongoing',
+        concat: true,
+      });
+
+      expect(roomsStore.pinnedRooms).toEqual([]);
+      expect(roomsStore.agentRooms.map((room) => room.uuid)).toEqual(
+        expect.arrayContaining(['existing', 'new-room']),
+      );
+
+      Room.getAll.mockResolvedValue({
+        results: [],
+        pinned_rooms: [],
+        next: false,
+        count: 1,
+      });
+
+      await roomsStore.getAll({
+        offset: 0,
+        limit: 30,
+        roomsType: 'ongoing',
+        concat: true,
+      });
+
+      expect(roomsStore.pinnedRooms).toEqual([]);
+      expect(roomsStore.agentRooms.map((room) => room.uuid)).toEqual(
+        expect.arrayContaining(['existing', 'new-room']),
+      );
+    });
+
+    it('clears is_pinned on rooms removed from pinned_rooms when not in new results', async () => {
+      const stalePinned = ongoingRoom({
+        uuid: 'stale-pinned',
+        is_pinned: true,
+      });
+
+      roomsStore.rooms = [stalePinned];
+      roomsStore.pinnedRooms = [stalePinned];
+
+      Room.getAll.mockResolvedValue({
+        results: [ongoingRoom({ uuid: 'other' })],
+        pinned_rooms: [],
+        next: false,
+        count: 1,
+      });
+
+      await roomsStore.getAll({
+        offset: 0,
+        limit: 30,
+        roomsType: 'ongoing',
+        concat: true,
+      });
+
+      const staleRoom = roomsStore.rooms.find(
+        (room) => room.uuid === 'stale-pinned',
+      );
+      expect(staleRoom?.is_pinned).toBe(false);
+      expect(
+        roomsStore.agentRooms.filter((room) => room.is_pinned),
+      ).toHaveLength(0);
+    });
+
+    it('ignores pinned_rooms for non-ongoing room types', async () => {
+      const waitingRoom = {
+        uuid: 'waiting-room',
+        user: null,
+        is_waiting: false,
+        queue: { uuid: 'queue1' },
+        added_to_queue_at: '2024-01-01T00:00:00Z',
+      };
+      const pinnedOngoing = ongoingRoom({ uuid: 'pinned-ongoing' });
+
+      Room.getAll.mockResolvedValue({
+        results: [waitingRoom],
+        pinned_rooms: [pinnedOngoing],
+        next: false,
+        count: 1,
+      });
+
+      await roomsStore.getAll({
+        offset: 0,
+        limit: 30,
+        roomsType: 'waiting',
+      });
+
+      expect(roomsStore.pinnedRooms).toEqual([]);
+      expect(roomsStore.waitingQueue).toHaveLength(1);
+      expect(roomsStore.waitingQueue[0].uuid).toBe('waiting-room');
+      expect(roomsStore.agentRooms).toHaveLength(0);
+    });
+
+    it('uses legacy behavior when weniChatsPinRoomsOptimization is disabled', async () => {
+      const featureFlagStore = useFeatureFlag();
+      featureFlagStore.featureFlags = { active_features: [] };
+
+      const pinnedOnly = ongoingRoom({
+        uuid: 'pinned-only',
+        is_pinned: true,
+      });
+      const regularRoom = ongoingRoom({
+        uuid: 'regular',
+        is_pinned: false,
+      });
+
+      Room.getAll.mockResolvedValue({
+        results: [regularRoom],
+        pinned_rooms: [pinnedOnly],
+        next: false,
+        count: 2,
+      });
+
+      await roomsStore.getAll({
+        offset: 0,
+        limit: 30,
+        roomsType: 'ongoing',
+      });
+
+      expect(roomsStore.pinnedRooms).toEqual([]);
+      expect(roomsStore.agentRooms).toHaveLength(1);
+      expect(roomsStore.agentRooms[0].uuid).toBe('regular');
     });
   });
 

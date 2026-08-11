@@ -7,7 +7,6 @@ import { createI18n } from 'vue-i18n';
 import { useRooms } from '@/store/modules/chats/rooms';
 import { useDiscussions } from '@/store/modules/chats/discussions';
 import { useProfile } from '@/store/modules/profile';
-import { useFeatureFlag } from '@/store/modules/featureFlag';
 import { useConfig } from '@/store/modules/config';
 import { useMessageManager } from '@/store/modules/chats/messageManager';
 import { useRoomMessages } from '@/store/modules/chats/roomMessages';
@@ -16,7 +15,6 @@ import { useDiscussionMessages } from '@/store/modules/chats/discussionMessages'
 import HomeChat from '../HomeChat.vue';
 import HomeChatModals from '../HomeChatModals.vue';
 import RoomMessages from '@/components/chats/chat/RoomMessages.vue';
-import MessageManager from '@/components/chats/MessageManager/index.vue';
 import ChatsDropzone from '@/layouts/ChatsLayout/components/ChatsDropzone/index.vue';
 
 import RoomService from '@/services/api/resources/chats/room';
@@ -120,7 +118,6 @@ describe('HomeChat.vue', () => {
         components: {
           RoomMessages,
           HomeChatModals,
-          MessageManager,
           ChatsDropzone,
         },
         stubs: {
@@ -131,6 +128,10 @@ describe('HomeChat.vue', () => {
           DiscussionHeader: {
             template: '<div data-testid="discussion-header-stub" />',
             props: ['discussionContact', 'discussionSubject', 'clickable'],
+          },
+          MessageManager: {
+            template: '<div data-testid="message-manager" />',
+            props: ['isLoading'],
           },
           HomeChatModals: {
             template: '<div data-testid="home-chat-modals" />',
@@ -248,10 +249,29 @@ describe('HomeChat.vue', () => {
       expect(useMessageManager().inputMessage).toBe('Hello world');
     });
 
-    it('updates uploadFilesProgress  with the given value', () => {
-      wrapper.vm.setUploadFilesProgress('100');
+    it('adds dropped files to message manager store', () => {
+      const messageManagerStore = useMessageManager();
+      const addMediaUploadFilesSpy = vi.spyOn(
+        messageManagerStore,
+        'addMediaUploadFiles',
+      );
+      const fakeFiles = [new File(['content'], 'file1.png', { type: 'image/png' })];
 
-      expect(wrapper.vm.uploadFilesProgress).toBe('100');
+      wrapper.vm.openModalFileUploader(fakeFiles);
+
+      expect(addMediaUploadFilesSpy).toHaveBeenCalledWith(fakeFiles);
+    });
+
+    it('does not add files when openModalFileUploader receives empty list', () => {
+      const messageManagerStore = useMessageManager();
+      const addMediaUploadFilesSpy = vi.spyOn(
+        messageManagerStore,
+        'addMediaUploadFiles',
+      );
+
+      wrapper.vm.openModalFileUploader([]);
+
+      expect(addMediaUploadFilesSpy).not.toHaveBeenCalled();
     });
 
     it('returns the uuid when activeChat has a uuid', () => {
@@ -275,17 +295,6 @@ describe('HomeChat.vue', () => {
       expect(wrapper.emitted('close-room-contact-info')).toBeTruthy();
     });
 
-    it('should update uploadFilesProgress when file-uploader-progress is emitted', async () => {
-      const modals = wrapper.findComponent('[data-testid="home-chat-modals"]');
-
-      const progress = 62;
-      await modals.vm.$emit('file-uploader-progress', progress);
-
-      await wrapper.vm.$nextTick();
-
-      expect(wrapper.vm.uploadFilesProgress).toBe(progress);
-    });
-
     it('should update textBoxMessage when select-quick-message is emitted', async () => {
       const text = 'Hello!';
 
@@ -294,26 +303,6 @@ describe('HomeChat.vue', () => {
 
       await wrapper.vm.$nextTick();
       expect(useMessageManager().inputMessage).toBe(text);
-    });
-
-    it('should call configFileUploader and openModal on home-chat-modals ref', () => {
-      const modals = wrapper.findComponent('[data-testid="home-chat-modals"]');
-
-      const configFileUploaderSpy = vi.spyOn(modals.vm, 'configFileUploader');
-
-      const openModalSpy = vi.spyOn(modals.vm, 'openModal');
-
-      const fakeFiles = [{ name: 'file1.png', type: 'image' }];
-      const fakeType = 'image';
-
-      wrapper.vm.openModalFileUploader(fakeFiles, fakeType);
-
-      expect(configFileUploaderSpy).toHaveBeenCalledWith({
-        files: fakeFiles,
-        filesType: fakeType,
-      });
-
-      expect(openModalSpy).toHaveBeenCalledWith('fileUploader');
     });
 
     it('redirects to home if not on home route and no active chat', async () => {
@@ -490,11 +479,14 @@ describe('HomeChat.vue', () => {
     });
 
     it('should render get-chat button as primary when bulk actions are disabled', async () => {
-      const featureFlagStore = useFeatureFlag();
-      featureFlagStore.featureFlags = { active_features: [] };
-
       const configStore = useConfig();
-      configStore.project = { config: { can_use_bulk_take: false } };
+      configStore.project = {
+        config: {
+          can_use_bulk_take: false,
+          can_use_bulk_close: false,
+          can_use_bulk_transfer: false,
+        },
+      };
 
       await wrapper.vm.$nextTick();
 
@@ -502,31 +494,12 @@ describe('HomeChat.vue', () => {
     });
 
     it('should render get-chat button as secondary when bulk take is enabled', async () => {
-      const featureFlagStore = useFeatureFlag();
-      featureFlagStore.featureFlags = {
-        active_features: ['weniChatsBulkTake'],
-      };
-
       const configStore = useConfig();
       configStore.project = { config: { can_use_bulk_take: true } };
 
       await wrapper.vm.$nextTick();
 
       expect(wrapper.vm.getChatButtonType).toBe('secondary');
-    });
-
-    it('should render get-chat button as primary when feature flag is active but config is off', async () => {
-      const featureFlagStore = useFeatureFlag();
-      featureFlagStore.featureFlags = {
-        active_features: ['weniChatsBulkTake'],
-      };
-
-      const configStore = useConfig();
-      configStore.project = { config: { can_use_bulk_take: false } };
-
-      await wrapper.vm.$nextTick();
-
-      expect(wrapper.vm.getChatButtonType).toBe('primary');
     });
 
     it('calls Room.updateReadMessages if room is valid and belongs to the user', async () => {
@@ -547,12 +520,7 @@ describe('HomeChat.vue', () => {
       expect(updateReadMessagesSpy).toHaveBeenCalledWith('1', true);
     });
 
-    it('calls getCanSendMessageStatus when feature flag is active and platform is whatsapp', async () => {
-      const featureFlagStore = useFeatureFlag();
-      featureFlagStore.featureFlags = {
-        active_features: ['weniChatsIs24hValidOptimization'],
-      };
-
+    it('calls getCanSendMessageStatus when platform is whatsapp', async () => {
       const roomsStore = useRooms();
       roomsStore.activeRoom = null;
       roomsStore.setIsLoadingCanSendMessageStatus = vi.fn();
@@ -596,11 +564,6 @@ describe('HomeChat.vue', () => {
     });
 
     it('handles error when getCanSendMessageStatus fails', async () => {
-      const featureFlagStore = useFeatureFlag();
-      featureFlagStore.featureFlags = {
-        active_features: ['weniChatsIs24hValidOptimization'],
-      };
-
       const roomsStore = useRooms();
       roomsStore.activeRoom = null;
       roomsStore.setIsLoadingCanSendMessageStatus = vi.fn();

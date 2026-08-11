@@ -3,6 +3,7 @@ import { cloneDeep } from 'lodash';
 
 import { useDashboard } from '../dashboard';
 import { useProfile } from '../profile';
+import { useFeatureFlag } from '../featureFlag';
 import { useRoomCounters } from './roomCounters';
 
 import Room from '@/services/api/resources/chats/room';
@@ -48,6 +49,7 @@ export const useRooms = defineStore('rooms', {
       flow_start: 0,
     },
     filterQueues: [],
+    pinnedRooms: [],
   }),
 
   actions: {
@@ -155,7 +157,19 @@ export const useRooms = defineStore('rooms', {
         const isProjectAdmin = profileStore.me.project_permission_role === 1;
 
         if (viewedAgentEmail) {
-          return room.user?.email === viewedAgentEmail;
+          if (room.user?.email === viewedAgentEmail) return true;
+
+          // Waiting rooms (no agent) remain visible in view-mode when they match
+          // the active queue filter, so ongoing → queue transfers update the
+          // waiting list and counter instead of only removing the room.
+          if (!room.user && !room.is_waiting) {
+            const emptyQueuesFilter = this.filterQueues.length === 0;
+            return (
+              emptyQueuesFilter || this.filterQueues.includes(room.queue?.uuid)
+            );
+          }
+
+          return false;
         }
 
         if (isProjectAdmin && !room.user) return true;
@@ -203,7 +217,39 @@ export const useRooms = defineStore('rooms', {
       let gettedRooms = response.results || [];
       const listRoomHasNext = response.next;
 
-      if (concat) {
+      const isPinRoomsOptimizationEnabled =
+        useFeatureFlag().featureFlags?.active_features?.includes(
+          'weniChatsPinRoomsOptimization',
+        );
+
+      if (roomsType === 'ongoing' && isPinRoomsOptimizationEnabled) {
+        const newPinnedRooms = response.pinned_rooms || [];
+        const newPinnedUuids = new Set(newPinnedRooms.map((room) => room.uuid));
+
+        this.pinnedRooms.forEach(({ uuid }) => {
+          if (newPinnedUuids.has(uuid)) return;
+          const index = this.rooms.findIndex((room) => room.uuid === uuid);
+          if (index !== -1 && this.rooms[index].is_pinned) {
+            this.rooms[index] = { ...this.rooms[index], is_pinned: false };
+          }
+        });
+
+        this.pinnedRooms = newPinnedRooms;
+
+        if (concat) {
+          gettedRooms = gettedRooms.concat(this.rooms);
+        }
+
+        const pinnedRoomsMarked = newPinnedRooms.map((room) => ({
+          ...room,
+          is_pinned: true,
+        }));
+
+        gettedRooms = [
+          ...pinnedRoomsMarked,
+          ...gettedRooms.filter((room) => !newPinnedUuids.has(room.uuid)),
+        ];
+      } else if (concat) {
         gettedRooms = gettedRooms.concat(this.rooms);
       }
 
@@ -478,6 +524,12 @@ export const useRooms = defineStore('rooms', {
           if (!viewedAgentEmail && routerReplace) {
             routerReplace();
           }
+          return;
+        }
+        // View-mode: room moved to the waiting queue (no agent). Keep it in the
+        // waiting list/counter, but close the open chat since it left the agent.
+        if (viewedAgentEmail && !room.user) {
+          this.setActiveRoom(null);
           return;
         }
         this.setActiveRoom({ ...room });

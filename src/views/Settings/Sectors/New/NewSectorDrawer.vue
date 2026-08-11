@@ -98,7 +98,6 @@ import Queue from '@/services/api/resources/settings/queue';
 
 import { useSettings } from '@/store/modules/settings';
 import { useConfig } from '@/store/modules/config';
-import { useFeatureFlag } from '@/store/modules/featureFlag';
 import { useQuickMessageShared } from '@/store/modules/chats/quickMessagesShared';
 
 import isMobile from 'is-mobile';
@@ -106,6 +105,7 @@ import isMobile from 'is-mobile';
 import Unnnic from '@weni/unnnic-system';
 
 import { handleConnectOverlay } from '@/utils/overlay';
+import { emitToHost } from '@/utils/hostBridge';
 
 export default {
   name: 'NewSectorDrawer',
@@ -174,6 +174,7 @@ export default {
         {
           name: '',
           queue_limit: { is_active: false, limit: null },
+          queue_purpose: '',
           currentAgents: [],
           agents: 0,
         },
@@ -190,7 +191,6 @@ export default {
     };
   },
   computed: {
-    ...mapState(useFeatureFlag, ['featureFlags']),
     ...mapWritableState(useSettings, ['sectors']),
     ...mapState(useConfig, ['enableGroupsMode']),
     showDiscartQuestion() {
@@ -209,12 +209,6 @@ export default {
     },
     activePage() {
       return this.newSectorPages[this.activePageIndex];
-    },
-    enableAutomaticCsatFeature() {
-      return this.featureFlags.active_features?.includes('weniChatsCSAT');
-    },
-    enableQueueLimitFeature() {
-      return this.featureFlags.active_features?.includes('weniChatsQueueLimit');
     },
   },
   mounted() {
@@ -251,10 +245,6 @@ export default {
           custom_csat_flow_uuid,
         } = this.sector;
 
-        const csatEnabled = this.enableAutomaticCsatFeature
-          ? is_csat_enabled
-          : false;
-
         const createSectorBody = {
           can_edit_custom_fields,
           can_trigger_flows,
@@ -266,20 +256,15 @@ export default {
             : { ...config, secondary_project: undefined },
           automatic_message,
           automatic_message_queue,
-          is_csat_enabled: this.enableAutomaticCsatFeature
-            ? is_csat_enabled
-            : false,
-          custom_csat_flow_uuid: csatEnabled ? custom_csat_flow_uuid : null,
+          is_csat_enabled,
+          custom_csat_flow_uuid: is_csat_enabled ? custom_csat_flow_uuid : null,
         };
 
         const createdSector = await Sector.create(createSectorBody);
 
         this.sectors.unshift(createdSector);
 
-        window.parent.postMessage(
-          { event: 'addSector', data: createdSector },
-          '*',
-        );
+        emitToHost('addSector', { data: createdSector });
 
         this.sector = { ...this.sector, ...createdSector };
 
@@ -302,9 +287,8 @@ export default {
         const createQueuesBody = this.sectorQueues.map((sectorQueue) => ({
           name: sectorQueue.name,
           default_message: '',
-          queue_limit: this.enableQueueLimitFeature
-            ? sectorQueue.queue_limit
-            : { is_active: false, limit: null },
+          queue_limit: sectorQueue.queue_limit,
+          queue_purpose: sectorQueue.queue_purpose,
           agents: sectorQueue.currentAgents.map((agent) => agent.user.email),
         }));
 

@@ -21,25 +21,10 @@
 
       <DiscussionMessages v-if="!!discussion" />
 
-      <MessageManagerV2
-        v-if="
-          isMessageManagerV2Enabled &&
-          (isMessageManagerRoomVisible || isMessageManagerDiscussionVisible)
-        "
+      <MessageManager
+        v-if="isMessageManagerRoomVisible || isMessageManagerDiscussionVisible"
         data-testid="message-manager"
         :isLoading="isChatSkeletonActive"
-        @show-quick-messages="handleShowQuickMessages"
-        @open-file-uploader="openModalFileUploader"
-      />
-      <MessageManager
-        v-else-if="
-          isMessageManagerRoomVisible || isMessageManagerDiscussionVisible
-        "
-        :loadingFileValue="uploadFilesProgress"
-        :showSkeletonLoading="isChatSkeletonActive"
-        data-testid="message-manager"
-        @show-quick-messages="handleShowQuickMessages"
-        @open-file-uploader="openModalFileUploader"
       />
     </ChatsDropzone>
 
@@ -63,7 +48,6 @@
       ref="home-chat-modals"
       data-testid="home-chat-modals"
       @got-chat="emitCloseRoomContactInfo()"
-      @file-uploader-progress="setUploadFilesProgress"
       @select-quick-message="updateTextBoxMessage($event?.text)"
     />
   </section>
@@ -83,7 +67,6 @@ import ChatsDropzone from '@/layouts/ChatsLayout/components/ChatsDropzone/index.
 import RoomMessages from '@/components/chats/chat/RoomMessages.vue';
 import DiscussionMessages from '@/components/chats/chat/DiscussionMessages.vue';
 import MessageManager from '@/components/chats/MessageManager/index.vue';
-import MessageManagerV2 from '@/components/chats/MessageManagerV2/index.vue';
 import ButtonJoinDiscussion from '@/components/chats/chat/ButtonJoinDiscussion.vue';
 
 import Room from '@/services/api/resources/chats/room';
@@ -92,7 +75,6 @@ import { parseUrn } from '@/utils/room';
 import HomeChatHeaders from './HomeChatHeaders.vue';
 import HomeChatModals from './HomeChatModals.vue';
 
-import { useFeatureFlag } from '@/store/modules/featureFlag';
 import { useMessageManager } from '@/store/modules/chats/messageManager';
 
 export default {
@@ -103,10 +85,9 @@ export default {
     HomeChatHeaders,
     RoomMessages,
     DiscussionMessages,
-    MessageManager,
     ButtonJoinDiscussion,
     HomeChatModals,
-    MessageManagerV2,
+    MessageManager,
   },
   emits: [
     'open-room-contact-info',
@@ -120,7 +101,6 @@ export default {
       isMobile: isMobile(),
 
       isRoomContactInfoOpen: false,
-      uploadFilesProgress: undefined,
       isChatSkeletonActive: false,
       tempJoinedDiscussions: [],
     };
@@ -135,7 +115,6 @@ export default {
       isCanSendMessageActiveRoom: 'isCanSendMessageActiveRoom',
       isLoadingCanSendMessageStatus: 'isLoadingCanSendMessageStatus',
     }),
-    ...mapState(useFeatureFlag, ['featureFlags']),
     ...mapState(useConfig, ['project']),
     ...mapState(useProfile, ['me']),
     ...mapState(useDiscussions, {
@@ -143,23 +122,9 @@ export default {
       discussions: 'discussions',
       getDiscussionById: 'getDiscussionById',
     }),
-    isMessageManagerV2Enabled() {
-      return this.featureFlags.active_features?.includes(
-        'weniChatsInputMessageV2',
-      );
-    },
-    isActiveFeatureIs24hValidOptimization() {
-      return this.featureFlags.active_features?.includes(
-        'weniChatsIs24hValidOptimization',
-      );
-    },
     isBulkActionsEnabled() {
-      const hasBulkTake =
-        this.featureFlags.active_features?.includes('weniChatsBulkTake') &&
-        this.project.config?.can_use_bulk_take;
-      const hasBulkClose =
-        this.featureFlags.active_features?.includes('weniChatsBulkClose') &&
-        this.project.config?.can_use_bulk_close;
+      const hasBulkTake = this.project.config?.can_use_bulk_take;
+      const hasBulkClose = this.project.config?.can_use_bulk_close;
       const hasBulkTransfer = this.project.config?.can_use_bulk_transfer;
       return !!hasBulkTake || !!hasBulkClose || !!hasBulkTransfer;
     },
@@ -167,9 +132,9 @@ export default {
       return this.isBulkActionsEnabled ? 'secondary' : 'primary';
     },
     isCanSendMessage() {
-      return this.isActiveFeatureIs24hValidOptimization
-        ? this.isCanSendMessageActiveRoom && !this.isLoadingCanSendMessageStatus
-        : this.room?.is_24h_valid;
+      return (
+        this.isCanSendMessageActiveRoom && !this.isLoadingCanSendMessageStatus
+      );
     },
     isRenderChatsDropzoneVisible() {
       return (
@@ -217,8 +182,7 @@ export default {
         if (
           newRoom &&
           newRoom.uuid !== oldRoom?.uuid &&
-          parseUrn(newRoom).plataform === 'whatsapp' &&
-          this.isActiveFeatureIs24hValidOptimization
+          parseUrn(newRoom).plataform === 'whatsapp'
         ) {
           this.setIsLoadingCanSendMessageStatus(true);
           try {
@@ -323,10 +287,10 @@ export default {
     openModal(modalName) {
       this.$refs['home-chat-modals'].openModal(modalName);
     },
-    openModalFileUploader(files, filesType) {
-      const homeChatModals = this.$refs['home-chat-modals'];
-      homeChatModals.configFileUploader({ files, filesType });
-      homeChatModals.openModal('fileUploader');
+    openModalFileUploader(files) {
+      if (files?.length) {
+        useMessageManager().addMediaUploadFiles(files);
+      }
     },
     emitOpenRoomContactInfo() {
       this.$emit('open-room-contact-info');
@@ -351,9 +315,6 @@ export default {
 
     updateTextBoxMessage(message) {
       this.inputMessage = message;
-    },
-    setUploadFilesProgress(progress) {
-      this.uploadFilesProgress = progress;
     },
 
     async handlingSetActiveRoom(uuid) {
@@ -442,16 +403,16 @@ export default {
 
 <style lang="scss" scoped>
 .home-chat {
-  padding-bottom: $unnnic-spacing-xs;
+  padding-bottom: $unnnic-space-2;
 
   display: flex;
   flex-direction: column;
 
   height: 100%;
-  max-height: 100vh;
+  max-height: 100%;
 
   .get-chat-button {
-    margin: auto $unnnic-spacing-inline-sm 0;
+    margin: auto $unnnic-space-4 0;
   }
 }
 </style>

@@ -79,7 +79,6 @@ import { mapState } from 'pinia';
 
 import { useRooms } from '@/store/modules/chats/rooms';
 import { useConfig } from '@/store/modules/config';
-import { useFeatureFlag } from '@/store/modules/featureFlag';
 import { useProfile } from '@/store/modules/profile';
 import { useDashboard } from '@/store/modules/dashboard';
 
@@ -150,9 +149,6 @@ export default {
       enableAutomaticRoomRouting: 'enableAutomaticRoomRouting',
       project: 'project',
     }),
-    ...mapState(useFeatureFlag, {
-      featureFlags: 'featureFlags',
-    }),
     ...mapState(useProfile, {
       me: 'me',
     }),
@@ -161,11 +157,6 @@ export default {
     },
     isViewMode() {
       return this.viewedAgent?.email !== '';
-    },
-    isPendingResponseFeatureEnabled() {
-      return !!this.featureFlags?.active_features?.includes(
-        'weniChatsPendingResponse',
-      );
     },
     isLastMessageFromAgent() {
       return !!this.room.last_message?.user;
@@ -197,7 +188,6 @@ export default {
 
       return (
         !this.showNewChatReceivedIndicator &&
-        this.isPendingResponseFeatureEnabled &&
         this.isProgressRoom &&
         isLastMessageValid &&
         this.unreadMessages === 0
@@ -220,7 +210,6 @@ export default {
       const { last_message: lastMessage } = this.room;
 
       const isFromMe =
-        this.isPendingResponseFeatureEnabled &&
         this.isProgressRoom &&
         this.isLastMessageFromAgent &&
         lastMessage &&
@@ -254,7 +243,7 @@ export default {
     waitingTimeComputed() {
       const { waitingTime } = this;
       if (waitingTime !== 0) {
-        return this.$t('waiting_for.minutes', waitingTime);
+        return this.$t('waiting_for.minutes', { count: waitingTime });
       }
       return 0;
     },

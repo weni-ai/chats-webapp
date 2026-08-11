@@ -409,7 +409,7 @@ async function transferBulk(
 
   if (totalFailed === 0 && totalSuccess > 0) {
     showAlert(
-      i18n.global.tc('bulk_transfer.success_message', totalSuccess, {
+      i18n.global.t('bulk_transfer.success_message', {
         count: totalSuccess,
       }),
       'success',
@@ -418,7 +418,7 @@ async function transferBulk(
     emit('transfer-complete', 'success');
   } else if (totalFailed > 0 && totalSuccess > 0) {
     showAlert(
-      i18n.global.tc('bulk_transfer.partial_success_message', totalSuccess, {
+      i18n.global.t('bulk_transfer.partial_success_message', {
         success: totalSuccess,
         failed: totalFailed,
       }),

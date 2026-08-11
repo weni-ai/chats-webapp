@@ -15,7 +15,7 @@
     />
 
     <HomeChatTakeoverRoom
-      v-if="enableChatTakeoverFeedbackModal && showModalAssumedChat"
+      v-if="showModalAssumedChat"
       v-model="showModalAssumedChat"
       :title="modalAssumedTitle"
       :description="modalAssumedText"
@@ -29,31 +29,17 @@
       :room="room"
       @close="closeModal('closeChat')"
     />
-
-    <FileUploader
-      v-if="!enableMessageManagerV2"
-      ref="fileUploader"
-      v-model="modalFileUploaderFiles"
-      :mediasType="modalFileUploaderMediaType"
-      data-testid="modal-file-uploader"
-      @progress="emitFileUploaderProgress"
-      @close="closeModal('fileUploader')"
-      @update:model-value="modalFileUploaderFiles = $event"
-    />
   </section>
 </template>
 
 <script>
-import { mapActions, mapState, mapWritableState } from 'pinia';
+import { mapState, mapWritableState } from 'pinia';
 import isMobile from 'is-mobile';
 
-import FileUploader from '@/components/chats/MessageManager/FileUploader.vue';
 import ModalGetChat from '@/components/chats/chat/ModalGetChat.vue';
 import HomeChatTakeoverRoom from './HomeChatTakeoverRoom.vue';
 import ModalCloseChat from './ModalCloseChat.vue';
 
-import { useMessageManager } from '@/store/modules/chats/messageManager';
-import { useFeatureFlag } from '@/store/modules/featureFlag';
 import { useRooms } from '@/store/modules/chats/rooms';
 import { useDashboard } from '@/store/modules/dashboard';
 
@@ -61,12 +47,11 @@ export default {
   name: 'HomeChatModals',
 
   components: {
-    FileUploader,
     ModalGetChat,
     ModalCloseChat,
     HomeChatTakeoverRoom,
   },
-  emits: ['got-chat', 'file-uploader-progress', 'select-quick-message'],
+  emits: ['got-chat', 'select-quick-message'],
 
   data() {
     return {
@@ -75,48 +60,20 @@ export default {
       modalsShowing: {
         getChat: false,
         closeChat: false,
-        fileUploader: false,
       },
-
-      modalFileUploaderMediaType: '',
     };
   },
 
   computed: {
-    ...mapState(useFeatureFlag, ['featureFlags']),
     ...mapState(useRooms, { room: (store) => store.activeRoom }),
     ...mapWritableState(useDashboard, [
       'showModalAssumedChat',
       'modalAssumedText',
       'modalAssumedTitle',
     ]),
-    ...mapWritableState(useMessageManager, {
-      modalFileUploaderFiles: 'mediaUploadFiles',
-    }),
-    enableChatTakeoverFeedbackModal() {
-      return this.featureFlags.active_features?.includes(
-        'weniChatsChatTakeoverFeedbackModal',
-      );
-    },
-    enableMessageManagerV2() {
-      return this.featureFlags.active_features?.includes(
-        'weniChatsInputMessageV2',
-      );
-    },
-  },
-
-  watch: {
-    'modalsShowing.fileUploader': {
-      handler(newModalsShowingFileUploader) {
-        if (newModalsShowingFileUploader && !this.enableMessageManagerV2) {
-          this.$refs.fileUploader.open();
-        }
-      },
-    },
   },
 
   methods: {
-    ...mapActions(useMessageManager, ['addMediaUploadFiles']),
     toggleModal(modalName, action = 'close') {
       if (this.modalsShowing[modalName] === undefined) {
         console.error(`Modal '${modalName}' does not exist.`);
@@ -131,13 +88,6 @@ export default {
       this.toggleModal(modalName, 'close');
     },
 
-    configFileUploader({ files, filesType }) {
-      this.addMediaUploadFiles(files);
-      if (filesType) {
-        this.modalFileUploaderMediaType = filesType;
-      }
-    },
-
     closeModalTakeoverRoom() {
       this.showModalAssumedChat = false;
       this.modalAssumedText = '';
@@ -146,9 +96,6 @@ export default {
 
     emitGotChat() {
       this.$emit('got-chat');
-    },
-    emitFileUploaderProgress(progress) {
-      this.$emit('file-uploader-progress', progress);
     },
   },
 };

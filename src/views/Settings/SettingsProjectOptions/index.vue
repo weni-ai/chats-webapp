@@ -75,7 +75,6 @@ import { mapState, mapWritableState } from 'pinia';
 
 import { useConfig } from '@/store/modules/config';
 import { useProfile } from '@/store/modules/profile';
-import { useFeatureFlag } from '@/store/modules/featureFlag';
 
 import Project from '@/services/api/resources/settings/project';
 import agentBuilder from '@/services/api/resources/settings/agentBuilder';
@@ -99,6 +98,7 @@ export default {
       projectConfig: {
         can_use_bulk_transfer: false,
         filter_offline_agents: false,
+        filter_moderators: false,
         can_use_bulk_close: false,
         can_close_chats_in_queue: false,
         can_use_bulk_take: false,
@@ -123,15 +123,6 @@ export default {
     ...mapWritableState(useConfig, ['project']),
     ...mapState(useConfig, ['isSecondaryProject', 'isMainGroupsProject']),
     ...mapState(useProfile, ['me']),
-    ...mapState(useFeatureFlag, ['featureFlags']),
-
-    isBulkCloseFeatureEnabled() {
-      return this.featureFlags.active_features?.includes('weniChatsBulkClose');
-    },
-
-    isBulkTakeFeatureEnabled() {
-      return this.featureFlags.active_features?.includes('weniChatsBulkTake');
-    },
 
     isUserManager() {
       const ROLE_MANAGER = 1;
@@ -240,9 +231,20 @@ export default {
           name: this.configBlockTransferToOffAgentsTranslation,
         },
         {
+          key: 'filter_moderators',
+          type: 'flag',
+          visible: !this.isSecondaryProject,
+          name: this.$t(
+            'config_chats.project_configs.hide_moderators_from_transfer.switch_label',
+          ),
+          hint: this.$t(
+            'config_chats.project_configs.hide_moderators_from_transfer.hint',
+          ),
+        },
+        {
           key: 'can_use_bulk_close',
           type: 'flag',
-          visible: this.isBulkCloseFeatureEnabled && !this.isSecondaryProject,
+          visible: !this.isSecondaryProject,
           name: this.configBulkCloseTranslation,
         },
         {
@@ -254,7 +256,7 @@ export default {
         {
           key: 'can_use_bulk_take',
           type: 'flag',
-          visible: this.isBulkTakeFeatureEnabled && !this.isSecondaryProject,
+          visible: !this.isSecondaryProject,
           name: this.configBulkTakeTranslation,
         },
         {
@@ -381,6 +383,7 @@ export default {
       const {
         can_use_bulk_transfer,
         filter_offline_agents,
+        filter_moderators,
         can_use_bulk_close,
         can_close_chats_in_queue,
         can_use_bulk_take,
@@ -394,6 +397,7 @@ export default {
       await Project.update({
         can_use_bulk_transfer,
         filter_offline_agents,
+        filter_moderators,
         can_use_bulk_close,
         can_close_chats_in_queue,
         can_use_bulk_take,

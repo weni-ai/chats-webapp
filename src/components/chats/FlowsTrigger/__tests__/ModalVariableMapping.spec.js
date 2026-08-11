@@ -1,6 +1,8 @@
 import { mount, config } from '@vue/test-utils';
 import { expect, describe, it, beforeAll, afterAll, beforeEach } from 'vitest';
 
+import { useCompositionI18nInThisSpecFile } from '@/utils/test/compositionI18nVitest';
+
 import ModalVariableMapping from '../ModalVariableMapping.vue';
 
 let savedGlobalMocks;
@@ -71,6 +73,8 @@ const sharedTemplates = [
 ];
 
 describe('ModalVariableMapping', () => {
+  useCompositionI18nInThisSpecFile();
+
   const buildWrapper = (props = {}) =>
     mount(ModalVariableMapping, {
       props: {

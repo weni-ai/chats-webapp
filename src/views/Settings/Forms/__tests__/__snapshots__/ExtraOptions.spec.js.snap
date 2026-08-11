@@ -3,19 +3,115 @@
 exports[`SectorExtraOptions > Should match the snapshot 1`] = `
 "<section data-v-8e9664ba="" class="sector-extra-options-form">
   <section data-v-8e9664ba="" class="switchs">
-    <h2 data-v-8e9664ba="" class="switchs__title" data-testid="switchs-title">Extra options</h2>
-    <unnnic-switch-stub data-v-8e9664ba="" size="small" label="" option="" helper="" textleft="" textright="Triggering message templates" disabled="false" modelvalue="false" class="margin-y-space-1" data-testid="config-switch"></unnnic-switch-stub>
+    <h2 data-v-8e9664ba="" class="switchs__title" data-testid="switchs-title">Additional options</h2>
+    <unnnic-switch-stub data-v-8e9664ba="" size="small" label="" option="" helper="" textleft="" textright="Trigger message templates" disabled="false" modelvalue="false" class="margin-y-space-1" data-testid="config-switch"></unnnic-switch-stub>
     <section data-v-8e9664ba="" class="switchs__container">
-      <unnnic-switch-stub data-v-8e9664ba="" size="small" label="" option="" helper="Each message exchanged will have the name of the agent who is answering." textleft="" textright="Use signature" disabled="false" modelvalue="false" class="margin-y-space-1" data-testid="config-switch"></unnnic-switch-stub>
+      <unnnic-switch-stub data-v-8e9664ba="" size="small" label="" option="" helper="Each message exchanged will have the name of the representative who is answering." textleft="" textright="Use signature" disabled="false" modelvalue="false" class="margin-y-space-1" data-testid="config-switch"></unnnic-switch-stub>
     </section>
-    <unnnic-switch-stub data-v-8e9664ba="" size="small" label="" option="" helper="When active, it allows representatives to edit the custom fields of the contact in the &quot;All Information&quot; section." textleft="" textright="Allow representatives to edit custom contact information" disabled="false" modelvalue="false" class="margin-y-space-1" data-testid="config-switch"></unnnic-switch-stub>
+    <unnnic-switch-stub data-v-8e9664ba="" size="small" label="" option="" helper="When active, it allows representatives to edit the custom fields of the contact in the &quot;All Information&quot; section." textleft="" textright="Allow representatives to edit custom fields" disabled="false" modelvalue="false" class="margin-y-space-1" data-testid="config-switch"></unnnic-switch-stub>
   </section>
   <section data-v-8e9664ba="" class="switchs">
     <h2 data-v-8e9664ba="" class="switchs__title">Automated messages</h2>
+    <section data-v-8e9664ba="" class="switchs__container">
+      <unnnic-switch-stub data-v-8e9664ba="" size="small" label="" option="" helper="Automatically send a message to contacts while they wait for human support in the queue." textleft="" textright="Send automatic message to waiting contacts" disabled="false" modelvalue="false" class="margin-y-space-1" data-testid="config-switch"></unnnic-switch-stub>
+    </section>
+    <!--v-if-->
+    <section data-v-8e9664ba="" class="switchs__container">
+      <unnnic-switch-stub data-v-8e9664ba="" size="small" label="" option="" helper="Automatically send a message when a chat is assigned to a representative. The message will appear as if sent by the assigned representative." textleft="" textright="Send automatic message when support starts" disabled="false" modelvalue="false" class="margin-y-space-1" data-testid="config-switch"></unnnic-switch-stub>
+    </section>
     <!--v-if-->
   </section>
-  <!--v-if-->
-  <!--v-if-->
+  <section data-v-8e9664ba="" class="switchs">
+    <h2 data-v-8e9664ba="" class="switchs__title">Inactivity in conversation</h2>
+    <section data-v-8e9664ba="" class="switchs__container">
+      <unnnic-switch-stub data-v-8e9664ba="" size="small" label="" option="" helper="The alert is shown only for ongoing chats and considers the time since the representative's last message." textleft="" textright="Show inactivity alert to the representative and notify the contact" disabled="false" modelvalue="true" class="margin-y-space-1" data-testid="config-switch"></unnnic-switch-stub>
+    </section>
+    <section data-v-a13fc64d="" data-v-2dd04313="" data-v-8e9664ba="" class="unnnic-form-element unnnic-form md" data-testid="form-element">
+      <section data-v-b52fcb11="" data-v-a13fc64d="" class="unnnic-label unnnic-form-element__label">
+        <p data-v-b52fcb11="" class="unnnic-label__label">Define after how many minutes without a response from the contact the system should send the warning message</p>
+        <div data-v-03fa3548="" data-v-61269528="" class="unnnic-tooltip-trigger unnnic-tooltip" data-testid="tooltip-trigger" data-state="closed" data-grace-area-trigger=""><span data-v-b593673c="" data-v-b52fcb11="" class="unnnic-icon material-symbols-rounded unnnic-icon-scheme--fg-base unnnic-icon-size--sm unnnic-icon__size--sm" data-testid="material-icon" translate="no">help</span></div>
+        <div data-v-61269528="" disabled="false" defer="false" forcemount="false">
+          <!---->
+        </div>
+      </section>
+      <div data-v-ff09e93b="" data-v-2dd04313="" class="text-input size--md unnnic-form-input" hascloudycolor="false" mask=""><input data-v-043812be="" data-v-ff09e93b="" class="unnnic-form-input input-itself input size-md normal unnnic-form-input input-itself" hascloudycolor="false" placeholder="" iconleft="" iconright="" iconleftclickable="false" iconrightclickable="false" showclear="false" type="text" value="10">
+        <!---->
+        <section data-v-ff09e93b="" class="icon-right-container">
+          <!---->
+          <!---->
+        </section>
+      </div>
+      <!---->
+    </section>
+    <section data-v-a13fc64d="" data-v-2dd04313="" data-v-8e9664ba="" class="unnnic-form-element unnnic-form md" data-testid="form-element">
+      <section data-v-b52fcb11="" data-v-a13fc64d="" class="unnnic-label unnnic-form-element__label">
+        <p data-v-b52fcb11="" class="unnnic-label__label">Warning message</p>
+        <div data-v-03fa3548="" data-v-61269528="" class="unnnic-tooltip-trigger unnnic-tooltip" data-testid="tooltip-trigger" data-state="closed" data-grace-area-trigger=""><span data-v-b593673c="" data-v-b52fcb11="" class="unnnic-icon material-symbols-rounded unnnic-icon-scheme--fg-base unnnic-icon-size--sm unnnic-icon__size--sm" data-testid="material-icon" translate="no">help</span></div>
+        <div data-v-61269528="" disabled="false" defer="false" forcemount="false">
+          <!---->
+        </div>
+      </section>
+      <div data-v-ff09e93b="" data-v-2dd04313="" class="text-input size--md unnnic-form-input" hascloudycolor="false" mask=""><input data-v-043812be="" data-v-ff09e93b="" class="unnnic-form-input input-itself input size-md normal unnnic-form-input input-itself" hascloudycolor="false" placeholder="" iconleft="" iconright="" iconleftclickable="false" iconrightclickable="false" showclear="false" type="text" maxlength="160" value="Mai ești aici? Dacă nu există niciun răspuns, această sesiune va fi închisă în curând.">
+        <!---->
+        <section data-v-ff09e93b="" class="icon-right-container">
+          <!---->
+          <!---->
+        </section>
+      </div>
+      <section data-v-a13fc64d="" class="unnnic-form-element__hints-container">
+        <section data-v-a13fc64d="" class="unnnic-form-element__message-container">
+          <!---->
+          <!---->
+        </section>
+        <p data-v-a13fc64d="">86 / 160</p>
+      </section>
+    </section>
+    <section data-v-8e9664ba="" class="switchs__container">
+      <unnnic-switch-stub data-v-8e9664ba="" size="medium" label="" option="" helper="Chats are automatically ended if the contact does not send any messages within the period after the alert is sent." textleft="" textright="Automatically end inactive chats" disabled="false" modelvalue="true" class="margin-y-space-1"></unnnic-switch-stub>
+    </section>
+    <section data-v-a13fc64d="" data-v-2dd04313="" data-v-8e9664ba="" class="unnnic-form-element unnnic-form md" data-testid="form-element">
+      <section data-v-b52fcb11="" data-v-a13fc64d="" class="unnnic-label unnnic-form-element__label">
+        <p data-v-b52fcb11="" class="unnnic-label__label">Define how many minutes after sending the warning message the system should end the chat</p>
+        <!---->
+      </section>
+      <div data-v-ff09e93b="" data-v-2dd04313="" class="text-input size--md unnnic-form-input" hascloudycolor="false" mask=""><input data-v-043812be="" data-v-ff09e93b="" class="unnnic-form-input input-itself input size-md normal unnnic-form-input input-itself" hascloudycolor="false" placeholder="" iconleft="" iconright="" iconleftclickable="false" iconrightclickable="false" showclear="false" type="text" value="1">
+        <!---->
+        <section data-v-ff09e93b="" class="icon-right-container">
+          <!---->
+          <!---->
+        </section>
+      </div>
+      <!---->
+    </section>
+    <section data-v-a13fc64d="" data-v-2dd04313="" data-v-8e9664ba="" class="unnnic-form-element unnnic-form md" data-testid="form-element">
+      <section data-v-b52fcb11="" data-v-a13fc64d="" class="unnnic-label unnnic-form-element__label">
+        <p data-v-b52fcb11="" class="unnnic-label__label">Closing message</p>
+        <div data-v-03fa3548="" data-v-61269528="" class="unnnic-tooltip-trigger unnnic-tooltip" data-testid="tooltip-trigger" data-state="closed" data-grace-area-trigger=""><span data-v-b593673c="" data-v-b52fcb11="" class="unnnic-icon material-symbols-rounded unnnic-icon-scheme--fg-base unnnic-icon-size--sm unnnic-icon__size--sm" data-testid="material-icon" translate="no">help</span></div>
+        <div data-v-61269528="" disabled="false" defer="false" forcemount="false">
+          <!---->
+        </div>
+      </section>
+      <div data-v-ff09e93b="" data-v-2dd04313="" class="text-input size--md unnnic-form-input" hascloudycolor="false" mask=""><input data-v-043812be="" data-v-ff09e93b="" class="unnnic-form-input input-itself input size-md normal unnnic-form-input input-itself" hascloudycolor="false" placeholder="" iconleft="" iconright="" iconleftclickable="false" iconrightclickable="false" showclear="false" type="text" maxlength="160" value="Această sesiune s-a încheiat din cauza inactivității. Poți începe o nouă conversație oricând!">
+        <!---->
+        <section data-v-ff09e93b="" class="icon-right-container">
+          <!---->
+          <!---->
+        </section>
+      </div>
+      <section data-v-a13fc64d="" class="unnnic-form-element__hints-container">
+        <section data-v-a13fc64d="" class="unnnic-form-element__message-container">
+          <!---->
+          <!---->
+        </section>
+        <p data-v-a13fc64d="">93 / 160</p>
+      </section>
+    </section>
+  </section>
+  <section data-v-43697345="" data-v-8e9664ba="" class="satisfaction-survey-section" data-testid="satisfaction-survey-section">
+    <h2 data-v-43697345="" class="satisfaction-survey-section__title" data-testid="satisfaction-survey-title">Satisfaction survey</h2>
+    <unnnic-switch-stub data-v-43697345="" size="small" label="" option="" helper="If an active flow in the Flows module is configured to trigger a survey after support ends, this setting may conflict with that flow and affect survey delivery." textleft="" textright="Automatically send a satisfaction survey after Live Desk support ends" disabled="false" modelvalue="false" data-testid="satisfaction-survey-switch"></unnnic-switch-stub>
+    <!--v-if-->
+  </section>
   <section data-v-8e9664ba="" class="tags">
     <h2 data-v-8e9664ba="" class="tags__title" data-testid="tags-title">Tags <div data-v-03fa3548="" data-v-61269528="" class="unnnic-tooltip-trigger unnnic-tooltip" data-testid="tooltip-trigger" data-state="closed" data-grace-area-trigger=""><svg data-v-b593673c="" data-v-8e9664ba="" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" aria-hidden="true" role="img" width="1em" height="1em" viewBox="0 0 24 24" class="iconify iconify--ri unnnic-icon unnnic-icon-scheme--fg-base unnnic-icon-size--sm" data-testid="iconify-icon">
           <path fill="currentColor" d="M12 22C6.477 22 2 17.523 2 12S6.477 2 12 2s10 4.477 10 10s-4.477 10-10 10m0-2a8 8 0 1 0 0-16a8 8 0 0 0 0 16m-1-5h2v2h-2zm2-1.645V14h-2v-1.5a1 1 0 0 1 1-1a1.5 1.5 0 1 0-1.471-1.794l-1.962-.393A3.501 3.501 0 1 1 13 13.355"></path>
@@ -30,7 +126,7 @@ exports[`SectorExtraOptions > Should match the snapshot 1`] = `
           <p data-v-b52fcb11="" class="unnnic-label__label">Tag name</p>
           <!---->
         </section>
-        <div data-v-ff09e93b="" data-v-2dd04313="" class="text-input size--md tags-form__input unnnic-form-input" data-testid="tags-input-tag-name" hascloudycolor="false" mask=""><input data-v-043812be="" data-v-ff09e93b="" class="tags-form__input unnnic-form-input input-itself input size-md normal tags-form__input unnnic-form-input input-itself" data-testid="tags-input-tag-name" hascloudycolor="false" placeholder="Enter the name of a tag to search or to add it" iconleft="" iconright="" iconleftclickable="false" iconrightclickable="false" showclear="false" type="text" maxlength="120" value="">
+        <div data-v-ff09e93b="" data-v-2dd04313="" class="text-input size--md tags-form__input unnnic-form-input" data-testid="tags-input-tag-name" hascloudycolor="false" mask=""><input data-v-043812be="" data-v-ff09e93b="" class="tags-form__input unnnic-form-input input-itself input size-md normal tags-form__input unnnic-form-input input-itself" data-testid="tags-input-tag-name" hascloudycolor="false" placeholder="Enter the name of a tag to search for or to add it" iconleft="" iconright="" iconleftclickable="false" iconrightclickable="false" showclear="false" type="text" maxlength="120" value="">
           <!---->
           <section data-v-ff09e93b="" class="icon-right-container">
             <!---->

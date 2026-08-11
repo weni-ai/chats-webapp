@@ -66,7 +66,7 @@
           v-if="waitingTime !== 0 && !discussionGoal"
           class="ellipsis"
         >
-          {{ $t('waiting_for', waitingTime, { waitingTime }) }}
+          {{ $t('waiting_for.minutes', { count: waitingTime }) }}
         </p>
         <template v-else-if="lastMessageMedia.isMedia">
           <section class="chats-contact__infos__media">
@@ -101,7 +101,7 @@
           v-if="isInactive"
           enabled
           :text="
-            $tc('inactive_room_tooltip', inactivityTimeoutTime, {
+            $t('inactive_room_tooltip', {
               minutes: inactivityTimeoutTime,
             })
           "
@@ -178,7 +178,7 @@
         <p
           v-else-if="(unreadMessages && !selected) || forceShowUnreadMessages"
           class="chats-contact__infos__unread-messages"
-          :title="$t('unread_messages', unreadMessages, { unreadMessages })"
+          :title="$t('unread_messages', { count: unreadMessages })"
         >
           {{ unreadMessages }}
         </p>

@@ -1,12 +1,10 @@
-import { mount, flushPromises, config } from '@vue/test-utils';
+import { mount, flushPromises } from '@vue/test-utils';
 import {
   describe,
   it,
   expect,
   beforeEach,
   afterEach,
-  beforeAll,
-  afterAll,
   vi,
 } from 'vitest';
 import { createTestingPinia } from '@pinia/testing';
@@ -22,17 +20,6 @@ vi.mock('@/services/api/resources/chats/queues', () => ({
     getQueuesToFilter: vi.fn(),
   },
 }));
-
-let savedGlobalMocks;
-
-beforeAll(() => {
-  savedGlobalMocks = { ...config.global.mocks };
-  config.global.mocks = {};
-});
-
-afterAll(() => {
-  config.global.mocks = savedGlobalMocks;
-});
 
 const mockSectorsResponse = {
   sectors: [

@@ -97,7 +97,6 @@ import FillDefaultOption from '../FillDefaultOption.vue';
 
 import { useProfile } from '@/store/modules/profile';
 import { useConfig } from '@/store/modules/config';
-import { useFeatureFlag } from '@/store/modules/featureFlag';
 
 import { cloneDeep } from 'lodash';
 import { removeDuplicatedItems } from '@/utils/array';
@@ -135,6 +134,7 @@ export default {
         name: '',
         default_message: '',
         queue_limit: { is_active: false, limit: null },
+        queue_purpose: '',
         currentAgents: [],
         agents: 0,
         toAddAgentsUuids: [],
@@ -149,7 +149,6 @@ export default {
   },
 
   computed: {
-    ...mapState(useFeatureFlag, ['featureFlags']),
     ...mapState(useProfile, ['me']),
     ...mapState(useConfig, ['enableGroupsMode']),
     isEditing() {
@@ -188,6 +187,7 @@ export default {
             ...this.queues[0].queue_limit,
           },
           agents: this.queues[0].agents,
+          queue_purpose: this.queues[0].queue_purpose || '',
         },
       ];
 

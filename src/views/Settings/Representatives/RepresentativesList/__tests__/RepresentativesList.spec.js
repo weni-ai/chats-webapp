@@ -148,7 +148,7 @@ describe('RepresentativesList/index.vue', () => {
     ).toBe(true);
     expect(
       wrapper.find('[data-testid="representatives-list-empty-message"]').text(),
-    ).toContain('There are no members with permission');
+    ).toContain('There are no members with human support permissions');
   });
 
   it('shows empty state when there are no representatives and emptyRepresentatives is false', async () => {
@@ -162,6 +162,6 @@ describe('RepresentativesList/index.vue', () => {
     ).toBe(true);
     expect(
       wrapper.find('[data-testid="representatives-list-empty-message"]').text(),
-    ).toContain('No representative found');
+    ).toContain('No representatives found');
   });
 });

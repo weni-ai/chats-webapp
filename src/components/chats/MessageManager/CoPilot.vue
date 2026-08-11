@@ -58,10 +58,11 @@
   </div>
 </template>
 <script>
+import { mapActions, mapState, mapWritableState } from 'pinia';
 import vClickOutside from 'v-click-outside';
 
-import { mapActions, mapState } from 'pinia';
 import { useRooms } from '@/store/modules/chats/rooms';
+import { useMessageManager } from '@/store/modules/chats/messageManager';
 
 export default {
   name: 'CoPilot',
@@ -77,6 +78,7 @@ export default {
   },
   computed: {
     ...mapState(useRooms, ['copilotSuggestion']),
+    ...mapWritableState(useMessageManager, ['isCopilotOpen', 'inputMessage']),
     isError() {
       return !this.isLoading && !this.copilotSuggestion;
     },
@@ -115,7 +117,7 @@ export default {
   methods: {
     ...mapActions(useRooms, ['getCopilotSuggestion', 'clearCopilotSuggestion']),
     close() {
-      this.$emit('close');
+      this.isCopilotOpen = false;
     },
     select(suggestion) {
       this.$emit('select', suggestion);
@@ -130,9 +132,9 @@ export default {
   position: absolute;
   bottom: calc(100% + $unnnic-spacing-xs);
 
-  background-color: $unnnic-color-bg-base;
+  background-color: $unnnic-color-bg-base-soft;
   border-radius: $unnnic-border-radius-md;
-  box-shadow: $unnnic-shadow-1;
+  box-shadow: $unnnic-shadow-level-near;
 
   width: calc(100% - $unnnic-spacing-sm);
   max-height: 40vh;
@@ -234,7 +236,7 @@ export default {
       outline: none;
       border: none;
       padding: 0;
-      background-color: $unnnic-color-bg-base;
+      background-color: $unnnic-color-bg-base-soft;
     }
   }
 

@@ -81,7 +81,7 @@ describe('DiscussionAbout', () => {
   it('renders the component correctly with provided details', () => {
     const title = wrapper.find('.discussion-about__section__title');
     expect(title.text()).toContain(
-      `${wrapper.vm.$tc('discussions.title')} ${wrapper.vm.$t('about')} ${wrapper.vm.details?.contact}`,
+      `${wrapper.vm.$t('discussions.title')} ${wrapper.vm.$t('about')} ${wrapper.vm.details?.contact}`,
     );
     const date = wrapper.text();
     expect(date).toContain(

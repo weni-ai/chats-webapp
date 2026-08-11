@@ -11,7 +11,7 @@
       class="transfer-session__title"
       data-testid="transfer-session-title"
     >
-      {{ $tc('transfer_contact') }}
+      {{ $t('transfer_contact', { count: 1 }) }}
     </p>
     <section class="transfer-section">
       <RoomsTransferFields

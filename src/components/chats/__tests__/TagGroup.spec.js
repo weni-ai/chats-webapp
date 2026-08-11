@@ -1,7 +1,7 @@
 import { unnnicTag } from '@weni/unnnic-system';
 import { mount } from '@vue/test-utils';
 import TagGroup from '@/components/TagGroup.vue';
-import { expect } from 'vitest';
+import { expect, vi } from 'vitest';
 
 function createWrapper(props = {}) {
   return mount(TagGroup, {
@@ -268,6 +268,61 @@ describe('TagGroup', () => {
 
       expect(wrapper.vm.showCloseIcon(tags[0])).toBeTruthy();
       expect(wrapper.vm.showCloseIcon(tags[1])).toBeFalsy();
+    });
+  });
+
+  describe('infinite scroll', () => {
+    let intersectionCallback;
+
+    beforeEach(() => {
+      global.IntersectionObserver = vi.fn((callback) => {
+        intersectionCallback = callback;
+        return {
+          observe: vi.fn(),
+          disconnect: vi.fn(),
+          unobserve: vi.fn(),
+        };
+      });
+    });
+
+    it('renders sentinel when infiniteScroll is enabled', () => {
+      const wrapper = createWrapper({
+        tags,
+        infiniteScroll: true,
+        canLoadMore: true,
+      });
+
+      expect(wrapper.find('[data-testid="tag-group-sentinel"]').exists()).toBe(
+        true,
+      );
+    });
+
+    it('emits load-more when sentinel intersects and can load more', async () => {
+      const wrapper = createWrapper({
+        tags,
+        infiniteScroll: true,
+        canLoadMore: true,
+        loadingMore: false,
+      });
+
+      await wrapper.vm.$nextTick();
+      intersectionCallback([{ isIntersecting: true }]);
+
+      expect(wrapper.emitted('load-more')).toBeTruthy();
+    });
+
+    it('does not emit load-more when loadingMore is true', async () => {
+      const wrapper = createWrapper({
+        tags,
+        infiniteScroll: true,
+        canLoadMore: true,
+        loadingMore: true,
+      });
+
+      await wrapper.vm.$nextTick();
+      intersectionCallback([{ isIntersecting: true }]);
+
+      expect(wrapper.emitted('load-more')).toBeFalsy();
     });
   });
 });

@@ -6,6 +6,9 @@ import Message from '@/services/api/resources/chats/message';
 import RoomNotes from '@/services/api/resources/chats/roomNotes';
 
 import { useMessageManager } from './messageManager';
+import { useFeatureFlag } from '@/store/modules/featureFlag';
+import { useSocketMessageFeatureFlag } from '@/composables/useSocketMessageFeatureFlag';
+import { sendRoomMessageBySocket } from '@/services/api/websocket/messages';
 
 import {
   isMessageFromCurrentUser,
@@ -236,6 +239,37 @@ export const useRoomMessages = defineStore('roomMessages', {
 
       if (!activeRoom || !roomUuid) return;
 
+      const featureFlagStore = useFeatureFlag();
+      const useSocket = useSocketMessageFeatureFlag(
+        featureFlagStore.featureFlags,
+      );
+
+      if (useSocket) {
+        const requestId = crypto.randomUUID();
+
+        await sendMessage({
+          itemType: 'room',
+          itemUuid: roomUuid,
+          itemUser: activeRoom.user,
+          message: text,
+          repliedMessage: repliedMessage,
+          uuid: requestId,
+          sendItemMessage: () =>
+            sendRoomMessageBySocket({
+              room: roomUuid,
+              text,
+              aiTextImprovement,
+              requestId,
+            }),
+          addMessage: (message) => this.handlingAddMessage({ message }),
+          addSortedMessage: (message) => this.addRoomMessageSorted({ message }),
+          updateMessage: ({ message, toUpdateMessageUuid }) =>
+            this.updateMessage({ message, toUpdateMessageUuid }),
+          addFailedMessage: (message) => this.addFailedMessage({ message }),
+        });
+        return;
+      }
+
       await sendMessage({
         itemType: 'room',
         itemUuid: roomUuid,
@@ -267,6 +301,11 @@ export const useRoomMessages = defineStore('roomMessages', {
       const { activeRoom } = roomsStore;
       if (!activeRoom || !roomUuid) return;
 
+      const featureFlagStore = useFeatureFlag();
+      const useSocket = useSocketMessageFeatureFlag(
+        featureFlagStore.featureFlags,
+      );
+
       await sendMedias({
         itemType: 'room',
         itemUuid: roomUuid,
@@ -279,6 +318,18 @@ export const useRoomMessages = defineStore('roomMessages', {
             media,
             updateLoadingFiles,
             repliedMessageId: repliedMessage?.uuid,
+            ...(useSocket
+              ? {
+                  createMessage: () => {
+                    const requestId = crypto.randomUUID();
+                    return sendRoomMessageBySocket({
+                      room: roomUuid,
+                      text: '',
+                      requestId,
+                    });
+                  },
+                }
+              : {}),
           }),
         addMessage: (message) => this.handlingAddMessage({ message }),
         addSortedMessage: (message) => this.addRoomMessageSorted({ message }),
@@ -425,6 +476,44 @@ export const useRoomMessages = defineStore('roomMessages', {
       const { activeRoom } = roomsStore;
       if (!activeRoom || !roomUuid) return;
 
+      if (isMessageFromCurrentUser(message)) {
+        this.removeMessageFromFaileds(message.uuid);
+        if (!this.roomMessagesSendingUuids.includes(message.uuid)) {
+          this.roomMessagesSendingUuids.push(message.uuid);
+        }
+      }
+
+      const featureFlagStore = useFeatureFlag();
+      const useSocket = useSocketMessageFeatureFlag(
+        featureFlagStore.featureFlags,
+      );
+
+      if (useSocket) {
+        const requestId = crypto.randomUUID();
+
+        await resendMessage({
+          itemUuid: roomUuid,
+          message,
+          sendItemMessage: () =>
+            sendRoomMessageBySocket({
+              room: roomUuid,
+              text: message.text,
+              requestId,
+            }),
+          updateMessage: ({ message: updatedMessage, toUpdateMessageUuid }) =>
+            this.updateMessage({
+              message: updatedMessage,
+              toUpdateMessageUuid,
+            }),
+          messagesInPromiseUuids: this.roomMessagesInPromiseUuids,
+          removeInPromiseMessage: (messageUuid) =>
+            this.removeMessageFromInPromise(messageUuid),
+          addFailedMessage: (failedMessage) =>
+            this.addFailedMessage({ message: failedMessage }),
+        });
+        return;
+      }
+
       await resendMessage({
         itemUuid: roomUuid,
         message,
@@ -434,11 +523,11 @@ export const useRoomMessages = defineStore('roomMessages', {
             user_email: activeRoom.user.email,
             seen: true,
           }),
-        updateMessage: ({ message, toUpdateMessageUuid }) =>
-          this.updateMessage({ message, toUpdateMessageUuid }),
+        updateMessage: ({ message: updatedMessage, toUpdateMessageUuid }) =>
+          this.updateMessage({ message: updatedMessage, toUpdateMessageUuid }),
         messagesInPromiseUuids: this.roomMessagesInPromiseUuids,
-        removeInPromiseMessage: (message) =>
-          this.removeMessageFromInPromise(message),
+        removeInPromiseMessage: (messageUuid) =>
+          this.removeMessageFromInPromise(messageUuid),
       });
     },
 
@@ -446,6 +535,11 @@ export const useRoomMessages = defineStore('roomMessages', {
       const roomsStore = useRooms();
       const { activeRoom } = roomsStore;
       if (!activeRoom || !roomUuid) return;
+
+      const featureFlagStore = useFeatureFlag();
+      const useSocket = useSocketMessageFeatureFlag(
+        featureFlagStore.featureFlags,
+      );
 
       await resendMedia({
         itemUuid: roomUuid,
@@ -455,6 +549,18 @@ export const useRoomMessages = defineStore('roomMessages', {
           Message.sendRoomMedia(roomUuid, {
             user_email: activeRoom.user.email,
             media: media.file,
+            ...(useSocket
+              ? {
+                  createMessage: () => {
+                    const requestId = crypto.randomUUID();
+                    return sendRoomMessageBySocket({
+                      room: roomUuid,
+                      text: '',
+                      requestId,
+                    });
+                  },
+                }
+              : {}),
           }),
         addFailedMessage: (message) => this.addFailedMessage({ message }),
         removeFailedMessage: (message) =>

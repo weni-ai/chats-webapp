@@ -147,6 +147,26 @@ describe('Sector', () => {
     expect(result).toEqual(expectedData);
   });
 
+  it('should return a list of tags for a sector with search filter', async () => {
+    const expectedData = ['tag1'];
+    const sectorUuid = '123';
+    const search = 'vip';
+
+    http.get.mockResolvedValue({ data: expectedData });
+
+    const result = await Sector.tags(sectorUuid, {
+      limit: 20,
+      next: '',
+      search,
+    });
+
+    expect(http.get).toHaveBeenCalledWith('/tag/', {
+      params: { sector: sectorUuid, limit: 20, search },
+    });
+
+    expect(result).toEqual(expectedData);
+  });
+
   it('should add a tag to a sector', async () => {
     const sectorUuid = '123';
     const tagName = 'New Tag';
