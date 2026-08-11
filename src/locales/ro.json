@@ -401,6 +401,10 @@
   "interaction_time": "Timp interacțiune",
   "average_interaction_time": "Durata medie a conversației în chat",
   "chats": {
+    "audio_download": {
+      "tooltip": "Exportare",
+      "error": "Nu s-a putut exporta fișierul audio din cauza unei probleme tehnice"
+    },
     "transcription": {
       "unavailable_closed_chat": "Nu poți vizualiza transcrierile care nu au fost activate în timpul interacțiunii",
       "unavailable_exceeding_duration": "Transcrierea nu este disponibilă pentru audio mai lung de {duration} minute",
