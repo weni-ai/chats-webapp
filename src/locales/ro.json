@@ -466,7 +466,7 @@
       "pick_of_queue": "{agent} a preluat chatul din coada {queue}",
       "pick_of_agent": "{manager} a preluat chatul care era cu {agent}",
       "edit_custom_field": "a editat un câmp personalizat",
-      "discussion_created": "{agent} a început discuția cu coada {queue}",
+      "discussion_created": "{agent} a început discuția în coada {queue}",
       "discussion_joined": "{agent} s-a alăturat discuției",
       "agent_took_chat": "Ups! Chatul cu contactul {contact} a fost deja preluat de un alt agent",
       "automatic_transfer_from_queue": "Cameră atribuită lui {agent}",
