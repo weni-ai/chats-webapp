@@ -263,7 +263,7 @@
     "managers": {
       "title": "Gerentes de soporte",
       "add": {
-        "label": "Agregar manager",
+        "label": "Agregar gerente",
         "placeholder": "Buscar por nombre o email"
       },
       "working_day": {
@@ -288,7 +288,7 @@
           "label": "Hora de fin"
         },
         "limit_agents": {
-          "title": "Defina un límite en la cantidad de chats simultáneos por representante",
+          "title": "Define un límite en la cantidad de chats simultáneos por representante",
           "label": "Define el número máximo de chats de soporte simultáneos por representante",
           "hint": "Defina 0 para que los representantes tomen chats de la cola.",
           "placeholder": "Ejemplo: 4",
@@ -331,7 +331,7 @@
       "template_message": {
         "switch_active": "Activar plantillas de mensajes",
         "switch_disabled": "Activar plantillas de mensajes",
-        "switch_label": "Envío de plantillas de mensajes"
+        "switch_label": "Disparar plantillas de mensajes"
       },
       "edit_custom_fields": {
         "label": "Permitir a los representantes editar campos personalizables",
@@ -341,7 +341,7 @@
         "tooltip": "Cada mensaje mostrará el nombre del representante que respondió",
         "switch_active": "Mostrar el nombre del representante en los mensajes",
         "switch_disabled": "Mostrar el nombre del representante en los mensajes",
-        "hint": "Cada mensaje intercambiado tendrá el nombre del agente que responde.",
+        "hint": "Cada mensaje enviado mostrará el nombre del representante que está respondiendo.",
         "switch_label": "Usar firma"
       },
       "csat": {
@@ -703,7 +703,7 @@
     "tooltip_disabled": "Escribe una respuesta en el campo de texto para activar respuestas mejoradas con IA",
     "tooltip_enabled": "Mejorar respuesta con IA",
     "tooltip_cancel": "Cancelar respuestas mejoradas con IA",
-    "tooltip_internal_note": "Esta función no está disponible para notas internas",
+    "tooltip_internal_note": "Esta funcionalidad no está disponible para observaciones internas",
     "fix_grammar_and_spelling": "Corregir gramática y ortografía",
     "make_more_empathetic": "Hacerla más empática",
     "rewrite_for_clarity": "Reescribir con claridad",
@@ -930,7 +930,7 @@
     "description": "La cola {queue} será eliminada permanentemente"
   },
   "delete_sector_modal": {
-    "text": "Escribe el nombre del sector a eliminar"
+    "text": "Escribe el nombre del departamento a eliminar"
   },
   "cant_revert": "Esta acción no se puede deshacer",
   "confirm_typing": "Confirma ingresando",
@@ -1041,7 +1041,7 @@
     "disclaimer": "Escribe / (barra) en el campo de mensaje para ver los mensajes rápidos",
     "action_open": "Abrir mensajes rápidos (/)",
     "action_close": "Cerrar mensajes rápidos",
-    "description_new": "Mensaje rápido en el sector {sector}",
+    "description_new": "Mensaje rápido en el departamento {sector}",
     "error_deleting": "No se pudo eliminar el mensaje rápido.",
     "successfully_deleted": "Mensaje rápido eliminado con éxito"
   },
@@ -1092,13 +1092,13 @@
     "title": "Configuración",
     "section_sectors_title": "Departamentos en {project}",
     "section_groups_title": "Gestión de grupos de proyectos",
-    "filter_by_sector_name": "Filtrar por nombre del sector",
+    "filter_by_sector_name": "Filtrar por nombre del departamento",
     "filter_by_group_name": "Filtrar por nombre del grupo",
     "section_sectors_subtitle": "Agrega, consulta y gestiona departamentos, colas, managers y representantes dentro de tu organización.",
     "tabs": {
       "settings": "Configuración",
       "groups": "Grupos de proyectos",
-      "sectors": "Sectores",
+      "sectors": "Departamentos",
       "representatives": "Representantes",
       "general": "General"
     },
@@ -1148,8 +1148,8 @@
         "switch_inactive": "Transferir chats en masa a otra cola o representante"
       },
       "block_transfer_to_off_agents": {
-        "switch_active": "Bloquear transferencia de chats a representantes offline",
-        "switch_inactive": "Bloquear transferencia de chats a representantes offline"
+        "switch_active": "Bloquear transferencias de chats a representantes offline",
+        "switch_inactive": "Bloquear transferencias de chats a representantes offline"
       },
       "hide_moderators_from_transfer": {
         "hint": "Cuando está activa, solo se muestran los usuarios asignados a la cola como representantes. Los moderadores solo aparecen si también están asignados a la cola como representantes. Cuando está desactivada, se muestran todos los usuarios, incluidos los moderadores.",
@@ -1180,8 +1180,8 @@
         "switch_label": "Mostrar contador con el número de chats esperando soporte humano"
       },
       "use_name_sector_in_rooms": {
-        "switch_label": "Mostrar sector del chat en la lista de conversaciones",
-        "hint": "Cuando está activada, se mostrará una etiqueta con el sector del chat junto al nombre del contacto."
+        "switch_label": "Mostrar departamento del chat en la lista de conversaciones",
+        "hint": "Cuando está activada, se mostrará una tag con el departamento del chat junto al nombre del contacto."
       }
     },
     "custom_sector": "Personalizar nuevo departamento (recomendado)",
@@ -1195,7 +1195,7 @@
       "invalid_hours": "El horario de inicio no puede ser posterior o igual al horario de fin",
       "invalid_start_second_hour": "El horario de inicio del segundo periodo debe ser posterior o igual al horario de fin del primer periodo."
     },
-    "custom_queue": "Crear cola personalizada",
+    "custom_queue": "Crear cola personalizada (recomendado)",
     "default_queue": {
       "title": "Crear cola predeterminada (más rápido)",
       "name": "Cola predeterminada"
@@ -1213,7 +1213,7 @@
       "remove_tooltip": "Quitar esta cola",
       "configure_queue": {
         "title": "Configurar cola",
-        "tooltip": "Las colas son grupos de atención dentro del sector. Puedes crear nuevas colas o editarlas cuando quieras después de crear el sector."
+        "tooltip": "Las colas son grupos de atención dentro del departamento. Puedes crear nuevas colas o editarlas cuando quieras después de crear el departamento."
       },
       "delete_or_edit": "Eliminar o editar",
       "limit_chats": {
@@ -1241,12 +1241,12 @@
       "delete_this_quick_message": "Eliminar este mensaje rápido",
       "empty": {
         "description": "Crea el primer mensaje rápido",
-        "title": "No hay mensajes rápidos en este sector"
+        "title": "No hay mensajes rápidos en este departamento"
       },
       "new": "Nuevo mensaje rápido",
       "title": {
         "label": "Configurar un mensaje rápido",
-        "tooltip": "Los mensajes rápidos son textos predeterminados que ayudan a estandarizar la atención. Todos los agentes de este sector podrán usar estos mensajes. Es posible registrar nuevos mensajes abajo."
+        "tooltip": "Los mensajes rápidos son textos predefinidos que ayudan a estandarizar el servicio de atención al cliente. Todos los representantes de este departamento podrán usarlos, y puedes agregar nuevos a continuación."
       }
     },
     "groups": {
@@ -1381,9 +1381,9 @@
     "contacts": "Contactos",
     "open": "Abrir",
     "empty_sectors": {
-      "title": "No hay sectores en este proyecto",
-      "subtitle": "Crea el primer sector para empezar a usar el módulo Live Desk",
-      "action": "Crear sector"
+      "title": "No hay departamentos en este proyecto",
+      "subtitle": "Crea el primer departamento para empezar a usar el módulo Live Desk",
+      "action": "Crear departamento"
     },
     "empty_groups": {
       "title": "No hay grupos de proyectos en {projectName}",

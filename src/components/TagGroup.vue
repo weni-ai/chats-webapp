@@ -1,5 +1,12 @@
 <template>
-  <section :class="{ 'tag-group': true, flex }">
+  <section
+    ref="scrollContainer"
+    :class="{
+      'tag-group': true,
+      flex,
+      'tag-group--infinite-scroll': infiniteScroll,
+    }"
+  >
     <section
       v-if="tags.length > 0"
       ref="container"
@@ -29,7 +36,18 @@
       >
         +{{ remainingTags }}
       </p>
+      <div
+        v-if="infiniteScroll"
+        ref="infiniteScrollSentinel"
+        class="tag-group__sentinel"
+        data-testid="tag-group-sentinel"
+      />
     </section>
+    <UnnnicIconLoading
+      v-if="loadingMore"
+      class="tag-group__loading"
+      data-testid="tag-group-loading"
+    />
   </section>
 </template>
 
@@ -68,11 +86,28 @@ export default {
       type: String,
       default: '32px',
     },
+    infiniteScroll: {
+      type: Boolean,
+      default: false,
+    },
+    canLoadMore: {
+      type: Boolean,
+      default: false,
+    },
+    loadingMore: {
+      type: Boolean,
+      default: false,
+    },
+    maxHeight: {
+      type: String,
+      default: '140px',
+    },
   },
-  emits: ['update:modelValue', 'close', 'add', 'remove'],
+  emits: ['update:modelValue', 'close', 'add', 'remove', 'load-more'],
 
   data: () => ({
     remainingTags: 0,
+    intersectionObserver: null,
   }),
 
   computed: {
@@ -87,9 +122,32 @@ export default {
     tagNames() {
       return this.tags.map((tag) => tag.name);
     },
+    scrollMaxHeight() {
+      return this.maxHeight;
+    },
+  },
+
+  watch: {
+    tags() {
+      this.scheduleInfiniteScrollSetup();
+    },
+    canLoadMore(canLoad) {
+      if (canLoad) {
+        this.scheduleInfiniteScrollSetup();
+      }
+    },
+    loadingMore(isLoading, wasLoading) {
+      if (wasLoading && !isLoading) {
+        this.scheduleInfiniteScrollSetup();
+      }
+    },
   },
 
   mounted() {
+    if (this.infiniteScroll) {
+      this.scheduleInfiniteScrollSetup();
+    }
+
     if (this.flex) {
       return;
     }
@@ -108,7 +166,45 @@ export default {
     });
   },
 
+  beforeUnmount() {
+    this.teardownInfiniteScroll();
+  },
+
   methods: {
+    scheduleInfiniteScrollSetup() {
+      if (!this.infiniteScroll) return;
+
+      this.$nextTick(() => {
+        this.setupInfiniteScroll();
+      });
+    },
+    setupInfiniteScroll() {
+      this.teardownInfiniteScroll();
+
+      const sentinel = this.$refs.infiniteScrollSentinel;
+      const root = this.$refs.scrollContainer;
+      if (!sentinel || !root) return;
+
+      this.intersectionObserver = new IntersectionObserver(
+        (entries) => {
+          const isVisible = entries.some((entry) => entry.isIntersecting);
+          if (isVisible && this.canLoadMore && !this.loadingMore) {
+            this.$emit('load-more');
+          }
+        },
+        {
+          root,
+          rootMargin: '40px',
+        },
+      );
+      this.intersectionObserver.observe(sentinel);
+    },
+    teardownInfiniteScroll() {
+      if (this.intersectionObserver) {
+        this.intersectionObserver.disconnect();
+        this.intersectionObserver = null;
+      }
+    },
     select(tag) {
       if (this.disabledTag) {
         this.$emit('close', tag);
@@ -189,6 +285,13 @@ export default {
     height: v-bind(tagSize);
   }
 
+  &--infinite-scroll {
+    align-items: flex-start;
+    max-height: v-bind(scrollMaxHeight);
+    overflow-x: hidden;
+    overflow-y: auto;
+  }
+
   &__tags {
     position: relative;
     display: flex;
@@ -199,12 +302,29 @@ export default {
     user-select: none;
     overflow: hidden;
     align-self: flex-start;
+    max-width: 100%;
+
+    .tag-group--infinite-scroll & {
+      overflow: visible;
+    }
 
     :deep(.chip) {
       width: max-content;
       max-width: 100%;
       height: v-bind(tagSize);
     }
+  }
+
+  &__sentinel {
+    width: 100%;
+    height: 1px;
+    flex-basis: 100%;
+    min-width: 0;
+  }
+
+  &__loading {
+    align-self: center;
+    margin: $unnnic-spacing-xs auto;
   }
 
   &__remaining-children {
