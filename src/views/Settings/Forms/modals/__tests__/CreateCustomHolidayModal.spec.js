@@ -87,7 +87,7 @@ describe('CreateCustomHolidayModal', () => {
     it('should display the modal title', () => {
       wrapper = createWrapper();
       const title = wrapper.find('[data-testid="modal-title"]');
-      expect(title.text()).toBe('Add Specific Non-working Dates');
+      expect(title.text()).toBe('Add specific non-working dates');
     });
 
     it('should render initial form with empty date and repeat false', () => {
@@ -295,7 +295,7 @@ describe('CreateCustomHolidayModal', () => {
 
       expect(unnnic.unnnicCallAlert).toHaveBeenCalledWith({
         props: {
-          text: 'Non-working dates added successfully.',
+          text: 'Non-working dates added successfully',
           type: 'success',
         },
       });
@@ -402,7 +402,7 @@ describe('CreateCustomHolidayModal', () => {
 
       expect(unnnic.unnnicCallAlert).toHaveBeenCalledWith({
         props: {
-          text: 'Failed to add some non-working dates, please check and try again.',
+          text: 'Failed to add some non-working dates. Review them and try again.',
           type: 'error',
         },
       });

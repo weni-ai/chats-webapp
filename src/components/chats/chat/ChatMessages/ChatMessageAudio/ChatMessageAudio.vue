@@ -130,13 +130,11 @@
 
 <script setup>
 import { ref, useTemplateRef, computed, watch } from 'vue';
-import { storeToRefs } from 'pinia';
 
 import { UnnnicCallAlert } from '@weni/unnnic-system';
 
 import { useRoomMessages } from '@/store/modules/chats/roomMessages';
 import { useDashboard } from '@/store/modules/dashboard';
-import { useFeatureFlag } from '@/store/modules/featureFlag';
 
 import TranscriptionFeedbackModal from './FeedbackModal.vue';
 
@@ -163,8 +161,6 @@ const props = defineProps({
 });
 const emit = defineEmits(['failed-click']);
 
-const { featureFlags } = storeToRefs(useFeatureFlag());
-
 const audioRecorderRef = useTemplateRef('audio-recorder');
 
 const dashboardStore = useDashboard();
@@ -178,13 +174,6 @@ const isContactMessage = computed(() => {
 });
 
 const canShowAudioDownloadAction = computed(() => {
-  if (
-    !featureFlags.value.active_features?.includes(
-      'weniChatsDownloadAudioMessage',
-    )
-  ) {
-    return false;
-  }
   return isContactMessage.value;
 });
 
@@ -269,13 +258,6 @@ watch(showTranscriptionText, () => {
 });
 
 const canShowTranscriptionAudioAction = computed(() => {
-  if (
-    !featureFlags.value.active_features?.includes(
-      'weniChatsTranscriptAudioMessage',
-    )
-  ) {
-    return false;
-  }
   return isContactMessage.value;
 });
 

@@ -55,12 +55,13 @@ export default {
     return response.data;
   },
 
-  async listByProject() {
+  async listByProject({ limit, offset } = {}) {
     const response = await http.get('/queue/', {
       params: {
         project: getProject(),
         ordering: '-created_on',
-        limit: 1000,
+        offset: offset || 0,
+        limit: limit || 1000,
       },
     });
     return response.data;
@@ -121,7 +122,7 @@ export default {
     };
   },
 
-  async tags(queueUuid, { limit = 20, next = '' }) {
+  async tags(queueUuid, { limit = 20, next = '', search = '' } = {}) {
     const endpoint = '/tag/';
     const nextParams = next
       ? getURLParams({ URL: next, endpoint, returnObject: true })
@@ -130,6 +131,7 @@ export default {
       ...nextParams,
       limit: nextParams.limit || limit,
       queue: queueUuid,
+      search,
     };
     const response = await http.get(endpoint, {
       params,

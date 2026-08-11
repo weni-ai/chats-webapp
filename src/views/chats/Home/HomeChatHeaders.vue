@@ -42,9 +42,6 @@
             </section>
           </UnnnicToolTip>
           <UnnnicToolTip
-            v-if="
-              featureFlags.active_features?.includes('weniChatsSearchMessages')
-            "
             enabled
             :text="$t('chats.search_messages.title')"
             side="left"
@@ -67,9 +64,6 @@
             </section>
           </UnnnicToolTip>
           <UnnnicToolTip
-            v-if="
-              featureFlags.active_features?.includes('weniChatsContactInfoV2')
-            "
             enabled
             :text="
               room?.has_history
@@ -89,9 +83,6 @@
             </section>
           </UnnnicToolTip>
           <UnnnicToolTip
-            v-if="
-              featureFlags.active_features?.includes('weniChatsContactInfoV2')
-            "
             enabled
             :text="$t('transfer_contact', { count: 1 })"
             side="left"
@@ -160,7 +151,6 @@ import isMobile from 'is-mobile';
 
 import { useRooms } from '@/store/modules/chats/rooms';
 import { useDiscussions } from '@/store/modules/chats/discussions';
-import { useFeatureFlag } from '@/store/modules/featureFlag';
 import { useConfig } from '@/store/modules/config';
 import { useProfile } from '@/store/modules/profile';
 import { useRoomMessages } from '@/store/modules/chats/roomMessages';
@@ -173,7 +163,7 @@ import DiscussionHeader from '@/components/chats/DiscussionHeader.vue';
 import ModalCloseDiscussion from '@/views/chats/Home/ModalCloseDiscussion.vue';
 
 import { formatContactName } from '@/utils/chats';
-import { buildHistorySearchTerm } from '@/utils/room';
+import { buildHistoryContactQuery } from '@/utils/room';
 import { isUserAdmin } from '@/utils/permissions';
 
 export default {
@@ -209,7 +199,6 @@ export default {
   },
 
   computed: {
-    ...mapState(useFeatureFlag, ['featureFlags']),
     ...mapState(useRooms, {
       room: (store) => store.activeRoom,
       isLoadingCanSendMessageStatus: (store) =>
@@ -252,15 +241,10 @@ export default {
       const { discussion, isLoading } = this;
       return discussion && !isLoading;
     },
-    isActiveFeatureIs24hValidOptimization() {
-      return this.featureFlags.active_features?.includes(
-        'weniChatsIs24hValidOptimization',
-      );
-    },
     isCanSendMessage() {
-      return this.isActiveFeatureIs24hValidOptimization
-        ? this.isCanSendMessageActiveRoom && !this.isLoadingCanSendMessageStatus
-        : this.room?.is_24h_valid;
+      return (
+        this.isCanSendMessageActiveRoom && !this.isLoadingCanSendMessageStatus
+      );
     },
     isShowingSendFlowHeader() {
       const { room, discussion, isLoading } = this;
@@ -314,9 +298,6 @@ export default {
     openHistory() {
       if (!this.room?.has_history) return;
 
-      const contactUrn = buildHistorySearchTerm(this.room);
-      const protocol = this.room.protocol;
-
       const A_YEAR_AGO = dateFnsFormat(
         dateFnsSubYears(new Date(), 1),
         'yyyy-MM-dd',
@@ -325,8 +306,8 @@ export default {
       this.$router.push({
         name: 'closed-rooms',
         query: {
-          contactUrn,
-          protocol,
+          ...buildHistoryContactQuery(this.room),
+          protocol: this.room.protocol,
           startDate: A_YEAR_AGO,
           from: this.room.uuid,
         },
@@ -347,6 +328,7 @@ export default {
 <style lang="scss" scoped>
 .home-chat-headers {
   background-color: $unnnic-color-bg-base;
+
   &__icon {
     width: 38px;
     height: 38px;
@@ -363,16 +345,6 @@ export default {
   &__summary-icon {
     &--open {
       background-color: $unnnic-color-bg-purple-plain;
-      &::after {
-        content: '';
-        position: fixed;
-        top: 49px;
-        transform: rotate(-45deg);
-        width: $unnnic-space-3;
-        height: $unnnic-space-3;
-        background-color: $unnnic-color-bg-purple-plain;
-        border-radius: $unnnic-space-1;
-      }
     }
   }
   &__actions {

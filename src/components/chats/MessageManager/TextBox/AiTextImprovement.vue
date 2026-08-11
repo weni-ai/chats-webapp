@@ -94,11 +94,14 @@ const aiTextImprovement = useAiTextImprovement();
 const { isLoading, isPopoverOpen, showNewTag } = storeToRefs(aiTextImprovement);
 
 const messageManager = useMessageManager();
-const { inputMessage, isDisabledInput, isInternalNote } =
+const { inputMessage, isDisabledInput, isInternalNote, isDictationListening } =
   storeToRefs(messageManager);
 
 const isDisabled = computed(
-  () => !inputMessage.value.trim() || isInternalNote.value,
+  () =>
+    !inputMessage.value.trim() ||
+    isInternalNote.value ||
+    isDictationListening.value,
 );
 
 const tooltipText = computed(() => {

@@ -75,7 +75,6 @@ import { parseUrn } from '@/utils/room';
 import HomeChatHeaders from './HomeChatHeaders.vue';
 import HomeChatModals from './HomeChatModals.vue';
 
-import { useFeatureFlag } from '@/store/modules/featureFlag';
 import { useMessageManager } from '@/store/modules/chats/messageManager';
 
 export default {
@@ -116,7 +115,6 @@ export default {
       isCanSendMessageActiveRoom: 'isCanSendMessageActiveRoom',
       isLoadingCanSendMessageStatus: 'isLoadingCanSendMessageStatus',
     }),
-    ...mapState(useFeatureFlag, ['featureFlags']),
     ...mapState(useConfig, ['project']),
     ...mapState(useProfile, ['me']),
     ...mapState(useDiscussions, {
@@ -124,18 +122,9 @@ export default {
       discussions: 'discussions',
       getDiscussionById: 'getDiscussionById',
     }),
-    isActiveFeatureIs24hValidOptimization() {
-      return this.featureFlags.active_features?.includes(
-        'weniChatsIs24hValidOptimization',
-      );
-    },
     isBulkActionsEnabled() {
-      const hasBulkTake =
-        this.featureFlags.active_features?.includes('weniChatsBulkTake') &&
-        this.project.config?.can_use_bulk_take;
-      const hasBulkClose =
-        this.featureFlags.active_features?.includes('weniChatsBulkClose') &&
-        this.project.config?.can_use_bulk_close;
+      const hasBulkTake = this.project.config?.can_use_bulk_take;
+      const hasBulkClose = this.project.config?.can_use_bulk_close;
       const hasBulkTransfer = this.project.config?.can_use_bulk_transfer;
       return !!hasBulkTake || !!hasBulkClose || !!hasBulkTransfer;
     },
@@ -143,9 +132,9 @@ export default {
       return this.isBulkActionsEnabled ? 'secondary' : 'primary';
     },
     isCanSendMessage() {
-      return this.isActiveFeatureIs24hValidOptimization
-        ? this.isCanSendMessageActiveRoom && !this.isLoadingCanSendMessageStatus
-        : this.room?.is_24h_valid;
+      return (
+        this.isCanSendMessageActiveRoom && !this.isLoadingCanSendMessageStatus
+      );
     },
     isRenderChatsDropzoneVisible() {
       return (
@@ -193,8 +182,7 @@ export default {
         if (
           newRoom &&
           newRoom.uuid !== oldRoom?.uuid &&
-          parseUrn(newRoom).plataform === 'whatsapp' &&
-          this.isActiveFeatureIs24hValidOptimization
+          parseUrn(newRoom).plataform === 'whatsapp'
         ) {
           this.setIsLoadingCanSendMessageStatus(true);
           try {
@@ -415,16 +403,16 @@ export default {
 
 <style lang="scss" scoped>
 .home-chat {
-  padding-bottom: $unnnic-spacing-xs;
+  padding-bottom: $unnnic-space-2;
 
   display: flex;
   flex-direction: column;
 
   height: 100%;
-  max-height: 100vh;
+  max-height: 100%;
 
   .get-chat-button {
-    margin: auto $unnnic-spacing-inline-sm 0;
+    margin: auto $unnnic-space-4 0;
   }
 }
 </style>

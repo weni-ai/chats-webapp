@@ -2,7 +2,7 @@
   <section
     :class="[
       'chats-layout',
-      isAsideVisible && 'has-aside',
+      isAsideVisible && !showBulkSendView && 'has-aside',
       isViewMode && 'view-mode',
     ]"
   >
@@ -34,6 +34,7 @@
           :showFlowsTriggerButton="canTriggerFlows"
           @open-flows-trigger="openFlowsTrigger"
           @show-quick-messages="$emit('show-quick-messages')"
+          @open-bulk-message="openBulkMessage"
         />
       </div>
     </slot>
@@ -49,28 +50,40 @@
       />
     </slot>
 
-    <main>
-      <slot />
-    </main>
-    <section
-      v-if="isAsideVisible"
-      class="aside"
-    >
-      <slot name="aside" />
-    </section>
+    <BulkMessage
+      v-if="showBulkSendView"
+      @close="closeBulkMessage"
+    />
+
+    <template v-else>
+      <main>
+        <slot />
+      </main>
+      <section
+        v-if="isAsideVisible"
+        class="aside"
+      >
+        <slot name="aside" />
+      </section>
+    </template>
   </section>
 </template>
 
 <script>
+import { mapWritableState } from 'pinia';
+
+import { useBulkMessageSend } from '@/store/modules/chats/bulkMessageSend';
+
 import SidebarLoading from '@/views/loadings/HomeSidebar.vue';
 import TheCardGroups from './components/TheCardGroups/index.vue';
 import LayoutFlowsTrigger from './components/FlowsTrigger/index.vue';
 import ChatsLayoutFooterButton from './components/FooterButton/index.vue';
 import ViewOptions from './components/ViewOptions/index.vue';
+import BulkMessage from '@/components/chats/BulkMessage/index.vue';
+import StatusBar from '@/components/StatusBar.vue';
 
 import Sector from '@/services/api/resources/settings/sector.js';
 import FlowsTrigger from '@/services/api/resources/chats/flowsTrigger.js';
-import StatusBar from '@/components/StatusBar.vue';
 
 export default {
   name: 'ChatsLayout',
@@ -82,6 +95,7 @@ export default {
     ChatsLayoutFooterButton,
     ViewOptions,
     StatusBar,
+    BulkMessage,
   },
 
   props: {
@@ -105,6 +119,7 @@ export default {
   }),
 
   computed: {
+    ...mapWritableState(useBulkMessageSend, ['showBulkSendView']),
     isAsideVisible() {
       const asideSlot = this.$slots.aside ? this.$slots.aside() : [];
       return asideSlot.some(
@@ -129,6 +144,12 @@ export default {
   },
 
   methods: {
+    openBulkMessage() {
+      this.showBulkSendView = true;
+    },
+    closeBulkMessage() {
+      this.showBulkSendView = false;
+    },
     openFlowsTrigger({ contact = null } = {}) {
       if (contact) {
         this.flowsTriggerContact = contact;
@@ -174,14 +195,14 @@ section.chats-layout {
 
   padding: 0;
 
-  height: 100vh;
-  max-height: 100vh;
-  width: 100vw;
-  max-width: 100vw;
+  height: 100%;
+  max-height: 100%;
+  width: 100%;
+  max-width: 100%;
 
   display: grid;
   grid-template-columns: 3fr 9fr;
-  grid-template-rows: 100vh;
+  grid-template-rows: 100%;
 
   overflow: hidden;
 
@@ -199,7 +220,7 @@ section.chats-layout {
     position: relative;
 
     padding-top: $viewModeHeaderHeight;
-    grid-template-rows: calc(100vh - $viewModeHeaderHeight);
+    grid-template-rows: calc(100%);
   }
 
   .sidebar {
@@ -217,7 +238,7 @@ section.chats-layout {
     }
 
     & > * {
-      padding-right: $unnnic-spacing-xs;
+      padding-right: $unnnic-space-2;
     }
   }
 

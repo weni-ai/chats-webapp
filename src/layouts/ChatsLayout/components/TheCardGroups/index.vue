@@ -157,13 +157,13 @@ import isMobile from 'is-mobile';
 import { mapActions, mapState, mapWritableState } from 'pinia';
 import unnnic from '@weni/unnnic-system';
 import env from '@/utils/env';
+import { emitToHost } from '@/utils/hostBridge';
 
 import { useRooms } from '@/store/modules/chats/rooms';
 import { useRoomCounters } from '@/store/modules/chats/roomCounters';
 import { useConfig } from '@/store/modules/config';
 import { useProfile } from '@/store/modules/profile';
 import { useDiscussions } from '@/store/modules/chats/discussions';
-import { useFeatureFlag } from '@/store/modules/featureFlag';
 
 import RoomsListLoading from '@/views/loadings/RoomsList.vue';
 import CardGroup from './CardGroup/index.vue';
@@ -242,7 +242,6 @@ export default {
     ...mapState(useConfig, ['project']),
     ...mapState(useProfile, ['me']),
     ...mapState(useDiscussions, ['discussions']),
-    ...mapState(useFeatureFlag, ['featureFlags']),
     ...mapWritableState(useRooms, ['orderBy', 'activeTab', 'showOngoingDot']),
     ...mapState(useRoomCounters, { roomsCount: 'counts' }),
     ...mapWritableState(useDiscussions, [
@@ -313,53 +312,29 @@ export default {
     },
 
     showQueueFilter() {
-      const enableQueueFilterFeature =
-        this.featureFlags.active_features?.includes('weniChatsFilterQueues');
-      if (!enableQueueFilterFeature) return false;
-
       return (
         (this.isViewMode || this.activeTab === 'waiting') &&
         this.activeTab !== 'discussions'
       );
     },
 
-    isBulkCloseFeatureEnabled() {
-      return this.featureFlags.active_features?.includes('weniChatsBulkClose');
-    },
-
-    isBulkTakeFeatureEnabled() {
-      return this.featureFlags.active_features?.includes('weniChatsBulkTake');
-    },
-
-    isBulkTransferFeatureEnabled() {
-      return this.featureFlags.active_features?.includes(
-        'weniChatsBulkTransfer',
-      );
-    },
-
     showSelectAllCheckbox() {
       const canBulkTransfer = this.project.config?.can_use_bulk_transfer;
-      const canBulkClose =
-        this.isBulkCloseFeatureEnabled &&
-        this.project.config?.can_use_bulk_close;
+      const canBulkClose = this.project.config?.can_use_bulk_close;
       const canBulkTake =
-        this.isBulkTakeFeatureEnabled &&
-        this.project.config?.can_use_bulk_take &&
-        !this.isViewMode;
+        this.project.config?.can_use_bulk_take && !this.isViewMode;
       const blockCloseInQueue = this.project.config?.can_close_chats_in_queue;
 
       if (this.activeTab === 'waiting') {
-        const canBulkTransferInWaiting =
-          this.isBulkTransferFeatureEnabled && canBulkTransfer;
-        return (
+        return !!(
           canBulkTake ||
-          canBulkTransferInWaiting ||
+          canBulkTransfer ||
           (canBulkClose && !blockCloseInQueue)
         );
       }
 
       if (this.activeTab === 'ongoing') {
-        return canBulkTransfer || canBulkClose;
+        return !!(canBulkTransfer || canBulkClose);
       }
 
       return false;
@@ -414,28 +389,22 @@ export default {
 
     isWithSelection() {
       const canBulkTransfer = this.project.config?.can_use_bulk_transfer;
-      const canBulkClose =
-        this.isBulkCloseFeatureEnabled &&
-        this.project.config?.can_use_bulk_close;
+      const canBulkClose = this.project.config?.can_use_bulk_close;
       const canBulkTake =
-        this.isBulkTakeFeatureEnabled &&
-        this.project.config?.can_use_bulk_take &&
-        !this.isViewMode;
+        this.project.config?.can_use_bulk_take && !this.isViewMode;
       const blockCloseInQueue = this.project.config?.can_close_chats_in_queue;
 
       if (this.isMobile) return false;
 
       if (this.activeTab === 'waiting') {
-        const canBulkTransferInWaiting =
-          this.isBulkTransferFeatureEnabled && canBulkTransfer;
-        return (
+        return !!(
           canBulkTake ||
-          canBulkTransferInWaiting ||
+          canBulkTransfer ||
           (canBulkClose && !blockCloseInQueue)
         );
       }
 
-      return canBulkTransfer || canBulkClose;
+      return !!(canBulkTransfer || canBulkClose);
     },
   },
   watch: {
@@ -472,13 +441,9 @@ export default {
     totalUnreadMessages: {
       immediate: true,
       handler() {
-        window.parent.postMessage(
-          {
-            event: 'chats:update-unread-messages',
-            unreadMessages: this.totalUnreadMessages,
-          },
-          '*',
-        );
+        emitToHost('chats:update-unread-messages', {
+          unreadMessages: this.totalUnreadMessages,
+        });
       },
     },
     nameOfContact: {
