@@ -331,7 +331,7 @@
       "template_message": {
         "switch_active": "Trigger message templates",
         "switch_disabled": "Trigger message templates",
-        "switch_label": "Triggering message templates"
+        "switch_label": "Trigger message templates"
       },
       "edit_custom_fields": {
         "label": "Allow representatives to edit custom fields",
@@ -341,7 +341,7 @@
         "tooltip": "Each message will display the name of the representative who answered",
         "switch_active": "Display the representative name in messages",
         "switch_disabled": "Display the representative name in messages",
-        "hint": "Each message exchanged will have the name of the agent who is answering.",
+        "hint": "Each message exchanged will have the name of the representative who is answering.",
         "switch_label": "Use signature"
       },
       "csat": {
@@ -928,7 +928,7 @@
     "description": "The queue {queue} will be permanently deleted"
   },
   "delete_sector_modal": {
-    "text": "Type the name of the sector to delete"
+    "text": "Type the name of the department to delete"
   },
   "cant_revert": "This action can't be undone",
   "confirm_typing": "Confirm by typing",
@@ -1025,7 +1025,7 @@
     "delete_description": "Are you sure you want to delete the quick message {shortcut}?",
     "shortcut_tooltip": "Type /{shortcut} to use",
     "new": "New quick message",
-    "description_new": "Quick message in the {sector} sector",
+    "description_new": "Quick message in the {sector} department",
     "add": "Add quick message",
     "edit": "Edit quick message",
     "available_shortcuts": "Available shortcuts",
@@ -1090,14 +1090,14 @@
     "title": "Settings",
     "section_sectors_title": "Departments in {project}",
     "section_groups_title": "Project Groups Management",
-    "filter_by_sector_name": "Filter by sector name",
+    "filter_by_sector_name": "Filter by department name",
     "filter_by_group_name": "Filter by group name",
     "section_sectors_subtitle": "Add, view, and manage departments, queues, managers, and representatives within your organization.",
     "tabs": {
       "general": "General",
       "settings": "Settings",
       "groups": "Project groups",
-      "sectors": "Sectors",
+      "sectors": "Departments",
       "representatives": "Representatives"
     },
     "custom_breaks": {
@@ -1146,8 +1146,8 @@
         "switch_inactive": "Transfer chats in bulk to another queue or representative"
       },
       "block_transfer_to_off_agents": {
-        "switch_active": "Block chats transfer to offline representatives",
-        "switch_inactive": "Block chats transfer to offline representatives"
+        "switch_active": "Block chat transfers to offline representatives",
+        "switch_inactive": "Block chat transfers to offline representatives"
       },
       "hide_moderators_from_transfer": {
         "hint": "When enabled, only users assigned to the queue as representatives are shown. Moderators are only displayed if they are also assigned to the queue as representatives. When disabled, all users, including moderators, are shown.",
@@ -1178,8 +1178,8 @@
         "switch_label": "Show counter with the number of chats waiting for human support"
       },
       "use_name_sector_in_rooms": {
-        "switch_label": "Show chat sector in the conversation list",
-        "hint": "When enabled, a tag with the chat’s sector will be displayed next to the contact’s name."
+        "switch_label": "Show chat department in the conversation list",
+        "hint": "When enabled, a tag with the chat department will be displayed next to the contact’s name."
       }
     },
     "custom_sector": "Customize new department (recommended)",
@@ -1193,7 +1193,7 @@
       "invalid_hours": "Start time can't be greater than or equal to the end time",
       "invalid_start_second_hour": "The start time of the second period must be greater than or equal to the end time of the first period."
     },
-    "custom_queue": "Create a custom queue",
+    "custom_queue": "Create a custom queue (recommended)",
     "default_queue": {
       "title": "Create default queue (faster)",
       "name": "Default queue"
@@ -1210,7 +1210,7 @@
       "remove_tooltip": "Delete this queue",
       "configure_queue": {
         "title": "Configure queue",
-        "tooltip": "Queues are support groups within the sector. You can create new queues or edit them whenever you want with the created sector."
+        "tooltip": "Queues are support groups within the department. You can create new queues or edit them whenever you want in the created department."
       },
       "queue_definitions": "Queue settings",
       "delete_or_edit": "Delete or edit",
@@ -1239,12 +1239,12 @@
       "delete_this_quick_message": "Delete this quick message",
       "empty": {
         "description": "Create the first quick message",
-        "title": "There are no quick messages in this sector"
+        "title": "There are no quick messages in this department"
       },
       "new": "New quick message",
       "title": {
         "label": "Configure a quick message",
-        "tooltip": "Quick messages are ready-made texts that help standardize customer service. All agents in this sector will be able to use these messages, and you can register new messages below."
+        "tooltip": "Quick messages are ready-made texts that help standardize customer service. All representatives in this department will be able to use these messages, and you can add new messages below."
       }
     },
     "groups": {
@@ -1379,9 +1379,9 @@
     "contacts": "Contacts",
     "open": "Open",
     "empty_sectors": {
-      "title": "There are no sectors in this project",
-      "subtitle": "Create the first sector to start using the Live Desk module",
-      "action": "Create sector"
+      "title": "There are no departments in this project",
+      "subtitle": "Create the first department to start using the Live Desk module",
+      "action": "Create department"
     },
     "empty_groups": {
       "title": "There are no project groups in {projectName}",
