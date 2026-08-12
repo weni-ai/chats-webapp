@@ -7,7 +7,7 @@
       class="desk-copilot__chat"
       data-testid="desk-copilot-chat"
     >
-      <SummaryMessage />
+      <SummaryMessage v-if="enableRoomSummary" />
     </section>
 
     <Disclaimer
@@ -19,10 +19,12 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, ref } from 'vue';
+import { computed, onMounted, ref } from 'vue';
+import { storeToRefs } from 'pinia';
 import SummaryMessage from './SummaryMessage.vue';
 import Disclaimer from './Disclaimer.vue';
 import Copilot from '@/services/api/resources/chats/copilot';
+import { useConfig } from '@/store/modules/config';
 
 defineOptions({
   name: 'DeskCopilotTab',
@@ -42,6 +44,12 @@ withDefaults(
 const emit = defineEmits<{
   loaded: [];
 }>();
+
+const { project } = storeToRefs(useConfig());
+
+const enableRoomSummary = computed(
+  () => !!project.value?.config?.has_chats_summary,
+);
 
 const isConfigured = ref(false);
 const isLoadingConnection = ref(true);
