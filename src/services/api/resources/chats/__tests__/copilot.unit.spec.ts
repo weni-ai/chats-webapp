@@ -19,28 +19,18 @@ describe('Copilot service', () => {
   });
 
   describe('listConnections', () => {
-    it('requests connections with is_principal false by default', async () => {
-      const connections = [{ conection: { socketUrl: 'wss://example.com' } }];
-      vi.mocked(http.get).mockResolvedValue({ data: connections });
-
+    it('returns the mock connections without calling the API', async () => {
       const result = await Copilot.listConnections();
 
-      expect(http.get).toHaveBeenCalledWith(
-        '/project/mocked-project-id/copilot/list_connections',
-        { params: { is_principal: false } },
-      );
-      expect(result).toEqual(connections);
+      expect(http.get).not.toHaveBeenCalled();
+      expect(result).toEqual([]);
     });
 
-    it('forwards isPrincipal true as is_principal param', async () => {
-      vi.mocked(http.get).mockResolvedValue({ data: [] });
+    it('returns the mock connections regardless of isPrincipal', async () => {
+      const result = await Copilot.listConnections({ isPrincipal: true });
 
-      await Copilot.listConnections({ isPrincipal: true });
-
-      expect(http.get).toHaveBeenCalledWith(
-        '/project/mocked-project-id/copilot/list_connections',
-        { params: { is_principal: true } },
-      );
+      expect(http.get).not.toHaveBeenCalled();
+      expect(result).toEqual([]);
     });
   });
 });
