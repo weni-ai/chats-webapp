@@ -246,21 +246,25 @@ async function loadRoomTags({ reset = false }: { reset?: boolean } = {}) {
 }
 
 async function removeRoomTag(tag: RoomTag) {
+  const previousTags = [...roomTags.value];
   try {
     await Room.removeRoomTag(room.value.uuid, tag.uuid);
     roomTags.value = roomTags.value.filter(
       (roomTag: RoomTag) => roomTag.uuid !== tag.uuid,
     );
   } catch (error) {
+    roomTags.value = previousTags;
     console.log(error);
   }
 }
 
 async function addRoomTag(tag: RoomTag) {
+  const previousTags = [...roomTags.value];
   try {
     await Room.addRoomTag(room.value.uuid, tag.uuid);
     roomTags.value.push(tag);
   } catch (error) {
+    roomTags.value = previousTags;
     console.log(error);
   }
 }
