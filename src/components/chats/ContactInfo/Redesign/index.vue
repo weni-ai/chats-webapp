@@ -18,6 +18,7 @@
       v-if="activeTab === 'desk_copilot'"
       :isHistory="isHistory"
       :isViewMode="isViewMode"
+      @loaded="emit('loaded-medias')"
     />
 
     <section
