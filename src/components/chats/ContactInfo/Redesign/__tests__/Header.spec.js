@@ -15,6 +15,26 @@ afterAll(() => {
   }
 });
 
+const segmentedControlStub = {
+  name: 'UnnnicSegmentedControl',
+  template: '<div class="unnnic-segmented-control"><slot /></div>',
+  props: ['modelValue', 'defaultValue'],
+  emits: ['update:modelValue'],
+};
+
+const segmentedControlListStub = {
+  name: 'UnnnicSegmentedControlList',
+  template: '<div class="unnnic-segmented-control-list"><slot /></div>',
+};
+
+const segmentedControlTriggerStub = {
+  name: 'UnnnicSegmentedControlTrigger',
+  template:
+    '<button class="unnnic-segmented-control-trigger" :disabled="disabled" :data-testid="$attrs[\'data-testid\']"><slot /></button>',
+  props: ['value', 'disabled'],
+  inheritAttrs: false,
+};
+
 const createWrapper = (props = {}) =>
   mount(Header, {
     props: {
@@ -26,23 +46,13 @@ const createWrapper = (props = {}) =>
         $t: (key) => key,
       },
       stubs: {
-        UnnnicSegmentedControl: {
-          name: 'UnnnicSegmentedControl',
-          template: '<div class="unnnic-segmented-control"><slot /></div>',
-          props: ['modelValue', 'defaultValue'],
-          emits: ['update:modelValue'],
-        },
-        UnnnicSegmentedControlList: {
-          name: 'UnnnicSegmentedControlList',
-          template: '<div class="unnnic-segmented-control-list"><slot /></div>',
-        },
-        UnnnicSegmentedControlTrigger: {
-          name: 'UnnnicSegmentedControlTrigger',
-          template:
-            '<button class="unnnic-segmented-control-trigger" :disabled="disabled" :data-testid="$attrs[\'data-testid\']"><slot /></button>',
-          props: ['value', 'disabled'],
-          inheritAttrs: false,
-        },
+        // UnnnicSegmentedControl is an alias of Tabs.vue (name: UnnnicTabs)
+        UnnnicTabs: segmentedControlStub,
+        UnnnicSegmentedControl: segmentedControlStub,
+        SegmentedControlList: segmentedControlListStub,
+        UnnnicSegmentedControlList: segmentedControlListStub,
+        SegmentedControlTrigger: segmentedControlTriggerStub,
+        UnnnicSegmentedControlTrigger: segmentedControlTriggerStub,
         UnnnicButton: {
           name: 'UnnnicButton',
           template:
@@ -83,7 +93,8 @@ describe('ContactInfoRedesignHeader', () => {
   it('emits update:modelValue when the segmented control changes', async () => {
     wrapper = createWrapper({ modelValue: 'desk_copilot' });
 
-    const segmented = wrapper.findComponent({ name: 'UnnnicTabs' });
+    const segmented = wrapper.findComponent({ name: 'UnnnicSegmentedControl' });
+    expect(segmented.exists()).toBe(true);
     await segmented.vm.$emit('update:modelValue', 'information');
 
     expect(wrapper.emitted('update:modelValue')).toEqual([['information']]);
