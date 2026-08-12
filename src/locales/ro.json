@@ -115,7 +115,7 @@
     "description": "Trage fișierul aici pentru a-l trimite"
   },
   "waiting_for": {
-    "minutes": "1 minut de așteptare | {n} minute de așteptare"
+    "minutes": "{count, plural, one {1 minut de așteptare} few {{count} minute de așteptare} other {{count} de minute de așteptare}}"
   },
   "chat_message": {
     "reply_message": {
@@ -144,11 +144,13 @@
     "info": "Definește un răspuns automat pentru contactele care așteaptă asistență. Lasă câmpul necompletat dacă nu vrei niciun mesaj.",
     "placeholder": "Nu ai setat încă un mesaj automat. Adaugă unul pentru contactele care așteaptă în coadă.",
     "automatic_opening_message": "Mesaj de deschidere automat",
-    "inactive_warning_message": "Mesaj de avertisment",
+    "inactive_warning_message": "Mesaj de inactivitate",
     "inactive_close_message": "Mesaj de încheiere",
     "bulk_message": "Mesaj în masă trimis de {sender}"
   },
+  "inactive_room_tooltip": "{minutes, plural, one {Conversația a atins limita de inactivitate de {minutes} minut.} few {Conversația a atins limita de inactivitate de {minutes} minute.} other {Conversația a atins limita de inactivitate de {minutes} de minute.}}",
   "reply": "Răspuns",
+  "chats_count": "{count, plural, one {{count} chat} few {{count} chaturi} other {{count} de chaturi}}",
   "attention": "Avertisment",
   "updates_saved": "Actualizări salvate",
   "updated_info": "Informații actualizate",
@@ -171,7 +173,7 @@
   "transfer_all_selected_chats": "Transferă toate chaturile selectate",
   "take_over_all_selected_chats_tooltip": "Preia toate chaturile selectate",
   "end_all_selected_chats_tooltip": "Închide toate chaturile selectate",
-  "number_of_chats_selected": "{count} chat selectat | {count} chaturi selectate",
+  "number_of_chats_selected": "{count, plural, one {{count} chat selectat} few {{count} chaturi selectate} other {{count} de chaturi selectate}}",
   "image": "Imagine",
   "image_preview": {
     "count": "Imaginea {current} din {total}",
@@ -276,14 +278,26 @@
       "inactivity_timeout": {
         "show": {
           "field": {
-            "default_warning_message": "Mai ești aici? Dacă nu există niciun răspuns, această sesiune va fi închisă în curând."
-          }
+            "default_warning_message": "Mai ești aici? Dacă nu există niciun răspuns, această sesiune va fi închisă în curând.",
+            "timeout_time_label": "Definește câte minute fără un răspuns din partea contactului ar trebui să aștepte sistemul înainte de a trimite un mesaj de inactivitate",
+            "timeout_time_tooltip": "În acest moment, reprezentantul va vedea, de asemenea, chatul marcat cu o alertă de inactivitate.",
+            "warning_message_label": "Mesaj de inactivitate",
+            "warning_message_tooltip": "Mesajul va apărea ca și cum ar fi fost trimis de reprezentantul atribuit."
+          },
+          "switch_label": "Afișează alerta de inactivitate reprezentantului și notifică contactul",
+          "hint": "Alerta este afișată doar pentru chaturile în desfășurare și ia în considerare timpul de la ultimul mesaj al reprezentantului."
         },
         "close_room": {
           "field": {
-            "default_close_room_message": "Această sesiune s-a încheiat din cauza inactivității. Poți începe o nouă conversație oricând!"
-          }
-        }
+            "default_close_room_message": "Această sesiune s-a încheiat din cauza inactivității. Poți începe o nouă conversație oricând!",
+            "close_room_time_label": "Definește câte minute trebuie să aștepte sistemul pentru a încheia conversația după trimiterea mesajului de inactivitate",
+            "close_room_message_label": "Mesaj de închidere",
+            "close_room_message_tooltip": "Mesajul va apărea ca și cum ar fi fost trimis de reprezentantul atribuit."
+          },
+          "switch_label": "Închide automat chaturile inactive",
+          "hint": "Chaturile sunt închise automat dacă contactul nu trimite niciun mesaj în perioada de după trimiterea alertei."
+        },
+        "title": "Inactivitate conversație"
       },
       "template_message": {
         "switch_active": "Declanșare șabloane mesaj",
@@ -295,7 +309,7 @@
         "tooltip": "Fiecare mesaj va afișa numele reprezentantului care a răspuns",
         "switch_active": "Afișează numele reprezentativ în mesaje",
         "switch_disabled": "Afișează numele reprezentativ în mesaje",
-        "hint": "Fiecare mesaj schimbat va avea numele reprezentantului care răspunde.",
+        "hint": "Fiecare mesaj trimis va avea numele reprezentantului care răspunde.",
         "switch_label": "Folosește semnătura"
       },
       "csat": {
@@ -401,6 +415,10 @@
   "interaction_time": "Timp interacțiune",
   "average_interaction_time": "Durata medie a conversației în chat",
   "chats": {
+    "audio_download": {
+      "tooltip": "Exportare",
+      "error": "Nu s-a putut exporta fișierul audio din cauza unei probleme tehnice"
+    },
     "transcription": {
       "unavailable_closed_chat": "Nu poți vizualiza transcrierile care nu au fost activate în timpul interacțiunii",
       "unavailable_exceeding_duration": "Transcrierea nu este disponibilă pentru audio mai lung de {duration} minute",
@@ -452,20 +470,25 @@
     },
     "feedback": {
       "forwarded_to_agent": "Contact transferat către reprezentantul {agent}",
-      "forwarded_to_queue": "Contact transferat în coada {queue}",
+      "forwarded_to_queue": "Chat transmis în coada {queue}",
       "transfer_to_agent": "{agent1} a transferat conversația către {agent2}",
       "transfer_to_queue": "{agent} a transferat în coada {queue}",
-      "transfer_from_queue_to_queue": "Transferat din coada {queue1} în coada {queue2}",
-      "transfer_from_queue_to_agent": "Transferat din coada {queue} către {agent}",
-      "pick_of_queue": "{agent} l-a preluat din coada {queue}",
-      "pick_of_agent": "{manager} a preluat chatul lui {agent}",
-      "edit_custom_field": "Câmp personalizat editat",
-      "discussion_created": "{agent} a început discuția cu coada {queue}",
+      "transfer_from_queue_to_queue": "A fost transferat din coada {queue1} în coada {queue2}",
+      "transfer_from_queue_to_agent": "A fost transferat din coada {queue} către {agent}",
+      "pick_of_queue": "{agent} a preluat chatul din coada {queue}",
+      "pick_of_agent": "{manager} a preluat chatul care era cu {agent}",
+      "edit_custom_field": "a editat un câmp personalizat",
+      "discussion_created": "{agent} a început discuția în coada {queue}",
       "discussion_joined": "{agent} s-a alăturat discuției",
-      "agent_took_chat": "Chatul cu contactul {contact} a fost deja preluat de un alt agent",
+      "agent_took_chat": "Ups! Chatul cu contactul {contact} a fost deja preluat de un alt agent",
       "automatic_transfer_from_queue": "Cameră atribuită lui {agent}",
-      "see_all_internal_notes": "<b style='color: white;'>Vezi notele interne</b>",
-      "transfer_to_agent_by_other": "{requestedBy} a transferat conversația lui {agent1} către {agent2}"
+      "automatic_close_room": "Închis automat din cauza lipsei de interacțiune din partea contactului",
+      "see_all_internal_notes": "<b style='color: white;'>Vedeți notele interne</b>",
+      "transfer_to_agent_by_other": "{requestedBy} a transferat conversația lui {agent1} către {agent2}",
+      "chat_ended_by": "Conversație încheiată de {agent}",
+      "transfer_from_queue_to_agent_by_other": "{requestedBy} a transferat chatul din coada {queue} către {agent}",
+      "transfer_from_queue_to_queue_by_other": "{requestedBy} a transferat chatul din coada {queue1} în coada {queue2}",
+      "transfer_to_queue_by_other": "{requestedBy} a transferat chatul lui {agent} în coada {queue}"
     },
     "room_list": {
       "order_by": "Sortează după:",
@@ -575,7 +598,7 @@
       "close": "Închide vizualizarea",
       "assume_chat": "Preia doar acest chat",
       "assume_chat_question": "Preiei chatul cu {contact}?",
-      "assume_chat_question_description": "Sigur dorești să preiei chatul cu {contact}?<br /><br />Dacă confirmi, vei elimina chatul de la reprezentantul actual și vei fi responsabil pentru acesta.",
+      "assume_chat_question_description": "Ești sigur că vrei să preiei chatul cu {contact}?<br /><br />Dacă confirmi, vei fi responsabil de acesta și va fi eliminat de la reprezentantul curent.",
       "assume_chat_confirmation": "Dacă confirmi, acest chat va fi transferat de la {viewedAgent} către tine"
     }
   },
@@ -622,7 +645,7 @@
     "by_tag": "Filtrează după etichetă",
     "by_tags": "Filtrează după etichete",
     "by_agent": "Filtrează după reprezentant",
-    "by_date": "Filtrează după @.lower:dată",
+    "by_date": "Filtrează după dată",
     "clear_all": "Elimină filtrele",
     "dates": {
       "today": "Astăzi",
@@ -638,7 +661,7 @@
   },
   "pagination": "{from} – {to} din {total}",
   "contact": "Contact",
-  "unread_messages": "{count, plural, one {{count} mesaj necitit} other {{count} mesaje necitite}}",
+  "unread_messages": "{count, plural, one {{count} mesaj necitit} few {{count} mesaje necitite} other {{count} de mesaje necitite}}",
   "unnamed_contact": "Contact fără nume",
   "unnamed_agent": "Reprezentant fără nume",
   "no_agent_assigned": "Niciun reprezentant atribuit",
@@ -713,11 +736,14 @@
   "chat_closed_by": {
     "agent": "Chat închis de reprezentant"
   },
-  "transfer_contact": "Transferă contact | Transferă contacte",
+  "transfer_contact": "{count, plural, one {Transferă contactul} few {Transferă contactele} other {Transferă contactele}}",
   "bulk_transfer": {
     "transfer_selected_contacts": "Transferă contactele selectate",
-    "agent_transfer_success": "Contactul a fost transferat cu succes reprezentantului {agent} | Contactele au fost transferate cu succes reprezentantului {agent}",
-    "queue_transfer_success": "Contactul a fost transferat cu succes în coada {queue} | Contactele au fost transferate cu succes în coada {queue}",
+    "selected_chats_count": "{count, plural, one {{count} chat este selectat pentru transfer} few {{count} chaturi sunt selectate pentru transfer} other {{count} de chaturi sunt selectate pentru transfer}}",
+    "success_message": "{count, plural, one {{count} chat transferat cu succes} few {{count} chaturi transferate cu succes} other {{count} de chaturi transferate cu succes}}",
+    "partial_success_message": "{success, plural, one {{success} chat transferat, {failed} eșuat. Încearcă din nou.} few {{success} chaturi transferate, {failed} eșuate. Încearcă din nou.} other {{success} de chaturi transferate, {failed} eșuate. Încearcă din nou.}}",
+    "agent_transfer_success": "{count, plural, one {Contactul a fost transferat reprezentantului {agent}} few {Contactele au fost transferate reprezentantului {agent}} other {Contactele au fost transferate reprezentantului {agent}}}",
+    "queue_transfer_success": "{count, plural, one {Contactul a fost transferat cu succes în coada {queue}} few {Contactele au fost transferate cu succes în coada {queue}} other {Contactele au fost transferate cu succes în coada {queue}}}",
     "error": "Eroare la transferul contactelor. Încearcă din nou.",
     "disclaimer": {
       "transfer_to_other_sector": "Când transferi chatul într-o coadă dintr-un alt departament, etichetele vor fi eliminate",
@@ -728,19 +754,19 @@
   "bulk_close": {
     "close_selected_contacts": "Închide contactele selectate",
     "confirm_close_selected": "Sigur vrei să închizi contactele selectate?",
-    "success_message": "{count} chat s-a încheiat cu succes | {count} chaturi s-au încheiat cu succes",
-    "partial_success_message": "{success} chat încheiat, {failed} eșuat. Încearcă din nou. | {success} chaturi încheiate, {failed} eșuate. Încearcă din nou.",
+    "success_message": "{count, plural, one {{count} chat finalizat cu succes} few {{count} chaturi finalizate cu succes} other {{count} de chaturi finalizate cu succes}}",
+    "partial_success_message": "{success, plural, one {{success} chat încheiat, {failed} eșuat. Încearcă din nou.} few {{success} chaturi încheiate, {failed} eșuate. Încearcă din nou.} other {{success} de chaturi încheiate, {failed} eșuate. Încearcă din nou.}}",
     "error_message": "Eroare la închiderea chaturilor. Încearcă din nou.",
     "end_all_selected_chats": "Închide toate chaturile selectate",
     "sector_tag": "Departamentul {current} din {total}",
-    "chats_count_sector": "{count} chat · departament {sector} | {count} chaturi · departament {sector}",
+    "chats_count_sector": "{count, plural, one {{count} chat · departament {sector}} few {{count} chaturi · departament {sector}} other {{count} de chaturi · departament {sector}}}",
     "required_tags_title": "Etichetele sunt necesare pentru a închide chaturile în departamentul {sector}",
-    "required_tags_description": "Dacă selectezi unul sau mai multe etichete de mai jos, acestea vor fi aplicate la {count} chat şi vor înlocui orice etichete existente.",
+    "required_tags_description": "{count, plural, one {Dacă selectezi orice etichetă de mai jos, aceasta va fi aplicată acestui chat și va înlocui orice etichete existente.} few {Dacă selectezi orice etichetă de mai jos, aceasta va fi aplicată la {count} chaturi și va înlocui orice etichete existente.} other {Dacă selectezi orice etichetă de mai jos, aceasta va fi aplicată la {count} de chaturi și va înlocui orice etichete existente.}}",
     "next_sector": "Următorul departament",
     "end_all_chats": "Închide toate ({count} chaturi)",
     "back": "Înapoi",
     "optional_tags_title": "Etichetele nu sunt necesare pentru a închide chaturile în departamentul {sector}",
-    "optional_tags_description": "Dacă selectezi una sau mai multe etichete de mai jos, acestea vor fi aplicate la {count} chat și vor înlocui orice etichete existente. | Dacă selectezi una sau mai multe etichete de mai jos, acestea vor fi aplicate la {count} chaturi și vor înlocui orice etichete existente.",
+    "optional_tags_description": "{count, plural, one {Dacă selectezi orice etichetă de mai jos, aceasta va fi aplicată acestui chat și va înlocui orice etichete existente.} few {Dacă selectezi orice etichetă de mai jos, aceasta va fi aplicată la {count} chaturi și va înlocui orice etichete existente.} other {Dacă selectezi orice etichetă de mai jos, aceasta va fi aplicată la {count} de chaturi și va înlocui orice etichete existente.}}",
     "no_tags_in_sector": "Nu există etichete de selectat în acest departament"
   },
   "close_chat": {
@@ -748,11 +774,11 @@
   },
   "bulk_take": {
     "title": "Preia toate chaturile selectate",
-    "selected_chats_count": "{count} chat este selectat pentru preluare. | {count} chaturi sunt selectate pentru preluare.",
+    "selected_chats_count": "{count, plural, one {{count} chat este selectat pentru preluare} few {{count} chaturi sunt selectate pentru preluare} other {{count} de chaturi sunt selectate pentru preluare}}",
     "confirm_take_over_selected": "Sigur vrei să preiei toate chaturile selectate?",
     "take_over_all": "Preia toate",
-    "success_message": "{count} chat preluat cu succes | {count} chaturi preluate cu succes",
-    "partial_success_message": "{success} chat preluat, {failed} nereușite. Încearcă din nou. | {success} chaturi preluate, {failed} nereușite. Încearcă din nou.",
+    "success_message": "{count, plural, one {{count} chat preluat cu succes} few {{count} chaturi preluate cu succes} other {{count} de chaturi preluate cu succes}}",
+    "partial_success_message": "{success, plural, one {{success} chat preluat, {failed} eșuat. Încearcă din nou.} few {{success} chaturi preluate, {failed} eșuate. Încearcă din nou.} other {{success} de chaturi preluate, {failed} eșuate. Încearcă din nou.}}",
     "error_message": "Eroare la preluarea chaturilor. Încearcă din nou."
   },
   "contact_info": {
@@ -788,7 +814,7 @@
     }
   },
   "discussions": {
-    "title": "Discuție | Discuții",
+    "title": "Discuție",
     "start_discussion": {
       "title": "Începe discuția",
       "form": {
@@ -868,6 +894,9 @@
     "text": "Șterge coada {queue}",
     "description": "Coada {queue} va fi ștearsă definitiv"
   },
+  "delete_sector_modal": {
+    "text": "Introdu numele departamentului care urmează să fie șters"
+  },
   "cant_revert": "Această acțiune nu poate fi refăcută",
   "confirm_typing": "Confirmă prin tastare",
   "sector_deleted_success": "Departament șters cu succes",
@@ -887,9 +916,9 @@
   "send_media": "Trimite media",
   "send_photo_or_video": "Trimite fotografie sau video",
   "photo_or_video": "Fotografie sau video",
-  "send_docs": "Trimite document | Trimite document | Trimite documente",
+  "send_docs": "",
   "doc": "Document",
-  "send_images": "Trimite imagine | Trimite imagini",
+  "send_images": "",
   "quick_message": "Mesaje rapide",
   "flows": "Fluxuri",
   "flows_trigger": {
@@ -901,7 +930,7 @@
       "trigger_time": "Ora declanșării"
     },
     "groups": "Grupuri ({length})",
-    "group_contacts": "{n} contact | {n} contacte",
+    "group_contacts": "{n, plural, one {{n} contact} few {{n} contacte} other {{n} de contacte}}",
     "letter_group": "{letter} ({length})",
     "letter_group_unnamed": "Fără nume ({length})",
     "unnamed_contact": "Contact fără nume",
@@ -938,7 +967,7 @@
       "confirmation_helper": "Asigură-te că fiecare câmp este mapat corect. Mesajul tău va fi personalizat pentru fiecare contact selectat pe baza acestor mapări.",
       "confirmation_checkbox": "Am verificat și sunt gata să o trimit",
       "next_template": "Șablonul următor",
-      "send_templates": "{count, plural, one {Trimite ({count} șablon)} other {Trimite ({count} șabloane)}}",
+      "send_templates": "{count, plural, one {Trimite ({count} șablon)} few {Trimite ({count} șabloane)} other {Trimite ({count} de șabloane)}}",
       "local_variables": {
         "contact_name": "Nume contact",
         "contact_urn": "Telefon de contact",
@@ -963,7 +992,7 @@
     "delete_description": "Ești sigur că dorești să ștergi mesajul rapid {shortcut}?",
     "shortcut_tooltip": "Scrie /{shortcut} pentru a folosi",
     "new": "Mesaj rapid nou",
-    "description_new": "Mesaj rapid în sectorul {sector}",
+    "description_new": "Mesaj rapid în departamentul {sector}",
     "add": "Adăugare mesaj rapid",
     "edit": "Editează mesaj rapid",
     "available_shortcuts": "Comenzi rapide disponibile",
@@ -1047,11 +1076,13 @@
   "config_chats": {
     "title": "Setări",
     "section_sectors_title": "Sectoare în {project}",
+    "filter_by_sector_name": "Filtrează după numele departamentului",
     "section_sectors_subtitle": "Adaugă, vizualizează și gestionează sectoare, cozi, manageri și reprezentanți în cadrul organizației tale.",
     "tabs": {
       "general": "General",
       "settings": "Setări",
       "groups": "Grupuri de proiect",
+      "sectors": "Departamente",
       "representatives": "Reprezentanți"
     },
     "custom_breaks": {
@@ -1118,6 +1149,10 @@
       },
       "show_waiting_rooms_count": {
         "switch_label": "Afișează contorul cu numărul de chaturi care așteaptă asistența umană"
+      },
+      "use_name_sector_in_rooms": {
+        "switch_label": "Afișează departamentul chatului în lista de conversații",
+        "hint": "Când este activată, o etichetă cu departamentul chatului va fi afișată lângă numele contactului."
       }
     },
     "custom_sector": "Personalizează noul departament (recomandat)",
@@ -1131,7 +1166,7 @@
       "invalid_hours": "Ora de început nu poate fi mai mare sau egală cu ora de sfârșit",
       "invalid_start_second_hour": "Ora de început a celei de-a doua perioade trebuie să fie mai mare sau egală cu ora de sfârșit a primei perioade."
     },
-    "custom_queue": "Creează o coadă personalizată",
+    "custom_queue": "Creează o coadă personalizată (recomandat)",
     "default_queue": {
       "title": "Creează coadă implicită (mai rapid)",
       "name": "Coada implicită"
@@ -1141,6 +1176,9 @@
       "new": "Coadă nouă",
       "info": "Cozile sunt grupuri de asistență în cadrul unui departament. Poți direcționa contactele dintr-un flux către o anumită coadă.",
       "hint": "Cozile sunt grupuri de asistență într-un departament. Le poți crea sau modifica în orice moment.",
+      "configure_queue": {
+        "tooltip": "Cozile sunt grupuri de asistență în cadrul departamentului. Poți crea cozi noi sau le poți edita oricând în departamentul creat."
+      },
       "queue_definitions": "Setările cozii",
       "delete_or_edit": "Șterge sau editează",
       "limit_chats": {
@@ -1174,6 +1212,14 @@
         "delete_error": "Eroare la ștergerea cozii",
         "add_new_queue": "Această coadă nouă va fi adăugată pentru toți reprezentanții. O poți elimina în <b>Setări Live Desk > Grupuri > Agenți</b>.",
         "config_agents_group": "Adaugă sau elimină reprezentanți din această coadă în <b>Setări chat > Grupuri de proiect</b>"
+      }
+    },
+    "quick_messages": {
+      "empty": {
+        "title": "Nu există mesaje rapide în acest departament"
+      },
+      "title": {
+        "tooltip": "Mesajele rapide sunt texte gata pregătite care ajută la standardizarea serviciului pentru clienți. Toți reprezentanții din acest departament vor putea utiliza aceste mesaje, iar tu poți adăuga mesaje noi mai jos."
       }
     },
     "groups": {
@@ -1306,7 +1352,12 @@
     "new_group": "Grup nou",
     "agent_title": "Reprezentanți",
     "contacts": "Contacte",
-    "open": "Deschise"
+    "open": "Deschise",
+    "empty_sectors": {
+      "title": "Nu există departamente în acest proiect",
+      "subtitle": "Creează primul departament pentru a începe să folosești modulul Live Desk",
+      "action": "Creează departament"
+    }
   },
   "new_sector": {
     "sector_tip": "Creează un departament pentru a gestiona operațiunile tale de asistență, inclusiv roluri, agenți și programul de lucru",
@@ -1500,5 +1551,7 @@
       "activate": "Mod vocal",
       "stop": "Oprire"
     }
-  }
+  },
+  "inactive": "Inactiv",
+  "automatically_ended": "Închis automat"
 }

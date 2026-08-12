@@ -45,12 +45,6 @@ vi.spyOn(i18n.global, 't').mockImplementation((key) => key);
 
 const createWrapper = (options = {}) => {
   const {
-    featureFlags = {
-      active_features: [
-        'weniChatsAITextImprovement',
-        'weniChatsEnableInternalNoteMedias',
-      ],
-    },
     activeDiscussion = null,
     inputMessage = '',
     isInternalNote = false,
@@ -72,7 +66,6 @@ const createWrapper = (options = {}) => {
         isSuggestionBoxOpen: false,
       },
       aiTextImprovement: { isLoading: isAiLoading },
-      featureFlag: { featureFlags },
       discussions: { activeDiscussion },
     },
   });
@@ -135,19 +128,10 @@ describe('Actions', () => {
   });
 
   describe('AI text improvement visibility', () => {
-    it('should show AiTextImprovement when feature flag is active', () => {
+    it('should show AiTextImprovement in room mode', () => {
       const wrapper = createWrapper();
       expect(wrapper.find('[data-testid="ai-text-improvement"]').exists()).toBe(
         true,
-      );
-    });
-
-    it('should hide AiTextImprovement when feature flag is off', () => {
-      const wrapper = createWrapper({
-        featureFlags: { active_features: [] },
-      });
-      expect(wrapper.find('[data-testid="ai-text-improvement"]').exists()).toBe(
-        false,
       );
     });
 

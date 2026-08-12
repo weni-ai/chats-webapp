@@ -39,7 +39,7 @@ describe('RoomsTable.vue', () => {
   let wrapper;
 
   const createWrapper = (props = {}, mountOptions = {}, routeQuery = null) => {
-    const defaultRouteQuery = { contactUrn: '', startDate: '', endDate: '' };
+    const defaultRouteQuery = { contact: '', startDate: '', endDate: '' };
     const currentRouteQuery = routeQuery
       ? { ...defaultRouteQuery, ...routeQuery }
       : defaultRouteQuery;
@@ -305,6 +305,127 @@ describe('RoomsTable.vue', () => {
       );
 
       getHistoryRoomsSpy.mockRestore();
+    });
+
+    it('calls getHistoryRooms with unified query params', async () => {
+      wrapper = createWrapper(
+        {},
+        {},
+        {
+          contact: 'abc-123',
+          email: 'test@example.com',
+          document: '12345678900',
+        },
+      );
+
+      History.getHistoryRooms.mockClear();
+      await wrapper.vm.getHistoryRooms();
+
+      expect(History.getHistoryRooms).toHaveBeenCalledWith(
+        expect.objectContaining({
+          contact: 'abc-123',
+          email: 'test@example.com',
+          document: '12345678900',
+        }),
+      );
+      expect(History.getHistoryRooms.mock.calls[0][0].search).toBeUndefined();
+    });
+
+    it('calls getHistoryRooms with legacy comma-separated contactUrn as search', async () => {
+      wrapper = createWrapper(
+        {},
+        {},
+        {
+          contactUrn: '558486065742,kallil@gmail.com',
+        },
+      );
+
+      History.getHistoryRooms.mockClear();
+      await wrapper.vm.getHistoryRooms();
+
+      expect(History.getHistoryRooms).toHaveBeenCalledWith(
+        expect.objectContaining({
+          search: '558486065742,kallil@gmail.com',
+        }),
+      );
+    });
+
+    it('parses token filter into typed params without search', async () => {
+      wrapper = createWrapper();
+
+      await wrapper.setData({
+        filters: {
+          ...wrapper.vm.filters,
+          contact:
+            'contact=abc-123 email=kallil@gmail.com document=12345678900',
+        },
+      });
+
+      History.getHistoryRooms.mockClear();
+      await wrapper.vm.getHistoryRooms();
+
+      expect(History.getHistoryRooms).toHaveBeenCalledWith(
+        expect.objectContaining({
+          contact: 'abc-123',
+          email: 'kallil@gmail.com',
+          document: '12345678900',
+        }),
+      );
+      expect(History.getHistoryRooms.mock.calls[0][0].search).toBeUndefined();
+    });
+
+    it('manual free-text search takes precedence over unified query params', async () => {
+      wrapper = createWrapper(
+        {},
+        {},
+        {
+          contact: 'abc-123',
+          email: 'test@example.com',
+        },
+      );
+
+      await wrapper.setData({
+        filters: { ...wrapper.vm.filters, contact: 'Manual Search' },
+      });
+
+      History.getHistoryRooms.mockClear();
+      await wrapper.vm.getHistoryRooms();
+
+      expect(History.getHistoryRooms).toHaveBeenCalledWith(
+        expect.objectContaining({
+          search: 'Manual Search',
+        }),
+      );
+      expect(History.getHistoryRooms.mock.calls[0][0].contact).toBeUndefined();
+    });
+
+    it('token filter takes precedence over route query params', async () => {
+      wrapper = createWrapper(
+        {},
+        {},
+        {
+          contact: 'route-contact',
+          email: 'route@example.com',
+        },
+      );
+
+      await wrapper.setData({
+        filters: {
+          ...wrapper.vm.filters,
+          contact: 'contact=typed-id email=typed@example.com',
+        },
+      });
+
+      History.getHistoryRooms.mockClear();
+      await wrapper.vm.getHistoryRooms();
+
+      expect(History.getHistoryRooms).toHaveBeenCalledWith(
+        expect.objectContaining({
+          contact: 'typed-id',
+          email: 'typed@example.com',
+        }),
+      );
+      expect(History.getHistoryRooms.mock.calls[0][0].search).toBeUndefined();
     });
 
     it('calls getHistoryRooms with correct filter parameters', async () => {

@@ -1,7 +1,6 @@
 import { vi, describe, it, expect, beforeEach, afterEach } from 'vitest';
 import messageService from '../message';
 import http from '@/services/api/http';
-import { useFeatureFlag } from '@/store/modules/featureFlag';
 
 vi.mock('@/services/api/http', () => ({
   default: {
@@ -18,22 +17,9 @@ vi.mock('@/utils/config', () => ({
   getProject: vi.fn(() => 'mocked-project-id'),
 }));
 
-vi.mock('@/store/modules/featureFlag', () => ({
-  useFeatureFlag: vi.fn(() => ({
-    featureFlags: {
-      active_features: [],
-    },
-  })),
-}));
-
 describe('Message service', () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    useFeatureFlag.mockReturnValue({
-      featureFlags: {
-        active_features: [],
-      },
-    });
   });
 
   afterEach(() => {
@@ -62,6 +48,7 @@ describe('Message service', () => {
           ordering: '-created_on',
           reverse_results: true,
         },
+        baseURL: 'https://api.example.com/v2',
       });
       expect(result).toEqual(mockResponse.data);
     });
@@ -85,7 +72,9 @@ describe('Message service', () => {
 
       expect(http.get).toHaveBeenCalledWith(
         '/msg/?offset=20&limit=20&room=room-123',
-        {},
+        {
+          baseURL: 'https://api.example.com/v2',
+        },
       );
       expect(result).toEqual(mockResponse.data);
     });
@@ -100,13 +89,7 @@ describe('Message service', () => {
       ).rejects.toThrow('Room not found');
     });
 
-    it('should use v2 API when feature flag is active', async () => {
-      useFeatureFlag.mockReturnValue({
-        featureFlags: {
-          active_features: ['weniChatsV2Message'],
-        },
-      });
-
+    it('should use v2 API endpoint', async () => {
       const mockResponse = {
         data: {
           results: [{ id: 1, text: 'v2 message' }],
@@ -125,58 +108,6 @@ describe('Message service', () => {
           reverse_results: true,
         },
         baseURL: 'https://api.example.com/v2',
-      });
-    });
-
-    it('should use v1 API when feature flag is not active', async () => {
-      useFeatureFlag.mockReturnValue({
-        featureFlags: {
-          active_features: [],
-        },
-      });
-
-      const mockResponse = {
-        data: {
-          results: [{ id: 1, text: 'v1 message' }],
-          count: 1,
-        },
-      };
-      http.get.mockResolvedValue(mockResponse);
-
-      const params = { nextReq: null };
-      await messageService.getByRoom(params, 'room-123');
-
-      expect(http.get).toHaveBeenCalledWith('/msg/', {
-        params: {
-          room: 'room-123',
-          ordering: '-created_on',
-          reverse_results: true,
-        },
-      });
-    });
-
-    it('should use v1 API when featureFlags is undefined', async () => {
-      useFeatureFlag.mockReturnValue({
-        featureFlags: undefined,
-      });
-
-      const mockResponse = {
-        data: {
-          results: [{ id: 1, text: 'v1 message' }],
-          count: 1,
-        },
-      };
-      http.get.mockResolvedValue(mockResponse);
-
-      const params = { nextReq: null };
-      await messageService.getByRoom(params, 'room-123');
-
-      expect(http.get).toHaveBeenCalledWith('/msg/', {
-        params: {
-          room: 'room-123',
-          ordering: '-created_on',
-          reverse_results: true,
-        },
       });
     });
   });
@@ -429,7 +360,7 @@ describe('Message service', () => {
       );
 
       expect(result).toEqual({
-        message_response: mockMessageResponse.data,
+        message_response: { ...mockMessageResponse.data, media: [] },
         media_response: mockMediaResponse.data,
       });
     });
@@ -486,7 +417,7 @@ describe('Message service', () => {
       const result = await messageService.sendRoomMedia('room-789', mediaData);
 
       expect(result).toEqual({
-        message_response: mockMessageResponse.data,
+        message_response: { ...mockMessageResponse.data, media: [] },
         media_response: mockMediaResponse.data,
       });
     });
@@ -530,6 +461,53 @@ describe('Message service', () => {
       await expect(
         messageService.sendRoomMedia('room-error', mediaData),
       ).rejects.toThrow('Media upload failed');
+    });
+
+    it('should create the message via createMessage when provided and still upload media via REST', async () => {
+      const mockMessage = {
+        uuid: 'socket-msg-uuid',
+        text: '',
+        room: 'room-socket',
+      };
+      const mockMediaResponse = {
+        data: { id: 460, media_file: 'file.jpg', message: 'socket-msg-uuid' },
+      };
+      const createMessage = vi.fn().mockResolvedValue(mockMessage);
+
+      http.postForm.mockResolvedValue(mockMediaResponse);
+
+      const updateLoadingFiles = vi.fn();
+      const mediaFile = new File(['content'], 'test.jpg', {
+        type: 'image/jpeg',
+      });
+
+      const result = await messageService.sendRoomMedia('room-socket', {
+        user_email: 'user@example.com',
+        media: mediaFile,
+        updateLoadingFiles,
+        repliedMessageId: 'replied-msg-123',
+        createMessage,
+      });
+
+      expect(createMessage).toHaveBeenCalled();
+      expect(http.post).not.toHaveBeenCalled();
+      expect(updateLoadingFiles).toHaveBeenCalledWith('socket-msg-uuid', 0);
+      expect(http.postForm).toHaveBeenCalledWith(
+        '/media/',
+        {
+          content_type: 'image/jpeg',
+          message: 'socket-msg-uuid',
+          media_file: mediaFile,
+          replied_message_id: 'replied-msg-123',
+        },
+        {
+          onUploadProgress: expect.any(Function),
+        },
+      );
+      expect(result).toEqual({
+        message_response: { ...mockMessage, media: [] },
+        media_response: mockMediaResponse.data,
+      });
     });
   });
 

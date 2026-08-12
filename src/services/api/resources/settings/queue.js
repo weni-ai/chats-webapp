@@ -128,7 +128,7 @@ export default {
     };
   },
 
-  async tags(queueUuid, { limit = 20, next = '' }) {
+  async tags(queueUuid, { limit = 20, next = '', search = '' } = {}) {
     const endpoint = '/tag/';
     const nextParams = next
       ? getURLParams({ URL: next, endpoint, returnObject: true })
@@ -137,6 +137,7 @@ export default {
       ...nextParams,
       limit: nextParams.limit || limit,
       queue: queueUuid,
+      search,
     };
     const response = await http.get(endpoint, {
       params,

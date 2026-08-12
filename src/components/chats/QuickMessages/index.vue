@@ -31,7 +31,7 @@
         :title="$t('quick_messages.shared')"
         :quickMessages="sharedQuickMessages"
         :withoutMessagesText="$t('quick_messages.without_messages_shared')"
-        :infiniteScroll="isV2"
+        :infiniteScroll="true"
         :loadingMore="isLoadingQuickMessagesSharedByProject"
         :hasMore="hasMoreQuickMessagesSharedByProject"
         @select-quick-message="selectQuickMessage"
@@ -80,8 +80,6 @@ import ModalDeleteQuickMessage from './ModalDeleteQuickMessage.vue';
 
 import { useQuickMessages } from '@/store/modules/chats/quickMessages';
 import { useQuickMessageShared } from '@/store/modules/chats/quickMessagesShared';
-import { useFeatureFlag } from '@/store/modules/featureFlag';
-import { useQuickMessagesFeatureFlag } from '@/composables/useQuickMessagesFeatureFlag';
 
 export default {
   name: 'QuickMessages',
@@ -109,21 +107,13 @@ export default {
   computed: {
     ...mapState(useQuickMessages, ['quickMessages']),
     ...mapState(useQuickMessageShared, [
-      'quickMessagesShared',
       'quickMessagesSharedByProject',
       'isLoadingQuickMessagesSharedByProject',
       'hasMoreQuickMessagesSharedByProject',
     ]),
-    ...mapState(useFeatureFlag, ['featureFlags']),
-
-    isV2() {
-      return useQuickMessagesFeatureFlag(this.featureFlags);
-    },
 
     sharedQuickMessages() {
-      return this.isV2
-        ? this.quickMessagesSharedByProject
-        : this.quickMessagesShared;
+      return this.quickMessagesSharedByProject;
     },
 
     isEditing() {
@@ -153,8 +143,6 @@ export default {
   },
 
   mounted() {
-    if (!this.isV2) return;
-
     this.loadPersonalQuickMessagesV2IfNeeded();
     if (!this.quickMessagesSharedByProject.length) {
       this.loadMoreSharedByProject();
