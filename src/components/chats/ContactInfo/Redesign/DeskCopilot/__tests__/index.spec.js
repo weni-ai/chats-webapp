@@ -117,6 +117,15 @@ describe('DeskCopilotTab', () => {
     );
   });
 
+  it('emits loaded on mount so the contact drawer can leave the skeleton', async () => {
+    Copilot.listConnections.mockResolvedValue([]);
+    wrapper = createWrapper();
+
+    await flushPromises();
+
+    expect(wrapper.emitted('loaded')).toBeTruthy();
+  });
+
   it('shows the disclaimer when the connections request fails', async () => {
     Copilot.listConnections.mockRejectedValue(new Error('Not found'));
     wrapper = createWrapper();
