@@ -86,6 +86,29 @@ describe('SelectFlow', () => {
     });
   });
 
+  it('refetches flows with the queue query param when the queue prop changes', async () => {
+    await flushPromises();
+    FlowsTrigger.getFlows.mockClear();
+
+    await wrapper.setProps({ queue: 'queue-1' });
+    await flushPromises();
+
+    expect(FlowsTrigger.getFlows).toHaveBeenCalledWith(undefined, {
+      verify_chats_tag: true,
+      queue: 'queue-1',
+    });
+  });
+
+  it('clears selection and emits empty modelValue when the queue prop changes', async () => {
+    await flushPromises();
+
+    await wrapper.setProps({ queue: 'queue-1' });
+    await flushPromises();
+
+    expect(wrapper.vm.flowSelection).toBeNull();
+    expect(wrapper.emitted('update:modelValue')).toContainEqual(['']);
+  });
+
   it('clears selection and emits empty modelValue when projectUuidFlow changes', async () => {
     await flushPromises();
     FlowsTrigger.getFlows.mockClear();
