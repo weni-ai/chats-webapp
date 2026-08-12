@@ -1,23 +1,24 @@
 <template>
-  <UnnnicTab
+  <UnnnicTabs
     v-model="activeTab"
-    size="md"
-    :tabs="tabsKeys"
+    defaultValue="notes"
     class="contact-info-redesign-media"
     data-testid="contact-info-redesign-media"
   >
-    <template
-      v-for="key in Object.keys(tabs)"
-      #[`tab-head-${key}`]
-      :key="`tab-head-${key}`"
-    >
-      {{ $t(tabs[key].name) }}
-    </template>
-
-    <template
-      v-for="key in Object.keys(tabs) as TabKey[]"
-      #[`tab-panel-${key}`]
-      :key="`tab-panel-${key}`"
+    <UnnnicTabsList>
+      <UnnnicTabsTrigger
+        v-for="key in tabsKeys"
+        :key="key"
+        :value="key"
+      >
+        {{ $t(tabs[key].name) }}
+      </UnnnicTabsTrigger>
+    </UnnnicTabsList>
+    <UnnnicTabsContent
+      v-for="key in tabsKeys"
+      :key="key"
+      :value="key"
+      class="contact-info-redesign-media__content"
     >
       <component
         :is="tabs[key].component"
@@ -26,8 +27,8 @@
         v-bind="getComponentProps(key)"
         v-on="getComponentEvents(key)"
       />
-    </template>
-  </UnnnicTab>
+    </UnnnicTabsContent>
+  </UnnnicTabs>
 </template>
 
 <script setup lang="ts">
@@ -159,8 +160,13 @@ onUnmounted(() => {
 
 <style lang="scss" scoped>
 .contact-info-redesign-media {
-  :deep(.tab-content) {
-    gap: $unnnic-space-0;
+  :deep(.unnnic-tabs-trigger) {
+    flex: 1;
+    justify-content: center;
+  }
+
+  &__content {
+    padding-top: $unnnic-space-3;
   }
 }
 </style>
