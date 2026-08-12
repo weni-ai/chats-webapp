@@ -847,6 +847,21 @@
         "1": "😡 Muy insatisfecho",
         "no_response": "Sin respuesta"
       }
+    },
+    "desk_copilot": {
+      "copy_summary": "Copiar resumen",
+      "disclaimer": {
+        "description": "Desk Copilot puede ayudarte con:",
+        "enable_button": "Activar Desk Copilot",
+        "items": {
+          "catalog_search": "Búsqueda en el catálogo",
+          "next_best_actions": "Próximas mejores acciones",
+          "product_recommendations": "Recomendaciones de productos",
+          "sales_arguments": "Argumentos de venta"
+        },
+        "title": "Ve más allá de los resúmenes de conversación"
+      },
+      "summary_title": "Resumen de esta conversación"
     }
   },
   "discussions": {

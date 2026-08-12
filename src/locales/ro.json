@@ -815,6 +815,21 @@
         "1": "😡 Foarte nemulțumit",
         "no_response": "Fără răspuns"
       }
+    },
+    "desk_copilot": {
+      "copy_summary": "Copiază rezumatul",
+      "disclaimer": {
+        "description": "Desk Copilot te poate ajuta cu:",
+        "enable_button": "Activează Desk Copilot",
+        "items": {
+          "catalog_search": "Căutare în catalog",
+          "next_best_actions": "Următoarele acțiuni recomandate",
+          "product_recommendations": "Recomandări de produse",
+          "sales_arguments": "Argumente de vânzare"
+        },
+        "title": "Mergi dincolo de rezumatele conversațiilor"
+      },
+      "summary_title": "Rezumatul acestei conversații"
     }
   },
   "discussions": {

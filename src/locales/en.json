@@ -845,6 +845,21 @@
         "1": "😡 Very dissatisfied",
         "no_response": "No response"
       }
+    },
+    "desk_copilot": {
+      "copy_summary": "Copy summary",
+      "disclaimer": {
+        "description": "Desk Copilot can help you with:",
+        "enable_button": "Enable Desk Copilot",
+        "items": {
+          "catalog_search": "Catalog search",
+          "next_best_actions": "Next best actions",
+          "product_recommendations": "Product recommendations",
+          "sales_arguments": "Sales arguments"
+        },
+        "title": "Go beyond conversation summaries"
+      },
+      "summary_title": "Summary of this conversation"
     }
   },
   "discussions": {
