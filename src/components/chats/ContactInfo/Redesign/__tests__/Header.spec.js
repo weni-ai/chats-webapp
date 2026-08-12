@@ -17,7 +17,10 @@ afterAll(() => {
 
 const createWrapper = (props = {}) =>
   mount(Header, {
-    props,
+    props: {
+      modelValue: 'desk_copilot',
+      ...props,
+    },
     global: {
       mocks: {
         $t: (key) => key,
@@ -26,6 +29,8 @@ const createWrapper = (props = {}) =>
         UnnnicSegmentedControl: {
           name: 'UnnnicSegmentedControl',
           template: '<div class="unnnic-segmented-control"><slot /></div>',
+          props: ['modelValue', 'defaultValue'],
+          emits: ['update:modelValue'],
         },
         UnnnicSegmentedControlList: {
           name: 'UnnnicSegmentedControlList',
@@ -56,7 +61,7 @@ describe('ContactInfoRedesignHeader', () => {
     wrapper?.unmount();
   });
 
-  it('renders segmented control with desk copilot disabled and information active', () => {
+  it('renders segmented control with desk copilot enabled', () => {
     wrapper = createWrapper();
 
     expect(
@@ -69,10 +74,19 @@ describe('ContactInfoRedesignHeader', () => {
       wrapper
         .find('[data-testid="segmented-desk-copilot"]')
         .attributes('disabled'),
-    ).toBeDefined();
+    ).toBeUndefined();
     expect(wrapper.find('[data-testid="segmented-information"]').exists()).toBe(
       true,
     );
+  });
+
+  it('emits update:modelValue when the segmented control changes', async () => {
+    wrapper = createWrapper({ modelValue: 'desk_copilot' });
+
+    const segmented = wrapper.findComponent({ name: 'UnnnicTabs' });
+    await segmented.vm.$emit('update:modelValue', 'information');
+
+    expect(wrapper.emitted('update:modelValue')).toEqual([['information']]);
   });
 
   it('emits refresh and close events', async () => {
