@@ -819,6 +819,10 @@
     "switch_tooltip": "Enable if you want the contact always to be directly assigned to you",
     "alert_linked": "Linked contact",
     "alert_detached": "Unlinked contact",
+    "header": {
+      "desk_copilot": "Desk Copilot",
+      "information": "Information"
+    },
     "linked_contact": "Contact linked to representative {name}",
     "see_contact_history": "View history",
     "no_contact_history": "No history",

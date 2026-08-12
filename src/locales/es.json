@@ -821,6 +821,10 @@
     "switch_tooltip": "Activa si deseas que el contacto siempre se te asigne directamente",
     "alert_linked": "Contacto vinculado",
     "alert_detached": "Contacto desvinculado",
+    "header": {
+      "desk_copilot": "Desk Copilot",
+      "information": "Información"
+    },
     "linked_contact": "Contacto vinculado al representante {name}",
     "see_contact_history": "Ver historial",
     "no_contact_history": "Sin historial",
