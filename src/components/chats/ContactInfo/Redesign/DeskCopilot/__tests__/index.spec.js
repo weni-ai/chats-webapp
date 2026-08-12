@@ -31,7 +31,7 @@ afterAll(() => {
   }
 });
 
-const createWrapper = (props = {}) =>
+const createWrapper = (props = {}, piniaState = {}) =>
   mount(DeskCopilotTab, {
     props,
     global: {
@@ -47,6 +47,10 @@ const createWrapper = (props = {}) =>
             profile: {
               me: { project_permission_role: 1 },
             },
+            config: {
+              project: { config: { has_chats_summary: true } },
+            },
+            ...piniaState,
           },
         }),
       ],
@@ -115,6 +119,27 @@ describe('DeskCopilotTab', () => {
     expect(wrapper.find('[data-testid="desk-copilot-summary"]').exists()).toBe(
       true,
     );
+  });
+
+  it('hides the summary when has_chats_summary is disabled', async () => {
+    Copilot.listConnections.mockResolvedValue([]);
+    wrapper = createWrapper(
+      {},
+      {
+        config: {
+          project: { config: { has_chats_summary: false } },
+        },
+      },
+    );
+
+    await flushPromises();
+
+    expect(wrapper.find('[data-testid="desk-copilot-summary"]').exists()).toBe(
+      false,
+    );
+    expect(
+      wrapper.find('[data-testid="desk-copilot-disclaimer"]').exists(),
+    ).toBe(true);
   });
 
   it('emits loaded on mount so the contact drawer can leave the skeleton', async () => {
