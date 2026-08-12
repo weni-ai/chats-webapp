@@ -79,7 +79,7 @@ import Rooms from '@/services/api/resources/settings/rooms';
 import ModalDeleteWithTransfer from '@/components/ModalDeleteWithTransfer.vue';
 import QueueCard from './QueueCard.vue';
 
-import { useFeatureFlag } from '@/store/modules/featureFlags';
+import { useFeatureFlag } from '@/store/modules/featureFlag';
 
 import Queue from '@/services/api/resources/settings/queue';
 

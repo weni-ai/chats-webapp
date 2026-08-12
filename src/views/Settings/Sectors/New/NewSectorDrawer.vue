@@ -99,7 +99,7 @@ import Queue from '@/services/api/resources/settings/queue';
 import { useSettings } from '@/store/modules/settings';
 import { useConfig } from '@/store/modules/config';
 import { useQuickMessageShared } from '@/store/modules/chats/quickMessagesShared';
-import { useFeatureFlag } from '@/store/modules/featureFlags';
+import { useFeatureFlag } from '@/store/modules/featureFlag';
 
 import isMobile from 'is-mobile';
 

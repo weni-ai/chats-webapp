@@ -87,7 +87,7 @@ import DisableBondFlowsModal from './DisableBondFlowsModal.vue';
 
 import { useProfile } from '@/store/modules/profile';
 import { useConfig } from '@/store/modules/config';
-import { useFeatureFlags } from '@/store/modules/featureFlags';
+import { useFeatureFlag } from '@/store/modules/featureFlag';
 
 export default {
   name: 'QueueInputsForm',
@@ -121,7 +121,7 @@ export default {
   computed: {
     ...mapState(useProfile, ['me']),
     ...mapState(useConfig, ['enableGroupsMode']),
-    ...mapState(useFeatureFlags, ['featureFlags']),
+    ...mapState(useFeatureFlag, ['featureFlags']),
     isEditing() {
       return !!this.queueForm.uuid;
     },
