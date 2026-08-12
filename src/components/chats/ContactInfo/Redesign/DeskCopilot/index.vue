@@ -39,6 +39,10 @@ withDefaults(
   },
 );
 
+const emit = defineEmits<{
+  loaded: [];
+}>();
+
 const isConfigured = ref(false);
 const isLoadingConnection = ref(true);
 
@@ -55,6 +59,7 @@ async function loadConnectionStatus() {
 }
 
 onMounted(() => {
+  emit('loaded');
   loadConnectionStatus();
 });
 </script>
