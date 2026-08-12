@@ -164,7 +164,7 @@
     "info": "Defina uma resposta automática para contatos aguardando atendimento. Deixe em branco se não quiser enviar nenhuma mensagem.",
     "placeholder": "Você ainda não configurou uma mensagem automática. Adicione uma para contatos aguardando na fila.",
     "automatic_opening_message": "Mensagem de abertura automática",
-    "inactive_warning_message": "Mensagem de aviso",
+    "inactive_warning_message": "Mensagem de inatividade",
     "inactive_close_message": "Mensagem de encerramento",
     "bulk_message": "Mensagem em massa enviada por {sender}"
   },
@@ -263,15 +263,15 @@
     "managers": {
       "title": "Gerentes de suporte",
       "add": {
-        "label": "Adicionar gerente",
+        "label": "Adicione um gerente",
         "placeholder": "Buscar por nome ou email"
       },
       "working_day": {
         "title": "Dias de funcionamento",
         "copy_workday": "Copiar configurações de dias úteis de um setor existente",
-        "select_days": "Selecionar os dias da semana",
-        "set_hours": "Configurar horário de funcionamento para cada dia",
-        "add_holidays": "Adicionar feriados e datas específicas em que não haverá atendimento",
+        "select_days": "Selecione os dias da semana",
+        "set_hours": "Configure o horário de funcionamento para cada dia",
+        "add_holidays": "Adicione feriados e datas específicas em que não haverá atendimento",
         "add_non_working_dates": "Adicionar datas específicas sem atendimento",
         "select_date_or_period": "Selecionar uma data ou período",
         "repeat_annually": "Repetir anualmente",
@@ -305,25 +305,25 @@
     "additional_options": {
       "title": "Opções adicionais",
       "inactivity_timeout": {
-        "title": "Inatividade na conversa",
+        "title": "Inatividade da conversa",
         "show": {
           "switch_label": "Exibir alerta de inatividade ao atendente e notificar o contato",
           "hint": "O alerta é exibido apenas em chats em andamento e considera o tempo desde a última mensagem do atendente.",
           "field": {
             "timeout_time_label": "Definir após quantos minutos sem resposta do contato o sistema deve enviar a mensagem de aviso",
             "timeout_time_tooltip": "Nesse momento, o atendente também verá a conversa marcada com um alerta de inatividade.",
-            "warning_message_label": "Mensagem de aviso",
-            "warning_message_tooltip": "A mensagem aparecerá como se tivesse sido enviada pelo atendente designado.",
+            "warning_message_label": "Mensagem de inatividade",
+            "warning_message_tooltip": "A mensagem aparecerá como se tivesse sido enviada pelo atendente atribuído.",
             "default_warning_message": "Você ainda está aí? Esta sessão será encerrada em breve se não houver resposta."
           }
         },
         "close_room": {
           "switch_label": "Encerrar chats inativos automaticamente",
-          "hint": "Os chats são encerrados automaticamente se o contato não enviar mensagens no período após o envio do alerta.",
+          "hint": "Os chats são encerrados automaticamente se o contato não enviar nenhuma mensagem no período de inatividade após o envio do alerta.",
           "field": {
             "close_room_time_label": "Definir quantos minutos após o envio da mensagem de aviso o sistema deve encerrar o chat",
             "close_room_message_label": "Mensagem de encerramento",
-            "close_room_message_tooltip": "A mensagem aparecerá como se tivesse sido enviada pelo atendente designado.",
+            "close_room_message_tooltip": "A mensagem aparecerá como se tivesse sido enviada pelo atendente atribuído.",
             "default_close_room_message": "Esta sessão foi encerrada por inatividade. Fique à vontade para iniciar um novo chat a qualquer momento!"
           }
         }
@@ -331,7 +331,7 @@
       "template_message": {
         "switch_active": "Disparar templates de mensagens",
         "switch_disabled": "Disparar templates de mensagens",
-        "switch_label": "Disparo de modelos de mensagens"
+        "switch_label": "Disparar templates de mensagens"
       },
       "edit_custom_fields": {
         "label": "Permitir que atendentes editem campos customizáveis",
@@ -341,7 +341,7 @@
         "tooltip": "Cada mensagem exibirá o nome do atendente que respondeu",
         "switch_active": "Exibir nome do atendente nas mensagens",
         "switch_disabled": "Exibir nome do atendente nas mensagens",
-        "hint": "Cada mensagem trocada terá o nome do agente que está respondendo.",
+        "hint": "Cada mensagem trocada exibirá o nome do agente que está respondendo.",
         "switch_label": "Usar assinatura"
       },
       "csat": {
@@ -497,12 +497,12 @@
       }
     },
     "feedback": {
-      "agent_took_chat": "O chat com o contato {contact} já foi assumido por outro atendente",
+      "agent_took_chat": "Ops! O chat com o contato {contact} já foi assumido por outro atendente",
       "automatic_transfer_from_queue": "Sala atribuída a {agent}",
-      "chat_ended_by": "Chat encerrado por {agent}",
+      "chat_ended_by": "Chat finalizado por {agent}",
       "discussion_created": "{agent} iniciou uma discussão na fila {queue}",
       "discussion_joined": "{agent} entrou na discussão",
-      "edit_custom_field": "Campo customizável editado",
+      "edit_custom_field": "campo customizável editado",
       "forwarded_to_agent": "Contato transferido para o atendente {agent}",
       "forwarded_to_queue": "Contato transferido para a fila {queue}",
       "pick_of_agent": "{manager} assumiu o chat de {agent}",
@@ -510,7 +510,7 @@
       "see_all_internal_notes": "<b style='color: white;'>Ver notas internas</b>",
       "transfer_from_queue_to_agent": "Transferido da fila {queue} para {agent}",
       "transfer_from_queue_to_agent_by_other": "{requestedBy} transferiu o chat da fila {queue} para {agent}",
-      "transfer_from_queue_to_queue": "Transferido da fila {queue1} para a fila {queue2}",
+      "transfer_from_queue_to_queue": "Foi transferido da fila {queue1} para a fila {queue2}",
       "transfer_from_queue_to_queue_by_other": "{requestedBy} transferiu o chat da fila {queue1} para a fila {queue2}",
       "transfer_to_agent": "{agent1} transferido para {agent2}",
       "transfer_to_agent_by_other": "{requestedBy} transferiu o chat de {agent1} para {agent2}",
@@ -568,7 +568,7 @@
     "tags_help": "As tags ajudam a encontrar chats e gerar relatórios melhores",
     "chat_with_contact_ended": "O chat com {contact} foi encerrado",
     "see_history": "Histórico geral",
-    "tag_request": "Adicionar tag ao chat",
+    "tag_request": "Classifique o atendimento",
     "closed_in": "Chat encerrado em",
     "closed": "Chat encerrado",
     "transfer": {
@@ -626,7 +626,7 @@
       "close": "Fechar visualização",
       "assume_chat": "Assumir apenas este chat",
       "assume_chat_question": "Assumir o chat com {contact}?",
-      "assume_chat_question_description": "Tem certeza de que deseja assumir o chat com {contact}?<br /><br />Ao confirmar, você removerá o chat do atendente atual e será responsável pelo chat.",
+      "assume_chat_question_description": "Tem certeza de que deseja assumir o chat com {contact}?<br /><br />Ao confirmar, você removerá o chat do atendente atual e passará a ser responsável por ele.",
       "assume_chat_confirmation": "Se confirmar, este chat será transferido de {viewedAgent} para você"
     }
   },
@@ -704,7 +704,7 @@
     "tooltip_disabled": "Escreva uma resposta no campo de texto para habilitar respostas aprimoradas com IA",
     "tooltip_enabled": "Melhorar resposta com IA",
     "tooltip_cancel": "Cancelar resposta aprimorada com IA",
-    "tooltip_internal_note": "Esta função não está disponível para notas internas",
+    "tooltip_internal_note": "Esta funcionalidade não está disponível para notas internas",
     "fix_grammar_and_spelling": "Corrigir gramática e ortografia",
     "make_more_empathetic": "Tornar mais empática",
     "rewrite_for_clarity": "Reescrever com clareza",
@@ -723,7 +723,7 @@
     "add": {
       "title": "Adicionar atendentes",
       "select": {
-        "label": "Selecionar atendente",
+        "label": "Selecione um atendente",
         "placeholder": "Buscar por nome ou email"
       },
       "button": "Selecionar"
@@ -771,12 +771,12 @@
   "bulk_transfer": {
     "transfer_selected_contacts": "Transferir contatos selecionados",
     "transfer_all": "Transferir todos",
-    "selected_chats_count": "{count, plural, one {{count} chat selecionado para transferência.} other {{count} chats selecionados para transferência.}}",
-    "success_message": "{count, plural, one {{count} chat transferido com sucesso!} other {{count} chats transferidos com sucesso!}}",
+    "selected_chats_count": "{count, plural, one {{count} chat selecionado para transferência} other {{count} chats selecionados para transferência}}",
+    "success_message": "{count, plural, one {{count} chat transferido com sucesso} other {{count} chats transferidos com sucesso}}",
     "partial_success_message": "{success, plural, one {{success} chat transferido, {failed} falhou. Tente novamente.} other {{success} chats transferidos, {failed} falharam. Tente novamente.}}",
     "error_message": "Não foi possível transferir os chats, tente novamente",
-    "agent_transfer_success": "{count, plural, one {Contato transferido com sucesso para atendente {agent}} other {Contatos transferidos com sucesso para atendente {agent}}}",
-    "queue_transfer_success": "{count, plural, one {Contato transferido com sucesso para fila {queue}} other {Contatos transferidos com sucesso para fila {queue}}}",
+    "agent_transfer_success": "{count, plural, one {Contato transferido com sucesso para o atendente {agent}} other {Contatos transferidos com sucesso para o atendente {agent}}}",
+    "queue_transfer_success": "{count, plural, one {Contato transferido com sucesso para a fila {queue}} other {Contatos transferidos com sucesso para a fila {queue}}}",
     "error": "Não foi possível transferir os contatos, tente novamente",
     "disclaimer": {
       "transfer_to_other_sector": "Ao transferir o chat para uma fila de outro setor, as tags serão removidas.",
@@ -787,19 +787,19 @@
   "bulk_close": {
     "close_selected_contacts": "Encerrar contatos selecionados",
     "confirm_close_selected": "Tem certeza que deseja encerrar os contatos selecionados?",
-    "success_message": "{count, plural, one {{count} chat encerrado com sucesso!} other {{count} chats encerrados com sucesso!}}",
-    "partial_success_message": "{success, plural, one {{success} chat encerrado, {failed} falhou. Tente novamente.} other {{success} chats encerrados, {failed} falharam. Tente novamente.}}",
+    "success_message": "{count, plural, one {{count} chat encerrado com sucesso} other {{count} chats encerrados com sucesso}}",
+    "partial_success_message": "{success, plural, one {{success} chat finalizado, {failed} falhou. Tente novamente.} other {{success} chats finalizados, {failed} falharam. Tente novamente.}}",
     "error_message": "Não foi possível encerrar os chats, tente novamente",
     "end_all_selected_chats": "Encerrar todos os chats selecionados",
     "sector_tag": "Setor {current} de {total}",
     "chats_count_sector": "{count, plural, one {{count} chat · setor {sector}} other {{count} chats · setor {sector}}}",
     "required_tags_title": "Tags são obrigatórias para finalizar chats no setor {sector}",
-    "required_tags_description": "{count, plural, one {Se você selecionar alguma tag abaixo, ela será aplicada ao {count} chat e substituirá quaisquer tags existentes.} other {Se você selecionar alguma tag abaixo, ela será aplicada aos {count} chats e substituirá quaisquer tags existentes.}}",
+    "required_tags_description": "{count, plural, one {Se você selecionar alguma das tags abaixo, ela será aplicada ao {count} chat e substituirá as tags existentes.} other {Se você selecionar alguma das tags abaixo, ela será aplicada aos {count} chats e substituirá as tags existentes.}}",
     "next_sector": "Próximo setor",
     "end_all_chats": "Encerrar todos ({count} chats)",
     "back": "Voltar",
     "optional_tags_title": "Tags não são obrigatórias para finalizar chats no setor {sector}",
-    "optional_tags_description": "{count, plural, one {Se você selecionar alguma tag abaixo, ela será aplicada ao {count} chat e substituirá quaisquer tags existentes.} other {Se você selecionar alguma tag abaixo, ela será aplicada aos {count} chats e substituirá quaisquer tags existentes.}}",
+    "optional_tags_description": "{count, plural, one {Se você selecionar alguma das tags abaixo, ela será aplicada ao {count} chat e substituirá as tags existentes.} other {Se você selecionar alguma das tags abaixo, ela será aplicada aos {count} chats e substituirá as tags existentes.}}",
     "no_tags_in_sector": "Não há tags cadastradas neste setor para serem selecionadas."
   },
   "close_chat": {
@@ -807,10 +807,10 @@
   },
   "bulk_take": {
     "title": "Assumir todos os chats selecionados",
-    "selected_chats_count": "{count, plural, one {{count} chat está selecionado para assumir.} other {{count} chats estão selecionados para assumir.}}",
+    "selected_chats_count": "{count, plural, one {{count} chat está selecionado para ser assumido} other {{count} chats estão selecionados para serem assumidos}}",
     "confirm_take_over_selected": "Tem certeza que deseja assumir todos os chats selecionados?",
     "take_over_all": "Assumir todos",
-    "success_message": "{count, plural, one {{count} chat assumido com sucesso!} other {{count} chats assumidos com sucesso!}}",
+    "success_message": "{count, plural, one {{count} chat assumido com sucesso} other {{count} chats assumidos com sucesso}}",
     "partial_success_message": "{success, plural, one {{success} chat assumido, {failed} falhou. Tente novamente.} other {{success} chats assumidos, {failed} falharam. Tente novamente.}}",
     "error_message": "Não foi possível assumir os chats, tente novamente"
   },
@@ -947,7 +947,7 @@
   "successfully_transferred_contact_to": {
     "line": "O contato foi encaminhado para a fila {name}"
   },
-  "select_agent": "Selecionar atendente",
+  "select_agent": "Selecione um atendente",
   "select_queue": "Selecionar fila",
   "select_representative": "Selecionar um atendente",
   "select_sector": "Selecionar setor",
@@ -1151,8 +1151,8 @@
         "switch_inactive": "Transferir chats em massa para outra fila ou atendente"
       },
       "block_transfer_to_off_agents": {
-        "switch_active": "Bloquear transferência de chats para atendentes offline",
-        "switch_inactive": "Bloquear transferência de chats para atendentes offline"
+        "switch_active": "Bloquear a transferência de chats para atendentes offline",
+        "switch_inactive": "Bloquear a transferência de chats para atendentes offline"
       },
       "hide_moderators_from_transfer": {
         "hint": "Quando ativada, apenas usuários atribuídos à fila como atendentes são exibidos. Moderadores só aparecem se também estiverem atribuídos à fila como atendentes. Quando desativada, todos os usuários, incluindo moderadores, são exibidos.",
@@ -1198,7 +1198,7 @@
       "invalid_hours": "O horário de início não pode ser maior ou igual ao horário de término",
       "invalid_start_second_hour": "O horário de início do segundo período deve ser maior ou igual ao horário de término do primeiro período."
     },
-    "custom_queue": "Criar fila personalizada",
+    "custom_queue": "Criar fila personalizada (recomendado)",
     "default_queue": {
       "title": "Criar fila padrão (mais rápido)",
       "name": "Fila padrão"
@@ -1249,7 +1249,7 @@
       "new": "Nova mensagem rápida",
       "title": {
         "label": "Configurar uma mensagem rápida",
-        "tooltip": "As mensagens rápidas são textos prontos que ajudam a padronizar o atendimento. Todos os agentes deste setor poderão usar essas mensagens. É possível cadastrar novas mensagens abaixo."
+        "tooltip": "As mensagens rápidas são textos prontos que ajudam a padronizar o atendimento. Todos os atendentes deste setor poderão usar essas mensagens. É possível cadastrar novas mensagens abaixo."
       }
     },
     "groups": {
