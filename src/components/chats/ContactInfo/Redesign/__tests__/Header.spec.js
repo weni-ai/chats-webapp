@@ -1,0 +1,97 @@
+import { describe, it, expect, afterEach, beforeAll, afterAll } from 'vitest';
+import { mount, config } from '@vue/test-utils';
+import Header from '../Header.vue';
+import i18n from '@/plugins/i18n';
+
+beforeAll(() => {
+  config.global.plugins = (config.global.plugins || []).filter(
+    (plugin) => plugin !== i18n,
+  );
+});
+
+afterAll(() => {
+  if (config.global.plugins && !config.global.plugins.includes(i18n)) {
+    config.global.plugins.push(i18n);
+  }
+});
+
+const createWrapper = (props = {}) =>
+  mount(Header, {
+    props,
+    global: {
+      mocks: {
+        $t: (key) => key,
+      },
+      stubs: {
+        UnnnicSegmentedControl: {
+          name: 'UnnnicSegmentedControl',
+          template: '<div class="unnnic-segmented-control"><slot /></div>',
+        },
+        UnnnicSegmentedControlList: {
+          name: 'UnnnicSegmentedControlList',
+          template: '<div class="unnnic-segmented-control-list"><slot /></div>',
+        },
+        UnnnicSegmentedControlTrigger: {
+          name: 'UnnnicSegmentedControlTrigger',
+          template:
+            '<button class="unnnic-segmented-control-trigger" :disabled="disabled" :data-testid="$attrs[\'data-testid\']"><slot /></button>',
+          props: ['value', 'disabled'],
+          inheritAttrs: false,
+        },
+        UnnnicButton: {
+          name: 'UnnnicButton',
+          template:
+            '<button class="unnnic-button" :data-testid="$attrs[\'data-testid\']" @click="$emit(\'click\')" />',
+          props: ['iconCenter', 'type', 'size', 'disabled'],
+          emits: ['click'],
+        },
+      },
+    },
+  });
+
+describe('ContactInfoRedesignHeader', () => {
+  let wrapper;
+
+  afterEach(() => {
+    wrapper?.unmount();
+  });
+
+  it('renders segmented control with desk copilot disabled and information active', () => {
+    wrapper = createWrapper();
+
+    expect(
+      wrapper.find('[data-testid="contact-info-redesign-header"]').exists(),
+    ).toBe(true);
+    expect(
+      wrapper.find('[data-testid="segmented-desk-copilot"]').exists(),
+    ).toBe(true);
+    expect(
+      wrapper
+        .find('[data-testid="segmented-desk-copilot"]')
+        .attributes('disabled'),
+    ).toBeDefined();
+    expect(wrapper.find('[data-testid="segmented-information"]').exists()).toBe(
+      true,
+    );
+  });
+
+  it('emits refresh and close events', async () => {
+    wrapper = createWrapper();
+
+    await wrapper.find('[data-testid="refresh-button"]').trigger('click');
+    await wrapper.find('[data-testid="close-button"]').trigger('click');
+
+    expect(wrapper.emitted('refresh')).toBeTruthy();
+    expect(wrapper.emitted('close')).toBeTruthy();
+  });
+
+  it('hides refresh and close buttons when props disable them', () => {
+    wrapper = createWrapper({
+      showRefresh: false,
+      showClose: false,
+    });
+
+    expect(wrapper.find('[data-testid="refresh-button"]').exists()).toBe(false);
+    expect(wrapper.find('[data-testid="close-button"]').exists()).toBe(false);
+  });
+});

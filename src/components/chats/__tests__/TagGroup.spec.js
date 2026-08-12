@@ -1,7 +1,7 @@
 import { unnnicTag } from '@weni/unnnic-system';
 import { mount } from '@vue/test-utils';
 import TagGroup from '@/components/TagGroup.vue';
-import { expect } from 'vitest';
+import { expect, vi } from 'vitest';
 
 function createWrapper(props = {}) {
   return mount(TagGroup, {
@@ -292,9 +292,9 @@ describe('TagGroup', () => {
         canLoadMore: true,
       });
 
-      expect(
-        wrapper.find('[data-testid="tag-group-sentinel"]').exists(),
-      ).toBe(true);
+      expect(wrapper.find('[data-testid="tag-group-sentinel"]').exists()).toBe(
+        true,
+      );
     });
 
     it('emits load-more when sentinel intersects and can load more', async () => {
