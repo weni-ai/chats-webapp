@@ -174,5 +174,58 @@ describe('Settings/index.vue (SettingsPage)', () => {
         wrapper.find('[data-testid="desk-copilot-new-tag"]').exists(),
       ).toBe(true);
     });
+
+    it('selects the Desk Copilot tab from the query on first render', async () => {
+      const history = createMemoryHistory();
+      const testRouter = createRouter({
+        history,
+        routes,
+      });
+      await testRouter.push({
+        name: 'settings',
+        query: { tab: 'desk_copilot' },
+      });
+      testRouter.replace = vi.fn();
+
+      wrapper = mount(SettingsPage, {
+        global: {
+          plugins: [
+            testRouter,
+            createTestingPinia({
+              initialState: {
+                config: {
+                  project: {
+                    uuid: 'test-uuid',
+                    name: 'Test Project',
+                    config: {},
+                  },
+                },
+                featureFlag: {
+                  featureFlags: {
+                    active_features: [ASSISTED_SALES_FEATURE_FLAG],
+                  },
+                },
+                settings: {
+                  sectors: [],
+                  groups: [],
+                },
+              },
+            }),
+          ],
+          stubs: {
+            SettingsProjectOptions: SettingsProjectOptionsStub,
+            CustomBreaks: CustomBreaksStub,
+            SectorsList: true,
+            GroupsList: true,
+            RepresentativesSettings: true,
+            DeskCopilotSettings: true,
+            NewSectorDrawer: true,
+            NewGroupDrawer: true,
+          },
+        },
+      });
+
+      expect(wrapper.vm.activeTab).toBe('desk_copilot');
+    });
   });
 });
