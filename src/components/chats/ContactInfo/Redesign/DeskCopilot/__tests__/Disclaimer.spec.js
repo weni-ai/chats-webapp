@@ -73,7 +73,7 @@ describe('DeskCopilotDisclaimer', () => {
       wrapper.find('[data-testid="desk-copilot-disclaimer"]').exists(),
     ).toBe(true);
     expect(wrapper.text()).toContain(
-      'contact_info.desk_copilot.disclaimer.title',
+      'contact_info.desk_copilot.disclaimer.title_without_summary',
     );
     expect(wrapper.text()).toContain(
       'contact_info.desk_copilot.disclaimer.description',
@@ -81,6 +81,22 @@ describe('DeskCopilotDisclaimer', () => {
     expect(wrapper.text()).toContain(
       'contact_info.desk_copilot.disclaimer.items.product_recommendations',
     );
+  });
+
+  it('keeps the summary title when the project uses chats summary', () => {
+    wrapper = createWrapper({ props: { hasSummary: true } });
+
+    expect(
+      wrapper.find('[data-testid="desk-copilot-disclaimer-title"]').text(),
+    ).toBe('contact_info.desk_copilot.disclaimer.title');
+  });
+
+  it('uses the title without summary when chats summary is disabled', () => {
+    wrapper = createWrapper({ props: { hasSummary: false } });
+
+    expect(
+      wrapper.find('[data-testid="desk-copilot-disclaimer-title"]').text(),
+    ).toBe('contact_info.desk_copilot.disclaimer.title_without_summary');
   });
 
   it('shows the enable button for admin users', () => {
