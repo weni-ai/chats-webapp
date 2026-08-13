@@ -11,8 +11,11 @@
       />
 
       <section class="desk-copilot-disclaimer__text">
-        <h3 class="desk-copilot-disclaimer__title">
-          {{ $t('contact_info.desk_copilot.disclaimer.title') }}
+        <h3
+          class="desk-copilot-disclaimer__title"
+          data-testid="desk-copilot-disclaimer-title"
+        >
+          {{ $t(titleKey) }}
         </h3>
         <p class="desk-copilot-disclaimer__description">
           {{ $t('contact_info.desk_copilot.disclaimer.description') }}
@@ -59,16 +62,24 @@ defineOptions({
 
 const props = withDefaults(
   defineProps<{
+    hasSummary?: boolean;
     isHistory?: boolean;
     isViewMode?: boolean;
   }>(),
   {
+    hasSummary: false,
     isHistory: false,
     isViewMode: false,
   },
 );
 
 const { me } = storeToRefs(useProfile());
+
+const titleKey = computed(() =>
+  props.hasSummary
+    ? 'contact_info.desk_copilot.disclaimer.title'
+    : 'contact_info.desk_copilot.disclaimer.title_without_summary',
+);
 
 const disclaimerItems = [
   'contact_info.desk_copilot.disclaimer.items.product_recommendations',
