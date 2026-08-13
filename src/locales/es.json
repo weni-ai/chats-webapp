@@ -1116,11 +1116,12 @@
     "filter_by_group_name": "Filtrar por nombre del grupo",
     "section_sectors_subtitle": "Agrega, consulta y gestiona departamentos, colas, managers y representantes dentro de tu organización.",
     "tabs": {
-      "settings": "Configuración",
+      "desk_copilot": "Desk Copilot",
+      "general": "General",
       "groups": "Grupos de proyectos",
-      "sectors": "Departamentos",
       "representatives": "Representantes",
-      "general": "General"
+      "sectors": "Departamentos",
+      "settings": "Configuración"
     },
     "custom_breaks": {
       "title": "Pausas personalizadas",
@@ -1142,6 +1143,51 @@
         "success": "Pausa personalizada eliminada con éxito",
         "title": "Eliminar pausa personalizada"
       }
+    },
+    "desk_copilot": {
+      "connected": {
+        "assigned_agents": "Agentes asignados",
+        "badge": "Copilot",
+        "connected_by": "Conectado por",
+        "connected_to": "Conectado el",
+        "created_on": "Creado el",
+        "description": "Este proyecto se usa exclusivamente para gestionar los agentes de IA de Desk Copilot. Solo es accesible desde esta sección.",
+        "open": "Abrir"
+      },
+      "empty_state": {
+        "create_button": "Crear proyecto Copilot",
+        "description": "Para activar Desk Copilot, conecta este proyecto a un proyecto Copilot donde se gestionan tus agentes de IA",
+        "title": "Ningún proyecto Copilot conectado"
+      },
+      "enable_title": "Activar Desk Copilot",
+      "info": {
+        "ai_assistance": {
+          "description": "Ayuda a tus representantes durante las conversaciones con sugerencias generadas por IA, ítems recomendados y próximas acciones.",
+          "title": "Asistencia de IA"
+        },
+        "automatic_updates": {
+          "description": "Los cambios realizados en tu proyecto Copilot se reflejan en todos los proyectos Live Desk conectados.",
+          "title": "Actualizaciones automáticas"
+        },
+        "centralized_agents": {
+          "description": "Gestiona todos los agentes de IA en un único proyecto Copilot.",
+          "title": "Agentes de IA centralizados"
+        },
+        "learn_more": "Saber más",
+        "shared_across_projects": {
+          "description": "Un proyecto Copilot puede compartirse entre varios proyectos Live Desk para mantener el conocimiento de IA consistente.",
+          "title": "Compartido entre proyectos"
+        },
+        "title": "Cómo funciona Desk Copilot"
+      },
+      "modal": {
+        "disclaimer": "Este proyecto Copilot se creará y se conectará automáticamente a este proyecto.",
+        "error": "No se pudo crear el proyecto Copilot debido a un problema técnico",
+        "input_label": "Define el nombre del proyecto Copilot",
+        "success": "Proyecto Copilot creado y conectado con éxito",
+        "title": "Crear proyecto Copilot"
+      },
+      "new_badge": "Nuevo"
     },
     "changes_saved": "Cambios guardados con éxito",
     "changes_not_saved": "Error al guardar cambios. Vuelve a intentarlo.",
