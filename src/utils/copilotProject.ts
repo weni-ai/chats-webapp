@@ -1,10 +1,10 @@
 import env from '@/utils/env';
 
 export function buildCopilotProjectUrl(uuid: string): string {
-  const dashboardUrl = String(env('WENI_DASHBOARD_URL') || '').replace(
+  const connectUrl = String(env('MODULE_FEDERATION_CONNECT_URL') || '').replace(
     /\/$/,
     '',
   );
 
-  return `${dashboardUrl}/projects/${uuid}`;
+  return `${connectUrl}/projects/${uuid}`;
 }

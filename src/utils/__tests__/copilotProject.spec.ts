@@ -12,15 +12,16 @@ describe('buildCopilotProjectUrl', () => {
     vi.clearAllMocks();
   });
 
-  it('builds the dashboard project URL', () => {
+  it('builds the project URL from MODULE_FEDERATION_CONNECT_URL', () => {
     env.mockReturnValue('https://dash.stg.cloud.weni.ai');
 
     expect(buildCopilotProjectUrl('copilot-uuid')).toBe(
       'https://dash.stg.cloud.weni.ai/projects/copilot-uuid',
     );
+    expect(env).toHaveBeenCalledWith('MODULE_FEDERATION_CONNECT_URL');
   });
 
-  it('strips a trailing slash from the dashboard URL', () => {
+  it('strips a trailing slash from the connect URL', () => {
     env.mockReturnValue('https://dash.stg.cloud.weni.ai/');
 
     expect(buildCopilotProjectUrl('copilot-uuid')).toBe(
