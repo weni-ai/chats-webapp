@@ -12,7 +12,7 @@
           <UnnnicIcon
             icon="bi:stars"
             size="sm"
-            scheme="fg-emphasized"
+            scheme="fg-accent"
           />
         </span>
         <section class="desk-copilot-connected-card__identity-text">
@@ -26,6 +26,7 @@
             <UnnnicTag
               :text="$t('config_chats.desk_copilot.connected.badge')"
               scheme="bg-muted"
+              type="next"
               data-testid="desk-copilot-connected-badge"
             />
           </section>
@@ -37,9 +38,9 @@
 
       <section class="desk-copilot-connected-card__actions">
         <UnnnicButton
-          type="tertiary"
-          size="small"
-          iconLeft="open_in_new"
+          type="secondary"
+          size="large"
+          iconLeft="arrow_outward"
           :text="$t('config_chats.desk_copilot.connected.open')"
           data-testid="desk-copilot-open-button"
           @click="openProject"
