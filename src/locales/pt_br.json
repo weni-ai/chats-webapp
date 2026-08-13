@@ -1229,17 +1229,10 @@
         }
       },
       "bond_flows_queue": {
-        "switch": {
-          "label": "Restringir fluxos de disparo",
-          "helper": "Selecione quais fluxos os representantes desta fila podem usar para enviar disparos. Se nenhum fluxo for selecionado, eles poderão usar qualquer fluxo."
-        },
         "select": {
-          "label": "Selecionar fluxos",
-          "placeholder": "Digite o nome para buscar"
-        },
-        "disable_modal": {
-          "description": "Desativar isso removerá todos os fluxos selecionados. Será necessário selecioná-los novamente se quiser reativar.",
-          "confirm": "Desativar mesmo assim"
+          "label": "Fluxos associados",
+          "placeholder": "Selecione um ou mais fluxos",
+          "tooltip": "Associe fluxos a esta fila para definir quais fluxos ficam disponíveis ao filtrar por ela. Fluxos que não estão associados a nenhuma fila são considerados gerais e ficam disponíveis quando nenhum filtro de fila é aplicado."
         }
       },
       "message": {

@@ -35,6 +35,15 @@ describe('SelectQueueFlows', () => {
     });
   });
 
+  it('renders the label with its tooltip', () => {
+    const label = wrapper.find('[data-testid="select-queue-flows-label"]');
+
+    expect(label.text()).toContain(
+      'config_chats.queues.bond_flows_queue.select.label',
+    );
+    expect(label.find('[data-testid="tooltip-trigger"]').exists()).toBe(true);
+  });
+
   it('fetches flows on mount', async () => {
     await flushPromises();
 

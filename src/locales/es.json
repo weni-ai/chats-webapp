@@ -1226,17 +1226,10 @@
         }
       },
       "bond_flows_queue": {
-        "switch": {
-          "label": "Restringir flujos de difusión",
-          "helper": "Selecciona qué flujos pueden usar los representantes de esta cola para enviar difusiones. Si no se selecciona ningún flujo, podrán usar cualquiera."
-        },
         "select": {
-          "label": "Seleccionar flujos",
-          "placeholder": "Ingresa el nombre para buscar"
-        },
-        "disable_modal": {
-          "description": "Desactivar esto eliminará todos los flujos seleccionados. Tendrás que seleccionarlos de nuevo si quieres volver a activarlo.",
-          "confirm": "Desactivar de todos modos"
+          "label": "Flujos asociados",
+          "placeholder": "Selecciona uno o más flujos",
+          "tooltip": "Asocia flujos a esta cola para definir qué flujos están disponibles al filtrar por ella. Los flujos que no están asociados a ninguna cola se consideran generales y están disponibles cuando no se aplica ningún filtro de cola."
         }
       },
       "message": {

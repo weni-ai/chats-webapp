@@ -3,12 +3,29 @@
     class="select-queue-flows"
     data-testid="select-queue-flows"
   >
+    <section
+      class="select-queue-flows__label"
+      data-testid="select-queue-flows-label"
+    >
+      {{ $t('config_chats.queues.bond_flows_queue.select.label') }}
+      <UnnnicToolTip
+        enabled
+        side="right"
+        maxWidth="23rem"
+        :text="$t('config_chats.queues.bond_flows_queue.select.tooltip')"
+      >
+        <UnnnicIcon
+          icon="ri:question-line"
+          scheme="fg-base"
+          size="sm"
+        />
+      </UnnnicToolTip>
+    </section>
     <UnnnicSelect
       v-model="flowSelection"
       data-testid="select-queue-flows-input"
       :options="availableFlowOptions"
       :disabled="loadingFlows"
-      :label="$t('config_chats.queues.bond_flows_queue.select.label')"
       :placeholder="
         $t('config_chats.queues.bond_flows_queue.select.placeholder')
       "
@@ -181,6 +198,20 @@ export default {
   display: flex;
   flex-direction: column;
   width: 100%;
+
+  &__label {
+    display: flex;
+    align-items: center;
+    gap: $unnnic-space-1;
+    margin-bottom: $unnnic-space-1;
+
+    color: $unnnic-color-fg-base;
+    font: $unnnic-font-body;
+
+    :deep(.unnnic-tooltip) {
+      display: flex;
+    }
+  }
 
   &__chips {
     width: 100%;

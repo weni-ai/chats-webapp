@@ -1191,17 +1191,10 @@
         }
       },
       "bond_flows_queue": {
-        "switch": {
-          "label": "Restricționează fluxurile de difuzare",
-          "helper": "Selectează ce fluxuri pot folosi reprezentanții din această coadă pentru a trimite difuzări. Dacă nu este selectat niciun flux, pot folosi orice flux."
-        },
         "select": {
-          "label": "Selectează fluxuri",
-          "placeholder": "Introdu numele pentru a căuta"
-        },
-        "disable_modal": {
-          "description": "Dezactivarea acestei opțiuni va elimina toate fluxurile selectate. Va trebui să le selectezi din nou dacă vrei să reactivezi opțiunea.",
-          "confirm": "Dezactivează oricum"
+          "label": "Fluxuri asociate",
+          "placeholder": "Selectează unul sau mai multe",
+          "tooltip": "Asociază fluxuri acestei cozi pentru a defini ce fluxuri sunt disponibile la filtrarea după ea. Fluxurile care nu sunt asociate niciunei cozi sunt considerate generale și sunt disponibile când nu se aplică niciun filtru de coadă."
         }
       },
       "message": {
