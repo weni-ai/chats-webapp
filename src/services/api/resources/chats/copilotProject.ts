@@ -21,6 +21,18 @@ type CopilotProjectResponse = {
   connect_by?: string;
 };
 
+const IS_MOCKED = false;
+
+const MOCKED_COPILOT_PROJECT: CopilotProject = {
+  name: 'Desk Copilot',
+  assigned_agents: 0,
+  created_on: new Date().toISOString(),
+  connected_on: new Date().toISOString(),
+  uuid: '1234567890',
+  project_uuid: 'project-1234567890',
+  connected_by: 'test@example.com',
+};
+
 export function normalizeCopilotProject(data: unknown): CopilotProject | null {
   if (!data || typeof data !== 'object' || Array.isArray(data)) {
     return null;
@@ -47,6 +59,10 @@ export function normalizeCopilotProject(data: unknown): CopilotProject | null {
 
 export default {
   async getLinkedProject(projectUuid: string): Promise<CopilotProject | null> {
+    if (IS_MOCKED) {
+      return MOCKED_COPILOT_PROJECT;
+    }
+
     const response = await http.get<CopilotProjectResponse | null>(
       `/project/copilot/linked_project/${projectUuid}`,
     );
@@ -58,7 +74,9 @@ export default {
       '/project/copilot/create',
       { name },
     );
-    const project = normalizeCopilotProject(response.data);
+    const project = IS_MOCKED
+      ? MOCKED_COPILOT_PROJECT
+      : normalizeCopilotProject(response.data);
 
     if (!project) {
       throw new Error('Invalid copilot project response');
