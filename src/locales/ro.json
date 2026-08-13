@@ -827,7 +827,8 @@
           "product_recommendations": "Recomandări de produse",
           "sales_arguments": "Argumente de vânzare"
         },
-        "title": "Mergi dincolo de rezumatele conversațiilor"
+        "title": "Mergi dincolo de rezumatele conversațiilor",
+        "title_without_summary": "Deblochează-ți tot potențialul cu Desk Copilot"
       },
       "summary_title": "Rezumatul acestei conversații"
     }

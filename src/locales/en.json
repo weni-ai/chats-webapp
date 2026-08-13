@@ -857,7 +857,8 @@
           "product_recommendations": "Product recommendations",
           "sales_arguments": "Sales arguments"
         },
-        "title": "Go beyond conversation summaries"
+        "title": "Go beyond conversation summaries",
+        "title_without_summary": "Unlock your full potential with Desk Copilot"
       },
       "summary_title": "Summary of this conversation"
     }

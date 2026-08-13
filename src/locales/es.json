@@ -859,7 +859,8 @@
           "product_recommendations": "Recomendaciones de productos",
           "sales_arguments": "Argumentos de venta"
         },
-        "title": "Ve más allá de los resúmenes de conversación"
+        "title": "Ve más allá de los resúmenes de conversación",
+        "title_without_summary": "Desbloquea todo tu potencial con Desk Copilot"
       },
       "summary_title": "Resumen de esta conversación"
     }
