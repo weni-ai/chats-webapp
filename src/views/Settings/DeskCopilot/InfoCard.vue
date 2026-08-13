@@ -8,8 +8,8 @@
         {{ $t('config_chats.desk_copilot.info.title') }}
       </h2>
       <UnnnicButton
-        type="tertiary"
-        size="small"
+        type="secondary"
+        size="large"
         iconLeft="open_in_new"
         :text="$t('config_chats.desk_copilot.info.learn_more')"
         data-testid="desk-copilot-learn-more"
@@ -26,7 +26,7 @@
         <UnnnicIcon
           :icon="feature.icon"
           size="sm"
-          scheme="fg-emphasized"
+          :scheme="feature.scheme"
         />
         <section class="desk-copilot-info-card__feature-text">
           <p class="desk-copilot-info-card__feature-title">
@@ -51,23 +51,27 @@ defineOptions({
 const features = [
   {
     icon: 'bi:stars',
+    scheme: 'fg-accent',
     titleKey: 'config_chats.desk_copilot.info.ai_assistance.title',
     descriptionKey: 'config_chats.desk_copilot.info.ai_assistance.description',
   },
   {
     icon: 'workspaces',
+    scheme: 'fg-accent',
     titleKey: 'config_chats.desk_copilot.info.centralized_agents.title',
     descriptionKey:
       'config_chats.desk_copilot.info.centralized_agents.description',
   },
   {
     icon: 'copy_all',
+    scheme: 'fg-accent',
     titleKey: 'config_chats.desk_copilot.info.shared_across_projects.title',
     descriptionKey:
       'config_chats.desk_copilot.info.shared_across_projects.description',
   },
   {
     icon: 'autorenew',
+    scheme: 'fg-accent',
     titleKey: 'config_chats.desk_copilot.info.automatic_updates.title',
     descriptionKey:
       'config_chats.desk_copilot.info.automatic_updates.description',
