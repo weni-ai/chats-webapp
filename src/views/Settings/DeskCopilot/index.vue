@@ -3,7 +3,7 @@
     class="desk-copilot-settings"
     data-testid="desk-copilot-settings"
   >
-    <InfoCard />
+    <InfoCard v-if="!isLoading && !linkedProject" />
 
     <section class="desk-copilot-settings__enable">
       <h2
