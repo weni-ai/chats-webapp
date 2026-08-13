@@ -815,6 +815,22 @@
         "1": "😡 Foarte nemulțumit",
         "no_response": "Fără răspuns"
       }
+    },
+    "desk_copilot": {
+      "copy_summary": "Copiază rezumatul",
+      "disclaimer": {
+        "description": "Desk Copilot te poate ajuta cu:",
+        "enable_button": "Activează Desk Copilot",
+        "items": {
+          "catalog_search": "Căutare în catalog",
+          "next_best_actions": "Următoarele acțiuni recomandate",
+          "product_recommendations": "Recomandări de produse",
+          "sales_arguments": "Argumente de vânzare"
+        },
+        "title": "Mergi dincolo de rezumatele conversațiilor",
+        "title_without_summary": "Deblochează-ți tot potențialul cu Desk Copilot"
+      },
+      "summary_title": "Rezumatul acestei conversații"
     }
   },
   "discussions": {
@@ -1081,11 +1097,12 @@
     "filter_by_sector_name": "Filtrează după numele departamentului",
     "section_sectors_subtitle": "Adaugă, vizualizează și gestionează sectoare, cozi, manageri și reprezentanți în cadrul organizației tale.",
     "tabs": {
+      "desk_copilot": "Desk Copilot",
       "general": "General",
-      "settings": "Setări",
       "groups": "Grupuri de proiect",
+      "representatives": "Reprezentanți",
       "sectors": "Departamente",
-      "representatives": "Reprezentanți"
+      "settings": "Setări"
     },
     "custom_breaks": {
       "title": "Pauze personalizate",
@@ -1099,6 +1116,51 @@
       "status_success": "Status adăugat cu succes",
       "status_remove_success": "Statusul {status} a fost eliminat",
       "status_error": "Eroare la salvarea modificărilor. Încearcă din nou."
+    },
+    "desk_copilot": {
+      "connected": {
+        "assigned_agents": "Agenți atribuiți",
+        "badge": "Copilot",
+        "connected_by": "Conectat de",
+        "connected_to": "Conectat la",
+        "created_on": "Creat pe",
+        "description": "Acest proiect este folosit exclusiv pentru a gestiona agenții IA pentru Desk Copilot. Este accesibil doar din această secțiune.",
+        "open": "Deschide"
+      },
+      "empty_state": {
+        "create_button": "Creează proiect Copilot",
+        "description": "Pentru a activa Desk Copilot, conectează acest proiect la un proiect Copilot unde sunt gestionați agenții tăi IA",
+        "title": "Niciun proiect Copilot conectat"
+      },
+      "enable_title": "Activează Desk Copilot",
+      "info": {
+        "ai_assistance": {
+          "description": "Ajută-ți reprezentanții în timpul conversațiilor cu sugestii generate de IA, elemente recomandate și următoarele acțiuni.",
+          "title": "Asistență IA"
+        },
+        "automatic_updates": {
+          "description": "Modificările făcute în proiectul Copilot se reflectă în fiecare proiect Live Desk conectat.",
+          "title": "Actualizări automate"
+        },
+        "centralized_agents": {
+          "description": "Gestionează toți agenții IA într-un singur proiect Copilot.",
+          "title": "Agenți IA centralizați"
+        },
+        "learn_more": "Află mai multe",
+        "shared_across_projects": {
+          "description": "Un proiect Copilot poate fi partajat între mai multe proiecte Live Desk pentru a menține cunoștințele IA consistente.",
+          "title": "Partajat între proiecte"
+        },
+        "title": "Cum funcționează Desk Copilot"
+      },
+      "modal": {
+        "disclaimer": "Acest proiect Copilot va fi creat și conectat automat la acest proiect.",
+        "error": "Nu s-a putut crea proiectul Copilot din cauza unei probleme tehnice",
+        "input_label": "Definește numele proiectului Copilot",
+        "success": "Proiect Copilot creat și conectat cu succes",
+        "title": "Creează proiect Copilot"
+      },
+      "new_badge": "Nou"
     },
     "changes_saved": "Modificări salvate cu succes",
     "changes_not_saved": "Eroare la salvarea modificărilor. Încearcă din nou.",

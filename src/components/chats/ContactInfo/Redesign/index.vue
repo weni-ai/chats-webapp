@@ -5,6 +5,7 @@
   >
     <template #header>
       <ContactInfoRedesignHeader
+        v-model="activeTab"
         :showRefresh="!isHistory"
         :showClose="!isHistory"
         :isRefreshDisabled="isRefreshDisabled"
@@ -13,7 +14,17 @@
       />
     </template>
 
-    <section class="contact-info-redesign__scrollable">
+    <DeskCopilotTab
+      v-if="activeTab === 'desk_copilot'"
+      :isHistory="isHistory"
+      :isViewMode="isViewMode"
+      @loaded="emit('loaded-medias')"
+    />
+
+    <section
+      v-else
+      class="contact-info-redesign__scrollable"
+    >
       <AboutContactCard
         :contactName="contactName"
         :contactNumber="contactNumber"
@@ -56,15 +67,30 @@
 </template>
 
 <script setup lang="ts">
+import { ref, watch } from 'vue';
 import AsideSlotTemplate from '@/components/layouts/chats/AsideSlotTemplate/index.vue';
-import ContactInfoRedesignHeader from './Header.vue';
+import ContactInfoRedesignHeader, { type ContactInfoTab } from './Header.vue';
 import AboutContactCard from './AboutContactCard.vue';
 import AboutSupportCard from './AboutSupportCard.vue';
 import MediaTabs from './MediaTabs.vue';
+import DeskCopilotTab from './DeskCopilot/index.vue';
+import { moduleStorage } from '@/utils/storage';
 
 defineOptions({
   name: 'ContactInfoRedesign',
 });
+
+const CONTACT_INFO_ACTIVE_TAB_KEY = 'contactInfoActiveTab';
+const DEFAULT_TAB: ContactInfoTab = 'desk_copilot';
+const VALID_TABS = new Set<ContactInfoTab>(['desk_copilot', 'information']);
+
+function getPersistedTab(): ContactInfoTab {
+  const storedTab = moduleStorage.getItem(
+    CONTACT_INFO_ACTIVE_TAB_KEY,
+    DEFAULT_TAB,
+  );
+  return VALID_TABS.has(storedTab) ? storedTab : DEFAULT_TAB;
+}
 
 type CustomFields = Record<string, string>;
 
@@ -140,6 +166,12 @@ const emit = defineEmits<{
   fullscreen: [url: string, images: MediaItem[]];
   'loaded-medias': [];
 }>();
+
+const activeTab = ref<ContactInfoTab>(getPersistedTab());
+
+watch(activeTab, (tab) => {
+  moduleStorage.setItem(CONTACT_INFO_ACTIVE_TAB_KEY, tab);
+});
 
 const handleFullscreen = (url: string, images: MediaItem[]) => {
   emit('fullscreen', url, images);
