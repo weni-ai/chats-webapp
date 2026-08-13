@@ -35,7 +35,8 @@
                 <UnnnicTag
                   v-if="tab.value === 'desk_copilot' && showDeskCopilotNewBadge"
                   :text="$t('config_chats.desk_copilot.new_badge')"
-                  type="brand"
+                  type="next"
+                  scheme="teal"
                   data-testid="desk-copilot-new-tag"
                 />
               </span>
