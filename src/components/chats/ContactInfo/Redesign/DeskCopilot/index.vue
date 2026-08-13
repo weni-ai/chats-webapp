@@ -12,6 +12,7 @@
 
     <Disclaimer
       v-if="!isLoadingConnection && !isConfigured"
+      :hasSummary="enableRoomSummary"
       :isHistory="isHistory"
       :isViewMode="isViewMode"
     />
