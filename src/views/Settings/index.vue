@@ -19,7 +19,7 @@
       </template>
       <template #tabs>
         <UnnnicTabs
-          defaultValue="general"
+          :defaultValue="activeTab"
           :modelValue="activeTab"
           class="settings-page__tabs"
           @update:model-value="updateTab"
@@ -88,7 +88,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted, ref } from 'vue';
+import { computed, onMounted, ref, watch } from 'vue';
 import { storeToRefs } from 'pinia';
 import { useRouter, useRoute } from 'vue-router';
 
@@ -133,6 +133,7 @@ const settingsStore = useSettings();
 const { sectors, groups } = storeToRefs(settingsStore);
 
 const activeTab = ref('');
+
 const settingsTabs = computed(() => {
   const deskCopilotTab = isAssistedSalesEnabled.value
     ? [
@@ -169,10 +170,25 @@ const settingsTabs = computed(() => {
   return [...tabs, ...deskCopilotTab];
 });
 
-const updateTab = (newTab: string) => {
-  const newActiveTab = settingsTabs.value.find((tab) =>
-    [tab.label, tab.value].includes(newTab),
+const findTab = (tabValue?: string) => {
+  if (!tabValue) return undefined;
+
+  return settingsTabs.value.find((tab) =>
+    [tab.label, tab.value].includes(tabValue),
   );
+};
+
+const syncActiveTab = (tabValue?: string) => {
+  const match =
+    findTab(tabValue) || findTab('general') || settingsTabs.value[0];
+
+  if (!match) return;
+
+  activeTab.value = match.value;
+};
+
+const updateTab = (newTab: string) => {
+  const newActiveTab = findTab(newTab);
 
   if (!newActiveTab) return;
 
@@ -187,6 +203,15 @@ const updateTab = (newTab: string) => {
     });
   }
 };
+
+watch(
+  [settingsTabs, () => route.query.tab],
+  () => {
+    const requestedTab = (route.query.tab as string) || activeTab.value;
+    syncActiveTab(requestedTab);
+  },
+  { immediate: true },
+);
 
 const showNewSectorButton = computed(() => {
   return activeTab.value === 'sectors' && sectors.value.length > 0;
@@ -207,8 +232,6 @@ const openNewGroupDrawer = () => {
 };
 
 onMounted(() => {
-  updateTab((route.query.tab as string) || 'general');
-
   if (isAssistedSalesEnabled.value) {
     fetchLinkedProject();
   }
