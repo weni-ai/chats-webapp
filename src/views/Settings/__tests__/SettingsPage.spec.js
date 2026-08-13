@@ -7,6 +7,16 @@ import { createMemoryHistory, createRouter } from 'vue-router';
 import SettingsPage from '@/views/Settings/index.vue';
 
 import { useCompositionI18nInThisSpecFile } from '@/utils/test/compositionI18nVitest';
+import { ASSISTED_SALES_FEATURE_FLAG } from '@/composables/useAssistedSalesFeatureFlag';
+import { resetCopilotProjectState } from '@/composables/useCopilotProject';
+
+vi.mock('@/services/api/resources/chats/copilotProject', () => ({
+  default: {
+    getLinkedProject: vi.fn().mockResolvedValue(null),
+    create: vi.fn(),
+  },
+  normalizeCopilotProject: vi.fn(),
+}));
 
 const routes = [{ path: '/settings', name: 'settings' }];
 const router = createRouter({
@@ -26,7 +36,7 @@ const CustomBreaksStub = {
   template: '<section data-testid="custom-breaks" />',
 };
 
-const createWrapper = ({ projectConfig = {} } = {}) => {
+const createWrapper = ({ projectConfig = {}, activeFeatures = [] } = {}) => {
   return mount(SettingsPage, {
     global: {
       plugins: [
@@ -41,7 +51,7 @@ const createWrapper = ({ projectConfig = {} } = {}) => {
               },
             },
             featureFlag: {
-              featureFlags: { active_features: [] },
+              featureFlags: { active_features: activeFeatures },
             },
             settings: {
               sectors: [],
@@ -56,6 +66,7 @@ const createWrapper = ({ projectConfig = {} } = {}) => {
         SectorsList: true,
         GroupsList: true,
         RepresentativesSettings: true,
+        DeskCopilotSettings: true,
         NewSectorDrawer: true,
         NewGroupDrawer: true,
       },
@@ -70,6 +81,7 @@ describe('Settings/index.vue (SettingsPage)', () => {
 
   beforeEach(() => {
     vi.clearAllMocks();
+    resetCopilotProjectState();
   });
 
   describe('Regular project (not in groups mode)', () => {
@@ -137,6 +149,30 @@ describe('Settings/index.vue (SettingsPage)', () => {
     it('exposes only the general tab', () => {
       expect(wrapper.vm.settingsTabs).toHaveLength(1);
       expect(wrapper.vm.settingsTabs[0].value).toBe('general');
+    });
+  });
+
+  describe('Assisted sales feature flag', () => {
+    it('hides the Desk Copilot tab when the flag is off', () => {
+      wrapper = createWrapper();
+      const tabValues = wrapper.vm.settingsTabs.map((tab) => tab.value);
+
+      expect(tabValues).not.toContain('desk_copilot');
+      expect(
+        wrapper.find('[data-testid="desk-copilot-new-tag"]').exists(),
+      ).toBe(false);
+    });
+
+    it('shows the Desk Copilot tab and New badge when the flag is on', () => {
+      wrapper = createWrapper({
+        activeFeatures: [ASSISTED_SALES_FEATURE_FLAG],
+      });
+      const tabValues = wrapper.vm.settingsTabs.map((tab) => tab.value);
+
+      expect(tabValues).toContain('desk_copilot');
+      expect(
+        wrapper.find('[data-testid="desk-copilot-new-tag"]').exists(),
+      ).toBe(true);
     });
   });
 });
