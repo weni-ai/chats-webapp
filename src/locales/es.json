@@ -1150,8 +1150,8 @@
         "switch_inactive": "Bloquear transferencias de chats a representantes offline"
       },
       "hide_moderators_from_transfer": {
-        "hint": "Cuando está activa, solo se muestran los usuarios asignados a la cola como representantes. Los moderadores solo aparecen si también están asignados a la cola como representantes. Cuando está desactivada, se muestran todos los usuarios, incluidos los moderadores.",
-        "switch_label": "Ocultar perfiles de moderadores al transferir chats"
+        "hint": "Si se activa esta opción, solo se muestran los usuarios asignados a la cola como representantes. Los moderadores solo se muestran si también están asignados a la cola como representantes. Cuando está desactivada se muestran todos los usuarios, incluidos los moderadores.",
+        "switch_label": "Ocultar los perfiles de moderadores al transferir chats"
       },
       "bulk_close": {
         "switch_active": "Finalizar chats en masa",
