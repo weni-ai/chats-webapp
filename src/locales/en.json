@@ -341,7 +341,7 @@
         "tooltip": "Each message will display the name of the representative who answered",
         "switch_active": "Display the representative name in messages",
         "switch_disabled": "Display the representative name in messages",
-        "hint": "Each message exchanged will have the name of the representative who is answering.",
+        "hint": "Each exchanged message will have the name of the representative who is answering.",
         "switch_label": "Use signature"
       },
       "csat": {
@@ -359,7 +359,7 @@
           "custom": "Custom flows",
           "default": "Default CSAT survey (recommended)",
           "label": "Survey type",
-          "tooltip": "Choose between the default CSAT survey and a custom flow already configured in the Flows module."
+          "tooltip": "Choose between the default CSAT survey and a custom flow previously configured in the Flows module."
         }
       },
       "automatic_message": {
@@ -1287,6 +1287,13 @@
           "helper": "When the limit is reached, no new chats are created.",
           "input_label": "Maximum number of chats waiting for support",
           "input_placeholder": "Example: 50"
+        }
+      },
+      "bond_flows_queue": {
+        "select": {
+          "label": "Associated flows",
+          "placeholder": "Select one or more flows",
+          "tooltip": "Associate flows with this queue to define which flows are available when filtering by this queue. Flows that aren't associated with any queue are considered general and are available when no queue filter is applied."
         }
       },
       "message": {

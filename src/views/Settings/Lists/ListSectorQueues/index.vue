@@ -72,11 +72,14 @@
 </template>
 
 <script>
+import { mapState } from 'pinia';
 import FormQueue from '@/views/Settings/Forms/Queue/index.vue';
 import ListOrdinator from '@/components/ListOrdinator.vue';
 import Rooms from '@/services/api/resources/settings/rooms';
 import ModalDeleteWithTransfer from '@/components/ModalDeleteWithTransfer.vue';
 import QueueCard from './QueueCard.vue';
+
+import { useFeatureFlag } from '@/store/modules/featureFlag';
 
 import Queue from '@/services/api/resources/settings/queue';
 
@@ -117,6 +120,12 @@ export default {
   },
 
   computed: {
+    ...mapState(useFeatureFlag, ['featureFlags']),
+    enableQueueFlowsFeature() {
+      return this.featureFlags.active_features?.includes(
+        'weniChatsFilterFlowsByQueue',
+      );
+    },
     queuesOrdered() {
       let queuesOrdered = this.queues.slice().sort((a, b) => {
         let first = null;
@@ -232,6 +241,8 @@ export default {
                 : String(queue?.queue_limit?.limit),
             },
             queue_purpose: queue?.queue_purpose || '',
+            bond_flows_queue: queue?.bond_flows_queue || false,
+            selected_flows: queue?.selected_flows || [],
           },
         ];
       } else {
@@ -243,6 +254,8 @@ export default {
             default_message: '',
             queue_limit: { is_active: false, limit: null },
             queue_purpose: '',
+            bond_flows_queue: false,
+            selected_flows: [],
           },
         ];
       }
@@ -279,6 +292,8 @@ export default {
           toAddAgentsUuids,
           toRemoveAgentsUuids,
           queue_purpose,
+          bond_flows_queue,
+          selected_flows,
         } = this.queueToConfig[0];
 
         if (this.queueToConfig[0].uuid) {
@@ -294,6 +309,10 @@ export default {
           const { data: updatedQueue } = await Queue.editQueue({
             uuid,
             default_message,
+            bond_flows_queue: this.enableQueueFlowsFeature
+              ? bond_flows_queue
+              : false,
+            selected_flows: this.enableQueueFlowsFeature ? selected_flows : [],
             queue_limit,
             queue_purpose,
           });
@@ -313,6 +332,10 @@ export default {
             name,
             default_message,
             sectorUuid: this.sector.uuid,
+            bond_flows_queue: this.enableQueueFlowsFeature
+              ? bond_flows_queue
+              : false,
+            selected_flows: this.enableQueueFlowsFeature ? selected_flows : [],
             queue_limit,
             queue_purpose,
           });
