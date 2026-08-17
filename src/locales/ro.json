@@ -791,6 +791,10 @@
     "switch_tooltip": "Activează dacă vrei ca contactul să-ți fie întotdeauna atribuit direct ție",
     "alert_linked": "Contact asociat",
     "alert_detached": "Contact neasociat",
+    "header": {
+      "desk_copilot": "Desk Copilot",
+      "information": "Informații"
+    },
     "linked_contact": "Contact asociat reprezentantului {name}",
     "see_contact_history": "Vezi istoric",
     "no_contact_history": "Fără istoric",
