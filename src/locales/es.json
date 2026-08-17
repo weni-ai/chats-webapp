@@ -1219,6 +1219,10 @@
         "switch_active": "Bloquear transferencias de chats a representantes offline",
         "switch_inactive": "Bloquear transferencias de chats a representantes offline"
       },
+      "hide_desk_copilot_tab": {
+        "hint": "Si esta opción está activa, los representantes solo ven la pestaña de información en el panel del contacto",
+        "switch_label": "Ocultar pestaña Desk Copilot"
+      },
       "hide_moderators_from_transfer": {
         "hint": "Si se activa esta opción, solo se muestran los usuarios asignados a la cola como representantes. Los moderadores solo se muestran si también están asignados a la cola como representantes. Cuando está desactivada se muestran todos los usuarios, incluidos los moderadores.",
         "switch_label": "Ocultar los perfiles de moderadores al transferir chats"
