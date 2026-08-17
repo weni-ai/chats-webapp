@@ -133,4 +133,27 @@ describe('ContactInfoRedesignHeader', () => {
       true,
     );
   });
+
+  it('keeps the information tab compact on the left when desk copilot is hidden', () => {
+    wrapper = createWrapper({
+      showDeskCopilotTab: false,
+      modelValue: 'information',
+    });
+
+    expect(
+      wrapper
+        .find('[data-testid="contact-info-redesign-header"]')
+        .classes(),
+    ).toContain('contact-info-redesign-header--compact');
+  });
+
+  it('does not use the compact header when both tabs are visible', () => {
+    wrapper = createWrapper();
+
+    expect(
+      wrapper
+        .find('[data-testid="contact-info-redesign-header"]')
+        .classes(),
+    ).not.toContain('contact-info-redesign-header--compact');
+  });
 });

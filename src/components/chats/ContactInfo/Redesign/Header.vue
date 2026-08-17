@@ -1,6 +1,9 @@
 <template>
   <header
     class="contact-info-redesign-header"
+    :class="{
+      'contact-info-redesign-header--compact': !showDeskCopilotTab,
+    }"
     data-testid="contact-info-redesign-header"
   >
     <UnnnicSegmentedControl
@@ -82,6 +85,7 @@ const emit = defineEmits<{
 .contact-info-redesign-header {
   display: flex;
   align-items: center;
+  justify-content: space-between;
   gap: $unnnic-space-2;
   padding: $unnnic-space-2;
   min-height: var(--chats-column-header-height, 57px);
@@ -90,6 +94,15 @@ const emit = defineEmits<{
   &__segmented {
     flex: 1;
     min-width: 0;
+  }
+
+  &--compact &__segmented {
+    flex: 0 0 auto;
+    min-width: unset;
+
+    :deep(.unnnic-segmented-control-trigger) {
+      width: auto;
+    }
   }
 
   &__actions {
