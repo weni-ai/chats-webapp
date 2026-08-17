@@ -107,6 +107,7 @@ export default {
         can_see_waiting_rooms_count: true,
         can_use_name_sector_in_rooms: false,
         restrict_offline_agents: false,
+        block_link_contact_agents: false,
       },
       hasAgentBuilder: false,
       aiTransferConfig: {
@@ -216,6 +217,17 @@ export default {
           ),
           hint: this.$t(
             'config_chats.project_configs.restrict_offline_agents.hint',
+          ),
+        },
+        {
+          key: 'block_link_contact_agents',
+          type: 'flag',
+          visible: !this.isSecondaryProject,
+          name: this.$t(
+            'config_chats.project_configs.block_link_contact_agents.switch_label',
+          ),
+          hint: this.$t(
+            'config_chats.project_configs.block_link_contact_agents.hint',
           ),
         },
         {
@@ -392,6 +404,7 @@ export default {
         can_see_waiting_rooms_count,
         can_use_name_sector_in_rooms,
         restrict_offline_agents,
+        block_link_contact_agents,
       } = this.projectConfig;
 
       await Project.update({
@@ -406,6 +419,7 @@ export default {
         can_see_waiting_rooms_count,
         can_use_name_sector_in_rooms,
         restrict_offline_agents,
+        block_link_contact_agents,
       });
 
       this.project.config = {

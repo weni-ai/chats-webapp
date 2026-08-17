@@ -1140,6 +1140,10 @@
         "switch_label": "Allow interactions only for online representatives",
         "hint": "If this option is enabled, representatives that are offline or on break won't be able to respond to chats in progress"
       },
+      "block_link_contact_agents": {
+        "switch_label": "Block representatives from linking contacts",
+        "hint": "If this option is enabled, representatives won't be able to link contacts to themselves"
+      },
       "bulk_transfer": {
         "tooltip": "This function allows representatives to transfer different contacts at once",
         "switch_active": "Transfer chats in bulk to another queue or representative",

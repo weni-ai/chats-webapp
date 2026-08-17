@@ -233,6 +233,7 @@ describe('SettingsProjectOptions.vue', () => {
   describe('Groups mode (main vs secondary project)', () => {
     const otherKeys = [
       'restrict_offline_agents',
+      'block_link_contact_agents',
       'can_use_bulk_transfer',
       'filter_offline_agents',
       'filter_moderators',
