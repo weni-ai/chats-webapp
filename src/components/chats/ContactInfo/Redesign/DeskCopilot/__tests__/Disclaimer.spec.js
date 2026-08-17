@@ -134,7 +134,7 @@ describe('DeskCopilotDisclaimer', () => {
       .trigger('click');
 
     expect(emitToHost).toHaveBeenCalledWith('redirect', {
-      path: 'chats:settings/live-desk',
+      path: 'chats-settings:?tab=desk_copilot',
     });
   });
 });
