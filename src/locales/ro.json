@@ -791,6 +791,10 @@
     "switch_tooltip": "Activează dacă vrei ca contactul să-ți fie întotdeauna atribuit direct ție",
     "alert_linked": "Contact asociat",
     "alert_detached": "Contact neasociat",
+    "header": {
+      "desk_copilot": "Desk Copilot",
+      "information": "Informații"
+    },
     "linked_contact": "Contact asociat reprezentantului {name}",
     "see_contact_history": "Vezi istoric",
     "no_contact_history": "Fără istoric",
@@ -813,6 +817,22 @@
         "1": "😡 Foarte nemulțumit",
         "no_response": "Fără răspuns"
       }
+    },
+    "desk_copilot": {
+      "copy_summary": "Copiază rezumatul",
+      "disclaimer": {
+        "description": "Desk Copilot te poate ajuta cu:",
+        "enable_button": "Activează Desk Copilot",
+        "items": {
+          "catalog_search": "Căutare în catalog",
+          "next_best_actions": "Următoarele acțiuni recomandate",
+          "product_recommendations": "Recomandări de produse",
+          "sales_arguments": "Argumente de vânzare"
+        },
+        "title": "Mergi dincolo de rezumatele conversațiilor",
+        "title_without_summary": "Deblochează-ți tot potențialul cu Desk Copilot"
+      },
+      "summary_title": "Rezumatul acestei conversații"
     }
   },
   "discussions": {

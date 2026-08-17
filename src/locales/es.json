@@ -819,6 +819,10 @@
     "switch_tooltip": "Activa si deseas que el contacto siempre se te asigne directamente",
     "alert_linked": "Contacto vinculado",
     "alert_detached": "Contacto desvinculado",
+    "header": {
+      "desk_copilot": "Desk Copilot",
+      "information": "Información"
+    },
     "linked_contact": "Contacto vinculado al representante {name}",
     "see_contact_history": "Ver historial",
     "no_contact_history": "Sin historial",
@@ -841,6 +845,22 @@
         "1": "😡 Muy insatisfecho",
         "no_response": "Sin respuesta"
       }
+    },
+    "desk_copilot": {
+      "copy_summary": "Copiar resumen",
+      "disclaimer": {
+        "description": "Desk Copilot puede ayudarte con:",
+        "enable_button": "Activar Desk Copilot",
+        "items": {
+          "catalog_search": "Búsqueda en el catálogo",
+          "next_best_actions": "Próximas mejores acciones",
+          "product_recommendations": "Recomendaciones de productos",
+          "sales_arguments": "Argumentos de venta"
+        },
+        "title": "Ve más allá de los resúmenes de conversación",
+        "title_without_summary": "Desbloquea todo tu potencial con Desk Copilot"
+      },
+      "summary_title": "Resumen de esta conversación"
     }
   },
   "discussions": {

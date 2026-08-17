@@ -2,202 +2,269 @@
 <template>
   <div class="contact-info__container">
     <ContactInfosLoading v-show="isLoading" />
-    <AsideSlotTemplate
-      v-show="!isLoading"
-      v-if="closedRoom || room"
-      class="contact-info"
-    >
-      <template #header>
-        <header class="contact-info__header">
-          <p>{{ $t('chats.room_contact_info.title') }}</p>
-          <div>
-            <UnnnicButton
-              v-if="!isHistory"
-              iconCenter="sync"
-              type="tertiary"
-              size="small"
-              :disabled="isRefreshContactDisabled"
-              @click="refreshContactInfos"
+
+    <template v-if="closedRoom || room">
+      <ContactInfoRedesign
+        v-if="isAssistedSalesEnabled"
+        v-show="!isLoading"
+        :room="room"
+        :closedRoom="closedRoom"
+        :contactInfo="(closedRoom || room).contact"
+        :isHistory="isHistory"
+        :isViewMode="isViewMode"
+        :isRefreshDisabled="isRefreshContactDisabled"
+        :contactName="(closedRoom || room).contact.name"
+        :contactNumber="contactNumber?.contactNum"
+        :contactPlatform="contactNumber?.plataform"
+        :isOnline="room?.contact.status === 'online'"
+        :lastMessageText="lastMessageText"
+        :customFields="computedCustomFields"
+        :currentCustomField="currentCustomField"
+        :canEditCustomFields="!isHistory && room?.can_edit_custom_fields"
+        :openCustomFields="openCustomFields"
+        :isLinkedUser="isLinkedUser"
+        :isLinkedToOtherAgent="isLinkedToOtherAgent"
+        :linkedUserName="room?.linked_user"
+        :showLinkSwitch="
+          !isLinkedToOtherAgent &&
+          !isViewMode &&
+          !isHistory &&
+          !isLinkContactBlocked
+        "
+        @refresh="refreshContactInfos"
+        @close="emitClose"
+        @update:is-linked-user="handleLinkedUserUpdate"
+        @update:open-custom-fields="openCustomFields = $event"
+        @update-current-custom-field="updateCurrentCustomField"
+        @save-value="saveCurrentCustomFieldValue"
+        @fullscreen="openFullScreen"
+        @loaded-medias="isLoading = false"
+      >
+        <template #previews>
+          <FullscreenPreview
+            v-if="isFullscreen && currentMedia"
+            :downloadMediaUrl="currentMedia?.url"
+            :downloadMediaName="currentMedia?.message"
+            :mediaCurrent="currentMediaIndex"
+            :mediaTotal="images.length"
+            @close="isFullscreen = false"
+            @next="nextMedia"
+            @previous="previousMedia"
+          >
+            <VideoPreview
+              v-if="currentMedia.content_type.includes('mp4')"
+              :src="currentMedia.url"
+              @keypress.enter="() => {}"
+              @click.stop="() => {}"
             />
-            <UnnnicButton
-              v-if="!isHistory"
-              iconCenter="close"
-              type="tertiary"
-              size="small"
-              @click="emitClose"
+            <img
+              v-else
+              :src="currentMedia.url"
+              :alt="currentMedia.url"
+              @keypress.enter="() => {}"
+              @click.stop="() => {}"
             />
-          </div>
-        </header>
-      </template>
-      <section class="scrollable">
-        <AsideSlotTemplateSection class="contact-info__section">
-          <section class="infos-header">
-            <section class="infos-header__title-container">
-              <h3 class="infos-header__title">
-                {{ $t('contact_info.title') }}
-              </h3>
+          </FullscreenPreview>
+        </template>
+      </ContactInfoRedesign>
+
+      <AsideSlotTemplate
+        v-else
+        v-show="!isLoading"
+        class="contact-info"
+      >
+        <template #header>
+          <header class="contact-info__header">
+            <p>{{ $t('chats.room_contact_info.title') }}</p>
+            <div>
+              <UnnnicButton
+                v-if="!isHistory"
+                iconCenter="sync"
+                type="tertiary"
+                size="small"
+                :disabled="isRefreshContactDisabled"
+                @click="refreshContactInfos"
+              />
+              <UnnnicButton
+                v-if="!isHistory"
+                iconCenter="close"
+                type="tertiary"
+                size="small"
+                @click="emitClose"
+              />
+            </div>
+          </header>
+        </template>
+        <section class="scrollable">
+          <AsideSlotTemplateSection class="contact-info__section">
+            <section class="infos-header">
+              <section class="infos-header__title-container">
+                <h3 class="infos-header__title">
+                  {{ $t('contact_info.title') }}
+                </h3>
+                <section
+                  v-if="isLinkedToOtherAgent"
+                  class="infos-header__linked-contact"
+                >
+                  <UnnnicIcon
+                    icon="info"
+                    size="ant"
+                    scheme="fg-warning"
+                  />
+                  <p>
+                    {{
+                      $t('contact_info.linked_contact', {
+                        name: room.linked_user,
+                      })
+                    }}
+                  </p>
+                </section>
+              </section>
+              <div
+                v-if="
+                  !isLinkedToOtherAgent &&
+                  !isViewMode &&
+                  !isHistory &&
+                  !isLinkContactBlocked
+                "
+                class="sync-contact"
+              >
+                <UnnnicSwitch
+                  v-model="isLinkedUser"
+                  size="small"
+                  :textRight="
+                    isLinkedUser
+                      ? $t('contact_info.switch_disassociate_contact')
+                      : $t('contact_info.switch_associate_contact')
+                  "
+                  @update:model-value="addContactToAgent"
+                />
+                <UnnnicToolTip
+                  enabled
+                  :text="$t('contact_info.switch_tooltip')"
+                  side="left"
+                >
+                  <UnnnicIconSvg
+                    icon="info"
+                    scheme="fg-base"
+                    size="sm"
+                  />
+                </UnnnicToolTip>
+              </div>
+            </section>
+            <section class="infos-contact">
+              <p
+                v-if="room?.contact.status === 'online'"
+                class="infos-contact__item-value"
+              >
+                {{ $t('status.online') }}
+              </p>
+              <p
+                v-if="lastMessageFromContact?.created_on"
+                class="infos-contact__item-last-contact"
+              >
+                {{
+                  $t('last_message_time.date', {
+                    date: moment(lastMessageFromContact?.created_on).fromNow(),
+                  })
+                }}
+              </p>
+              <section class="infos-contact__item">
+                <section class="infos-contact__item-content">
+                  <p class="infos-contact__item-title">{{ $t('name') }}:</p>
+                  <p class="infos-contact__item-value">
+                    {{ (closedRoom || room).contact.name }}
+                  </p>
+                </section>
+                <CopyValueButton :value="(closedRoom || room).contact.name" />
+              </section>
+              <section class="infos-contact__item">
+                <section class="infos-contact__item-content">
+                  <p class="infos-contact__item-title">
+                    {{ contactNumber?.plataform || $t('URN') }}:
+                  </p>
+                  <p class="infos-contact__item-value">
+                    {{ contactNumber?.contactNum }}
+                  </p>
+                </section>
+                <CopyValueButton :value="contactNumber?.contactNum" />
+              </section>
+
+              <Transition name="expand-with-fade">
+                <section
+                  v-if="hasCustomFields && openCustomFields"
+                  class="custom-fields-container"
+                >
+                  <CustomField
+                    v-for="(value, key) in computedCustomFields"
+                    :key="key"
+                    :title="key"
+                    :description="value"
+                    :isEditable="!isHistory && room.can_edit_custom_fields"
+                    :isCurrent="isCurrentCustomField(key)"
+                    :value="currentCustomField?.[key]"
+                    @update-current-custom-field="updateCurrentCustomField"
+                    @save-value="saveCurrentCustomFieldValue"
+                  />
+                </section>
+              </Transition>
+
               <section
-                v-if="isLinkedToOtherAgent"
-                class="infos-header__linked-contact"
+                v-if="hasCustomFields"
+                class="infos-contact__slide"
               >
                 <UnnnicIcon
-                  icon="info"
-                  size="ant"
-                  scheme="fg-warning"
-                />
-                <p>
-                  {{
-                    $t('contact_info.linked_contact', {
-                      name: room.linked_user,
-                    })
-                  }}
-                </p>
-              </section>
-            </section>
-            <div
-              v-if="
-                !isLinkedToOtherAgent &&
-                !isViewMode &&
-                !isHistory &&
-                !isLinkContactBlocked
-              "
-              class="sync-contact"
-            >
-              <UnnnicSwitch
-                v-model="isLinkedUser"
-                size="small"
-                :textRight="
-                  isLinkedUser
-                    ? $t('contact_info.switch_disassociate_contact')
-                    : $t('contact_info.switch_associate_contact')
-                "
-                @update:model-value="addContactToAgent"
-              />
-              <UnnnicToolTip
-                enabled
-                :text="$t('contact_info.switch_tooltip')"
-                side="left"
-              >
-                <UnnnicIconSvg
-                  icon="info"
-                  scheme="fg-base"
-                  size="sm"
-                />
-              </UnnnicToolTip>
-            </div>
-          </section>
-          <section class="infos-contact">
-            <p
-              v-if="room?.contact.status === 'online'"
-              class="infos-contact__item-value"
-            >
-              {{ $t('status.online') }}
-            </p>
-            <p
-              v-if="lastMessageFromContact?.created_on"
-              class="infos-contact__item-last-contact"
-            >
-              {{
-                $t('last_message_time.date', {
-                  date: moment(lastMessageFromContact?.created_on).fromNow(),
-                })
-              }}
-            </p>
-            <section class="infos-contact__item">
-              <section class="infos-contact__item-content">
-                <p class="infos-contact__item-title">{{ $t('name') }}:</p>
-                <p class="infos-contact__item-value">
-                  {{ (closedRoom || room).contact.name }}
-                </p>
-              </section>
-              <CopyValueButton :value="(closedRoom || room).contact.name" />
-            </section>
-            <section class="infos-contact__item">
-              <section class="infos-contact__item-content">
-                <p class="infos-contact__item-title">
-                  {{ contactNumber?.plataform || $t('URN') }}:
-                </p>
-                <p class="infos-contact__item-value">
-                  {{ contactNumber?.contactNum }}
-                </p>
-              </section>
-              <CopyValueButton :value="contactNumber?.contactNum" />
-            </section>
-
-            <Transition name="expand-with-fade">
-              <section
-                v-if="hasCustomFields && openCustomFields"
-                class="custom-fields-container"
-              >
-                <CustomField
-                  v-for="(value, key) in computedCustomFields"
-                  :key="key"
-                  :title="key"
-                  :description="value"
-                  :isEditable="!isHistory && room.can_edit_custom_fields"
-                  :isCurrent="isCurrentCustomField(key)"
-                  :value="currentCustomField?.[key]"
-                  @update-current-custom-field="updateCurrentCustomField"
-                  @save-value="saveCurrentCustomFieldValue"
+                  :icon="openCustomFields ? 'expand_less' : 'expand_more'"
+                  clickable
+                  @click="openCustomFields = !openCustomFields"
                 />
               </section>
-            </Transition>
-
-            <section
-              v-if="hasCustomFields"
-              class="infos-contact__slide"
-            >
-              <UnnnicIcon
-                :icon="openCustomFields ? 'expand_less' : 'expand_more'"
-                clickable
-                @click="openCustomFields = !openCustomFields"
-              />
             </section>
-          </section>
-        </AsideSlotTemplateSection>
+          </AsideSlotTemplateSection>
 
-        <AboutSupport
-          :closedRoom="closedRoom"
-          :isHistory="isHistory"
-          :isViewMode="isViewMode"
-        />
-
-        <AsideSlotTemplateSection class="contact-info__section">
-          <ContactMedia
-            :room="room"
-            :history="isHistory"
-            :contactInfo="(closedRoom || room).contact"
-            @fullscreen="openFullScreen"
-            @loaded-medias="isLoading = false"
+          <AboutSupport
+            :closedRoom="closedRoom"
+            :isHistory="isHistory"
+            :isViewMode="isViewMode"
           />
-        </AsideSlotTemplateSection>
-      </section>
 
-      <FullscreenPreview
-        v-if="isFullscreen && currentMedia"
-        :downloadMediaUrl="currentMedia?.url"
-        :downloadMediaName="currentMedia?.message"
-        :mediaCurrent="currentMediaIndex"
-        :mediaTotal="images.length"
-        @close="isFullscreen = false"
-        @next="nextMedia"
-        @previous="previousMedia"
-      >
-        <VideoPreview
-          v-if="currentMedia.content_type.includes('mp4')"
-          :src="currentMedia.url"
-          @keypress.enter="() => {}"
-          @click.stop="() => {}"
-        />
-        <img
-          v-else
-          :src="currentMedia.url"
-          :alt="currentMedia.url"
-          @keypress.enter="() => {}"
-          @click.stop="() => {}"
-        />
-      </FullscreenPreview>
-    </AsideSlotTemplate>
+          <AsideSlotTemplateSection class="contact-info__section">
+            <ContactMedia
+              :room="room"
+              :history="isHistory"
+              :contactInfo="(closedRoom || room).contact"
+              @fullscreen="openFullScreen"
+              @loaded-medias="isLoading = false"
+            />
+          </AsideSlotTemplateSection>
+        </section>
+
+        <FullscreenPreview
+          v-if="isFullscreen && currentMedia"
+          :downloadMediaUrl="currentMedia?.url"
+          :downloadMediaName="currentMedia?.message"
+          :mediaCurrent="currentMediaIndex"
+          :mediaTotal="images.length"
+          @close="isFullscreen = false"
+          @next="nextMedia"
+          @previous="previousMedia"
+        >
+          <VideoPreview
+            v-if="currentMedia.content_type.includes('mp4')"
+            :src="currentMedia.url"
+            @keypress.enter="() => {}"
+            @click.stop="() => {}"
+          />
+          <img
+            v-else
+            :src="currentMedia.url"
+            :alt="currentMedia.url"
+            @keypress.enter="() => {}"
+            @click.stop="() => {}"
+          />
+        </FullscreenPreview>
+      </AsideSlotTemplate>
+    </template>
   </div>
 </template>
 
@@ -225,11 +292,14 @@ import ContactMedia from './Media.vue';
 import VideoPreview from '../MediaMessage/Previews/Video.vue';
 import FullscreenPreview from '../MediaMessage/Previews/Fullscreen.vue';
 import AboutSupport from './AboutSupport.vue';
+import ContactInfoRedesign from './Redesign/index.vue';
 
 import moment from 'moment';
 import { parseUrn } from '@/utils/room';
 
 import i18n from '@/plugins/i18n';
+import { useFeatureFlag } from '@/store/modules/featureFlag';
+import { useAssistedSalesFeatureFlag } from '@/composables/useAssistedSalesFeatureFlag';
 
 export default {
   name: 'ContactInfo',
@@ -244,6 +314,7 @@ export default {
     FullscreenPreview,
     VideoPreview,
     AboutSupport,
+    ContactInfoRedesign,
   },
   props: {
     closedRoom: {
@@ -289,9 +360,14 @@ export default {
       isLoadingActiveRoomSummary: 'isLoadingActiveRoomSummary',
     }),
     ...mapState(useConfig, ['project']),
+    ...mapState(useFeatureFlag, ['featureFlags']),
 
     isLinkContactBlocked() {
       return !!this.project?.config?.block_link_contact_agents;
+    },
+
+    isAssistedSalesEnabled() {
+      return useAssistedSalesFeatureFlag(this.featureFlags);
     },
 
     hasCustomFields() {
@@ -336,6 +412,16 @@ export default {
         return messages.findLast((message) => message.contact);
       }
       return '';
+    },
+
+    lastMessageText() {
+      if (!this.lastMessageFromContact?.created_on) {
+        return '';
+      }
+
+      return this.$t('last_message_time.date', {
+        date: moment(this.lastMessageFromContact.created_on).fromNow(),
+      });
     },
 
     contactNumber() {
@@ -475,6 +561,11 @@ export default {
       } else {
         this.removeLinkedContact();
       }
+    },
+
+    handleLinkedUserUpdate(value) {
+      this.isLinkedUser = value;
+      this.addContactToAgent();
     },
 
     verifyLinkedUser() {
