@@ -10,6 +10,7 @@
     >
       <UnnnicSegmentedControlList>
         <UnnnicSegmentedControlTrigger
+          v-if="showDeskCopilotTab"
           value="desk_copilot"
           data-testid="segmented-desk-copilot"
         >
@@ -59,12 +60,14 @@ withDefaults(
     showRefresh?: boolean;
     showClose?: boolean;
     isRefreshDisabled?: boolean;
+    showDeskCopilotTab?: boolean;
   }>(),
   {
     modelValue: 'desk_copilot',
     showRefresh: true,
     showClose: true,
     isRefreshDisabled: false,
+    showDeskCopilotTab: true,
   },
 );
 
