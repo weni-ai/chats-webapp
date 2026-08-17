@@ -5,12 +5,12 @@
   >
     <UnnnicSegmentedControl
       class="contact-info-redesign-header__segmented"
-      defaultValue="information"
+      :modelValue="modelValue"
+      @update:model-value="emit('update:modelValue', $event)"
     >
       <UnnnicSegmentedControlList>
         <UnnnicSegmentedControlTrigger
           value="desk_copilot"
-          disabled
           data-testid="segmented-desk-copilot"
         >
           {{ $t('contact_info.header.desk_copilot') }}
@@ -47,17 +47,21 @@
 </template>
 
 <script setup lang="ts">
+export type ContactInfoTab = 'desk_copilot' | 'information';
+
 defineOptions({
   name: 'ContactInfoRedesignHeader',
 });
 
 withDefaults(
   defineProps<{
+    modelValue?: ContactInfoTab;
     showRefresh?: boolean;
     showClose?: boolean;
     isRefreshDisabled?: boolean;
   }>(),
   {
+    modelValue: 'desk_copilot',
     showRefresh: true,
     showClose: true,
     isRefreshDisabled: false,
@@ -65,6 +69,7 @@ withDefaults(
 );
 
 const emit = defineEmits<{
+  'update:modelValue': [value: ContactInfoTab];
   refresh: [];
   close: [];
 }>();

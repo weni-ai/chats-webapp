@@ -845,6 +845,22 @@
         "1": "😡 Muito insatisfeito",
         "no_response": "Sem resposta"
       }
+    },
+    "desk_copilot": {
+      "copy_summary": "Copiar resumo",
+      "disclaimer": {
+        "description": "O Desk Copilot pode ajudar você com:",
+        "enable_button": "Ativar Desk Copilot",
+        "items": {
+          "catalog_search": "Busca no catálogo",
+          "next_best_actions": "Próximas melhores ações",
+          "product_recommendations": "Recomendações de produtos",
+          "sales_arguments": "Argumentos de venda"
+        },
+        "title": "Vá além dos resumos de conversa",
+        "title_without_summary": "Desbloqueie todo o seu potencial com o Desk Copilot"
+      },
+      "summary_title": "Resumo desta conversa"
     }
   },
   "discussions": {

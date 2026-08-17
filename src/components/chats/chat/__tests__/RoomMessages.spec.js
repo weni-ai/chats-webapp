@@ -6,6 +6,8 @@ import RoomMessages from '../RoomMessages.vue';
 import { useRooms } from '@/store/modules/chats/rooms';
 import { useRoomMessages } from '@/store/modules/chats/roomMessages';
 import { useConfig } from '@/store/modules/config';
+import { useFeatureFlag } from '@/store/modules/featureFlag';
+import { ASSISTED_SALES_FEATURE_FLAG } from '@/composables/useAssistedSalesFeatureFlag';
 import RoomService from '@/services/api/resources/chats/room';
 import RoomNotes from '@/services/api/resources/chats/roomNotes';
 import i18n from '@/plugins/i18n';
@@ -79,6 +81,7 @@ const createWrapper = (props = {}, piniaState = {}) => {
   const roomsStore = useRooms();
   const roomMessagesStore = useRoomMessages();
   const configStore = useConfig();
+  const featureFlagStore = useFeatureFlag();
 
   roomsStore.$patch({
     activeRoom: mockRoom,
@@ -100,6 +103,9 @@ const createWrapper = (props = {}, piniaState = {}) => {
   roomMessagesStore.addRoomMessageSorted = vi.fn();
 
   configStore.project = { config: { has_chats_summary: false } };
+  featureFlagStore.$patch({
+    featureFlags: { active_features: [] },
+  });
 
   if (piniaState.rooms) {
     roomsStore.$patch(piniaState.rooms);
@@ -116,6 +122,9 @@ const createWrapper = (props = {}, piniaState = {}) => {
   }
   if (piniaState.config) {
     Object.assign(configStore, piniaState.config);
+  }
+  if (piniaState.featureFlag) {
+    featureFlagStore.$patch(piniaState.featureFlag);
   }
 
   return mount(RoomMessages, {
@@ -285,6 +294,42 @@ describe('RoomMessages.vue', () => {
       const chatSummary = wrapper.findComponent({ name: 'ChatSummary' });
       expect(chatSummary.exists()).toBe(true);
       expect(chatSummary.props('showSummary')).toBe(true);
+    });
+
+    it('does not render ChatSummary when assisted sales flag is enabled', async () => {
+      RoomNotes.getInternalNotes.mockResolvedValue({ results: [] });
+      RoomService.getSummary.mockResolvedValue({
+        status: 'DONE',
+        summary: 'Resumo',
+        feedback: null,
+      });
+
+      const wrapper = createWrapper(
+        { showRoomSummary: true },
+        {
+          config: {
+            project: { config: { has_chats_summary: true } },
+          },
+          rooms: {
+            openActiveRoomSummary: true,
+            roomsSummary: {
+              [mockRoom.uuid]: { summary: 'Summary', feedback: null },
+            },
+          },
+          featureFlag: {
+            featureFlags: {
+              active_features: [ASSISTED_SALES_FEATURE_FLAG],
+            },
+          },
+        },
+      );
+
+      await flushPromises();
+      wrapper.vm.isLoadingMessages = false;
+      wrapper.vm.silentLoadingMessages = true;
+      await wrapper.vm.$nextTick();
+
+      expect(wrapper.find('[data-testid="chat-summary"]').exists()).toBe(false);
     });
   });
 
