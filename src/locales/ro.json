@@ -1135,6 +1135,10 @@
         "switch_label": "Permite interacțiuni doar pentru reprezentanții online",
         "hint": "Dacă această opțiune este activată, reprezentanții care sunt offline sau în pauză nu vor putea răspunde la conversațiile în curs"
       },
+      "block_link_contact_agents": {
+        "switch_label": "Blochează asocierea contactelor de către reprezentanți",
+        "hint": "Dacă această opțiune este activată, reprezentanții nu vor putea asocia contacte la ei"
+      },
       "bulk_transfer": {
         "tooltip": "Această funcție permite reprezentanților să transfere simultan mai multe contacte",
         "switch_active": "Transferă chaturile în masă către o altă coadă sau reprezentant",

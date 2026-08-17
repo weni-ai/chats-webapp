@@ -25,7 +25,12 @@
         :isLinkedUser="isLinkedUser"
         :isLinkedToOtherAgent="isLinkedToOtherAgent"
         :linkedUserName="room?.linked_user"
-        :showLinkSwitch="!isLinkedToOtherAgent && !isViewMode && !isHistory"
+        :showLinkSwitch="
+          !isLinkedToOtherAgent &&
+          !isViewMode &&
+          !isHistory &&
+          !isLinkContactBlocked
+        "
         @refresh="refreshContactInfos"
         @close="emitClose"
         @update:is-linked-user="handleLinkedUserUpdate"
@@ -116,7 +121,12 @@
                 </section>
               </section>
               <div
-                v-if="!isLinkedToOtherAgent && !isViewMode && !isHistory"
+                v-if="
+                  !isLinkedToOtherAgent &&
+                  !isViewMode &&
+                  !isHistory &&
+                  !isLinkContactBlocked
+                "
                 class="sync-contact"
               >
                 <UnnnicSwitch
@@ -264,6 +274,7 @@ import isMobile from 'is-mobile';
 import { mapActions, mapState } from 'pinia';
 import { useRooms } from '@/store/modules/chats/rooms';
 import { useRoomMessages } from '@/store/modules/chats/roomMessages';
+import { useConfig } from '@/store/modules/config';
 
 import AsideSlotTemplate from '@/components/layouts/chats/AsideSlotTemplate/index.vue';
 import AsideSlotTemplateSection from '@/components/layouts/chats/AsideSlotTemplate/Section.vue';
@@ -348,7 +359,12 @@ export default {
       activeRoomSummary: 'activeRoomSummary',
       isLoadingActiveRoomSummary: 'isLoadingActiveRoomSummary',
     }),
+    ...mapState(useConfig, ['project']),
     ...mapState(useFeatureFlag, ['featureFlags']),
+
+    isLinkContactBlocked() {
+      return !!this.project?.config?.block_link_contact_agents;
+    },
 
     isAssistedSalesEnabled() {
       return useAssistedSalesFeatureFlag(this.featureFlags);
