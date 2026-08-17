@@ -1206,6 +1206,10 @@
         "switch_label": "Permitir interações apenas para atendentes online",
         "hint": "Se essa opção estiver ativada, atendentes offline ou em pausa não poderão responder a chats em andamento."
       },
+      "block_link_contact_agents": {
+        "switch_label": "Bloquear a vinculação de contatos pelos atendentes",
+        "hint": "Se essa opção estiver ativada, os atendentes não poderão vincular contatos a eles"
+      },
       "bulk_transfer": {
         "tooltip": "Esta função permite que os atendentes transfiram diferentes contatos de uma só vez",
         "switch_active": "Transferir chats em massa para outra fila ou atendente",
@@ -1216,8 +1220,8 @@
         "switch_inactive": "Bloquear a transferência de chats para atendentes offline"
       },
       "hide_moderators_from_transfer": {
-        "hint": "Quando ativada, apenas usuários atribuídos à fila como atendentes são exibidos. Moderadores só aparecem se também estiverem atribuídos à fila como atendentes. Quando desativada, todos os usuários, incluindo moderadores, são exibidos.",
-        "switch_label": "Ocultar perfis moderadores ao transferir chats"
+        "hint": "Quando ativado, somente os usuários atribuídos à fila como atendentes são exibidos. Os moderadores aparecem apenas se também estiverem atribuídos à fila como atendentes. Quando desativado, todos os usuários são exibidos, inclusive os moderadores.",
+        "switch_label": "Ocultar perfis de moderadores ao transferir chats"
       },
       "bulk_close": {
         "switch_active": "Encerrar chats em massa",
