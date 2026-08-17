@@ -1194,6 +1194,10 @@
         "switch_active": "Blochează transferul chaturilor către reprezentanți offline",
         "switch_inactive": "Blochează transferul chaturilor către reprezentanți offline"
       },
+      "hide_desk_copilot_tab": {
+        "hint": "Când este activată, reprezentanții văd doar fila Informații în panoul contactului",
+        "switch_label": "Ascunde fila Desk Copilot"
+      },
       "hide_moderators_from_transfer": {
         "hint": "Când este activată, sunt afișați doar utilizatorii atribuiți cozii ca reprezentanți. Moderatorii sunt afișați doar dacă sunt și ei atribuiți cozii ca reprezentanți. Când este dezactivată, sunt afișați toți utilizatorii, inclusiv moderatorii.",
         "switch_label": "Ascunde profilurile moderatorilor la transferul chaturilor"

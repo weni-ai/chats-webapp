@@ -1219,6 +1219,10 @@
         "switch_active": "Bloquear a transferência de chats para atendentes offline",
         "switch_inactive": "Bloquear a transferência de chats para atendentes offline"
       },
+      "hide_desk_copilot_tab": {
+        "hint": "Quando ativada, os atendentes veem apenas a aba de informações no painel do contato",
+        "switch_label": "Ocultar aba Desk Copilot"
+      },
       "hide_moderators_from_transfer": {
         "hint": "Quando ativado, somente os usuários atribuídos à fila como atendentes são exibidos. Os moderadores aparecem apenas se também estiverem atribuídos à fila como atendentes. Quando desativado, todos os usuários são exibidos, inclusive os moderadores.",
         "switch_label": "Ocultar perfis de moderadores ao transferir chats"
