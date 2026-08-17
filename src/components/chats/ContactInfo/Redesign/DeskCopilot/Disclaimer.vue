@@ -96,8 +96,7 @@ const showEnableButton = computed(
 );
 
 function handleEnable() {
-  // Placeholder path until Connect wires the Live Desk settings route
-  emitToHost('redirect', { path: 'chats:settings/live-desk' });
+  emitToHost('redirect', { path: 'chats-settings:?tab=desk_copilot' });
 }
 </script>
 
