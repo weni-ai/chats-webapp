@@ -341,7 +341,7 @@
         "tooltip": "Cada mensagem exibirá o nome do atendente que respondeu",
         "switch_active": "Exibir nome do atendente nas mensagens",
         "switch_disabled": "Exibir nome do atendente nas mensagens",
-        "hint": "Cada mensagem trocada exibirá o nome do agente que está respondendo.",
+        "hint": "Cada mensagem trocada terá o nome do atendente que está respondendo.",
         "switch_label": "Usar assinatura"
       },
       "csat": {
@@ -350,16 +350,16 @@
         },
         "hint": "Se um fluxo ativo no módulo Fluxos estiver configurado para disparar uma pesquisa após o fim do suporte, esta configuração pode conflitar com o fluxo e afetar a entrega da pesquisa.",
         "label": "Enviar automaticamente uma pesquisa de satisfação após o fim do suporte no Live Desk",
+        "confirm_modal": {
+          "content_1": "Se um fluxo ativo no módulo Fluxos estiver configurado para disparar uma pesquisa após o fim do suporte, esta configuração pode conflitar com o fluxo e afetar a entrega da pesquisa.",
+          "content_2": "Deseja continuar mesmo assim?"
+        },
         "section_title": "Pesquisa de satisfação",
         "type": {
           "custom": "Fluxos personalizados",
           "default": "Pesquisa CSAT padrão (recomendado)",
           "label": "Tipo de pesquisa",
-          "tooltip": "Escolha entre a pesquisa CSAT padrão ou um fluxo personalizado já configurado no módulo Fluxos."
-        },
-        "confirm_modal": {
-          "content_1": "Se um fluxo ativo no módulo Fluxos estiver configurado para disparar uma pesquisa após o fim do suporte, esta configuração pode conflitar com o fluxo e afetar a entrega da pesquisa.",
-          "content_2": "Deseja continuar mesmo assim?"
+          "tooltip": "Escolha entre a pesquisa CSAT padrão e um fluxo personalizado já configurado no módulo Fluxos."
         }
       },
       "automatic_message": {
@@ -378,7 +378,7 @@
         "switch_label": "Exigir tags ao final do atendimento humano"
       },
       "automated_message": {
-        "title": "Mensagens automatizadas",
+        "title": "Mensagens automáticas",
         "switch_when_waiting_label": "Enviar mensagem automática para contatos na fila de espera",
         "switch_when_start_label": "Enviar mensagem automática quando o atendimento começar",
         "hint_when_waiting": "Envia automaticamente uma mensagem para os contatos enquanto aguardam atendimento humano na fila.",
@@ -425,9 +425,6 @@
   "addition_date": "Data de cadastro",
   "in_queues": "nas filas",
   "in_progress": "Em andamento",
-  "waiting": "Aguardando",
-  "sent_flows": "Fluxos enviados",
-  "discussion": "Discussões",
   "in_progress_tooltip": "Número de chats sendo atendidos por um atendente",
   "in_progress_tooltip_filtered": "Número de chats que foram atendidos por um atendente",
   "closed": "Encerrados",
@@ -497,24 +494,24 @@
       }
     },
     "feedback": {
-      "agent_took_chat": "Ops! O chat com o contato {contact} já foi assumido por outro atendente",
-      "automatic_transfer_from_queue": "Sala atribuída a {agent}",
-      "chat_ended_by": "Chat finalizado por {agent}",
-      "discussion_created": "{agent} iniciou uma discussão na fila {queue}",
-      "discussion_joined": "{agent} entrou na discussão",
-      "edit_custom_field": "campo customizável editado",
       "forwarded_to_agent": "Contato transferido para o atendente {agent}",
       "forwarded_to_queue": "Contato transferido para a fila {queue}",
-      "pick_of_agent": "{manager} assumiu o chat de {agent}",
-      "pick_of_queue": "{agent} assumiu o chat da fila {queue}",
-      "see_all_internal_notes": "<b style='color: white;'>Ver notas internas</b>",
+      "transfer_to_agent": "{agent1} transferido para {agent2}",
+      "transfer_to_queue": "{agent} transferido para a fila {queue}",
+      "transfer_from_queue_to_queue": "Foi transferido da fila {queue1} para a fila {queue2}",
       "transfer_from_queue_to_agent": "Transferido da fila {queue} para {agent}",
       "transfer_from_queue_to_agent_by_other": "{requestedBy} transferiu o chat da fila {queue} para {agent}",
-      "transfer_from_queue_to_queue": "Foi transferido da fila {queue1} para a fila {queue2}",
+      "pick_of_queue": "{agent} assumiu o chat da fila {queue}",
+      "pick_of_agent": "{manager} assumiu o chat de {agent}",
+      "edit_custom_field": "campo customizável editado",
+      "discussion_created": "{agent} iniciou uma discussão na fila {queue}",
+      "discussion_joined": "{agent} entrou na discussão",
+      "agent_took_chat": "Ops! O chat com o contato {contact} já foi assumido por outro atendente",
+      "automatic_transfer_from_queue": "Sala atribuída a {agent}",
+      "see_all_internal_notes": "<b style='color: white;'>Ver notas internas</b>",
+      "chat_ended_by": "Chat finalizado por {agent}",
       "transfer_from_queue_to_queue_by_other": "{requestedBy} transferiu o chat da fila {queue1} para a fila {queue2}",
-      "transfer_to_agent": "{agent1} transferido para {agent2}",
       "transfer_to_agent_by_other": "{requestedBy} transferiu o chat de {agent1} para {agent2}",
-      "transfer_to_queue": "{agent} transferido para a fila {queue}",
       "transfer_to_queue_by_other": "{requestedBy} transferiu o chat de {agent} para a fila {queue}",
       "automatic_close_room": "Encerrado automaticamente por falta de interação do contato"
     },
@@ -814,8 +811,6 @@
     "partial_success_message": "{success, plural, one {{success} chat assumido, {failed} falhou. Tente novamente.} other {{success} chats assumidos, {failed} falharam. Tente novamente.}}",
     "error_message": "Não foi possível assumir os chats, tente novamente"
   },
-  "close_contact": "Encerrar contato",
-  "close_contact_confirmation": "Tem certeza que deseja encerrar este contato?",
   "contact_info": {
     "title": "Sobre o contato",
     "about_support": "Sobre o atendimento",
@@ -1140,11 +1135,11 @@
       "status_remove_success": "Status {status} removido",
       "status_error": "Erro ao salvar alterações. Tente novamente.",
       "delete_modal": {
+        "title": "Excluir pausa personalizada",
         "description_1": "Tem certeza de que deseja excluir a pausa personalizada “{name}”?",
         "description_2": "Depois de excluir, os dados não aparecerão mais no painel do Live Desk e não poderão ser recuperados.",
-        "error": "Não foi possível excluir a pausa personalizada.",
         "success": "Pausa personalizada excluída com sucesso",
-        "title": "Excluir pausa personalizada"
+        "error": "Não foi possível excluir a pausa personalizada."
       }
     },
     "desk_copilot": {
@@ -1211,6 +1206,10 @@
         "switch_label": "Permitir interações apenas para atendentes online",
         "hint": "Se essa opção estiver ativada, atendentes offline ou em pausa não poderão responder a chats em andamento."
       },
+      "block_link_contact_agents": {
+        "switch_label": "Bloquear a vinculação de contatos pelos atendentes",
+        "hint": "Se essa opção estiver ativada, os atendentes não poderão vincular contatos a eles"
+      },
       "bulk_transfer": {
         "tooltip": "Esta função permite que os atendentes transfiram diferentes contatos de uma só vez",
         "switch_active": "Transferir chats em massa para outra fila ou atendente",
@@ -1221,8 +1220,8 @@
         "switch_inactive": "Bloquear a transferência de chats para atendentes offline"
       },
       "hide_moderators_from_transfer": {
-        "hint": "Quando ativada, apenas usuários atribuídos à fila como atendentes são exibidos. Moderadores só aparecem se também estiverem atribuídos à fila como atendentes. Quando desativada, todos os usuários, incluindo moderadores, são exibidos.",
-        "switch_label": "Ocultar perfis moderadores ao transferir chats"
+        "hint": "Quando ativado, somente os usuários atribuídos à fila como atendentes são exibidos. Os moderadores aparecem apenas se também estiverem atribuídos à fila como atendentes. Quando desativado, todos os usuários são exibidos, inclusive os moderadores.",
+        "switch_label": "Ocultar perfis de moderadores ao transferir chats"
       },
       "bulk_close": {
         "switch_active": "Encerrar chats em massa",
@@ -1272,8 +1271,8 @@
     "queues": {
       "in_sector": "Fila no setor {sector}",
       "new": "Nova fila",
-      "info": "Filas são grupos de suporte dentro de um setor. Você pode direcionar os contatos de um fluxo para uma fila específica.",
       "title": "Gestão de filas",
+      "info": "Filas são grupos de suporte dentro de um setor. Você pode direcionar os contatos de um fluxo para uma fila específica.",
       "hint": "Filas são grupos de suporte dentro de um setor. Você pode criar ou editar uma fila a qualquer momento.",
       "filter_by_name": "Filtrar por nome da fila",
       "add_queue": "Adicionar fila",
@@ -1661,5 +1660,10 @@
       "activate": "Modo de voz",
       "stop": "Desativar"
     }
-  }
+  },
+  "waiting": "Aguardando",
+  "sent_flows": "Fluxos enviados",
+  "discussion": "Discussões",
+  "close_contact": "Encerrar contato",
+  "close_contact_confirmation": "Tem certeza que deseja encerrar este contato?"
 }

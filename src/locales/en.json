@@ -341,7 +341,7 @@
         "tooltip": "Each message will display the name of the representative who answered",
         "switch_active": "Display the representative name in messages",
         "switch_disabled": "Display the representative name in messages",
-        "hint": "Each message exchanged will have the name of the representative who is answering.",
+        "hint": "Each exchanged message will have the name of the representative who is answering.",
         "switch_label": "Use signature"
       },
       "csat": {
@@ -359,7 +359,7 @@
           "custom": "Custom flows",
           "default": "Default CSAT survey (recommended)",
           "label": "Survey type",
-          "tooltip": "Choose between the default CSAT survey and a custom flow already configured in the Flows module."
+          "tooltip": "Choose between the default CSAT survey and a custom flow previously configured in the Flows module."
         }
       },
       "automatic_message": {
@@ -1205,6 +1205,10 @@
       "restrict_offline_agents": {
         "switch_label": "Allow interactions only for online representatives",
         "hint": "If this option is enabled, representatives that are offline or on break won't be able to respond to chats in progress"
+      },
+      "block_link_contact_agents": {
+        "switch_label": "Block representatives from linking contacts",
+        "hint": "If this option is enabled, representatives won't be able to link contacts to themselves"
       },
       "bulk_transfer": {
         "tooltip": "This function allows representatives to transfer different contacts at once",
