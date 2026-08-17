@@ -119,4 +119,18 @@ describe('ContactInfoRedesignHeader', () => {
     expect(wrapper.find('[data-testid="refresh-button"]').exists()).toBe(false);
     expect(wrapper.find('[data-testid="close-button"]').exists()).toBe(false);
   });
+
+  it('hides the desk copilot tab when showDeskCopilotTab is false', () => {
+    wrapper = createWrapper({
+      showDeskCopilotTab: false,
+      modelValue: 'information',
+    });
+
+    expect(
+      wrapper.find('[data-testid="segmented-desk-copilot"]').exists(),
+    ).toBe(false);
+    expect(wrapper.find('[data-testid="segmented-information"]').exists()).toBe(
+      true,
+    );
+  });
 });
