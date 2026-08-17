@@ -89,9 +89,7 @@ export default {
     },
 
     availableFlowOptions() {
-      const selectedUuids = new Set(
-        this.selectedFlows.map((flow) => flow.uuid),
-      );
+      const selectedUuids = new Set(this.selectedFlows);
 
       return this.flows
         .filter((flow) => !selectedUuids.has(flow.uuid))
@@ -102,9 +100,13 @@ export default {
     },
 
     selectedFlowTags() {
-      return this.selectedFlows.map(({ uuid, name }) => ({
+      const flowsByUuid = new Map(
+        this.flows.map((flow) => [flow.uuid, flow.name]),
+      );
+
+      return this.selectedFlows.map((uuid) => ({
         uuid,
-        name,
+        name: flowsByUuid.get(uuid) || uuid,
       }));
     },
   },
@@ -115,26 +117,17 @@ export default {
         return;
       }
 
-      const alreadySelected = this.selectedFlows.some(
-        (flow) => flow.uuid === uuid,
-      );
-      const flow = this.flows.find((item) => item.uuid === uuid);
+      const alreadySelected = this.selectedFlows.includes(uuid);
+      const flowExists = this.flows.some((item) => item.uuid === uuid);
 
-      if (!alreadySelected && flow) {
-        this.selectedFlows = [
-          ...this.selectedFlows,
-          { uuid: flow.uuid, name: flow.name },
-        ];
+      if (!alreadySelected && flowExists) {
+        this.selectedFlows = [...this.selectedFlows, uuid];
       }
 
       this.$nextTick(() => {
         this.flowSelection = '';
         this.searchFlow = '';
       });
-    },
-
-    flows() {
-      this.hydrateSelectedFlowNames();
     },
   },
 
@@ -145,31 +138,8 @@ export default {
   methods: {
     removeFlow(flowUuid) {
       this.selectedFlows = this.selectedFlows.filter(
-        (flow) => flow.uuid !== flowUuid,
+        (uuid) => uuid !== flowUuid,
       );
-    },
-
-    hydrateSelectedFlowNames() {
-      if (!this.selectedFlows.length || !this.flows.length) {
-        return;
-      }
-
-      const flowsByUuid = new Map(
-        this.flows.map((flow) => [flow.uuid, flow.name]),
-      );
-
-      const hydrated = this.selectedFlows.map((flow) => ({
-        uuid: flow.uuid,
-        name: flowsByUuid.get(flow.uuid) || flow.name,
-      }));
-
-      const changed = hydrated.some(
-        (flow, index) => flow.name !== this.selectedFlows[index]?.name,
-      );
-
-      if (changed) {
-        this.selectedFlows = hydrated;
-      }
     },
 
     async getFlows() {
@@ -186,7 +156,6 @@ export default {
         console.error('Error getting flows', error);
       } finally {
         this.loadingFlows = false;
-        this.hydrateSelectedFlowNames();
       }
     },
   },

@@ -70,10 +70,8 @@ describe('QueueInputsForm', () => {
       name: 'SelectQueueFlows',
     });
 
-    await selectQueueFlows.vm.$emit('update:modelValue', [
-      { uuid: 'flow-1', name: 'Flow 1' },
-    ]);
-    wrapper.vm.queueForm.selected_flows = [{ uuid: 'flow-1', name: 'Flow 1' }];
+    await selectQueueFlows.vm.$emit('update:modelValue', ['flow-1']);
+    wrapper.vm.queueForm.selected_flows = ['flow-1'];
     await wrapper.vm.$nextTick();
 
     expect(wrapper.vm.queueForm.bond_flows_queue).toBe(true);
@@ -83,7 +81,7 @@ describe('QueueInputsForm', () => {
     const preSelectedWrapper = mountQueueInputsForm({
       queueForm: createQueueForm({
         bond_flows_queue: true,
-        selected_flows: [{ uuid: 'flow-1', name: 'Flow 1' }],
+        selected_flows: ['flow-1'],
       }),
     });
 
