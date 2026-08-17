@@ -1219,6 +1219,10 @@
         "switch_active": "Block chat transfers to offline representatives",
         "switch_inactive": "Block chat transfers to offline representatives"
       },
+      "hide_desk_copilot_tab": {
+        "hint": "When enabled, representatives only see the Information tab in the contact panel",
+        "switch_label": "Hide Desk Copilot tab"
+      },
       "hide_moderators_from_transfer": {
         "hint": "When enabled, only users assigned to the queue as representatives are shown. Moderators are only displayed if they are also assigned to the queue as representatives. When disabled, all users, including moderators, are shown.",
         "switch_label": "Hide moderator profiles when transferring chats"

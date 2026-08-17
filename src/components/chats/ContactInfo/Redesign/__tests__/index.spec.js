@@ -8,9 +8,11 @@ import {
   vi,
 } from 'vitest';
 import { mount, config } from '@vue/test-utils';
+import { createTestingPinia } from '@pinia/testing';
 import ContactInfoRedesign from '../index.vue';
 import { moduleStorage } from '@/utils/storage';
 import i18n from '@/plugins/i18n';
+import { useConfig } from '@/store/modules/config';
 
 vi.mock('@/utils/storage', () => ({
   moduleStorage: {
@@ -31,9 +33,21 @@ afterAll(() => {
   }
 });
 
-const createWrapper = () =>
+const createWrapper = ({ hideDeskCopilotTab = false } = {}) =>
   mount(ContactInfoRedesign, {
     global: {
+      plugins: [
+        createTestingPinia({
+          createSpy: vi.fn,
+          initialState: {
+            config: {
+              project: {
+                config: { hide_desk_copilot_tab: hideDeskCopilotTab },
+              },
+            },
+          },
+        }),
+      ],
       mocks: {
         $t: (key) => key,
       },
@@ -51,6 +65,7 @@ const createWrapper = () =>
             'showRefresh',
             'showClose',
             'isRefreshDisabled',
+            'showDeskCopilotTab',
           ],
         },
         DeskCopilotTab: {
@@ -103,6 +118,39 @@ describe('ContactInfoRedesign', () => {
     expect(moduleStorage.setItem).toHaveBeenCalledWith(
       'contactInfoActiveTab',
       'information',
+    );
+  });
+
+  it('opens the information tab when hide_desk_copilot_tab is enabled', () => {
+    moduleStorage.getItem.mockReturnValue('desk_copilot');
+    wrapper = createWrapper({ hideDeskCopilotTab: true });
+
+    expect(wrapper.find('[data-testid="desk-copilot"]').exists()).toBe(false);
+    expect(wrapper.findComponent({ name: 'AboutContactCard' }).exists()).toBe(
+      true,
+    );
+    expect(wrapper.vm.activeTab).toBe('information');
+    expect(
+      wrapper
+        .findComponent({ name: 'ContactInfoRedesignHeader' })
+        .props('showDeskCopilotTab'),
+    ).toBe(false);
+  });
+
+  it('switches to information when hide_desk_copilot_tab is enabled at runtime', async () => {
+    moduleStorage.getItem.mockReturnValue('desk_copilot');
+    wrapper = createWrapper();
+
+    expect(wrapper.find('[data-testid="desk-copilot"]').exists()).toBe(true);
+
+    const configStore = useConfig();
+    configStore.project.config.hide_desk_copilot_tab = true;
+    await wrapper.vm.$nextTick();
+
+    expect(wrapper.vm.activeTab).toBe('information');
+    expect(wrapper.find('[data-testid="desk-copilot"]').exists()).toBe(false);
+    expect(wrapper.findComponent({ name: 'AboutContactCard' }).exists()).toBe(
+      true,
     );
   });
 });

@@ -9,6 +9,7 @@
         :showRefresh="!isHistory"
         :showClose="!isHistory"
         :isRefreshDisabled="isRefreshDisabled"
+        :showDeskCopilotTab="showDeskCopilotTab"
         @refresh="emit('refresh')"
         @close="emit('close')"
       />
@@ -67,7 +68,8 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch } from 'vue';
+import { computed, ref, watch } from 'vue';
+import { storeToRefs } from 'pinia';
 import AsideSlotTemplate from '@/components/layouts/chats/AsideSlotTemplate/index.vue';
 import ContactInfoRedesignHeader, { type ContactInfoTab } from './Header.vue';
 import AboutContactCard from './AboutContactCard.vue';
@@ -75,21 +77,42 @@ import AboutSupportCard from './AboutSupportCard.vue';
 import MediaTabs from './MediaTabs.vue';
 import DeskCopilotTab from './DeskCopilot/index.vue';
 import { moduleStorage } from '@/utils/storage';
+import { useConfig } from '@/store/modules/config';
 
 defineOptions({
   name: 'ContactInfoRedesign',
 });
 
+const { project } = storeToRefs(useConfig());
+
+const showDeskCopilotTab = computed(
+  () => !project.value?.config?.hide_desk_copilot_tab,
+);
+
 const CONTACT_INFO_ACTIVE_TAB_KEY = 'contactInfoActiveTab';
-const DEFAULT_TAB: ContactInfoTab = 'desk_copilot';
-const VALID_TABS = new Set<ContactInfoTab>(['desk_copilot', 'information']);
+const DESK_COPILOT_TAB: ContactInfoTab = 'desk_copilot';
+const INFORMATION_TAB: ContactInfoTab = 'information';
+const VALID_TABS = new Set<ContactInfoTab>([DESK_COPILOT_TAB, INFORMATION_TAB]);
+
+function getDefaultTab(): ContactInfoTab {
+  return showDeskCopilotTab.value ? DESK_COPILOT_TAB : INFORMATION_TAB;
+}
 
 function getPersistedTab(): ContactInfoTab {
   const storedTab = moduleStorage.getItem(
     CONTACT_INFO_ACTIVE_TAB_KEY,
-    DEFAULT_TAB,
+    getDefaultTab(),
   );
-  return VALID_TABS.has(storedTab) ? storedTab : DEFAULT_TAB;
+
+  if (!VALID_TABS.has(storedTab)) {
+    return getDefaultTab();
+  }
+
+  if (storedTab === DESK_COPILOT_TAB && !showDeskCopilotTab.value) {
+    return INFORMATION_TAB;
+  }
+
+  return storedTab;
 }
 
 type CustomFields = Record<string, string>;
@@ -171,6 +194,12 @@ const activeTab = ref<ContactInfoTab>(getPersistedTab());
 
 watch(activeTab, (tab) => {
   moduleStorage.setItem(CONTACT_INFO_ACTIVE_TAB_KEY, tab);
+});
+
+watch(showDeskCopilotTab, (visible) => {
+  if (!visible && activeTab.value === DESK_COPILOT_TAB) {
+    activeTab.value = INFORMATION_TAB;
+  }
 });
 
 const handleFullscreen = (url: string, images: MediaItem[]) => {
