@@ -1616,12 +1616,14 @@
         "contacts_waiting_for_service": "Contatos aguardando atendimento",
         "filters": {
           "queues": {
+            "all": "Todas as filas",
             "label": "Selecione uma fila",
-            "all": "Todas as filas"
+            "placeholder": "Selecione pelo menos uma fila"
           },
           "representatives": {
+            "all": "Todos os representantes",
             "label": "Selecione um representante",
-            "all": "Todos os representantes"
+            "placeholder": "Selecione pelo menos um representante"
           }
         },
         "select_the_contacts_status": "Selecione o status dos contatos",

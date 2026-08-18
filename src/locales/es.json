@@ -1626,12 +1626,14 @@
         "contacts_waiting_for_service": "Contactos esperando atención",
         "filters": {
           "queues": {
+            "all": "Todas las colas",
             "label": "Selecciona una cola",
-            "all": "Todas las colas"
+            "placeholder": "Selecciona al menos una cola"
           },
           "representatives": {
+            "all": "Todos los representantes",
             "label": "Selecciona un representante",
-            "all": "Todos los representantes"
+            "placeholder": "Selecciona al menos un representante"
           }
         },
         "select_the_contacts_status": "Selecciona el estado de los contactos",

@@ -1626,12 +1626,14 @@
         "contacts_waiting_for_service": "Contacts waiting for service",
         "filters": {
           "queues": {
+            "all": "All queues",
             "label": "Select a queue",
-            "all": "All queues"
+            "placeholder": "Select at least one queue"
           },
           "representatives": {
+            "all": "All representatives",
             "label": "Select a representative",
-            "all": "All representatives"
+            "placeholder": "Select at least one representative"
           }
         },
         "select_the_contacts_status": "Select the contacts status",

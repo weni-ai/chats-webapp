@@ -9,6 +9,9 @@
       :options="queuesOptions"
       :modelValue="props.queues"
       :label="$t('mass_message.form.recipients.filters.queues.label')"
+      :placeholder="
+        $t('mass_message.form.recipients.filters.queues.placeholder')
+      "
       size="sm"
       clearable
       @update:model-value="updateSelectedQueues"
@@ -19,6 +22,9 @@
       :options="representativesOptions"
       :modelValue="props.representatives"
       :label="$t('mass_message.form.recipients.filters.representatives.label')"
+      :placeholder="
+        $t('mass_message.form.recipients.filters.representatives.placeholder')
+      "
       size="sm"
       clearable
       @update:model-value="updateSelectedRepresentatives"
