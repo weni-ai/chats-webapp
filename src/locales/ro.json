@@ -1567,12 +1567,14 @@
         "contacts_waiting_for_service": "Contacte în așteptare",
         "filters": {
           "queues": {
+            "all": "Toate cozile",
             "label": "Selectează o coadă",
-            "all": "Toate cozile"
+            "placeholder": "Selectează cel puțin o coadă"
           },
           "representatives": {
+            "all": "Toți reprezentanții",
             "label": "Selectează un reprezentant",
-            "all": "Toți reprezentanții"
+            "placeholder": "Selectează cel puțin un reprezentant"
           }
         }
       },
