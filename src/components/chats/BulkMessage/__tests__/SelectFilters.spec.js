@@ -156,4 +156,23 @@ describe('SelectFilters', () => {
       'jane@test.com',
     ]);
   });
+
+  it('should set placeholders indicating at least one selection is required', async () => {
+    wrapper = createWrapper();
+    await flushPromises();
+
+    const queuesSelect = wrapper.findComponent(
+      '[data-testid="select-filters-queues"]',
+    );
+    const representativesSelect = wrapper.findComponent(
+      '[data-testid="select-filters-representatives"]',
+    );
+
+    expect(queuesSelect.props('placeholder')).toBe(
+      'Select at least one queue',
+    );
+    expect(representativesSelect.props('placeholder')).toBe(
+      'Select at least one representative',
+    );
+  });
 });
