@@ -109,7 +109,7 @@
         "
         class="unnnic-chats-message__tooltip"
       >
-        <UnnnicTooltip
+        <UnnnicToolTip
           enabled
           size="right"
           :text="$t('reply')"
@@ -123,7 +123,7 @@
             data-testid="reply-icon"
             @click.stop="$emit('reply')"
           />
-        </UnnnicTooltip>
+        </UnnnicToolTip>
       </section>
       <section
         v-else
