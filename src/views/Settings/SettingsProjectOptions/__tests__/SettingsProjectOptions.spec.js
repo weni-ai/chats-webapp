@@ -9,6 +9,7 @@ import Project from '@/services/api/resources/settings/project';
 
 import { useCompositionI18nInThisSpecFile } from '@/utils/test/compositionI18nVitest';
 import agentBuilder from '@/services/api/resources/settings/agentBuilder';
+import { ASSISTED_SALES_FEATURE_FLAG } from '@/composables/useAssistedSalesFeatureFlag';
 
 vi.mock('@/services/api/resources/settings/project', () => ({
   default: {
@@ -37,11 +38,13 @@ const defaultConfig = {
   can_use_queue_prioritization: false,
   can_see_waiting_rooms_count: true,
   can_use_name_sector_in_rooms: false,
+  hide_desk_copilot_tab: false,
 };
 
 const createWrapper = ({
   storeOverrides = {},
   projectConfig = {},
+  activeFeatures = [],
 } = {}) => {
   return mount(SettingsProjectOptions, {
     global: {
@@ -61,6 +64,9 @@ const createWrapper = ({
                 project_permission_role: 1,
               },
               ...storeOverrides.profile,
+            },
+            featureFlag: {
+              featureFlags: { active_features: activeFeatures },
             },
           },
         }),
@@ -217,6 +223,52 @@ describe('SettingsProjectOptions.vue', () => {
       );
     });
 
+    it('should hide hide_desk_copilot_tab when assisted sales is disabled', () => {
+      wrapper = createWrapper();
+
+      const item = wrapper.vm.optionsItems.find(
+        (option) => option.key === 'hide_desk_copilot_tab',
+      );
+
+      expect(item).toBeUndefined();
+    });
+
+    it('should include hide_desk_copilot_tab when assisted sales is enabled', () => {
+      wrapper = createWrapper({
+        activeFeatures: [ASSISTED_SALES_FEATURE_FLAG],
+      });
+
+      const item = wrapper.vm.optionsItems.find(
+        (option) => option.key === 'hide_desk_copilot_tab',
+      );
+
+      expect(item).toBeTruthy();
+      expect(item.type).toBe('flag');
+      expect(item.name).toBe(
+        wrapper.vm.$t(
+          'config_chats.project_configs.hide_desk_copilot_tab.switch_label',
+        ),
+      );
+      expect(item.hint).toBe(
+        wrapper.vm.$t(
+          'config_chats.project_configs.hide_desk_copilot_tab.hint',
+        ),
+      );
+    });
+
+    it('should hide hide_desk_copilot_tab on secondary project even with assisted sales enabled', () => {
+      wrapper = createWrapper({
+        projectConfig: { its_principal: false },
+        activeFeatures: [ASSISTED_SALES_FEATURE_FLAG],
+      });
+
+      const item = wrapper.vm.optionsItems.find(
+        (option) => option.key === 'hide_desk_copilot_tab',
+      );
+
+      expect(item).toBeUndefined();
+    });
+
     it('should have prompt config on flag-prompt items', async () => {
       await flushPromises();
 
@@ -233,6 +285,7 @@ describe('SettingsProjectOptions.vue', () => {
   describe('Groups mode (main vs secondary project)', () => {
     const otherKeys = [
       'restrict_offline_agents',
+      'block_link_contact_agents',
       'can_use_bulk_transfer',
       'filter_offline_agents',
       'filter_moderators',
@@ -558,6 +611,21 @@ describe('SettingsProjectOptions.vue', () => {
       );
     });
 
+    it('should persist hide_desk_copilot_tab when the toggle changes', async () => {
+      wrapper = createWrapper({
+        activeFeatures: [ASSISTED_SALES_FEATURE_FLAG],
+      });
+
+      wrapper.vm.projectConfig.hide_desk_copilot_tab = true;
+      await wrapper.vm.$nextTick();
+
+      expect(Project.update).toHaveBeenCalledWith(
+        expect.objectContaining({
+          hide_desk_copilot_tab: true,
+        }),
+      );
+    });
+
     it('should load config from project store', () => {
       expect(wrapper.vm.projectConfig.can_use_bulk_transfer).toBe(false);
     });
@@ -611,5 +679,4 @@ describe('SettingsProjectOptions.vue', () => {
       );
     });
   });
-
 });

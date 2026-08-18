@@ -819,6 +819,10 @@
     "switch_tooltip": "Activa si deseas que el contacto siempre se te asigne directamente",
     "alert_linked": "Contacto vinculado",
     "alert_detached": "Contacto desvinculado",
+    "header": {
+      "desk_copilot": "Desk Copilot",
+      "information": "Información"
+    },
     "linked_contact": "Contacto vinculado al representante {name}",
     "see_contact_history": "Ver historial",
     "no_contact_history": "Sin historial",
@@ -841,6 +845,22 @@
         "1": "😡 Muy insatisfecho",
         "no_response": "Sin respuesta"
       }
+    },
+    "desk_copilot": {
+      "copy_summary": "Copiar resumen",
+      "disclaimer": {
+        "description": "Desk Copilot puede ayudarte con:",
+        "enable_button": "Activar Desk Copilot",
+        "items": {
+          "catalog_search": "Búsqueda en el catálogo",
+          "next_best_actions": "Próximas mejores acciones",
+          "product_recommendations": "Recomendaciones de productos",
+          "sales_arguments": "Argumentos de venta"
+        },
+        "title": "Ve más allá de los resúmenes de conversación",
+        "title_without_summary": "Desbloquea todo tu potencial con Desk Copilot"
+      },
+      "summary_title": "Resumen de esta conversación"
     }
   },
   "discussions": {
@@ -1094,11 +1114,12 @@
     "filter_by_group_name": "Filtrar por nombre del grupo",
     "section_sectors_subtitle": "Agrega, consulta y gestiona departamentos, colas, managers y representantes dentro de tu organización.",
     "tabs": {
+      "desk_copilot": "Desk Copilot",
       "general": "General",
-      "settings": "Configuración",
       "groups": "Grupos de proyectos",
+      "representatives": "Representantes",
       "sectors": "Departamentos",
-      "representatives": "Representantes"
+      "settings": "Configuración"
     },
     "custom_breaks": {
       "title": "Pausas personalizadas",
@@ -1121,6 +1142,51 @@
         "error": "No se pudo eliminar la pausa personalizada."
       }
     },
+    "desk_copilot": {
+      "connected": {
+        "assigned_agents": "Agentes asignados",
+        "badge": "Copilot",
+        "connected_by": "Conectado por",
+        "connected_to": "Conectado el",
+        "created_on": "Creado el",
+        "description": "Este proyecto se usa exclusivamente para gestionar los agentes de IA de Desk Copilot. Solo es accesible desde esta sección.",
+        "open": "Abrir"
+      },
+      "empty_state": {
+        "create_button": "Crear proyecto Copilot",
+        "description": "Para activar Desk Copilot, conecta este proyecto a un proyecto Copilot donde se gestionan tus agentes de IA",
+        "title": "Ningún proyecto Copilot conectado"
+      },
+      "enable_title": "Activar Desk Copilot",
+      "info": {
+        "ai_assistance": {
+          "description": "Ayuda a tus representantes durante las conversaciones con sugerencias generadas por IA, ítems recomendados y próximas acciones.",
+          "title": "Asistencia de IA"
+        },
+        "automatic_updates": {
+          "description": "Los cambios realizados en tu proyecto Copilot se reflejan en todos los proyectos Live Desk conectados.",
+          "title": "Actualizaciones automáticas"
+        },
+        "centralized_agents": {
+          "description": "Gestiona todos los agentes de IA en un único proyecto Copilot.",
+          "title": "Agentes de IA centralizados"
+        },
+        "learn_more": "Saber más",
+        "shared_across_projects": {
+          "description": "Un proyecto Copilot puede compartirse entre varios proyectos Live Desk para mantener el conocimiento de IA consistente.",
+          "title": "Compartido entre proyectos"
+        },
+        "title": "Cómo funciona Desk Copilot"
+      },
+      "modal": {
+        "disclaimer": "Este proyecto Copilot se creará y se conectará automáticamente a este proyecto.",
+        "error": "No se pudo crear el proyecto Copilot debido a un problema técnico",
+        "input_label": "Define el nombre del proyecto Copilot",
+        "success": "Proyecto Copilot creado y conectado con éxito",
+        "title": "Crear proyecto Copilot"
+      },
+      "new_badge": "Nuevo"
+    },
     "changes_saved": "Cambios guardados con éxito",
     "changes_not_saved": "Error al guardar cambios. Vuelve a intentarlo.",
     "project_configs": {
@@ -1140,6 +1206,10 @@
         "switch_label": "Permitir interacciones solo para representantes online",
         "hint": "Si esta opción está activa, los representantes offline o en pausa no podrán responder a chats en curso."
       },
+      "block_link_contact_agents": {
+        "switch_label": "Bloquear la vinculación de contactos por los representantes",
+        "hint": "Si esta opción está activa, los representantes no podrán vincular contactos a ellos"
+      },
       "bulk_transfer": {
         "tooltip": "Esta función permite a los representantes transferir diferentes contactos a la vez",
         "switch_active": "Transferir chats en masa a otra cola o representante",
@@ -1149,9 +1219,13 @@
         "switch_active": "Bloquear transferencias de chats a representantes offline",
         "switch_inactive": "Bloquear transferencias de chats a representantes offline"
       },
+      "hide_desk_copilot_tab": {
+        "hint": "Si esta opción está activa, los representantes solo ven la pestaña de información en el panel del contacto",
+        "switch_label": "Ocultar pestaña Desk Copilot"
+      },
       "hide_moderators_from_transfer": {
-        "hint": "Cuando está activa, solo se muestran los usuarios asignados a la cola como representantes. Los moderadores solo aparecen si también están asignados a la cola como representantes. Cuando está desactivada, se muestran todos los usuarios, incluidos los moderadores.",
-        "switch_label": "Ocultar perfiles de moderadores al transferir chats"
+        "hint": "Si se activa esta opción, solo se muestran los usuarios asignados a la cola como representantes. Los moderadores solo se muestran si también están asignados a la cola como representantes. Cuando está desactivada se muestran todos los usuarios, incluidos los moderadores.",
+        "switch_label": "Ocultar los perfiles de moderadores al transferir chats"
       },
       "bulk_close": {
         "switch_active": "Finalizar chats en masa",

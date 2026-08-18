@@ -819,6 +819,10 @@
     "switch_tooltip": "Ative se quiser que o contato seja sempre atribuído diretamente a você",
     "alert_linked": "Contato vinculado",
     "alert_detached": "Contato desvinculado",
+    "header": {
+      "desk_copilot": "Desk Copilot",
+      "information": "Informações"
+    },
     "linked_contact": "Contato vinculado ao atendente {name}",
     "see_contact_history": "Ver histórico",
     "no_contact_history": "Sem histórico",
@@ -841,6 +845,22 @@
         "1": "😡 Muito insatisfeito",
         "no_response": "Sem resposta"
       }
+    },
+    "desk_copilot": {
+      "copy_summary": "Copiar resumo",
+      "disclaimer": {
+        "description": "O Desk Copilot pode ajudar você com:",
+        "enable_button": "Ativar Desk Copilot",
+        "items": {
+          "catalog_search": "Busca no catálogo",
+          "next_best_actions": "Próximas melhores ações",
+          "product_recommendations": "Recomendações de produtos",
+          "sales_arguments": "Argumentos de venda"
+        },
+        "title": "Vá além dos resumos de conversa",
+        "title_without_summary": "Desbloqueie todo o seu potencial com o Desk Copilot"
+      },
+      "summary_title": "Resumo desta conversa"
     }
   },
   "discussions": {
@@ -1094,11 +1114,12 @@
     "filter_by_group_name": "Filtrar por nome do grupo",
     "section_sectors_subtitle": "Adicione, visualize e gerencie setores, filas, gerentes e atendentes na sua organização.",
     "tabs": {
+      "desk_copilot": "Desk Copilot",
       "general": "Geral",
-      "settings": "Configurações",
       "groups": "Grupos do projeto",
+      "representatives": "Atendentes",
       "sectors": "Setores",
-      "representatives": "Atendentes"
+      "settings": "Configurações"
     },
     "custom_breaks": {
       "title": "Pausas personalizadas",
@@ -1121,6 +1142,51 @@
         "error": "Não foi possível excluir a pausa personalizada."
       }
     },
+    "desk_copilot": {
+      "connected": {
+        "assigned_agents": "Agentes atribuídos",
+        "badge": "Copilot",
+        "connected_by": "Conectado por",
+        "connected_to": "Conectado em",
+        "created_on": "Criado em",
+        "description": "Este projeto é usado exclusivamente para gerenciar os agentes de IA do Desk Copilot. O acesso é feito apenas por esta seção.",
+        "open": "Abrir"
+      },
+      "empty_state": {
+        "create_button": "Criar projeto Copilot",
+        "description": "Para ativar o Desk Copilot, conecte este projeto a um projeto Copilot onde seus agentes de IA são gerenciados",
+        "title": "Nenhum projeto Copilot conectado"
+      },
+      "enable_title": "Ativar Desk Copilot",
+      "info": {
+        "ai_assistance": {
+          "description": "Auxilie seus atendentes durante as conversas com sugestões geradas por IA, itens recomendados e próximas ações.",
+          "title": "Assistência de IA"
+        },
+        "automatic_updates": {
+          "description": "Alterações feitas no projeto Copilot são refletidas em todos os projetos Live Desk conectados.",
+          "title": "Atualizações automáticas"
+        },
+        "centralized_agents": {
+          "description": "Gerencie todos os agentes de IA em um único projeto Copilot.",
+          "title": "Agentes de IA centralizados"
+        },
+        "learn_more": "Saiba mais",
+        "shared_across_projects": {
+          "description": "Um projeto Copilot pode ser compartilhado entre vários projetos Live Desk para manter o conhecimento de IA consistente.",
+          "title": "Compartilhado entre projetos"
+        },
+        "title": "Como o Desk Copilot funciona"
+      },
+      "modal": {
+        "disclaimer": "Este projeto Copilot será criado e conectado automaticamente a este projeto.",
+        "error": "Não foi possível criar o projeto Copilot devido a um problema técnico",
+        "input_label": "Defina o nome do projeto Copilot",
+        "success": "Projeto Copilot criado e conectado com sucesso",
+        "title": "Criar projeto Copilot"
+      },
+      "new_badge": "Novo"
+    },
     "changes_saved": "Alterações salvas com sucesso",
     "changes_not_saved": "Erro ao salvar alterações. Tente novamente.",
     "project_configs": {
@@ -1140,6 +1206,10 @@
         "switch_label": "Permitir interações apenas para atendentes online",
         "hint": "Se essa opção estiver ativada, atendentes offline ou em pausa não poderão responder a chats em andamento."
       },
+      "block_link_contact_agents": {
+        "switch_label": "Bloquear a vinculação de contatos pelos atendentes",
+        "hint": "Se essa opção estiver ativada, os atendentes não poderão vincular contatos a eles"
+      },
       "bulk_transfer": {
         "tooltip": "Esta função permite que os atendentes transfiram diferentes contatos de uma só vez",
         "switch_active": "Transferir chats em massa para outra fila ou atendente",
@@ -1149,9 +1219,13 @@
         "switch_active": "Bloquear a transferência de chats para atendentes offline",
         "switch_inactive": "Bloquear a transferência de chats para atendentes offline"
       },
+      "hide_desk_copilot_tab": {
+        "hint": "Quando ativada, os atendentes veem apenas a aba de informações no painel do contato",
+        "switch_label": "Ocultar aba Desk Copilot"
+      },
       "hide_moderators_from_transfer": {
-        "hint": "Quando ativada, apenas usuários atribuídos à fila como atendentes são exibidos. Moderadores só aparecem se também estiverem atribuídos à fila como atendentes. Quando desativada, todos os usuários, incluindo moderadores, são exibidos.",
-        "switch_label": "Ocultar perfis moderadores ao transferir chats"
+        "hint": "Quando ativado, somente os usuários atribuídos à fila como atendentes são exibidos. Os moderadores aparecem apenas se também estiverem atribuídos à fila como atendentes. Quando desativado, todos os usuários são exibidos, inclusive os moderadores.",
+        "switch_label": "Ocultar perfis de moderadores ao transferir chats"
       },
       "bulk_close": {
         "switch_active": "Encerrar chats em massa",

@@ -819,6 +819,10 @@
     "switch_tooltip": "Enable if you want the contact always to be directly assigned to you",
     "alert_linked": "Linked contact",
     "alert_detached": "Unlinked contact",
+    "header": {
+      "desk_copilot": "Desk Copilot",
+      "information": "Information"
+    },
     "linked_contact": "Contact linked to representative {name}",
     "see_contact_history": "View history",
     "no_contact_history": "No history",
@@ -841,6 +845,22 @@
         "1": "😡 Very dissatisfied",
         "no_response": "No response"
       }
+    },
+    "desk_copilot": {
+      "copy_summary": "Copy summary",
+      "disclaimer": {
+        "description": "Desk Copilot can help you with:",
+        "enable_button": "Enable Desk Copilot",
+        "items": {
+          "catalog_search": "Catalog search",
+          "next_best_actions": "Next best actions",
+          "product_recommendations": "Product recommendations",
+          "sales_arguments": "Sales arguments"
+        },
+        "title": "Go beyond conversation summaries",
+        "title_without_summary": "Unlock your full potential with Desk Copilot"
+      },
+      "summary_title": "Summary of this conversation"
     }
   },
   "discussions": {
@@ -1094,11 +1114,12 @@
     "filter_by_group_name": "Filter by group name",
     "section_sectors_subtitle": "Add, view, and manage departments, queues, managers, and representatives within your organization.",
     "tabs": {
+      "desk_copilot": "Desk Copilot",
       "general": "General",
-      "settings": "Settings",
       "groups": "Project groups",
+      "representatives": "Representatives",
       "sectors": "Departments",
-      "representatives": "Representatives"
+      "settings": "Settings"
     },
     "custom_breaks": {
       "title": "Custom breaks",
@@ -1121,6 +1142,51 @@
         "error": "Unable to delete the custom break."
       }
     },
+    "desk_copilot": {
+      "connected": {
+        "assigned_agents": "Assigned agents",
+        "badge": "Copilot",
+        "connected_by": "Connected by",
+        "connected_to": "Connected to",
+        "created_on": "Created on",
+        "description": "This project is used exclusively to manage the AI agents for the Desk Copilot. It is accessible only through this section.",
+        "open": "Open"
+      },
+      "empty_state": {
+        "create_button": "Create Copilot Project",
+        "description": "To enable Desk Copilot, connect this project to a Copilot Project where your AI Agents are managed",
+        "title": "No Copilot Project connected"
+      },
+      "enable_title": "Enable Desk Copilot",
+      "info": {
+        "ai_assistance": {
+          "description": "Assist your representatives during conversations with AI-powered suggestions, recommended items, and next-best actions.",
+          "title": "AI Assistance"
+        },
+        "automatic_updates": {
+          "description": "Changes made to your Copilot Project are reflected across every connected Live Desk project.",
+          "title": "Automatic updates"
+        },
+        "centralized_agents": {
+          "description": "Manage all AI Agents in one Copilot Project.",
+          "title": "Centralized AI Agents"
+        },
+        "learn_more": "Learn more",
+        "shared_across_projects": {
+          "description": "One Copilot Project can be shared across multiple Live Desk projects to keep AI knowledge consistent.",
+          "title": "Shared across projects"
+        },
+        "title": "How Desk Copilot works"
+      },
+      "modal": {
+        "disclaimer": "This Copilot Project will be created and automatically connected to this project.",
+        "error": "Copilot project couldn't be created due to a technical issue",
+        "input_label": "Define the name of the Copilot Project",
+        "success": "Copilot project created and connected successfully",
+        "title": "Create Copilot Project"
+      },
+      "new_badge": "New"
+    },
     "changes_saved": "Changes saved successfully",
     "changes_not_saved": "Error saving changes. Try again.",
     "project_configs": {
@@ -1140,6 +1206,10 @@
         "switch_label": "Allow interactions only for online representatives",
         "hint": "If this option is enabled, representatives that are offline or on break won't be able to respond to chats in progress"
       },
+      "block_link_contact_agents": {
+        "switch_label": "Block representatives from linking contacts",
+        "hint": "If this option is enabled, representatives won't be able to link contacts to themselves"
+      },
       "bulk_transfer": {
         "tooltip": "This function allows representatives to transfer different contacts at once",
         "switch_active": "Transfer chats in bulk to another queue or representative",
@@ -1148,6 +1218,10 @@
       "block_transfer_to_off_agents": {
         "switch_active": "Block chat transfers to offline representatives",
         "switch_inactive": "Block chat transfers to offline representatives"
+      },
+      "hide_desk_copilot_tab": {
+        "hint": "When enabled, representatives only see the Information tab in the contact panel",
+        "switch_label": "Hide Desk Copilot tab"
       },
       "hide_moderators_from_transfer": {
         "hint": "When enabled, only users assigned to the queue as representatives are shown. Moderators are only displayed if they are also assigned to the queue as representatives. When disabled, all users, including moderators, are shown.",
