@@ -50,15 +50,15 @@ describe('copilotProject service', () => {
       expect(normalizeCopilotProject([])).toBeNull();
     });
 
-    it('normalizes connect_by into connected_by', () => {
+    it('normalizes connect_by into connectedBy', () => {
       expect(normalizeCopilotProject(linkedProjectResponse)).toEqual({
         name: 'projeto copilot teste',
-        assigned_agents: 5,
-        created_on: '2026-07-30T00:00:00Z',
-        connected_on: '2026-07-30T00:00:00Z',
+        assignedAgents: 5,
+        createdOn: '2026-07-30T00:00:00Z',
+        connectedOn: '2026-07-30T00:00:00Z',
         uuid: 'copilot-uuid',
-        project_uuid: 'desk-uuid',
-        connected_by: 'edu',
+        projectUuid: 'desk-uuid',
+        connectedBy: 'edu',
       });
     });
   });
@@ -74,9 +74,9 @@ describe('copilotProject service', () => {
         normalizeCopilotProjectSummary(existingProjectsResponse[0]),
       ).toEqual({
         name: 'projeto copilot teste',
-        assigned_agents: 5,
+        assignedAgents: 5,
         uuid: 'copilot-uuid',
-        project_uuid: 'desk-uuid',
+        projectUuid: 'desk-uuid',
       });
     });
   });
@@ -91,7 +91,7 @@ describe('copilotProject service', () => {
         '/project/copilot/linked_project/desk-uuid',
       );
       expect(result?.uuid).toBe('copilot-uuid');
-      expect(result?.connected_by).toBe('edu');
+      expect(result?.connectedBy).toBe('edu');
     });
 
     it('returns null when the API has no linked project', async () => {
@@ -114,7 +114,12 @@ describe('copilotProject service', () => {
         '/project/copilot/list_existing_projects/org-uuid',
       );
       expect(result).toHaveLength(2);
-      expect(result[0].uuid).toBe('copilot-uuid');
+      expect(result[0]).toEqual({
+        name: 'projeto copilot teste',
+        assignedAgents: 5,
+        uuid: 'copilot-uuid',
+        projectUuid: 'desk-uuid',
+      });
     });
 
     it('returns an empty list when the payload is not an array', async () => {
@@ -187,7 +192,7 @@ describe('copilotProject service', () => {
         { new_uuid: 'copilot-uuid-2' },
       );
       expect(result.uuid).toBe('copilot-uuid');
-      expect(result.connected_by).toBe('edu');
+      expect(result.connectedBy).toBe('edu');
     });
 
     it('throws when the response cannot be normalized', async () => {

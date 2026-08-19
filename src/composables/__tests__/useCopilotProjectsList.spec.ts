@@ -2,7 +2,9 @@ import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { setActivePinia, createPinia } from 'pinia';
 
 import { useConfig } from '@/store/modules/config';
-import CopilotProjectService from '@/services/api/resources/chats/copilotProject';
+import CopilotProjectService, {
+  type CopilotProjectSummary,
+} from '@/services/api/resources/chats/copilotProject';
 import {
   resetCopilotProjectsListState,
   useCopilotProjectsList,
@@ -17,15 +19,15 @@ vi.mock('@/services/api/resources/chats/copilotProject', () => ({
 const existingProjects = [
   {
     name: 'Sales 123',
-    assigned_agents: 3,
+    assignedAgents: 3,
     uuid: 'copilot-uuid',
-    project_uuid: 'desk-uuid',
+    projectUuid: 'desk-uuid',
   },
   {
     name: 'Sales 456',
-    assigned_agents: 1,
+    assignedAgents: 1,
     uuid: 'copilot-uuid-2',
-    project_uuid: 'desk-uuid-2',
+    projectUuid: 'desk-uuid-2',
   },
 ];
 
@@ -107,5 +109,39 @@ describe('useCopilotProjectsList', () => {
 
     expect(CopilotProjectService.listExistingProjects).not.toHaveBeenCalled();
     expect(projects.value).toEqual([]);
+  });
+
+  it('ignores stale results when fetchProjects is forced while in flight', async () => {
+    let resolveFirst: (value: CopilotProjectSummary[]) => void = () => {};
+    CopilotProjectService.listExistingProjects
+      .mockImplementationOnce(
+        () =>
+          new Promise((resolve) => {
+            resolveFirst = resolve;
+          }),
+      )
+      .mockResolvedValueOnce(existingProjects);
+
+    const { fetchProjects, projects, isLoading } = useCopilotProjectsList();
+
+    const firstFetch = fetchProjects();
+    const secondFetch = fetchProjects(true);
+
+    await secondFetch;
+
+    expect(projects.value).toEqual(existingProjects);
+    expect(isLoading.value).toBe(false);
+
+    resolveFirst([
+      {
+        name: 'stale',
+        assignedAgents: 0,
+        uuid: 'stale-uuid',
+      },
+    ]);
+    await firstFetch;
+
+    expect(projects.value).toEqual(existingProjects);
+    expect(isLoading.value).toBe(false);
   });
 });
