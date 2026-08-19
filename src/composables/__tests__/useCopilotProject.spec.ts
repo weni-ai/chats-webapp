@@ -14,6 +14,7 @@ vi.mock('@/services/api/resources/chats/copilotProject', () => ({
     create: vi.fn(),
     update: vi.fn(),
     listExistingProjects: vi.fn(),
+    remove: vi.fn(),
   },
 }));
 
@@ -141,5 +142,35 @@ describe('useCopilotProject', () => {
       'network',
     );
     expect(project.value).toBeNull();
+  });
+
+  it('clears the linked project after a successful disconnect', async () => {
+    CopilotProjectService.remove.mockResolvedValue();
+
+    const {
+      setLinkedProject,
+      disconnectLinkedProject,
+      linkedProject: project,
+    } = useCopilotProject();
+    setLinkedProject(linkedProject);
+
+    await disconnectLinkedProject();
+
+    expect(CopilotProjectService.remove).toHaveBeenCalledWith('copilot-uuid');
+    expect(project.value).toBeNull();
+  });
+
+  it('keeps the linked project when disconnect fails', async () => {
+    CopilotProjectService.remove.mockRejectedValue(new Error('network'));
+
+    const {
+      setLinkedProject,
+      disconnectLinkedProject,
+      linkedProject: project,
+    } = useCopilotProject();
+    setLinkedProject(linkedProject);
+
+    await expect(disconnectLinkedProject()).rejects.toThrow('network');
+    expect(project.value).toEqual(linkedProject);
   });
 });
