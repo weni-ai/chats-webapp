@@ -80,6 +80,17 @@ export function useCopilotProject() {
     return updatedProject;
   }
 
+  async function disconnectLinkedProject() {
+    const copilotProjectUuid = linkedProject.value?.uuid;
+
+    if (!copilotProjectUuid) {
+      throw new Error('Missing copilot project uuid');
+    }
+
+    await CopilotProjectService.remove(copilotProjectUuid);
+    linkedProject.value = null;
+  }
+
   const isLinked = computed(() => !!linkedProject.value);
   const showNewBadge = computed(() => !linkedProject.value);
 
@@ -92,5 +103,6 @@ export function useCopilotProject() {
     setLinkedProject,
     createProject,
     changeLinkedProject,
+    disconnectLinkedProject,
   };
 }
