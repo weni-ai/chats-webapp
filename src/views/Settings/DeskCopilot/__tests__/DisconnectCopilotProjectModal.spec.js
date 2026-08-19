@@ -9,28 +9,29 @@ import {
 } from 'vitest';
 import { mount, config } from '@vue/test-utils';
 import { createTestingPinia } from '@pinia/testing';
+import { setActivePinia } from 'pinia';
 
-import CreateCopilotProjectModal from '../CreateCopilotProjectModal.vue';
+import DisconnectCopilotProjectModal from '../DisconnectCopilotProjectModal.vue';
+import {
+  resetCopilotProjectState,
+  useCopilotProject,
+} from '@/composables/useCopilotProject';
 import CopilotProjectService from '@/services/api/resources/chats/copilotProject';
 import callUnnnicAlert from '@/utils/callUnnnicAlert';
-import { buildCopilotProjectUrl } from '@/utils/copilotProject';
 import i18n from '@/plugins/i18n';
 
 vi.mock('@/services/api/resources/chats/copilotProject', () => ({
   default: {
-    create: vi.fn(),
+    remove: vi.fn(),
     getLinkedProject: vi.fn(),
+    create: vi.fn(),
+    update: vi.fn(),
+    listExistingProjects: vi.fn(),
   },
 }));
 
 vi.mock('@/utils/callUnnnicAlert', () => ({
   default: vi.fn(),
-}));
-
-vi.mock('@/utils/copilotProject', () => ({
-  buildCopilotProjectUrl: vi.fn(
-    (uuid) => `https://dash.stg.cloud.weni.ai/projects/${uuid}`,
-  ),
 }));
 
 beforeAll(() => {
@@ -45,9 +46,9 @@ afterAll(() => {
   }
 });
 
-const createdProject = {
+const linkedProject = {
   name: 'Sales 123',
-  assignedAgents: 0,
+  assignedAgents: 3,
   createdOn: '2026-07-30T00:00:00Z',
   connectedOn: '2026-07-30T00:00:00Z',
   uuid: 'copilot-uuid',
@@ -55,24 +56,12 @@ const createdProject = {
 };
 
 const createWrapper = () =>
-  mount(CreateCopilotProjectModal, {
+  mount(DisconnectCopilotProjectModal, {
     props: {
       modelValue: true,
     },
     global: {
-      plugins: [
-        createTestingPinia({
-          initialState: {
-            config: {
-              project: {
-                uuid: 'desk-uuid',
-                name: 'Sales 123',
-                config: {},
-              },
-            },
-          },
-        }),
-      ],
+      plugins: [createTestingPinia()],
       mocks: {
         $t: (key) => key,
       },
@@ -97,38 +86,34 @@ const createWrapper = () =>
         UnnnicDialogFooter: {
           template: '<div><slot /></div>',
         },
-        UnnnicDisclaimer: true,
       },
     },
   });
 
-describe('CreateCopilotProjectModal', () => {
+describe('DisconnectCopilotProjectModal', () => {
   let wrapper;
-  const originalOpen = window.open;
 
   beforeEach(() => {
     vi.clearAllMocks();
-    window.open = vi.fn();
+    resetCopilotProjectState();
+    setActivePinia(createTestingPinia());
+    const { setLinkedProject } = useCopilotProject();
+    setLinkedProject(linkedProject);
     wrapper = createWrapper();
   });
 
-  afterAll(() => {
-    window.open = originalOpen;
+  it('renders the disconnect title', () => {
+    expect(
+      wrapper.find('[data-testid="disconnect-copilot-project-title"]').text(),
+    ).toBe('config_chats.desk_copilot.disconnect_modal.title');
   });
 
-  it('prefills the current project name', () => {
-    expect(wrapper.vm.projectName).toBe('Sales 123');
-  });
+  it('disconnects the project, shows a toast and closes the modal', async () => {
+    CopilotProjectService.remove.mockResolvedValue();
 
-  it('creates the project, shows a toast and opens a new tab', async () => {
-    CopilotProjectService.create.mockResolvedValue(createdProject);
+    await wrapper.vm.disconnect();
 
-    await wrapper.vm.createProject();
-
-    expect(CopilotProjectService.create).toHaveBeenCalledWith(
-      'Sales 123',
-      'desk-uuid',
-    );
+    expect(CopilotProjectService.remove).toHaveBeenCalledWith('copilot-uuid');
     expect(callUnnnicAlert).toHaveBeenCalledWith({
       props: {
         text: expect.any(String),
@@ -136,20 +121,13 @@ describe('CreateCopilotProjectModal', () => {
       },
       seconds: 5,
     });
-    expect(buildCopilotProjectUrl).toHaveBeenCalledWith('copilot-uuid');
-    expect(window.open).toHaveBeenCalledWith(
-      'https://dash.stg.cloud.weni.ai/projects/copilot-uuid',
-      '_blank',
-      'noopener,noreferrer',
-    );
-    expect(wrapper.emitted('created')[0]).toEqual([createdProject]);
     expect(wrapper.emitted('update:modelValue').at(-1)).toEqual([false]);
   });
 
   it('shows an error toast and keeps the modal open on failure', async () => {
-    CopilotProjectService.create.mockRejectedValue(new Error('API Error'));
+    CopilotProjectService.remove.mockRejectedValue(new Error('API Error'));
 
-    await wrapper.vm.createProject();
+    await wrapper.vm.disconnect();
 
     expect(callUnnnicAlert).toHaveBeenCalledWith({
       props: {
@@ -158,14 +136,6 @@ describe('CreateCopilotProjectModal', () => {
       },
       seconds: 5,
     });
-    expect(wrapper.emitted('created')).toBeFalsy();
-    expect(window.open).not.toHaveBeenCalled();
-  });
-
-  it('does not create when the name is empty', async () => {
-    wrapper.vm.projectName = '   ';
-    await wrapper.vm.createProject();
-
-    expect(CopilotProjectService.create).not.toHaveBeenCalled();
+    expect(wrapper.emitted('update:modelValue')).toBeFalsy();
   });
 });

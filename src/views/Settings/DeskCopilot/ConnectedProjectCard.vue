@@ -45,12 +45,46 @@
           data-testid="desk-copilot-open-button"
           @click="openProject"
         />
-        <UnnnicButton
-          type="tertiary"
-          size="small"
-          iconCenter="more_vert"
-          data-testid="desk-copilot-more-button"
-        />
+        <UnnnicPopover
+          :open="openPopover"
+          data-testid="desk-copilot-more-popover"
+          @update:open="openPopover = $event"
+        >
+          <UnnnicPopoverTrigger>
+            <UnnnicButton
+              type="tertiary"
+              size="small"
+              iconCenter="more_vert"
+              data-testid="desk-copilot-more-button"
+            />
+          </UnnnicPopoverTrigger>
+          <UnnnicPopoverContent
+            size="small"
+            side="bottom"
+            align="end"
+          >
+            <UnnnicPopoverOption
+              v-if="hasMultipleProjects"
+              :label="
+                $t('config_chats.desk_copilot.connected.popover_change_option')
+              "
+              icon="edit_square"
+              data-testid="desk-copilot-change-option"
+              @click="handleChange"
+            />
+            <UnnnicPopoverOption
+              :label="
+                $t(
+                  'config_chats.desk_copilot.connected.popover_disconnect_option',
+                )
+              "
+              icon="delete"
+              scheme="fg-critical"
+              data-testid="desk-copilot-disconnect-option"
+              @click="handleDisconnect"
+            />
+          </UnnnicPopoverContent>
+        </UnnnicPopover>
       </section>
     </section>
 
@@ -68,11 +102,12 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue';
+import { computed, ref } from 'vue';
 import moment from 'moment';
 
 import type { CopilotProject } from '@/services/api/resources/chats/copilotProject';
 import { buildCopilotProjectUrl } from '@/utils/copilotProject';
+import { useCopilotProjectsList } from '@/composables/useCopilotProjectsList';
 
 defineOptions({
   name: 'DeskCopilotConnectedProjectCard',
@@ -81,6 +116,14 @@ defineOptions({
 const props = defineProps<{
   linkedProject: CopilotProject;
 }>();
+
+const emit = defineEmits<{
+  'open-change-modal': [];
+  'open-disconnect-modal': [];
+}>();
+
+const { hasMultipleProjects } = useCopilotProjectsList();
+const openPopover = ref(false);
 
 function formatDate(value: string) {
   if (!value) return '–';
@@ -91,22 +134,22 @@ function formatDate(value: string) {
 const metadata = computed(() => [
   {
     labelKey: 'config_chats.desk_copilot.connected.created_on',
-    value: formatDate(props.linkedProject.created_on),
+    value: formatDate(props.linkedProject.createdOn),
     testId: 'desk-copilot-created-on',
   },
   {
     labelKey: 'config_chats.desk_copilot.connected.connected_to',
-    value: formatDate(props.linkedProject.connected_on),
+    value: formatDate(props.linkedProject.connectedOn),
     testId: 'desk-copilot-connected-on',
   },
   {
     labelKey: 'config_chats.desk_copilot.connected.connected_by',
-    value: props.linkedProject.connected_by || '–',
+    value: props.linkedProject.connectedBy || '–',
     testId: 'desk-copilot-connected-by',
   },
   {
     labelKey: 'config_chats.desk_copilot.connected.assigned_agents',
-    value: String(props.linkedProject.assigned_agents ?? '–'),
+    value: String(props.linkedProject.assignedAgents ?? '–'),
     testId: 'desk-copilot-assigned-agents',
   },
 ]);
@@ -117,6 +160,16 @@ function openProject() {
     '_blank',
     'noopener,noreferrer',
   );
+}
+
+function handleChange() {
+  openPopover.value = false;
+  emit('open-change-modal');
+}
+
+function handleDisconnect() {
+  openPopover.value = false;
+  emit('open-disconnect-modal');
 }
 </script>
 
