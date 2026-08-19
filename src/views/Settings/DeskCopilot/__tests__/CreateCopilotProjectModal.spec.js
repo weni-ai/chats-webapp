@@ -125,7 +125,10 @@ describe('CreateCopilotProjectModal', () => {
 
     await wrapper.vm.createProject();
 
-    expect(CopilotProjectService.create).toHaveBeenCalledWith('Sales 123');
+    expect(CopilotProjectService.create).toHaveBeenCalledWith(
+      'Sales 123',
+      'desk-uuid',
+    );
     expect(callUnnnicAlert).toHaveBeenCalledWith({
       props: {
         text: expect.any(String),
