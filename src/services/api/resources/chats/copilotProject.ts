@@ -28,7 +28,7 @@ type CopilotProjectResponse = {
   connect_by?: string;
 };
 
-const IS_MOCKED = false;
+const IS_MOCKED = true;
 
 const MOCKED_COPILOT_PROJECT: CopilotProject = {
   name: 'Desk Copilot',
@@ -161,5 +161,13 @@ export default {
     }
 
     return project;
+  },
+
+  async remove(copilotProjectUuid: string): Promise<void> {
+    if (IS_MOCKED) {
+      return;
+    }
+
+    await http.delete(`/project/copilot/remove/${copilotProjectUuid}`);
   },
 };
