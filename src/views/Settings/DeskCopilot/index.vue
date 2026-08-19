@@ -16,17 +16,23 @@
       <EmptyState
         v-if="!isLoading && !linkedProject"
         @open-create-modal="showCreateModal = true"
+        @open-select-modal="openPicker('connect')"
       />
 
       <ConnectedProjectCard
         v-else-if="linkedProject"
         :linkedProject="linkedProject"
+        @open-change-modal="openPicker('change')"
       />
     </section>
 
     <CreateCopilotProjectModal
       v-model="showCreateModal"
       @created="handleCreated"
+    />
+    <CopilotProjectPickerModal
+      v-model="showPickerModal"
+      :mode="pickerMode"
     />
   </section>
 </template>
@@ -38,17 +44,29 @@ import InfoCard from './InfoCard.vue';
 import EmptyState from './EmptyState.vue';
 import ConnectedProjectCard from './ConnectedProjectCard.vue';
 import CreateCopilotProjectModal from './CreateCopilotProjectModal.vue';
+import CopilotProjectPickerModal from './CopilotProjectPickerModal.vue';
 import { useCopilotProject } from '@/composables/useCopilotProject';
+import { useCopilotProjectsList } from '@/composables/useCopilotProjectsList';
 import type { CopilotProject } from '@/services/api/resources/chats/copilotProject';
 
 defineOptions({
   name: 'DeskCopilotSettings',
 });
 
+type PickerMode = 'connect' | 'change';
+
 const { linkedProject, isLoading, fetchLinkedProject, setLinkedProject } =
   useCopilotProject();
+const { fetchProjects } = useCopilotProjectsList();
 
 const showCreateModal = ref(false);
+const showPickerModal = ref(false);
+const pickerMode = ref<PickerMode>('connect');
+
+function openPicker(mode: PickerMode) {
+  pickerMode.value = mode;
+  showPickerModal.value = true;
+}
 
 function handleCreated(project: CopilotProject) {
   setLinkedProject(project);
@@ -57,6 +75,7 @@ function handleCreated(project: CopilotProject) {
 
 onMounted(() => {
   fetchLinkedProject();
+  fetchProjects();
 });
 </script>
 
