@@ -1129,11 +1129,13 @@
         "connected_to": "Conectat la",
         "created_on": "Creat pe",
         "description": "Acest proiect este folosit exclusiv pentru a gestiona agenții IA pentru Desk Copilot. Este accesibil doar din această secțiune.",
-        "open": "Deschide"
+        "open": "Deschide",
+        "popover_change_option": "Schimbă"
       },
       "empty_state": {
         "create_button": "Creează proiect Copilot",
         "description": "Pentru a activa Desk Copilot, conectează acest proiect la un proiect Copilot unde sunt gestionați agenții tăi IA",
+        "select_button": "Selectează proiect Copilot",
         "title": "Niciun proiect Copilot conectat"
       },
       "enable_title": "Activează Desk Copilot",
@@ -1164,7 +1166,19 @@
         "success": "Proiect Copilot creat și conectat cu succes",
         "title": "Creează proiect Copilot"
       },
-      "new_badge": "Nou"
+      "new_badge": "Nou",
+      "picker_modal": {
+        "assigned_agents_tag": "{count, plural, one {{count} agent atribuit} other {{count} agenți atribuiți}}",
+        "change_button": "Schimbă",
+        "change_error": "Nu s-a putut schimba proiectul Copilot",
+        "change_success": "Proiect Copilot schimbat cu succes",
+        "change_title": "Schimbă proiectul Copilot",
+        "connect_button": "Conectează",
+        "connect_error": "Nu s-a putut conecta la proiectul Copilot",
+        "connect_success": "Proiect Copilot conectat cu succes",
+        "search_placeholder": "Caută după nume",
+        "select_title": "Selectează proiectul Copilot existent"
+      }
     },
     "changes_saved": "Modificări salvate cu succes",
     "changes_not_saved": "Eroare la salvarea modificărilor. Încearcă din nou.",
