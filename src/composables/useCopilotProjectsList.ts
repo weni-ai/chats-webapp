@@ -9,11 +9,13 @@ import CopilotProjectService, {
 const projects = ref<CopilotProjectSummary[]>([]);
 const isLoading = ref(false);
 let fetchPromise: Promise<void> | null = null;
+let fetchGeneration = 0;
 
 export function resetCopilotProjectsListState() {
   projects.value = [];
   isLoading.value = false;
   fetchPromise = null;
+  fetchGeneration = 0;
 }
 
 export function useCopilotProjectsList() {
@@ -31,15 +33,24 @@ export function useCopilotProjectsList() {
       return fetchPromise;
     }
 
+    const generation = ++fetchGeneration;
     isLoading.value = true;
     fetchPromise = (async () => {
       try {
-        projects.value =
+        const result =
           await CopilotProjectService.listExistingProjects(orgUuid);
+
+        if (generation !== fetchGeneration) return;
+
+        projects.value = result;
       } catch {
+        if (generation !== fetchGeneration) return;
+
         projects.value = [];
       } finally {
-        isLoading.value = false;
+        if (generation === fetchGeneration) {
+          isLoading.value = false;
+        }
       }
     })();
 
