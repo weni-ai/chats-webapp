@@ -1151,7 +1151,15 @@
         "created_on": "Created on",
         "description": "This project is used exclusively to manage the AI agents for the Desk Copilot. It is accessible only through this section.",
         "open": "Open",
-        "popover_change_option": "Change"
+        "popover_change_option": "Change",
+        "popover_disconnect_option": "Disconnect"
+      },
+      "disconnect_modal": {
+        "confirm": "Disconnect",
+        "description": "This project will lose access to Desk Copilot feature until a Copilot Project is reconnected. The Copilot Project itself and its other connections will not be affected.",
+        "error": "Unable to disconnect the Copilot Project.",
+        "success": "The Copilot Project has been disconnected!",
+        "title": "Disconnect Copilot Project"
       },
       "empty_state": {
         "create_button": "Create Copilot Project",

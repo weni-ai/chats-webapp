@@ -1130,7 +1130,15 @@
         "created_on": "Creat pe",
         "description": "Acest proiect este folosit exclusiv pentru a gestiona agenții IA pentru Desk Copilot. Este accesibil doar din această secțiune.",
         "open": "Deschide",
-        "popover_change_option": "Schimbă"
+        "popover_change_option": "Schimbă",
+        "popover_disconnect_option": "Deconectează"
+      },
+      "disconnect_modal": {
+        "confirm": "Deconectează",
+        "description": "Acest proiect va pierde accesul la Desk Copilot până când un proiect Copilot este reconectat. Proiectul Copilot și celelalte conexiuni nu vor fi afectate.",
+        "error": "Nu s-a putut deconecta proiectul Copilot",
+        "success": "Proiect Copilot deconectat cu succes",
+        "title": "Deconectează proiectul Copilot"
       },
       "empty_state": {
         "create_button": "Creează proiect Copilot",
