@@ -10,6 +10,7 @@ vi.mock('@/services/api/http', () => ({
     get: vi.fn(),
     post: vi.fn(),
     put: vi.fn(),
+    delete: vi.fn(),
   },
 }));
 
@@ -201,6 +202,18 @@ describe('copilotProject service', () => {
       await expect(
         CopilotProjectService.update('desk-uuid', 'copilot-uuid-2'),
       ).rejects.toThrow('Invalid copilot project response');
+    });
+  });
+
+  describe('remove', () => {
+    it('deletes the copilot project link by copilot uuid', async () => {
+      http.delete.mockResolvedValue({ status: 200 });
+
+      await CopilotProjectService.remove('copilot-uuid');
+
+      expect(http.delete).toHaveBeenCalledWith(
+        '/project/copilot/remove/copilot-uuid',
+      );
     });
   });
 });

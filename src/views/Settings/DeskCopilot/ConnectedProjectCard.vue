@@ -46,7 +46,6 @@
           @click="openProject"
         />
         <UnnnicPopover
-          v-if="hasMultipleProjects"
           :open="openPopover"
           data-testid="desk-copilot-more-popover"
           @update:open="openPopover = $event"
@@ -59,14 +58,30 @@
               data-testid="desk-copilot-more-button"
             />
           </UnnnicPopoverTrigger>
-          <UnnnicPopoverContent size="small">
+          <UnnnicPopoverContent
+            size="small"
+            side="bottom"
+            align="end"
+          >
             <UnnnicPopoverOption
+              v-if="hasMultipleProjects"
               :label="
                 $t('config_chats.desk_copilot.connected.popover_change_option')
               "
               icon="edit_square"
               data-testid="desk-copilot-change-option"
               @click="handleChange"
+            />
+            <UnnnicPopoverOption
+              :label="
+                $t(
+                  'config_chats.desk_copilot.connected.popover_disconnect_option',
+                )
+              "
+              icon="delete"
+              scheme="fg-critical"
+              data-testid="desk-copilot-disconnect-option"
+              @click="handleDisconnect"
             />
           </UnnnicPopoverContent>
         </UnnnicPopover>
@@ -104,6 +119,7 @@ const props = defineProps<{
 
 const emit = defineEmits<{
   'open-change-modal': [];
+  'open-disconnect-modal': [];
 }>();
 
 const { hasMultipleProjects } = useCopilotProjectsList();
@@ -149,6 +165,11 @@ function openProject() {
 function handleChange() {
   openPopover.value = false;
   emit('open-change-modal');
+}
+
+function handleDisconnect() {
+  openPopover.value = false;
+  emit('open-disconnect-modal');
 }
 </script>
 

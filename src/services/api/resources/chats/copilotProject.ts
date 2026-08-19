@@ -162,4 +162,12 @@ export default {
 
     return project;
   },
+
+  async remove(copilotProjectUuid: string): Promise<void> {
+    if (IS_MOCKED) {
+      return;
+    }
+
+    await http.delete(`/project/copilot/remove/${copilotProjectUuid}`);
+  },
 };
