@@ -52,11 +52,11 @@ afterAll(() => {
 
 const linkedProject = {
   name: 'Sales 123',
-  assigned_agents: 3,
-  created_on: '2026-07-30T00:00:00Z',
-  connected_on: '2026-07-30T00:00:00Z',
+  assignedAgents: 3,
+  createdOn: '2026-07-30T00:00:00Z',
+  connectedOn: '2026-07-30T00:00:00Z',
   uuid: 'copilot-uuid',
-  connected_by: 'edu',
+  connectedBy: 'edu',
 };
 
 const createWrapper = () =>
@@ -117,7 +117,7 @@ describe('DeskCopilot ConnectedProjectCard', () => {
       wrapper.find('[data-testid="desk-copilot-assigned-agents"]').text(),
     ).toBe('3');
     expect(wrapper.find('[data-testid="desk-copilot-created-on"]').text()).toBe(
-      moment(linkedProject.created_on).format('L'),
+      moment(linkedProject.createdOn).format('L'),
     );
   });
 

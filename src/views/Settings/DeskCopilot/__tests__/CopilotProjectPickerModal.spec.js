@@ -60,25 +60,25 @@ afterAll(() => {
 const existingProjects = [
   {
     name: 'Sales 123',
-    assigned_agents: 3,
+    assignedAgents: 3,
     uuid: 'copilot-uuid',
-    project_uuid: 'desk-uuid',
+    projectUuid: 'desk-uuid',
   },
   {
     name: 'Sales 456',
-    assigned_agents: 1,
+    assignedAgents: 1,
     uuid: 'copilot-uuid-2',
-    project_uuid: 'desk-uuid-2',
+    projectUuid: 'desk-uuid-2',
   },
 ];
 
 const updatedProject = {
   name: 'Sales 456',
-  assigned_agents: 1,
-  created_on: '2026-07-30T00:00:00Z',
-  connected_on: '2026-07-30T00:00:00Z',
+  assignedAgents: 1,
+  createdOn: '2026-07-30T00:00:00Z',
+  connectedOn: '2026-07-30T00:00:00Z',
   uuid: 'copilot-uuid-2',
-  connected_by: 'edu',
+  connectedBy: 'edu',
 };
 
 const createWrapper = ({ mode = 'connect' } = {}) =>

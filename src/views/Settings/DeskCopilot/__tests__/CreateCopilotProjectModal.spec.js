@@ -47,11 +47,11 @@ afterAll(() => {
 
 const createdProject = {
   name: 'Sales 123',
-  assigned_agents: 0,
-  created_on: '2026-07-30T00:00:00Z',
-  connected_on: '2026-07-30T00:00:00Z',
+  assignedAgents: 0,
+  createdOn: '2026-07-30T00:00:00Z',
+  connectedOn: '2026-07-30T00:00:00Z',
   uuid: 'copilot-uuid',
-  connected_by: 'edu',
+  connectedBy: 'edu',
 };
 
 const createWrapper = () =>
