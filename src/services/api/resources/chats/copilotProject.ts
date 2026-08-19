@@ -2,19 +2,19 @@ import http from '@/services/api/http';
 
 export type CopilotProject = {
   name: string;
-  assigned_agents: number;
-  created_on: string;
-  connected_on: string;
+  assignedAgents: number;
+  createdOn: string;
+  connectedOn: string;
   uuid: string;
-  project_uuid?: string;
-  connected_by?: string;
+  projectUuid?: string;
+  connectedBy?: string;
 };
 
 export type CopilotProjectSummary = {
   name: string;
-  assigned_agents: number;
+  assignedAgents: number;
   uuid: string;
-  project_uuid?: string;
+  projectUuid?: string;
 };
 
 type CopilotProjectResponse = {
@@ -32,12 +32,12 @@ const IS_MOCKED = false;
 
 const MOCKED_COPILOT_PROJECT: CopilotProject = {
   name: 'Desk Copilot',
-  assigned_agents: 0,
-  created_on: new Date().toISOString(),
-  connected_on: new Date().toISOString(),
+  assignedAgents: 0,
+  createdOn: new Date().toISOString(),
+  connectedOn: new Date().toISOString(),
   uuid: '1234567890',
-  project_uuid: 'project-1234567890',
-  connected_by: 'test@example.com',
+  projectUuid: 'project-1234567890',
+  connectedBy: 'test@example.com',
 };
 
 export function normalizeCopilotProject(data: unknown): CopilotProject | null {
@@ -53,14 +53,14 @@ export function normalizeCopilotProject(data: unknown): CopilotProject | null {
 
   return {
     name: String(project.name ?? ''),
-    assigned_agents: Number(project.assigned_agents ?? 0),
-    created_on: String(project.created_on ?? ''),
-    connected_on: String(project.connected_on ?? ''),
+    assignedAgents: Number(project.assigned_agents ?? 0),
+    createdOn: String(project.created_on ?? ''),
+    connectedOn: String(project.connected_on ?? ''),
     uuid: String(project.uuid),
-    project_uuid: project.project_uuid
+    projectUuid: project.project_uuid
       ? String(project.project_uuid)
       : undefined,
-    connected_by: String(project.connected_by ?? project.connect_by ?? ''),
+    connectedBy: String(project.connected_by ?? project.connect_by ?? ''),
   };
 }
 
@@ -79,9 +79,9 @@ export function normalizeCopilotProjectSummary(
 
   return {
     name: String(project.name ?? ''),
-    assigned_agents: Number(project.assigned_agents ?? 0),
+    assignedAgents: Number(project.assigned_agents ?? 0),
     uuid: String(project.uuid),
-    project_uuid: project.project_uuid
+    projectUuid: project.project_uuid
       ? String(project.project_uuid)
       : undefined,
   };
@@ -106,9 +106,9 @@ export default {
       return [
         {
           name: MOCKED_COPILOT_PROJECT.name,
-          assigned_agents: MOCKED_COPILOT_PROJECT.assigned_agents,
+          assignedAgents: MOCKED_COPILOT_PROJECT.assignedAgents,
           uuid: MOCKED_COPILOT_PROJECT.uuid,
-          project_uuid: MOCKED_COPILOT_PROJECT.project_uuid,
+          projectUuid: MOCKED_COPILOT_PROJECT.projectUuid,
         },
       ];
     }
