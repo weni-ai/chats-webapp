@@ -12,6 +12,8 @@ vi.mock('@/services/api/resources/chats/copilotProject', () => ({
   default: {
     getLinkedProject: vi.fn(),
     create: vi.fn(),
+    update: vi.fn(),
+    listExistingProjects: vi.fn(),
   },
 }));
 
@@ -35,6 +37,7 @@ describe('useCopilotProject', () => {
       uuid: 'desk-uuid',
       name: 'Sales 123',
       config: {},
+      org: 'org-uuid',
     };
   });
 
@@ -111,5 +114,32 @@ describe('useCopilotProject', () => {
 
     expect(project.value).toEqual(linkedProject);
     expect(showNewBadge.value).toBe(false);
+  });
+
+  it('changes the linked project', async () => {
+    const updatedProject = { ...linkedProject, uuid: 'copilot-uuid-2' };
+    CopilotProjectService.update.mockResolvedValue(updatedProject);
+
+    const { changeLinkedProject, linkedProject: project } = useCopilotProject();
+
+    const result = await changeLinkedProject('copilot-uuid-2');
+
+    expect(CopilotProjectService.update).toHaveBeenCalledWith(
+      'desk-uuid',
+      'copilot-uuid-2',
+    );
+    expect(result).toEqual(updatedProject);
+    expect(project.value).toEqual(updatedProject);
+  });
+
+  it('rethrows when changing the linked project fails', async () => {
+    CopilotProjectService.update.mockRejectedValue(new Error('network'));
+
+    const { changeLinkedProject, linkedProject: project } = useCopilotProject();
+
+    await expect(changeLinkedProject('copilot-uuid-2')).rejects.toThrow(
+      'network',
+    );
+    expect(project.value).toBeNull();
   });
 });
