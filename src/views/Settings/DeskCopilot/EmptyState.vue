@@ -7,13 +7,13 @@
       class="desk-copilot-empty-state__title"
       data-testid="desk-copilot-empty-state-title"
     >
-      {{ $t("config_chats.desk_copilot.empty_state.title") }}
+      {{ $t('config_chats.desk_copilot.empty_state.title') }}
     </h2>
     <p
       class="desk-copilot-empty-state__description"
       data-testid="desk-copilot-empty-state-description"
     >
-      {{ $t("config_chats.desk_copilot.empty_state.description") }}
+      {{ $t('config_chats.desk_copilot.empty_state.description') }}
     </p>
     <section class="desk-copilot-empty-state__actions">
       <UnnnicButton
@@ -36,12 +36,12 @@
 
 <script setup lang="ts">
 defineOptions({
-  name: "DeskCopilotEmptyState",
+  name: 'DeskCopilotEmptyState',
 });
 
 const emit = defineEmits<{
-  "open-create-modal": [];
-  "open-select-modal": [];
+  'open-create-modal': [];
+  'open-select-modal': [];
 }>();
 </script>
 
