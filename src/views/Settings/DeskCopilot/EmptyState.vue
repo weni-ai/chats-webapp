@@ -7,31 +7,41 @@
       class="desk-copilot-empty-state__title"
       data-testid="desk-copilot-empty-state-title"
     >
-      {{ $t('config_chats.desk_copilot.empty_state.title') }}
+      {{ $t("config_chats.desk_copilot.empty_state.title") }}
     </h2>
     <p
       class="desk-copilot-empty-state__description"
       data-testid="desk-copilot-empty-state-description"
     >
-      {{ $t('config_chats.desk_copilot.empty_state.description') }}
+      {{ $t("config_chats.desk_copilot.empty_state.description") }}
     </p>
-    <UnnnicButton
-      type="primary"
-      size="small"
-      :text="$t('config_chats.desk_copilot.empty_state.create_button')"
-      data-testid="desk-copilot-create-button"
-      @click="emit('open-create-modal')"
-    />
+    <section class="desk-copilot-empty-state__actions">
+      <UnnnicButton
+        type="primary"
+        size="small"
+        :text="$t('config_chats.desk_copilot.empty_state.select_button')"
+        data-testid="desk-copilot-select-button"
+        @click="emit('open-select-modal')"
+      />
+      <UnnnicButton
+        type="secondary"
+        size="small"
+        :text="$t('config_chats.desk_copilot.empty_state.create_button')"
+        data-testid="desk-copilot-create-button"
+        @click="emit('open-create-modal')"
+      />
+    </section>
   </section>
 </template>
 
 <script setup lang="ts">
 defineOptions({
-  name: 'DeskCopilotEmptyState',
+  name: "DeskCopilotEmptyState",
 });
 
 const emit = defineEmits<{
-  'open-create-modal': [];
+  "open-create-modal": [];
+  "open-select-modal": [];
 }>();
 </script>
 
@@ -59,6 +69,13 @@ const emit = defineEmits<{
     text-align: center;
     max-width: 374px;
     margin: 0;
+  }
+
+  &__actions {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: $unnnic-space-3;
   }
 }
 </style>
