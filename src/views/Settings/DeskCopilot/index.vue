@@ -23,6 +23,7 @@
         v-else-if="linkedProject"
         :linkedProject="linkedProject"
         @open-change-modal="openPicker('change')"
+        @open-disconnect-modal="showDisconnectModal = true"
       />
     </section>
 
@@ -34,6 +35,7 @@
       v-model="showPickerModal"
       :mode="pickerMode"
     />
+    <DisconnectCopilotProjectModal v-model="showDisconnectModal" />
   </section>
 </template>
 
@@ -45,6 +47,7 @@ import EmptyState from './EmptyState.vue';
 import ConnectedProjectCard from './ConnectedProjectCard.vue';
 import CreateCopilotProjectModal from './CreateCopilotProjectModal.vue';
 import CopilotProjectPickerModal from './CopilotProjectPickerModal.vue';
+import DisconnectCopilotProjectModal from './DisconnectCopilotProjectModal.vue';
 import { useCopilotProject } from '@/composables/useCopilotProject';
 import { useCopilotProjectsList } from '@/composables/useCopilotProjectsList';
 import type { CopilotProject } from '@/services/api/resources/chats/copilotProject';
@@ -61,6 +64,7 @@ const { fetchProjects } = useCopilotProjectsList();
 
 const showCreateModal = ref(false);
 const showPickerModal = ref(false);
+const showDisconnectModal = ref(false);
 const pickerMode = ref<PickerMode>('connect');
 
 function openPicker(mode: PickerMode) {
