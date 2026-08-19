@@ -2,12 +2,14 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import http from '@/services/api/http';
 import CopilotProjectService, {
   normalizeCopilotProject,
+  normalizeCopilotProjectSummary,
 } from '../copilotProject';
 
 vi.mock('@/services/api/http', () => ({
   default: {
     get: vi.fn(),
     post: vi.fn(),
+    put: vi.fn(),
   },
 }));
 
@@ -20,6 +22,21 @@ const linkedProjectResponse = {
   project_uuid: 'desk-uuid',
   connect_by: 'edu',
 };
+
+const existingProjectsResponse = [
+  {
+    name: 'projeto copilot teste',
+    assigned_agents: 5,
+    uuid: 'copilot-uuid',
+    project_uuid: 'desk-uuid',
+  },
+  {
+    name: 'another copilot',
+    assigned_agents: 2,
+    uuid: 'copilot-uuid-2',
+    project_uuid: 'desk-uuid-2',
+  },
+];
 
 describe('copilotProject service', () => {
   beforeEach(() => {
@@ -46,6 +63,24 @@ describe('copilotProject service', () => {
     });
   });
 
+  describe('normalizeCopilotProjectSummary', () => {
+    it('returns null for empty payloads', () => {
+      expect(normalizeCopilotProjectSummary(null)).toBeNull();
+      expect(normalizeCopilotProjectSummary({})).toBeNull();
+    });
+
+    it('normalizes a summary payload', () => {
+      expect(
+        normalizeCopilotProjectSummary(existingProjectsResponse[0]),
+      ).toEqual({
+        name: 'projeto copilot teste',
+        assigned_agents: 5,
+        uuid: 'copilot-uuid',
+        project_uuid: 'desk-uuid',
+      });
+    });
+  });
+
   describe('getLinkedProject', () => {
     it('requests the linked project by uuid', async () => {
       http.get.mockResolvedValue({ data: linkedProjectResponse });
@@ -68,8 +103,43 @@ describe('copilotProject service', () => {
     });
   });
 
+  describe('listExistingProjects', () => {
+    it('requests the existing projects by org uuid', async () => {
+      http.get.mockResolvedValue({ data: existingProjectsResponse });
+
+      const result =
+        await CopilotProjectService.listExistingProjects('org-uuid');
+
+      expect(http.get).toHaveBeenCalledWith(
+        '/project/copilot/list_existing_projects/org-uuid',
+      );
+      expect(result).toHaveLength(2);
+      expect(result[0].uuid).toBe('copilot-uuid');
+    });
+
+    it('returns an empty list when the payload is not an array', async () => {
+      http.get.mockResolvedValue({ data: null });
+
+      await expect(
+        CopilotProjectService.listExistingProjects('org-uuid'),
+      ).resolves.toEqual([]);
+    });
+
+    it('skips items without a uuid', async () => {
+      http.get.mockResolvedValue({
+        data: [{ name: 'invalid' }, existingProjectsResponse[0]],
+      });
+
+      const result =
+        await CopilotProjectService.listExistingProjects('org-uuid');
+
+      expect(result).toHaveLength(1);
+      expect(result[0].uuid).toBe('copilot-uuid');
+    });
+  });
+
   describe('create', () => {
-    it('posts the project name and returns the created project', async () => {
+    it('posts the project name and uuid and returns the created project', async () => {
       http.post.mockResolvedValue({
         data: {
           ...linkedProjectResponse,
@@ -77,10 +147,14 @@ describe('copilotProject service', () => {
         },
       });
 
-      const result = await CopilotProjectService.create('Sales 123');
+      const result = await CopilotProjectService.create(
+        'Sales 123',
+        'desk-uuid',
+      );
 
       expect(http.post).toHaveBeenCalledWith('/project/copilot/create', {
         name: 'Sales 123',
+        project: 'desk-uuid',
       });
       expect(result.name).toBe('projeto copilot teste');
     });
@@ -88,9 +162,40 @@ describe('copilotProject service', () => {
     it('throws when the response cannot be normalized', async () => {
       http.post.mockResolvedValue({ data: {} });
 
-      await expect(CopilotProjectService.create('Sales 123')).rejects.toThrow(
-        'Invalid copilot project response',
+      await expect(
+        CopilotProjectService.create('Sales 123', 'desk-uuid'),
+      ).rejects.toThrow('Invalid copilot project response');
+    });
+  });
+
+  describe('update', () => {
+    it('puts the new copilot uuid and returns the linked project', async () => {
+      http.put.mockResolvedValue({
+        data: {
+          ...linkedProjectResponse,
+          connected_by: 'edu',
+        },
+      });
+
+      const result = await CopilotProjectService.update(
+        'desk-uuid',
+        'copilot-uuid-2',
       );
+
+      expect(http.put).toHaveBeenCalledWith(
+        '/project/copilot/update/desk-uuid',
+        { new_uuid: 'copilot-uuid-2' },
+      );
+      expect(result.uuid).toBe('copilot-uuid');
+      expect(result.connected_by).toBe('edu');
+    });
+
+    it('throws when the response cannot be normalized', async () => {
+      http.put.mockResolvedValue({ data: {} });
+
+      await expect(
+        CopilotProjectService.update('desk-uuid', 'copilot-uuid-2'),
+      ).rejects.toThrow('Invalid copilot project response');
     });
   });
 });
