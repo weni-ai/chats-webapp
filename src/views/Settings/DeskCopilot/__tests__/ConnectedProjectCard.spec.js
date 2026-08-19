@@ -7,25 +7,25 @@ import {
   afterAll,
   beforeEach,
   afterEach,
-} from "vitest";
-import { mount, config } from "@vue/test-utils";
-import moment from "moment";
-import { createTestingPinia } from "@pinia/testing";
-import { ref } from "vue";
+} from 'vitest';
+import { mount, config } from '@vue/test-utils';
+import moment from 'moment';
+import { createTestingPinia } from '@pinia/testing';
+import { ref } from 'vue';
 
-import ConnectedProjectCard from "../ConnectedProjectCard.vue";
-import i18n from "@/plugins/i18n";
-import UnnnicSystemPlugin from "@/plugins/UnnnicSystem.js";
+import ConnectedProjectCard from '../ConnectedProjectCard.vue';
+import i18n from '@/plugins/i18n';
+import UnnnicSystemPlugin from '@/plugins/UnnnicSystem.js';
 
 const hasMultipleProjects = ref(true);
 
-vi.mock("@/utils/copilotProject", () => ({
+vi.mock('@/utils/copilotProject', () => ({
   buildCopilotProjectUrl: vi.fn(
     (uuid) => `https://dash.stg.cloud.weni.ai/projects/${uuid}`,
   ),
 }));
 
-vi.mock("@/composables/useCopilotProjectsList", () => ({
+vi.mock('@/composables/useCopilotProjectsList', () => ({
   useCopilotProjectsList: () => ({
     hasMultipleProjects,
   }),
@@ -51,12 +51,12 @@ afterAll(() => {
 });
 
 const linkedProject = {
-  name: "Sales 123",
+  name: 'Sales 123',
   assigned_agents: 3,
-  created_on: "2026-07-30T00:00:00Z",
-  connected_on: "2026-07-30T00:00:00Z",
-  uuid: "copilot-uuid",
-  connected_by: "edu",
+  created_on: '2026-07-30T00:00:00Z',
+  connected_on: '2026-07-30T00:00:00Z',
+  uuid: 'copilot-uuid',
+  connected_by: 'edu',
 };
 
 const createWrapper = () =>
@@ -69,29 +69,29 @@ const createWrapper = () =>
       },
       stubs: {
         UnnnicPopover: {
-          name: "UnnnicPopover",
+          name: 'UnnnicPopover',
           template:
             '<div data-testid="desk-copilot-more-popover"><slot /></div>',
         },
         UnnnicPopoverTrigger: {
-          name: "UnnnicPopoverTrigger",
-          template: "<div><slot /></div>",
+          name: 'UnnnicPopoverTrigger',
+          template: '<div><slot /></div>',
         },
         UnnnicPopoverContent: {
-          name: "UnnnicPopoverContent",
-          template: "<div><slot /></div>",
+          name: 'UnnnicPopoverContent',
+          template: '<div><slot /></div>',
         },
         UnnnicPopoverOption: {
-          name: "UnnnicPopoverOption",
+          name: 'UnnnicPopoverOption',
           template:
             '<button data-testid="desk-copilot-change-option" @click="$emit(\'click\')">{{ label }}</button>',
-          props: ["label", "icon"],
+          props: ['label', 'icon'],
         },
       },
     },
   });
 
-describe("DeskCopilot ConnectedProjectCard", () => {
+describe('DeskCopilot ConnectedProjectCard', () => {
   let wrapper;
   const originalOpen = window.open;
 
@@ -106,34 +106,34 @@ describe("DeskCopilot ConnectedProjectCard", () => {
     wrapper?.unmount();
   });
 
-  it("renders the linked project details", () => {
+  it('renders the linked project details', () => {
     expect(
       wrapper.find('[data-testid="desk-copilot-connected-name"]').text(),
-    ).toBe("Sales 123");
+    ).toBe('Sales 123');
     expect(
       wrapper.find('[data-testid="desk-copilot-connected-by"]').text(),
-    ).toBe("edu");
+    ).toBe('edu');
     expect(
       wrapper.find('[data-testid="desk-copilot-assigned-agents"]').text(),
-    ).toBe("3");
+    ).toBe('3');
     expect(wrapper.find('[data-testid="desk-copilot-created-on"]').text()).toBe(
-      moment(linkedProject.created_on).format("L"),
+      moment(linkedProject.created_on).format('L'),
     );
   });
 
-  it("opens the copilot project in a new tab", async () => {
+  it('opens the copilot project in a new tab', async () => {
     await wrapper
       .find('[data-testid="desk-copilot-open-button"]')
-      .trigger("click");
+      .trigger('click');
 
     expect(window.open).toHaveBeenCalledWith(
-      "https://dash.stg.cloud.weni.ai/projects/copilot-uuid",
-      "_blank",
-      "noopener,noreferrer",
+      'https://dash.stg.cloud.weni.ai/projects/copilot-uuid',
+      '_blank',
+      'noopener,noreferrer',
     );
   });
 
-  it("shows the change option when there are multiple projects", () => {
+  it('shows the change option when there are multiple projects', () => {
     expect(
       wrapper.find('[data-testid="desk-copilot-more-popover"]').exists(),
     ).toBe(true);
@@ -142,7 +142,7 @@ describe("DeskCopilot ConnectedProjectCard", () => {
     ).toBe(true);
   });
 
-  it("hides the popover when there is a single project", async () => {
+  it('hides the popover when there is a single project', async () => {
     hasMultipleProjects.value = false;
     wrapper.unmount();
     wrapper = createWrapper();
@@ -153,11 +153,11 @@ describe("DeskCopilot ConnectedProjectCard", () => {
     ).toBe(false);
   });
 
-  it("emits open-change-modal when change is clicked", async () => {
+  it('emits open-change-modal when change is clicked', async () => {
     await wrapper
       .find('[data-testid="desk-copilot-change-option"]')
-      .trigger("click");
+      .trigger('click');
 
-    expect(wrapper.emitted("open-change-modal")).toBeTruthy();
+    expect(wrapper.emitted('open-change-modal')).toBeTruthy();
   });
 });
