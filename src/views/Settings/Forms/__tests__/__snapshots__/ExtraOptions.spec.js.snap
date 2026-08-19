@@ -4,9 +4,9 @@ exports[`SectorExtraOptions > Should match the snapshot 1`] = `
 "<section data-v-8e9664ba="" class="sector-extra-options-form">
   <section data-v-8e9664ba="" class="switchs">
     <h2 data-v-8e9664ba="" class="switchs__title" data-testid="switchs-title">Additional options</h2>
-    <unnnic-switch-stub data-v-8e9664ba="" size="small" label="" option="" helper="" textleft="" textright="Triggering message templates" disabled="false" modelvalue="false" class="margin-y-space-1" data-testid="config-switch"></unnnic-switch-stub>
+    <unnnic-switch-stub data-v-8e9664ba="" size="small" label="" option="" helper="" textleft="" textright="Trigger message templates" disabled="false" modelvalue="false" class="margin-y-space-1" data-testid="config-switch"></unnnic-switch-stub>
     <section data-v-8e9664ba="" class="switchs__container">
-      <unnnic-switch-stub data-v-8e9664ba="" size="small" label="" option="" helper="Each message exchanged will have the name of the agent who is answering." textleft="" textright="Use signature" disabled="false" modelvalue="false" class="margin-y-space-1" data-testid="config-switch"></unnnic-switch-stub>
+      <unnnic-switch-stub data-v-8e9664ba="" size="small" label="" option="" helper="Each message exchanged will have the name of the representative who is answering." textleft="" textright="Use signature" disabled="false" modelvalue="false" class="margin-y-space-1" data-testid="config-switch"></unnnic-switch-stub>
     </section>
     <unnnic-switch-stub data-v-8e9664ba="" size="small" label="" option="" helper="When active, it allows representatives to edit the custom fields of the contact in the &quot;All Information&quot; section." textleft="" textright="Allow representatives to edit custom fields" disabled="false" modelvalue="false" class="margin-y-space-1" data-testid="config-switch"></unnnic-switch-stub>
   </section>

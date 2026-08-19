@@ -19,7 +19,10 @@
 import { computed, onMounted, onUnmounted, watch } from 'vue';
 import { storeToRefs } from 'pinia';
 
-import { useSpeechRecognition } from '@/composables/useSpeechRecognition';
+import {
+  toSpeechRecognitionLang,
+  useSpeechRecognition,
+} from '@/composables/useSpeechRecognition';
 import { useMessageManager } from '@/store/modules/chats/messageManager';
 import { useRooms } from '@/store/modules/chats/rooms';
 
@@ -38,9 +41,14 @@ const messageManagerStore = useMessageManager();
 const { isDictationListening, inputMessage, isDisabledInput } =
   storeToRefs(messageManagerStore);
 
+const speechLang = computed(() =>
+  toSpeechRecognitionLang(i18n.global.locale.value),
+);
+
 const voiceRecognition = useSpeechRecognition({
   continuous: true,
   interimResults: true,
+  lang: speechLang,
 });
 
 const startDictation = () => {

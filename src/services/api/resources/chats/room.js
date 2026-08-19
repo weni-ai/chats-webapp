@@ -61,7 +61,14 @@ export default {
     return response.data;
   },
 
-  async sendSummaryFeedback({ roomUuid, liked, text, tags }) {
+  /**
+   * @param {object} payload
+   * @param {string} payload.roomUuid
+   * @param {boolean} payload.liked
+   * @param {string} [payload.text]
+   * @param {string[]} [payload.tags]
+   */
+  async sendSummaryFeedback({ roomUuid, liked, text = '', tags = [] }) {
     const response = await http.post(
       `/room/${roomUuid}/chats-summary/feedback/`,
       { liked, text, tags },
