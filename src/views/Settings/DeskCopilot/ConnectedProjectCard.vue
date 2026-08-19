@@ -118,22 +118,22 @@ function formatDate(value: string) {
 const metadata = computed(() => [
   {
     labelKey: 'config_chats.desk_copilot.connected.created_on',
-    value: formatDate(props.linkedProject.created_on),
+    value: formatDate(props.linkedProject.createdOn),
     testId: 'desk-copilot-created-on',
   },
   {
     labelKey: 'config_chats.desk_copilot.connected.connected_to',
-    value: formatDate(props.linkedProject.connected_on),
+    value: formatDate(props.linkedProject.connectedOn),
     testId: 'desk-copilot-connected-on',
   },
   {
     labelKey: 'config_chats.desk_copilot.connected.connected_by',
-    value: props.linkedProject.connected_by || '–',
+    value: props.linkedProject.connectedBy || '–',
     testId: 'desk-copilot-connected-by',
   },
   {
     labelKey: 'config_chats.desk_copilot.connected.assigned_agents',
-    value: String(props.linkedProject.assigned_agents ?? '–'),
+    value: String(props.linkedProject.assignedAgents ?? '–'),
     testId: 'desk-copilot-assigned-agents',
   },
 ]);
