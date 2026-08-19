@@ -28,7 +28,7 @@ type CopilotProjectResponse = {
   connect_by?: string;
 };
 
-const IS_MOCKED = true;
+const IS_MOCKED = false;
 
 const MOCKED_COPILOT_PROJECT: CopilotProject = {
   name: 'Desk Copilot',
