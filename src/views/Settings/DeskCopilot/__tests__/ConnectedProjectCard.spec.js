@@ -83,9 +83,10 @@ const createWrapper = () =>
         },
         UnnnicPopoverOption: {
           name: 'UnnnicPopoverOption',
+          inheritAttrs: false,
           template:
-            '<button data-testid="desk-copilot-change-option" @click="$emit(\'click\')">{{ label }}</button>',
-          props: ['label', 'icon'],
+            '<button v-bind="$attrs" @click="$emit(\'click\')">{{ label }}</button>',
+          props: ['label', 'icon', 'scheme'],
         },
       },
     },
@@ -140,9 +141,12 @@ describe('DeskCopilot ConnectedProjectCard', () => {
     expect(
       wrapper.find('[data-testid="desk-copilot-change-option"]').exists(),
     ).toBe(true);
+    expect(
+      wrapper.find('[data-testid="desk-copilot-disconnect-option"]').exists(),
+    ).toBe(true);
   });
 
-  it('hides the popover when there is a single project', async () => {
+  it('hides the change option when there is a single project', async () => {
     hasMultipleProjects.value = false;
     wrapper.unmount();
     wrapper = createWrapper();
@@ -150,7 +154,13 @@ describe('DeskCopilot ConnectedProjectCard', () => {
 
     expect(
       wrapper.find('[data-testid="desk-copilot-more-popover"]').exists(),
+    ).toBe(true);
+    expect(
+      wrapper.find('[data-testid="desk-copilot-change-option"]').exists(),
     ).toBe(false);
+    expect(
+      wrapper.find('[data-testid="desk-copilot-disconnect-option"]').exists(),
+    ).toBe(true);
   });
 
   it('emits open-change-modal when change is clicked', async () => {
@@ -159,5 +169,13 @@ describe('DeskCopilot ConnectedProjectCard', () => {
       .trigger('click');
 
     expect(wrapper.emitted('open-change-modal')).toBeTruthy();
+  });
+
+  it('emits open-disconnect-modal when disconnect is clicked', async () => {
+    await wrapper
+      .find('[data-testid="desk-copilot-disconnect-option"]')
+      .trigger('click');
+
+    expect(wrapper.emitted('open-disconnect-modal')).toBeTruthy();
   });
 });
