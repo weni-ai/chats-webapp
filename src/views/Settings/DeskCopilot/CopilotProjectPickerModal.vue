@@ -25,7 +25,11 @@
         />
 
         <ul
+          ref="listRef"
           class="copilot-project-picker-modal__list"
+          :class="{
+            'copilot-project-picker-modal__list--scrollable': hasOverflow,
+          }"
           data-testid="copilot-project-picker-list"
         >
           <li
@@ -82,7 +86,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref, watch } from 'vue';
+import { computed, nextTick, ref, watch } from 'vue';
 
 import { useCopilotProject } from '@/composables/useCopilotProject';
 import { useCopilotProjectsList } from '@/composables/useCopilotProjectsList';
@@ -114,6 +118,8 @@ const { projects } = useCopilotProjectsList();
 const searchTerm = ref('');
 const selectedUuid = ref('');
 const isSaving = ref(false);
+const listRef = ref<HTMLElement | null>(null);
+const hasOverflow = ref(false);
 
 const isOpen = computed({
   get: () => props.modelValue,
@@ -154,6 +160,11 @@ const canSubmit = computed(() => {
   return true;
 });
 
+function updateListOverflow() {
+  const list = listRef.value;
+  hasOverflow.value = !!list && list.scrollHeight > list.clientHeight;
+}
+
 watch(
   () => props.modelValue,
   (isVisible) => {
@@ -163,9 +174,14 @@ watch(
     selectedUuid.value = isChangeMode.value
       ? (linkedProject.value?.uuid ?? '')
       : '';
+    nextTick(updateListOverflow);
   },
   { immediate: true },
 );
+
+watch(filteredProjects, () => {
+  nextTick(updateListOverflow);
+});
 
 function close() {
   isOpen.value = false;
@@ -243,6 +259,10 @@ defineExpose({
     margin: 0;
     padding: 0;
     list-style: none;
+
+    &--scrollable {
+      padding-right: $unnnic-space-2;
+    }
   }
 
   &__option {
