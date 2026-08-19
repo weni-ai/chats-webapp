@@ -1,4 +1,13 @@
-import { computed, onUnmounted, ref, type ComputedRef, type Ref } from 'vue';
+import {
+  computed,
+  onUnmounted,
+  ref,
+  unref,
+  watch,
+  type ComputedRef,
+  type MaybeRef,
+  type Ref,
+} from 'vue';
 
 /**
  * Minimal Web Speech API typings.
@@ -30,6 +39,7 @@ interface SpeechRecognitionLike extends EventTarget {
   continuous: boolean;
   interimResults: boolean;
   lang: string;
+  processLocally?: boolean;
   onend: ((_ev: Event) => void) | null;
   onerror: ((_ev: SpeechRecognitionErrorEventLike) => void) | null;
   onresult: ((_ev: SpeechRecognitionEventLike) => void) | null;
@@ -39,7 +49,24 @@ interface SpeechRecognitionLike extends EventTarget {
   stop(): void;
 }
 
-type SpeechRecognitionConstructor = new () => SpeechRecognitionLike;
+type SpeechRecognitionAvailability =
+  | 'available'
+  | 'downloadable'
+  | 'downloading'
+  | 'unavailable';
+
+type SpeechRecognitionInstallOptions = {
+  langs: string[];
+  processLocally?: boolean;
+  quality?: 'command' | 'dictation' | 'conversation';
+};
+
+type SpeechRecognitionConstructor = (new () => SpeechRecognitionLike) & {
+  available?: (
+    _options: SpeechRecognitionInstallOptions,
+  ) => Promise<SpeechRecognitionAvailability>;
+  install?: (_options: SpeechRecognitionInstallOptions) => Promise<boolean>;
+};
 
 type WindowWithSpeechRecognition = Window & {
   SpeechRecognition?: SpeechRecognitionConstructor;
@@ -54,8 +81,43 @@ const FATAL_SPEECH_ERRORS = new Set([
   'service-not-allowed',
 ]);
 
+const SPEECH_LANG_BY_LOCALE: Record<string, string> = {
+  en: 'en-US',
+  'en-us': 'en-US',
+  es: 'es-ES',
+  'pt-br': 'pt-BR',
+  ro: 'ro-RO',
+};
+
+const DEFAULT_SPEECH_LANG = 'en-US';
+
+const LANG_FALLBACKS: Record<string, string[]> = {
+  en: ['en-US', 'en-GB', 'en'],
+  'en-US': ['en-US', 'en-GB', 'en'],
+  'en-GB': ['en-US', 'en'],
+  'es-ES': ['es-ES', 'es'],
+  'pt-BR': ['pt-BR', 'pt'],
+  'ro-RO': ['ro-RO', 'ro'],
+};
+
+const PLATFORM_SPEECH_LANGS = ['pt-BR', 'en-US', 'es-ES', 'ro-RO'] as const;
+
+const logDictation = (message: string, extra?: unknown) => {
+  if (extra !== undefined) {
+    console.info(`[dictation] ${message}`, extra);
+    return;
+  }
+
+  console.info(`[dictation] ${message}`);
+};
+
+export function toSpeechRecognitionLang(locale?: string): string {
+  const normalized = (locale || 'en').toLowerCase().replace('_', '-');
+  return SPEECH_LANG_BY_LOCALE[normalized] || DEFAULT_SPEECH_LANG;
+}
+
 export interface UseSpeechRecognitionOptions {
-  lang?: string;
+  lang?: MaybeRef<string>;
   continuous?: boolean;
   interimResults?: boolean;
 }
@@ -76,6 +138,9 @@ function getSpeechRecognitionAPI(): SpeechRecognitionConstructor | undefined {
   const { SpeechRecognition, webkitSpeechRecognition } =
     window as WindowWithSpeechRecognition;
 
+  // Prefer the prefixed constructor: it is the classic cloud recognizer.
+  // window.SpeechRecognition on newer Chrome is the on-device API, whose
+  // language packs are often unavailable (Linux, WSL, many locales).
   return webkitSpeechRecognition || SpeechRecognition || undefined;
 }
 
@@ -83,17 +148,78 @@ export function isSpeechRecognitionSupported(): boolean {
   return !!getSpeechRecognitionAPI();
 }
 
+function getLanguagePackAPI(): SpeechRecognitionConstructor | undefined {
+  if (typeof window === 'undefined') return undefined;
+
+  const { SpeechRecognition, webkitSpeechRecognition } =
+    window as WindowWithSpeechRecognition;
+
+  if (typeof SpeechRecognition?.available === 'function') {
+    return SpeechRecognition;
+  }
+
+  if (typeof webkitSpeechRecognition?.available === 'function') {
+    return webkitSpeechRecognition;
+  }
+
+  return undefined;
+}
+
+export async function listSpeechRecognitionLangPacks() {
+  const SpeechRecognitionAPI = getLanguagePackAPI();
+
+  if (!SpeechRecognitionAPI) {
+    logDictation(
+      'SpeechRecognition.available() is not supported — language packs cannot be queried',
+    );
+    return [];
+  }
+
+  const rows = [];
+
+  for (const lang of PLATFORM_SPEECH_LANGS) {
+    try {
+      const onDevice = await SpeechRecognitionAPI.available({
+        langs: [lang],
+        processLocally: true,
+        quality: 'dictation',
+      });
+      const cloudOrLocal = await SpeechRecognitionAPI.available({
+        langs: [lang],
+        processLocally: false,
+        quality: 'dictation',
+      });
+
+      rows.push({ lang, onDevice, cloudOrLocal });
+    } catch (error) {
+      rows.push({
+        lang,
+        onDevice: 'error',
+        cloudOrLocal: 'error',
+        error,
+      });
+    }
+  }
+
+  logDictation(
+    'language pack status (onDevice = local pack, cloudOrLocal = cloud or local)',
+  );
+  console.table(rows);
+
+  return rows;
+}
+
 /**
  * Continuous speech recognition via the native Web Speech API.
  * Accumulates final transcripts so pauses do not clear or duplicate text.
  *
- * Note: Chrome uses Google's cloud speech service — no local language pack
- * download is required. Edge/Windows on-device recognition may differ.
+ * On-device language packs are often unavailable. start() therefore uses the
+ * cloud recognizer immediately so the call stays inside the user gesture.
  */
 export function useSpeechRecognition(
   options: UseSpeechRecognitionOptions = {},
 ): UseSpeechRecognitionReturn {
-  const { continuous = true, interimResults = true } = options;
+  const { continuous = true, interimResults = true, lang } = options;
 
   const SpeechRecognitionAPI = getSpeechRecognitionAPI();
 
@@ -110,6 +236,41 @@ export function useSpeechRecognition(
   let recognition: SpeechRecognitionLike | null = null;
   let shouldKeepListening = false;
   let restartTimeoutId: ReturnType<typeof setTimeout> | null = null;
+  let langFallbackIndex = 0;
+
+  const getPreferredLang = () => unref(lang) || DEFAULT_SPEECH_LANG;
+
+  const getLangFallbacks = (): string[] => {
+    const preferred = getPreferredLang();
+
+    if (LANG_FALLBACKS[preferred]) {
+      return LANG_FALLBACKS[preferred];
+    }
+
+    const base = preferred.split('-')[0];
+    const fallbacks = [preferred];
+
+    if (base && base.toLowerCase() !== preferred.toLowerCase()) {
+      fallbacks.push(base);
+    }
+
+    return fallbacks;
+  };
+
+  const applyRecognitionLang = (instance: SpeechRecognitionLike) => {
+    const fallbacks = getLangFallbacks();
+    const current =
+      fallbacks[Math.min(langFallbackIndex, fallbacks.length - 1)];
+
+    if (current) {
+      instance.lang = current;
+    }
+
+    logDictation('starting recognition', {
+      lang: current || '(browser default)',
+      fallbackIndex: langFallbackIndex,
+    });
+  };
 
   const clearRestartTimeout = () => {
     if (restartTimeoutId !== null) {
@@ -155,6 +316,24 @@ export function useSpeechRecognition(
   };
 
   const handleError = (event: SpeechRecognitionErrorEventLike) => {
+    // Chrome rejects some regional tags (e.g. es-ES) with language-not-supported.
+    // Advance to the next fallback and let onend restart recognition.
+    if (
+      event.error === 'language-not-supported' &&
+      langFallbackIndex < getLangFallbacks().length - 1
+    ) {
+      langFallbackIndex += 1;
+      logDictation('language-not-supported, trying fallback', {
+        nextLang: getLangFallbacks()[langFallbackIndex] || '(browser default)',
+      });
+      return;
+    }
+
+    logDictation('recognition error', {
+      error: event.error,
+      message: event.message,
+    });
+
     // Chrome often fires transient errors (network, no-speech) in continuous
     // mode. Let onend restart unless the error is fatal.
     if (!FATAL_SPEECH_ERRORS.has(event.error)) {
@@ -206,6 +385,7 @@ export function useSpeechRecognition(
 
     instance.continuous = continuous;
     instance.interimResults = interimResults;
+    applyRecognitionLang(instance);
 
     instance.onresult = handleResult;
     instance.onerror = handleError;
@@ -218,12 +398,9 @@ export function useSpeechRecognition(
     return instance;
   };
 
-  const start = () => {
-    if (!SpeechRecognitionAPI || shouldKeepListening) return;
+  const beginRecognition = () => {
+    if (!shouldKeepListening) return;
 
-    reset();
-    clearRestartTimeout();
-    shouldKeepListening = true;
     recognition = createRecognition();
 
     try {
@@ -234,6 +411,42 @@ export function useSpeechRecognition(
       error.value = 'start-failed';
     }
   };
+
+  const start = () => {
+    if (!SpeechRecognitionAPI || shouldKeepListening) return;
+
+    reset();
+    clearRestartTimeout();
+    langFallbackIndex = 0;
+    shouldKeepListening = true;
+
+    logDictation('start requested', {
+      constructor: SpeechRecognitionAPI.name,
+      lang: getPreferredLang(),
+    });
+
+    beginRecognition();
+  };
+
+  watch(
+    () => unref(lang),
+    (nextLang, previousLang) => {
+      if (!shouldKeepListening || nextLang === previousLang) return;
+
+      langFallbackIndex = 0;
+      logDictation('locale changed, restarting recognition', {
+        from: previousLang,
+        to: nextLang,
+      });
+
+      try {
+        recognition?.stop();
+      } catch {
+        scheduleRestart();
+      }
+    },
+    { flush: 'sync' },
+  );
 
   const stop = () => {
     shouldKeepListening = false;
@@ -267,4 +480,12 @@ export function useSpeechRecognition(
     stop,
     reset,
   };
+}
+
+if (typeof window !== 'undefined') {
+  (
+    window as Window & {
+      listSpeechRecognitionLangPacks?: typeof listSpeechRecognitionLangPacks;
+    }
+  ).listSpeechRecognitionLangPacks = listSpeechRecognitionLangPacks;
 }
