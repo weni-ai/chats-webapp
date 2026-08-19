@@ -92,9 +92,9 @@ const SPEECH_LANG_BY_LOCALE: Record<string, string> = {
 const DEFAULT_SPEECH_LANG = 'en-US';
 
 const LANG_FALLBACKS: Record<string, string[]> = {
-  en: ['en-US', 'en-GB', 'en'],
-  'en-US': ['en-US', 'en-GB', 'en'],
-  'en-GB': ['en-US', 'en'],
+  en: [''],
+  'en-US': [''],
+  'en-GB': ['en-GB', 'en'],
   'es-ES': ['es-ES', 'es'],
   'pt-BR': ['pt-BR', 'pt'],
   'ro-RO': ['ro-RO', 'ro'],
@@ -115,6 +115,11 @@ export function toSpeechRecognitionLang(locale?: string): string {
   const normalized = (locale || 'en').toLowerCase().replace('_', '-');
   return SPEECH_LANG_BY_LOCALE[normalized] || DEFAULT_SPEECH_LANG;
 }
+
+const shouldOmitSpeechLang = (lang: string) => {
+  const normalized = lang.toLowerCase();
+  return !lang || normalized === 'en-us';
+};
 
 export interface UseSpeechRecognitionOptions {
   lang?: MaybeRef<string>;
@@ -260,14 +265,14 @@ export function useSpeechRecognition(
   const applyRecognitionLang = (instance: SpeechRecognitionLike) => {
     const fallbacks = getLangFallbacks();
     const current =
-      fallbacks[Math.min(langFallbackIndex, fallbacks.length - 1)];
+      fallbacks[Math.min(langFallbackIndex, fallbacks.length - 1)] ?? '';
 
-    if (current) {
+    if (!shouldOmitSpeechLang(current)) {
       instance.lang = current;
     }
 
     logDictation('starting recognition', {
-      lang: current || '(browser default)',
+      lang: shouldOmitSpeechLang(current) ? '(unset)' : current,
       fallbackIndex: langFallbackIndex,
     });
   };

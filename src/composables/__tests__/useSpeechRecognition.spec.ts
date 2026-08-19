@@ -95,7 +95,7 @@ describe('useSpeechRecognition', () => {
     wrapper.unmount();
   });
 
-  it('defaults lang to en-US when none is provided', () => {
+  it('does not set lang when the mapped language is en-US', () => {
     const instances: MockSpeechRecognition[] = [];
 
     class CapturingSpeechRecognition extends MockSpeechRecognition {
@@ -110,7 +110,26 @@ describe('useSpeechRecognition', () => {
     const { composable, wrapper } = mountSpeechRecognition();
     composable.start();
 
-    expect(instances[0].lang).toBe('en-US');
+    expect(instances[0].lang).toBe('');
+    wrapper.unmount();
+  });
+
+  it('does not set lang when lang is en-US', () => {
+    const instances: MockSpeechRecognition[] = [];
+
+    class CapturingSpeechRecognition extends MockSpeechRecognition {
+      constructor() {
+        super();
+        instances.push(this);
+      }
+    }
+
+    vi.stubGlobal('webkitSpeechRecognition', CapturingSpeechRecognition);
+
+    const { composable, wrapper } = mountSpeechRecognition({ lang: 'en-US' });
+    composable.start();
+
+    expect(instances[0].lang).toBe('');
     wrapper.unmount();
   });
 
@@ -130,7 +149,7 @@ describe('useSpeechRecognition', () => {
     const { composable, wrapper } = mountSpeechRecognition({ lang });
 
     composable.start();
-    expect(instances[0].lang).toBe('en-US');
+    expect(instances[0].lang).toBe('');
 
     lang.value = 'es-ES';
     vi.advanceTimersByTime(150);
@@ -164,34 +183,6 @@ describe('useSpeechRecognition', () => {
     vi.advanceTimersByTime(150);
 
     expect(instances[1].lang).toBe('es');
-    expect(composable.isListening.value).toBe(true);
-    wrapper.unmount();
-  });
-
-  it('falls back to en-GB when en-US is not supported', () => {
-    const instances: MockSpeechRecognition[] = [];
-
-    class CapturingSpeechRecognition extends MockSpeechRecognition {
-      constructor() {
-        super();
-        instances.push(this);
-      }
-    }
-
-    vi.stubGlobal('webkitSpeechRecognition', CapturingSpeechRecognition);
-
-    const { composable, wrapper } = mountSpeechRecognition({ lang: 'en-US' });
-    composable.start();
-
-    expect(instances[0].lang).toBe('en-US');
-
-    instances[0].onerror?.({
-      error: 'language-not-supported',
-    } as Event & { error: string });
-    instances[0].onend?.(new Event('end'));
-    vi.advanceTimersByTime(150);
-
-    expect(instances[1].lang).toBe('en-GB');
     expect(composable.isListening.value).toBe(true);
     wrapper.unmount();
   });
