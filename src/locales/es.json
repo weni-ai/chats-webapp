@@ -1150,11 +1150,13 @@
         "connected_to": "Conectado el",
         "created_on": "Creado el",
         "description": "Este proyecto se usa exclusivamente para gestionar los agentes de IA de Desk Copilot. Solo es accesible desde esta sección.",
-        "open": "Abrir"
+        "open": "Abrir",
+        "popover_change_option": "Cambiar"
       },
       "empty_state": {
         "create_button": "Crear proyecto Copilot",
         "description": "Para activar Desk Copilot, conecta este proyecto a un proyecto Copilot donde se gestionan tus agentes de IA",
+        "select_button": "Seleccionar proyecto Copilot",
         "title": "Ningún proyecto Copilot conectado"
       },
       "enable_title": "Activar Desk Copilot",
@@ -1185,7 +1187,19 @@
         "success": "Proyecto Copilot creado y conectado con éxito",
         "title": "Crear proyecto Copilot"
       },
-      "new_badge": "Nuevo"
+      "new_badge": "Nuevo",
+      "picker_modal": {
+        "assigned_agents_tag": "{count, plural, one {{count} agente asignado} other {{count} agentes asignados}}",
+        "change_button": "Cambiar",
+        "change_error": "No se pudo cambiar el proyecto Copilot",
+        "change_success": "Proyecto Copilot cambiado con éxito",
+        "change_title": "Cambiar proyecto Copilot",
+        "connect_button": "Conectar",
+        "connect_error": "No se pudo conectar al proyecto Copilot",
+        "connect_success": "Proyecto Copilot conectado con éxito",
+        "search_placeholder": "Buscar por nombre",
+        "select_title": "Seleccionar proyecto Copilot existente"
+      }
     },
     "changes_saved": "Cambios guardados con éxito",
     "changes_not_saved": "Error al guardar cambios. Vuelve a intentarlo.",

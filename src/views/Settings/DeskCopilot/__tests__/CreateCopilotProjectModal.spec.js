@@ -47,11 +47,11 @@ afterAll(() => {
 
 const createdProject = {
   name: 'Sales 123',
-  assigned_agents: 0,
-  created_on: '2026-07-30T00:00:00Z',
-  connected_on: '2026-07-30T00:00:00Z',
+  assignedAgents: 0,
+  createdOn: '2026-07-30T00:00:00Z',
+  connectedOn: '2026-07-30T00:00:00Z',
   uuid: 'copilot-uuid',
-  connected_by: 'edu',
+  connectedBy: 'edu',
 };
 
 const createWrapper = () =>
@@ -125,7 +125,10 @@ describe('CreateCopilotProjectModal', () => {
 
     await wrapper.vm.createProject();
 
-    expect(CopilotProjectService.create).toHaveBeenCalledWith('Sales 123');
+    expect(CopilotProjectService.create).toHaveBeenCalledWith(
+      'Sales 123',
+      'desk-uuid',
+    );
     expect(callUnnnicAlert).toHaveBeenCalledWith({
       props: {
         text: expect.any(String),
