@@ -55,7 +55,7 @@
               :text="
                 $t(
                   'config_chats.desk_copilot.picker_modal.assigned_agents_tag',
-                  { count: item.assigned_agents },
+                  { count: item.assignedAgents },
                 )
               "
               type="next"
