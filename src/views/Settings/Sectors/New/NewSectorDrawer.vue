@@ -99,6 +99,7 @@ import Queue from '@/services/api/resources/settings/queue';
 import { useSettings } from '@/store/modules/settings';
 import { useConfig } from '@/store/modules/config';
 import { useQuickMessageShared } from '@/store/modules/chats/quickMessagesShared';
+import { useFeatureFlag } from '@/store/modules/featureFlag';
 
 import isMobile from 'is-mobile';
 
@@ -191,6 +192,7 @@ export default {
     };
   },
   computed: {
+    ...mapState(useFeatureFlag, ['featureFlags']),
     ...mapWritableState(useSettings, ['sectors']),
     ...mapState(useConfig, ['enableGroupsMode']),
     showDiscartQuestion() {
@@ -209,6 +211,11 @@ export default {
     },
     activePage() {
       return this.newSectorPages[this.activePageIndex];
+    },
+    enableQueueFlowsFeature() {
+      return this.featureFlags.active_features?.includes(
+        'weniChatsFilterFlowsByQueue',
+      );
     },
   },
   mounted() {
@@ -287,6 +294,12 @@ export default {
         const createQueuesBody = this.sectorQueues.map((sectorQueue) => ({
           name: sectorQueue.name,
           default_message: '',
+          bond_flows_queue: this.enableQueueFlowsFeature
+            ? sectorQueue.bond_flows_queue
+            : false,
+          selected_flows: this.enableQueueFlowsFeature
+            ? sectorQueue.selected_flows
+            : [],
           queue_limit: sectorQueue.queue_limit,
           queue_purpose: sectorQueue.queue_purpose,
           agents: sectorQueue.currentAgents.map((agent) => agent.user.email),

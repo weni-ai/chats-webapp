@@ -1319,6 +1319,13 @@
           "input_placeholder": "Ejemplo: 50"
         }
       },
+      "bond_flows_queue": {
+        "select": {
+          "label": "Flujos asociados",
+          "placeholder": "Selecciona uno o más flujos",
+          "tooltip": "Asocia flujos a esta cola para definir qué flujos están disponibles al filtrar por ella. Los flujos que no están asociados a ninguna cola se consideran generales y están disponibles cuando no se aplica ningún filtro de cola."
+        }
+      },
       "message": {
         "create": "Cola creada con éxito",
         "update": "Cola actualizada con éxito",
@@ -1633,12 +1640,14 @@
         "contacts_waiting_for_service": "Contactos esperando atención",
         "filters": {
           "queues": {
+            "all": "Todas las colas",
             "label": "Selecciona una cola",
-            "all": "Todas las colas"
+            "placeholder": "Selecciona al menos una cola"
           },
           "representatives": {
+            "all": "Todos los representantes",
             "label": "Selecciona un representante",
-            "all": "Todos los representantes"
+            "placeholder": "Selecciona al menos un representante"
           }
         }
       },

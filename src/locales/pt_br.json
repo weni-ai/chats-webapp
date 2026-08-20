@@ -1319,6 +1319,13 @@
           "input_placeholder": "Exemplo: 50"
         }
       },
+      "bond_flows_queue": {
+        "select": {
+          "label": "Fluxos associados",
+          "placeholder": "Selecione um ou mais fluxos",
+          "tooltip": "Associe fluxos a esta fila para definir quais fluxos ficam disponíveis ao filtrar por ela. Fluxos que não estão associados a nenhuma fila são considerados gerais e ficam disponíveis quando nenhum filtro de fila é aplicado."
+        }
+      },
       "message": {
         "create": "Fila criada com sucesso",
         "update": "Fila atualizada com sucesso",
@@ -1633,12 +1640,14 @@
         "contacts_waiting_for_service": "Contatos aguardando atendimento",
         "filters": {
           "queues": {
+            "all": "Todas as filas",
             "label": "Selecione uma fila",
-            "all": "Todas as filas"
+            "placeholder": "Selecione pelo menos uma fila"
           },
           "representatives": {
+            "all": "Todos os representantes",
             "label": "Selecione um representante",
-            "all": "Todos os representantes"
+            "placeholder": "Selecione pelo menos um representante"
           }
         }
       },

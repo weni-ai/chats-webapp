@@ -3,10 +3,15 @@
     class="send-flow"
     data-testid="send-flow-container"
   >
-    <section>
+    <section class="send-flow__fields">
       <SelectProjects
         v-if="isProjectPrincipal"
         v-model="projectUuidFlow"
+      />
+      <SelectQueue
+        v-model="selectedQueue"
+        data-testid="select-queue"
+        :isDisabled="isCheckingTemplate"
       />
       <SelectFlow
         v-model="selectedFlow"
@@ -15,6 +20,7 @@
           isCheckingTemplate || (isProjectPrincipal && !projectUuidFlow)
         "
         :projectUuidFlow="projectUuidFlow"
+        :queue="selectedQueue"
       />
     </section>
 
@@ -60,6 +66,7 @@ import ModalProgressBarFalse from '@/components/ModalProgressBarFalse.vue';
 import FlowsTriggerAPI from '@/services/api/resources/chats/flowsTrigger';
 
 import SelectFlow from './SelectFlow.vue';
+import SelectQueue from './SelectQueue.vue';
 import SendFlowButton from './SendFlowButton.vue';
 import SelectProjects from './SelectProjects.vue';
 import { hasTemplateVariables } from '@/utils/flowTemplates';
@@ -69,6 +76,7 @@ export default {
 
   components: {
     SelectFlow,
+    SelectQueue,
     SendFlowButton,
     ModalProgressBarFalse,
     SelectProjects,
@@ -101,6 +109,7 @@ export default {
       showProgressBar: false,
 
       selectedFlow: '',
+      selectedQueue: '',
       projectUuidFlow: '',
 
       isCheckingTemplate: false,
@@ -206,6 +215,11 @@ export default {
   flex-direction: column;
 
   height: 100%;
+
+  &__fields {
+    display: grid;
+    gap: $unnnic-space-4;
+  }
 
   &__handlers {
     display: grid;
