@@ -7,6 +7,7 @@
       <UnnnicInput
         v-model="queueNameFilter"
         class="sector-queues-form__filters__input"
+        data-testid="queue-name-filter"
         iconLeft="search-1"
         size="md"
         :label="$t('config_chats.queues.filter_by_name')"
@@ -14,10 +15,14 @@
       />
       <ListOrdinator
         v-model="queueOrder"
+        data-testid="list-ordinator"
         :label="$t('order_by.label')"
       />
     </section>
-    <section class="sector-queues-form-grid">
+    <section
+      class="sector-queues-form-grid"
+      data-testid="queues-grid"
+    >
       <QueueCard
         v-for="queue in queuesOrdered"
         :key="queue.uuid"

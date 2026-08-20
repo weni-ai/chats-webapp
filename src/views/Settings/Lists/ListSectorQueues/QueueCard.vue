@@ -1,15 +1,20 @@
 <template>
   <section
     class="queue-card"
+    data-testid="queue-card"
     @click="emit('edit', props.queue)"
   >
     <section class="queue-card__info">
-      <p class="queue-card__title">
+      <p
+        class="queue-card__title"
+        data-testid="queue-card-title"
+      >
         {{ props.queue.name }}
       </p>
     </section>
     <section
       class="queue-card__actions"
+      data-testid="queue-card-actions"
       @click.stop
     >
       <UnnnicPopover
@@ -18,17 +23,20 @@
       >
         <UnnnicPopoverTrigger>
           <UnnnicButton
+            data-testid="queue-card-more-button"
             iconCenter="more_vert"
             type="tertiary"
           />
         </UnnnicPopoverTrigger>
         <UnnnicPopoverContent size="small">
           <UnnnicPopoverOption
+            data-testid="queue-card-edit-option"
             :label="$t('edit')"
             icon="edit_square"
             @click="emitEdit"
           />
           <UnnnicPopoverOption
+            data-testid="queue-card-delete-option"
             :label="$t('delete')"
             icon="delete"
             scheme="fg-critical"
