@@ -1038,6 +1038,7 @@
     "example_message_description": "Quick messages are predefined responses that help standardize customer service. All representatives in this department can use them, and you can add new ones below.",
     "personal": "Your messages",
     "shared": "Shared messages",
+    "send_in_bulk": "Send in bulk",
     "delete": "Delete quick message",
     "delete_your_quick_message": "Delete your quick message",
     "delete_confirm": "Are you sure you want to delete the quick message?",
