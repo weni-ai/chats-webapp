@@ -7,15 +7,23 @@ import {
   afterAll,
   vi,
 } from 'vitest';
+import { computed, ref } from 'vue';
 import { mount, config, flushPromises } from '@vue/test-utils';
 import { createTestingPinia } from '@pinia/testing';
 import DeskCopilotTab from '../index.vue';
-import Copilot from '@/services/api/resources/chats/copilot';
+import { useCopilotConnection } from '@/composables/useCopilotConnection';
+import { copilotSocketManager } from '@/services/copilot/copilotSocketManager';
 import i18n from '@/plugins/i18n';
 
-vi.mock('@/services/api/resources/chats/copilot', () => ({
-  default: {
-    listConnections: vi.fn(),
+vi.mock('@/composables/useCopilotConnection', () => ({
+  useCopilotConnection: vi.fn(),
+}));
+
+vi.mock('@/services/copilot/copilotSocketManager', () => ({
+  copilotSocketManager: {
+    getOrCreateService: vi.fn(),
+    setRoomContext: vi.fn(),
+    disposeService: vi.fn(),
   },
 }));
 
@@ -31,6 +39,28 @@ afterAll(() => {
   }
 });
 
+const defaultConnection = {
+  socketUrl: 'wss://example.com',
+  channelUuid: 'channel-1',
+  host: 'https://flows.weni.ai',
+  connectOn: 'mount',
+  storage: 'local',
+  callbackUrl: '',
+};
+
+function mockCopilotConnection({
+  isConfigured = false,
+  isLoading = false,
+  connection = undefined,
+} = {}) {
+  useCopilotConnection.mockReturnValue({
+    connection: ref(connection),
+    isConfigured: computed(() => isConfigured),
+    isLoading: ref(isLoading),
+    reload: vi.fn(),
+  });
+}
+
 const createWrapper = (props = {}, piniaState = {}) =>
   mount(DeskCopilotTab, {
     props,
@@ -40,7 +70,7 @@ const createWrapper = (props = {}, piniaState = {}) =>
           createSpy: vi.fn,
           initialState: {
             rooms: {
-              activeRoom: { uuid: 'room-1' },
+              activeRoom: { uuid: 'room-1', queue: { sector: 'sector-1' } },
               roomsSummary: {},
               isLoadingActiveRoomSummary: false,
             },
@@ -89,14 +119,12 @@ describe('DeskCopilotTab', () => {
   });
 
   it('renders the summary and disclaimer when there are no connections', async () => {
-    Copilot.listConnections.mockResolvedValue([]);
+    mockCopilotConnection();
     wrapper = createWrapper();
 
     await flushPromises();
 
-    expect(Copilot.listConnections).toHaveBeenCalledWith({
-      isPrincipal: false,
-    });
+    expect(useCopilotConnection).toHaveBeenCalled();
     expect(wrapper.find('[data-testid="desk-copilot-summary"]').exists()).toBe(
       true,
     );
@@ -106,9 +134,10 @@ describe('DeskCopilotTab', () => {
   });
 
   it('hides the disclaimer when the project has copilot connections', async () => {
-    Copilot.listConnections.mockResolvedValue([
-      { conection: { socketUrl: 'wss://example.com' } },
-    ]);
+    mockCopilotConnection({
+      isConfigured: true,
+      connection: defaultConnection,
+    });
     wrapper = createWrapper();
 
     await flushPromises();
@@ -119,10 +148,18 @@ describe('DeskCopilotTab', () => {
     expect(wrapper.find('[data-testid="desk-copilot-summary"]').exists()).toBe(
       true,
     );
+    expect(copilotSocketManager.getOrCreateService).toHaveBeenCalledWith(
+      'channel-1',
+      defaultConnection,
+    );
+    expect(copilotSocketManager.setRoomContext).toHaveBeenCalledWith(
+      'channel-1',
+      'room-1',
+    );
   });
 
   it('hides the summary when has_chats_summary is disabled', async () => {
-    Copilot.listConnections.mockResolvedValue([]);
+    mockCopilotConnection();
     wrapper = createWrapper(
       {},
       {
@@ -143,7 +180,7 @@ describe('DeskCopilotTab', () => {
   });
 
   it('emits loaded on mount so the contact drawer can leave the skeleton', async () => {
-    Copilot.listConnections.mockResolvedValue([]);
+    mockCopilotConnection();
     wrapper = createWrapper();
 
     await flushPromises();
@@ -151,8 +188,8 @@ describe('DeskCopilotTab', () => {
     expect(wrapper.emitted('loaded')).toBeTruthy();
   });
 
-  it('shows the disclaimer when the connections request fails', async () => {
-    Copilot.listConnections.mockRejectedValue(new Error('Not found'));
+  it('shows the disclaimer when the connections request is not configured', async () => {
+    mockCopilotConnection({ isConfigured: false });
     wrapper = createWrapper();
 
     await flushPromises();
@@ -160,5 +197,6 @@ describe('DeskCopilotTab', () => {
     expect(
       wrapper.find('[data-testid="desk-copilot-disclaimer"]').exists(),
     ).toBe(true);
+    expect(copilotSocketManager.getOrCreateService).not.toHaveBeenCalled();
   });
 });

@@ -19,6 +19,7 @@
     "@vueuse/components": "^13.9.0",
     "@vueuse/core": "^13.9.0",
     "@weni/unnnic-system": "^3.31.1",
+    "@weni/webchat-service": "^1.15.2",
     "axios": "^0.27.2",
     "core-js": "^3.8.3",
     "cross-env": "^7.0.3",
