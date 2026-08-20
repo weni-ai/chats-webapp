@@ -120,4 +120,16 @@ export default {
     );
     return response.data;
   },
+
+  async sendBulk({ text, contacts }) {
+    const url = '/msg/bulk-send-quick-message/';
+    const body = {
+      text,
+      project: getProject(),
+      contacts,
+    };
+
+    const response = await http.post(url, body);
+    return response.data;
+  },
 };
