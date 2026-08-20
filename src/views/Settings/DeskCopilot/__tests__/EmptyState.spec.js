@@ -35,4 +35,12 @@ describe('DeskCopilot EmptyState', () => {
 
     expect(wrapper.emitted('open-create-modal')).toBeTruthy();
   });
+
+  it('emits open-select-modal when the select button is clicked', async () => {
+    await wrapper
+      .find('[data-testid="desk-copilot-select-button"]')
+      .trigger('click');
+
+    expect(wrapper.emitted('open-select-modal')).toBeTruthy();
+  });
 });

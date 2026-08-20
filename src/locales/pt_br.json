@@ -1150,11 +1150,21 @@
         "connected_to": "Conectado em",
         "created_on": "Criado em",
         "description": "Este projeto é usado exclusivamente para gerenciar os agentes de IA do Desk Copilot. O acesso é feito apenas por esta seção.",
-        "open": "Abrir"
+        "open": "Abrir",
+        "popover_change_option": "Alterar",
+        "popover_disconnect_option": "Desconectar"
+      },
+      "disconnect_modal": {
+        "confirm": "Desconectar",
+        "description": "Este projeto perderá o acesso ao Desk Copilot até que um projeto Copilot seja reconectado. O projeto Copilot e as outras conexões não serão afetados.",
+        "error": "Não foi possível desconectar o projeto Copilot",
+        "success": "Projeto Copilot desconectado com sucesso",
+        "title": "Desconectar projeto Copilot"
       },
       "empty_state": {
         "create_button": "Criar projeto Copilot",
         "description": "Para ativar o Desk Copilot, conecte este projeto a um projeto Copilot onde seus agentes de IA são gerenciados",
+        "select_button": "Selecionar projeto Copilot",
         "title": "Nenhum projeto Copilot conectado"
       },
       "enable_title": "Ativar Desk Copilot",
@@ -1185,7 +1195,19 @@
         "success": "Projeto Copilot criado e conectado com sucesso",
         "title": "Criar projeto Copilot"
       },
-      "new_badge": "Novo"
+      "new_badge": "Novo",
+      "picker_modal": {
+        "assigned_agents_tag": "{count, plural, one {{count} agente atribuído} other {{count} agentes atribuídos}}",
+        "change_button": "Alterar",
+        "change_error": "Não foi possível alterar o projeto Copilot",
+        "change_success": "Projeto Copilot alterado com sucesso",
+        "change_title": "Alterar projeto Copilot",
+        "connect_button": "Conectar",
+        "connect_error": "Não foi possível conectar ao projeto Copilot",
+        "connect_success": "Projeto Copilot conectado com sucesso",
+        "search_placeholder": "Buscar por nome",
+        "select_title": "Selecionar projeto Copilot existente"
+      }
     },
     "changes_saved": "Alterações salvas com sucesso",
     "changes_not_saved": "Erro ao salvar alterações. Tente novamente.",

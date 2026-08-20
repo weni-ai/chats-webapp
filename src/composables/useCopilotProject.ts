@@ -50,6 +50,47 @@ export function useCopilotProject() {
     linkedProject.value = projectValue;
   }
 
+  async function createProject(name: string) {
+    const projectUuid = project.value?.uuid;
+
+    if (!projectUuid) {
+      throw new Error('Missing project uuid');
+    }
+
+    const createdProject = await CopilotProjectService.create(
+      name,
+      projectUuid,
+    );
+    linkedProject.value = createdProject;
+    return createdProject;
+  }
+
+  async function changeLinkedProject(newCopilotProjectUuid: string) {
+    const projectUuid = project.value?.uuid;
+
+    if (!projectUuid) {
+      throw new Error('Missing project uuid');
+    }
+
+    const updatedProject = await CopilotProjectService.update(
+      projectUuid,
+      newCopilotProjectUuid,
+    );
+    linkedProject.value = updatedProject;
+    return updatedProject;
+  }
+
+  async function disconnectLinkedProject() {
+    const copilotProjectUuid = linkedProject.value?.uuid;
+
+    if (!copilotProjectUuid) {
+      throw new Error('Missing copilot project uuid');
+    }
+
+    await CopilotProjectService.remove(copilotProjectUuid);
+    linkedProject.value = null;
+  }
+
   const isLinked = computed(() => !!linkedProject.value);
   const showNewBadge = computed(() => !linkedProject.value);
 
@@ -60,5 +101,8 @@ export function useCopilotProject() {
     showNewBadge,
     fetchLinkedProject,
     setLinkedProject,
+    createProject,
+    changeLinkedProject,
+    disconnectLinkedProject,
   };
 }
