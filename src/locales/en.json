@@ -1626,21 +1626,24 @@
       "no_contacts_filtered_alert": "No contacts match the selected filters. Try adjusting your filters.",
       "contacts_count_disclaimer": "{count, plural, one {This message will be sent to {count} contact. The number of recipients may change during delivery due to conversation transfers, conversation closures, or interactions taking place simultaneously.} other {This message will be sent to {count} contacts. The number of recipients may change during delivery due to conversation transfers, conversation closures, or interactions taking place simultaneously.}}",
       "recipients": {
-        "title": "Recipients",
-        "title_tooltip": "This message will be delivered to all contacts matching the selected filters. Use this feature for operational communications such as delays, incidents, updates.",
-        "select_the_contacts_status": "Select the contacts status",
+        "at_least_one_status_must_be_selected": "At least one status must be selected",
         "contacts_in_service": "Contacts in service",
         "contacts_waiting_for_service": "Contacts waiting for service",
         "filters": {
           "queues": {
+            "all": "All queues",
             "label": "Select a queue",
-            "all": "All queues"
+            "placeholder": "Select at least one queue"
           },
           "representatives": {
+            "all": "All representatives",
             "label": "Select a representative",
-            "all": "All representatives"
+            "placeholder": "Select at least one representative"
           }
-        }
+        },
+        "select_the_contacts_status": "Select the contacts status",
+        "title": "Recipients",
+        "title_tooltip": "This message will be delivered to all contacts matching the selected filters. Use this feature for operational communications such as delays, incidents, updates."
       },
       "message": {
         "title": "Message",
