@@ -82,8 +82,8 @@
     }
   },
   "status": {
-    "online": "Online",
-    "offline": "Offline",
+    "online": "En línea",
+    "offline": "Desconectada",
     "set_status": "Definir status"
   },
   "status-bar": {
@@ -140,7 +140,7 @@
   "chat_message": {
     "reply_message": {
       "you": "Tú",
-      "video": "Video",
+      "video": "Vídeo",
       "image": "Imagen",
       "audio": "Mensaje de audio"
     }
@@ -247,7 +247,7 @@
     "general": "General",
     "extra_options": "Opciones adicionales",
     "queues": "Colas",
-    "tags": "Tags",
+    "tags": "Etiquetas",
     "add_name_and_managers": "Define un nombre para el departamento y sus gerentes",
     "add_queue": "Agregar nueva cola",
     "name": "Nombre del departamento",
@@ -263,7 +263,7 @@
     "managers": {
       "title": "Gerentes de soporte",
       "add": {
-        "label": "Agregar gerente",
+        "label": "Agregar manager",
         "placeholder": "Buscar por nombre o email"
       },
       "working_day": {
@@ -705,14 +705,14 @@
     "fix_grammar_and_spelling": "Corregir gramática y ortografía",
     "make_more_empathetic": "Hacerla más empática",
     "rewrite_for_clarity": "Reescribir con claridad",
-    "improving_response": "Mejorando tu respuesta",
+    "improving_response": "Mejorando respuesta",
     "improvement": "Respuesta mejorada",
     "error": "Error al mejorar respuesta con IA. Vuelve a intentarlo.",
     "new": "Nueva",
     "back_to_original": "Original",
     "back_to_original_tooltip": "Volver a la versión original (Ctrl+Z)"
   },
-  "manager": "Manager",
+  "manager": "Gerente",
   "yesterday": "Ayer",
   "you": "Tú",
   "queue": "Cola",
@@ -1670,7 +1670,7 @@
       },
       "partial_success": {
         "button": "Ver envíos",
-        "message": "{success, plural, one {{failed, plural, one {Mensaje enviado a {success} contacto, {failed} falló.} other {Mensaje enviado a {success} contacto, {failed} fallaron.}}} other {{failed, plural, one {Mensaje enviado a {success} contactos, {failed} falló.} other {Mensaje enviado a {success} contactos, {failed} fallaron.}}}}"
+        "message": "{success, plural, one {Message sent to {success} contact, {failed} failed.} other {Message sent to {success} contacts, {failed} failed.}}"
       },
       "success": {
         "message": "{count, plural, one {Mensaje enviado a {count} contacto} other {Mensaje enviado a {count} contactos}}"
@@ -1686,8 +1686,5 @@
       "activate": "Modo de voz",
       "stop": "Detener"
     }
-  },
-  "waiting": "Esperando",
-  "sent_flows": "Flujos enviados",
-  "discussion": "Discusiones"
+  }
 }
