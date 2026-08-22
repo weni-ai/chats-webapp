@@ -247,7 +247,7 @@
     "general": "Geral",
     "extra_options": "Opções adicionais",
     "queues": "Filas",
-    "tags": "Tags",
+    "tags": "Etiquetas",
     "add_name_and_managers": "Defina um nome para o setor e seus gerentes",
     "add_queue": "Adicionar nova fila",
     "name": "Nome do setor",
@@ -705,7 +705,7 @@
     "fix_grammar_and_spelling": "Corrigir gramática e ortografia",
     "make_more_empathetic": "Tornar mais empática",
     "rewrite_for_clarity": "Reescrever com clareza",
-    "improving_response": "Melhorando sua resposta",
+    "improving_response": "Melhorar resposta",
     "improvement": "Resposta aprimorada",
     "error": "Erro ao aprimorar resposta com IA. Tente novamente.",
     "new": "Novo",
@@ -1234,8 +1234,8 @@
       },
       "bulk_transfer": {
         "tooltip": "Esta função permite que os atendentes transfiram diferentes contatos de uma só vez",
-        "switch_active": "Transferir chats em massa para outra fila ou atendente",
-        "switch_inactive": "Transferir chats em massa para outra fila ou atendente"
+        "switch_active": "Transferir chat em massa para outra fila ou atendente",
+        "switch_inactive": "Transferir chat em massa para outra fila ou atendente"
       },
       "block_transfer_to_off_agents": {
         "switch_active": "Bloquear a transferência de chats para atendentes offline",
@@ -1670,7 +1670,7 @@
       },
       "partial_success": {
         "button": "Ver envios",
-        "message": "{success, plural, one {{failed, plural, one {Mensagem enviada para {success} contato, {failed} falhou.} other {Mensagem enviada para {success} contato, {failed} falharam.}}} other {{failed, plural, one {Mensagem enviada para {success} contatos, {failed} falhou.} other {Mensagem enviada para {success} contatos, {failed} falharam.}}}}"
+        "message": "{success, plural, one {Message sent to {success} contact, {failed} failed.} other {Message sent to {success} contacts, {failed} failed.}}"
       },
       "success": {
         "message": "{count, plural, one {Mensagem enviada para {count} contato} other {Mensagem enviada para {count} contatos}}"
@@ -1686,10 +1686,5 @@
       "activate": "Modo de voz",
       "stop": "Desativar"
     }
-  },
-  "waiting": "Aguardando",
-  "sent_flows": "Fluxos enviados",
-  "discussion": "Discussões",
-  "close_contact": "Encerrar contato",
-  "close_contact_confirmation": "Tem certeza que deseja encerrar este contato?"
+  }
 }
