@@ -58,7 +58,7 @@ describe('SelectQueueFlows', () => {
 
   it('excludes already selected flows from options', async () => {
     await wrapper.setProps({
-      modelValue: [{ uuid: 'flow-1', name: 'Flow 1' }],
+      modelValue: ['flow-1'],
     });
     await flushPromises();
 
@@ -75,50 +75,29 @@ describe('SelectQueueFlows', () => {
     });
     await flushPromises();
 
-    expect(wrapper.emitted('update:modelValue').at(-1)[0]).toEqual([
-      { uuid: 'flow-1', name: 'Flow 1' },
-    ]);
+    expect(wrapper.emitted('update:modelValue').at(-1)[0]).toEqual(['flow-1']);
     expect(wrapper.vm.flowSelection).toBe('');
   });
 
   it('removes a selected flow by uuid', async () => {
     await wrapper.setProps({
-      modelValue: [
-        { uuid: 'flow-1', name: 'Flow 1' },
-        { uuid: 'flow-2', name: 'Flow 2' },
-      ],
+      modelValue: ['flow-1', 'flow-2'],
     });
 
     wrapper.vm.removeFlow('flow-1');
     await wrapper.vm.$nextTick();
 
-    expect(wrapper.emitted('update:modelValue').at(-1)[0]).toEqual([
-      { uuid: 'flow-2', name: 'Flow 2' },
-    ]);
+    expect(wrapper.emitted('update:modelValue').at(-1)[0]).toEqual(['flow-2']);
   });
 
-  it('hydrates flow names when selected flows only have uuids as name', async () => {
-    const hydratedWrapper = mount(SelectQueueFlows, {
-      props: {
-        modelValue: [{ uuid: 'flow-1', name: 'flow-1' }],
-      },
-      global: {
-        stubs: {
-          UnnnicSelect: true,
-          TagGroup: true,
-        },
-        mocks: {
-          $t: (key) => key,
-        },
-      },
+  it('resolves flow names for tags from loaded flows', async () => {
+    await wrapper.setProps({
+      modelValue: ['flow-1'],
     });
-
     await flushPromises();
 
-    expect(hydratedWrapper.emitted('update:modelValue').at(-1)[0]).toEqual([
+    expect(wrapper.vm.selectedFlowTags).toEqual([
       { uuid: 'flow-1', name: 'Flow 1' },
     ]);
-
-    hydratedWrapper.unmount();
   });
 });

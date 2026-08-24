@@ -190,10 +190,7 @@ export default {
           },
           agents: this.queues[0].agents,
           bond_flows_queue: this.queues[0].bond_flows_queue || false,
-          selected_flows: (this.queues[0].selected_flows || []).map((uuid) => ({
-            uuid,
-            name: uuid,
-          })),
+          selected_flows: this.queues[0].selected_flows || [],
           queue_purpose: this.queues[0].queue_purpose || '',
         },
       ];
