@@ -40,6 +40,7 @@
         <SelectFilters
           :queues="selectedQueues"
           :representatives="selectedRepresentatives"
+          :enableRepresentativesFilter="enableRepresentativesFilter"
           @update:queues="selectedQueues = $event"
           @update:representatives="selectedRepresentatives = $event"
         />
@@ -173,11 +174,16 @@ const filtersForm = computed(() => ({
 
 const contactsCount = ref<number>(0);
 
+const enableRepresentativesFilter = computed(() => {
+  return selectedContactsStatus.value.includes('ongoing');
+});
+
 const hasRequiredFilters = computed(
   () =>
     selectedContactsStatus.value.length > 0 &&
     selectedQueues.value.length > 0 &&
-    selectedRepresentatives.value.length > 0,
+    (selectedRepresentatives.value.length > 0 ||
+      !enableRepresentativesFilter.value),
 );
 
 const validForm = computed(() => {
