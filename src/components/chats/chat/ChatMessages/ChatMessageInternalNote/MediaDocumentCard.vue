@@ -66,7 +66,12 @@ const downloadMedia = async () => {
     const filename =
       props.media.url?.split('/').at(-1) || props.media.file?.name;
 
-    await Media.download({ media: mediaToDownload, name: filename });
+    await Media.download({
+      media: mediaToDownload,
+      name: filename,
+      mediaUuid: undefined,
+      messageUuid: undefined,
+    });
   } catch (error) {
     console.error(
       'An error occurred when trying to download the media:',
