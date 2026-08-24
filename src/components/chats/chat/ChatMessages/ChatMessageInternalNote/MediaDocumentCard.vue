@@ -29,8 +29,8 @@ import { computed } from 'vue';
 import Media from '@/services/api/resources/chats/media';
 import { treatedMediaName } from '@/utils/medias';
 
-interface InternalNoteMedia {
-  content_type: string;
+interface GridMedia {
+  content_type?: string;
   url?: string;
   message?: string;
   preview?: string;
@@ -40,7 +40,7 @@ interface InternalNoteMedia {
 }
 
 interface Props {
-  media: InternalNoteMedia;
+  media: GridMedia;
 }
 
 const props = defineProps<Props>();

@@ -12,6 +12,7 @@ import { createTestingPinia } from '@pinia/testing';
 import { setActivePinia } from 'pinia';
 
 import Actions from '../Actions/index.vue';
+import { MEDIA_MESSAGES_WITH_TEXT_FEATURE_FLAG } from '@/composables/useMediaMessagesWithTextFeatureFlag';
 import i18n from '@/plugins/i18n';
 
 vi.mock('@/services/api/resources/chats/aiTextImprovement', () => ({
@@ -50,6 +51,7 @@ const createWrapper = (options = {}) => {
     isInternalNote = false,
     isAiLoading = false,
     audioRecorderStatus = 'idle',
+    featureFlags = { active_features: [] },
   } = options;
 
   const pinia = createTestingPinia({
@@ -67,6 +69,7 @@ const createWrapper = (options = {}) => {
       },
       aiTextImprovement: { isLoading: isAiLoading },
       discussions: { activeDiscussion },
+      featureFlag: { featureFlags },
     },
   });
   setActivePinia(pinia);
@@ -167,6 +170,19 @@ describe('Actions', () => {
       const wrapper = createWrapper({
         inputMessage: 'hello',
         isInternalNote: true,
+      });
+      const attachButton = wrapper.findAll(
+        '.text-box__actions__item button',
+      )[3];
+      expect(attachButton.attributes('data-disabled')).toBe('false');
+    });
+
+    it('should enable attach when there is text and the media with text flag is on', () => {
+      const wrapper = createWrapper({
+        inputMessage: 'hello',
+        featureFlags: {
+          active_features: [MEDIA_MESSAGES_WITH_TEXT_FEATURE_FLAG],
+        },
       });
       const attachButton = wrapper.findAll(
         '.text-box__actions__item button',

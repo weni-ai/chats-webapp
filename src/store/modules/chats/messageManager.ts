@@ -198,18 +198,27 @@ export const useMessageManager = defineStore('messageManager', () => {
   }
 
   function sendMediasMessage(activeRoomUuid: string) {
+    const files = [...mediaUploadFiles.value];
+    const text = inputMessage.value.trim();
+    const repliedMessage = replyMessage.value;
+    const aiTextImprovementStore = useAiTextImprovement();
+    const aiTextImprovementPayload =
+      aiTextImprovementStore.getAiTextImprovementPayload(text);
+
     try {
       isLoadingSend.value = true;
       if (discussionsStore.activeDiscussion?.uuid) {
         discussionMessagesStore.sendDiscussionMedias({
-          files: [...mediaUploadFiles.value],
+          files,
           updateLoadingFiles: () => {},
         });
       } else {
         roomMessagesStore.sendRoomMedias({
-          files: [...mediaUploadFiles.value],
+          files,
+          text,
+          aiTextImprovement: aiTextImprovementPayload,
           updateLoadingFiles: () => {},
-          repliedMessage: replyMessage.value,
+          repliedMessage,
           roomUuid: activeRoomUuid,
         });
       }
