@@ -61,12 +61,14 @@ function mockCopilotConnection({
 function mockCopilotChat({
   messages = [],
   isThinking = false,
+  isLoadingHistory = false,
   cartCount = 0,
   suggestions = [],
 } = {}) {
   useCopilotChat.mockReturnValue({
     messages: ref(messages),
     isThinking: ref(isThinking),
+    isLoadingHistory: ref(isLoadingHistory),
     cartCount: ref(cartCount),
     suggestions: ref(suggestions),
     sendMessage: vi.fn(),
@@ -125,8 +127,8 @@ const createWrapper = (props = {}, piniaState = {}) =>
         AssistantMessageList: {
           name: 'AssistantMessageList',
           template:
-            '<div data-testid="assistant-message-list" @click="$emit(\'send\', \'Suggested text\')" />',
-          props: ['messages', 'isThinking'],
+            '<div data-testid="assistant-message-list" @click="$emit(\'send\', \'Suggested text\')"><div v-if="isLoadingHistory" data-testid="assistant-history-loading" /></div>',
+          props: ['messages', 'isThinking', 'isLoadingHistory'],
         },
         AssistantInput: {
           name: 'AssistantInput',
@@ -246,5 +248,20 @@ describe('DeskCopilotTab', () => {
     await flushPromises();
 
     expect(wrapper.emitted('loaded')).toBeTruthy();
+  });
+
+  it('shows the history loading state while the conversation is restored', async () => {
+    mockCopilotConnection({
+      isConfigured: true,
+      connection: defaultConnection,
+    });
+    mockCopilotChat({ isLoadingHistory: true });
+    wrapper = createWrapper();
+
+    await flushPromises();
+
+    expect(
+      wrapper.find('[data-testid="assistant-history-loading"]').exists(),
+    ).toBe(true);
   });
 });
