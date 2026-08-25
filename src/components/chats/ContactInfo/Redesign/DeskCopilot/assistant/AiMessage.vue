@@ -155,6 +155,10 @@ async function handleCopy() {
   align-items: flex-start;
   gap: $unnnic-space-2;
   width: 100%;
+  max-width: 75%;
+  min-width: 0;
+  animation: assistant-bubble-in-left 0.3s ease-out both;
+  transform-origin: top left;
 
   &__icon {
     flex-shrink: 0;
@@ -191,6 +195,7 @@ async function handleCopy() {
     display: flex;
     align-items: center;
     justify-content: space-between;
+    flex-wrap: wrap;
     gap: $unnnic-space-2;
     width: 100%;
   }
@@ -200,6 +205,23 @@ async function handleCopy() {
     display: flex;
     align-items: center;
     gap: $unnnic-space-2;
+    min-width: 0;
+  }
+}
+
+@keyframes assistant-bubble-in-left {
+  0% {
+    opacity: 0;
+    transform: translateX(-2px) scale(0.8);
+  }
+
+  60% {
+    transform: translateX(2px) scale(1.02);
+  }
+
+  100% {
+    opacity: 1;
+    transform: translateX(0) scale(1);
   }
 }
 </style>
