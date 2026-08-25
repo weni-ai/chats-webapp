@@ -1625,7 +1625,7 @@
     }
   },
   "mass_message": {
-    "title": "Mass message",
+    "title": "Bulk message",
     "form": {
       "title": "Send mass message",
       "shipping_history": "Shipping history",
