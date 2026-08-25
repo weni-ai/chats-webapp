@@ -28,6 +28,9 @@ declare module '@weni/webchat-service' {
     THINKING_STOP: string;
     CART_UPDATED: string;
     CONNECTION_STATUS_CHANGED: string;
+    HISTORY_LOADED: string;
+    STATE_CHANGED: string;
+    ERROR: string;
     [key: string]: string;
   };
 
