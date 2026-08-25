@@ -33,8 +33,14 @@ declare module '@weni/webchat-service' {
 
   export default class WeniWebchatService {
     constructor(_config: ServiceConfig);
+    session?: {
+      sessionKey: string;
+    };
     init(): Promise<unknown>;
+    connect(): Promise<unknown>;
     destroy(): void;
+    isConnected(): boolean;
+    isConnecting(): boolean;
     setContext(_context: string): void;
     getContext(): string;
     getMessages(): Message[];
