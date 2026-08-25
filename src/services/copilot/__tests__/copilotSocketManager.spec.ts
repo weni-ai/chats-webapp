@@ -2,18 +2,23 @@ import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 
 import { copilotSocketManager } from '../copilotSocketManager';
 
-const { init, destroy, setContext, MockService } = vi.hoisted(() => {
+const { init, destroy, setContext, connect, MockService } = vi.hoisted(() => {
   const init = vi.fn().mockResolvedValue(undefined);
   const destroy = vi.fn();
   const setContext = vi.fn();
+  const connect = vi.fn().mockResolvedValue(undefined);
   const MockService = vi.fn().mockImplementation((config) => ({
     config,
+    session: { sessionKey: 'weni:webchat:session' },
     init,
     destroy,
     setContext,
+    connect,
+    isConnected: vi.fn(() => true),
+    isConnecting: vi.fn(() => false),
   }));
 
-  return { init, destroy, setContext, MockService };
+  return { init, destroy, setContext, connect, MockService };
 });
 
 vi.mock('@weni/webchat-service', () => ({
@@ -53,6 +58,7 @@ describe('copilotSocketManager', () => {
         sessionId: 'room-1',
       }),
     );
+    expect(service.session.sessionKey).toBe('session:channel-1:room-1');
   });
 
   it('reuses the same service instance for the same room and channel', () => {
@@ -83,6 +89,8 @@ describe('copilotSocketManager', () => {
       2,
       expect.objectContaining({ sessionId: 'room-2' }),
     );
+    expect(first.session.sessionKey).toBe('session:channel-1:room-1');
+    expect(second.session.sessionKey).toBe('session:channel-1:room-2');
   });
 
   it('sets the room context on an existing service', () => {
@@ -167,6 +175,34 @@ describe('copilotSocketManager', () => {
 
     vi.advanceTimersByTime(120000);
     expect(destroy).toHaveBeenCalledTimes(1);
+  });
+
+  it('reconnects an existing service that was closed', () => {
+    const first = copilotSocketManager.getOrCreateService('room-1', connection);
+    const firstMock = first as typeof first & {
+      isConnected: ReturnType<typeof vi.fn>;
+      isConnecting: ReturnType<typeof vi.fn>;
+    };
+
+    firstMock.isConnected.mockReturnValue(false);
+    firstMock.isConnecting.mockReturnValue(false);
+
+    const resumed = copilotSocketManager.getOrCreateService(
+      'room-1',
+      connection,
+    );
+
+    expect(resumed).toBe(first);
+    expect(connect).toHaveBeenCalledTimes(1);
+    expect(init).toHaveBeenCalledTimes(1);
+  });
+
+  it('does not reconnect an existing service that is already connected', () => {
+    copilotSocketManager.getOrCreateService('room-1', connection);
+    copilotSocketManager.getOrCreateService('room-1', connection);
+
+    expect(connect).not.toHaveBeenCalled();
+    expect(init).toHaveBeenCalledTimes(1);
   });
 
   it('cancels eviction when the room becomes active again', () => {
