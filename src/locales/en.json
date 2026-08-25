@@ -850,6 +850,7 @@
       "assistant": {
         "copy_action": "Copy",
         "input_placeholder": "Ask the assistant",
+        "loading_conversation": "Loading conversation",
         "processing_information": "Processing information",
         "send_action": "Send"
       },
