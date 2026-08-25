@@ -177,6 +177,30 @@ describe('BulkMessage', () => {
     expect(wrapper.vm.agreeToSend).toBe(true);
   });
 
+  it('should keep form invalid when queues are empty', async () => {
+    wrapper = createWrapper();
+    await flushPromises();
+
+    wrapper.vm.message = 'Hello contacts';
+    wrapper.vm.selectedQueues = [];
+    await flushPromises();
+
+    expect(wrapper.vm.hasRequiredFilters).toBe(false);
+    expect(wrapper.vm.validForm).toBe(false);
+  });
+
+  it('should keep form invalid when representatives are empty', async () => {
+    wrapper = createWrapper();
+    await flushPromises();
+
+    wrapper.vm.message = 'Hello contacts';
+    wrapper.vm.selectedRepresentatives = [];
+    await flushPromises();
+
+    expect(wrapper.vm.hasRequiredFilters).toBe(false);
+    expect(wrapper.vm.validForm).toBe(false);
+  });
+
   it('should reset agreement when form becomes invalid', async () => {
     wrapper = createWrapper();
     await flushPromises();

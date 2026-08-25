@@ -1319,6 +1319,13 @@
           "input_placeholder": "Example: 50"
         }
       },
+      "bond_flows_queue": {
+        "select": {
+          "label": "Associated flows",
+          "placeholder": "Select one or more flows",
+          "tooltip": "Associate flows with this queue to define which flows are available when filtering by this queue. Flows that aren't associated with any queue are considered general and are available when no queue filter is applied."
+        }
+      },
       "message": {
         "create": "Queue created successfully",
         "update": "Queue updated successfully",
@@ -1633,12 +1640,14 @@
         "contacts_waiting_for_service": "Contacts waiting for service",
         "filters": {
           "queues": {
+            "all": "All queues",
             "label": "Select a queue",
-            "all": "All queues"
+            "placeholder": "Select at least one queue"
           },
           "representatives": {
+            "all": "All representatives",
             "label": "Select a representative",
-            "all": "All representatives"
+            "placeholder": "Select at least one representative"
           }
         }
       },
