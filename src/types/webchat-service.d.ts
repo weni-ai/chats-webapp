@@ -24,8 +24,11 @@ declare module '@weni/webchat-service' {
   export const SERVICE_EVENTS: {
     MESSAGE_RECEIVED: string;
     MESSAGE_SENT: string;
+    MESSAGE_UPDATED: string;
     THINKING_START: string;
     THINKING_STOP: string;
+    TYPING_START: string;
+    TYPING_STOP: string;
     CART_UPDATED: string;
     CONNECTION_STATUS_CHANGED: string;
     HISTORY_LOADED: string;
