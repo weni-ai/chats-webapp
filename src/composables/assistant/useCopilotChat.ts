@@ -18,14 +18,20 @@ import { mapServiceMessage } from '@/services/assistant/messageMapper';
 import type { AssistantMessage } from '@/services/assistant/types';
 
 type ConnectionRef = Ref<CopilotConnection | undefined>;
+type RoomUuidRef = Ref<string | undefined>;
 
-export function useCopilotChat(connection: ConnectionRef) {
+export function useCopilotChat(
+  connection: ConnectionRef,
+  roomUuid: RoomUuidRef,
+) {
   const messages = ref<AssistantMessage[]>([]);
   const isThinking = ref(false);
   const cartCount = ref(0);
 
   let activeService: WeniWebchatService | null = null;
   let activeChannelUuid: string | null = null;
+  let activeRoomUuid: string | null = null;
+  let activeConnection: CopilotConnection | null = null;
 
   const suggestions = computed(() => {
     const lastAiMessage = [...messages.value]
@@ -34,6 +40,12 @@ export function useCopilotChat(connection: ConnectionRef) {
 
     return lastAiMessage?.quickReplies || [];
   });
+
+  function resetViewState() {
+    messages.value = [];
+    isThinking.value = false;
+    cartCount.value = 0;
+  }
 
   function syncMessagesFromService(service: WeniWebchatService) {
     messages.value = service.getMessages().map(mapServiceMessage);
@@ -90,27 +102,37 @@ export function useCopilotChat(connection: ConnectionRef) {
     service.on(SERVICE_EVENTS.CART_UPDATED, handleCartUpdated);
   }
 
-  function detachCurrentService() {
+  function detachCurrentView() {
     if (activeService) {
       unsubscribe(activeService);
     }
 
     activeService = null;
     activeChannelUuid = null;
-    messages.value = [];
-    isThinking.value = false;
-    cartCount.value = 0;
+    activeRoomUuid = null;
+    activeConnection = null;
+    resetViewState();
   }
 
-  function attachService(currentConnection: CopilotConnection) {
-    const channelUuid = currentConnection.channelUuid;
-
-    if (!channelUuid) {
-      detachCurrentService();
+  function scheduleActiveRoomEviction() {
+    if (!activeRoomUuid || !activeConnection) {
       return;
     }
 
-    if (activeChannelUuid === channelUuid && activeService) {
+    copilotSocketManager.scheduleEviction(activeRoomUuid, activeConnection);
+  }
+
+  function attachService(
+    currentConnection: CopilotConnection,
+    currentRoomUuid: string,
+  ) {
+    const channelUuid = currentConnection.channelUuid;
+
+    if (
+      activeChannelUuid === channelUuid &&
+      activeRoomUuid === currentRoomUuid &&
+      activeService
+    ) {
       return;
     }
 
@@ -118,13 +140,17 @@ export function useCopilotChat(connection: ConnectionRef) {
       unsubscribe(activeService);
     }
 
+    resetViewState();
+
     const service = copilotSocketManager.getOrCreateService(
-      channelUuid,
+      currentRoomUuid,
       currentConnection,
     );
 
     activeService = service;
     activeChannelUuid = channelUuid;
+    activeRoomUuid = currentRoomUuid;
+    activeConnection = currentConnection;
     subscribe(service);
     syncMessagesFromService(service);
   }
@@ -140,21 +166,40 @@ export function useCopilotChat(connection: ConnectionRef) {
   }
 
   watch(
-    connection,
-    (currentConnection) => {
-      if (!currentConnection?.channelUuid) {
-        detachCurrentService();
+    [connection, roomUuid],
+    ([currentConnection, currentRoomUuid], previous) => {
+      const previousConnection = previous?.[0];
+      const previousRoomUuid = previous?.[1];
+      const isSameRoom =
+        !!currentRoomUuid &&
+        currentRoomUuid === previousRoomUuid &&
+        currentConnection?.channelUuid === previousConnection?.channelUuid;
+
+      if (isSameRoom) {
         return;
       }
 
-      attachService(currentConnection);
+      if (previousRoomUuid && previousConnection?.channelUuid) {
+        copilotSocketManager.scheduleEviction(
+          previousRoomUuid,
+          previousConnection,
+        );
+      }
+
+      if (!currentConnection?.channelUuid || !currentRoomUuid) {
+        detachCurrentView();
+        return;
+      }
+
+      attachService(currentConnection, currentRoomUuid);
     },
     { immediate: true },
   );
 
   if (getCurrentInstance()) {
     onUnmounted(() => {
-      detachCurrentService();
+      scheduleActiveRoomEviction();
+      detachCurrentView();
     });
   }
 
