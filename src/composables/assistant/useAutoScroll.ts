@@ -9,11 +9,12 @@ import {
 
 export const BOTTOM_SCROLL_THRESHOLD_PX = 100;
 
-type ScrollBehaviorOption = ScrollBehavior;
+type ScrollBehaviorOption = 'auto' | 'smooth';
 
 export function useAutoScroll(
   messages: Ref<unknown>,
   isThinking: Ref<boolean>,
+  isTyping: Ref<boolean> = ref(false),
 ) {
   const listRef = ref<HTMLElement | null>(null);
   const bottomAnchorRef = ref<HTMLElement | null>(null);
@@ -43,7 +44,7 @@ export function useAutoScroll(
   }
 
   watch(
-    [messages, isThinking],
+    [messages, isThinking, isTyping],
     () => {
       nextTick(() => {
         scrollToBottom();
