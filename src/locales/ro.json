@@ -819,6 +819,12 @@
       }
     },
     "desk_copilot": {
+      "assistant": {
+        "copy_action": "Copiază",
+        "input_placeholder": "Întreabă asistentul",
+        "processing_information": "Se procesează informațiile",
+        "send_action": "Trimite"
+      },
       "copy_summary": "Copiază rezumatul",
       "disclaimer": {
         "description": "Desk Copilot te poate ajuta cu:",
