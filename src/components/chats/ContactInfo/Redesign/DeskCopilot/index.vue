@@ -18,6 +18,7 @@
         <AssistantMessageList
           :messages="messages"
           :isThinking="isThinking"
+          :isLoadingHistory="isLoadingHistory"
           @send="handleSendSuggestionToInput"
         />
       </template>
@@ -86,8 +87,14 @@ const {
 } = useCopilotConnection(activeRoom);
 
 const roomUuid = computed(() => activeRoom.value?.uuid);
-const { messages, isThinking, cartCount, suggestions, sendMessage } =
-  useCopilotChat(connection, roomUuid);
+const {
+  messages,
+  isThinking,
+  isLoadingHistory,
+  cartCount,
+  suggestions,
+  sendMessage,
+} = useCopilotChat(connection, roomUuid);
 
 const enableRoomSummary = computed(
   () => !!project.value?.config?.has_chats_summary,
