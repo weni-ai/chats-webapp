@@ -76,4 +76,12 @@ describe('AssistantMessageList', () => {
       wrapper.find('[data-testid="assistant-human-message"]').exists(),
     ).toBe(true);
   });
+
+  it('shows the thinking indicator while the assistant is processing', () => {
+    wrapper = createWrapper({ isThinking: true });
+
+    expect(
+      wrapper.find('[data-testid="assistant-thinking-indicator"]').exists(),
+    ).toBe(true);
+  });
 });

@@ -144,6 +144,11 @@ const createWrapper = (props = {}, piniaState = {}) =>
           template: '<div data-testid="assistant-cart-badge" />',
           props: ['count'],
         },
+        UnnnicButton: {
+          name: 'UnnnicButton',
+          inheritAttrs: false,
+          template: '<button v-bind="$attrs" @click="$emit(\'click\')" />',
+        },
       },
     },
   });
