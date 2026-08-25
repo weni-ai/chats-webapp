@@ -4,6 +4,7 @@
     data-testid="desk-copilot"
   >
     <section
+      ref="listRef"
       class="desk-copilot__chat"
       data-testid="desk-copilot-chat"
     >
@@ -21,7 +22,25 @@
           :isLoadingHistory="isLoadingHistory"
           @send="handleSendSuggestionToInput"
         />
+
+        <section
+          v-if="showGoToBottom"
+          class="desk-copilot__go-to-bottom"
+        >
+          <UnnnicButton
+            class="desk-copilot__go-to-bottom-button"
+            type="tertiary"
+            size="small"
+            iconCenter="arrow_downward"
+            data-testid="assistant-scroll-to-bottom"
+            :aria-label="
+              $t('contact_info.desk_copilot.assistant.scroll_to_bottom')
+            "
+            @click="scrollToBottom()"
+          />
+        </section>
       </template>
+      <div ref="bottomAnchorRef" />
     </section>
 
     <template v-if="isConfigured">
@@ -50,6 +69,7 @@ import AssistantMessageList from './assistant/AssistantMessageList.vue';
 import AssistantInput from './assistant/AssistantInput.vue';
 import SuggestionChips from './assistant/SuggestionChips.vue';
 import CartBadge from './assistant/CartBadge.vue';
+import { useAutoScroll } from '@/composables/assistant/useAutoScroll';
 import { useCopilotChat } from '@/composables/assistant/useCopilotChat';
 import { useCopilotConnection } from '@/composables/useCopilotConnection';
 import { useConfig } from '@/store/modules/config';
@@ -96,6 +116,9 @@ const {
   sendMessage,
 } = useCopilotChat(connection, roomUuid);
 
+const { listRef, bottomAnchorRef, showGoToBottom, scrollToBottom } =
+  useAutoScroll(messages, isThinking);
+
 const enableRoomSummary = computed(
   () => !!project.value?.config?.has_chats_summary,
 );
@@ -127,6 +150,45 @@ onMounted(() => {
     flex: 1;
     min-height: 0;
     overflow: hidden auto;
+  }
+
+  &__go-to-bottom {
+    display: flex;
+    justify-content: center;
+    position: sticky;
+    bottom: -$unnnic-space-4;
+    left: 0;
+    right: 0;
+    height: $unnnic-space-16;
+    z-index: 1;
+    pointer-events: none;
+    background-image: linear-gradient(
+      to bottom,
+      transparent,
+      $unnnic-color-bg-base
+    );
+  }
+
+  &__go-to-bottom-button {
+    pointer-events: auto;
+    align-self: center;
+    animation: assistant-go-to-bottom-enter 0.4s ease both;
+  }
+}
+
+@keyframes assistant-go-to-bottom-enter {
+  from {
+    opacity: 0;
+    transform: translateY(100%);
+  }
+
+  30% {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
   }
 }
 </style>
