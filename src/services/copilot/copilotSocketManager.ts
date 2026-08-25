@@ -1,9 +1,30 @@
 import WeniWebchatService from '@weni/webchat-service';
 import type { CopilotConnection } from '@/services/api/resources/chats/copilot';
+import env from '@/utils/env';
+
+const DEFAULT_IDLE_TIMEOUT_MS = 120000;
 
 const services = new Map<string, WeniWebchatService>();
+const evictionTimers = new Map<string, ReturnType<typeof setTimeout>>();
 
-function createService(connection: CopilotConnection): WeniWebchatService {
+function buildKey(channelUuid: string, roomUuid: string) {
+  return `${channelUuid}:${roomUuid}`;
+}
+
+function getIdleTimeoutMs() {
+  const parsed = Number(env('COPILOT_IDLE_TIMEOUT_MS'));
+
+  if (Number.isFinite(parsed) && parsed > 0) {
+    return parsed;
+  }
+
+  return DEFAULT_IDLE_TIMEOUT_MS;
+}
+
+function createService(
+  connection: CopilotConnection,
+  roomUuid: string,
+): WeniWebchatService {
   return new WeniWebchatService({
     socketUrl: connection.socketUrl,
     channelUuid: connection.channelUuid,
@@ -12,54 +33,97 @@ function createService(connection: CopilotConnection): WeniWebchatService {
     storage: connection.storage || 'local',
     callbackUrl: connection.callbackUrl || '',
     mode: 'live',
+    sessionId: roomUuid,
   });
+}
+
+function clearEvictionTimer(key: string) {
+  const timer = evictionTimers.get(key);
+
+  if (!timer) {
+    return;
+  }
+
+  clearTimeout(timer);
+  evictionTimers.delete(key);
+}
+
+function disposeByKey(key: string) {
+  clearEvictionTimer(key);
+
+  const service = services.get(key);
+
+  if (!service) {
+    return;
+  }
+
+  service.destroy();
+  services.delete(key);
 }
 
 export const copilotSocketManager = {
   getOrCreateService(
-    channelUuid: string,
+    roomUuid: string,
     connection: CopilotConnection,
   ): WeniWebchatService {
-    const existingService = services.get(channelUuid);
+    const key = buildKey(connection.channelUuid, roomUuid);
+    clearEvictionTimer(key);
+
+    const existingService = services.get(key);
 
     if (existingService) {
       return existingService;
     }
 
-    const service = createService({
-      ...connection,
-      channelUuid,
-    });
-
-    services.set(channelUuid, service);
+    const service = createService(connection, roomUuid);
+    services.set(key, service);
     service.init().catch((error) => {
-      console.error(
-        `Failed to initialize copilot service for ${channelUuid}:`,
-        error,
-      );
-      services.delete(channelUuid);
+      console.error(`Failed to initialize copilot service for ${key}:`, error);
+      disposeByKey(key);
     });
 
     return service;
   },
 
-  setRoomContext(channelUuid: string, context: string) {
-    const service = services.get(channelUuid);
-    service?.setContext(context);
+  setRoomContext(
+    roomUuid: string,
+    connection: CopilotConnection,
+    context: string,
+  ) {
+    const key = buildKey(connection.channelUuid, roomUuid);
+    services.get(key)?.setContext(context);
   },
 
-  disposeService(channelUuid: string) {
-    const service = services.get(channelUuid);
+  scheduleEviction(
+    roomUuid: string,
+    connection: CopilotConnection,
+    delayMs = getIdleTimeoutMs(),
+  ) {
+    const key = buildKey(connection.channelUuid, roomUuid);
 
-    if (!service) {
+    if (!services.has(key)) {
       return;
     }
 
-    service.destroy();
-    services.delete(channelUuid);
+    clearEvictionTimer(key);
+
+    const timer = setTimeout(() => {
+      disposeByKey(key);
+    }, delayMs);
+
+    evictionTimers.set(key, timer);
+  },
+
+  disposeService(roomUuid: string, connection: CopilotConnection) {
+    disposeByKey(buildKey(connection.channelUuid, roomUuid));
   },
 
   reset() {
+    evictionTimers.forEach((timer) => {
+      clearTimeout(timer);
+    });
+    evictionTimers.clear();
+
     services.forEach((service) => {
       service.destroy();
     });
