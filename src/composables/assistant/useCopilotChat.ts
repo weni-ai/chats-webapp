@@ -26,6 +26,7 @@ export function useCopilotChat(
 ) {
   const messages = ref<AssistantMessage[]>([]);
   const isThinking = ref(false);
+  const isTyping = ref(false);
   const cartCount = ref(0);
   const isLoadingHistory = ref(false);
 
@@ -38,7 +39,10 @@ export function useCopilotChat(
   const suggestions = computed(() => {
     const lastAiMessage = [...messages.value]
       .reverse()
-      .find((message) => message.direction === 'ai');
+      .find(
+        (message) =>
+          message.direction === 'ai' && message.status !== 'streaming',
+      );
 
     return lastAiMessage?.quickReplies || [];
   });
@@ -46,6 +50,7 @@ export function useCopilotChat(
   function resetViewState() {
     messages.value = [];
     isThinking.value = false;
+    isTyping.value = false;
     cartCount.value = 0;
     isLoadingHistory.value = false;
   }
@@ -73,13 +78,7 @@ export function useCopilotChat(
     messages.value = service.getMessages().map(mapServiceMessage);
   }
 
-  function handleMessageReceived(...args: unknown[]) {
-    const message = args[0] as Message;
-    if (!message?.id) {
-      return;
-    }
-
-    const mapped = mapServiceMessage(message);
+  function upsertMappedMessage(mapped: AssistantMessage) {
     const existingIndex = messages.value.findIndex(
       (item) => item.id === mapped.id,
     );
@@ -92,8 +91,35 @@ export function useCopilotChat(
     messages.value.push(mapped);
   }
 
+  function handleMessageReceived(...args: unknown[]) {
+    const message = args[0] as Message;
+    if (!message?.id) {
+      return;
+    }
+
+    upsertMappedMessage(mapServiceMessage(message));
+  }
+
   function handleMessageSent(...args: unknown[]) {
     handleMessageReceived(...args);
+  }
+
+  function handleMessageUpdated(...args: unknown[]) {
+    const messageId = args[0] as string;
+
+    if (!messageId || !activeService) {
+      return;
+    }
+
+    const updated = activeService
+      .getMessages()
+      .find((message) => message.id === messageId);
+
+    if (!updated) {
+      return;
+    }
+
+    upsertMappedMessage(mapServiceMessage(updated));
   }
 
   function handleThinkingStart() {
@@ -102,6 +128,14 @@ export function useCopilotChat(
 
   function handleThinkingStop() {
     isThinking.value = false;
+  }
+
+  function handleTypingStart() {
+    isTyping.value = true;
+  }
+
+  function handleTypingStop() {
+    isTyping.value = false;
   }
 
   function handleCartUpdated(...args: unknown[]) {
@@ -133,8 +167,11 @@ export function useCopilotChat(
     clearHistoryLoadedTimer();
     service.off(SERVICE_EVENTS.MESSAGE_RECEIVED, handleMessageReceived);
     service.off(SERVICE_EVENTS.MESSAGE_SENT, handleMessageSent);
+    service.off(SERVICE_EVENTS.MESSAGE_UPDATED, handleMessageUpdated);
     service.off(SERVICE_EVENTS.THINKING_START, handleThinkingStart);
     service.off(SERVICE_EVENTS.THINKING_STOP, handleThinkingStop);
+    service.off(SERVICE_EVENTS.TYPING_START, handleTypingStart);
+    service.off(SERVICE_EVENTS.TYPING_STOP, handleTypingStop);
     service.off(SERVICE_EVENTS.CART_UPDATED, handleCartUpdated);
     service.off(SERVICE_EVENTS.STATE_CHANGED, handleStateChanged);
     service.off(SERVICE_EVENTS.HISTORY_LOADED, handleHistoryLoaded);
@@ -144,8 +181,11 @@ export function useCopilotChat(
   function subscribe(service: WeniWebchatService) {
     service.on(SERVICE_EVENTS.MESSAGE_RECEIVED, handleMessageReceived);
     service.on(SERVICE_EVENTS.MESSAGE_SENT, handleMessageSent);
+    service.on(SERVICE_EVENTS.MESSAGE_UPDATED, handleMessageUpdated);
     service.on(SERVICE_EVENTS.THINKING_START, handleThinkingStart);
     service.on(SERVICE_EVENTS.THINKING_STOP, handleThinkingStop);
+    service.on(SERVICE_EVENTS.TYPING_START, handleTypingStart);
+    service.on(SERVICE_EVENTS.TYPING_STOP, handleTypingStop);
     service.on(SERVICE_EVENTS.CART_UPDATED, handleCartUpdated);
     service.on(SERVICE_EVENTS.STATE_CHANGED, handleStateChanged);
     service.on(SERVICE_EVENTS.HISTORY_LOADED, handleHistoryLoaded);
@@ -257,6 +297,7 @@ export function useCopilotChat(
   return {
     messages,
     isThinking,
+    isTyping,
     isLoadingHistory,
     cartCount,
     suggestions,
