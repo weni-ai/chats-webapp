@@ -8,12 +8,14 @@ const TestHost = defineComponent({
   setup() {
     const messages = ref<{ id: string }[]>([]);
     const isThinking = ref(false);
+    const isTyping = ref(false);
     const { listRef, bottomAnchorRef, showGoToBottom, scrollToBottom } =
-      useAutoScroll(messages, isThinking);
+      useAutoScroll(messages, isThinking, isTyping);
 
     return {
       messages,
       isThinking,
+      isTyping,
       listRef,
       bottomAnchorRef,
       showGoToBottom,
@@ -68,6 +70,18 @@ describe('useAutoScroll', () => {
     scrollIntoView.mockClear();
 
     wrapper.vm.isThinking = true;
+    await nextTick();
+    await nextTick();
+
+    expect(scrollIntoView).toHaveBeenCalledWith({ behavior: 'smooth' });
+  });
+
+  it('scrolls to the bottom when typing starts', async () => {
+    mountHost();
+    await nextTick();
+    scrollIntoView.mockClear();
+
+    wrapper.vm.isTyping = true;
     await nextTick();
     await nextTick();
 
