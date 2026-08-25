@@ -12,16 +12,19 @@ vi.mock('@/services/api/resources/chats/copilotProject', () => ({
   default: {
     getLinkedProject: vi.fn(),
     create: vi.fn(),
+    update: vi.fn(),
+    listExistingProjects: vi.fn(),
+    remove: vi.fn(),
   },
 }));
 
 const linkedProject = {
   name: 'Sales 123',
-  assigned_agents: 3,
-  created_on: '2026-07-30T00:00:00Z',
-  connected_on: '2026-07-30T00:00:00Z',
+  assignedAgents: 3,
+  createdOn: '2026-07-30T00:00:00Z',
+  connectedOn: '2026-07-30T00:00:00Z',
   uuid: 'copilot-uuid',
-  connected_by: 'edu',
+  connectedBy: 'edu',
 };
 
 describe('useCopilotProject', () => {
@@ -35,6 +38,7 @@ describe('useCopilotProject', () => {
       uuid: 'desk-uuid',
       name: 'Sales 123',
       config: {},
+      org: 'org-uuid',
     };
   });
 
@@ -111,5 +115,62 @@ describe('useCopilotProject', () => {
 
     expect(project.value).toEqual(linkedProject);
     expect(showNewBadge.value).toBe(false);
+  });
+
+  it('changes the linked project', async () => {
+    const updatedProject = { ...linkedProject, uuid: 'copilot-uuid-2' };
+    CopilotProjectService.update.mockResolvedValue(updatedProject);
+
+    const { changeLinkedProject, linkedProject: project } = useCopilotProject();
+
+    const result = await changeLinkedProject('copilot-uuid-2');
+
+    expect(CopilotProjectService.update).toHaveBeenCalledWith(
+      'desk-uuid',
+      'copilot-uuid-2',
+    );
+    expect(result).toEqual(updatedProject);
+    expect(project.value).toEqual(updatedProject);
+  });
+
+  it('rethrows when changing the linked project fails', async () => {
+    CopilotProjectService.update.mockRejectedValue(new Error('network'));
+
+    const { changeLinkedProject, linkedProject: project } = useCopilotProject();
+
+    await expect(changeLinkedProject('copilot-uuid-2')).rejects.toThrow(
+      'network',
+    );
+    expect(project.value).toBeNull();
+  });
+
+  it('clears the linked project after a successful disconnect', async () => {
+    CopilotProjectService.remove.mockResolvedValue();
+
+    const {
+      setLinkedProject,
+      disconnectLinkedProject,
+      linkedProject: project,
+    } = useCopilotProject();
+    setLinkedProject(linkedProject);
+
+    await disconnectLinkedProject();
+
+    expect(CopilotProjectService.remove).toHaveBeenCalledWith('copilot-uuid');
+    expect(project.value).toBeNull();
+  });
+
+  it('keeps the linked project when disconnect fails', async () => {
+    CopilotProjectService.remove.mockRejectedValue(new Error('network'));
+
+    const {
+      setLinkedProject,
+      disconnectLinkedProject,
+      linkedProject: project,
+    } = useCopilotProject();
+    setLinkedProject(linkedProject);
+
+    await expect(disconnectLinkedProject()).rejects.toThrow('network');
+    expect(project.value).toEqual(linkedProject);
   });
 });

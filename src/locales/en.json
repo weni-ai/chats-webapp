@@ -1150,11 +1150,21 @@
         "connected_to": "Connected to",
         "created_on": "Created on",
         "description": "This project is used exclusively to manage the AI agents for the Desk Copilot. It is accessible only through this section.",
-        "open": "Open"
+        "open": "Open",
+        "popover_change_option": "Change",
+        "popover_disconnect_option": "Disconnect"
+      },
+      "disconnect_modal": {
+        "confirm": "Disconnect",
+        "description": "This project will lose access to Desk Copilot feature until a Copilot Project is reconnected. The Copilot Project itself and its other connections will not be affected.",
+        "error": "Unable to disconnect the Copilot Project.",
+        "success": "The Copilot Project has been disconnected!",
+        "title": "Disconnect Copilot Project"
       },
       "empty_state": {
         "create_button": "Create Copilot Project",
         "description": "To enable Desk Copilot, connect this project to a Copilot Project where your AI Agents are managed",
+        "select_button": "Select Copilot Project",
         "title": "No Copilot Project connected"
       },
       "enable_title": "Enable Desk Copilot",
@@ -1185,7 +1195,19 @@
         "success": "Copilot project created and connected successfully",
         "title": "Create Copilot Project"
       },
-      "new_badge": "New"
+      "new_badge": "New",
+      "picker_modal": {
+        "assigned_agents_tag": "{count, plural, one {{count} assigned agent} other {{count} assigned agents}}",
+        "change_button": "Change",
+        "change_error": "Unable to change the Copilot Project.",
+        "change_success": "The Copilot Project has been changed!",
+        "change_title": "Change Copilot Project",
+        "connect_button": "Connect",
+        "connect_error": "Error connecting to copilot project.",
+        "connect_success": "Copilot project connected!",
+        "search_placeholder": "Search by name",
+        "select_title": "Select Existing Copilot Project"
+      }
     },
     "changes_saved": "Changes saved successfully",
     "changes_not_saved": "Error saving changes. Try again.",
