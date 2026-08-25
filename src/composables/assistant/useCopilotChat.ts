@@ -27,11 +27,13 @@ export function useCopilotChat(
   const messages = ref<AssistantMessage[]>([]);
   const isThinking = ref(false);
   const cartCount = ref(0);
+  const isLoadingHistory = ref(false);
 
   let activeService: WeniWebchatService | null = null;
   let activeChannelUuid: string | null = null;
   let activeRoomUuid: string | null = null;
   let activeConnection: CopilotConnection | null = null;
+  let historyLoadedTimer: ReturnType<typeof setTimeout> | null = null;
 
   const suggestions = computed(() => {
     const lastAiMessage = [...messages.value]
@@ -45,6 +47,26 @@ export function useCopilotChat(
     messages.value = [];
     isThinking.value = false;
     cartCount.value = 0;
+    isLoadingHistory.value = false;
+  }
+
+  function clearHistoryLoadedTimer() {
+    if (!historyLoadedTimer) {
+      return;
+    }
+
+    clearTimeout(historyLoadedTimer);
+    historyLoadedTimer = null;
+  }
+
+  function finishHistoryLoading() {
+    clearHistoryLoadedTimer();
+
+    if (activeService) {
+      syncMessagesFromService(activeService);
+    }
+
+    isLoadingHistory.value = false;
   }
 
   function syncMessagesFromService(service: WeniWebchatService) {
@@ -86,12 +108,37 @@ export function useCopilotChat(
     cartCount.value = extractCartCount(args[0]);
   }
 
+  function handleStateChanged() {
+    if (!activeService || !isLoadingHistory.value) {
+      return;
+    }
+
+    syncMessagesFromService(activeService);
+  }
+
+  function handleHistoryLoaded() {
+    clearHistoryLoadedTimer();
+    // getHistory emits this before merging into state; wait a tick so messages exist.
+    historyLoadedTimer = setTimeout(() => {
+      historyLoadedTimer = null;
+      finishHistoryLoading();
+    }, 0);
+  }
+
+  function handleServiceError() {
+    finishHistoryLoading();
+  }
+
   function unsubscribe(service: WeniWebchatService) {
+    clearHistoryLoadedTimer();
     service.off(SERVICE_EVENTS.MESSAGE_RECEIVED, handleMessageReceived);
     service.off(SERVICE_EVENTS.MESSAGE_SENT, handleMessageSent);
     service.off(SERVICE_EVENTS.THINKING_START, handleThinkingStart);
     service.off(SERVICE_EVENTS.THINKING_STOP, handleThinkingStop);
     service.off(SERVICE_EVENTS.CART_UPDATED, handleCartUpdated);
+    service.off(SERVICE_EVENTS.STATE_CHANGED, handleStateChanged);
+    service.off(SERVICE_EVENTS.HISTORY_LOADED, handleHistoryLoaded);
+    service.off(SERVICE_EVENTS.ERROR, handleServiceError);
   }
 
   function subscribe(service: WeniWebchatService) {
@@ -100,6 +147,9 @@ export function useCopilotChat(
     service.on(SERVICE_EVENTS.THINKING_START, handleThinkingStart);
     service.on(SERVICE_EVENTS.THINKING_STOP, handleThinkingStop);
     service.on(SERVICE_EVENTS.CART_UPDATED, handleCartUpdated);
+    service.on(SERVICE_EVENTS.STATE_CHANGED, handleStateChanged);
+    service.on(SERVICE_EVENTS.HISTORY_LOADED, handleHistoryLoaded);
+    service.on(SERVICE_EVENTS.ERROR, handleServiceError);
   }
 
   function detachCurrentView() {
@@ -153,6 +203,7 @@ export function useCopilotChat(
     activeConnection = currentConnection;
     subscribe(service);
     syncMessagesFromService(service);
+    isLoadingHistory.value = !service.isConnected();
   }
 
   function sendMessage(text: string) {
@@ -206,6 +257,7 @@ export function useCopilotChat(
   return {
     messages,
     isThinking,
+    isLoadingHistory,
     cartCount,
     suggestions,
     sendMessage,
