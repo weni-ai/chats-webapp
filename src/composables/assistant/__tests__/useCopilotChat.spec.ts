@@ -34,8 +34,11 @@ vi.mock('@weni/webchat-service', () => ({
   SERVICE_EVENTS: {
     MESSAGE_RECEIVED: 'message:received',
     MESSAGE_SENT: 'message:sent',
+    MESSAGE_UPDATED: 'message:updated',
     THINKING_START: 'thinking:start',
     THINKING_STOP: 'thinking:stop',
+    TYPING_START: 'typing:start',
+    TYPING_STOP: 'typing:stop',
     CART_UPDATED: 'cart:updated',
     STATE_CHANGED: 'state:changed',
     HISTORY_LOADED: 'history:loaded',
@@ -110,6 +113,65 @@ describe('useCopilotChat', () => {
 
     emit(SERVICE_EVENTS.CART_UPDATED, { count: 3 });
     expect(cartCount.value).toBe(3);
+  });
+
+  it('updates typing from service events', async () => {
+    const connection = ref<CopilotConnection | undefined>(connectionValue);
+    const roomUuid = ref<string | undefined>('room-1');
+    const { isTyping } = useCopilotChat(connection, roomUuid);
+
+    await nextTick();
+
+    emit(SERVICE_EVENTS.TYPING_START);
+    expect(isTyping.value).toBe(true);
+
+    emit(SERVICE_EVENTS.TYPING_STOP);
+    expect(isTyping.value).toBe(false);
+  });
+
+  it('upserts streaming updates from message:updated', async () => {
+    const connection = ref<CopilotConnection | undefined>(connectionValue);
+    const roomUuid = ref<string | undefined>('room-1');
+    const { messages, suggestions } = useCopilotChat(connection, roomUuid);
+
+    await nextTick();
+
+    serviceMock.getMessages.mockReturnValue([
+      {
+        id: 'ai-1',
+        type: 'text',
+        text: 'Hello',
+        timestamp: 1,
+        direction: 'incoming',
+        status: 'streaming',
+        quick_replies: ['Ask later'],
+      },
+    ]);
+
+    emit(SERVICE_EVENTS.MESSAGE_UPDATED, 'ai-1');
+
+    expect(messages.value).toHaveLength(1);
+    expect(messages.value[0].text).toBe('Hello');
+    expect(messages.value[0].status).toBe('streaming');
+    expect(suggestions.value).toEqual([]);
+
+    serviceMock.getMessages.mockReturnValue([
+      {
+        id: 'ai-1',
+        type: 'text',
+        text: 'Hello world',
+        timestamp: 1,
+        direction: 'incoming',
+        status: 'delivered',
+        quick_replies: ['Ask later'],
+      },
+    ]);
+
+    emit(SERVICE_EVENTS.MESSAGE_UPDATED, 'ai-1');
+
+    expect(messages.value[0].text).toBe('Hello world');
+    expect(messages.value[0].status).toBe('delivered');
+    expect(suggestions.value).toEqual(['Ask later']);
   });
 
   it('sends messages through the active service', async () => {
