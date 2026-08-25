@@ -32,7 +32,13 @@ export const copilotSocketManager = {
     });
 
     services.set(channelUuid, service);
-    void service.init();
+    service.init().catch((error) => {
+      console.error(
+        `Failed to initialize copilot service for ${channelUuid}:`,
+        error,
+      );
+      services.delete(channelUuid);
+    });
 
     return service;
   },

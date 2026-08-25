@@ -97,4 +97,31 @@ describe('copilotSocketManager', () => {
     expect(second).not.toBe(first);
     expect(init).toHaveBeenCalledTimes(2);
   });
+
+  it('removes the service from the map when init fails', async () => {
+    const consoleError = vi
+      .spyOn(console, 'error')
+      .mockImplementation(() => undefined);
+    init.mockRejectedValueOnce(new Error('init failed'));
+
+    const failed = copilotSocketManager.getOrCreateService(
+      'channel-1',
+      connection,
+    );
+
+    await Promise.resolve();
+    await Promise.resolve();
+
+    expect(consoleError).toHaveBeenCalled();
+
+    const recreated = copilotSocketManager.getOrCreateService(
+      'channel-1',
+      connection,
+    );
+
+    expect(recreated).not.toBe(failed);
+    expect(init).toHaveBeenCalledTimes(2);
+
+    consoleError.mockRestore();
+  });
 });
