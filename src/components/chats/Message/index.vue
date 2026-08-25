@@ -13,6 +13,7 @@
       'is-video': isVideo,
       'is-geo': isGeolocation,
       highlighted: highlighted,
+      'is-medias-group': hasMediasGroup,
     }"
     @mouseover="isHovering = true"
     @mouseleave="isHovering = false"
@@ -40,6 +41,7 @@
         'is-image': isImage,
         'is-video': isVideo,
         'is-geo': isGeolocation,
+        'is-medias-group': hasMediasGroup,
       }"
     >
       <UnnnicIcon
@@ -48,6 +50,12 @@
         icon="location_on"
         size="avatar-nano"
       />
+      <div
+        v-if="hasMediasGroup"
+        class="unnnic-chats-message__medias-group"
+      >
+        <slot name="medias" />
+      </div>
       <ChatsMessageText
         v-if="isText"
         :text="slotText"
@@ -241,10 +249,16 @@ export default {
     isMedia() {
       return !!this.mediaType;
     },
+    hasMediasGroup() {
+      return !!this.$slots.medias;
+    },
     isDocument() {
       return !!this.documentName;
     },
     isText() {
+      if (this.hasMediasGroup) {
+        return !!this.slotText;
+      }
       const validText = !this.isMedia || this.isGeolocation;
       return validText && !this.isDocument;
     },
@@ -349,6 +363,10 @@ $defaultLineHeight: $unnnic-font-size-body-gt + $unnnic-line-height-medium;
     }
   }
 
+  &.is-medias-group {
+    padding: $unnnic-space-2 $unnnic-space-3;
+  }
+
   &.is-media {
     padding: $unnnic-space-2;
   }
@@ -394,6 +412,13 @@ $defaultLineHeight: $unnnic-font-size-body-gt + $unnnic-line-height-medium;
         width: 300px;
         max-width: 300px;
       }
+    }
+
+    &.is-medias-group {
+      display: flex;
+      flex-direction: column;
+      align-items: stretch;
+      gap: $unnnic-space-2;
     }
 
     &.is-document {
@@ -454,6 +479,12 @@ $defaultLineHeight: $unnnic-font-size-body-gt + $unnnic-line-height-medium;
       align-items: center;
       gap: $unnnic-space-1;
     }
+  }
+
+  &__medias-group {
+    display: flex;
+    flex-direction: column;
+    gap: $unnnic-space-2;
   }
 
   &__media__container {
