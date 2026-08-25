@@ -41,7 +41,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted, watch } from 'vue';
+import { computed, onMounted } from 'vue';
 import { storeToRefs } from 'pinia';
 import SummaryMessage from './SummaryMessage.vue';
 import Disclaimer from './Disclaimer.vue';
@@ -51,7 +51,6 @@ import SuggestionChips from './assistant/SuggestionChips.vue';
 import CartBadge from './assistant/CartBadge.vue';
 import { useCopilotChat } from '@/composables/assistant/useCopilotChat';
 import { useCopilotConnection } from '@/composables/useCopilotConnection';
-import { copilotSocketManager } from '@/services/copilot/copilotSocketManager';
 import { useConfig } from '@/store/modules/config';
 import { useRooms } from '@/store/modules/chats/rooms';
 import { useMessageManager } from '@/store/modules/chats/messageManager';
@@ -86,8 +85,9 @@ const {
   isLoading: isLoadingConnection,
 } = useCopilotConnection(activeRoom);
 
+const roomUuid = computed(() => activeRoom.value?.uuid);
 const { messages, isThinking, cartCount, suggestions, sendMessage } =
-  useCopilotChat(connection);
+  useCopilotChat(connection, roomUuid);
 
 const enableRoomSummary = computed(
   () => !!project.value?.config?.has_chats_summary,
@@ -97,28 +97,6 @@ function handleSendSuggestionToInput(text: string) {
   inputMessage.value = text;
   inputMessageFocused.value = true;
 }
-
-watch(
-  [connection, () => activeRoom.value?.uuid],
-  ([currentConnection, roomUuid]) => {
-    if (!currentConnection?.channelUuid) {
-      return;
-    }
-
-    copilotSocketManager.getOrCreateService(
-      currentConnection.channelUuid,
-      currentConnection,
-    );
-
-    if (roomUuid) {
-      copilotSocketManager.setRoomContext(
-        currentConnection.channelUuid,
-        roomUuid,
-      );
-    }
-  },
-  { immediate: true },
-);
 
 onMounted(() => {
   emit('loaded');
