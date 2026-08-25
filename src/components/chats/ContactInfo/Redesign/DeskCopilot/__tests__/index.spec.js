@@ -61,6 +61,7 @@ function mockCopilotConnection({
 function mockCopilotChat({
   messages = [],
   isThinking = false,
+  isTyping = false,
   isLoadingHistory = false,
   cartCount = 0,
   suggestions = [],
@@ -68,6 +69,7 @@ function mockCopilotChat({
   useCopilotChat.mockReturnValue({
     messages: ref(messages),
     isThinking: ref(isThinking),
+    isTyping: ref(isTyping),
     isLoadingHistory: ref(isLoadingHistory),
     cartCount: ref(cartCount),
     suggestions: ref(suggestions),
@@ -128,7 +130,7 @@ const createWrapper = (props = {}, piniaState = {}) =>
           name: 'AssistantMessageList',
           template:
             '<div data-testid="assistant-message-list" @click="$emit(\'send\', \'Suggested text\')"><div v-if="isLoadingHistory" data-testid="assistant-history-loading" /></div>',
-          props: ['messages', 'isThinking', 'isLoadingHistory'],
+          props: ['messages', 'isThinking', 'isTyping', 'isLoadingHistory'],
         },
         AssistantInput: {
           name: 'AssistantInput',
