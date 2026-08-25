@@ -13,7 +13,6 @@ import { createTestingPinia } from '@pinia/testing';
 import DeskCopilotTab from '../index.vue';
 import { useCopilotConnection } from '@/composables/useCopilotConnection';
 import { useCopilotChat } from '@/composables/assistant/useCopilotChat';
-import { copilotSocketManager } from '@/services/copilot/copilotSocketManager';
 import { useMessageManager } from '@/store/modules/chats/messageManager';
 import i18n from '@/plugins/i18n';
 
@@ -23,14 +22,6 @@ vi.mock('@/composables/useCopilotConnection', () => ({
 
 vi.mock('@/composables/assistant/useCopilotChat', () => ({
   useCopilotChat: vi.fn(),
-}));
-
-vi.mock('@/services/copilot/copilotSocketManager', () => ({
-  copilotSocketManager: {
-    getOrCreateService: vi.fn(),
-    setRoomContext: vi.fn(),
-    disposeService: vi.fn(),
-  },
 }));
 
 beforeAll(() => {
@@ -202,10 +193,9 @@ describe('DeskCopilotTab', () => {
     expect(wrapper.find('[data-testid="assistant-cart-badge"]').exists()).toBe(
       true,
     );
-    expect(copilotSocketManager.getOrCreateService).toHaveBeenCalledWith(
-      'channel-1',
-      defaultConnection,
-    );
+    expect(useCopilotChat).toHaveBeenCalled();
+    const [, roomUuid] = useCopilotChat.mock.calls[0];
+    expect(roomUuid.value).toBe('room-1');
   });
 
   it('sends the AI suggestion into the main chat input', async () => {
