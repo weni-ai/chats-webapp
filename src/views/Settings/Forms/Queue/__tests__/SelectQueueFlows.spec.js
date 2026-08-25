@@ -70,9 +70,7 @@ describe('SelectQueueFlows', () => {
   it('adds a selected flow and clears the select', async () => {
     await flushPromises();
 
-    await wrapper.setData({
-      flowSelection: 'flow-1',
-    });
+    wrapper.vm.flowSelection = 'flow-1';
     await flushPromises();
 
     expect(wrapper.emitted('update:modelValue').at(-1)[0]).toEqual(['flow-1']);
