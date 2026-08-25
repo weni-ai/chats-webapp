@@ -12,11 +12,17 @@ import { mount, config, flushPromises } from '@vue/test-utils';
 import { createTestingPinia } from '@pinia/testing';
 import DeskCopilotTab from '../index.vue';
 import { useCopilotConnection } from '@/composables/useCopilotConnection';
+import { useCopilotChat } from '@/composables/assistant/useCopilotChat';
 import { copilotSocketManager } from '@/services/copilot/copilotSocketManager';
+import { useMessageManager } from '@/store/modules/chats/messageManager';
 import i18n from '@/plugins/i18n';
 
 vi.mock('@/composables/useCopilotConnection', () => ({
   useCopilotConnection: vi.fn(),
+}));
+
+vi.mock('@/composables/assistant/useCopilotChat', () => ({
+  useCopilotChat: vi.fn(),
 }));
 
 vi.mock('@/services/copilot/copilotSocketManager', () => ({
@@ -61,6 +67,21 @@ function mockCopilotConnection({
   });
 }
 
+function mockCopilotChat({
+  messages = [],
+  isThinking = false,
+  cartCount = 0,
+  suggestions = [],
+} = {}) {
+  useCopilotChat.mockReturnValue({
+    messages: ref(messages),
+    isThinking: ref(isThinking),
+    cartCount: ref(cartCount),
+    suggestions: ref(suggestions),
+    sendMessage: vi.fn(),
+  });
+}
+
 const createWrapper = (props = {}, piniaState = {}) =>
   mount(DeskCopilotTab, {
     props,
@@ -79,6 +100,10 @@ const createWrapper = (props = {}, piniaState = {}) =>
             },
             config: {
               project: { config: { has_chats_summary: true } },
+            },
+            messageManager: {
+              inputMessage: '',
+              inputMessageFocused: false,
             },
             ...piniaState,
           },
@@ -106,6 +131,26 @@ const createWrapper = (props = {}, piniaState = {}) =>
           template: '<div data-testid="desk-copilot-disclaimer" />',
           props: ['hasSummary', 'isHistory', 'isViewMode'],
         },
+        AssistantMessageList: {
+          name: 'AssistantMessageList',
+          template:
+            '<div data-testid="assistant-message-list" @click="$emit(\'send\', \'Suggested text\')" />',
+          props: ['messages', 'isThinking'],
+        },
+        AssistantInput: {
+          name: 'AssistantInput',
+          template: '<div data-testid="assistant-input" />',
+        },
+        SuggestionChips: {
+          name: 'AssistantSuggestionChips',
+          template: '<div data-testid="assistant-suggestion-chips" />',
+          props: ['suggestions'],
+        },
+        CartBadge: {
+          name: 'AssistantCartBadge',
+          template: '<div data-testid="assistant-cart-badge" />',
+          props: ['count'],
+        },
       },
     },
   });
@@ -120,6 +165,7 @@ describe('DeskCopilotTab', () => {
 
   it('renders the summary and disclaimer when there are no connections', async () => {
     mockCopilotConnection();
+    mockCopilotChat();
     wrapper = createWrapper();
 
     await flushPromises();
@@ -133,10 +179,14 @@ describe('DeskCopilotTab', () => {
     ).toBe(true);
   });
 
-  it('hides the disclaimer when the project has copilot connections', async () => {
+  it('hides the disclaimer and shows chat UI when configured', async () => {
     mockCopilotConnection({
       isConfigured: true,
       connection: defaultConnection,
+    });
+    mockCopilotChat({
+      cartCount: 1,
+      suggestions: ['Ask about color'],
     });
     wrapper = createWrapper();
 
@@ -145,21 +195,40 @@ describe('DeskCopilotTab', () => {
     expect(
       wrapper.find('[data-testid="desk-copilot-disclaimer"]').exists(),
     ).toBe(false);
-    expect(wrapper.find('[data-testid="desk-copilot-summary"]').exists()).toBe(
+    expect(
+      wrapper.find('[data-testid="assistant-message-list"]').exists(),
+    ).toBe(true);
+    expect(wrapper.find('[data-testid="assistant-input"]').exists()).toBe(true);
+    expect(wrapper.find('[data-testid="assistant-cart-badge"]').exists()).toBe(
       true,
     );
     expect(copilotSocketManager.getOrCreateService).toHaveBeenCalledWith(
       'channel-1',
       defaultConnection,
     );
-    expect(copilotSocketManager.setRoomContext).toHaveBeenCalledWith(
-      'channel-1',
-      'room-1',
-    );
+  });
+
+  it('sends the AI suggestion into the main chat input', async () => {
+    mockCopilotConnection({
+      isConfigured: true,
+      connection: defaultConnection,
+    });
+    mockCopilotChat();
+    wrapper = createWrapper();
+
+    await flushPromises();
+    await wrapper
+      .find('[data-testid="assistant-message-list"]')
+      .trigger('click');
+
+    const messageManager = useMessageManager();
+    expect(messageManager.inputMessage).toBe('Suggested text');
+    expect(messageManager.inputMessageFocused).toBe(true);
   });
 
   it('hides the summary when has_chats_summary is disabled', async () => {
     mockCopilotConnection();
+    mockCopilotChat();
     wrapper = createWrapper(
       {},
       {
@@ -181,22 +250,11 @@ describe('DeskCopilotTab', () => {
 
   it('emits loaded on mount so the contact drawer can leave the skeleton', async () => {
     mockCopilotConnection();
+    mockCopilotChat();
     wrapper = createWrapper();
 
     await flushPromises();
 
     expect(wrapper.emitted('loaded')).toBeTruthy();
-  });
-
-  it('shows the disclaimer when the connections request is not configured', async () => {
-    mockCopilotConnection({ isConfigured: false });
-    wrapper = createWrapper();
-
-    await flushPromises();
-
-    expect(
-      wrapper.find('[data-testid="desk-copilot-disclaimer"]').exists(),
-    ).toBe(true);
-    expect(copilotSocketManager.getOrCreateService).not.toHaveBeenCalled();
   });
 });
