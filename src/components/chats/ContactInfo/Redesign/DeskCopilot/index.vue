@@ -19,8 +19,10 @@
         <AssistantMessageList
           :messages="messages"
           :isThinking="isThinking"
+          :isTyping="isTyping"
           :isLoadingHistory="isLoadingHistory"
           @send="handleSendSuggestionToInput"
+          @word-revealed="scrollToBottom()"
         />
 
         <section
@@ -110,6 +112,7 @@ const roomUuid = computed(() => activeRoom.value?.uuid);
 const {
   messages,
   isThinking,
+  isTyping,
   isLoadingHistory,
   cartCount,
   suggestions,
@@ -117,7 +120,7 @@ const {
 } = useCopilotChat(connection, roomUuid);
 
 const { listRef, bottomAnchorRef, showGoToBottom, scrollToBottom } =
-  useAutoScroll(messages, isThinking);
+  useAutoScroll(messages, isThinking, isTyping);
 
 const enableRoomSummary = computed(
   () => !!project.value?.config?.has_chats_summary,
