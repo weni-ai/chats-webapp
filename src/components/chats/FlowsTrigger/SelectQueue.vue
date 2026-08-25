@@ -19,44 +19,50 @@
   </section>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { computed, onMounted, ref, watch } from 'vue';
 import { storeToRefs } from 'pinia';
 
 import { useProfile } from '@/store/modules/profile';
 
-const props = defineProps({
-  modelValue: {
-    type: String,
-    required: false,
-    default: '',
-  },
-  isDisabled: {
-    type: Boolean,
-    required: false,
-    default: false,
-  },
+import type {
+  QueuePermission,
+  QueueSelectOption,
+  SelectQueueProps,
+} from './types';
+
+const props = withDefaults(defineProps<SelectQueueProps>(), {
+  modelValue: '',
+  isDisabled: false,
 });
 
-const emit = defineEmits(['update:modelValue']);
+const emit = defineEmits<{
+  'update:modelValue': [uuid: string];
+}>();
 
 const profileStore = useProfile();
 const { me } = storeToRefs(profileStore);
 
 const isLoading = ref(false);
-const queueSelection = ref(null);
+const queueSelection = ref<QueueSelectOption | null>(null);
 const searchQueue = ref('');
 
-const queues = computed(() =>
-  (me.value?.queues || [])
-    .filter((permission) => permission?.queue)
+function hasQueue(
+  permission: QueuePermission,
+): permission is QueuePermission & { queue: string; queue_name: string } {
+  return Boolean(permission?.queue);
+}
+
+const queues = computed<QueueSelectOption[]>(() =>
+  ((me.value?.queues as QueuePermission[] | undefined) || [])
+    .filter(hasQueue)
     .map((permission) => ({
       value: permission.queue,
       label: permission.queue_name,
     })),
 );
 
-function syncSelectionFromModelValue(uuid) {
+function syncSelectionFromModelValue(uuid?: string) {
   if (!uuid) {
     queueSelection.value = null;
     return;
