@@ -1667,7 +1667,7 @@
     "history": {
       "filter_by_sender": "Filter by sender",
       "filter_by_status": "Filter by status",
-      "last_message_disclaimer": "The message \"{text}\" was sent in the last hour - at {time}.",
+      "last_message_disclaimer": "The message \"{text}\" was sent in the last hour, at {time}.",
       "sent_by": "Sent by",
       "status": "Status",
       "status_failed": "Failed to send",
@@ -1688,8 +1688,8 @@
   },
   "message_dictation": {
     "tooltip": {
-      "activate": "Activate voice mode (shift + V)",
-      "stop": "Stop voice mode (esc)"
+      "activate": "Activate voice mode (Shift + V)",
+      "stop": "Stop voice mode (Esc)"
     },
     "button": {
       "activate": "Voice mode",

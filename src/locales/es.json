@@ -1666,10 +1666,10 @@
     },
     "history": {
       "filter_by_sender": "Filtrar por remitente",
-      "filter_by_status": "Filtrar por estado",
-      "last_message_disclaimer": "El mensaje \"{text}\" se envió en la última hora - a las {time}.",
+      "filter_by_status": "Filtrar por status",
+      "last_message_disclaimer": "El mensaje \"{text}\" se envió durante la hora pasada a las {time}.",
       "sent_by": "Enviado por",
-      "status": "Estado",
+      "status": "Status",
       "status_failed": "Error al enviar",
       "status_sent": "Enviado"
     },

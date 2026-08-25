@@ -1619,7 +1619,7 @@
       "last_message_disclaimer": "Mesajul \"{text}\" a fost trimis în ultima oră - la {time}.",
       "sent_by": "Trimis de",
       "status": "Status",
-      "status_failed": "Eșec la trimitere",
+      "status_failed": "Trimitere nereușită",
       "status_sent": "Trimis"
     },
     "toast": {
@@ -1637,8 +1637,8 @@
   },
   "message_dictation": {
     "tooltip": {
-      "activate": "Activare mod vocal (shift + V)",
-      "stop": "Oprire mod vocal (esc)"
+      "activate": "Activare mod vocal (Shift + V)",
+      "stop": "Oprire mod vocal (Esc)"
     },
     "button": {
       "activate": "Mod vocal",
