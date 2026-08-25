@@ -852,7 +852,15 @@
         "input_placeholder": "Pergunte ao assistente",
         "loading_conversation": "Carregando conversa",
         "processing_information": "Processando informações",
-        "send_action": "Enviar"
+        "scroll_to_bottom": "Ir ao final",
+        "send_action": "Enviar",
+        "thinking_messages": {
+          "almost": "Quase pronto, só mais um instante",
+          "connecting": "Conectando ideias",
+          "processing": "Processando informações",
+          "refining": "Refinando detalhes",
+          "structuring": "Estruturando resposta"
+        }
       },
       "copy_summary": "Copiar resumo",
       "disclaimer": {

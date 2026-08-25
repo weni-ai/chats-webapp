@@ -852,7 +852,15 @@
         "input_placeholder": "Ask the assistant",
         "loading_conversation": "Loading conversation",
         "processing_information": "Processing information",
-        "send_action": "Send"
+        "scroll_to_bottom": "Go to bottom",
+        "send_action": "Send",
+        "thinking_messages": {
+          "almost": "Almost ready, just a moment",
+          "connecting": "Connecting ideas",
+          "processing": "Processing information",
+          "refining": "Refining details",
+          "structuring": "Structuring reply"
+        }
       },
       "copy_summary": "Copy summary",
       "disclaimer": {
