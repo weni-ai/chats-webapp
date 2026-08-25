@@ -7,6 +7,7 @@ declare module '@weni/webchat-service' {
     storage?: string;
     callbackUrl?: string;
     mode?: string;
+    sessionId?: string;
   };
 
   export type Message = {
@@ -38,6 +39,7 @@ declare module '@weni/webchat-service' {
     getContext(): string;
     getMessages(): Message[];
     sendMessage(_text: string, _options?: Record<string, unknown>): void;
+    setSessionId(_id: string): Promise<void>;
     on(_event: string, _cb: (..._args: unknown[]) => void): void;
     off(_event: string, _cb: (..._args: unknown[]) => void): void;
   }
