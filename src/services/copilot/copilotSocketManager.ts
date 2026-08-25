@@ -21,11 +21,36 @@ function getIdleTimeoutMs() {
   return DEFAULT_IDLE_TIMEOUT_MS;
 }
 
+function isolateSessionStorage(
+  service: WeniWebchatService,
+  connection: CopilotConnection,
+  roomUuid: string,
+) {
+  if (!service.session) {
+    return;
+  }
+
+  // webchat-service restores from a single shared key (`weni:webchat:session`)
+  // and ignores `sessionId` when that restore succeeds. Namespace it per room
+  // so concurrent instances do not register with the same `from` id.
+  service.session.sessionKey = `session:${connection.channelUuid}:${roomUuid}`;
+}
+
+function ensureConnected(service: WeniWebchatService, key: string) {
+  if (service.isConnected() || service.isConnecting()) {
+    return;
+  }
+
+  service.connect().catch((error) => {
+    console.error(`Failed to reconnect copilot service for ${key}:`, error);
+  });
+}
+
 function createService(
   connection: CopilotConnection,
   roomUuid: string,
 ): WeniWebchatService {
-  return new WeniWebchatService({
+  const service = new WeniWebchatService({
     socketUrl: connection.socketUrl,
     channelUuid: connection.channelUuid,
     host: connection.host,
@@ -35,6 +60,10 @@ function createService(
     mode: 'live',
     sessionId: roomUuid,
   });
+
+  isolateSessionStorage(service, connection, roomUuid);
+
+  return service;
 }
 
 function clearEvictionTimer(key: string) {
@@ -72,6 +101,7 @@ export const copilotSocketManager = {
     const existingService = services.get(key);
 
     if (existingService) {
+      ensureConnected(existingService, key);
       return existingService;
     }
 
