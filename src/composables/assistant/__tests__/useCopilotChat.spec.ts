@@ -11,6 +11,7 @@ const listeners = new Map<string, Set<(..._args: unknown[]) => void>>();
 const serviceMock = {
   getMessages: vi.fn(() => []),
   sendMessage: vi.fn(),
+  isConnected: vi.fn(() => false),
   on: vi.fn((event: string, cb: (..._args: unknown[]) => void) => {
     if (!listeners.has(event)) {
       listeners.set(event, new Set());
@@ -36,6 +37,9 @@ vi.mock('@weni/webchat-service', () => ({
     THINKING_START: 'thinking:start',
     THINKING_STOP: 'thinking:stop',
     CART_UPDATED: 'cart:updated',
+    STATE_CHANGED: 'state:changed',
+    HISTORY_LOADED: 'history:loaded',
+    ERROR: 'error',
   },
 }));
 
@@ -57,6 +61,7 @@ describe('useCopilotChat', () => {
     listeners.clear();
     vi.clearAllMocks();
     serviceMock.getMessages.mockReturnValue([]);
+    serviceMock.isConnected.mockReturnValue(false);
   });
 
   afterEach(() => {
@@ -148,5 +153,62 @@ describe('useCopilotChat', () => {
       connectionValue,
     );
     expect(messages.value).toEqual([]);
+  });
+
+  it('syncs restored history into the visible messages', async () => {
+    const connection = ref<CopilotConnection | undefined>(connectionValue);
+    const roomUuid = ref<string | undefined>('room-1');
+    const { messages, isLoadingHistory } = useCopilotChat(connection, roomUuid);
+
+    await nextTick();
+
+    expect(isLoadingHistory.value).toBe(true);
+
+    serviceMock.getMessages.mockReturnValue([
+      {
+        id: 'ai-1',
+        type: 'text',
+        text: 'From history',
+        timestamp: 1,
+        direction: 'incoming',
+        status: 'delivered',
+      },
+    ]);
+
+    emit(SERVICE_EVENTS.STATE_CHANGED);
+
+    expect(messages.value).toHaveLength(1);
+    expect(messages.value[0].text).toBe('From history');
+    expect(isLoadingHistory.value).toBe(true);
+
+    emit(SERVICE_EVENTS.HISTORY_LOADED);
+    await new Promise((resolve) => {
+      setTimeout(resolve, 0);
+    });
+
+    expect(isLoadingHistory.value).toBe(false);
+  });
+
+  it('skips the history loading state when the service is already connected', async () => {
+    serviceMock.isConnected.mockReturnValue(true);
+    serviceMock.getMessages.mockReturnValue([
+      {
+        id: 'ai-1',
+        type: 'text',
+        text: 'Already in memory',
+        timestamp: 1,
+        direction: 'incoming',
+        status: 'delivered',
+      },
+    ]);
+
+    const connection = ref<CopilotConnection | undefined>(connectionValue);
+    const roomUuid = ref<string | undefined>('room-1');
+    const { messages, isLoadingHistory } = useCopilotChat(connection, roomUuid);
+
+    await nextTick();
+
+    expect(isLoadingHistory.value).toBe(false);
+    expect(messages.value[0].text).toBe('Already in memory');
   });
 });
