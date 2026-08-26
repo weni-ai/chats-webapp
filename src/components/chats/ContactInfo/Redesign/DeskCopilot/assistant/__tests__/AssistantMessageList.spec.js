@@ -1,0 +1,79 @@
+import { describe, it, expect, afterEach, vi } from 'vitest';
+import { mount } from '@vue/test-utils';
+import AssistantMessageList from '../AssistantMessageList.vue';
+
+const createWrapper = (props = {}) =>
+  mount(AssistantMessageList, {
+    props: {
+      messages: [],
+      ...props,
+    },
+    global: {
+      mocks: {
+        $t: (key) => key,
+      },
+      stubs: {
+        UnnnicSkeletonLoading: {
+          name: 'UnnnicSkeletonLoading',
+          template: '<div data-testid="assistant-history-skeleton" />',
+        },
+        HumanMessage: {
+          name: 'AssistantHumanMessage',
+          template: '<div data-testid="assistant-human-message" />',
+          props: ['text'],
+        },
+        AiMessage: {
+          name: 'AssistantAiMessage',
+          template: '<div data-testid="assistant-ai-message" />',
+          props: ['text', 'suggestion'],
+        },
+        ThinkingIndicator: {
+          name: 'AssistantThinkingIndicator',
+          template: '<div data-testid="assistant-thinking-indicator" />',
+        },
+      },
+    },
+  });
+
+describe('AssistantMessageList', () => {
+  let wrapper;
+
+  afterEach(() => {
+    wrapper?.unmount();
+    vi.clearAllMocks();
+  });
+
+  it('shows the history loading state when there are no messages yet', () => {
+    wrapper = createWrapper({ isLoadingHistory: true });
+
+    expect(
+      wrapper.find('[data-testid="assistant-history-loading"]').exists(),
+    ).toBe(true);
+    expect(wrapper.text()).toContain(
+      'contact_info.desk_copilot.assistant.loading_conversation',
+    );
+  });
+
+  it('hides the history loading state after messages arrive', () => {
+    wrapper = createWrapper({
+      isLoadingHistory: true,
+      messages: [
+        {
+          id: '1',
+          direction: 'human',
+          text: 'Hello',
+          quickReplies: [],
+          status: 'sent',
+          timestamp: 1,
+        },
+      ],
+    });
+
+    expect(
+      wrapper.find('[data-testid="assistant-history-loading"]').exists(),
+    ).toBe(false);
+    expect(
+      wrapper.find('[data-testid="assistant-human-message"]').exists(),
+    ).toBe(true);
+  });
+});

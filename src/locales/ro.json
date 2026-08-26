@@ -822,6 +822,7 @@
       "assistant": {
         "copy_action": "Copiază",
         "input_placeholder": "Întreabă asistentul",
+        "loading_conversation": "Se încarcă conversația",
         "processing_information": "Se procesează informațiile",
         "send_action": "Trimite"
       },

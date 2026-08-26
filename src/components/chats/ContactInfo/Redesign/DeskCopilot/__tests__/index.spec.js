@@ -13,7 +13,6 @@ import { createTestingPinia } from '@pinia/testing';
 import DeskCopilotTab from '../index.vue';
 import { useCopilotConnection } from '@/composables/useCopilotConnection';
 import { useCopilotChat } from '@/composables/assistant/useCopilotChat';
-import { copilotSocketManager } from '@/services/copilot/copilotSocketManager';
 import { useMessageManager } from '@/store/modules/chats/messageManager';
 import i18n from '@/plugins/i18n';
 
@@ -23,14 +22,6 @@ vi.mock('@/composables/useCopilotConnection', () => ({
 
 vi.mock('@/composables/assistant/useCopilotChat', () => ({
   useCopilotChat: vi.fn(),
-}));
-
-vi.mock('@/services/copilot/copilotSocketManager', () => ({
-  copilotSocketManager: {
-    getOrCreateService: vi.fn(),
-    setRoomContext: vi.fn(),
-    disposeService: vi.fn(),
-  },
 }));
 
 beforeAll(() => {
@@ -70,12 +61,14 @@ function mockCopilotConnection({
 function mockCopilotChat({
   messages = [],
   isThinking = false,
+  isLoadingHistory = false,
   cartCount = 0,
   suggestions = [],
 } = {}) {
   useCopilotChat.mockReturnValue({
     messages: ref(messages),
     isThinking: ref(isThinking),
+    isLoadingHistory: ref(isLoadingHistory),
     cartCount: ref(cartCount),
     suggestions: ref(suggestions),
     sendMessage: vi.fn(),
@@ -134,8 +127,8 @@ const createWrapper = (props = {}, piniaState = {}) =>
         AssistantMessageList: {
           name: 'AssistantMessageList',
           template:
-            '<div data-testid="assistant-message-list" @click="$emit(\'send\', \'Suggested text\')" />',
-          props: ['messages', 'isThinking'],
+            '<div data-testid="assistant-message-list" @click="$emit(\'send\', \'Suggested text\')"><div v-if="isLoadingHistory" data-testid="assistant-history-loading" /></div>',
+          props: ['messages', 'isThinking', 'isLoadingHistory'],
         },
         AssistantInput: {
           name: 'AssistantInput',
@@ -202,10 +195,9 @@ describe('DeskCopilotTab', () => {
     expect(wrapper.find('[data-testid="assistant-cart-badge"]').exists()).toBe(
       true,
     );
-    expect(copilotSocketManager.getOrCreateService).toHaveBeenCalledWith(
-      'channel-1',
-      defaultConnection,
-    );
+    expect(useCopilotChat).toHaveBeenCalled();
+    const [, roomUuid] = useCopilotChat.mock.calls[0];
+    expect(roomUuid.value).toBe('room-1');
   });
 
   it('sends the AI suggestion into the main chat input', async () => {
@@ -256,5 +248,20 @@ describe('DeskCopilotTab', () => {
     await flushPromises();
 
     expect(wrapper.emitted('loaded')).toBeTruthy();
+  });
+
+  it('shows the history loading state while the conversation is restored', async () => {
+    mockCopilotConnection({
+      isConfigured: true,
+      connection: defaultConnection,
+    });
+    mockCopilotChat({ isLoadingHistory: true });
+    wrapper = createWrapper();
+
+    await flushPromises();
+
+    expect(
+      wrapper.find('[data-testid="assistant-history-loading"]').exists(),
+    ).toBe(true);
   });
 });
