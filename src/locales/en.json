@@ -855,11 +855,11 @@
         "scroll_to_bottom": "Go to bottom",
         "send_action": "Send",
         "thinking_messages": {
-          "almost": "Almost ready, just a moment",
+          "almost": "Almost ready, just a moment longer",
           "connecting": "Connecting ideas",
           "processing": "Processing information",
           "refining": "Refining details",
-          "structuring": "Structuring reply"
+          "structuring": "Structuring response"
         }
       },
       "copy_summary": "Copy summary",
