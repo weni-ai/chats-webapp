@@ -1573,16 +1573,6 @@
       "tooltip": "Conversații noi primite"
     }
   },
-  "message_dictation": {
-    "tooltip": {
-      "activate": "Activare mod vocal (shift + V)",
-      "stop": "Oprire mod vocal (esc)"
-    },
-    "button": {
-      "activate": "Mod vocal",
-      "stop": "Oprire"
-    }
-  },
   "mass_message": {
     "title": "Mesaj în masă",
     "form": {
@@ -1630,7 +1620,7 @@
       "last_message_disclaimer": "Mesajul \"{text}\" a fost trimis în ultima oră - la {time}.",
       "sent_by": "Trimis de",
       "status": "Status",
-      "status_failed": "Eșec la trimitere",
+      "status_failed": "Trimitere nereușită",
       "status_sent": "Trimis"
     },
     "toast": {
@@ -1644,6 +1634,16 @@
       "success": {
         "message": "{count, plural, one {Mesaj trimis către {count} contact} few {Mesaj trimis către {count} contacte} other {Mesaj trimis către {count} de contacte}}"
       }
+    }
+  },
+  "message_dictation": {
+    "tooltip": {
+      "activate": "Activare mod vocal (Shift + V)",
+      "stop": "Oprire mod vocal (Esc)"
+    },
+    "button": {
+      "activate": "Mod vocal",
+      "stop": "Oprire"
     }
   }
 }

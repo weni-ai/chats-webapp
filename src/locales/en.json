@@ -1624,18 +1624,8 @@
       "tooltip": "You did not respond to this contact"
     }
   },
-  "message_dictation": {
-    "tooltip": {
-      "activate": "Activate voice mode (shift + V)",
-      "stop": "Stop voice mode (esc)"
-    },
-    "button": {
-      "activate": "Voice mode",
-      "stop": "Stop"
-    }
-  },
   "mass_message": {
-    "title": "Mass message",
+    "title": "Bulk message",
     "form": {
       "title": "Send mass message",
       "shipping_history": "Shipping history",
@@ -1678,7 +1668,7 @@
     "history": {
       "filter_by_sender": "Filter by sender",
       "filter_by_status": "Filter by status",
-      "last_message_disclaimer": "The message \"{text}\" was sent in the last hour - at {time}.",
+      "last_message_disclaimer": "The message \"{text}\" was sent in the last hour, at {time}.",
       "sent_by": "Sent by",
       "status": "Status",
       "status_failed": "Failed to send",
@@ -1695,6 +1685,16 @@
       "success": {
         "message": "{count, plural, one {Message sent to {count} contact} other {Message sent to {count} contacts}}"
       }
+    }
+  },
+  "message_dictation": {
+    "tooltip": {
+      "activate": "Activate voice mode (Shift + V)",
+      "stop": "Stop voice mode (Esc)"
+    },
+    "button": {
+      "activate": "Voice mode",
+      "stop": "Stop"
     }
   }
 }

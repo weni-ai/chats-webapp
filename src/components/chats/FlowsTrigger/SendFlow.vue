@@ -9,6 +9,7 @@
         v-model="projectUuidFlow"
       />
       <SelectQueue
+        v-if="enableFilterQueues"
         v-model="selectedQueue"
         data-testid="select-queue"
         :isDisabled="isCheckingTemplate"
@@ -59,6 +60,7 @@
 </template>
 
 <script>
+import { mapState } from 'pinia';
 import callUnnnicAlert from '@/utils/callUnnnicAlert';
 
 import ModalProgressBarFalse from '@/components/ModalProgressBarFalse.vue';
@@ -69,6 +71,8 @@ import SelectFlow from './SelectFlow.vue';
 import SelectQueue from './SelectQueue.vue';
 import SendFlowButton from './SendFlowButton.vue';
 import SelectProjects from './SelectProjects.vue';
+
+import { useFeatureFlag } from '@/store/modules/featureFlag';
 import { hasTemplateVariables } from '@/utils/flowTemplates';
 
 export default {
@@ -118,6 +122,14 @@ export default {
   },
 
   computed: {
+    ...mapState(useFeatureFlag, ['featureFlags']),
+
+    enableFilterQueues() {
+      return this.featureFlags?.active_features?.includes(
+        'weniChatsFilterFlowsByQueue',
+      );
+    },
+
     noHasContacts() {
       return !this.selectedContact && this.contacts.length === 0;
     },

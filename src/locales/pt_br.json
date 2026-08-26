@@ -1668,7 +1668,7 @@
     "history": {
       "filter_by_sender": "Filtrar por remetente",
       "filter_by_status": "Filtrar por status",
-      "last_message_disclaimer": "A mensagem \"{text}\" foi enviada na última hora - às {time}.",
+      "last_message_disclaimer": "A mensagem \"{text}\" foi enviada na última hora, às {time}.",
       "sent_by": "Enviado por",
       "status": "Status",
       "status_failed": "Falha ao enviar",
@@ -1689,12 +1689,12 @@
   },
   "message_dictation": {
     "tooltip": {
-      "activate": "Ativar modo de voz (shift + V)",
-      "stop": "Desativar modo de voz (esc)"
+      "activate": "Ativar modo de voz (Shift + V)",
+      "stop": "Sair do modo de voz (Esc)"
     },
     "button": {
       "activate": "Modo de voz",
-      "stop": "Desativar"
+      "stop": "Parar"
     }
   },
   "waiting": "Aguardando",

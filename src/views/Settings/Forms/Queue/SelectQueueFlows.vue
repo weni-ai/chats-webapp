@@ -35,7 +35,7 @@
       @update:search="searchFlow = $event"
     />
     <section
-      v-if="selectedFlows.length > 0"
+      v-if="selectedFlows.length > 0 && !loadingFlows"
       class="select-queue-flows__chips"
       data-testid="select-queue-flows-chips"
     >
@@ -49,117 +49,117 @@
   </section>
 </template>
 
-<script>
+<script setup lang="ts">
+import { computed, nextTick, onMounted, ref, watch } from 'vue';
+
 import FlowsTrigger from '@/services/api/resources/chats/flowsTrigger.js';
 import TagGroup from '@/components/TagGroup.vue';
 
-export default {
-  name: 'SelectQueueFlows',
+defineOptions({ name: 'SelectQueueFlows' });
 
-  components: {
-    TagGroup,
+interface QueueFlow {
+  uuid: string;
+  name: string;
+}
+
+interface QueueFlowSelectOption {
+  value: string;
+  label: string;
+}
+
+interface QueueFlowTag {
+  uuid: string;
+  name: string;
+}
+
+interface SelectQueueFlowsProps {
+  modelValue?: string[];
+}
+
+const props = withDefaults(defineProps<SelectQueueFlowsProps>(), {
+  modelValue: () => [],
+});
+
+const emit = defineEmits<{
+  'update:modelValue': [value: string[]];
+}>();
+
+const flowSelection = ref('');
+const flows = ref<QueueFlow[]>([]);
+const searchFlow = ref('');
+const loadingFlows = ref(false);
+
+const selectedFlows = computed({
+  get: () => props.modelValue,
+  set: (value: string[]) => {
+    emit('update:modelValue', value);
   },
+});
 
-  props: {
-    modelValue: {
-      type: Array,
-      default: () => [],
-    },
-  },
+const availableFlowOptions = computed<QueueFlowSelectOption[]>(() => {
+  const selectedUuids = new Set(selectedFlows.value);
 
-  emits: ['update:modelValue'],
+  return flows.value
+    .filter((flow) => !selectedUuids.has(flow.uuid))
+    .map(({ uuid, name }) => ({
+      value: uuid,
+      label: name,
+    }));
+});
 
-  data() {
-    return {
-      flowSelection: '',
-      flows: [],
-      searchFlow: '',
-      loadingFlows: false,
-    };
-  },
+const selectedFlowTags = computed<QueueFlowTag[]>(() => {
+  const flowsByUuid = new Map(
+    flows.value.map((flow) => [flow.uuid, flow.name]),
+  );
 
-  computed: {
-    selectedFlows: {
-      get() {
-        return this.modelValue;
-      },
-      set(value) {
-        this.$emit('update:modelValue', value);
-      },
-    },
+  return selectedFlows.value.map((uuid) => ({
+    uuid,
+    name: flowsByUuid.get(uuid) || uuid,
+  }));
+});
 
-    availableFlowOptions() {
-      const selectedUuids = new Set(this.selectedFlows);
+watch(flowSelection, (uuid) => {
+  if (!uuid) {
+    return;
+  }
 
-      return this.flows
-        .filter((flow) => !selectedUuids.has(flow.uuid))
-        .map(({ uuid, name }) => ({
-          value: uuid,
-          label: name,
-        }));
-    },
+  const alreadySelected = selectedFlows.value.includes(uuid);
+  const flowExists = flows.value.some((item) => item.uuid === uuid);
 
-    selectedFlowTags() {
-      const flowsByUuid = new Map(
-        this.flows.map((flow) => [flow.uuid, flow.name]),
-      );
+  if (!alreadySelected && flowExists) {
+    selectedFlows.value = [...selectedFlows.value, uuid];
+  }
 
-      return this.selectedFlows.map((uuid) => ({
-        uuid,
-        name: flowsByUuid.get(uuid) || uuid,
-      }));
-    },
-  },
+  nextTick(() => {
+    flowSelection.value = '';
+    searchFlow.value = '';
+  });
+});
 
-  watch: {
-    flowSelection(uuid) {
-      if (!uuid) {
-        return;
-      }
+function removeFlow(flowUuid: string) {
+  selectedFlows.value = selectedFlows.value.filter((uuid) => uuid !== flowUuid);
+}
 
-      const alreadySelected = this.selectedFlows.includes(uuid);
-      const flowExists = this.flows.some((item) => item.uuid === uuid);
+async function getFlows() {
+  loadingFlows.value = true;
 
-      if (!alreadySelected && flowExists) {
-        this.selectedFlows = [...this.selectedFlows, uuid];
-      }
+  try {
+    const response: QueueFlow[] = await FlowsTrigger.getFlows(undefined, {
+      verify_chats_tag: true,
+    });
 
-      this.$nextTick(() => {
-        this.flowSelection = '';
-        this.searchFlow = '';
-      });
-    },
-  },
+    flows.value = response.map(({ uuid, name }) => ({ uuid, name }));
+  } catch (error) {
+    flows.value = [];
+    console.error('Error getting flows', error);
+  } finally {
+    loadingFlows.value = false;
+  }
+}
 
-  mounted() {
-    this.getFlows();
-  },
-
-  methods: {
-    removeFlow(flowUuid) {
-      this.selectedFlows = this.selectedFlows.filter(
-        (uuid) => uuid !== flowUuid,
-      );
-    },
-
-    async getFlows() {
-      this.loadingFlows = true;
-
-      try {
-        const response = await FlowsTrigger.getFlows(undefined, {
-          verify_chats_tag: true,
-        });
-
-        this.flows = response.map(({ uuid, name }) => ({ uuid, name }));
-      } catch (error) {
-        this.flows = [];
-        console.error('Error getting flows', error);
-      } finally {
-        this.loadingFlows = false;
-      }
-    },
-  },
-};
+onMounted(() => {
+  getFlows();
+});
 </script>
 
 <style lang="scss" scoped>
