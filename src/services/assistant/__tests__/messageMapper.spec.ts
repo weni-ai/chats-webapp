@@ -60,4 +60,27 @@ describe('mapServiceMessage', () => {
     expect(mapped.text).toBe('Intro text');
     expect(mapped.suggestion).toBe('Suggested reply');
   });
+
+  it('maps media message fields for audio and files', () => {
+    const mapped = mapServiceMessage(
+      buildMessage({
+        type: 'audio',
+        text: '',
+        media: 'data:audio/mp3;base64,abc',
+        metadata: {
+          filename: 'voice.mp3',
+          mimeType: 'audio/mpeg',
+          size: 1234,
+          duration: 2.5,
+        },
+      }),
+    );
+
+    expect(mapped.type).toBe('audio');
+    expect(mapped.media).toBe('data:audio/mp3;base64,abc');
+    expect(mapped.filename).toBe('voice.mp3');
+    expect(mapped.mimeType).toBe('audio/mpeg');
+    expect(mapped.size).toBe(1234);
+    expect(mapped.duration).toBe(2.5);
+  });
 });
