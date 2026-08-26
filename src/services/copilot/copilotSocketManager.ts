@@ -59,6 +59,9 @@ function createService(
     callbackUrl: connection.callbackUrl || '',
     mode: 'live',
     sessionId: roomUuid,
+    voiceMode: {
+      enabled: true,
+    },
   });
 
   isolateSessionStorage(service, connection, roomUuid);
