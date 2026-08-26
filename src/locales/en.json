@@ -848,17 +848,35 @@
     },
     "desk_copilot": {
       "assistant": {
+        "attach_action": "Attach file",
+        "cancel_recording": "Cancel recording",
         "copy_action": "Copy",
+        "file_too_large": "Select a smaller file",
+        "file_type_not_allowed": "Select a supported file type",
+        "image_attachment": "Image attachment",
         "input_placeholder": "Ask the assistant",
         "processing_information": "Processing information",
+        "record_audio": "Record audio",
+        "recording_in_progress": "Recording",
         "scroll_to_bottom": "Go to bottom",
         "send_action": "Send",
+        "send_audio": "Send audio",
         "thinking_messages": {
           "almost": "Almost ready, just a moment longer",
           "connecting": "Connecting ideas",
           "processing": "Processing information",
           "refining": "Refining details",
           "structuring": "Structuring response"
+        },
+        "voice_mode": {
+          "dismiss": "Dismiss",
+          "enter": "Start voice mode",
+          "error_title": "Voice mode unavailable",
+          "exit": "Exit voice mode",
+          "listening": "Listening",
+          "processing": "Transcribing",
+          "retry": "Try again",
+          "speaking": "Assistant speaking"
         }
       },
       "copy_summary": "Copy summary",

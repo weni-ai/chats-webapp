@@ -848,17 +848,35 @@
     },
     "desk_copilot": {
       "assistant": {
+        "attach_action": "Anexar arquivo",
+        "cancel_recording": "Cancelar gravação",
         "copy_action": "Copiar",
+        "file_too_large": "Selecione um arquivo menor",
+        "file_type_not_allowed": "Selecione um tipo de arquivo compatível",
+        "image_attachment": "Anexo de imagem",
         "input_placeholder": "Pergunte ao assistente",
         "processing_information": "Processando informações",
+        "record_audio": "Gravar áudio",
+        "recording_in_progress": "Gravando",
         "scroll_to_bottom": "Ir ao final",
         "send_action": "Enviar",
+        "send_audio": "Enviar áudio",
         "thinking_messages": {
           "almost": "Quase pronto, só mais um momento",
           "connecting": "Conectando ideias",
           "processing": "Processando informações",
           "refining": "Refinando detalhes",
           "structuring": "Estruturando resposta"
+        },
+        "voice_mode": {
+          "dismiss": "Dispensar",
+          "enter": "Iniciar modo de voz",
+          "error_title": "Modo de voz indisponível",
+          "exit": "Sair do modo de voz",
+          "listening": "Ouvindo",
+          "processing": "Transcrevendo",
+          "retry": "Tentar novamente",
+          "speaking": "Assistente falando"
         }
       },
       "copy_summary": "Copiar resumo",
