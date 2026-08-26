@@ -208,6 +208,7 @@ onMounted(() => {
     flex: 1;
     min-height: 0;
     overflow: hidden auto;
+    padding-bottom: $unnnic-space-2;
   }
 
   &__go-to-bottom {

@@ -42,7 +42,6 @@ const TestHost = defineComponent({
 
 describe('useAutoScroll', () => {
   let wrapper;
-  let scrollIntoView;
 
   afterEach(() => {
     wrapper?.unmount();
@@ -50,8 +49,6 @@ describe('useAutoScroll', () => {
   });
 
   function mountHost() {
-    scrollIntoView = vi.fn();
-    Element.prototype.scrollIntoView = scrollIntoView;
     wrapper = mount(TestHost);
     return wrapper;
   }
@@ -72,66 +69,89 @@ describe('useAutoScroll', () => {
     });
     Object.defineProperty(list, 'scrollTop', {
       value: scrollTop,
+      writable: true,
       configurable: true,
     });
     return list;
   }
 
-  it('scrolls to the bottom when messages change while near the end', async () => {
+  it('scrolls the list container when messages change while near the end', async () => {
     mountHost();
     await nextTick();
-    scrollIntoView.mockClear();
 
+    const list = mockListMetrics({ scrollTop: 300 });
     wrapper.vm.messages.push({ id: '1' });
     await nextTick();
     await nextTick();
 
-    expect(scrollIntoView).toHaveBeenCalledWith({ behavior: 'smooth' });
+    expect(list.scrollTop).toBe(400);
   });
 
-  it('scrolls to the bottom when thinking starts while near the end', async () => {
+  it('scrolls the list container when thinking starts while near the end', async () => {
     mountHost();
     await nextTick();
-    scrollIntoView.mockClear();
 
+    const list = mockListMetrics({ scrollTop: 300 });
     wrapper.vm.isThinking = true;
     await nextTick();
     await nextTick();
 
-    expect(scrollIntoView).toHaveBeenCalledWith({ behavior: 'smooth' });
+    expect(list.scrollTop).toBe(400);
   });
 
-  it('scrolls to the bottom when typing starts while near the end', async () => {
+  it('scrolls the list container when typing starts while near the end', async () => {
     mountHost();
     await nextTick();
-    scrollIntoView.mockClear();
 
+    const list = mockListMetrics({ scrollTop: 300 });
     wrapper.vm.isTyping = true;
     await nextTick();
     await nextTick();
 
-    expect(scrollIntoView).toHaveBeenCalledWith({ behavior: 'smooth' });
+    expect(list.scrollTop).toBe(400);
   });
 
   it('does not auto-scroll when the user has scrolled away from the end', async () => {
     mountHost();
     await nextTick();
 
+    const list = mockListMetrics({ scrollTop: 300 });
     wrapper.vm.messages.push({ id: '1' });
     await nextTick();
     await nextTick();
+    await new Promise((resolve) => requestAnimationFrame(resolve));
 
-    const list = mockListMetrics({ scrollTop: 0 });
+    mockListMetrics({ scrollTop: 0 });
     list.dispatchEvent(new Event('scroll'));
     await nextTick();
-    scrollIntoView.mockClear();
 
+    expect(wrapper.vm.showGoToBottom).toBe(true);
+
+    const previousScrollTop = list.scrollTop;
     wrapper.vm.messages.push({ id: '2' });
     await nextTick();
     await nextTick();
 
-    expect(scrollIntoView).not.toHaveBeenCalled();
+    expect(list.scrollTop).toBe(previousScrollTop);
     expect(wrapper.vm.showGoToBottom).toBe(true);
+  });
+
+  it('treats upward wheel gestures as leaving the bottom', async () => {
+    mountHost();
+    await nextTick();
+
+    const list = mockListMetrics({ scrollTop: 320 });
+    list.dispatchEvent(new WheelEvent('wheel', { deltaY: -40 }));
+    await nextTick();
+
+    expect(wrapper.vm.showGoToBottom).toBe(true);
+
+    const previousScrollTop = list.scrollTop;
+    wrapper.vm.messages.push({ id: '1' });
+    await nextTick();
+    await nextTick();
+
+    expect(list.scrollTop).toBe(previousScrollTop);
   });
 
   it('shows the go-to-bottom control when the user scrolls away from the end', async () => {
