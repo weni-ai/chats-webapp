@@ -1009,6 +1009,7 @@
     "example_message_description": "Mesajele rapide sunt răspunsuri predefinite care ajută la standardizarea serviciului pentru clienți. Toți reprezentanții din acest departament le pot utiliza, iar tu poți adăuga altele noi mai jos.",
     "personal": "Mesajele tale",
     "shared": "Mesaje distribuite",
+    "send_in_bulk": "Trimite în masă",
     "delete": "Șterge mesaj rapid",
     "delete_your_quick_message": "Șterge mesajul tău rapid",
     "delete_confirm": "Ești sigur că dorești să ștergi mesajul rapid?",
@@ -1032,7 +1033,30 @@
     "no_suggestions": "Nu s-au găsit rezultate pentru comanda rapidă introdusă",
     "disclaimer": "Tastează / (slash) în câmpul mesaj pentru a vedea mesajele rapide",
     "action_open": "Deschide mesajele rapide (/)",
-    "action_close": "Închide mesajele rapide"
+    "action_close": "Închide mesajele rapide",
+    "bulk": {
+      "confirmation": {
+        "checkbox_label": "Am verificat toate câmpurile și vreau să trimit"
+      },
+      "contacts": {
+        "all": "Toate contactele",
+        "helper": "Doar contactele în curs de deservire pot primi acest mesaj",
+        "label": "Contacte"
+      },
+      "send": "{count, plural, =0 {Trimite către toate (0 contacte)} one {Trimite către toate ({count} contact)} other {Trimite către toate ({count} contacte)}}",
+      "sending": "{count, plural, one {Se trimite mesajul către {count} contact} few {Se trimite mesajul către {count} contacte} other {Se trimite mesajul către {count} de contacte}}",
+      "toast": {
+        "error": {
+          "message": "Nu s-a putut trimite mesajul. Încearcă din nou."
+        },
+        "partial_success": {
+          "message": "{success, plural, one {Mesaj trimis către {success} contact, {failed} eșuat.} few {Mesaj trimis către {success} contacte, {failed} eșuate.} other {Mesaj trimis către {success} de contacte, {failed} eșuate.}}"
+        },
+        "success": {
+          "message": "{count, plural, one {Mesaj trimis către {count} contact} few {Mesaj trimis către {count} contacte} other {Mesaj trimis către {count} de contacte}}"
+        }
+      }
+    }
   },
   "discard": "Șterge",
   "on_boarding": {

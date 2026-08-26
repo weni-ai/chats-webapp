@@ -1040,6 +1040,7 @@
     "example_message_description": "Mensagens rápidas são respostas pré-definidas que ajudam a padronizar o atendimento ao cliente. Todos os atendentes deste setor podem usá-las, e você pode adicionar novas abaixo.",
     "personal": "Suas mensagens",
     "shared": "Mensagens compartilhadas",
+    "send_in_bulk": "Enviar em massa",
     "delete": "Excluir mensagem rápida",
     "delete_your_quick_message": "Excluir sua mensagem rápida",
     "delete_confirm": "Tem certeza de que deseja excluir a mensagem rápida?",
@@ -1063,7 +1064,30 @@
     "no_suggestions": "Nenhum resultado encontrado para o atalho informado",
     "disclaimer": "Digite / (barra) no campo de mensagem para ver mensagens rápidas",
     "action_open": "Abrir mensagens rápidas (/)",
-    "action_close": "Fechar mensagens rápidas"
+    "action_close": "Fechar mensagens rápidas",
+    "bulk": {
+      "confirmation": {
+        "checkbox_label": "Verifiquei todos os campos e quero enviar"
+      },
+      "contacts": {
+        "all": "Todos os contatos",
+        "helper": "Apenas contatos em atendimento podem receber esta mensagem",
+        "label": "Contatos"
+      },
+      "send": "{count, plural, =0 {Enviar para todos (0 contatos)} one {Enviar para todos ({count} contato)} other {Enviar para todos ({count} contatos)}}",
+      "sending": "{count, plural, one {Enviando a mensagem para {count} contato} other {Enviando a mensagem para {count} contatos}}",
+      "toast": {
+        "error": {
+          "message": "Não foi possível enviar a mensagem. Tente novamente."
+        },
+        "partial_success": {
+          "message": "{success, plural, one {Mensagem enviada para {success} contato, {failed} falhou.} other {Mensagem enviada para {success} contatos, {failed} falharam.}}"
+        },
+        "success": {
+          "message": "{count, plural, one {Mensagem enviada para {count} contato} other {Mensagem enviada para {count} contatos}}"
+        }
+      }
+    }
   },
   "discard": "Descartar",
   "on_boarding": {

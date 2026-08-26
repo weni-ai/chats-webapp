@@ -3,7 +3,7 @@
     class="header-quick-messages__header"
     data-testid="header-quick-messages"
   >
-    <p>{{ $t('quick_messages.title') }}</p>
+    <p>{{ headerTitle }}</p>
     <UnnnicButton
       iconCenter="close"
       type="tertiary"
@@ -14,7 +14,22 @@
 </template>
 
 <script setup>
+import { computed } from 'vue';
+
+import i18n from '@/plugins/i18n';
+
+const props = defineProps({
+  title: {
+    type: String,
+    default: '',
+  },
+});
+
 defineEmits(['close']);
+
+const headerTitle = computed(
+  () => props.title || i18n.global.t('quick_messages.title'),
+);
 </script>
 
 <style lang="scss" scoped>
@@ -22,9 +37,10 @@ defineEmits(['close']);
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: $unnnic-space-4 $unnnic-space-2;
+  padding: $unnnic-space-2;
   font: $unnnic-font-display-3;
   color: $unnnic-color-fg-emphasized;
   border-bottom: 1px solid $unnnic-color-border-soft;
+  flex-shrink: 0;
 }
 </style>
