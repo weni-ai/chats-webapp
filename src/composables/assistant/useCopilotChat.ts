@@ -8,6 +8,7 @@ import {
 } from 'vue';
 import WeniWebchatService, {
   SERVICE_EVENTS,
+  type FileConfig,
   type Message,
 } from '@weni/webchat-service';
 
@@ -20,6 +21,12 @@ import type { AssistantMessage } from '@/services/assistant/types';
 type ConnectionRef = Ref<CopilotConnection | undefined>;
 type RoomUuidRef = Ref<string | undefined>;
 
+const DEFAULT_FILE_CONFIG: FileConfig = {
+  allowedTypes: [],
+  maxFileSize: 32 * 1024 * 1024,
+  acceptAttribute: '',
+};
+
 export function useCopilotChat(
   connection: ConnectionRef,
   roomUuid: RoomUuidRef,
@@ -29,6 +36,14 @@ export function useCopilotChat(
   const isTyping = ref(false);
   const cartCount = ref(0);
   const isLoadingHistory = ref(false);
+  const isRecording = ref(false);
+  const recordingDurationMs = ref(0);
+  const isAudioRecordingSupported = ref(
+    !!WeniWebchatService.isAudioRecordingSupported,
+  );
+  const isVoiceEnabledByServer = ref(false);
+  const fileConfig = ref<FileConfig>({ ...DEFAULT_FILE_CONFIG });
+  const lastStreamingText = ref('');
 
   let activeService: WeniWebchatService | null = null;
   let activeChannelUuid: string | null = null;
@@ -53,6 +68,11 @@ export function useCopilotChat(
     isTyping.value = false;
     cartCount.value = 0;
     isLoadingHistory.value = false;
+    isRecording.value = false;
+    recordingDurationMs.value = 0;
+    isVoiceEnabledByServer.value = false;
+    fileConfig.value = { ...DEFAULT_FILE_CONFIG };
+    lastStreamingText.value = '';
   }
 
   function clearHistoryLoadedTimer() {
@@ -78,6 +98,16 @@ export function useCopilotChat(
     messages.value = service.getMessages().map(mapServiceMessage);
   }
 
+  function syncFileConfig(service: WeniWebchatService) {
+    try {
+      fileConfig.value = service.getFileConfig?.() || {
+        ...DEFAULT_FILE_CONFIG,
+      };
+    } catch {
+      fileConfig.value = { ...DEFAULT_FILE_CONFIG };
+    }
+  }
+
   function upsertMappedMessage(mapped: AssistantMessage) {
     const existingIndex = messages.value.findIndex(
       (item) => item.id === mapped.id,
@@ -85,10 +115,15 @@ export function useCopilotChat(
 
     if (existingIndex >= 0) {
       messages.value.splice(existingIndex, 1, mapped);
-      return;
+    } else {
+      messages.value.push(mapped);
     }
 
-    messages.value.push(mapped);
+    if (mapped.direction === 'ai' && mapped.status === 'streaming') {
+      lastStreamingText.value = mapped.text || mapped.suggestion || '';
+    } else if (mapped.direction === 'ai' && mapped.status !== 'streaming') {
+      lastStreamingText.value = mapped.text || mapped.suggestion || '';
+    }
   }
 
   function handleMessageReceived(...args: unknown[]) {
@@ -142,6 +177,41 @@ export function useCopilotChat(
     cartCount.value = extractCartCount(args[0]);
   }
 
+  function handleRecordingStarted() {
+    isRecording.value = true;
+    recordingDurationMs.value = 0;
+  }
+
+  function handleRecordingStopped() {
+    isRecording.value = false;
+    recordingDurationMs.value = 0;
+  }
+
+  function handleRecordingCancelled() {
+    isRecording.value = false;
+    recordingDurationMs.value = 0;
+  }
+
+  function handleRecordingTick(...args: unknown[]) {
+    const duration = args[0];
+    if (typeof duration === 'number') {
+      recordingDurationMs.value = duration;
+      return;
+    }
+
+    if (
+      duration &&
+      typeof duration === 'object' &&
+      typeof (duration as { duration?: number }).duration === 'number'
+    ) {
+      recordingDurationMs.value = (duration as { duration: number }).duration;
+    }
+  }
+
+  function handleVoiceEnabled() {
+    isVoiceEnabledByServer.value = true;
+  }
+
   function handleStateChanged() {
     if (!activeService || !isLoadingHistory.value) {
       return;
@@ -152,7 +222,6 @@ export function useCopilotChat(
 
   function handleHistoryLoaded() {
     clearHistoryLoadedTimer();
-    // getHistory emits this before merging into state; wait a tick so messages exist.
     historyLoadedTimer = setTimeout(() => {
       historyLoadedTimer = null;
       finishHistoryLoading();
@@ -176,6 +245,11 @@ export function useCopilotChat(
     service.off(SERVICE_EVENTS.STATE_CHANGED, handleStateChanged);
     service.off(SERVICE_EVENTS.HISTORY_LOADED, handleHistoryLoaded);
     service.off(SERVICE_EVENTS.ERROR, handleServiceError);
+    service.off(SERVICE_EVENTS.RECORDING_STARTED, handleRecordingStarted);
+    service.off(SERVICE_EVENTS.RECORDING_STOPPED, handleRecordingStopped);
+    service.off(SERVICE_EVENTS.RECORDING_CANCELLED, handleRecordingCancelled);
+    service.off(SERVICE_EVENTS.RECORDING_TICK, handleRecordingTick);
+    service.off(SERVICE_EVENTS.VOICE_ENABLED, handleVoiceEnabled);
   }
 
   function subscribe(service: WeniWebchatService) {
@@ -190,6 +264,11 @@ export function useCopilotChat(
     service.on(SERVICE_EVENTS.STATE_CHANGED, handleStateChanged);
     service.on(SERVICE_EVENTS.HISTORY_LOADED, handleHistoryLoaded);
     service.on(SERVICE_EVENTS.ERROR, handleServiceError);
+    service.on(SERVICE_EVENTS.RECORDING_STARTED, handleRecordingStarted);
+    service.on(SERVICE_EVENTS.RECORDING_STOPPED, handleRecordingStopped);
+    service.on(SERVICE_EVENTS.RECORDING_CANCELLED, handleRecordingCancelled);
+    service.on(SERVICE_EVENTS.RECORDING_TICK, handleRecordingTick);
+    service.on(SERVICE_EVENTS.VOICE_ENABLED, handleVoiceEnabled);
   }
 
   function detachCurrentView() {
@@ -243,7 +322,10 @@ export function useCopilotChat(
     activeConnection = currentConnection;
     subscribe(service);
     syncMessagesFromService(service);
+    syncFileConfig(service);
     isLoadingHistory.value = !service.isConnected();
+    isAudioRecordingSupported.value =
+      !!WeniWebchatService.isAudioRecordingSupported;
   }
 
   function sendMessage(text: string) {
@@ -254,6 +336,50 @@ export function useCopilotChat(
     }
 
     activeService.sendMessage(trimmed);
+  }
+
+  async function sendAttachment(file: File) {
+    if (!file || !activeService) {
+      return;
+    }
+
+    await activeService.sendAttachment(file);
+  }
+
+  async function startRecording() {
+    if (!activeService) {
+      return;
+    }
+
+    await activeService.startRecording();
+  }
+
+  async function stopRecording() {
+    if (!activeService) {
+      return;
+    }
+
+    await activeService.stopRecording();
+  }
+
+  function cancelRecording() {
+    if (!activeService) {
+      return;
+    }
+
+    activeService.cancelRecording();
+  }
+
+  async function requestVoiceTokens(timeout?: number) {
+    if (!activeService) {
+      throw new Error('Copilot service is not connected');
+    }
+
+    return activeService.requestVoiceTokens(timeout);
+  }
+
+  function getActiveService() {
+    return activeService;
   }
 
   watch(
@@ -301,6 +427,18 @@ export function useCopilotChat(
     isLoadingHistory,
     cartCount,
     suggestions,
+    isRecording,
+    recordingDurationMs,
+    isAudioRecordingSupported,
+    isVoiceEnabledByServer,
+    fileConfig,
+    lastStreamingText,
     sendMessage,
+    sendAttachment,
+    startRecording,
+    stopRecording,
+    cancelRecording,
+    requestVoiceTokens,
+    getActiveService,
   };
 }
