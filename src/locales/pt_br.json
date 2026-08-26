@@ -341,7 +341,7 @@
         "tooltip": "Cada mensagem exibirá o nome do atendente que respondeu",
         "switch_active": "Exibir nome do atendente nas mensagens",
         "switch_disabled": "Exibir nome do atendente nas mensagens",
-        "hint": "Cada mensagem trocada exibirá o nome do agente que está respondendo.",
+        "hint": "Cada mensagem trocada terá o nome do atendente que está respondendo.",
         "switch_label": "Usar assinatura"
       },
       "csat": {
@@ -350,16 +350,16 @@
         },
         "hint": "Se um fluxo ativo no módulo Fluxos estiver configurado para disparar uma pesquisa após o fim do suporte, esta configuração pode conflitar com o fluxo e afetar a entrega da pesquisa.",
         "label": "Enviar automaticamente uma pesquisa de satisfação após o fim do suporte no Live Desk",
+        "confirm_modal": {
+          "content_1": "Se um fluxo ativo no módulo Fluxos estiver configurado para disparar uma pesquisa após o fim do suporte, esta configuração pode conflitar com o fluxo e afetar a entrega da pesquisa.",
+          "content_2": "Deseja continuar mesmo assim?"
+        },
         "section_title": "Pesquisa de satisfação",
         "type": {
           "custom": "Fluxos personalizados",
           "default": "Pesquisa CSAT padrão (recomendado)",
           "label": "Tipo de pesquisa",
-          "tooltip": "Escolha entre a pesquisa CSAT padrão ou um fluxo personalizado já configurado no módulo Fluxos."
-        },
-        "confirm_modal": {
-          "content_1": "Se um fluxo ativo no módulo Fluxos estiver configurado para disparar uma pesquisa após o fim do suporte, esta configuração pode conflitar com o fluxo e afetar a entrega da pesquisa.",
-          "content_2": "Deseja continuar mesmo assim?"
+          "tooltip": "Escolha entre a pesquisa CSAT padrão e um fluxo personalizado já configurado no módulo Fluxos."
         }
       },
       "automatic_message": {
@@ -378,7 +378,7 @@
         "switch_label": "Exigir tags ao final do atendimento humano"
       },
       "automated_message": {
-        "title": "Mensagens automatizadas",
+        "title": "Mensagens automáticas",
         "switch_when_waiting_label": "Enviar mensagem automática para contatos na fila de espera",
         "switch_when_start_label": "Enviar mensagem automática quando o atendimento começar",
         "hint_when_waiting": "Envia automaticamente uma mensagem para os contatos enquanto aguardam atendimento humano na fila.",
@@ -425,9 +425,6 @@
   "addition_date": "Data de cadastro",
   "in_queues": "nas filas",
   "in_progress": "Em andamento",
-  "waiting": "Aguardando",
-  "sent_flows": "Fluxos enviados",
-  "discussion": "Discussões",
   "in_progress_tooltip": "Número de chats sendo atendidos por um atendente",
   "in_progress_tooltip_filtered": "Número de chats que foram atendidos por um atendente",
   "closed": "Encerrados",
@@ -497,24 +494,24 @@
       }
     },
     "feedback": {
-      "agent_took_chat": "Ops! O chat com o contato {contact} já foi assumido por outro atendente",
-      "automatic_transfer_from_queue": "Sala atribuída a {agent}",
-      "chat_ended_by": "Chat finalizado por {agent}",
-      "discussion_created": "{agent} iniciou uma discussão na fila {queue}",
-      "discussion_joined": "{agent} entrou na discussão",
-      "edit_custom_field": "campo customizável editado",
       "forwarded_to_agent": "Contato transferido para o atendente {agent}",
       "forwarded_to_queue": "Contato transferido para a fila {queue}",
-      "pick_of_agent": "{manager} assumiu o chat de {agent}",
-      "pick_of_queue": "{agent} assumiu o chat da fila {queue}",
-      "see_all_internal_notes": "<b style='color: white;'>Ver notas internas</b>",
+      "transfer_to_agent": "{agent1} transferido para {agent2}",
+      "transfer_to_queue": "{agent} transferido para a fila {queue}",
+      "transfer_from_queue_to_queue": "Foi transferido da fila {queue1} para a fila {queue2}",
       "transfer_from_queue_to_agent": "Transferido da fila {queue} para {agent}",
       "transfer_from_queue_to_agent_by_other": "{requestedBy} transferiu o chat da fila {queue} para {agent}",
-      "transfer_from_queue_to_queue": "Foi transferido da fila {queue1} para a fila {queue2}",
+      "pick_of_queue": "{agent} assumiu o chat da fila {queue}",
+      "pick_of_agent": "{manager} assumiu o chat de {agent}",
+      "edit_custom_field": "campo customizável editado",
+      "discussion_created": "{agent} iniciou uma discussão na fila {queue}",
+      "discussion_joined": "{agent} entrou na discussão",
+      "agent_took_chat": "Ops! O chat com o contato {contact} já foi assumido por outro atendente",
+      "automatic_transfer_from_queue": "Sala atribuída a {agent}",
+      "see_all_internal_notes": "<b style='color: white;'>Ver notas internas</b>",
+      "chat_ended_by": "Chat finalizado por {agent}",
       "transfer_from_queue_to_queue_by_other": "{requestedBy} transferiu o chat da fila {queue1} para a fila {queue2}",
-      "transfer_to_agent": "{agent1} transferido para {agent2}",
       "transfer_to_agent_by_other": "{requestedBy} transferiu o chat de {agent1} para {agent2}",
-      "transfer_to_queue": "{agent} transferido para a fila {queue}",
       "transfer_to_queue_by_other": "{requestedBy} transferiu o chat de {agent} para a fila {queue}",
       "automatic_close_room": "Encerrado automaticamente por falta de interação do contato"
     },
@@ -814,8 +811,6 @@
     "partial_success_message": "{success, plural, one {{success} chat assumido, {failed} falhou. Tente novamente.} other {{success} chats assumidos, {failed} falharam. Tente novamente.}}",
     "error_message": "Não foi possível assumir os chats, tente novamente"
   },
-  "close_contact": "Encerrar contato",
-  "close_contact_confirmation": "Tem certeza que deseja encerrar este contato?",
   "contact_info": {
     "title": "Sobre o contato",
     "about_support": "Sobre o atendimento",
@@ -824,6 +819,10 @@
     "switch_tooltip": "Ative se quiser que o contato seja sempre atribuído diretamente a você",
     "alert_linked": "Contato vinculado",
     "alert_detached": "Contato desvinculado",
+    "header": {
+      "desk_copilot": "Desk Copilot",
+      "information": "Informações"
+    },
     "linked_contact": "Contato vinculado ao atendente {name}",
     "see_contact_history": "Ver histórico",
     "no_contact_history": "Sem histórico",
@@ -846,6 +845,22 @@
         "1": "😡 Muito insatisfeito",
         "no_response": "Sem resposta"
       }
+    },
+    "desk_copilot": {
+      "copy_summary": "Copiar resumo",
+      "disclaimer": {
+        "description": "O Desk Copilot pode ajudar você com:",
+        "enable_button": "Ativar Desk Copilot",
+        "items": {
+          "catalog_search": "Busca no catálogo",
+          "next_best_actions": "Próximas melhores ações",
+          "product_recommendations": "Recomendações de produtos",
+          "sales_arguments": "Argumentos de venda"
+        },
+        "title": "Vá além dos resumos de conversa",
+        "title_without_summary": "Desbloqueie todo o seu potencial com o Desk Copilot"
+      },
+      "summary_title": "Resumo desta conversa"
     }
   },
   "discussions": {
@@ -1100,11 +1115,12 @@
     "filter_by_group_name": "Filtrar por nome do grupo",
     "section_sectors_subtitle": "Adicione, visualize e gerencie setores, filas, gerentes e atendentes na sua organização.",
     "tabs": {
-      "settings": "Configurações",
+      "desk_copilot": "Desk Copilot",
+      "general": "Geral",
       "groups": "Grupos do projeto",
-      "sectors": "Setores",
       "representatives": "Atendentes",
-      "general": "Geral"
+      "sectors": "Setores",
+      "settings": "Configurações"
     },
     "custom_breaks": {
       "title": "Pausas personalizadas",
@@ -1120,11 +1136,78 @@
       "status_remove_success": "Status {status} removido",
       "status_error": "Erro ao salvar alterações. Tente novamente.",
       "delete_modal": {
+        "title": "Excluir pausa personalizada",
         "description_1": "Tem certeza de que deseja excluir a pausa personalizada “{name}”?",
         "description_2": "Depois de excluir, os dados não aparecerão mais no painel do Live Desk e não poderão ser recuperados.",
-        "error": "Não foi possível excluir a pausa personalizada.",
         "success": "Pausa personalizada excluída com sucesso",
-        "title": "Excluir pausa personalizada"
+        "error": "Não foi possível excluir a pausa personalizada."
+      }
+    },
+    "desk_copilot": {
+      "connected": {
+        "assigned_agents": "Agentes atribuídos",
+        "badge": "Copilot",
+        "connected_by": "Conectado por",
+        "connected_to": "Conectado em",
+        "created_on": "Criado em",
+        "description": "Este projeto é usado exclusivamente para gerenciar os agentes de IA do Desk Copilot. O acesso é feito apenas por esta seção.",
+        "open": "Abrir",
+        "popover_change_option": "Alterar",
+        "popover_disconnect_option": "Desconectar"
+      },
+      "disconnect_modal": {
+        "confirm": "Desconectar",
+        "description": "Este projeto perderá o acesso ao Desk Copilot até que um projeto Copilot seja reconectado. O projeto Copilot e as outras conexões não serão afetados.",
+        "error": "Não foi possível desconectar o projeto Copilot",
+        "success": "Projeto Copilot desconectado com sucesso",
+        "title": "Desconectar projeto Copilot"
+      },
+      "empty_state": {
+        "create_button": "Criar projeto Copilot",
+        "description": "Para ativar o Desk Copilot, conecte este projeto a um projeto Copilot onde seus agentes de IA são gerenciados",
+        "select_button": "Selecionar projeto Copilot",
+        "title": "Nenhum projeto Copilot conectado"
+      },
+      "enable_title": "Ativar Desk Copilot",
+      "info": {
+        "ai_assistance": {
+          "description": "Auxilie seus atendentes durante as conversas com sugestões geradas por IA, itens recomendados e próximas ações.",
+          "title": "Assistência de IA"
+        },
+        "automatic_updates": {
+          "description": "Alterações feitas no projeto Copilot são refletidas em todos os projetos Live Desk conectados.",
+          "title": "Atualizações automáticas"
+        },
+        "centralized_agents": {
+          "description": "Gerencie todos os agentes de IA em um único projeto Copilot.",
+          "title": "Agentes de IA centralizados"
+        },
+        "learn_more": "Saiba mais",
+        "shared_across_projects": {
+          "description": "Um projeto Copilot pode ser compartilhado entre vários projetos Live Desk para manter o conhecimento de IA consistente.",
+          "title": "Compartilhado entre projetos"
+        },
+        "title": "Como o Desk Copilot funciona"
+      },
+      "modal": {
+        "disclaimer": "Este projeto Copilot será criado e conectado automaticamente a este projeto.",
+        "error": "Não foi possível criar o projeto Copilot devido a um problema técnico",
+        "input_label": "Defina o nome do projeto Copilot",
+        "success": "Projeto Copilot criado e conectado com sucesso",
+        "title": "Criar projeto Copilot"
+      },
+      "new_badge": "Novo",
+      "picker_modal": {
+        "assigned_agents_tag": "{count, plural, one {{count} agente atribuído} other {{count} agentes atribuídos}}",
+        "change_button": "Alterar",
+        "change_error": "Não foi possível alterar o projeto Copilot",
+        "change_success": "Projeto Copilot alterado com sucesso",
+        "change_title": "Alterar projeto Copilot",
+        "connect_button": "Conectar",
+        "connect_error": "Não foi possível conectar ao projeto Copilot",
+        "connect_success": "Projeto Copilot conectado com sucesso",
+        "search_placeholder": "Buscar por nome",
+        "select_title": "Selecionar projeto Copilot existente"
       }
     },
     "changes_saved": "Alterações salvas com sucesso",
@@ -1146,6 +1229,10 @@
         "switch_label": "Permitir interações apenas para atendentes online",
         "hint": "Se essa opção estiver ativada, atendentes offline ou em pausa não poderão responder a chats em andamento."
       },
+      "block_link_contact_agents": {
+        "switch_label": "Bloquear a vinculação de contatos pelos atendentes",
+        "hint": "Se essa opção estiver ativada, os atendentes não poderão vincular contatos a eles"
+      },
       "bulk_transfer": {
         "tooltip": "Esta função permite que os atendentes transfiram diferentes contatos de uma só vez",
         "switch_active": "Transferir chats em massa para outra fila ou atendente",
@@ -1155,9 +1242,13 @@
         "switch_active": "Bloquear a transferência de chats para atendentes offline",
         "switch_inactive": "Bloquear a transferência de chats para atendentes offline"
       },
+      "hide_desk_copilot_tab": {
+        "hint": "Quando ativada, os atendentes veem apenas a aba de informações no painel do contato",
+        "switch_label": "Ocultar aba Desk Copilot"
+      },
       "hide_moderators_from_transfer": {
-        "hint": "Quando ativada, apenas usuários atribuídos à fila como atendentes são exibidos. Moderadores só aparecem se também estiverem atribuídos à fila como atendentes. Quando desativada, todos os usuários, incluindo moderadores, são exibidos.",
-        "switch_label": "Ocultar perfis moderadores ao transferir chats"
+        "hint": "Quando ativado, somente os usuários atribuídos à fila como atendentes são exibidos. Os moderadores aparecem apenas se também estiverem atribuídos à fila como atendentes. Quando desativado, todos os usuários são exibidos, inclusive os moderadores.",
+        "switch_label": "Ocultar perfis de moderadores ao transferir chats"
       },
       "bulk_close": {
         "switch_active": "Encerrar chats em massa",
@@ -1207,8 +1298,8 @@
     "queues": {
       "in_sector": "Fila no setor {sector}",
       "new": "Nova fila",
-      "info": "Filas são grupos de suporte dentro de um setor. Você pode direcionar os contatos de um fluxo para uma fila específica.",
       "title": "Gestão de filas",
+      "info": "Filas são grupos de suporte dentro de um setor. Você pode direcionar os contatos de um fluxo para uma fila específica.",
       "hint": "Filas são grupos de suporte dentro de um setor. Você pode criar ou editar uma fila a qualquer momento.",
       "filter_by_name": "Filtrar por nome da fila",
       "add_queue": "Adicionar fila",
@@ -1227,6 +1318,13 @@
           "helper": "Quando o limite for alcançado, nenhum novo chat será criado.",
           "input_label": "Número máximo de chats aguardando suporte",
           "input_placeholder": "Exemplo: 50"
+        }
+      },
+      "bond_flows_queue": {
+        "select": {
+          "label": "Fluxos associados",
+          "placeholder": "Selecione um ou mais fluxos",
+          "tooltip": "Associe fluxos a esta fila para definir quais fluxos ficam disponíveis ao filtrar por ela. Fluxos que não estão associados a nenhuma fila são considerados gerais e ficam disponíveis quando nenhum filtro de fila é aplicado."
         }
       },
       "message": {
@@ -1543,12 +1641,14 @@
         "contacts_waiting_for_service": "Contatos aguardando atendimento",
         "filters": {
           "queues": {
+            "all": "Todas as filas",
             "label": "Selecione uma fila",
-            "all": "Todas as filas"
+            "placeholder": "Selecione pelo menos uma fila"
           },
           "representatives": {
+            "all": "Todos os representantes",
             "label": "Selecione um representante",
-            "all": "Todos os representantes"
+            "placeholder": "Selecione pelo menos um representante"
           }
         }
       },
@@ -1568,7 +1668,7 @@
     "history": {
       "filter_by_sender": "Filtrar por remetente",
       "filter_by_status": "Filtrar por status",
-      "last_message_disclaimer": "A mensagem \"{text}\" foi enviada na última hora - às {time}.",
+      "last_message_disclaimer": "A mensagem \"{text}\" foi enviada na última hora, às {time}.",
       "sent_by": "Enviado por",
       "status": "Status",
       "status_failed": "Falha ao enviar",
@@ -1589,12 +1689,17 @@
   },
   "message_dictation": {
     "tooltip": {
-      "activate": "Ativar modo de voz (shift + V)",
-      "stop": "Desativar modo de voz (esc)"
+      "activate": "Ativar modo de voz (Shift + V)",
+      "stop": "Sair do modo de voz (Esc)"
     },
     "button": {
       "activate": "Modo de voz",
-      "stop": "Desativar"
+      "stop": "Parar"
     }
-  }
+  },
+  "waiting": "Aguardando",
+  "sent_flows": "Fluxos enviados",
+  "discussion": "Discussões",
+  "close_contact": "Encerrar contato",
+  "close_contact_confirmation": "Tem certeza que deseja encerrar este contato?"
 }
