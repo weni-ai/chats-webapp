@@ -171,7 +171,6 @@ import { useDiscussions } from '@/store/modules/chats/discussions';
 import RoomsListLoading from '@/views/loadings/RoomsList.vue';
 import CardGroup from './CardGroup/index.vue';
 import TabChip from './TabChip.vue';
-import ModalQueuePriorizations from '@/components/ModalQueuePriorizations.vue';
 import QueueFilter from './QueueFilter.vue';
 
 import Room from '@/services/api/resources/chats/room';
