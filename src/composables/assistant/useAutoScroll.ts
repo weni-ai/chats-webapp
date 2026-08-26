@@ -9,8 +9,6 @@ import {
 
 export const BOTTOM_SCROLL_THRESHOLD_PX = 100;
 
-type ScrollBehaviorOption = 'auto' | 'smooth';
-
 export function useAutoScroll(
   messages: Ref<unknown>,
   isThinking: Ref<boolean>,
@@ -20,17 +18,29 @@ export function useAutoScroll(
   const bottomAnchorRef = ref<HTMLElement | null>(null);
   const showGoToBottom = ref(false);
   const isNearBottomRef = { current: true };
+  const isProgrammaticScrollRef = { current: false };
 
-  function scrollToBottom(behavior: ScrollBehaviorOption = 'smooth') {
-    bottomAnchorRef.value?.scrollIntoView?.({ behavior });
+  function scrollToBottom() {
+    const el = listRef.value;
+
+    if (!el) {
+      return;
+    }
+
+    isProgrammaticScrollRef.current = true;
+    el.scrollTop = el.scrollHeight;
+    requestAnimationFrame(() => {
+      syncScrollState();
+      isProgrammaticScrollRef.current = false;
+    });
   }
 
-  function scrollToBottomIfNear(behavior: ScrollBehaviorOption = 'smooth') {
+  function scrollToBottomIfNear() {
     if (!isNearBottomRef.current) {
       return;
     }
 
-    scrollToBottom(behavior);
+    scrollToBottom();
   }
 
   function syncScrollState() {
@@ -48,7 +58,20 @@ export function useAutoScroll(
   }
 
   function handleScroll() {
+    if (isProgrammaticScrollRef.current) {
+      return;
+    }
+
     syncScrollState();
+  }
+
+  function handleWheel(event: WheelEvent) {
+    // Treat upward wheel intent as leaving the bottom immediately so auto-scroll
+    // does not fight the user mid-gesture (especially with smooth ancestors).
+    if (event.deltaY < 0) {
+      isNearBottomRef.current = false;
+      showGoToBottom.value = true;
+    }
   }
 
   watch(
@@ -56,7 +79,6 @@ export function useAutoScroll(
     () => {
       nextTick(() => {
         scrollToBottomIfNear();
-        requestAnimationFrame(syncScrollState);
       });
     },
     { deep: true },
@@ -71,11 +93,13 @@ export function useAutoScroll(
 
     syncScrollState();
     el.addEventListener('scroll', handleScroll, { passive: true });
+    el.addEventListener('wheel', handleWheel, { passive: true });
     window.addEventListener('resize', syncScrollState);
   });
 
   onBeforeUnmount(() => {
     listRef.value?.removeEventListener('scroll', handleScroll);
+    listRef.value?.removeEventListener('wheel', handleWheel);
     window.removeEventListener('resize', syncScrollState);
   });
 
