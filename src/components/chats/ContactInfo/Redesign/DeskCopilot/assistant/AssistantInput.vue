@@ -1,5 +1,26 @@
 <template>
+  <VoiceModeError
+    v-if="voiceError"
+    :error="voiceError"
+    @retry="emit('voiceRetry')"
+    @dismiss="emit('voiceDismiss')"
+  />
+
+  <VoiceModePanel
+    v-else-if="isVoiceModePageActive"
+    :state="voiceModeState"
+    @exit="emit('voiceExit')"
+  />
+
+  <AudioRecordingBar
+    v-else-if="isRecording"
+    :durationMs="recordingDurationMs"
+    @cancel="emit('cancelRecording')"
+    @send="emit('stopRecording')"
+  />
+
   <section
+    v-else
     class="assistant-input"
     data-testid="assistant-input"
   >
@@ -21,33 +42,102 @@
         type="tertiary"
         size="small"
         iconCenter="attach_file_add"
-        disabled
         data-testid="assistant-input-attach"
+        :aria-label="$t('contact_info.desk_copilot.assistant.attach_action')"
+        @click="openFilePicker"
+      />
+
+      <input
+        ref="fileInputRef"
+        class="assistant-input__file-input"
+        type="file"
+        :accept="fileAccept"
+        data-testid="assistant-input-file"
+        @change="handleFileChange"
+      />
+
+      <VoiceModeButton
+        v-if="canEnterVoiceMode && !draft.trim()"
+        @click="emit('voiceEnter')"
       />
       <UnnnicButton
+        v-else-if="isAudioRecordingSupported && !draft.trim()"
         type="secondary"
         size="small"
-        iconCenter="graphic_eq"
-        disabled
+        iconCenter="mic"
         data-testid="assistant-input-mic"
+        :aria-label="$t('contact_info.desk_copilot.assistant.record_audio')"
+        @click="emit('startRecording')"
       />
     </section>
   </section>
 </template>
 
 <script setup lang="ts">
-import { nextTick, onMounted, ref } from 'vue';
+import { computed, nextTick, onMounted, ref } from 'vue';
+import { UnnnicCallAlert } from '@weni/unnnic-system';
+import i18n from '@/plugins/i18n';
+import type { FileConfig } from '@weni/webchat-service';
+import AudioRecordingBar from './AudioRecordingBar.vue';
+import VoiceModeButton from './VoiceModeButton.vue';
+import VoiceModePanel from './VoiceModePanel.vue';
+import VoiceModeError from './VoiceModeError.vue';
 
 defineOptions({
   name: 'AssistantInput',
 });
 
+const props = withDefaults(
+  defineProps<{
+    isRecording?: boolean;
+    recordingDurationMs?: number;
+    isAudioRecordingSupported?: boolean;
+    canEnterVoiceMode?: boolean;
+    isVoiceModePageActive?: boolean;
+    voiceModeState?: string | null;
+    voiceError?: {
+      code?: string;
+      message?: string;
+      suggestion?: string;
+      recoverable?: boolean;
+    } | null;
+    fileConfig?: FileConfig;
+  }>(),
+  {
+    isRecording: false,
+    recordingDurationMs: 0,
+    isAudioRecordingSupported: false,
+    canEnterVoiceMode: false,
+    isVoiceModePageActive: false,
+    voiceModeState: null,
+    voiceError: null,
+    fileConfig: () => ({
+      allowedTypes: [],
+      maxFileSize: 32 * 1024 * 1024,
+      acceptAttribute: '',
+    }),
+  },
+);
+
 const emit = defineEmits<{
   send: [text: string];
+  attach: [file: File];
+  startRecording: [];
+  stopRecording: [];
+  cancelRecording: [];
+  voiceEnter: [];
+  voiceExit: [];
+  voiceRetry: [];
+  voiceDismiss: [];
 }>();
 
 const draft = ref('');
 const textareaRef = ref<HTMLTextAreaElement | null>(null);
+const fileInputRef = ref<HTMLInputElement | null>(null);
+
+const fileAccept = computed(
+  () => props.fileConfig?.acceptAttribute || undefined,
+);
 
 function autoGrow() {
   const el = textareaRef.value;
@@ -65,6 +155,49 @@ async function handleSend() {
   draft.value = '';
   await nextTick();
   autoGrow();
+}
+
+function openFilePicker() {
+  fileInputRef.value?.click();
+}
+
+function handleFileChange(event: Event) {
+  const input = event.target as HTMLInputElement;
+  const file = input.files?.[0];
+  input.value = '';
+
+  if (!file) {
+    return;
+  }
+
+  const maxSize = props.fileConfig?.maxFileSize || 32 * 1024 * 1024;
+  const allowedTypes = props.fileConfig?.allowedTypes || [];
+
+  if (file.size > maxSize) {
+    UnnnicCallAlert({
+      props: {
+        text: i18n.global.t(
+          'contact_info.desk_copilot.assistant.file_too_large',
+        ),
+        type: 'error',
+      },
+    });
+    return;
+  }
+
+  if (allowedTypes.length > 0 && !allowedTypes.includes(file.type)) {
+    UnnnicCallAlert({
+      props: {
+        text: i18n.global.t(
+          'contact_info.desk_copilot.assistant.file_type_not_allowed',
+        ),
+        type: 'error',
+      },
+    });
+    return;
+  }
+
+  emit('attach', file);
 }
 
 onMounted(() => {
@@ -112,6 +245,10 @@ onMounted(() => {
     align-items: center;
     justify-content: space-between;
     width: 100%;
+  }
+
+  &__file-input {
+    display: none;
   }
 }
 </style>
