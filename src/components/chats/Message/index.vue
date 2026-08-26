@@ -500,5 +500,9 @@ $defaultLineHeight: $unnnic-font-size-body-gt + $unnnic-line-height-medium;
   .geolocation-icon {
     align-self: center;
   }
+
+  &__time-container {
+    align-self: flex-end;
+  }
 }
 </style>
