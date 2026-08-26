@@ -24,6 +24,21 @@ vi.mock('@/composables/assistant/useCopilotChat', () => ({
   useCopilotChat: vi.fn(),
 }));
 
+vi.mock('@/composables/assistant/useVoiceMode', () => ({
+  useVoiceMode: vi.fn(() => ({
+    canEnterVoiceMode: computed(() => false),
+    isVoiceModeActive: ref(false),
+    isVoiceModePageActive: ref(false),
+    voiceModeState: ref(null),
+    voicePartialTranscript: ref(''),
+    voiceError: ref(null),
+    enter: vi.fn(),
+    exit: vi.fn(),
+    retry: vi.fn(),
+    dismissError: vi.fn(),
+  })),
+}));
+
 beforeAll(() => {
   config.global.plugins = (config.global.plugins || []).filter(
     (plugin) => plugin !== i18n,
@@ -73,7 +88,21 @@ function mockCopilotChat({
     isLoadingHistory: ref(isLoadingHistory),
     cartCount: ref(cartCount),
     suggestions: ref(suggestions),
+    isRecording: ref(false),
+    recordingDurationMs: ref(0),
+    isAudioRecordingSupported: ref(true),
+    isVoiceEnabledByServer: ref(false),
+    fileConfig: ref({
+      allowedTypes: [],
+      maxFileSize: 32 * 1024 * 1024,
+      acceptAttribute: '',
+    }),
     sendMessage: vi.fn(),
+    sendAttachment: vi.fn(),
+    startRecording: vi.fn(),
+    stopRecording: vi.fn(),
+    cancelRecording: vi.fn(),
+    requestVoiceTokens: vi.fn(),
   });
 }
 
