@@ -25,6 +25,14 @@ export function useAutoScroll(
     bottomAnchorRef.value?.scrollIntoView?.({ behavior });
   }
 
+  function scrollToBottomIfNear(behavior: ScrollBehaviorOption = 'smooth') {
+    if (!isNearBottomRef.current) {
+      return;
+    }
+
+    scrollToBottom(behavior);
+  }
+
   function syncScrollState() {
     const el = listRef.value;
 
@@ -47,11 +55,11 @@ export function useAutoScroll(
     [messages, isThinking, isTyping],
     () => {
       nextTick(() => {
-        scrollToBottom();
+        scrollToBottomIfNear();
         requestAnimationFrame(syncScrollState);
       });
     },
-    { deep: true, immediate: true },
+    { deep: true },
   );
 
   onMounted(() => {
@@ -76,5 +84,6 @@ export function useAutoScroll(
     bottomAnchorRef,
     showGoToBottom,
     scrollToBottom,
+    scrollToBottomIfNear,
   };
 }

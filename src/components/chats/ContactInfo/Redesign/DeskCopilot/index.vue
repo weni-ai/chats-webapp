@@ -22,7 +22,7 @@
           :isTyping="isTyping"
           :isLoadingHistory="isLoadingHistory"
           @send="handleSendSuggestionToInput"
-          @word-revealed="scrollToBottom()"
+          @word-revealed="scrollToBottomIfNear()"
         />
 
         <section
@@ -119,8 +119,13 @@ const {
   sendMessage,
 } = useCopilotChat(connection, roomUuid);
 
-const { listRef, bottomAnchorRef, showGoToBottom, scrollToBottom } =
-  useAutoScroll(messages, isThinking, isTyping);
+const {
+  listRef,
+  bottomAnchorRef,
+  showGoToBottom,
+  scrollToBottom,
+  scrollToBottomIfNear,
+} = useAutoScroll(messages, isThinking, isTyping);
 
 const enableRoomSummary = computed(
   () => !!project.value?.config?.has_chats_summary,
