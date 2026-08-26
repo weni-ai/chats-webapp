@@ -7,7 +7,7 @@
       class="thinking-indicator__icon"
       icon="progress_activity"
       size="sm"
-      scheme="fg-emphasized"
+      scheme="fg-accent"
     />
     <section class="thinking-indicator__text-wrapper">
       <section
@@ -179,8 +179,8 @@ onBeforeUnmount(() => {
   }
 
   &__text {
-    font: $unnnic-font-emphasis;
-    color: $unnnic-color-fg-emphasized;
+    font: $unnnic-font-body;
+    color: $unnnic-color-fg-muted;
     white-space: nowrap;
     flex-shrink: 0;
   }
