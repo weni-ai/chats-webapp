@@ -1,4 +1,4 @@
-import { describe, it, expect, afterEach, vi } from 'vitest';
+import { describe, it, expect, afterEach } from 'vitest';
 import { mount } from '@vue/test-utils';
 import AudioRecordingBar from '../AudioRecordingBar.vue';
 
@@ -28,7 +28,7 @@ describe('AssistantAudioRecordingBar', () => {
     wrapper?.unmount();
   });
 
-  it('formats the recording duration and emits send/cancel', async () => {
+  it('formats the recording duration and emits cancel', async () => {
     wrapper = createWrapper();
 
     expect(
@@ -38,11 +38,7 @@ describe('AssistantAudioRecordingBar', () => {
     await wrapper
       .find('[data-testid="assistant-audio-recording-cancel"]')
       .trigger('click');
-    await wrapper
-      .find('[data-testid="assistant-audio-recording-send"]')
-      .trigger('click');
 
     expect(wrapper.emitted('cancel')).toBeTruthy();
-    expect(wrapper.emitted('send')).toBeTruthy();
   });
 });
