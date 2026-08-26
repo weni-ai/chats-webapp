@@ -850,7 +850,6 @@
       "assistant": {
         "copy_action": "Copiar",
         "input_placeholder": "Pregunta al asistente",
-        "loading_conversation": "Cargando conversación",
         "processing_information": "Procesando información",
         "scroll_to_bottom": "Ir al final",
         "send_action": "Enviar",
