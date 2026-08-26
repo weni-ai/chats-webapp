@@ -855,8 +855,9 @@
         "file_type_not_allowed": "Select a supported file type",
         "image_attachment": "Image attachment",
         "input_placeholder": "Ask the assistant",
+        "open_media_menu": "Open media menu",
         "processing_information": "Processing information",
-        "record_audio": "Record audio",
+        "record_audio": "Audio",
         "recording_in_progress": "Recording",
         "scroll_to_bottom": "Go to bottom",
         "send_action": "Send",
@@ -868,6 +869,7 @@
           "refining": "Refining details",
           "structuring": "Structuring response"
         },
+        "upload_file": "Upload file",
         "voice_mode": {
           "dismiss": "Dismiss",
           "enter": "Start voice mode",
