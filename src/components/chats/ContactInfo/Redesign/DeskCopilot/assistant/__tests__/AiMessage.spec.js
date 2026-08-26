@@ -73,4 +73,19 @@ describe('AssistantAiMessage', () => {
       'Suggested reply for the customer',
     ]);
   });
+
+  it('shows a caret and hides actions while streaming', () => {
+    wrapper = createWrapper({
+      text: 'Hello world',
+      suggestion: undefined,
+      status: 'streaming',
+    });
+
+    expect(wrapper.find('[data-testid="assistant-ai-caret"]').exists()).toBe(
+      true,
+    );
+    expect(wrapper.find('[data-testid="assistant-ai-actions"]').exists()).toBe(
+      false,
+    );
+  });
 });

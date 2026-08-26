@@ -25,11 +25,15 @@ const createWrapper = (props = {}) =>
         AiMessage: {
           name: 'AssistantAiMessage',
           template: '<div data-testid="assistant-ai-message" />',
-          props: ['text', 'suggestion'],
+          props: ['text', 'suggestion', 'status'],
         },
         ThinkingIndicator: {
           name: 'AssistantThinkingIndicator',
           template: '<div data-testid="assistant-thinking-indicator" />',
+        },
+        TypingIndicator: {
+          name: 'AssistantTypingIndicator',
+          template: '<div data-testid="assistant-typing-indicator" />',
         },
       },
     },
@@ -75,5 +79,50 @@ describe('AssistantMessageList', () => {
     expect(
       wrapper.find('[data-testid="assistant-human-message"]').exists(),
     ).toBe(true);
+  });
+
+  it('shows the thinking indicator while the assistant is processing', () => {
+    wrapper = createWrapper({ isThinking: true });
+
+    expect(
+      wrapper.find('[data-testid="assistant-thinking-indicator"]').exists(),
+    ).toBe(true);
+  });
+
+  it('shows the typing indicator while waiting for a reply', () => {
+    wrapper = createWrapper({ isTyping: true });
+
+    expect(
+      wrapper.find('[data-testid="assistant-typing-indicator"]').exists(),
+    ).toBe(true);
+  });
+
+  it('prefers thinking over typing when both are active', () => {
+    wrapper = createWrapper({ isTyping: true, isThinking: true });
+
+    expect(
+      wrapper.find('[data-testid="assistant-thinking-indicator"]').exists(),
+    ).toBe(true);
+    expect(
+      wrapper.find('[data-testid="assistant-typing-indicator"]').exists(),
+    ).toBe(false);
+  });
+
+  it('passes message status to AiMessage for streaming replies', () => {
+    wrapper = createWrapper({
+      messages: [
+        {
+          id: 'ai-1',
+          direction: 'ai',
+          text: 'Hello world',
+          quickReplies: [],
+          status: 'streaming',
+          timestamp: 1,
+        },
+      ],
+    });
+
+    const aiMessage = wrapper.findComponent({ name: 'AssistantAiMessage' });
+    expect(aiMessage.props('status')).toBe('streaming');
   });
 });

@@ -34,11 +34,14 @@
         v-else
         :text="message.text"
         :suggestion="message.suggestion"
+        :status="message.status"
         @send="emit('send', $event)"
+        @word-revealed="emit('wordRevealed')"
       />
     </template>
 
     <ThinkingIndicator v-if="isThinking" />
+    <TypingIndicator v-else-if="isTyping" />
   </section>
 </template>
 
@@ -47,6 +50,7 @@ import type { AssistantMessage } from '@/services/assistant/types';
 import HumanMessage from './HumanMessage.vue';
 import AiMessage from './AiMessage.vue';
 import ThinkingIndicator from './ThinkingIndicator.vue';
+import TypingIndicator from './TypingIndicator.vue';
 
 defineOptions({
   name: 'AssistantMessageList',
@@ -56,17 +60,20 @@ withDefaults(
   defineProps<{
     messages?: AssistantMessage[];
     isThinking?: boolean;
+    isTyping?: boolean;
     isLoadingHistory?: boolean;
   }>(),
   {
     messages: () => [],
     isThinking: false,
+    isTyping: false,
     isLoadingHistory: false,
   },
 );
 
 const emit = defineEmits<{
   send: [text: string];
+  wordRevealed: [];
 }>();
 </script>
 

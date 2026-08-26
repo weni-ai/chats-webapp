@@ -824,7 +824,15 @@
         "input_placeholder": "Întreabă asistentul",
         "loading_conversation": "Se încarcă conversația",
         "processing_information": "Se procesează informațiile",
-        "send_action": "Trimite"
+        "scroll_to_bottom": "Mergi jos",
+        "send_action": "Trimite",
+        "thinking_messages": {
+          "almost": "Aproape gata, doar un moment",
+          "connecting": "Conectare idei",
+          "processing": "Procesare informații",
+          "refining": "Rafinare detalii",
+          "structuring": "Structurare răspuns"
+        }
       },
       "copy_summary": "Copiază rezumatul",
       "disclaimer": {

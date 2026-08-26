@@ -24,7 +24,8 @@ defineProps<{
   width: 100%;
 
   &__text {
-    max-width: 100%;
+    max-width: 75%;
+    min-width: 0;
     padding: $unnnic-space-3 $unnnic-space-4;
     border-radius: $unnnic-radius-2;
     background-color: $unnnic-color-bg-base;
@@ -32,6 +33,24 @@ defineProps<{
     font: $unnnic-font-body;
     color: $unnnic-color-fg-base;
     overflow-wrap: anywhere;
+    animation: assistant-bubble-in-right 0.3s ease-out both;
+    transform-origin: top right;
+  }
+}
+
+@keyframes assistant-bubble-in-right {
+  0% {
+    opacity: 0;
+    transform: translateX(2px) scale(0.8);
+  }
+
+  60% {
+    transform: translateX(-2px) scale(1.02);
+  }
+
+  100% {
+    opacity: 1;
+    transform: translateX(0) scale(1);
   }
 }
 </style>

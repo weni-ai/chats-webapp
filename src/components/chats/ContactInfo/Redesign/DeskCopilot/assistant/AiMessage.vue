@@ -2,6 +2,7 @@
   <section
     class="ai-message"
     data-testid="assistant-ai-message"
+    :class="{ 'ai-message--streaming': isStreamingOrBuffering }"
   >
     <UnnnicIcon
       class="ai-message__icon"
@@ -20,15 +21,23 @@
       </p>
 
       <section
-        v-if="suggestionText"
+        v-if="suggestionText || isStreamingOrBuffering"
         class="ai-message__suggestion"
         data-testid="assistant-ai-suggestion"
+        :class="{ 'ai-message__suggestion--streaming': isStreamingOrBuffering }"
       >
-        <p class="ai-message__suggestion-text">{{ suggestionText }}</p>
+        <p class="ai-message__suggestion-text">
+          {{ displayedSuggestionText
+          }}<span
+            v-if="isStreamingOrBuffering"
+            class="ai-message__caret"
+            data-testid="assistant-ai-caret"
+          />
+        </p>
       </section>
 
       <section
-        v-if="suggestionText"
+        v-if="suggestionText && !isStreamingOrBuffering"
         class="ai-message__actions"
         data-testid="assistant-ai-actions"
       >
@@ -92,23 +101,55 @@
 import { computed, ref } from 'vue';
 import { UnnnicCallAlert } from '@weni/unnnic-system';
 import i18n from '@/plugins/i18n';
+import { useStreamingBuffer } from '@/composables/assistant/useStreamingBuffer';
 
 defineOptions({
   name: 'AssistantAiMessage',
 });
 
-const props = defineProps<{
-  text: string;
-  suggestion?: string;
-}>();
+const props = withDefaults(
+  defineProps<{
+    text: string;
+    suggestion?: string;
+    status?: string;
+  }>(),
+  {
+    suggestion: undefined,
+    status: '',
+  },
+);
 
 const emit = defineEmits<{
   send: [text: string];
+  wordRevealed: [];
 }>();
 
 const feedbackLiked = ref<boolean | null>(null);
 
+const isStreaming = computed(() => props.status === 'streaming');
+const sourceText = computed(() => {
+  if (props.suggestion?.trim()) {
+    return props.suggestion.trim();
+  }
+
+  return props.text.trim();
+});
+
+const { displayedText, isBuffering } = useStreamingBuffer(
+  sourceText,
+  isStreaming,
+  () => emit('wordRevealed'),
+);
+
+const isStreamingOrBuffering = computed(
+  () => isStreaming.value || isBuffering.value,
+);
+
 const leadingText = computed(() => {
+  if (isStreamingOrBuffering.value) {
+    return '';
+  }
+
   if (props.suggestion?.trim()) {
     return props.text.trim();
   }
@@ -117,12 +158,18 @@ const leadingText = computed(() => {
 });
 
 const suggestionText = computed(() => {
+  if (isStreamingOrBuffering.value) {
+    return displayedText.value;
+  }
+
   if (props.suggestion?.trim()) {
     return props.suggestion.trim();
   }
 
   return props.text.trim();
 });
+
+const displayedSuggestionText = computed(() => suggestionText.value);
 
 async function handleCopy() {
   if (!suggestionText.value || !navigator.clipboard) {
@@ -155,6 +202,14 @@ async function handleCopy() {
   align-items: flex-start;
   gap: $unnnic-space-2;
   width: 100%;
+  max-width: 75%;
+  min-width: 0;
+  animation: assistant-bubble-in-left 0.3s ease-out both;
+  transform-origin: top left;
+
+  &--streaming {
+    animation: none;
+  }
 
   &__icon {
     flex-shrink: 0;
@@ -179,6 +234,12 @@ async function handleCopy() {
     padding: $unnnic-space-3 $unnnic-space-4;
     border: 1px solid $unnnic-color-border-base;
     border-radius: $unnnic-radius-2;
+
+    &--streaming {
+      border-color: transparent;
+      padding-left: 0;
+      padding-right: 0;
+    }
   }
 
   &__suggestion-text {
@@ -187,10 +248,21 @@ async function handleCopy() {
     overflow-wrap: anywhere;
   }
 
+  &__caret {
+    display: inline-block;
+    width: 1px;
+    height: 1.2em;
+    margin-left: -1px;
+    background: currentColor;
+    animation: caret-blink 1s step-end infinite;
+    vertical-align: text-bottom;
+  }
+
   &__actions {
     display: flex;
     align-items: center;
     justify-content: space-between;
+    flex-wrap: wrap;
     gap: $unnnic-space-2;
     width: 100%;
   }
@@ -200,6 +272,29 @@ async function handleCopy() {
     display: flex;
     align-items: center;
     gap: $unnnic-space-2;
+    min-width: 0;
+  }
+}
+
+@keyframes assistant-bubble-in-left {
+  0% {
+    opacity: 0;
+    transform: translateX(-2px) scale(0.8);
+  }
+
+  60% {
+    transform: translateX(2px) scale(1.02);
+  }
+
+  100% {
+    opacity: 1;
+    transform: translateX(0) scale(1);
+  }
+}
+
+@keyframes caret-blink {
+  50% {
+    opacity: 0;
   }
 }
 </style>
