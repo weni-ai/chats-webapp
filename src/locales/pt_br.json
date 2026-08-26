@@ -1319,6 +1319,13 @@
           "input_placeholder": "Exemplo: 50"
         }
       },
+      "bond_flows_queue": {
+        "select": {
+          "label": "Fluxos associados",
+          "placeholder": "Selecione um ou mais fluxos",
+          "tooltip": "Associe fluxos a esta fila para definir quais fluxos ficam disponíveis ao filtrar por ela. Fluxos que não estão associados a nenhuma fila são considerados gerais e ficam disponíveis quando nenhum filtro de fila é aplicado."
+        }
+      },
       "message": {
         "create": "Fila criada com sucesso",
         "update": "Fila atualizada com sucesso",
@@ -1661,7 +1668,7 @@
     "history": {
       "filter_by_sender": "Filtrar por remetente",
       "filter_by_status": "Filtrar por status",
-      "last_message_disclaimer": "A mensagem \"{text}\" foi enviada na última hora - às {time}.",
+      "last_message_disclaimer": "A mensagem \"{text}\" foi enviada na última hora, às {time}.",
       "sent_by": "Enviado por",
       "status": "Status",
       "status_failed": "Falha ao enviar",
@@ -1682,12 +1689,12 @@
   },
   "message_dictation": {
     "tooltip": {
-      "activate": "Ativar modo de voz (shift + V)",
-      "stop": "Desativar modo de voz (esc)"
+      "activate": "Ativar modo de voz (Shift + V)",
+      "stop": "Sair do modo de voz (Esc)"
     },
     "button": {
       "activate": "Modo de voz",
-      "stop": "Desativar"
+      "stop": "Parar"
     }
   },
   "waiting": "Aguardando",

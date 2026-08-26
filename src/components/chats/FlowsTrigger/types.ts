@@ -60,6 +60,24 @@ export interface TemplateBodySegment {
   value?: string;
 }
 
+export interface QueuePermission {
+  uuid?: string;
+  queue?: string;
+  queue_name?: string;
+  role?: number;
+  permission?: string;
+}
+
+export interface QueueSelectOption {
+  value: string;
+  label: string;
+}
+
+export interface SelectQueueProps {
+  modelValue?: string;
+  isDisabled?: boolean;
+}
+
 export type {
   LocalVariable,
   LocalVariableToken,

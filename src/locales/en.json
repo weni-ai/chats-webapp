@@ -1319,6 +1319,13 @@
           "input_placeholder": "Example: 50"
         }
       },
+      "bond_flows_queue": {
+        "select": {
+          "label": "Associated flows",
+          "placeholder": "Select one or more flows",
+          "tooltip": "Associate flows with this queue to define which flows are available when filtering by this queue. Flows that aren't associated with any queue are considered general and are available when no queue filter is applied."
+        }
+      },
       "message": {
         "create": "Queue created successfully",
         "update": "Queue updated successfully",
@@ -1618,7 +1625,7 @@
     }
   },
   "mass_message": {
-    "title": "Mass message",
+    "title": "Bulk message",
     "form": {
       "title": "Send mass message",
       "shipping_history": "Shipping history",
@@ -1661,7 +1668,7 @@
     "history": {
       "filter_by_sender": "Filter by sender",
       "filter_by_status": "Filter by status",
-      "last_message_disclaimer": "The message \"{text}\" was sent in the last hour - at {time}.",
+      "last_message_disclaimer": "The message \"{text}\" was sent in the last hour, at {time}.",
       "sent_by": "Sent by",
       "status": "Status",
       "status_failed": "Failed to send",
@@ -1682,8 +1689,8 @@
   },
   "message_dictation": {
     "tooltip": {
-      "activate": "Activate voice mode (shift + V)",
-      "stop": "Stop voice mode (esc)"
+      "activate": "Activate voice mode (Shift + V)",
+      "stop": "Stop voice mode (Esc)"
     },
     "button": {
       "activate": "Voice mode",

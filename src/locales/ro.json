@@ -1288,6 +1288,13 @@
           "input_placeholder": "Exemplu: 50"
         }
       },
+      "bond_flows_queue": {
+        "select": {
+          "label": "Fluxuri asociate",
+          "placeholder": "Selectează unul sau mai multe",
+          "tooltip": "Asociază fluxuri acestei cozi pentru a defini ce fluxuri sunt disponibile la filtrarea după ea. Fluxurile care nu sunt asociate niciunei cozi sunt considerate generale și sunt disponibile când nu se aplică niciun filtru de coadă."
+        }
+      },
       "message": {
         "create": "Coada a fost creată cu succes",
         "update": "Coada a fost actualizată cu succes",
@@ -1613,7 +1620,7 @@
       "last_message_disclaimer": "Mesajul \"{text}\" a fost trimis în ultima oră - la {time}.",
       "sent_by": "Trimis de",
       "status": "Status",
-      "status_failed": "Eșec la trimitere",
+      "status_failed": "Trimitere nereușită",
       "status_sent": "Trimis"
     },
     "toast": {
@@ -1631,8 +1638,8 @@
   },
   "message_dictation": {
     "tooltip": {
-      "activate": "Activare mod vocal (shift + V)",
-      "stop": "Oprire mod vocal (esc)"
+      "activate": "Activare mod vocal (Shift + V)",
+      "stop": "Oprire mod vocal (Esc)"
     },
     "button": {
       "activate": "Mod vocal",
