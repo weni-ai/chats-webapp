@@ -847,6 +847,12 @@
       }
     },
     "desk_copilot": {
+      "assistant": {
+        "copy_action": "Copy",
+        "input_placeholder": "Ask the assistant",
+        "processing_information": "Processing information",
+        "send_action": "Send"
+      },
       "copy_summary": "Copy summary",
       "disclaimer": {
         "description": "Desk Copilot can help you with:",

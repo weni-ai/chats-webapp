@@ -847,6 +847,12 @@
       }
     },
     "desk_copilot": {
+      "assistant": {
+        "copy_action": "Copiar",
+        "input_placeholder": "Pergunte ao assistente",
+        "processing_information": "Processando informações",
+        "send_action": "Enviar"
+      },
       "copy_summary": "Copiar resumo",
       "disclaimer": {
         "description": "O Desk Copilot pode ajudar você com:",
