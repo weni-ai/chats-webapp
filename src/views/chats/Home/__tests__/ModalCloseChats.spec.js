@@ -102,6 +102,7 @@ const createWrapper = (queueTagsMock) => {
         ChatClassifier: true,
         UnnnicDisclaimer: true,
         UnnnicInput: true,
+        UnnnicIconLoading: true,
       },
     },
   });
@@ -112,31 +113,64 @@ describe('ModalCloseChats.vue', () => {
 
   beforeEach(() => {
     Queue.tags.mockReset();
-    Queue.tags
-      .mockResolvedValue(tagsResponse)
-      .mockResolvedValueOnce({ ...tagsResponse, next: true });
+    Queue.tags.mockResolvedValue(tagsResponse);
     wrapper = createWrapper();
   });
 
-  it('should loads and concatenates tags correctly in classifyRoom', async () => {
-    const classifyRoom = vi.spyOn(ModalCloseChat.methods, 'classifyRoom');
-    const localWrapper = createWrapper();
-
+  it('should loads tags correctly in classifyRoom', async () => {
     await flushPromises();
-    await wrapper.vm.$nextTick();
 
     expect(Queue.tags).toHaveBeenCalledWith(roomMock.queue.uuid, {
       limit: 20,
       next: '',
+      search: '',
     });
 
-    expect(classifyRoom).toHaveBeenCalled();
+    expect(wrapper.vm.sectorTags).toEqual(tagsResponse.results);
+    expect(wrapper.vm.isLoadingTags).toBe(false);
+  });
+
+  it('should pass search param when filtering tags', async () => {
+    await flushPromises();
+    Queue.tags.mockClear();
+    Queue.tags.mockResolvedValue(tagsResponse);
+
+    await wrapper.vm.classifyRoom({ reset: true });
+    wrapper.vm.tagsFilter = 'vip';
+    await wrapper.vm.classifyRoom({ reset: true });
+    await flushPromises();
+
+    expect(Queue.tags).toHaveBeenLastCalledWith(roomMock.queue.uuid, {
+      limit: 20,
+      next: '',
+      search: 'vip',
+    });
+  });
+
+  it('should load next page when classifyRoom is called without reset', async () => {
+    Queue.tags.mockReset();
+    Queue.tags
+      .mockResolvedValueOnce({ ...tagsResponse, next: 'next-page-url' })
+      .mockResolvedValueOnce(tagsResponse);
+
+    const localWrapper = createWrapper();
+    await flushPromises();
 
     expect(localWrapper.vm.sectorTags).toEqual(tagsResponse.results);
-    expect(localWrapper.vm.isLoadingTags).toBe(false);
+
+    await localWrapper.vm.classifyRoom();
+    await flushPromises();
+
+    expect(Queue.tags).toHaveBeenLastCalledWith(roomMock.queue.uuid, {
+      limit: 20,
+      next: 'next-page-url',
+      search: '',
+    });
+    expect(localWrapper.vm.sectorTags).toHaveLength(4);
   });
 
   it('calls Room.close and emits "close" event when closeRoom is called', async () => {
+    await flushPromises();
     wrapper.vm.tags = [{ uuid: 'tag1' }];
 
     const closeChatButton = wrapper.findComponent(

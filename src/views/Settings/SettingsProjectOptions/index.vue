@@ -74,8 +74,9 @@
 import { mapState, mapWritableState } from 'pinia';
 
 import { useConfig } from '@/store/modules/config';
-import { useProfile } from '@/store/modules/profile';
 import { useFeatureFlag } from '@/store/modules/featureFlag';
+import { useProfile } from '@/store/modules/profile';
+import { useAssistedSalesFeatureFlag } from '@/composables/useAssistedSalesFeatureFlag';
 
 import Project from '@/services/api/resources/settings/project';
 import agentBuilder from '@/services/api/resources/settings/agentBuilder';
@@ -108,6 +109,8 @@ export default {
         can_see_waiting_rooms_count: true,
         can_use_name_sector_in_rooms: false,
         restrict_offline_agents: false,
+        block_link_contact_agents: false,
+        hide_desk_copilot_tab: false,
       },
       hasAgentBuilder: false,
       aiTransferConfig: {
@@ -123,20 +126,16 @@ export default {
   computed: {
     ...mapWritableState(useConfig, ['project']),
     ...mapState(useConfig, ['isSecondaryProject', 'isMainGroupsProject']),
-    ...mapState(useProfile, ['me']),
     ...mapState(useFeatureFlag, ['featureFlags']),
-
-    isBulkCloseFeatureEnabled() {
-      return this.featureFlags.active_features?.includes('weniChatsBulkClose');
-    },
-
-    isBulkTakeFeatureEnabled() {
-      return this.featureFlags.active_features?.includes('weniChatsBulkTake');
-    },
+    ...mapState(useProfile, ['me']),
 
     isUserManager() {
       const ROLE_MANAGER = 1;
       return this.me.project_permission_role === ROLE_MANAGER;
+    },
+
+    isAssistedSalesEnabled() {
+      return useAssistedSalesFeatureFlag(this.featureFlags);
     },
 
     configAiTransferTranslation() {
@@ -229,6 +228,28 @@ export default {
           ),
         },
         {
+          key: 'block_link_contact_agents',
+          type: 'flag',
+          visible: !this.isSecondaryProject,
+          name: this.$t(
+            'config_chats.project_configs.block_link_contact_agents.switch_label',
+          ),
+          hint: this.$t(
+            'config_chats.project_configs.block_link_contact_agents.hint',
+          ),
+        },
+        {
+          key: 'hide_desk_copilot_tab',
+          type: 'flag',
+          visible: !this.isSecondaryProject && this.isAssistedSalesEnabled,
+          name: this.$t(
+            'config_chats.project_configs.hide_desk_copilot_tab.switch_label',
+          ),
+          hint: this.$t(
+            'config_chats.project_configs.hide_desk_copilot_tab.hint',
+          ),
+        },
+        {
           key: 'can_use_bulk_transfer',
           type: 'flag',
           visible: !this.isSecondaryProject,
@@ -254,7 +275,7 @@ export default {
         {
           key: 'can_use_bulk_close',
           type: 'flag',
-          visible: this.isBulkCloseFeatureEnabled && !this.isSecondaryProject,
+          visible: !this.isSecondaryProject,
           name: this.configBulkCloseTranslation,
         },
         {
@@ -266,7 +287,7 @@ export default {
         {
           key: 'can_use_bulk_take',
           type: 'flag',
-          visible: this.isBulkTakeFeatureEnabled && !this.isSecondaryProject,
+          visible: !this.isSecondaryProject,
           name: this.configBulkTakeTranslation,
         },
         {
@@ -316,6 +337,10 @@ export default {
               newProject.config.can_see_waiting_rooms_count === undefined
                 ? true
                 : newProject.config.can_see_waiting_rooms_count,
+            hide_desk_copilot_tab:
+              newProject.config.hide_desk_copilot_tab === undefined
+                ? false
+                : newProject.config.hide_desk_copilot_tab,
           };
           this.projectConfig = config;
         }
@@ -402,6 +427,8 @@ export default {
         can_see_waiting_rooms_count,
         can_use_name_sector_in_rooms,
         restrict_offline_agents,
+        block_link_contact_agents,
+        hide_desk_copilot_tab,
       } = this.projectConfig;
 
       await Project.update({
@@ -416,6 +443,8 @@ export default {
         can_see_waiting_rooms_count,
         can_use_name_sector_in_rooms,
         restrict_offline_agents,
+        block_link_contact_agents,
+        hide_desk_copilot_tab,
       });
 
       this.project.config = {

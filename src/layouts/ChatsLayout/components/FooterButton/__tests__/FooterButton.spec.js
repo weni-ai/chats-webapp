@@ -4,7 +4,6 @@ import { createPinia, setActivePinia } from 'pinia';
 import FooterButton from '@/layouts/ChatsLayout/components/FooterButton/index.vue';
 import { useRooms } from '@/store/modules/chats/rooms';
 import { useConfig } from '@/store/modules/config';
-import { useFeatureFlag } from '@/store/modules/featureFlag';
 import i18n from '@/plugins/i18n';
 
 beforeAll(() => {
@@ -27,7 +26,6 @@ describe('FooterButton', () => {
       can_use_bulk_transfer = true,
       can_use_bulk_close = true,
       can_use_bulk_take = false,
-      activeFeatures = [],
       isViewMode = false,
     } = {},
   ) => {
@@ -35,7 +33,6 @@ describe('FooterButton', () => {
     setActivePinia(pinia);
     const roomsStore = useRooms();
     const configStore = useConfig();
-    const featureFlagStore = useFeatureFlag();
 
     if (activeTab === 'ongoing') {
       roomsStore.selectedOngoingRooms = selectedRooms;
@@ -52,10 +49,6 @@ describe('FooterButton', () => {
         can_use_bulk_close,
         can_use_bulk_take,
       },
-    };
-
-    featureFlagStore.featureFlags = {
-      active_features: activeFeatures,
     };
 
     return mount(FooterButton, {
@@ -205,10 +198,9 @@ describe('FooterButton', () => {
   });
 
   describe('Take Over Button', () => {
-    it('should show take over button on waiting tab with feature flag and config enabled', () => {
+    it('should show take over button on waiting tab with config enabled', () => {
       const wrapper = createWrapper(['room1'], 'waiting', {
         can_use_bulk_take: true,
-        activeFeatures: ['weniChatsBulkTake'],
       });
 
       expect(wrapper.find('[data-testid="take-over-button"]').exists()).toBe(
@@ -219,7 +211,6 @@ describe('FooterButton', () => {
     it('should hide take over button on ongoing tab', () => {
       const wrapper = createWrapper(['room1'], 'ongoing', {
         can_use_bulk_take: true,
-        activeFeatures: ['weniChatsBulkTake'],
       });
 
       expect(wrapper.find('[data-testid="take-over-button"]').exists()).toBe(
@@ -230,7 +221,6 @@ describe('FooterButton', () => {
     it('should hide take over button when isViewMode is true', () => {
       const wrapper = createWrapper(['room1'], 'waiting', {
         can_use_bulk_take: true,
-        activeFeatures: ['weniChatsBulkTake'],
         isViewMode: true,
       });
 
@@ -239,21 +229,10 @@ describe('FooterButton', () => {
       );
     });
 
-    it('should hide take over button when feature flag is inactive', () => {
-      const wrapper = createWrapper(['room1'], 'waiting', {
-        can_use_bulk_take: true,
-        activeFeatures: [],
-      });
-
-      expect(wrapper.find('[data-testid="take-over-button"]').exists()).toBe(
-        false,
-      );
-    });
 
     it('should hide take over button when can_use_bulk_take config is false', () => {
       const wrapper = createWrapper(['room1'], 'waiting', {
         can_use_bulk_take: false,
-        activeFeatures: ['weniChatsBulkTake'],
       });
 
       expect(wrapper.find('[data-testid="take-over-button"]').exists()).toBe(
@@ -264,7 +243,6 @@ describe('FooterButton', () => {
     it('should toggle take over modal', () => {
       const wrapper = createWrapper(['room1'], 'waiting', {
         can_use_bulk_take: true,
-        activeFeatures: ['weniChatsBulkTake'],
       });
 
       expect(wrapper.vm.isModalTakeOverRoomsOpened).toBe(false);
@@ -279,7 +257,6 @@ describe('FooterButton', () => {
     it('should show take over modal when opened', async () => {
       const wrapper = createWrapper(['room1'], 'waiting', {
         can_use_bulk_take: true,
-        activeFeatures: ['weniChatsBulkTake'],
       });
 
       expect(
@@ -298,7 +275,6 @@ describe('FooterButton', () => {
     it('should reset all modal states when activeTab changes', async () => {
       const wrapper = createWrapper(['room1'], 'waiting', {
         can_use_bulk_take: true,
-        activeFeatures: ['weniChatsBulkTake'],
       });
 
       await wrapper.setData({
@@ -319,7 +295,6 @@ describe('FooterButton', () => {
     it('should not open take over modal when selectedWaitingRooms is empty', () => {
       const wrapper = createWrapper([], 'waiting', {
         can_use_bulk_take: true,
-        activeFeatures: ['weniChatsBulkTake'],
       });
 
       wrapper.vm.handleModalTakeOverRooms();
@@ -329,7 +304,6 @@ describe('FooterButton', () => {
     it('should still allow closing take over modal when selectedWaitingRooms is empty', async () => {
       const wrapper = createWrapper(['room1'], 'waiting', {
         can_use_bulk_take: true,
-        activeFeatures: ['weniChatsBulkTake'],
       });
 
       wrapper.vm.handleModalTakeOverRooms();
@@ -346,7 +320,6 @@ describe('FooterButton', () => {
       const wrapper = createWrapper(['room1'], 'ongoing', {
         can_use_bulk_transfer: true,
         can_use_bulk_close: true,
-        activeFeatures: ['weniChatsBulkClose'],
       });
 
       await wrapper.setData({
@@ -367,11 +340,6 @@ describe('FooterButton', () => {
         can_use_bulk_take: true,
         can_use_bulk_transfer: true,
         can_use_bulk_close: true,
-        activeFeatures: [
-          'weniChatsBulkTake',
-          'weniChatsBulkTransfer',
-          'weniChatsBulkClose',
-        ],
       });
 
       await wrapper.setData({
@@ -392,7 +360,6 @@ describe('FooterButton', () => {
     it('should not reopen close modal when selecting a new room after bulk close', async () => {
       const wrapper = createWrapper(['room1', 'room2'], 'ongoing', {
         can_use_bulk_close: true,
-        activeFeatures: ['weniChatsBulkClose'],
       });
 
       await wrapper.setData({ isModalCloseRoomsOpened: true });
@@ -412,10 +379,9 @@ describe('FooterButton', () => {
   });
 
   describe('Transfer button on waiting tab', () => {
-    it('should show transfer button on waiting tab with feature flag enabled', () => {
+    it('should show transfer button on waiting tab when config is enabled', () => {
       const wrapper = createWrapper(['room1'], 'waiting', {
         can_use_bulk_transfer: true,
-        activeFeatures: ['weniChatsBulkTransfer'],
       });
 
       expect(wrapper.find('[data-testid="transfer-button"]').exists()).toBe(
@@ -423,21 +389,9 @@ describe('FooterButton', () => {
       );
     });
 
-    it('should hide transfer button on waiting tab without feature flag', () => {
-      const wrapper = createWrapper(['room1'], 'waiting', {
-        can_use_bulk_transfer: true,
-        activeFeatures: [],
-      });
-
-      expect(wrapper.find('[data-testid="transfer-button"]').exists()).toBe(
-        false,
-      );
-    });
-
-    it('should show transfer button on ongoing tab without feature flag', () => {
+    it('should show transfer button on ongoing tab when config is enabled', () => {
       const wrapper = createWrapper(['room1'], 'ongoing', {
         can_use_bulk_transfer: true,
-        activeFeatures: [],
       });
 
       expect(wrapper.find('[data-testid="transfer-button"]').exists()).toBe(
@@ -454,6 +408,16 @@ describe('FooterButton', () => {
         false,
       );
     });
+
+    it('should hide transfer button on waiting tab when can_use_bulk_transfer is false', () => {
+      const wrapper = createWrapper(['room1'], 'waiting', {
+        can_use_bulk_transfer: false,
+      });
+
+      expect(wrapper.find('[data-testid="transfer-button"]').exists()).toBe(
+        false,
+      );
+    });
   });
 
   describe('Button type priority (Take over > Transfer > End)', () => {
@@ -462,11 +426,6 @@ describe('FooterButton', () => {
         can_use_bulk_take: true,
         can_use_bulk_transfer: true,
         can_use_bulk_close: true,
-        activeFeatures: [
-          'weniChatsBulkTake',
-          'weniChatsBulkTransfer',
-          'weniChatsBulkClose',
-        ],
       });
 
       expect(wrapper.vm.takeOverButtonType).toBe('primary');
@@ -476,7 +435,6 @@ describe('FooterButton', () => {
       const wrapper = createWrapper(['room1'], 'ongoing', {
         can_use_bulk_transfer: true,
         can_use_bulk_close: true,
-        activeFeatures: ['weniChatsBulkClose'],
       });
 
       expect(wrapper.vm.transferButtonType).toBe('primary');
@@ -486,7 +444,6 @@ describe('FooterButton', () => {
       const wrapper = createWrapper(['room1'], 'waiting', {
         can_use_bulk_take: true,
         can_use_bulk_transfer: true,
-        activeFeatures: ['weniChatsBulkTake', 'weniChatsBulkTransfer'],
       });
 
       expect(wrapper.vm.transferButtonType).toBe('secondary');
@@ -496,7 +453,6 @@ describe('FooterButton', () => {
       const wrapper = createWrapper(['room1'], 'ongoing', {
         can_use_bulk_transfer: false,
         can_use_bulk_close: true,
-        activeFeatures: ['weniChatsBulkClose'],
       });
 
       expect(wrapper.vm.closeButtonType).toBe('primary');
@@ -506,7 +462,6 @@ describe('FooterButton', () => {
       const wrapper = createWrapper(['room1'], 'ongoing', {
         can_use_bulk_transfer: true,
         can_use_bulk_close: true,
-        activeFeatures: ['weniChatsBulkClose'],
       });
 
       expect(wrapper.vm.closeButtonType).toBe('secondary');
@@ -517,7 +472,6 @@ describe('FooterButton', () => {
         can_use_bulk_take: true,
         can_use_bulk_transfer: false,
         can_use_bulk_close: true,
-        activeFeatures: ['weniChatsBulkTake', 'weniChatsBulkClose'],
       });
 
       expect(wrapper.vm.closeButtonType).toBe('secondary');
@@ -528,7 +482,6 @@ describe('FooterButton', () => {
         can_use_bulk_take: true,
         can_use_bulk_transfer: false,
         can_use_bulk_close: false,
-        activeFeatures: ['weniChatsBulkTake'],
       });
 
       expect(wrapper.vm.takeOverButtonType).toBe('primary');
@@ -547,7 +500,6 @@ describe('FooterButton', () => {
       const wrapper = createWrapper(['room1'], 'ongoing', {
         can_use_bulk_transfer: false,
         can_use_bulk_close: true,
-        activeFeatures: ['weniChatsBulkClose'],
       });
 
       expect(wrapper.vm.closeButtonType).toBe('primary');
@@ -558,7 +510,6 @@ describe('FooterButton', () => {
         can_use_bulk_take: true,
         can_use_bulk_transfer: true,
         can_use_bulk_close: false,
-        activeFeatures: ['weniChatsBulkTake', 'weniChatsBulkTransfer'],
       });
 
       expect(wrapper.vm.takeOverButtonType).toBe('primary');
@@ -570,7 +521,6 @@ describe('FooterButton', () => {
         can_use_bulk_take: true,
         can_use_bulk_transfer: false,
         can_use_bulk_close: true,
-        activeFeatures: ['weniChatsBulkTake', 'weniChatsBulkClose'],
       });
 
       expect(wrapper.vm.takeOverButtonType).toBe('primary');
@@ -581,7 +531,6 @@ describe('FooterButton', () => {
       const wrapper = createWrapper(['room1'], 'ongoing', {
         can_use_bulk_transfer: true,
         can_use_bulk_close: true,
-        activeFeatures: ['weniChatsBulkClose'],
       });
 
       expect(wrapper.vm.transferButtonType).toBe('primary');
@@ -593,11 +542,6 @@ describe('FooterButton', () => {
         can_use_bulk_take: true,
         can_use_bulk_transfer: true,
         can_use_bulk_close: true,
-        activeFeatures: [
-          'weniChatsBulkTake',
-          'weniChatsBulkTransfer',
-          'weniChatsBulkClose',
-        ],
       });
 
       expect(wrapper.vm.takeOverButtonType).toBe('primary');

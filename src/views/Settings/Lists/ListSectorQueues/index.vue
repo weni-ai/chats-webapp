@@ -73,7 +73,6 @@
 
 <script>
 import { mapState } from 'pinia';
-
 import FormQueue from '@/views/Settings/Forms/Queue/index.vue';
 import ListOrdinator from '@/components/ListOrdinator.vue';
 import Rooms from '@/services/api/resources/settings/rooms';
@@ -122,17 +121,9 @@ export default {
 
   computed: {
     ...mapState(useFeatureFlag, ['featureFlags']),
-    enableQueuePurposeFeature() {
+    enableQueueFlowsFeature() {
       return this.featureFlags.active_features?.includes(
-        'weniChatsQueuePurpose',
-      );
-    },
-    enableQueueLimitFeature() {
-      return this.featureFlags.active_features?.includes('weniChatsQueueLimit');
-    },
-    isDeleteTransferEnabled() {
-      return this.featureFlags.active_features?.includes(
-        'weniChatsDeleteTransfer',
+        'weniChatsFilterFlowsByQueue',
       );
     },
     queuesOrdered() {
@@ -214,16 +205,12 @@ export default {
       handleConnectOverlay(true);
       this.queueToDelete = queue;
 
-      if (this.isDeleteTransferEnabled) {
-        try {
-          const { waiting, in_service } = await Rooms.count({
-            queue: queue.uuid,
-          });
-          this.queueRoomsCount = waiting + in_service;
-        } catch {
-          this.queueRoomsCount = 0;
-        }
-      } else {
+      try {
+        const { waiting, in_service } = await Rooms.count({
+          queue: queue.uuid,
+        });
+        this.queueRoomsCount = waiting + in_service;
+      } catch {
         this.queueRoomsCount = 0;
       }
 
@@ -254,6 +241,8 @@ export default {
                 : String(queue?.queue_limit?.limit),
             },
             queue_purpose: queue?.queue_purpose || '',
+            bond_flows_queue: queue?.bond_flows_queue || false,
+            selected_flows: queue?.selected_flows || [],
           },
         ];
       } else {
@@ -265,6 +254,8 @@ export default {
             default_message: '',
             queue_limit: { is_active: false, limit: null },
             queue_purpose: '',
+            bond_flows_queue: false,
+            selected_flows: [],
           },
         ];
       }
@@ -301,6 +292,8 @@ export default {
           toAddAgentsUuids,
           toRemoveAgentsUuids,
           queue_purpose,
+          bond_flows_queue,
+          selected_flows,
         } = this.queueToConfig[0];
 
         if (this.queueToConfig[0].uuid) {
@@ -316,12 +309,12 @@ export default {
           const { data: updatedQueue } = await Queue.editQueue({
             uuid,
             default_message,
-            queue_limit: this.enableQueueLimitFeature
-              ? queue_limit
-              : { is_active: false, limit: null },
-            queue_purpose: this.enableQueuePurposeFeature
-              ? queue_purpose
-              : undefined,
+            bond_flows_queue: this.enableQueueFlowsFeature
+              ? bond_flows_queue
+              : false,
+            selected_flows: this.enableQueueFlowsFeature ? selected_flows : [],
+            queue_limit,
+            queue_purpose,
           });
 
           this.queues = this.queues.map((queue) =>
@@ -339,12 +332,12 @@ export default {
             name,
             default_message,
             sectorUuid: this.sector.uuid,
-            queue_limit: this.enableQueueLimitFeature
-              ? queue_limit
-              : { is_active: false, limit: null },
-            queue_purpose: this.enableQueuePurposeFeature
-              ? queue_purpose
-              : undefined,
+            bond_flows_queue: this.enableQueueFlowsFeature
+              ? bond_flows_queue
+              : false,
+            selected_flows: this.enableQueueFlowsFeature ? selected_flows : [],
+            queue_limit,
+            queue_purpose,
           });
           await Promise.all(
             this.queueToConfig[0].currentAgents.map((agent) => {
