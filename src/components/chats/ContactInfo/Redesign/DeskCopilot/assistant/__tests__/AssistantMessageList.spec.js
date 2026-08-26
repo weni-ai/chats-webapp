@@ -53,9 +53,6 @@ describe('AssistantMessageList', () => {
     expect(
       wrapper.find('[data-testid="assistant-history-loading"]').exists(),
     ).toBe(true);
-    expect(wrapper.text()).toContain(
-      'contact_info.desk_copilot.assistant.loading_conversation',
-    );
   });
 
   it('hides the history loading state after messages arrive', () => {

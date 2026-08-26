@@ -17,9 +17,6 @@
         }"
         height="40px"
       />
-      <p class="assistant-message-list__loading-text">
-        {{ $t('contact_info.desk_copilot.assistant.loading_conversation') }}
-      </p>
     </section>
 
     <template
