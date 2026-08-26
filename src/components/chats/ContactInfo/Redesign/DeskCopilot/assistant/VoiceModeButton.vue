@@ -1,6 +1,6 @@
 <template>
   <UnnnicButton
-    type="primary"
+    type="secondary"
     size="small"
     iconCenter="graphic_eq"
     data-testid="assistant-voice-mode-button"
