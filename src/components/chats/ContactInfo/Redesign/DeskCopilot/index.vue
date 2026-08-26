@@ -23,7 +23,7 @@
           :isLoadingHistory="isLoadingHistory"
           :isVoiceModeActive="isVoiceModeActive"
           :voicePartialTranscript="voicePartialTranscript"
-          @send="handleSendSuggestionToInput"
+          @send="handleSendSuggestionToRoom"
           @word-revealed="scrollToBottomIfNear()"
         />
 
@@ -98,7 +98,7 @@ import { useVoiceMode } from '@/composables/assistant/useVoiceMode';
 import { useCopilotConnection } from '@/composables/useCopilotConnection';
 import { useConfig } from '@/store/modules/config';
 import { useRooms } from '@/store/modules/chats/rooms';
-import { useMessageManager } from '@/store/modules/chats/messageManager';
+import { useRoomMessages } from '@/store/modules/chats/roomMessages';
 
 defineOptions({
   name: 'DeskCopilotTab',
@@ -121,8 +121,7 @@ const emit = defineEmits<{
 
 const { project } = storeToRefs(useConfig());
 const { activeRoom } = storeToRefs(useRooms());
-const messageManagerStore = useMessageManager();
-const { inputMessage, inputMessageFocused } = storeToRefs(messageManagerStore);
+const roomMessagesStore = useRoomMessages();
 
 const {
   connection,
@@ -181,9 +180,15 @@ const enableRoomSummary = computed(
   () => !!project.value?.config?.has_chats_summary,
 );
 
-function handleSendSuggestionToInput(text: string) {
-  inputMessage.value = text;
-  inputMessageFocused.value = true;
+async function handleSendSuggestionToRoom(text: string) {
+  const trimmed = text?.trim();
+  const activeRoomUuid = activeRoom.value?.uuid;
+
+  if (!trimmed || !activeRoomUuid) {
+    return;
+  }
+
+  await roomMessagesStore.sendRoomMessage(trimmed, null, null, activeRoomUuid);
 }
 
 onMounted(() => {
