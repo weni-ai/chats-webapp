@@ -117,7 +117,10 @@
               </span>
             </UnnnicToolTip>
           </section>
-          <QueueFilter v-if="showQueueFilter" />
+          <QueueFilter
+            v-if="showQueueFilter"
+            :isViewMode="isViewMode"
+          />
         </div>
       </div>
       <CardGroup
@@ -172,6 +175,8 @@ import ModalQueuePriorizations from '@/components/ModalQueuePriorizations.vue';
 import QueueFilter from './QueueFilter.vue';
 
 import Room from '@/services/api/resources/chats/room';
+import { getProject } from '@/utils/config';
+import { getSelectedQueues } from '@/utils/queuesViewStorage';
 
 export default {
   name: 'TheCardGroups',
@@ -229,6 +234,7 @@ export default {
       allRooms: 'rooms',
       selectedOngoingRooms: 'selectedOngoingRooms',
       selectedWaitingRooms: 'selectedWaitingRooms',
+      filterQueues: 'filterQueues',
     }),
     ...mapState(useRooms, {
       rooms_ongoing: 'agentRooms',
@@ -237,7 +243,6 @@ export default {
       listRoomHasNext: 'hasNextRooms',
       newMessagesByRoom: 'newMessagesByRoom',
       maxPinLimit: 'maxPinLimit',
-      filterQueues: 'filterQueues',
     }),
     ...mapState(useConfig, ['project']),
     ...mapState(useProfile, ['me']),
@@ -504,6 +509,17 @@ export default {
   },
   async created() {
     this.allRooms = [];
+    const nextFilterQueues = this.isViewMode
+      ? []
+      : getSelectedQueues(getProject());
+    const hasSameFilterQueues =
+      nextFilterQueues.length === this.filterQueues.length &&
+      nextFilterQueues.every(
+        (queueUuid, index) => queueUuid === this.filterQueues[index],
+      );
+    if (!hasSameFilterQueues) {
+      this.filterQueues = nextFilterQueues;
+    }
     await Promise.all([
       this.listRoom({
         concat: true,
