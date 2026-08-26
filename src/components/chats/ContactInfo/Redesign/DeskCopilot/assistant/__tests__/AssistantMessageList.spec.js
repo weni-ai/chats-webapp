@@ -20,12 +20,12 @@ const createWrapper = (props = {}) =>
         HumanMessage: {
           name: 'AssistantHumanMessage',
           template: '<div data-testid="assistant-human-message" />',
-          props: ['text'],
+          props: ['text', 'type', 'media', 'filename'],
         },
         AiMessage: {
           name: 'AssistantAiMessage',
           template: '<div data-testid="assistant-ai-message" />',
-          props: ['text', 'suggestion', 'status'],
+          props: ['text', 'suggestion', 'status', 'type', 'media', 'filename'],
         },
         ThinkingIndicator: {
           name: 'AssistantThinkingIndicator',
