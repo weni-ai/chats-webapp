@@ -74,13 +74,19 @@ describe('AssistantAiMessage', () => {
     ]);
   });
 
-  it('shows a caret and hides actions while streaming', () => {
+  it('shows a caret inside the suggestion box and hides actions while streaming', () => {
     wrapper = createWrapper({
       text: 'Hello world',
       suggestion: undefined,
       status: 'streaming',
     });
 
+    const suggestion = wrapper.find('[data-testid="assistant-ai-suggestion"]');
+
+    expect(suggestion.exists()).toBe(true);
+    expect(suggestion.classes()).not.toContain(
+      'ai-message__suggestion--streaming',
+    );
     expect(wrapper.find('[data-testid="assistant-ai-caret"]').exists()).toBe(
       true,
     );

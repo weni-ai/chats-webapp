@@ -24,7 +24,6 @@
         v-if="suggestionText || isStreamingOrBuffering"
         class="ai-message__suggestion"
         data-testid="assistant-ai-suggestion"
-        :class="{ 'ai-message__suggestion--streaming': isStreamingOrBuffering }"
       >
         <p class="ai-message__suggestion-text">
           {{ displayedSuggestionText
@@ -234,12 +233,6 @@ async function handleCopy() {
     padding: $unnnic-space-3 $unnnic-space-4;
     border: 1px solid $unnnic-color-border-base;
     border-radius: $unnnic-radius-2;
-
-    &--streaming {
-      border-color: transparent;
-      padding-left: 0;
-      padding-right: 0;
-    }
   }
 
   &__suggestion-text {
