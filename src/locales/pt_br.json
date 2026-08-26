@@ -855,8 +855,9 @@
         "file_type_not_allowed": "Selecione um tipo de arquivo compatível",
         "image_attachment": "Anexo de imagem",
         "input_placeholder": "Pergunte ao assistente",
+        "open_media_menu": "Abrir menu de mídia",
         "processing_information": "Processando informações",
-        "record_audio": "Gravar áudio",
+        "record_audio": "Áudio",
         "recording_in_progress": "Gravando",
         "scroll_to_bottom": "Ir ao final",
         "send_action": "Enviar",
@@ -868,6 +869,7 @@
           "refining": "Refinando detalhes",
           "structuring": "Estruturando resposta"
         },
+        "upload_file": "Enviar arquivo",
         "voice_mode": {
           "dismiss": "Dispensar",
           "enter": "Iniciar modo de voz",
