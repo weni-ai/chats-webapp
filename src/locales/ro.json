@@ -1618,8 +1618,8 @@
       "message": {
         "title": "Mesaj",
         "input_label": "Definește conținutul mesajului",
-        "input_placeholder": "Exemplu: Experimentăm o instabilitate a sistemului, de aceea ne ia puțin mai mult să răspundem.",
-        "input_helper": "Mesajul va fi trimis exact așa cum a fost scris"
+        "input_placeholder": "Exemplu: Ne confruntăm cu o instabilitate la nivelul sistemului. Din acest motiv, ne ia puțin mai mult timp să răspundem.",
+        "input_helper": "Mesajul va fi trimis exact așa cum a fost introdus"
       },
       "confirmation": {
         "title": "Asigură-te că toate câmpurile sunt completate corect și confirmă verificarea",
