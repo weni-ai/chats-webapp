@@ -20,12 +20,12 @@ const createWrapper = (props = {}) =>
         HumanMessage: {
           name: 'AssistantHumanMessage',
           template: '<div data-testid="assistant-human-message" />',
-          props: ['text'],
+          props: ['text', 'type', 'media', 'filename'],
         },
         AiMessage: {
           name: 'AssistantAiMessage',
           template: '<div data-testid="assistant-ai-message" />',
-          props: ['text', 'suggestion', 'status'],
+          props: ['text', 'suggestion', 'status', 'type', 'media', 'filename'],
         },
         ThinkingIndicator: {
           name: 'AssistantThinkingIndicator',
@@ -53,9 +53,6 @@ describe('AssistantMessageList', () => {
     expect(
       wrapper.find('[data-testid="assistant-history-loading"]').exists(),
     ).toBe(true);
-    expect(wrapper.text()).toContain(
-      'contact_info.desk_copilot.assistant.loading_conversation',
-    );
   });
 
   it('hides the history loading state after messages arrive', () => {

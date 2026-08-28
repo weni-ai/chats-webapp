@@ -21,6 +21,8 @@
           :isThinking="isThinking"
           :isTyping="isTyping"
           :isLoadingHistory="isLoadingHistory"
+          :isVoiceModeActive="isVoiceModeActive"
+          :voicePartialTranscript="voicePartialTranscript"
           @send="handleSendSuggestionToInput"
           @word-revealed="scrollToBottomIfNear()"
         />
@@ -47,10 +49,29 @@
 
     <template v-if="isConfigured">
       <SuggestionChips
+        v-if="!isVoiceModePageActive && !isRecording"
         :suggestions="suggestions"
         @select="sendMessage"
       />
-      <AssistantInput @send="sendMessage" />
+      <AssistantInput
+        :isRecording="isRecording"
+        :recordingDurationMs="recordingDurationMs"
+        :isAudioRecordingSupported="isAudioRecordingSupported"
+        :canEnterVoiceMode="canEnterVoiceMode"
+        :isVoiceModePageActive="isVoiceModePageActive"
+        :voiceModeState="voiceModeState"
+        :voiceError="voiceError"
+        :fileConfig="fileConfig"
+        @send="sendMessage"
+        @attach="sendAttachment"
+        @start-recording="startRecording"
+        @stop-recording="stopRecording"
+        @cancel-recording="cancelRecording"
+        @voice-enter="enter"
+        @voice-exit="exit"
+        @voice-retry="retry"
+        @voice-dismiss="dismissError"
+      />
     </template>
 
     <Disclaimer
@@ -73,6 +94,7 @@ import SuggestionChips from './assistant/SuggestionChips.vue';
 import CartBadge from './assistant/CartBadge.vue';
 import { useAutoScroll } from '@/composables/assistant/useAutoScroll';
 import { useCopilotChat } from '@/composables/assistant/useCopilotChat';
+import { useVoiceMode } from '@/composables/assistant/useVoiceMode';
 import { useCopilotConnection } from '@/composables/useCopilotConnection';
 import { useConfig } from '@/store/modules/config';
 import { useRooms } from '@/store/modules/chats/rooms';
@@ -116,8 +138,36 @@ const {
   isLoadingHistory,
   cartCount,
   suggestions,
+  isRecording,
+  recordingDurationMs,
+  isAudioRecordingSupported,
+  isVoiceEnabledByServer,
+  fileConfig,
   sendMessage,
+  sendAttachment,
+  startRecording,
+  stopRecording,
+  cancelRecording,
+  requestVoiceTokens,
 } = useCopilotChat(connection, roomUuid);
+
+const {
+  canEnterVoiceMode,
+  isVoiceModeActive,
+  isVoiceModePageActive,
+  voiceModeState,
+  voicePartialTranscript,
+  voiceError,
+  enter,
+  exit,
+  retry,
+  dismissError,
+} = useVoiceMode({
+  isVoiceEnabledByServer,
+  messages,
+  sendMessage,
+  requestVoiceTokens,
+});
 
 const {
   listRef,
@@ -158,6 +208,7 @@ onMounted(() => {
     flex: 1;
     min-height: 0;
     overflow: hidden auto;
+    padding-bottom: $unnnic-space-2;
   }
 
   &__go-to-bottom {

@@ -11,6 +11,19 @@ const listeners = new Map<string, Set<(..._args: unknown[]) => void>>();
 const serviceMock = {
   getMessages: vi.fn(() => []),
   sendMessage: vi.fn(),
+  sendAttachment: vi.fn(),
+  startRecording: vi.fn(),
+  stopRecording: vi.fn(),
+  cancelRecording: vi.fn(),
+  getFileConfig: vi.fn(() => ({
+    allowedTypes: ['image/png'],
+    maxFileSize: 1024,
+    acceptAttribute: 'image/png',
+  })),
+  requestVoiceTokens: vi.fn(async () => ({
+    sttToken: 'stt',
+    ttsToken: 'tts',
+  })),
   isConnected: vi.fn(() => false),
   on: vi.fn((event: string, cb: (..._args: unknown[]) => void) => {
     if (!listeners.has(event)) {
@@ -31,6 +44,9 @@ vi.mock('@/services/copilot/copilotSocketManager', () => ({
 }));
 
 vi.mock('@weni/webchat-service', () => ({
+  default: {
+    isAudioRecordingSupported: true,
+  },
   SERVICE_EVENTS: {
     MESSAGE_RECEIVED: 'message:received',
     MESSAGE_SENT: 'message:sent',
@@ -43,6 +59,11 @@ vi.mock('@weni/webchat-service', () => ({
     STATE_CHANGED: 'state:changed',
     HISTORY_LOADED: 'history:loaded',
     ERROR: 'error',
+    RECORDING_STARTED: 'recording:started',
+    RECORDING_STOPPED: 'recording:stopped',
+    RECORDING_CANCELLED: 'recording:cancelled',
+    RECORDING_TICK: 'recording:tick',
+    VOICE_ENABLED: 'voice:enabled',
   },
 }));
 
@@ -272,5 +293,44 @@ describe('useCopilotChat', () => {
 
     expect(isLoadingHistory.value).toBe(false);
     expect(messages.value[0].text).toBe('Already in memory');
+  });
+
+  it('tracks recording state and proxies recording/attachment methods', async () => {
+    const connection = ref<CopilotConnection | undefined>(connectionValue);
+    const roomUuid = ref<string | undefined>('room-1');
+    const {
+      isRecording,
+      recordingDurationMs,
+      isVoiceEnabledByServer,
+      startRecording,
+      stopRecording,
+      cancelRecording,
+      sendAttachment,
+    } = useCopilotChat(connection, roomUuid);
+
+    await nextTick();
+
+    emit(SERVICE_EVENTS.RECORDING_STARTED);
+    expect(isRecording.value).toBe(true);
+
+    emit(SERVICE_EVENTS.RECORDING_TICK, 1500);
+    expect(recordingDurationMs.value).toBe(1500);
+
+    emit(SERVICE_EVENTS.VOICE_ENABLED);
+    expect(isVoiceEnabledByServer.value).toBe(true);
+
+    await startRecording();
+    await stopRecording();
+    cancelRecording();
+    const file = new File(['x'], 'note.png', { type: 'image/png' });
+    await sendAttachment(file);
+
+    expect(serviceMock.startRecording).toHaveBeenCalled();
+    expect(serviceMock.stopRecording).toHaveBeenCalled();
+    expect(serviceMock.cancelRecording).toHaveBeenCalled();
+    expect(serviceMock.sendAttachment).toHaveBeenCalledWith(file);
+
+    emit(SERVICE_EVENTS.RECORDING_STOPPED);
+    expect(isRecording.value).toBe(false);
   });
 });

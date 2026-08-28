@@ -820,18 +820,35 @@
     },
     "desk_copilot": {
       "assistant": {
+        "attach_action": "Atașează fișier",
+        "cancel_recording": "Anulează înregistrarea",
         "copy_action": "Copiază",
+        "file_too_large": "Selectează un fișier mai mic",
+        "file_type_not_allowed": "Selectează un tip de fișier compatibil",
+        "image_attachment": "Atașament imagine",
         "input_placeholder": "Întreabă asistentul",
-        "loading_conversation": "Se încarcă conversația",
         "processing_information": "Se procesează informațiile",
+        "record_audio": "Înregistrează audio",
+        "recording_in_progress": "Se înregistrează",
         "scroll_to_bottom": "Mergi jos",
         "send_action": "Trimite",
+        "send_audio": "Trimite audio",
         "thinking_messages": {
-          "almost": "Aproape gata, doar un moment",
+          "almost": "Aproape gata, încă un moment",
           "connecting": "Conectare idei",
           "processing": "Procesare informații",
           "refining": "Rafinare detalii",
           "structuring": "Structurare răspuns"
+        },
+        "voice_mode": {
+          "dismiss": "Închide",
+          "enter": "Pornește modul vocal",
+          "error_title": "Modul vocal indisponibil",
+          "exit": "Ieși din modul vocal",
+          "listening": "Ascult",
+          "processing": "Se transcrie",
+          "retry": "Încearcă din nou",
+          "speaking": "Asistentul vorbește"
         }
       },
       "copy_summary": "Copiază rezumatul",
