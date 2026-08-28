@@ -339,6 +339,8 @@ describe('ListSectorQueues.vue', () => {
         sectorUuid: 'sector-1',
         queue_limit: { is_active: true, limit: '4' },
         queue_purpose: 'Sales',
+        bond_flows_queue: false,
+        selected_flows: [],
       });
       expect(Queue.addAgent).toHaveBeenCalledWith('new-q', 'agent-1');
       expect(wrapper.vm.queues.some((queue) => queue.uuid === 'new-q')).toBe(
@@ -353,13 +355,12 @@ describe('ListSectorQueues.vue', () => {
       expect(wrapper.vm.showQueueDrawer).toBe(false);
     });
 
-    it('should omit queue features when feature flags are disabled', async () => {
+    it('should omit queue flow features when feature flag is disabled', async () => {
       wrapper.unmount();
       wrapper = createWrapper({ featureFlags: [] });
       await flushPromises();
 
-      expect(wrapper.vm.enableQueueLimitFeature).toBe(false);
-      expect(wrapper.vm.enableQueuePurposeFeature).toBe(false);
+      expect(wrapper.vm.enableQueueFlowsFeature).toBe(false);
 
       wrapper.vm.queueToConfig = [
         {
@@ -367,6 +368,8 @@ describe('ListSectorQueues.vue', () => {
           default_message: '',
           queue_limit: { is_active: true, limit: '4' },
           queue_purpose: 'Sales',
+          bond_flows_queue: true,
+          selected_flows: ['flow-1'],
           currentAgents: [],
           toAddAgentsUuids: [],
           toRemoveAgentsUuids: [],
@@ -380,8 +383,10 @@ describe('ListSectorQueues.vue', () => {
         name: 'New Queue',
         default_message: '',
         sectorUuid: 'sector-1',
-        queue_limit: { is_active: false, limit: null },
-        queue_purpose: undefined,
+        queue_limit: { is_active: true, limit: '4' },
+        queue_purpose: 'Sales',
+        bond_flows_queue: false,
+        selected_flows: [],
       });
     });
   });
@@ -418,6 +423,8 @@ describe('ListSectorQueues.vue', () => {
         default_message: 'Updated',
         queue_limit: { is_active: true, limit: '5' },
         queue_purpose: 'Support',
+        bond_flows_queue: false,
+        selected_flows: [],
       });
       expect(wrapper.vm.queues.find((q) => q.uuid === 'queue-1').name).toBe(
         'Alpha Queue Updated',
@@ -468,9 +475,7 @@ describe('ListSectorQueues.vue', () => {
       await flushPromises();
     });
 
-    it('should open delete modal and count rooms when transfer is enabled', async () => {
-      expect(wrapper.vm.isDeleteTransferEnabled).toBe(true);
-
+    it('should open delete modal and count rooms', async () => {
       const card = wrapper.findComponent({ name: 'QueueCard' });
       card.vm.openPopover = true;
       await card.vm.$nextTick();
@@ -490,15 +495,16 @@ describe('ListSectorQueues.vue', () => {
       );
     });
 
-    it('should set rooms count to 0 when transfer feature is disabled', async () => {
+    it('should count rooms even when transfer feature flag is not set', async () => {
+      wrapper.unmount();
       wrapper = createWrapper({ featureFlags: [] });
       await flushPromises();
 
       await wrapper.vm.handlerOpenDeleteQueueModal(queuesMock[0]);
       await flushPromises();
 
-      expect(Rooms.count).not.toHaveBeenCalled();
-      expect(wrapper.vm.queueRoomsCount).toBe(0);
+      expect(Rooms.count).toHaveBeenCalledWith({ queue: 'queue-1' });
+      expect(wrapper.vm.queueRoomsCount).toBe(5);
       expect(wrapper.vm.showDeleteQueueModal).toBe(true);
     });
 
