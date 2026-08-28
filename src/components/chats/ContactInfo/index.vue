@@ -2,286 +2,279 @@
 <template>
   <div class="contact-info__container">
     <ContactInfosLoading v-show="isLoading" />
-    <AsideSlotTemplate
-      v-show="!isLoading"
-      v-if="closedRoom || room"
-      class="contact-info"
-    >
-      <template #header>
-        <header class="contact-info__header">
-          <p>{{ $t('chats.room_contact_info.title') }}</p>
-          <div>
-            <UnnnicButton
-              v-if="!isHistory"
-              iconCenter="sync"
-              type="tertiary"
-              size="small"
-              :disabled="isRefreshContactDisabled"
-              @click="refreshContactInfos"
+
+    <template v-if="closedRoom || room">
+      <ContactInfoRedesign
+        v-if="isAssistedSalesEnabled"
+        v-show="!isLoading"
+        :room="room"
+        :closedRoom="closedRoom"
+        :contactInfo="(closedRoom || room).contact"
+        :isHistory="isHistory"
+        :isViewMode="isViewMode"
+        :isRefreshDisabled="isRefreshContactDisabled"
+        :contactName="(closedRoom || room).contact.name"
+        :contactNumber="contactNumber?.contactNum"
+        :contactPlatform="contactNumber?.plataform"
+        :isOnline="room?.contact.status === 'online'"
+        :lastMessageText="lastMessageText"
+        :customFields="computedCustomFields"
+        :currentCustomField="currentCustomField"
+        :canEditCustomFields="!isHistory && room?.can_edit_custom_fields"
+        :openCustomFields="openCustomFields"
+        :isLinkedUser="isLinkedUser"
+        :isLinkedToOtherAgent="isLinkedToOtherAgent"
+        :linkedUserName="room?.linked_user"
+        :showLinkSwitch="
+          !isLinkedToOtherAgent &&
+          !isViewMode &&
+          !isHistory &&
+          !isLinkContactBlocked
+        "
+        @refresh="refreshContactInfos"
+        @close="emitClose"
+        @update:is-linked-user="handleLinkedUserUpdate"
+        @update:open-custom-fields="openCustomFields = $event"
+        @update-current-custom-field="updateCurrentCustomField"
+        @save-value="saveCurrentCustomFieldValue"
+        @fullscreen="openFullScreen"
+        @loaded-medias="isLoading = false"
+      >
+        <template #previews>
+          <FullscreenPreview
+            v-if="isFullscreen && currentMedia"
+            :downloadMediaUrl="currentMedia?.url"
+            :downloadMediaName="currentMedia?.message"
+            :mediaCurrent="currentMediaIndex"
+            :mediaTotal="images.length"
+            @close="isFullscreen = false"
+            @next="nextMedia"
+            @previous="previousMedia"
+          >
+            <VideoPreview
+              v-if="currentMedia.content_type.includes('mp4')"
+              :src="currentMedia.url"
+              @keypress.enter="() => {}"
+              @click.stop="() => {}"
             />
-            <UnnnicButton
-              v-if="!isHistory"
-              iconCenter="close"
-              type="tertiary"
-              size="small"
-              @click="emitClose"
+            <img
+              v-else
+              :src="currentMedia.url"
+              :alt="currentMedia.url"
+              @keypress.enter="() => {}"
+              @click.stop="() => {}"
             />
-          </div>
-        </header>
-      </template>
-      <section class="scrollable">
-        <AsideSlotTemplateSection class="contact-info__section">
-          <section class="infos-header">
-            <section class="infos-header__title-container">
-              <h3 class="infos-header__title">
-                {{ $t('contact_info.title') }}
-              </h3>
-              <section
-                v-if="isLinkedToOtherAgent"
-                class="infos-header__linked-contact"
-              >
-                <UnnnicIcon
-                  icon="info"
-                  size="ant"
-                  scheme="fg-warning"
-                />
-                <p>
-                  {{
-                    $t('contact_info.linked_contact', {
-                      name: room.linked_user,
-                    })
-                  }}
-                </p>
-              </section>
-            </section>
-            <div
-              v-if="!isLinkedToOtherAgent && !isViewMode && !isHistory"
-              class="sync-contact"
-            >
-              <UnnnicSwitch
-                v-model="isLinkedUser"
+          </FullscreenPreview>
+        </template>
+      </ContactInfoRedesign>
+
+      <AsideSlotTemplate
+        v-else
+        v-show="!isLoading"
+        class="contact-info"
+      >
+        <template #header>
+          <header class="contact-info__header">
+            <p>{{ $t('chats.room_contact_info.title') }}</p>
+            <div>
+              <UnnnicButton
+                v-if="!isHistory"
+                iconCenter="sync"
+                type="tertiary"
                 size="small"
-                :textRight="
-                  isLinkedUser
-                    ? $t('contact_info.switch_disassociate_contact')
-                    : $t('contact_info.switch_associate_contact')
-                "
-                @update:model-value="addContactToAgent"
+                :disabled="isRefreshContactDisabled"
+                @click="refreshContactInfos"
               />
-              <UnnnicToolTip
-                enabled
-                :text="$t('contact_info.switch_tooltip')"
-                side="left"
-              >
-                <UnnnicIconSvg
-                  icon="info"
-                  scheme="fg-base"
-                  size="sm"
-                />
-              </UnnnicToolTip>
+              <UnnnicButton
+                v-if="!isHistory"
+                iconCenter="close"
+                type="tertiary"
+                size="small"
+                @click="emitClose"
+              />
             </div>
-          </section>
-          <section class="infos-contact">
-            <p
-              v-if="room?.contact.status === 'online'"
-              class="infos-contact__item-value"
-            >
-              {{ $t('status.online') }}
-            </p>
-            <p
-              v-if="lastMessageFromContact?.created_on"
-              class="infos-contact__item-last-contact"
-            >
-              {{
-                $t('last_message_time.date', {
-                  date: moment(lastMessageFromContact?.created_on).fromNow(),
-                })
-              }}
-            </p>
-            <section class="infos-contact__item">
-              <section class="infos-contact__item-content">
-                <p class="infos-contact__item-title">{{ $t('name') }}:</p>
-                <p class="infos-contact__item-value">
-                  {{ (closedRoom || room).contact.name }}
-                </p>
-              </section>
-              <CopyValueButton :value="(closedRoom || room).contact.name" />
-            </section>
-            <section class="infos-contact__item">
-              <section class="infos-contact__item-content">
-                <p class="infos-contact__item-title">
-                  {{ contactNumber?.plataform || $t('URN') }}:
-                </p>
-                <p class="infos-contact__item-value">
-                  {{ contactNumber?.contactNum }}
-                </p>
-              </section>
-              <CopyValueButton :value="contactNumber?.contactNum" />
-            </section>
-
-            <Transition name="expand-with-fade">
-              <section
-                v-if="hasCustomFields && openCustomFields"
-                class="custom-fields-container"
-              >
-                <CustomField
-                  v-for="(value, key) in computedCustomFields"
-                  :key="key"
-                  :title="key"
-                  :description="value"
-                  :isEditable="!isHistory && room.can_edit_custom_fields"
-                  :isCurrent="isCurrentCustomField(key)"
-                  :value="currentCustomField?.[key]"
-                  @update-current-custom-field="updateCurrentCustomField"
-                  @save-value="saveCurrentCustomFieldValue"
-                />
-              </section>
-            </Transition>
-
-            <section
-              v-if="hasCustomFields"
-              class="infos-contact__slide"
-            >
-              <UnnnicIcon
-                :icon="openCustomFields ? 'expand_less' : 'expand_more'"
-                clickable
-                @click="openCustomFields = !openCustomFields"
-              />
-            </section>
-          </section>
-        </AsideSlotTemplateSection>
-        <AsideSlotTemplateSection class="contact-info__section">
-          <section class="contact-info__about-support">
-            <header class="contact-info__about-support-header">
-              <h3 class="contact-info__about-support-title">
-                {{ $t('contact_info.about_support') }}
-              </h3>
-              <section class="contact-info__about-support-header__buttons">
-                <UnnnicPopover
-                  v-if="
-                    !isHistory && !isViewMode && allTags.length > 0 && room.user
-                  "
-                  :open="openDropdownTags"
-                  @update:open="openDropdownTags = $event"
+          </header>
+        </template>
+        <section class="scrollable">
+          <AsideSlotTemplateSection class="contact-info__section">
+            <section class="infos-header">
+              <section class="infos-header__title-container">
+                <h3 class="infos-header__title">
+                  {{ $t('contact_info.title') }}
+                </h3>
+                <section
+                  v-if="isLinkedToOtherAgent"
+                  class="infos-header__linked-contact"
                 >
-                  <UnnnicPopoverTrigger>
-                    <UnnnicButton
-                      iconLeft="add-1"
-                      type="secondary"
-                      size="small"
-                    >
-                      {{ $t('tag') }}
-                    </UnnnicButton>
-                  </UnnnicPopoverTrigger>
-                  <UnnnicPopoverContent align="end">
-                    <UnnnicInput
-                      v-model="tagsFilter"
-                      iconLeft="search"
-                      :placeholder="$t('tags.search')"
-                      class="contact-info__about-support-header__buttons__dropdown__input"
-                    />
-                    <section
-                      class="contact-info__about-support-header__buttons__dropdown"
-                    >
-                      <UnnnicCheckbox
-                        v-for="tag in filteredTags"
-                        :key="tag.uuid"
-                        :modelValue="
-                          roomTags.some((roomTag) => roomTag.uuid === tag.uuid)
-                        "
-                        :textRight="tag.name"
-                        @change="handleTagClick(tag)"
-                      />
-                    </section>
-                  </UnnnicPopoverContent>
-                </UnnnicPopover>
+                  <UnnnicIcon
+                    icon="info"
+                    size="ant"
+                    scheme="fg-warning"
+                  />
+                  <p>
+                    {{
+                      $t('contact_info.linked_contact', {
+                        name: room.linked_user,
+                      })
+                    }}
+                  </p>
+                </section>
+              </section>
+              <div
+                v-if="
+                  !isLinkedToOtherAgent &&
+                  !isViewMode &&
+                  !isHistory &&
+                  !isLinkContactBlocked
+                "
+                class="sync-contact"
+              >
+                <UnnnicSwitch
+                  v-model="isLinkedUser"
+                  size="small"
+                  :textRight="
+                    isLinkedUser
+                      ? $t('contact_info.switch_disassociate_contact')
+                      : $t('contact_info.switch_associate_contact')
+                  "
+                  @update:model-value="addContactToAgent"
+                />
                 <UnnnicToolTip
                   enabled
-                  :text="$t('discussions.start_discussion.title')"
+                  :text="$t('contact_info.switch_tooltip')"
                   side="left"
                 >
-                  <UnnnicButton
-                    v-if="!isViewMode && !isMobile"
-                    iconCenter="communication"
-                    size="small"
-                    type="secondary"
-                    @click="handleModalStartDiscussion()"
+                  <UnnnicIconSvg
+                    icon="info"
+                    scheme="fg-base"
+                    size="sm"
                   />
                 </UnnnicToolTip>
-              </section>
-            </header>
-            <section class="contact-info__about-support-content">
-              <TagGroup
-                v-if="roomTags?.length > 0"
-                class="contact-info__about-support-content__tag-group"
-                :modelValue="roomTags"
-                :tags="roomTags"
-                selectable
-                :useCloseClick="tagUseCloseOnClick"
-                @close="handleTagClick"
-              />
-              <ProtocolText :protocol="contactProtocol" />
-              <CsatInfo
-                v-if="closedRoom?.uuid"
-                :note="closedRoom?.csat_note"
-                :commentary="closedRoom?.csat_commentary"
-              />
-              <DiscussionsSession v-if="isHistory" />
+              </div>
             </section>
-          </section>
-        </AsideSlotTemplateSection>
+            <section class="infos-contact">
+              <p
+                v-if="room?.contact.status === 'online'"
+                class="infos-contact__item-value"
+              >
+                {{ $t('status.online') }}
+              </p>
+              <p
+                v-if="lastMessageFromContact?.created_on"
+                class="infos-contact__item-last-contact"
+              >
+                {{
+                  $t('last_message_time.date', {
+                    date: moment(lastMessageFromContact?.created_on).fromNow(),
+                  })
+                }}
+              </p>
+              <section class="infos-contact__item">
+                <section class="infos-contact__item-content">
+                  <p class="infos-contact__item-title">{{ $t('name') }}:</p>
+                  <p class="infos-contact__item-value">
+                    {{ (closedRoom || room).contact.name }}
+                  </p>
+                </section>
+                <CopyValueButton :value="(closedRoom || room).contact.name" />
+              </section>
+              <section class="infos-contact__item">
+                <section class="infos-contact__item-content">
+                  <p class="infos-contact__item-title">
+                    {{ contactNumber?.plataform || $t('URN') }}:
+                  </p>
+                  <p class="infos-contact__item-value">
+                    {{ contactNumber?.contactNum }}
+                  </p>
+                </section>
+                <CopyValueButton :value="contactNumber?.contactNum" />
+              </section>
 
-        <AsideSlotTemplateSection class="contact-info__section">
-          <ContactMedia
-            :room="room"
-            :history="isHistory"
-            :contactInfo="(closedRoom || room).contact"
-            @fullscreen="openFullScreen"
-            @loaded-medias="isLoading = false"
+              <Transition name="expand-with-fade">
+                <section
+                  v-if="hasCustomFields && openCustomFields"
+                  class="custom-fields-container"
+                >
+                  <CustomField
+                    v-for="(value, key) in computedCustomFields"
+                    :key="key"
+                    :title="key"
+                    :description="value"
+                    :isEditable="!isHistory && room.can_edit_custom_fields"
+                    :isCurrent="isCurrentCustomField(key)"
+                    :value="currentCustomField?.[key]"
+                    @update-current-custom-field="updateCurrentCustomField"
+                    @save-value="saveCurrentCustomFieldValue"
+                  />
+                </section>
+              </Transition>
+
+              <section
+                v-if="hasCustomFields"
+                class="infos-contact__slide"
+              >
+                <UnnnicIcon
+                  :icon="openCustomFields ? 'expand_less' : 'expand_more'"
+                  clickable
+                  @click="openCustomFields = !openCustomFields"
+                />
+              </section>
+            </section>
+          </AsideSlotTemplateSection>
+
+          <AboutSupport
+            :closedRoom="closedRoom"
+            :isHistory="isHistory"
+            :isViewMode="isViewMode"
           />
-        </AsideSlotTemplateSection>
-      </section>
 
-      <ModalStartDiscussion
-        v-if="isShowModalStartDiscussion"
-        v-model="isShowModalStartDiscussion"
-        @close="handleModalStartDiscussion()"
-      />
+          <AsideSlotTemplateSection class="contact-info__section">
+            <ContactMedia
+              :room="room"
+              :history="isHistory"
+              :contactInfo="(closedRoom || room).contact"
+              @fullscreen="openFullScreen"
+              @loaded-medias="isLoading = false"
+            />
+          </AsideSlotTemplateSection>
+        </section>
 
-      <FullscreenPreview
-        v-if="isFullscreen && currentMedia"
-        :downloadMediaUrl="currentMedia?.url"
-        :downloadMediaName="currentMedia?.message"
-        :mediaCurrent="currentMediaIndex"
-        :mediaTotal="images.length"
-        @close="isFullscreen = false"
-        @next="nextMedia"
-        @previous="previousMedia"
-      >
-        <VideoPreview
-          v-if="currentMedia.content_type.includes('mp4')"
-          :src="currentMedia.url"
-          @keypress.enter="() => {}"
-          @click.stop="() => {}"
-        />
-        <img
-          v-else
-          :src="currentMedia.url"
-          :alt="currentMedia.url"
-          @keypress.enter="() => {}"
-          @click.stop="() => {}"
-        />
-      </FullscreenPreview>
-    </AsideSlotTemplate>
+        <FullscreenPreview
+          v-if="isFullscreen && currentMedia"
+          :downloadMediaUrl="currentMedia?.url"
+          :downloadMediaName="currentMedia?.message"
+          :mediaCurrent="currentMediaIndex"
+          :mediaTotal="images.length"
+          @close="isFullscreen = false"
+          @next="nextMedia"
+          @previous="previousMedia"
+        >
+          <VideoPreview
+            v-if="currentMedia.content_type.includes('mp4')"
+            :src="currentMedia.url"
+            @keypress.enter="() => {}"
+            @click.stop="() => {}"
+          />
+          <img
+            v-else
+            :src="currentMedia.url"
+            :alt="currentMedia.url"
+            @keypress.enter="() => {}"
+            @click.stop="() => {}"
+          />
+        </FullscreenPreview>
+      </AsideSlotTemplate>
+    </template>
   </div>
 </template>
 
 <script>
 import isMobile from 'is-mobile';
 
-import { mapActions, mapState, mapWritableState } from 'pinia';
+import { mapActions, mapState } from 'pinia';
 import { useRooms } from '@/store/modules/chats/rooms';
 import { useRoomMessages } from '@/store/modules/chats/roomMessages';
+import { useConfig } from '@/store/modules/config';
 
 import AsideSlotTemplate from '@/components/layouts/chats/AsideSlotTemplate/index.vue';
 import AsideSlotTemplateSection from '@/components/layouts/chats/AsideSlotTemplate/Section.vue';
@@ -298,18 +291,15 @@ import CopyValueButton from './CopyValueButton.vue';
 import ContactMedia from './Media.vue';
 import VideoPreview from '../MediaMessage/Previews/Video.vue';
 import FullscreenPreview from '../MediaMessage/Previews/Fullscreen.vue';
-import ModalStartDiscussion from './ModalStartDiscussion.vue';
-import DiscussionsSession from './DiscussionsSession.vue';
-import ProtocolText from './ProtocolText.vue';
-import CsatInfo from './CsatInfo.vue';
-
-import Queues from '@/services/api/resources/settings/queue';
-import TagGroup from '@/components/TagGroup.vue';
+import AboutSupport from './AboutSupport.vue';
+import ContactInfoRedesign from './Redesign/index.vue';
 
 import moment from 'moment';
 import { parseUrn } from '@/utils/room';
 
 import i18n from '@/plugins/i18n';
+import { useFeatureFlag } from '@/store/modules/featureFlag';
+import { useAssistedSalesFeatureFlag } from '@/composables/useAssistedSalesFeatureFlag';
 
 export default {
   name: 'ContactInfo',
@@ -323,11 +313,8 @@ export default {
     ContactMedia,
     FullscreenPreview,
     VideoPreview,
-    ModalStartDiscussion,
-    DiscussionsSession,
-    ProtocolText,
-    TagGroup,
-    CsatInfo,
+    AboutSupport,
+    ContactInfoRedesign,
   },
   props: {
     closedRoom: {
@@ -363,12 +350,7 @@ export default {
     customFields: {},
     currentCustomField: {},
     isRefreshContactDisabled: false,
-    isShowModalStartDiscussion: false,
     openCustomFields: true,
-    openDropdownTags: false,
-    allTags: [],
-    tagsPageSize: 20,
-    tagsFilter: '',
   }),
 
   computed: {
@@ -377,17 +359,23 @@ export default {
       activeRoomSummary: 'activeRoomSummary',
       isLoadingActiveRoomSummary: 'isLoadingActiveRoomSummary',
     }),
-    ...mapWritableState(useRooms, {
-      roomTags: 'activeRoomTags',
-      roomTagsNext: 'activeRoomTagsNext',
-    }),
+    ...mapState(useConfig, ['project']),
+    ...mapState(useFeatureFlag, ['featureFlags']),
+
+    isLinkContactBlocked() {
+      return !!this.project?.config?.block_link_contact_agents;
+    },
+
+    isAssistedSalesEnabled() {
+      return useAssistedSalesFeatureFlag(this.featureFlags);
+    },
 
     hasCustomFields() {
       return Object.keys(this.computedCustomFields).length > 0;
     },
 
     computedCustomFields() {
-      const customFields = this.room?.custom_fields || {};
+      const customFields = { ...(this.customFields || {}) };
       const roomService = this.contactService;
       if (roomService?.length > 0) {
         customFields[this.$t('service')] = roomService;
@@ -395,21 +383,6 @@ export default {
       return customFields;
     },
 
-    tagUseCloseOnClick() {
-      return !this.isViewMode && !this.isHistory && !!this.room.user;
-    },
-
-    hideTagCloseIcon() {
-      return this.isViewMode || this.isHistory || !this.room.user
-        ? 'none'
-        : 'flex';
-    },
-
-    filteredTags() {
-      return this.allTags.filter((tag) =>
-        tag.name.toLowerCase().includes(this.tagsFilter.toLowerCase()),
-      );
-    },
     currentMediaIndex() {
       if (!this.currentMedia?.url) {
         return 0;
@@ -441,13 +414,20 @@ export default {
       return '';
     },
 
+    lastMessageText() {
+      if (!this.lastMessageFromContact?.created_on) {
+        return '';
+      }
+
+      return this.$t('last_message_time.date', {
+        date: moment(this.lastMessageFromContact.created_on).fromNow(),
+      });
+    },
+
     contactNumber() {
       const room = this.closedRoom || this.room;
 
       return parseUrn(room);
-    },
-    contactProtocol() {
-      return (this.closedRoom || this.room).protocol || '';
     },
     contactService() {
       return (this.closedRoom || this.room).service_chat;
@@ -459,9 +439,14 @@ export default {
       immediate: true,
       handler(newRoom) {
         if (newRoom) {
-          this.customFields = this.room.custom_fields;
-          this.loadAllTags();
-          this.loadRoomTags();
+          this.customFields = { ...(this.room.custom_fields || {}) };
+        }
+      },
+    },
+    'room.custom_fields': {
+      handler(newCustomFields) {
+        if (newCustomFields) {
+          this.customFields = { ...newCustomFields };
         }
       },
     },
@@ -475,15 +460,17 @@ export default {
 
   async created() {
     const { closedRoom, room } = this;
+    const sourceRoom =
+      closedRoom && Object.keys(closedRoom).length > 0 ? closedRoom : room;
 
-    this.customFields = (closedRoom || room)?.custom_fields;
+    this.customFields = { ...(sourceRoom?.custom_fields || {}) };
 
     if (this.isHistory) {
       return;
     }
 
     if (
-      moment((closedRoom || room).contact.created_on).format('YYYY-MM-DD') <
+      moment(sourceRoom.contact.created_on).format('YYYY-MM-DD') <
       moment().format('YYYY-MM-DD')
     ) {
       this.contactHaveHistory = true;
@@ -496,82 +483,11 @@ export default {
     }
   },
 
-  unmounted() {
-    this.roomTags = [];
-  },
-
   methods: {
     moment,
     ...mapActions(useRooms, ['updateRoomContact']),
-    async loadAllTags() {
-      try {
-        const { queue } = this.room || {};
-
-        if (!queue) return;
-
-        const { results, next } = await Queues.tags(queue.uuid, {
-          limit: this.tagsPageSize,
-          next: this.allTagsNext,
-        });
-        this.allTags = this.allTags.concat(results);
-        this.allTagsNext = next;
-      } catch (error) {
-        console.error('Error loading all tags', error);
-      } finally {
-        if (this.allTagsNext) this.loadAllTags();
-      }
-    },
-    async loadRoomTags() {
-      try {
-        const roomUuid = this.closedRoom?.uuid || this.room?.uuid;
-        const { results, next } = await Room.getRoomTags(roomUuid, {
-          next: this.roomTagsNext,
-          limit: this.tagsPageSize,
-        });
-        this.roomTags = this.roomTags.concat(results);
-        this.roomTagsNext = next;
-      } catch (error) {
-        console.error('Error loading room tags', error);
-      } finally {
-        if (this.roomTagsNext) this.loadRoomTags();
-      }
-    },
-    async removeRoomTag(tag) {
-      try {
-        await Room.removeRoomTag(this.room.uuid, tag.uuid);
-        this.roomTags = this.roomTags.filter(
-          (roomTag) => roomTag.uuid !== tag.uuid,
-        );
-      } catch (error) {
-        console.log(error);
-      }
-    },
-    async addRoomTag(tag) {
-      try {
-        await Room.addRoomTag(this.room.uuid, tag.uuid);
-        this.roomTags.push(tag);
-      } catch (error) {
-        console.log(error);
-      }
-    },
-
-    handleTagClick(tag) {
-      if (!this.room.user) return;
-      const hasSelectedTag = this.roomTags.some(
-        (roomTag) => roomTag.uuid === tag.uuid,
-      );
-      if (hasSelectedTag) {
-        this.removeRoomTag(tag);
-      } else {
-        this.addRoomTag(tag);
-      }
-    },
     emitClose() {
       this.$emit('close');
-    },
-
-    handleModalStartDiscussion() {
-      this.isShowModalStartDiscussion = !this.isShowModalStartDiscussion;
     },
 
     getCurrentCustomFieldKey() {
@@ -594,12 +510,22 @@ export default {
 
       if (currentCustomFieldValue) {
         if (
-          currentCustomFieldValue !== this.customFields[currentCustomFieldKey]
+          currentCustomFieldValue !== this.customFields?.[currentCustomFieldKey]
         ) {
           Room.updateCustomFields(this.room.uuid, this.currentCustomField);
         }
 
-        this.customFields[currentCustomFieldKey] = currentCustomFieldValue;
+        this.customFields = {
+          ...(this.customFields || {}),
+          [currentCustomFieldKey]: currentCustomFieldValue,
+        };
+
+        if (this.room) {
+          this.room.custom_fields = {
+            ...(this.room.custom_fields || {}),
+            [currentCustomFieldKey]: currentCustomFieldValue,
+          };
+        }
       }
 
       this.updateCurrentCustomField({});
@@ -635,6 +561,11 @@ export default {
       } else {
         this.removeLinkedContact();
       }
+    },
+
+    handleLinkedUserUpdate(value) {
+      this.isLinkedUser = value;
+      this.addContactToAgent();
     },
 
     verifyLinkedUser() {
@@ -787,59 +718,6 @@ export default {
     font: $unnnic-font-display-4;
     color: $unnnic-color-fg-emphasized;
     border-bottom: 1px solid $unnnic-color-border-soft;
-  }
-
-  &__about-support {
-    &-content {
-      display: flex;
-      flex-direction: column;
-      gap: $unnnic-space-2;
-      // This is required to remove the tag icon
-      :deep(.contact-info__about-support-content__tag-group) {
-        .unnnic-icon {
-          display: v-bind(hideTagCloseIcon);
-        }
-      }
-    }
-    &-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      &__buttons {
-        display: flex;
-        align-items: center;
-        gap: $unnnic-space-1;
-        :deep(.unnnic-dropdown__content) {
-          padding: $unnnic-space-2;
-        }
-        &__dropdown {
-          display: flex;
-          flex-direction: column;
-          gap: $unnnic-space-6;
-          width: 100%;
-          height: 204px;
-          overflow-y: auto;
-          padding-right: $unnnic-space-2;
-
-          &__input {
-            margin-bottom: $unnnic-space-6;
-          }
-        }
-      }
-    }
-    &-title {
-      font: $unnnic-font-display-4;
-      color: $unnnic-color-fg-emphasized;
-      &-container {
-        display: flex;
-        flex-direction: column;
-        gap: $unnnic-space-1;
-      }
-    }
-
-    :deep(.unnnic-tooltip) {
-      display: flex;
-    }
   }
 
   .scrollable {

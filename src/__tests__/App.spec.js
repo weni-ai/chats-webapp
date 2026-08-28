@@ -388,24 +388,9 @@ describe('App.vue', () => {
   });
 
   describe('Quick messages bootstrap', () => {
-    it('eager loads quick messages when v2 flag is off', () => {
+    it('does not eager load on the live desk', () => {
       const ffStore = useFeatureFlag();
       ffStore.featureFlags = { active_features: [] };
-      ffStore.featureFlagsLoaded = true;
-      const qmStore = useQuickMessages();
-      const qmsStore = useQuickMessageShared();
-
-      wrapper = createWrapper({ routePath: '/' });
-
-      expect(qmStore.getAll).toHaveBeenCalled();
-      expect(qmsStore.getAll).toHaveBeenCalled();
-    });
-
-    it('does not eager load on the live desk when v2 flag is on', () => {
-      const ffStore = useFeatureFlag();
-      ffStore.featureFlags = {
-        active_features: ['weniChatsQuickMessagesV2'],
-      };
       ffStore.featureFlagsLoaded = true;
       const qmStore = useQuickMessages();
       const qmsStore = useQuickMessageShared();
@@ -416,11 +401,9 @@ describe('App.vue', () => {
       expect(qmsStore.getAll).not.toHaveBeenCalled();
     });
 
-    it('keeps eager loading on settings routes when v2 flag is on', () => {
+    it('keeps eager loading on settings routes', () => {
       const ffStore = useFeatureFlag();
-      ffStore.featureFlags = {
-        active_features: ['weniChatsQuickMessagesV2'],
-      };
+      ffStore.featureFlags = { active_features: [] };
       ffStore.featureFlagsLoaded = true;
       const qmStore = useQuickMessages();
 
@@ -432,11 +415,9 @@ describe('App.vue', () => {
       expect(qmStore.getAll).toHaveBeenCalled();
     });
 
-    it('lazy loads quick messages by sector when entering a room with v2 flag on', async () => {
+    it('lazy loads quick messages by sector when entering a room', async () => {
       const ffStore = useFeatureFlag();
-      ffStore.featureFlags = {
-        active_features: ['weniChatsQuickMessagesV2'],
-      };
+      ffStore.featureFlags = { active_features: [] };
       ffStore.featureFlagsLoaded = true;
       const qmStore = useQuickMessages();
       const qmsStore = useQuickMessageShared();

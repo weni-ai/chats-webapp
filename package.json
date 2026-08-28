@@ -19,6 +19,7 @@
     "@vueuse/components": "^13.9.0",
     "@vueuse/core": "^13.9.0",
     "@weni/unnnic-system": "^3.31.1",
+    "@weni/webchat-service": "^1.15.2",
     "axios": "^0.27.2",
     "core-js": "^3.8.3",
     "cross-env": "^7.0.3",
@@ -55,6 +56,7 @@
     "@vitest/ui": "^2.0.5",
     "@vue/test-utils": "^2.4.6",
     "@weni/eslint-config": "^1.0.4",
+    "css-loader": "^7.1.4",
     "eslint": "^8.0.0",
     "eslint-config-prettier": "^9.1.0",
     "eslint-plugin-import": "^2.25.3",
@@ -71,6 +73,7 @@
     "typescript": "^5.9.3",
     "vite": "^5.2.12",
     "vitest": "^2.0.5",
-    "vue-eslint-parser": "^9.4.2"
+    "vue-eslint-parser": "^9.4.2",
+    "vue-style-loader": "^4.1.3"
   }
 }

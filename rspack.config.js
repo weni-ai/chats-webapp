@@ -12,15 +12,49 @@ dotenv.config();
 // Target browsers, see: https://github.com/browserslist/browserslist
 const targets = ['chrome >= 87', 'edge >= 88', 'firefox >= 78', 'safari >= 14'];
 
+const isDev = process.env.NODE_ENV === 'development';
+const PORT = 8080;
+const PUBLIC_PATH = `${process.env.PUBLIC_PATH_URL}/`;
+const FEDERATION_NAME = 'chats';
+
 // When the connect host URL is configured we wire chats as a Module Federation
 // remote that can also consume `connect/sharedStore`. When it's missing
 // (standalone `npm run dev`, CI, unit builds) we resolve that import to a local
 // stub so the bundle still compiles without a live host.
 const connectUrl = process.env.MODULE_FEDERATION_CONNECT_URL;
 
+const scssAdditionalData = `@import '@weni/unnnic-system/src/assets/scss/unnnic.scss';`;
+
+/**
+ * Dev: vue-style-loader chain so Vue SFC <style> blocks hot-reload.
+ * Prod: native CSS (experiments.css) for hashed standalone CSS files.
+ */
+function styleRule(test, loadersAfterCss = []) {
+  if (isDev) {
+    return {
+      test,
+      use: [
+        'vue-style-loader',
+        'css-loader',
+        'postcss-loader',
+        ...loadersAfterCss,
+      ],
+      type: 'javascript/auto',
+    };
+  }
+
+  return {
+    test,
+    use: ['postcss-loader', ...loadersAfterCss],
+    type: 'css',
+  };
+}
+
 module.exports = defineConfig({
+  ...(isDev ? { devtool: 'eval-cheap-module-source-map' } : {}),
   context: __dirname,
   devServer: {
+    port: PORT,
     historyApiFallback: true,
     hot: true,
     liveReload: false,
@@ -30,12 +64,22 @@ module.exports = defineConfig({
       // `remoteEntry.js` from this dev server during local federation testing.
       'Access-Control-Allow-Origin': '*',
     },
+    client: {
+      // Federated: the host page may run on another origin/port, so the HMR
+      // client must connect back to this remote's own websocket explicitly.
+      webSocketURL: `ws://localhost:${PORT}/ws`,
+    },
   },
   output: {
     path: path.resolve(__dirname, './dist'),
-    publicPath: `${process.env.PUBLIC_PATH_URL}/`,
-    filename: 'assets/js/[name]-[contenthash].js',
-    chunkFilename: 'assets/js/[name]-[contenthash].js',
+    uniqueName: FEDERATION_NAME,
+    publicPath: PUBLIC_PATH,
+    filename: isDev
+      ? 'assets/js/[name].js'
+      : 'assets/js/[name]-[contenthash].js',
+    chunkFilename: isDev
+      ? 'assets/js/[name].js'
+      : 'assets/js/[name]-[contenthash].js',
     assetModuleFilename: 'assets/[name]-[hash][ext]',
   },
   entry: {
@@ -84,24 +128,27 @@ module.exports = defineConfig({
           },
         ],
       },
-      {
-        test: /\.(scss|sass)$/,
-        use: [
-          'postcss-loader',
-          {
-            loader: 'sass-loader',
-            options: {
-              additionalData: `@import '@weni/unnnic-system/src/assets/scss/unnnic.scss';`,
+      // Dev: inject registerStoreHMR for every defineStore export (no per-file boilerplate).
+      ...(isDev
+        ? [
+            {
+              test: /\.(js|ts)$/,
+              include: [path.resolve(__dirname, 'src/store/modules')],
+              exclude: [/node_modules/, /\.spec\./, /\.unit\./, /__tests__/],
+              enforce: 'pre',
+              use: [path.resolve(__dirname, 'build/pinia-hmr-loader.js')],
             },
+          ]
+        : []),
+      styleRule(/\.(scss|sass)$/, [
+        {
+          loader: 'sass-loader',
+          options: {
+            additionalData: scssAdditionalData,
           },
-        ],
-        type: 'css',
-      },
-      {
-        test: /\.css$/,
-        use: ['postcss-loader'],
-        type: 'css',
-      },
+        },
+      ]),
+      styleRule(/\.css$/),
       {
         test: /\.(png|jpe?g|gif|svg|webp|avif)$/i,
         type: 'asset/resource',
@@ -122,6 +169,7 @@ module.exports = defineConfig({
     new HtmlRspackPlugin({
       template: './index.html',
       inject: 'head',
+      chunks: ['main'],
       minify: {
         removeComments: false,
         collapseWhitespace: true,
@@ -139,7 +187,7 @@ module.exports = defineConfig({
     }),
     new VueLoaderPlugin(),
     new rspack.container.ModuleFederationPlugin({
-      name: 'chats',
+      name: FEDERATION_NAME,
       filename: 'remoteEntry.js',
       exposes: {
         './main': './src/main.js',
@@ -178,6 +226,7 @@ module.exports = defineConfig({
     ],
   },
   experiments: {
-    css: true,
+    // Native CSS is incompatible with vue-style-loader HMR; enable only in prod.
+    css: !isDev,
   },
 });

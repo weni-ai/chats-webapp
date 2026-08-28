@@ -41,6 +41,11 @@ export default {
       required: false,
       default: '',
     },
+    queue: {
+      type: String,
+      required: false,
+      default: '',
+    },
     disableGetChatsTag: {
       type: Boolean,
       required: false,
@@ -63,6 +68,12 @@ export default {
       this.flowSelection = null;
       this.$emit('update:modelValue', '');
       this.getFlows(newProjectUuidFlow);
+    },
+
+    queue() {
+      this.flowSelection = null;
+      this.$emit('update:modelValue', '');
+      this.getFlows(this.projectUuidFlow || undefined);
     },
 
     flowSelection(newVal) {
@@ -117,6 +128,7 @@ export default {
       try {
         const response = await FlowsTrigger.getFlows(projectUuidFlow, {
           verify_chats_tag: !this.disableGetChatsTag,
+          queue: this.queue,
         });
 
         this.templates = response.map(({ name, uuid }) => ({

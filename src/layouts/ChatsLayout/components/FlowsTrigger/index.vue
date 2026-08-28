@@ -237,7 +237,6 @@ import { mapState } from 'pinia';
 
 import { useRooms } from '@/store/modules/chats/rooms';
 import { useConfig } from '@/store/modules/config';
-import { useFeatureFlag } from '@/store/modules/featureFlag';
 import { useProfile } from '@/store/modules/profile';
 
 import AsideSlotTemplate from '@/components/layouts/chats/AsideSlotTemplate/index.vue';
@@ -247,7 +246,6 @@ import ModalAddNewContact from '@/components/chats/FlowsTrigger/ModalAddNewConta
 import ModalSendFlow from '@/components/chats/FlowsTrigger/ModalSendFlow.vue';
 import ModalRemoveSelectedContacts from '@/components/chats/FlowsTrigger/ModalRemoveSelectedContacts.vue';
 import ModalVariableMapping from '@/components/chats/FlowsTrigger/ModalVariableMapping.vue';
-import { FLOW_TRIGGER_VARIABLE_MAPPING_FLAG } from '@/components/chats/FlowsTrigger/types';
 import {
   getAvailableLocalVariables,
   resolveAllValues,
@@ -336,14 +334,7 @@ export default {
     ...mapState(useRooms, {
       room: (store) => store.activeRoom,
     }),
-    ...mapState(useFeatureFlag, ['featureFlags']),
     ...mapState(useProfile, ['me']),
-
-    isVariableMappingEnabled() {
-      return !!this.featureFlags?.active_features?.includes(
-        FLOW_TRIGGER_VARIABLE_MAPPING_FLAG,
-      );
-    },
 
     hasCachedTemplateVariables() {
       return hasTemplateVariables(this.cachedTemplate?.templates ?? []);

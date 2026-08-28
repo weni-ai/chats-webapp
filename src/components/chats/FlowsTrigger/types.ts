@@ -1,6 +1,3 @@
-export const FLOW_TRIGGER_VARIABLE_MAPPING_FLAG =
-  'weniChatsFlowTriggerVariableMapping';
-
 export type MetaTemplateComponentType =
   | 'HEADER'
   | 'BODY'
@@ -61,6 +58,24 @@ export interface TemplateBodySegment {
   positionalNumber?: number;
   placeholder?: string;
   value?: string;
+}
+
+export interface QueuePermission {
+  uuid?: string;
+  queue?: string;
+  queue_name?: string;
+  role?: number;
+  permission?: string;
+}
+
+export interface QueueSelectOption {
+  value: string;
+  label: string;
+}
+
+export interface SelectQueueProps {
+  modelValue?: string;
+  isDisabled?: boolean;
 }
 
 export type {

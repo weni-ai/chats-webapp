@@ -63,9 +63,6 @@
               </section>
             </UnnnicToolTip>
             <UnnnicToolTip
-              v-if="
-                featureFlags.active_features?.includes('weniChatsContactInfoV2')
-              "
               enabled
               :text="
                 room?.has_history
@@ -83,9 +80,6 @@
               />
             </UnnnicToolTip>
             <UnnnicToolTip
-              v-if="
-                featureFlags.active_features?.includes('weniChatsContactInfoV2')
-              "
               enabled
               :text="$t('transfer_contact', { count: 1 })"
               side="left"
@@ -185,7 +179,6 @@ import { useDiscussions } from '@/store/modules/chats/discussions';
 import { useDashboard } from '@/store/modules/dashboard';
 import { useProfile } from '@/store/modules/profile';
 import { useRoomMessages } from '@/store/modules/chats/roomMessages';
-import { useFeatureFlag } from '@/store/modules/featureFlag';
 import { useConfig } from '@/store/modules/config';
 
 import ChatsLayout from '@/layouts/ChatsLayout/index.vue';
@@ -201,7 +194,7 @@ import ViewModeHeader from './components/ViewModeHeader.vue';
 import ContactHeader from '@/components/chats/ContactHeader.vue';
 import ChatsHeader from '@/components/chats/ChatHeader.vue';
 
-import { buildHistorySearchTerm } from '@/utils/room';
+import { buildHistoryContactQuery } from '@/utils/room';
 
 export default {
   name: 'ViewMode',
@@ -229,7 +222,6 @@ export default {
   }),
 
   computed: {
-    ...mapState(useFeatureFlag, ['featureFlags']),
     ...mapState(useRooms, {
       room: (store) => store.activeRoom,
       rooms: (store) => store.rooms,
@@ -251,12 +243,8 @@ export default {
 
     isBulkActionsEnabled() {
       const canBulkTransfer = this.project?.config?.can_use_bulk_transfer;
-      const canBulkClose =
-        this.featureFlags.active_features?.includes('weniChatsBulkClose') &&
-        this.project?.config?.can_use_bulk_close;
-      const canBulkTake =
-        this.featureFlags.active_features?.includes('weniChatsBulkTake') &&
-        this.project?.config?.can_use_bulk_take;
+      const canBulkClose = this.project?.config?.can_use_bulk_close;
+      const canBulkTake = this.project?.config?.can_use_bulk_take;
       return canBulkTransfer || canBulkClose || canBulkTake;
     },
   },
@@ -340,9 +328,6 @@ export default {
     openHistory() {
       if (!this.room?.has_history) return;
 
-      const contactUrn = buildHistorySearchTerm(this.room);
-      const protocol = this.room.protocol;
-
       const A_YEAR_AGO = dateFnsFormat(
         dateFnsSubYears(new Date(), 1),
         'yyyy-MM-dd',
@@ -351,8 +336,8 @@ export default {
       this.$router.push({
         name: 'closed-rooms',
         query: {
-          contactUrn,
-          protocol,
+          ...buildHistoryContactQuery(this.room),
+          protocol: this.room.protocol,
           startDate: A_YEAR_AGO,
           from: this.room.uuid,
         },
@@ -387,16 +372,6 @@ export default {
 
     &--open {
       background-color: $unnnic-color-bg-purple-plain;
-      &::after {
-        content: '';
-        position: fixed;
-        top: 106px; // This distance corresponds to the positioning of the summary balloon point.
-        transform: rotate(-45deg);
-        width: $unnnic-space-3;
-        height: $unnnic-space-3;
-        background-color: $unnnic-color-bg-purple-plain;
-        border-radius: $unnnic-space-1;
-      }
     }
   }
   &__active-chat {
@@ -405,10 +380,10 @@ export default {
 
     height: 100%;
 
-    padding-bottom: $unnnic-spacing-xs;
+    padding-bottom: $unnnic-space-2;
 
     .chat-messages__container {
-      padding-left: $unnnic-spacing-sm;
+      padding-left: $unnnic-space-4;
     }
 
     .discussion-header {
@@ -425,7 +400,7 @@ export default {
   }
 
   .assume-chat {
-    margin: $unnnic-spacing-nano $unnnic-spacing-inline-sm 0;
+    margin: $unnnic-space-1 $unnnic-space-4 0;
   }
 }
 </style>

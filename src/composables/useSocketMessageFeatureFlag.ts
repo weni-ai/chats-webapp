@@ -1,13 +1,13 @@
-export const QUICK_MESSAGES_V2_FEATURE_FLAG = 'weniChatsQuickMessagesV2';
+export const SOCKET_MESSAGE_SEND_FEATURE_FLAG = 'weniChatsSocketMessageSend';
 
 type FeatureFlags = {
   active_features?: string[];
 };
 
-export function useQuickMessagesFeatureFlag(
+export function useSocketMessageFeatureFlag(
   featureFlags?: FeatureFlags | null,
 ): boolean {
   return !!featureFlags?.active_features?.includes(
-    QUICK_MESSAGES_V2_FEATURE_FLAG,
+    SOCKET_MESSAGE_SEND_FEATURE_FLAG,
   );
 }

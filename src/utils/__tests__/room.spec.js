@@ -4,7 +4,9 @@ import {
   getRoomType,
   parseUrn,
   sanitizeDocument,
-  buildHistorySearchTerm,
+  buildHistoryContactQuery,
+  formatHistoryContactFilter,
+  parseHistoryContactFilter,
 } from '@/utils/room';
 
 describe('room utils', () => {
@@ -72,64 +74,139 @@ describe('room utils', () => {
     });
   });
 
-  describe('buildHistorySearchTerm', () => {
-    it('returns empty string when room has no identifiers', () => {
-      expect(buildHistorySearchTerm({ contact: {} })).toBe('');
-      expect(buildHistorySearchTerm({})).toBe('');
+  describe('buildHistoryContactQuery', () => {
+    it('returns empty object when room has no identifiers', () => {
+      expect(buildHistoryContactQuery({ contact: {} })).toEqual({});
+      expect(buildHistoryContactQuery({})).toEqual({});
     });
 
-    it('returns only contactUrn when only urn is present', () => {
+    it('returns only contact when only external_id is present', () => {
       const room = {
-        urn: 'whatsapp:5511999998888',
-        contact: {},
+        contact: { external_id: 'abc-123' },
       };
-      expect(buildHistorySearchTerm(room)).toBe('5511999998888');
+      expect(buildHistoryContactQuery(room)).toEqual({ contact: 'abc-123' });
     });
 
     it('returns only email when only email is present', () => {
       const room = {
         contact: { email: 'test@example.com' },
       };
-      expect(buildHistorySearchTerm(room)).toBe('test@example.com');
+      expect(buildHistoryContactQuery(room)).toEqual({
+        email: 'test@example.com',
+      });
     });
 
     it('returns only sanitized document when only document is present', () => {
       const room = {
         contact: { document: '234.234.243-20' },
       };
-      expect(buildHistorySearchTerm(room)).toBe('23423424320');
+      expect(buildHistoryContactQuery(room)).toEqual({
+        document: '23423424320',
+      });
     });
 
-    it('returns comma-separated values when multiple identifiers exist', () => {
+    it('returns separate params when multiple identifiers exist', () => {
       const room = {
-        urn: 'whatsapp:5511999998888',
         contact: {
+          external_id: 'abc-123',
           email: 'test@example.com',
           document: '123.456.789-00',
         },
       };
-      expect(buildHistorySearchTerm(room)).toBe(
-        '5511999998888,test@example.com,12345678900',
-      );
+      expect(buildHistoryContactQuery(room)).toEqual({
+        contact: 'abc-123',
+        email: 'test@example.com',
+        document: '12345678900',
+      });
     });
 
-    it('returns urn and email without document when document is empty', () => {
+    it('returns contact and email without document when document is empty', () => {
       const room = {
-        urn: 'telegram:123456',
         contact: {
+          external_id: 'abc-123',
           email: 'user@mail.com',
           document: '',
         },
       };
-      expect(buildHistorySearchTerm(room)).toBe('123456,user@mail.com');
+      expect(buildHistoryContactQuery(room)).toEqual({
+        contact: 'abc-123',
+        email: 'user@mail.com',
+      });
+    });
+  });
+
+  describe('formatHistoryContactFilter', () => {
+    it('returns empty string when no identifiers', () => {
+      expect(formatHistoryContactFilter({})).toBe('');
+      expect(formatHistoryContactFilter()).toBe('');
     });
 
-    it('handles non-whatsapp platforms without removing +', () => {
-      const room = {
-        urn: 'telegram:+999888',
-        contact: {},
-      };
-      expect(buildHistorySearchTerm(room)).toBe('+999888');
+    it('formats only present keys in stable order', () => {
+      expect(
+        formatHistoryContactFilter({
+          document: '123.456.789-00',
+          email: 'kallil@gmail.com',
+          contact: 'abc-123',
+        }),
+      ).toBe('contact=abc-123 email=kallil@gmail.com document=12345678900');
+    });
+
+    it('formats partial identifiers', () => {
+      expect(formatHistoryContactFilter({ email: 'a@b.com' })).toBe(
+        'email=a@b.com',
+      );
+      expect(formatHistoryContactFilter({ contact: 'abc-123' })).toBe(
+        'contact=abc-123',
+      );
+    });
+  });
+
+  describe('parseHistoryContactFilter', () => {
+    it('returns empty object for empty input', () => {
+      expect(parseHistoryContactFilter('')).toEqual({});
+      expect(parseHistoryContactFilter('   ')).toEqual({});
+      expect(parseHistoryContactFilter(null)).toEqual({});
+    });
+
+    it('parses full structured tokens', () => {
+      expect(
+        parseHistoryContactFilter(
+          'contact=abc-123 email=kallil@gmail.com document=12345678900',
+        ),
+      ).toEqual({
+        contact: 'abc-123',
+        email: 'kallil@gmail.com',
+        document: '12345678900',
+      });
+    });
+
+    it('parses partial tokens and sanitizes document', () => {
+      expect(
+        parseHistoryContactFilter('document=123.456.789-00 email=a@b.com'),
+      ).toEqual({
+        email: 'a@b.com',
+        document: '12345678900',
+      });
+    });
+
+    it('treats free text as search', () => {
+      expect(parseHistoryContactFilter('João Silva')).toEqual({
+        search: 'João Silva',
+      });
+    });
+
+    it('treats legacy comma-separated value as search', () => {
+      expect(
+        parseHistoryContactFilter('558486065742,kallil@gmail.com'),
+      ).toEqual({
+        search: '558486065742,kallil@gmail.com',
+      });
+    });
+
+    it('treats mixed free text and tokens as search', () => {
+      expect(parseHistoryContactFilter('João contact=abc-123')).toEqual({
+        search: 'João contact=abc-123',
+      });
     });
   });
 });

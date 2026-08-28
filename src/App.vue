@@ -24,6 +24,7 @@ import http from '@/services/api/http';
 import Profile from '@/services/api/resources/profile';
 import Project from './services/api/resources/settings/project';
 import WS from '@/services/api/websocket/setup';
+import { setActiveConnection } from '@/services/api/websocket/connectionRegistry';
 import KeycloakService from '@/services/keycloak';
 import * as notifications from '@/utils/notifications';
 
@@ -42,7 +43,6 @@ import {
   startLightThemeEnforcement,
   stopLightThemeEnforcement,
 } from '@/utils/theme';
-import { useQuickMessagesFeatureFlag } from '@/composables/useQuickMessagesFeatureFlag';
 
 import initHotjar from '@/plugins/Hotjar';
 import {
@@ -129,10 +129,6 @@ export default {
       return [appToken, appProject];
     },
 
-    isQuickMessagesV2Enabled() {
-      return useQuickMessagesFeatureFlag(this.featureFlags);
-    },
-
     quickMessagesBootstrapReady() {
       return !!this.appToken && !!this.appProject && this.featureFlagsLoaded;
     },
@@ -206,8 +202,6 @@ export default {
     },
     activeRoom: {
       handler(newRoom) {
-        if (!this.isQuickMessagesV2Enabled) return;
-
         const sectorUuid = newRoom?.queue?.sector;
         if (!sectorUuid) return;
 
@@ -370,15 +364,8 @@ export default {
     },
 
     bootstrapQuickMessages() {
-      if (!this.isQuickMessagesV2Enabled) {
-        this.loadQuickMessages();
-        this.loadQuickMessagesShared();
-        return;
-      }
-
-      // Under the v2 flag the live desk loads quick messages lazily (on room
-      // entry / panel open). The legacy eager load is only kept for the
-      // settings routes, which read the v1 store state directly.
+      // Live desk loads quick messages lazily (on room entry / panel open).
+      // Settings still needs the eager getAll/getAllBySector path.
       if (this.$route.path.startsWith('/settings')) {
         this.loadQuickMessages();
         this.loadQuickMessagesShared();
@@ -529,6 +516,7 @@ export default {
       if (isWSConnectionValid) {
         this.ws = new WS({ app: this });
         this.ws.connect();
+        setActiveConnection(this.ws);
       }
     },
 
