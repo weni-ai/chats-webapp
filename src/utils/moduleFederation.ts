@@ -15,7 +15,7 @@ function trimTrailingSlash(value: string | undefined): string {
 /**
  * True when the app is being consumed as a Module Federation remote by a host
  * (Connect / weni-webapp). False when the bundle is served from its own origin
- * (standalone dev, cross-origin iframe inside Connect, or mobile redirect).
+ * (standalone dev or mobile redirect).
  *
  * Detection compares the live browser origin to the build-time
  * `PUBLIC_PATH_URL` baked into the bundle. When the host loads
