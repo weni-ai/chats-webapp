@@ -760,7 +760,7 @@ describe('TheCardGroups.vue', () => {
 
   describe('watcher tests', () => {
     it('posts unread messages update to parent window', async () => {
-      const postMessageSpy = vi.spyOn(window.parent, 'postMessage');
+      const dispatchEventSpy = vi.spyOn(window, 'dispatchEvent');
 
       wrapper = createWrapper();
       const roomsStore = useRooms();
@@ -770,13 +770,17 @@ describe('TheCardGroups.vue', () => {
 
       await wrapper.vm.$nextTick();
 
-      expect(postMessageSpy).toHaveBeenCalledWith(
-        {
-          event: 'chats:update-unread-messages',
-          unreadMessages: 1,
-        },
-        '*',
+      expect(dispatchEventSpy).toHaveBeenCalledWith(
+        expect.objectContaining({
+          type: 'chatsToHost',
+          detail: {
+            event: 'chats:update-unread-messages',
+            unreadMessages: 1,
+          },
+        }),
       );
+
+      dispatchEventSpy.mockRestore();
     });
 
     describe('rooms_queue refetch on empty', () => {

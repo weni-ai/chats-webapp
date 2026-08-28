@@ -304,24 +304,24 @@ describe('ViewOptions', () => {
     );
 
     it('should post Dashboard navigation message and close popover', async () => {
-      const postMessageSpy = vi
-        .spyOn(window.parent, 'postMessage')
-        .mockImplementation(() => {});
+      const dispatchEventSpy = vi.spyOn(window, 'dispatchEvent');
 
       wrapper = createWrapper({ dashboard: true });
       wrapper.vm.isOpen = true;
       await wrapper.find('[data-testid="show-dashboard"]').trigger('click');
 
-      expect(postMessageSpy).toHaveBeenCalledWith(
-        {
-          event: 'redirect',
-          path: 'insights:init/humanServiceDashboard',
-        },
-        '*',
+      expect(dispatchEventSpy).toHaveBeenCalledWith(
+        expect.objectContaining({
+          type: 'chatsToHost',
+          detail: {
+            event: 'redirect',
+            path: 'insights:init/humanServiceDashboard',
+          },
+        }),
       );
       expect(wrapper.vm.isOpen).toBe(false);
 
-      postMessageSpy.mockRestore();
+      dispatchEventSpy.mockRestore();
     });
   });
 
