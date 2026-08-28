@@ -848,6 +848,40 @@
       }
     },
     "desk_copilot": {
+      "assistant": {
+        "attach_action": "Anexar arquivo",
+        "cancel_recording": "Cancelar gravação",
+        "copy_action": "Copiar",
+        "file_too_large": "Selecione um arquivo menor",
+        "file_type_not_allowed": "Selecione um tipo de arquivo compatível",
+        "image_attachment": "Anexo de imagem",
+        "input_placeholder": "Pergunte ao assistente",
+        "open_media_menu": "Abrir menu de mídia",
+        "processing_information": "Processando informações",
+        "record_audio": "Áudio",
+        "recording_in_progress": "Gravando",
+        "scroll_to_bottom": "Ir ao final",
+        "send_action": "Enviar",
+        "send_audio": "Enviar áudio",
+        "thinking_messages": {
+          "almost": "Quase pronto, só mais um momento",
+          "connecting": "Conectando ideias",
+          "processing": "Processando informações",
+          "refining": "Refinando detalhes",
+          "structuring": "Estruturando resposta"
+        },
+        "upload_file": "Enviar arquivo",
+        "voice_mode": {
+          "dismiss": "Dispensar",
+          "enter": "Iniciar modo de voz",
+          "error_title": "Modo de voz indisponível",
+          "exit": "Sair do modo de voz",
+          "listening": "Ouvindo",
+          "processing": "Transcrevendo",
+          "retry": "Tentar novamente",
+          "speaking": "Assistente falando"
+        }
+      },
       "copy_summary": "Copiar resumo",
       "disclaimer": {
         "description": "O Desk Copilot pode ajudar você com:",
@@ -1630,14 +1664,14 @@
     "title": "Mensagem em massa",
     "form": {
       "title": "Enviar mensagem em massa",
-      "shipping_history": "Histórico de envios",
+      "shipping_history": "Histórico de mensagens",
       "no_shipping_history": "Nenhuma mensagem foi enviada",
-      "no_contacts_filtered_alert": "Nenhum contato corresponde aos filtros selecionados. Tente ajustar os filtros.",
+      "no_contacts_filtered_alert": "Nenhum contato corresponde aos filtros selecionados. Tente ajustar seus filtros.",
       "contacts_count_disclaimer": "{count, plural, one {Esta mensagem será enviada para {count} contato. O número de destinatários pode mudar durante a entrega devido a transferências de conversa, encerramentos de conversa ou interações ocorrendo simultaneamente.} other {Esta mensagem será enviada para {count} contatos. O número de destinatários pode mudar durante a entrega devido a transferências de conversa, encerramentos de conversa ou interações ocorrendo simultaneamente.}}",
       "recipients": {
         "title": "Destinatários",
-        "title_tooltip": "Esta mensagem será entregue a todos os contatos que correspondem aos filtros selecionados. Use este recurso para comunicações operacionais como atrasos, incidentes, atualizações.",
-        "select_the_contacts_status": "Selecione o status dos contatos",
+        "title_tooltip": "Esta mensagem será entregue a todos os contatos que correspondem aos filtros selecionados. Use este recurso para comunicações operacionais, como atrasos, incidentes e atualizações.",
+        "select_the_contacts_status": "Selecione o status do contato",
         "contacts_in_service": "Contatos em atendimento",
         "contacts_waiting_for_service": "Contatos aguardando atendimento",
         "filters": {
@@ -1647,8 +1681,8 @@
             "placeholder": "Selecione pelo menos uma fila"
           },
           "representatives": {
-            "all": "Todos os representantes",
-            "label": "Selecione um representante",
+            "all": "Todos os atendentes",
+            "label": "Selecione um atendente",
             "placeholder": "Selecione pelo menos um representante"
           }
         }
@@ -1656,12 +1690,12 @@
       "message": {
         "title": "Mensagem",
         "input_label": "Defina o conteúdo da mensagem",
-        "input_placeholder": "Exemplo: Estamos com instabilidade no sistema, por isso está demorando um pouco mais para responder.",
-        "input_helper": "A mensagem será enviada exatamente como digitada"
+        "input_placeholder": "Exemplo: Estamos enfrentando instabilidade no sistema. É por isso que estamos demorando um pouco mais para responder.",
+        "input_helper": "A mensagem será enviada exatamente como foi inserida"
       },
       "confirmation": {
         "title": "Garanta que todos os campos estejam preenchidos corretamente e confirme a verificação",
-        "checkbox_label": "Verifiquei e estou pronto para enviar"
+        "checkbox_label": "Verifiquei e quero enviar"
       },
       "send": "{count, plural, =0 {Enviar para todos (0 contatos)} one {Enviar para todos ({count} contato)} other {Enviar para todos ({count} contatos)}}",
       "sending": "{count, plural, one {Enviando a mensagem para {count} contato} other {Enviando a mensagem para {count} contatos}}"
@@ -1691,7 +1725,7 @@
   "message_dictation": {
     "tooltip": {
       "activate": "Ativar modo de voz (Shift + V)",
-      "stop": "Sair do modo de voz (Esc)"
+      "stop": "Parar modo de voz (Esc)"
     },
     "button": {
       "activate": "Modo de voz",
