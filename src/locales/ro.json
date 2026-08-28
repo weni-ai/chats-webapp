@@ -827,8 +827,9 @@
         "file_type_not_allowed": "Selectează un tip de fișier compatibil",
         "image_attachment": "Atașament imagine",
         "input_placeholder": "Întreabă asistentul",
+        "open_media_menu": "Deschide meniul media",
         "processing_information": "Se procesează informațiile",
-        "record_audio": "Înregistrează audio",
+        "record_audio": "Audio",
         "recording_in_progress": "Se înregistrează",
         "scroll_to_bottom": "Mergi jos",
         "send_action": "Trimite",
@@ -840,6 +841,7 @@
           "refining": "Rafinare detalii",
           "structuring": "Structurare răspuns"
         },
+        "upload_file": "Încarcă fișier",
         "voice_mode": {
           "dismiss": "Închide",
           "enter": "Pornește modul vocal",
