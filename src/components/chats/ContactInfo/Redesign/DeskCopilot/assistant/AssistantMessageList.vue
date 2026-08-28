@@ -17,9 +17,6 @@
         }"
         height="40px"
       />
-      <p class="assistant-message-list__loading-text">
-        {{ $t('contact_info.desk_copilot.assistant.loading_conversation') }}
-      </p>
     </section>
 
     <template
@@ -29,16 +26,28 @@
       <HumanMessage
         v-if="message.direction === 'human'"
         :text="message.text"
+        :type="message.type"
+        :media="message.media"
+        :filename="message.filename"
       />
       <AiMessage
         v-else
         :text="message.text"
         :suggestion="message.suggestion"
         :status="message.status"
+        :type="message.type"
+        :media="message.media"
+        :filename="message.filename"
         @send="emit('send', $event)"
         @word-revealed="emit('wordRevealed')"
       />
     </template>
+
+    <HumanMessage
+      v-if="isVoiceModeActive && voicePartialTranscript"
+      :text="voicePartialTranscript"
+      data-testid="assistant-voice-partial-transcript"
+    />
 
     <ThinkingIndicator v-if="isThinking" />
     <TypingIndicator v-else-if="isTyping" />
@@ -62,12 +71,16 @@ withDefaults(
     isThinking?: boolean;
     isTyping?: boolean;
     isLoadingHistory?: boolean;
+    isVoiceModeActive?: boolean;
+    voicePartialTranscript?: string;
   }>(),
   {
     messages: () => [],
     isThinking: false,
     isTyping: false,
     isLoadingHistory: false,
+    isVoiceModeActive: false,
+    voicePartialTranscript: '',
   },
 );
 

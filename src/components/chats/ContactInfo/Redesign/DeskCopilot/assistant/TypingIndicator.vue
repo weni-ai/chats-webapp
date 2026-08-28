@@ -21,7 +21,7 @@ defineOptions({
   align-items: center;
   gap: $unnnic-space-1;
   width: 100%;
-  height: $unnnic-font-size-body-gt;
+  height: calc(0.875 * 16px * 1.4);
 
   &__dot {
     width: $unnnic-space-1;

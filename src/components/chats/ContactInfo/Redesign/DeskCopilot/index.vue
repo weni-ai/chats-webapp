@@ -21,7 +21,9 @@
           :isThinking="isThinking"
           :isTyping="isTyping"
           :isLoadingHistory="isLoadingHistory"
-          @send="handleSendSuggestionToInput"
+          :isVoiceModeActive="isVoiceModeActive"
+          :voicePartialTranscript="voicePartialTranscript"
+          @send="handleSendSuggestionToRoom"
           @word-revealed="scrollToBottomIfNear()"
         />
 
@@ -47,10 +49,29 @@
 
     <template v-if="isConfigured">
       <SuggestionChips
+        v-if="!isVoiceModePageActive && !isRecording"
         :suggestions="suggestions"
         @select="sendMessage"
       />
-      <AssistantInput @send="sendMessage" />
+      <AssistantInput
+        :isRecording="isRecording"
+        :recordingDurationMs="recordingDurationMs"
+        :isAudioRecordingSupported="isAudioRecordingSupported"
+        :canEnterVoiceMode="canEnterVoiceMode"
+        :isVoiceModePageActive="isVoiceModePageActive"
+        :voiceModeState="voiceModeState"
+        :voiceError="voiceError"
+        :fileConfig="fileConfig"
+        @send="sendMessage"
+        @attach="sendAttachment"
+        @start-recording="startRecording"
+        @stop-recording="stopRecording"
+        @cancel-recording="cancelRecording"
+        @voice-enter="enter"
+        @voice-exit="exit"
+        @voice-retry="retry"
+        @voice-dismiss="dismissError"
+      />
     </template>
 
     <Disclaimer
@@ -73,10 +94,11 @@ import SuggestionChips from './assistant/SuggestionChips.vue';
 import CartBadge from './assistant/CartBadge.vue';
 import { useAutoScroll } from '@/composables/assistant/useAutoScroll';
 import { useCopilotChat } from '@/composables/assistant/useCopilotChat';
+import { useVoiceMode } from '@/composables/assistant/useVoiceMode';
 import { useCopilotConnection } from '@/composables/useCopilotConnection';
 import { useConfig } from '@/store/modules/config';
 import { useRooms } from '@/store/modules/chats/rooms';
-import { useMessageManager } from '@/store/modules/chats/messageManager';
+import { useRoomMessages } from '@/store/modules/chats/roomMessages';
 
 defineOptions({
   name: 'DeskCopilotTab',
@@ -99,8 +121,7 @@ const emit = defineEmits<{
 
 const { project } = storeToRefs(useConfig());
 const { activeRoom } = storeToRefs(useRooms());
-const messageManagerStore = useMessageManager();
-const { inputMessage, inputMessageFocused } = storeToRefs(messageManagerStore);
+const roomMessagesStore = useRoomMessages();
 
 const {
   connection,
@@ -116,8 +137,36 @@ const {
   isLoadingHistory,
   cartCount,
   suggestions,
+  isRecording,
+  recordingDurationMs,
+  isAudioRecordingSupported,
+  isVoiceEnabledByServer,
+  fileConfig,
   sendMessage,
+  sendAttachment,
+  startRecording,
+  stopRecording,
+  cancelRecording,
+  requestVoiceTokens,
 } = useCopilotChat(connection, roomUuid);
+
+const {
+  canEnterVoiceMode,
+  isVoiceModeActive,
+  isVoiceModePageActive,
+  voiceModeState,
+  voicePartialTranscript,
+  voiceError,
+  enter,
+  exit,
+  retry,
+  dismissError,
+} = useVoiceMode({
+  isVoiceEnabledByServer,
+  messages,
+  sendMessage,
+  requestVoiceTokens,
+});
 
 const {
   listRef,
@@ -131,9 +180,15 @@ const enableRoomSummary = computed(
   () => !!project.value?.config?.has_chats_summary,
 );
 
-function handleSendSuggestionToInput(text: string) {
-  inputMessage.value = text;
-  inputMessageFocused.value = true;
+async function handleSendSuggestionToRoom(text: string) {
+  const trimmed = text?.trim();
+  const activeRoomUuid = activeRoom.value?.uuid;
+
+  if (!trimmed || !activeRoomUuid) {
+    return;
+  }
+
+  await roomMessagesStore.sendRoomMessage(trimmed, null, null, activeRoomUuid);
 }
 
 onMounted(() => {
@@ -158,6 +213,7 @@ onMounted(() => {
     flex: 1;
     min-height: 0;
     overflow: hidden auto;
+    padding-bottom: $unnnic-space-2;
   }
 
   &__go-to-bottom {

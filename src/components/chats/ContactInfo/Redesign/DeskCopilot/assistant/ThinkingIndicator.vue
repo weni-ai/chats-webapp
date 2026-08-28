@@ -7,7 +7,7 @@
       class="thinking-indicator__icon"
       icon="progress_activity"
       size="sm"
-      scheme="fg-emphasized"
+      scheme="fg-accent"
     />
     <section class="thinking-indicator__text-wrapper">
       <section
@@ -144,12 +144,14 @@ onBeforeUnmount(() => {
 </script>
 
 <style lang="scss" scoped>
+$thinking-line-height: calc(0.875 * 16px * 1.4);
+
 .thinking-indicator {
   display: flex;
   align-items: center;
   gap: $unnnic-space-2;
   width: 100%;
-  height: $unnnic-font-size-body-gt;
+  height: $thinking-line-height;
 
   &__icon {
     flex-shrink: 0;
@@ -157,8 +159,9 @@ onBeforeUnmount(() => {
   }
 
   &__text-wrapper {
-    height: $unnnic-font-size-body-gt;
+    height: $thinking-line-height;
     overflow: hidden;
+    min-width: 0;
   }
 
   &__text-track {
@@ -179,8 +182,11 @@ onBeforeUnmount(() => {
   }
 
   &__text {
-    font: $unnnic-font-emphasis;
-    color: $unnnic-color-fg-emphasized;
+    font: $unnnic-font-body;
+    letter-spacing: $unnnic-font-letter-spacing-body;
+    color: $unnnic-color-fg-muted;
+    margin: 0;
+    height: $thinking-line-height;
     white-space: nowrap;
     flex-shrink: 0;
   }

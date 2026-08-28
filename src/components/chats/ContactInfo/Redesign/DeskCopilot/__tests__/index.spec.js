@@ -13,7 +13,7 @@ import { createTestingPinia } from '@pinia/testing';
 import DeskCopilotTab from '../index.vue';
 import { useCopilotConnection } from '@/composables/useCopilotConnection';
 import { useCopilotChat } from '@/composables/assistant/useCopilotChat';
-import { useMessageManager } from '@/store/modules/chats/messageManager';
+import { useRoomMessages } from '@/store/modules/chats/roomMessages';
 import i18n from '@/plugins/i18n';
 
 vi.mock('@/composables/useCopilotConnection', () => ({
@@ -22,6 +22,21 @@ vi.mock('@/composables/useCopilotConnection', () => ({
 
 vi.mock('@/composables/assistant/useCopilotChat', () => ({
   useCopilotChat: vi.fn(),
+}));
+
+vi.mock('@/composables/assistant/useVoiceMode', () => ({
+  useVoiceMode: vi.fn(() => ({
+    canEnterVoiceMode: computed(() => false),
+    isVoiceModeActive: ref(false),
+    isVoiceModePageActive: ref(false),
+    voiceModeState: ref(null),
+    voicePartialTranscript: ref(''),
+    voiceError: ref(null),
+    enter: vi.fn(),
+    exit: vi.fn(),
+    retry: vi.fn(),
+    dismissError: vi.fn(),
+  })),
 }));
 
 beforeAll(() => {
@@ -73,7 +88,21 @@ function mockCopilotChat({
     isLoadingHistory: ref(isLoadingHistory),
     cartCount: ref(cartCount),
     suggestions: ref(suggestions),
+    isRecording: ref(false),
+    recordingDurationMs: ref(0),
+    isAudioRecordingSupported: ref(true),
+    isVoiceEnabledByServer: ref(false),
+    fileConfig: ref({
+      allowedTypes: [],
+      maxFileSize: 32 * 1024 * 1024,
+      acceptAttribute: '',
+    }),
     sendMessage: vi.fn(),
+    sendAttachment: vi.fn(),
+    startRecording: vi.fn(),
+    stopRecording: vi.fn(),
+    cancelRecording: vi.fn(),
+    requestVoiceTokens: vi.fn(),
   });
 }
 
@@ -207,7 +236,7 @@ describe('DeskCopilotTab', () => {
     expect(roomUuid.value).toBe('room-1');
   });
 
-  it('sends the AI suggestion into the main chat input', async () => {
+  it('sends the AI suggestion directly to the active room', async () => {
     mockCopilotConnection({
       isConfigured: true,
       connection: defaultConnection,
@@ -220,9 +249,13 @@ describe('DeskCopilotTab', () => {
       .find('[data-testid="assistant-message-list"]')
       .trigger('click');
 
-    const messageManager = useMessageManager();
-    expect(messageManager.inputMessage).toBe('Suggested text');
-    expect(messageManager.inputMessageFocused).toBe(true);
+    const roomMessages = useRoomMessages();
+    expect(roomMessages.sendRoomMessage).toHaveBeenCalledWith(
+      'Suggested text',
+      null,
+      null,
+      'room-1',
+    );
   });
 
   it('hides the summary when has_chats_summary is disabled', async () => {

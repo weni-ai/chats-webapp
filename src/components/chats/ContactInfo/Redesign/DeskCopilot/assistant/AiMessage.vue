@@ -8,91 +8,107 @@
       class="ai-message__icon"
       icon="bi:stars"
       size="sm"
-      scheme="fg-emphasized"
+      scheme="fg-accent"
     />
 
     <section class="ai-message__body">
-      <p
-        v-if="leadingText"
-        class="ai-message__leading"
-        data-testid="assistant-ai-leading"
-      >
-        {{ leadingText }}
-      </p>
+      <AudioMessage
+        v-if="type === 'audio' && media"
+        :src="media"
+      />
+      <ImageMessage
+        v-else-if="type === 'image' && media"
+        :src="media"
+        :filename="filename"
+      />
+      <FileMessage
+        v-else-if="(type === 'file' || type === 'video') && media"
+        :src="media"
+        :filename="filename"
+      />
 
-      <section
-        v-if="suggestionText || isStreamingOrBuffering"
-        class="ai-message__suggestion"
-        data-testid="assistant-ai-suggestion"
-        :class="{ 'ai-message__suggestion--streaming': isStreamingOrBuffering }"
-      >
-        <p class="ai-message__suggestion-text">
-          {{ displayedSuggestionText
-          }}<span
-            v-if="isStreamingOrBuffering"
-            class="ai-message__caret"
-            data-testid="assistant-ai-caret"
-          />
+      <template v-else>
+        <p
+          v-if="leadingText"
+          class="ai-message__leading"
+          data-testid="assistant-ai-leading"
+        >
+          {{ leadingText }}
         </p>
-      </section>
 
-      <section
-        v-if="suggestionText && !isStreamingOrBuffering"
-        class="ai-message__actions"
-        data-testid="assistant-ai-actions"
-      >
-        <section class="ai-message__actions-left">
-          <UnnnicButton
-            type="tertiary"
-            size="small"
-            data-testid="assistant-ai-copy"
-            @click="handleCopy"
-          >
-            {{ $t('contact_info.desk_copilot.assistant.copy_action') }}
-          </UnnnicButton>
-          <UnnnicButton
-            type="secondary"
-            size="small"
-            data-testid="assistant-ai-send"
-            @click="emit('send', suggestionText)"
-          >
-            {{ $t('contact_info.desk_copilot.assistant.send_action') }}
-          </UnnnicButton>
+        <section
+          v-if="suggestionText || isStreamingOrBuffering"
+          class="ai-message__suggestion"
+          data-testid="assistant-ai-suggestion"
+        >
+          <p class="ai-message__suggestion-text">
+            {{ displayedSuggestionText
+            }}<span
+              v-if="isStreamingOrBuffering"
+              class="ai-message__caret"
+              data-testid="assistant-ai-caret"
+            />
+          </p>
         </section>
 
-        <section class="ai-message__actions-right">
-          <UnnnicToolTip
-            enabled
-            :text="$t('chats.summary.feedback.positive')"
-            side="left"
-          >
-            <UnnnicIcon
-              icon="thumb_up"
-              :filled="feedbackLiked === true"
-              size="ant"
-              clickable
-              scheme="fg-base"
-              data-testid="assistant-ai-thumb-up"
-              @click="feedbackLiked = true"
-            />
-          </UnnnicToolTip>
-          <UnnnicToolTip
-            enabled
-            :text="$t('chats.summary.feedback.negative')"
-            side="left"
-          >
-            <UnnnicIcon
-              icon="thumb_down"
-              :filled="feedbackLiked === false"
-              size="ant"
-              clickable
-              scheme="fg-base"
-              data-testid="assistant-ai-thumb-down"
-              @click="feedbackLiked = false"
-            />
-          </UnnnicToolTip>
+        <section
+          v-if="suggestionText && !isStreamingOrBuffering"
+          class="ai-message__actions"
+          data-testid="assistant-ai-actions"
+        >
+          <section class="ai-message__actions-left">
+            <UnnnicButton
+              type="tertiary"
+              size="small"
+              data-testid="assistant-ai-copy"
+              @click="handleCopy"
+            >
+              {{ $t('contact_info.desk_copilot.assistant.copy_action') }}
+            </UnnnicButton>
+            <UnnnicButton
+              type="secondary"
+              size="small"
+              data-testid="assistant-ai-send"
+              @click="emit('send', suggestionText)"
+            >
+              {{ $t('contact_info.desk_copilot.assistant.send_action') }}
+            </UnnnicButton>
+          </section>
+
+          <section class="ai-message__actions-right">
+            <UnnnicToolTip
+              enabled
+              :text="$t('chats.summary.feedback.positive')"
+              side="left"
+            >
+              <UnnnicIcon
+                icon="thumb_up"
+                :filled="feedbackLiked === true"
+                size="ant"
+                clickable
+                scheme="fg-base"
+                data-testid="assistant-ai-thumb-up"
+                @click="feedbackLiked = true"
+              />
+            </UnnnicToolTip>
+            <UnnnicToolTip
+              enabled
+              :text="$t('chats.summary.feedback.negative')"
+              side="left"
+            >
+              <UnnnicIcon
+                icon="thumb_down"
+                :filled="feedbackLiked === false"
+                size="ant"
+                clickable
+                scheme="fg-base"
+                data-testid="assistant-ai-thumb-down"
+                @click="feedbackLiked = false"
+              />
+            </UnnnicToolTip>
+          </section>
         </section>
-      </section>
+      </template>
     </section>
   </section>
 </template>
@@ -102,6 +118,10 @@ import { computed, ref } from 'vue';
 import { UnnnicCallAlert } from '@weni/unnnic-system';
 import i18n from '@/plugins/i18n';
 import { useStreamingBuffer } from '@/composables/assistant/useStreamingBuffer';
+import type { AssistantMessageType } from '@/services/assistant/types';
+import AudioMessage from './media/AudioMessage.vue';
+import ImageMessage from './media/ImageMessage.vue';
+import FileMessage from './media/FileMessage.vue';
 
 defineOptions({
   name: 'AssistantAiMessage',
@@ -112,10 +132,16 @@ const props = withDefaults(
     text: string;
     suggestion?: string;
     status?: string;
+    type?: AssistantMessageType;
+    media?: string;
+    filename?: string;
   }>(),
   {
     suggestion: undefined,
     status: '',
+    type: 'text',
+    media: undefined,
+    filename: undefined,
   },
 );
 
@@ -234,12 +260,6 @@ async function handleCopy() {
     padding: $unnnic-space-3 $unnnic-space-4;
     border: 1px solid $unnnic-color-border-base;
     border-radius: $unnnic-radius-2;
-
-    &--streaming {
-      border-color: transparent;
-      padding-left: 0;
-      padding-right: 0;
-    }
   }
 
   &__suggestion-text {
