@@ -166,7 +166,7 @@
     "automatic_opening_message": "Automatic opening message",
     "inactive_warning_message": "Inactivity message",
     "inactive_close_message": "Closing message",
-    "bulk_message": "Mass message sent by {sender}"
+    "bulk_message": "Bulk message sent by {sender}"
   },
   "inactive": "Inactive",
   "inactive_room_tooltip": "{minutes, plural, one {The conversation has reached the {minutes}-minute inactivity limit.} other {The conversation has reached the {minutes}-minute inactivity limit.}}",
@@ -847,6 +847,40 @@
       }
     },
     "desk_copilot": {
+      "assistant": {
+        "attach_action": "Attach file",
+        "cancel_recording": "Cancel recording",
+        "copy_action": "Copy",
+        "file_too_large": "Select a smaller file",
+        "file_type_not_allowed": "Select a supported file type",
+        "image_attachment": "Image attachment",
+        "input_placeholder": "Ask the assistant",
+        "open_media_menu": "Open media menu",
+        "processing_information": "Processing information",
+        "record_audio": "Audio",
+        "recording_in_progress": "Recording",
+        "scroll_to_bottom": "Go to bottom",
+        "send_action": "Send",
+        "send_audio": "Send audio",
+        "thinking_messages": {
+          "almost": "Almost ready, just a moment longer",
+          "connecting": "Connecting ideas",
+          "processing": "Processing information",
+          "refining": "Refining details",
+          "structuring": "Structuring response"
+        },
+        "upload_file": "Upload file",
+        "voice_mode": {
+          "dismiss": "Dismiss",
+          "enter": "Start voice mode",
+          "error_title": "Voice mode unavailable",
+          "exit": "Exit voice mode",
+          "listening": "Listening",
+          "processing": "Transcribing",
+          "retry": "Try again",
+          "speaking": "Assistant speaking"
+        }
+      },
       "copy_summary": "Copy summary",
       "disclaimer": {
         "description": "Desk Copilot can help you with:",
@@ -1627,15 +1661,15 @@
   "mass_message": {
     "title": "Bulk message",
     "form": {
-      "title": "Send mass message",
-      "shipping_history": "Shipping history",
-      "no_shipping_history": "No message was sent",
+      "title": "Send bulk message",
+      "shipping_history": "Message history",
+      "no_shipping_history": "No messages were sent",
       "no_contacts_filtered_alert": "No contacts match the selected filters. Try adjusting your filters.",
       "contacts_count_disclaimer": "{count, plural, one {This message will be sent to {count} contact. The number of recipients may change during delivery due to conversation transfers, conversation closures, or interactions taking place simultaneously.} other {This message will be sent to {count} contacts. The number of recipients may change during delivery due to conversation transfers, conversation closures, or interactions taking place simultaneously.}}",
       "recipients": {
         "at_least_one_status_must_be_selected": "At least one status must be selected",
-        "contacts_in_service": "Contacts in service",
-        "contacts_waiting_for_service": "Contacts waiting for service",
+        "contacts_in_service": "Contacts in support chats",
+        "contacts_waiting_for_service": "Contacts waiting for support",
         "filters": {
           "queues": {
             "all": "All queues",
@@ -1655,11 +1689,11 @@
       "message": {
         "title": "Message",
         "input_label": "Define the message content",
-        "input_placeholder": "Example: We are experiencing system instability, which is why it is taking us a little longer to respond.",
-        "input_helper": "The message will be sent exactly as typed"
+        "input_placeholder": "Example: We're experiencing system instability. This is why it's taking us a little longer to respond.",
+        "input_helper": "The message will be sent exactly as entered"
       },
       "confirmation": {
-        "title": "Please ensure all fields are filled out correctly and confirm the verification",
+        "title": "Make sure all fields are completed correctly and confirm the verification",
         "checkbox_label": "I've checked it and I'm ready to send it"
       },
       "send": "{count, plural, =0 {Send to all (0 contacts)} one {Send to all ({count} contact)} other {Send to all ({count} contacts)}}",
