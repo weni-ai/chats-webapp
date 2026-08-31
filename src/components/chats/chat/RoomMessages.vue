@@ -42,6 +42,8 @@ import { useRooms } from '@/store/modules/chats/rooms';
 import { useRoomMessages } from '@/store/modules/chats/roomMessages';
 import { useConfig } from '@/store/modules/config';
 import { useMessageManager } from '@/store/modules/chats/messageManager';
+import { useFeatureFlag } from '@/store/modules/featureFlag';
+import { useAssistedSalesFeatureFlag } from '@/composables/useAssistedSalesFeatureFlag';
 
 import ChatMessages from '@/components/chats/chat/ChatMessages/index.vue';
 import ChatSummary from '@/layouts/ChatsLayout/components/ChatSummary/index.vue';
@@ -110,6 +112,11 @@ export default {
       enableRoomSummary: (store) => store.project?.config?.has_chats_summary,
     }),
     ...mapWritableState(useMessageManager, ['isDisabledInput', 'replyMessage']),
+    ...mapState(useFeatureFlag, ['featureFlags']),
+
+    isAssistedSalesEnabled() {
+      return useAssistedSalesFeatureFlag(this.featureFlags);
+    },
 
     messagesReady() {
       return (
@@ -121,7 +128,8 @@ export default {
         this.messagesReady &&
         this.openChatSummary &&
         this.showRoomSummary &&
-        this.enableRoomSummary
+        this.enableRoomSummary &&
+        !this.isAssistedSalesEnabled
       );
     },
     hasArchivedContent() {

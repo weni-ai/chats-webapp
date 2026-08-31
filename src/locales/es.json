@@ -341,36 +341,25 @@
         "tooltip": "Cada mensaje mostrará el nombre del representante que respondió",
         "switch_active": "Mostrar el nombre del representante en los mensajes",
         "switch_disabled": "Mostrar el nombre del representante en los mensajes",
-        "hint": "Cada mensaje enviado mostrará el nombre del representante que está respondiendo.",
-        "switch_label": "Usar firma"
+        "hint": "Cada mensaje intercambiado tendrá el nombre del representante que está respondiendo.",
+        "switch_label": "Utilizar firma"
       },
       "csat": {
         "custom": {
           "flow_disclaimer": "El flujo seleccionado debe usar una calificación de satisfacción de 1 a 5 para garantizar resultados correctos en la encuesta."
         },
-        "label": "Enviar automáticamente una encuesta de satisfacción después de finalizar el chat de soporte en Live Desk",
         "hint": "Si un flujo activo en el módulo Flujos está configurado para disparar una encuesta tras finalizar el soporte, esta configuración podría entrar en conflicto y afectar la entrega de la encuesta.",
+        "label": "Enviar automáticamente una encuesta de satisfacción después de finalizar el chat de soporte en Live Desk",
+        "confirm_modal": {
+          "content_1": "Si un flujo activo en el módulo Flujos está configurado para disparar una encuesta tras finalizar el soporte, esta configuración podría entrar en conflicto y afectar la entrega de la encuesta.",
+          "content_2": "¿Deseas continuar de todas formas?"
+        },
         "section_title": "Encuesta de satisfacción",
         "type": {
           "custom": "Flujos personalizados",
           "default": "Encuesta CSAT predeterminada (recomendado)",
           "label": "Tipo de encuesta",
           "tooltip": "Elige entre la encuesta CSAT predeterminada o un flujo personalizado ya configurado en el módulo Flujos."
-        },
-        "confirm_modal": {
-          "content_1": "Si un flujo activo en el módulo Flujos está configurado para disparar una encuesta tras finalizar el soporte, esta configuración podría entrar en conflicto y afectar la entrega de la encuesta.",
-          "content_2": "¿Deseas continuar de todas formas?"
-        }
-      },
-      "automated_message": {
-        "title": "Mensajes automatizados",
-        "switch_when_waiting_label": "Enviar mensaje automático a los contactos en espera",
-        "switch_when_start_label": "Enviar mensaje automático al iniciar el soporte",
-        "hint_when_waiting": "Se envía un mensaje automático a los contactos que están en la cola esperando soporte humano.",
-        "hint_when_start": "Se envía un mensaje automático cuando un chat se asigna a un representante. En el chat, el mensaje aparece como enviado por el representante asignado.",
-        "field": {
-          "title": "Mensaje automático",
-          "placeholder": "Ejemplo: ¡Hola! ¿Cómo puedo ayudarte hoy?"
         }
       },
       "automatic_message": {
@@ -386,7 +375,18 @@
         "switch_active": "Exigir tag al finalizar el chat de soporte",
         "switch_disabled": "Exigir tag al finalizar el chat de soporte",
         "tooltip": "Agrega al menos una tag para activar",
-        "switch_label": "Exigir etiquetas al final del soporte humano"
+        "switch_label": "Exigir tags al finalizar el soporte humano"
+      },
+      "automated_message": {
+        "title": "Mensajes automatizados",
+        "switch_when_waiting_label": "Enviar mensaje automático a los contactos en espera",
+        "switch_when_start_label": "Enviar mensaje automático al iniciar el soporte",
+        "hint_when_waiting": "Se envía automáticamente un mensaje a los contactos mientras están en la cola esperando soporte humano.",
+        "hint_when_start": "Se envía automáticamente un mensaje cuando un chat se asigna a un representante. El mensaje aparecerá como si lo hubiera enviado el representante asignado.",
+        "field": {
+          "title": "Mensaje automático",
+          "placeholder": "Ejemplo: ¡Hola! ¿Cómo puedo ayudarte hoy?"
+        }
       }
     }
   },
@@ -425,9 +425,6 @@
   "addition_date": "Fecha de registro",
   "in_queues": "en cola",
   "in_progress": "En curso",
-  "waiting": "Esperando",
-  "sent_flows": "Flujos enviados",
-  "discussion": "Discusiones",
   "in_progress_tooltip": "Número de chats atendidos por un representante actualmente",
   "in_progress_tooltip_filtered": "Número de chats atendidos por un representante",
   "closed": "Cerrados",
@@ -503,6 +500,7 @@
       "transfer_to_queue": "{agent} transferido a la cola {queue}",
       "transfer_from_queue_to_queue": "Transferido de la cola {queue1} a la cola {queue2}",
       "transfer_from_queue_to_agent": "Transferido de la cola {queue} a {agent}",
+      "transfer_from_queue_to_agent_by_other": "{requestedBy} transfirió el chat de la cola {queue} a {agent}",
       "pick_of_queue": "{agent} se asignó el chat de la cola {queue}",
       "pick_of_agent": "{manager} se asignó el chat de {agent}",
       "edit_custom_field": "campo personalizado editado",
@@ -512,7 +510,6 @@
       "automatic_transfer_from_queue": "Sala asignada a {agent}",
       "see_all_internal_notes": "<b style='color: white;'>Ver observación interna</b>",
       "chat_ended_by": "Chat finalizado por {agent}",
-      "transfer_from_queue_to_agent_by_other": "{requestedBy} transfirió el chat de la cola {queue} a {agent}",
       "transfer_from_queue_to_queue_by_other": "{requestedBy} transfirió el chat de la cola {queue1} a la cola {queue2}",
       "transfer_to_agent_by_other": "{requestedBy} transfirió el chat de {agent1} a {agent2}",
       "transfer_to_queue_by_other": "{requestedBy} transfirió el chat de {agent} a la cola {queue}",
@@ -598,11 +595,11 @@
     "your_chat_assumed": "Este chat se lo ha asignado otro representante",
     "your_chat_assumed_description": "El chat con {contact} se lo ha asignado {representative}",
     "closed_chats": {
+      "contact_history": "Historial del contacto",
       "general_history": "Historial general",
       "history": "Historial",
       "history_description": "Historial de todos los registros de chat de soporte del proyecto {projectName}",
-      "project_history": "Historial del proyecto",
-      "contact_history": "Historial del contacto"
+      "project_history": "Historial del proyecto"
     },
     "assigned_queues": "Colas asignadas",
     "select_queues": "Seleccionar colas",
@@ -630,6 +627,7 @@
       "assume_chat_confirmation": "Si confirmas, este chat se transferirá de {viewedAgent} a ti"
     }
   },
+  "select": "Seleccionar",
   "history": "Historial",
   "close_view": "Cerrar vista",
   "logout": "Cerrar sesión",
@@ -821,6 +819,10 @@
     "switch_tooltip": "Activa si deseas que el contacto siempre se te asigne directamente",
     "alert_linked": "Contacto vinculado",
     "alert_detached": "Contacto desvinculado",
+    "header": {
+      "desk_copilot": "Desk Copilot",
+      "information": "Información"
+    },
     "linked_contact": "Contacto vinculado al representante {name}",
     "see_contact_history": "Ver historial",
     "no_contact_history": "Sin historial",
@@ -843,6 +845,56 @@
         "1": "😡 Muy insatisfecho",
         "no_response": "Sin respuesta"
       }
+    },
+    "desk_copilot": {
+      "assistant": {
+        "attach_action": "Adjuntar archivo",
+        "cancel_recording": "Cancelar grabación",
+        "copy_action": "Copiar",
+        "file_too_large": "Selecciona un archivo más pequeño",
+        "file_type_not_allowed": "Selecciona un tipo de archivo compatible",
+        "image_attachment": "Adjunto de imagen",
+        "input_placeholder": "Pregunta al asistente",
+        "open_media_menu": "Abrir menú de medios",
+        "processing_information": "Procesando información",
+        "record_audio": "Audio",
+        "recording_in_progress": "Grabando",
+        "scroll_to_bottom": "Ir al final",
+        "send_action": "Enviar",
+        "send_audio": "Enviar audio",
+        "thinking_messages": {
+          "almost": "Casi listo, un momento más",
+          "connecting": "Conectando ideas",
+          "processing": "Procesando información",
+          "refining": "Refinando detalles",
+          "structuring": "Estructurando respuesta"
+        },
+        "upload_file": "Subir archivo",
+        "voice_mode": {
+          "dismiss": "Descartar",
+          "enter": "Iniciar modo de voz",
+          "error_title": "Modo de voz no disponible",
+          "exit": "Salir del modo de voz",
+          "listening": "Escuchando",
+          "processing": "Transcribiendo",
+          "retry": "Inténtalo de nuevo",
+          "speaking": "Asistente hablando"
+        }
+      },
+      "copy_summary": "Copiar resumen",
+      "disclaimer": {
+        "description": "Desk Copilot puede ayudarte con:",
+        "enable_button": "Activar Desk Copilot",
+        "items": {
+          "catalog_search": "Búsqueda en el catálogo",
+          "next_best_actions": "Próximas mejores acciones",
+          "product_recommendations": "Recomendaciones de productos",
+          "sales_arguments": "Argumentos de venta"
+        },
+        "title": "Ve más allá de los resúmenes de conversación",
+        "title_without_summary": "Desbloquea todo tu potencial con Desk Copilot"
+      },
+      "summary_title": "Resumen de esta conversación"
     }
   },
   "discussions": {
@@ -1027,6 +1079,7 @@
     "delete_description": "¿Realmente deseas eliminar el mensaje rápido {shortcut}?",
     "shortcut_tooltip": "Escribe /{shortcut} para usarlo",
     "new": "Nuevo mensaje rápido",
+    "description_new": "Mensaje rápido en el departamento {sector}",
     "add": "Agregar mensaje rápido",
     "edit": "Editar mensaje rápido",
     "available_shortcuts": "Atajos disponibles",
@@ -1036,14 +1089,13 @@
     "message_field_placeholder": "Ejemplo: Hola, ¿cómo estás? ¿En qué puedo ayudarte hoy?",
     "successfully_added": "Mensaje rápido agregado",
     "successfully_updated": "Mensaje rápido actualizado",
+    "successfully_deleted": "Mensaje rápido eliminado con éxito",
+    "error_deleting": "No se pudo eliminar el mensaje rápido.",
     "error": "Error al configurar mensaje rápido",
     "no_suggestions": "No se encontraron resultados para el atajo ingresado",
     "disclaimer": "Escribe / (barra) en el campo de mensaje para ver los mensajes rápidos",
     "action_open": "Abrir mensajes rápidos (/)",
-    "action_close": "Cerrar mensajes rápidos",
-    "description_new": "Mensaje rápido en el departamento {sector}",
-    "error_deleting": "No se pudo eliminar el mensaje rápido.",
-    "successfully_deleted": "Mensaje rápido eliminado con éxito"
+    "action_close": "Cerrar mensajes rápidos"
   },
   "discard": "Descartar",
   "on_boarding": {
@@ -1096,11 +1148,12 @@
     "filter_by_group_name": "Filtrar por nombre del grupo",
     "section_sectors_subtitle": "Agrega, consulta y gestiona departamentos, colas, managers y representantes dentro de tu organización.",
     "tabs": {
-      "settings": "Configuración",
+      "desk_copilot": "Desk Copilot",
+      "general": "General",
       "groups": "Grupos de proyectos",
-      "sectors": "Departamentos",
       "representatives": "Representantes",
-      "general": "General"
+      "sectors": "Departamentos",
+      "settings": "Configuración"
     },
     "custom_breaks": {
       "title": "Pausas personalizadas",
@@ -1116,11 +1169,78 @@
       "status_remove_success": "Status {status} removido",
       "status_error": "Error al guardar cambios. Vuelve a intentarlo.",
       "delete_modal": {
+        "title": "Eliminar pausa personalizada",
         "description_1": "¿Realmente deseas eliminar la pausa personalizada “{name}”?",
         "description_2": "Una vez eliminada, sus datos ya no aparecerán en el panel de Live Desk y no podrán recuperarse.",
-        "error": "No se pudo eliminar la pausa personalizada.",
         "success": "Pausa personalizada eliminada con éxito",
-        "title": "Eliminar pausa personalizada"
+        "error": "No se pudo eliminar la pausa personalizada."
+      }
+    },
+    "desk_copilot": {
+      "connected": {
+        "assigned_agents": "Agentes asignados",
+        "badge": "Copilot",
+        "connected_by": "Conectado por",
+        "connected_to": "Conectado el",
+        "created_on": "Creado el",
+        "description": "Este proyecto se usa exclusivamente para gestionar los agentes de IA de Desk Copilot. Solo es accesible desde esta sección.",
+        "open": "Abrir",
+        "popover_change_option": "Cambiar",
+        "popover_disconnect_option": "Desconectar"
+      },
+      "disconnect_modal": {
+        "confirm": "Desconectar",
+        "description": "Este proyecto perderá el acceso a Desk Copilot hasta que se reconecte un proyecto Copilot. El proyecto Copilot y las demás conexiones no se verán afectados.",
+        "error": "No se pudo desconectar el proyecto Copilot",
+        "success": "Proyecto Copilot desconectado con éxito",
+        "title": "Desconectar proyecto Copilot"
+      },
+      "empty_state": {
+        "create_button": "Crear proyecto Copilot",
+        "description": "Para activar Desk Copilot, conecta este proyecto a un proyecto Copilot donde se gestionan tus agentes de IA",
+        "select_button": "Seleccionar proyecto Copilot",
+        "title": "Ningún proyecto Copilot conectado"
+      },
+      "enable_title": "Activar Desk Copilot",
+      "info": {
+        "ai_assistance": {
+          "description": "Ayuda a tus representantes durante las conversaciones con sugerencias generadas por IA, ítems recomendados y próximas acciones.",
+          "title": "Asistencia de IA"
+        },
+        "automatic_updates": {
+          "description": "Los cambios realizados en tu proyecto Copilot se reflejan en todos los proyectos Live Desk conectados.",
+          "title": "Actualizaciones automáticas"
+        },
+        "centralized_agents": {
+          "description": "Gestiona todos los agentes de IA en un único proyecto Copilot.",
+          "title": "Agentes de IA centralizados"
+        },
+        "learn_more": "Saber más",
+        "shared_across_projects": {
+          "description": "Un proyecto Copilot puede compartirse entre varios proyectos Live Desk para mantener el conocimiento de IA consistente.",
+          "title": "Compartido entre proyectos"
+        },
+        "title": "Cómo funciona Desk Copilot"
+      },
+      "modal": {
+        "disclaimer": "Este proyecto Copilot se creará y se conectará automáticamente a este proyecto.",
+        "error": "No se pudo crear el proyecto Copilot debido a un problema técnico",
+        "input_label": "Define el nombre del proyecto Copilot",
+        "success": "Proyecto Copilot creado y conectado con éxito",
+        "title": "Crear proyecto Copilot"
+      },
+      "new_badge": "Nuevo",
+      "picker_modal": {
+        "assigned_agents_tag": "{count, plural, one {{count} agente asignado} other {{count} agentes asignados}}",
+        "change_button": "Cambiar",
+        "change_error": "No se pudo cambiar el proyecto Copilot",
+        "change_success": "Proyecto Copilot cambiado con éxito",
+        "change_title": "Cambiar proyecto Copilot",
+        "connect_button": "Conectar",
+        "connect_error": "No se pudo conectar al proyecto Copilot",
+        "connect_success": "Proyecto Copilot conectado con éxito",
+        "search_placeholder": "Buscar por nombre",
+        "select_title": "Seleccionar proyecto Copilot existente"
       }
     },
     "changes_saved": "Cambios guardados con éxito",
@@ -1142,6 +1262,10 @@
         "switch_label": "Permitir interacciones solo para representantes online",
         "hint": "Si esta opción está activa, los representantes offline o en pausa no podrán responder a chats en curso."
       },
+      "block_link_contact_agents": {
+        "switch_label": "Bloquear la vinculación de contactos por los representantes",
+        "hint": "Si esta opción está activa, los representantes no podrán vincular contactos a ellos"
+      },
       "bulk_transfer": {
         "tooltip": "Esta función permite a los representantes transferir diferentes contactos a la vez",
         "switch_active": "Transferir chats en masa a otra cola o representante",
@@ -1151,9 +1275,13 @@
         "switch_active": "Bloquear transferencias de chats a representantes offline",
         "switch_inactive": "Bloquear transferencias de chats a representantes offline"
       },
+      "hide_desk_copilot_tab": {
+        "hint": "Si esta opción está activa, los representantes solo ven la pestaña de información en el panel del contacto",
+        "switch_label": "Ocultar pestaña Desk Copilot"
+      },
       "hide_moderators_from_transfer": {
-        "hint": "Cuando está activa, solo se muestran los usuarios asignados a la cola como representantes. Los moderadores solo aparecen si también están asignados a la cola como representantes. Cuando está desactivada, se muestran todos los usuarios, incluidos los moderadores.",
-        "switch_label": "Ocultar perfiles de moderadores al transferir chats"
+        "hint": "Si se activa esta opción, solo se muestran los usuarios asignados a la cola como representantes. Los moderadores solo se muestran si también están asignados a la cola como representantes. Cuando está desactivada se muestran todos los usuarios, incluidos los moderadores.",
+        "switch_label": "Ocultar los perfiles de moderadores al transferir chats"
       },
       "bulk_close": {
         "switch_active": "Finalizar chats en masa",
@@ -1203,10 +1331,9 @@
     "queues": {
       "in_sector": "Cola en el departamento {sector}",
       "new": "Nueva cola",
-      "info": "Las colas son grupos de soporte dentro de un departamento. Puedes dirigir contactos desde un flujo a una cola específica.",
       "title": "Gestión de colas",
+      "info": "Las colas son grupos de soporte dentro de un departamento. Puedes dirigir contactos desde un flujo a una cola específica.",
       "hint": "Las colas son grupos de soporte dentro de un departamento. Puedes crearlas o editarlas en cualquier momento.",
-      "queue_definitions": "Configuración de la cola",
       "filter_by_name": "Filtrar por nombre de la cola",
       "add_queue": "Agregar cola",
       "delete_this_queue": "Escribe el nombre de la cola a eliminar",
@@ -1215,6 +1342,7 @@
         "title": "Configurar cola",
         "tooltip": "Las colas son grupos de atención dentro del departamento. Puedes crear nuevas colas o editarlas cuando quieras después de crear el departamento."
       },
+      "queue_definitions": "Configuración de la cola",
       "delete_or_edit": "Eliminar o editar",
       "limit_chats": {
         "title": "Límite de chats esperando soporte",
@@ -1223,6 +1351,13 @@
           "helper": "Cuando se alcanza el límite no se crean nuevos chats.",
           "input_label": "Número máximo de chats esperando soporte",
           "input_placeholder": "Ejemplo: 50"
+        }
+      },
+      "bond_flows_queue": {
+        "select": {
+          "label": "Flujos asociados",
+          "placeholder": "Selecciona uno o más flujos",
+          "tooltip": "Asocia flujos a esta cola para definir qué flujos están disponibles al filtrar por ella. Los flujos que no están asociados a ninguna cola se consideran generales y están disponibles cuando no se aplica ningún filtro de cola."
         }
       },
       "message": {
@@ -1523,7 +1658,6 @@
       "tooltip": "No respondiste a este contacto"
     }
   },
-  "select": "Seleccionar",
   "mass_message": {
     "title": "Mensaje en masa",
     "form": {
@@ -1534,40 +1668,42 @@
       "contacts_count_disclaimer": "{count, plural, one {Este mensaje se enviará a {count} contacto. El número de destinatarios puede cambiar durante la entrega debido a transferencias de conversación, cierres de conversación o interacciones que ocurren simultáneamente.} other {Este mensaje se enviará a {count} contactos. El número de destinatarios puede cambiar durante la entrega debido a transferencias de conversación, cierres de conversación o interacciones que ocurren simultáneamente.}}",
       "recipients": {
         "title": "Destinatarios",
-        "title_tooltip": "Este mensaje se entregará a todos los contactos que coincidan con los filtros seleccionados. Usa esta función para comunicaciones operativas como retrasos, incidentes, actualizaciones.",
-        "select_the_contacts_status": "Selecciona el estado de los contactos",
-        "contacts_in_service": "Contactos en atención",
-        "contacts_waiting_for_service": "Contactos esperando atención",
+        "title_tooltip": "Este mensaje se entregará a todos los contactos que coincidan con los filtros seleccionados. Usa esta función para comunicaciones operativas como retrasos, incidentes o actualizaciones.",
+        "select_the_contacts_status": "Selecciona el status de los contactos",
+        "contacts_in_service": "Contactos en chats de soporte",
+        "contacts_waiting_for_service": "Contactos esperando chat de soporte",
         "filters": {
           "queues": {
+            "all": "Todas las colas",
             "label": "Selecciona una cola",
-            "all": "Todas las colas"
+            "placeholder": "Selecciona al menos una cola"
           },
           "representatives": {
+            "all": "Todos los representantes",
             "label": "Selecciona un representante",
-            "all": "Todos los representantes"
+            "placeholder": "Selecciona al menos un representante"
           }
         }
       },
       "message": {
         "title": "Mensaje",
         "input_label": "Define el contenido del mensaje",
-        "input_placeholder": "Ejemplo: Estamos experimentando inestabilidad en el sistema, por eso nos está tomando un poco más responder.",
-        "input_helper": "El mensaje se enviará exactamente como se escribió"
+        "input_placeholder": "Ejemplo: Estamos experimentando inestabilidad en el sistema, por eso nos está tomando un poco más de tiempo responder.",
+        "input_helper": "El mensaje se enviará tal como se ingresó"
       },
       "confirmation": {
         "title": "Asegúrate de que todos los campos estén completados correctamente y confirma la verificación",
-        "checkbox_label": "Lo revisé y estoy listo para enviarlo"
+        "checkbox_label": "Lo verifiqué y estoy listo para enviar"
       },
       "send": "{count, plural, =0 {Enviar a todos (0 contactos)} one {Enviar a todos ({count} contacto)} other {Enviar a todos ({count} contactos)}}",
       "sending": "{count, plural, one {Enviando el mensaje a {count} contacto} other {Enviando el mensaje a {count} contactos}}"
     },
     "history": {
       "filter_by_sender": "Filtrar por remitente",
-      "filter_by_status": "Filtrar por estado",
-      "last_message_disclaimer": "El mensaje \"{text}\" se envió en la última hora - a las {time}.",
+      "filter_by_status": "Filtrar por status",
+      "last_message_disclaimer": "El mensaje \"{text}\" se envió durante la hora pasada a las {time}.",
       "sent_by": "Enviado por",
-      "status": "Estado",
+      "status": "Status",
       "status_failed": "Error al enviar",
       "status_sent": "Enviado"
     },
@@ -1593,5 +1729,8 @@
       "activate": "Modo de voz",
       "stop": "Detener"
     }
-  }
+  },
+  "waiting": "Esperando",
+  "sent_flows": "Flujos enviados",
+  "discussion": "Discusiones"
 }
