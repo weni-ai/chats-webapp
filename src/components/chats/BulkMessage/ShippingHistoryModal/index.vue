@@ -100,6 +100,11 @@ const tableHeaders = computed<TableHeader[]>(() => [
     flex: 1,
   },
   {
+    id: 'message',
+    text: t('message'),
+    flex: 1,
+  },
+  {
     id: 'sentBy',
     text: t('mass_message.history.sent_by'),
     flex: 1,

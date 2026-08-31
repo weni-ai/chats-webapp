@@ -110,17 +110,21 @@ describe('ViewModeHeader', () => {
       });
     });
 
-    it('should handle closeViewMode with insights module postMessage', async () => {
-      const postMessageSpy = vi.spyOn(window.parent, 'postMessage');
+    it('should handle closeViewMode with insights module redirect to host', async () => {
+      const dispatchEventSpy = vi.spyOn(window, 'dispatchEvent');
       const wrapper = createWrapper({}, { oldModule: 'insights' });
 
       await wrapper.vm.closeViewMode();
 
       expect(wrapper.vm.$router.push).not.toHaveBeenCalled();
-      expect(postMessageSpy).toHaveBeenCalledWith(
-        { event: 'redirect', path: 'insights:init' },
-        '*',
+      expect(dispatchEventSpy).toHaveBeenCalledWith(
+        expect.objectContaining({
+          type: 'chatsToHost',
+          detail: { event: 'redirect', path: 'insights:init' },
+        }),
       );
+
+      dispatchEventSpy.mockRestore();
     });
 
     it('should handle click and keypress events on close button', async () => {
