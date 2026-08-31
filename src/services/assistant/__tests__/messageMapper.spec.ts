@@ -83,4 +83,62 @@ describe('mapServiceMessage', () => {
     expect(mapped.size).toBe(1234);
     expect(mapped.duration).toBe(2.5);
   });
+
+  it('maps product_carousel items when present', () => {
+    const mapped = mapServiceMessage(
+      buildMessage({
+        text: 'Check these products',
+        product_carousel: {
+          text: 'Check these products',
+          product_items: [
+            {
+              product_retailer_id: '1276545',
+              name: 'Nike Air Zoom Pegasus',
+              price: 599.9,
+              sale_price: 499.9,
+              currency: 'BRL',
+              image: 'https://example.com/shoe.png',
+              description: 'Running shoe',
+              seller_id: '1',
+            },
+            {
+              product_retailer_id: '',
+              name: 'Invalid item',
+              price: 10,
+              image: '',
+            },
+          ],
+        },
+      }),
+    );
+
+    expect(mapped.productCarousel).toEqual({
+      text: 'Check these products',
+      items: [
+        {
+          product_retailer_id: '1276545',
+          name: 'Nike Air Zoom Pegasus',
+          price: 599.9,
+          sale_price: 499.9,
+          currency: 'BRL',
+          image: 'https://example.com/shoe.png',
+          description: 'Running shoe',
+          seller_id: '1',
+        },
+      ],
+    });
+  });
+
+  it('omits productCarousel when product_items is empty', () => {
+    const mapped = mapServiceMessage(
+      buildMessage({
+        product_carousel: {
+          text: 'No products',
+          product_items: [],
+        },
+      }),
+    );
+
+    expect(mapped.productCarousel).toBeUndefined();
+  });
 });
