@@ -166,7 +166,7 @@
     "automatic_opening_message": "Automatic opening message",
     "inactive_warning_message": "Inactivity message",
     "inactive_close_message": "Closing message",
-    "bulk_message": "Mass message sent by {sender}"
+    "bulk_message": "Bulk message sent by {sender}"
   },
   "inactive": "Inactive",
   "inactive_room_tooltip": "{minutes, plural, one {The conversation has reached the {minutes}-minute inactivity limit.} other {The conversation has reached the {minutes}-minute inactivity limit.}}",
@@ -847,6 +847,40 @@
       }
     },
     "desk_copilot": {
+      "assistant": {
+        "attach_action": "Attach file",
+        "cancel_recording": "Cancel recording",
+        "copy_action": "Copy",
+        "file_too_large": "Select a smaller file",
+        "file_type_not_allowed": "Select a supported file type",
+        "image_attachment": "Image attachment",
+        "input_placeholder": "Ask the assistant",
+        "open_media_menu": "Open media menu",
+        "processing_information": "Processing information",
+        "record_audio": "Audio",
+        "recording_in_progress": "Recording",
+        "scroll_to_bottom": "Go to bottom",
+        "send_action": "Send",
+        "send_audio": "Send audio",
+        "thinking_messages": {
+          "almost": "Almost ready, just a moment longer",
+          "connecting": "Connecting ideas",
+          "processing": "Processing information",
+          "refining": "Refining details",
+          "structuring": "Structuring response"
+        },
+        "upload_file": "Upload file",
+        "voice_mode": {
+          "dismiss": "Dismiss",
+          "enter": "Start voice mode",
+          "error_title": "Voice mode unavailable",
+          "exit": "Exit voice mode",
+          "listening": "Listening",
+          "processing": "Transcribing",
+          "retry": "Try again",
+          "speaking": "Assistant speaking"
+        }
+      },
       "copy_summary": "Copy summary",
       "disclaimer": {
         "description": "Desk Copilot can help you with:",
@@ -1319,6 +1353,13 @@
           "input_placeholder": "Example: 50"
         }
       },
+      "bond_flows_queue": {
+        "select": {
+          "label": "Associated flows",
+          "placeholder": "Select one or more flows",
+          "tooltip": "Associate flows with this queue to define which flows are available when filtering by this queue. Flows that aren't associated with any queue are considered general and are available when no queue filter is applied."
+        }
+      },
       "message": {
         "create": "Queue created successfully",
         "update": "Queue updated successfully",
@@ -1618,38 +1659,40 @@
     }
   },
   "mass_message": {
-    "title": "Mass message",
+    "title": "Bulk message",
     "form": {
-      "title": "Send mass message",
-      "shipping_history": "Shipping history",
-      "no_shipping_history": "No message was sent",
+      "title": "Send bulk message",
+      "shipping_history": "Message history",
+      "no_shipping_history": "No messages were sent",
       "no_contacts_filtered_alert": "No contacts match the selected filters. Try adjusting your filters.",
       "contacts_count_disclaimer": "{count, plural, one {This message will be sent to {count} contact. The number of recipients may change during delivery due to conversation transfers, conversation closures, or interactions taking place simultaneously.} other {This message will be sent to {count} contacts. The number of recipients may change during delivery due to conversation transfers, conversation closures, or interactions taking place simultaneously.}}",
       "recipients": {
         "title": "Recipients",
-        "title_tooltip": "This message will be delivered to all contacts matching the selected filters. Use this feature for operational communications such as delays, incidents, updates.",
-        "select_the_contacts_status": "Select the contacts status",
-        "contacts_in_service": "Contacts in service",
-        "contacts_waiting_for_service": "Contacts waiting for service",
+        "title_tooltip": "This message will be delivered to all contacts matching the selected filters. Use this feature for operational communications such as delays, incidents, or updates.",
+        "select_the_contacts_status": "Select contact status",
+        "contacts_in_service": "Contacts in support chats",
+        "contacts_waiting_for_service": "Contacts waiting for support",
         "filters": {
           "queues": {
+            "all": "All queues",
             "label": "Select a queue",
-            "all": "All queues"
+            "placeholder": "Select at least one queue"
           },
           "representatives": {
+            "all": "All representatives",
             "label": "Select a representative",
-            "all": "All representatives"
+            "placeholder": "Select at least one representative"
           }
         }
       },
       "message": {
         "title": "Message",
         "input_label": "Define the message content",
-        "input_placeholder": "Example: We are experiencing system instability, which is why it is taking us a little longer to respond.",
-        "input_helper": "The message will be sent exactly as typed"
+        "input_placeholder": "Example: We're experiencing system instability. This is why it's taking us a little longer to respond.",
+        "input_helper": "The message will be sent exactly as entered"
       },
       "confirmation": {
-        "title": "Please ensure all fields are filled out correctly and confirm the verification",
+        "title": "Make sure all fields are completed correctly and confirm the verification",
         "checkbox_label": "I've checked it and I'm ready to send it"
       },
       "send": "{count, plural, =0 {Send to all (0 contacts)} one {Send to all ({count} contact)} other {Send to all ({count} contacts)}}",
@@ -1658,7 +1701,7 @@
     "history": {
       "filter_by_sender": "Filter by sender",
       "filter_by_status": "Filter by status",
-      "last_message_disclaimer": "The message \"{text}\" was sent in the last hour - at {time}.",
+      "last_message_disclaimer": "The message \"{text}\" was sent in the last hour, at {time}.",
       "sent_by": "Sent by",
       "status": "Status",
       "status_failed": "Failed to send",
@@ -1679,8 +1722,8 @@
   },
   "message_dictation": {
     "tooltip": {
-      "activate": "Activate voice mode (shift + V)",
-      "stop": "Stop voice mode (esc)"
+      "activate": "Activate voice mode (Shift + V)",
+      "stop": "Stop voice mode (Esc)"
     },
     "button": {
       "activate": "Voice mode",

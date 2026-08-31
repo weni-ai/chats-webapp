@@ -44,10 +44,13 @@ describe('SelectFlow', () => {
 
     expect(FlowsTrigger.getFlows).toHaveBeenCalledWith(undefined, {
       verify_chats_tag: true,
+      queue: '',
     });
   });
 
   it('calls getFlows with verify_chats_tag=false when disableGetChatsTag prop is true', async () => {
+    FlowsTrigger.getFlows.mockClear();
+
     const customWrapper = mount(SelectFlow, {
       props: { modelValue: '', disableGetChatsTag: true },
     });
@@ -55,6 +58,7 @@ describe('SelectFlow', () => {
 
     expect(FlowsTrigger.getFlows).toHaveBeenCalledWith(undefined, {
       verify_chats_tag: false,
+      queue: '',
     });
 
     customWrapper.unmount();
@@ -83,7 +87,31 @@ describe('SelectFlow', () => {
 
     expect(FlowsTrigger.getFlows).toHaveBeenCalledWith('project-uuid-1', {
       verify_chats_tag: true,
+      queue: '',
     });
+  });
+
+  it('refetches flows with the queue query param when the queue prop changes', async () => {
+    await flushPromises();
+    FlowsTrigger.getFlows.mockClear();
+
+    await wrapper.setProps({ queue: 'queue-1' });
+    await flushPromises();
+
+    expect(FlowsTrigger.getFlows).toHaveBeenCalledWith(undefined, {
+      verify_chats_tag: true,
+      queue: 'queue-1',
+    });
+  });
+
+  it('clears selection and emits empty modelValue when the queue prop changes', async () => {
+    await flushPromises();
+
+    await wrapper.setProps({ queue: 'queue-1' });
+    await flushPromises();
+
+    expect(wrapper.vm.flowSelection).toBeNull();
+    expect(wrapper.emitted('update:modelValue')).toContainEqual(['']);
   });
 
   it('clears selection and emits empty modelValue when projectUuidFlow changes', async () => {
