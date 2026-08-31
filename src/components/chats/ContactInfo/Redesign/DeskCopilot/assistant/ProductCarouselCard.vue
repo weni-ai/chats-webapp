@@ -193,7 +193,7 @@ watch(
     height: 120px;
     border-radius: $unnnic-radius-2;
     overflow: hidden;
-    background-color: $unnnic-color-bg-soft;
+    background-color: $unnnic-color-bg-base-soft;
   }
 
   &__image {
