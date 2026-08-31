@@ -77,7 +77,7 @@
                 :title="messageFormatTitle(new Date(message.created_on))"
                 :signature="messageSignature(message)"
                 :mediaType="isGeolocation(message.media?.[0]) ? 'geo' : ''"
-                :enableReply="!!message.external_id"
+                :enableReply="!!message.external_id && !isDisabledInput"
                 :replyMessage="message.replied_message"
                 :automatic="
                   !!message.bulk_message || message.is_automatic_message
@@ -131,7 +131,7 @@
                   :status="messageStatus({ message })"
                   :title="messageFormatTitle(new Date(message.created_on))"
                   :signature="messageSignature(message)"
-                  :enableReply="!!message.external_id"
+                  :enableReply="!!message.external_id && !isDisabledInput"
                   :replyMessage="message.replied_message"
                   :highlighted="message.uuid === toScrollMessage?.uuid"
                   data-testid="chat-message"
@@ -194,7 +194,7 @@
                   :status="messageStatus({ message })"
                   :title="messageFormatTitle(new Date(message.created_on))"
                   :signature="messageSignature(message)"
-                  :enableReply="!!message.external_id"
+                  :enableReply="!!message.external_id && !isDisabledInput"
                   :replyMessage="message.replied_message"
                   data-testid="chat-message"
                   :highlighted="message.uuid === toScrollMessage?.uuid"
@@ -407,6 +407,7 @@ export default {
     }),
     ...mapState(useDashboard, ['viewedAgent']),
     ...mapState(useRoomMessages, ['roomMessagesNext']),
+    ...mapState(useMessageManager, ['isDisabledInput']),
     ...mapWritableState(useMessageManager, ['replyMessage', 'inputMessage']),
     ...mapWritableState(useRoomMessages, [
       'toScrollNote',
