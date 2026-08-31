@@ -40,6 +40,21 @@ describe('useProductCart', () => {
     expect(cart.total.value).toBe(270);
   });
 
+  it('ignores invalid sale prices that are higher than price', () => {
+    const cart = useProductCart();
+    cart.setQuantity(
+      {
+        ...PRODUCT,
+        price: 27,
+        sale_price: 32,
+      },
+      2,
+    );
+
+    expect(cart.discount.value).toBe(0);
+    expect(cart.total.value).toBe(54);
+  });
+
   it('builds order product items for sendOrder', () => {
     const cart = useProductCart();
     cart.setQuantity(PRODUCT, 2);
