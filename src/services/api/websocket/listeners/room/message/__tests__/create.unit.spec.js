@@ -76,6 +76,7 @@ describe('Room message create', () => {
     useRoomMessages.mockReturnValue(roomMessagesStoreMock);
 
     vi.clearAllMocks();
+    isValidJson.mockReturnValue(false);
   });
 
   it('should not bring the room to the front when a valid waiting room is found', async () => {
@@ -143,5 +144,99 @@ describe('Room message create', () => {
     await wsRoomMessageCreate(message, { app: appMock });
 
     expect(roomsStoreMock.addNewMessagesByRoom).not.toHaveBeenCalled();
+  });
+
+  it('should update last_message on a waiting room when a bulk message arrives', async () => {
+    const waitingRoom = roomsStoreMock.rooms[1];
+    waitingRoom.last_message = { text: 'previous' };
+    waitingRoom.last_interaction = '2024-01-01T00:00:00Z';
+
+    const bulkMessage = {
+      uuid: 'bulk-msg-1',
+      user: null,
+      room: 'room-456',
+      contact: null,
+      text: 'teste disparo',
+      media: [],
+      created_on: '2026-08-18T17:24:01.351446-03:00',
+      bulk_message: {
+        sent_by: { email: 'otheruser@example.com', name: 'Other User' },
+      },
+    };
+
+    await wsRoomMessageCreate(bulkMessage, { app: appMock });
+
+    expect(waitingRoom.last_message).toEqual(bulkMessage);
+    expect(waitingRoom.last_interaction).toBe(bulkMessage.created_on);
+  });
+
+  it('should not notify or increment unread when the bulk message was sent by the current user', async () => {
+    const waitingRoom = roomsStoreMock.rooms[1];
+    waitingRoom.last_message = { text: 'previous' };
+
+    const bulkMessage = {
+      uuid: 'bulk-msg-2',
+      user: null,
+      room: 'room-456',
+      contact: null,
+      text: 'teste disparo',
+      media: [],
+      created_on: '2026-08-18T17:24:01.351446-03:00',
+      bulk_message: {
+        sent_by: { email: 'user@example.com', name: 'Current User' },
+      },
+    };
+
+    await wsRoomMessageCreate(bulkMessage, { app: appMock });
+
+    expect(waitingRoom.last_message).toEqual(bulkMessage);
+    expect(waitingRoom.last_interaction).toBe(bulkMessage.created_on);
+    expect(soundNotificationMock.notify).not.toHaveBeenCalled();
+    expect(sendWindowNotification).not.toHaveBeenCalled();
+    expect(roomsStoreMock.addNewMessagesByRoom).not.toHaveBeenCalled();
+  });
+
+  it('should add a bulk message to the transcript when the waiting room is open', async () => {
+    appMock.$route.params.roomId = 'room-456';
+
+    const bulkMessage = {
+      uuid: 'bulk-msg-3',
+      user: null,
+      room: 'room-456',
+      contact: null,
+      text: 'teste disparo',
+      media: [],
+      created_on: '2026-08-18T17:24:01.351446-03:00',
+      bulk_message: {
+        sent_by: { email: 'user@example.com', name: 'Current User' },
+      },
+    };
+
+    await wsRoomMessageCreate(bulkMessage, { app: appMock });
+
+    expect(roomMessagesStoreMock.addMessage).toHaveBeenCalledWith(bulkMessage);
+    expect(soundNotificationMock.notify).not.toHaveBeenCalled();
+  });
+
+  it('should not update last_message for a system message without bulk_message', async () => {
+    const waitingRoom = roomsStoreMock.rooms[1];
+    const previousLastMessage = { text: 'previous' };
+    waitingRoom.last_message = previousLastMessage;
+    waitingRoom.last_interaction = '2024-01-01T00:00:00Z';
+
+    const systemMessage = {
+      uuid: 'system-msg-1',
+      user: null,
+      room: 'room-456',
+      contact: null,
+      text: 'Room transferred',
+      media: [],
+      created_on: '2026-08-18T17:24:01.351446-03:00',
+    };
+
+    await wsRoomMessageCreate(systemMessage, { app: appMock });
+
+    expect(waitingRoom.last_message).toEqual(previousLastMessage);
+    expect(waitingRoom.last_interaction).toBe('2024-01-01T00:00:00Z');
   });
 });
