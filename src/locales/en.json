@@ -1712,7 +1712,7 @@
         "message": "Couldn't send the message. Try again."
       },
       "partial_success": {
-        "button": "View shipments",
+        "button": "View sends",
         "message": "{success, plural, one {Message sent to {success} contact, {failed} failed.} other {Message sent to {success} contacts, {failed} failed.}}"
       },
       "success": {
