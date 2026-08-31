@@ -27,6 +27,11 @@ const createWrapper = (props = {}) =>
           name: 'UnnnicToolTip',
           template: '<div><slot /></div>',
         },
+        ProductCarousel: {
+          name: 'ProductCarousel',
+          template: '<div data-testid="assistant-ai-product-carousel" />',
+          props: ['products', 'getQuantity', 'dismissedIds'],
+        },
       },
     },
   });
@@ -93,5 +98,38 @@ describe('AssistantAiMessage', () => {
     expect(wrapper.find('[data-testid="assistant-ai-actions"]').exists()).toBe(
       false,
     );
+  });
+
+  it('renders product carousel and hides copy action for carousel messages', async () => {
+    wrapper = createWrapper({
+      text: 'Check these products',
+      suggestion: undefined,
+      productCarousel: {
+        text: 'Check these products',
+        items: [
+          {
+            product_retailer_id: 'sku-1',
+            name: 'Tile',
+            price: 32,
+            sale_price: 27,
+            currency: 'BRL',
+            image: 'https://example.com/tile.png',
+          },
+        ],
+      },
+    });
+
+    expect(
+      wrapper.find('[data-testid="assistant-ai-product-carousel"]').exists(),
+    ).toBe(true);
+    expect(wrapper.find('[data-testid="assistant-ai-copy"]').exists()).toBe(
+      false,
+    );
+    expect(wrapper.find('[data-testid="assistant-ai-send"]').exists()).toBe(
+      true,
+    );
+
+    await wrapper.find('[data-testid="assistant-ai-send"]').trigger('click');
+    expect(wrapper.emitted('send')?.[0]).toEqual(['Check these products']);
   });
 });
