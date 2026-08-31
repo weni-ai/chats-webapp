@@ -32,6 +32,22 @@ declare module '@weni/webchat-service' {
     size?: number;
   };
 
+  export type ProductCarouselItem = {
+    product_retailer_id: string;
+    name: string;
+    price: string | number;
+    image: string;
+    sale_price?: string | number;
+    currency?: string;
+    description?: string;
+    seller_id?: string;
+    product_url?: string;
+  };
+
+  export type OrderProductItem = ProductCarouselItem & {
+    quantity: number;
+  };
+
   export type Message = {
     id: string;
     type: string;
@@ -47,6 +63,13 @@ declare module '@weni/webchat-service' {
       size?: number;
       duration?: number;
       suggestion?: string;
+    };
+    product_carousel?: {
+      text?: string;
+      product_items?: ProductCarouselItem[];
+    };
+    order?: {
+      product_items?: OrderProductItem[];
     };
   };
 
@@ -101,6 +124,7 @@ declare module '@weni/webchat-service' {
     sendMessage(_text: string, _options?: Record<string, unknown>): void;
     sendAttachment(_file: File): void | Promise<void>;
     sendAudio(_payload: SendAudioPayload): void | Promise<void>;
+    sendOrder(_productItems: OrderProductItem[]): Promise<unknown>;
     startRecording(): Promise<void>;
     stopRecording(): Promise<void>;
     cancelRecording(): void;
