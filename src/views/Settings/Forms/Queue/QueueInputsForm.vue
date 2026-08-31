@@ -35,6 +35,14 @@
       </section>
     </section>
 
+    <section
+      v-if="enableQueueFlowsFeature"
+      class="sector-queues-form__bond-flows"
+      data-testid="queue-bond-flows"
+    >
+      <SelectQueueFlows v-model="queueForm.selected_flows" />
+    </section>
+
     <UnnnicDisclaimer
       v-if="enableGroupsMode"
       :description="
@@ -58,15 +66,19 @@
 
 <script>
 import { mapState } from 'pinia';
+
 import AgentsForm from '../Agent.vue';
+import SelectQueueFlows from './SelectQueueFlows.vue';
 
 import { useProfile } from '@/store/modules/profile';
 import { useConfig } from '@/store/modules/config';
+import { useFeatureFlag } from '@/store/modules/featureFlag';
 
 export default {
   name: 'QueueInputsForm',
   components: {
     AgentsForm,
+    SelectQueueFlows,
   },
   props: {
     modelValue: {
@@ -91,8 +103,14 @@ export default {
   computed: {
     ...mapState(useProfile, ['me']),
     ...mapState(useConfig, ['enableGroupsMode']),
+    ...mapState(useFeatureFlag, ['featureFlags']),
     isEditing() {
       return !!this.queueForm.uuid;
+    },
+    enableQueueFlowsFeature() {
+      return this.featureFlags.active_features?.includes(
+        'weniChatsFilterFlowsByQueue',
+      );
     },
     queueForm: {
       get() {
@@ -109,6 +127,13 @@ export default {
         if (!value) {
           this.queueForm.queue_limit.limit = null;
         }
+      },
+    },
+    'queueForm.selected_flows': {
+      immediate: true,
+      deep: true,
+      handler(selectedFlows) {
+        this.queueForm.bond_flows_queue = !!selectedFlows?.length;
       },
     },
     queueForm: {
@@ -197,6 +222,12 @@ export default {
       flex-direction: column;
       gap: $unnnic-space-2;
     }
+  }
+
+  &__bond-flows {
+    display: flex;
+    flex-direction: column;
+    gap: $unnnic-space-2;
   }
 }
 </style>

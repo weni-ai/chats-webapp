@@ -99,11 +99,15 @@ function close() {
 
 async function createProject() {
   const name = projectName.value.trim();
-  if (!name) return;
+  const projectUuid = project.value?.uuid;
+  if (!name || !projectUuid) return;
 
   isSaving.value = true;
   try {
-    const createdProject = await CopilotProjectService.create(name);
+    const createdProject = await CopilotProjectService.create(
+      name,
+      projectUuid,
+    );
 
     callUnnnicAlert({
       props: {

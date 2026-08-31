@@ -819,6 +819,40 @@
       }
     },
     "desk_copilot": {
+      "assistant": {
+        "attach_action": "Atașează fișier",
+        "cancel_recording": "Anulează înregistrarea",
+        "copy_action": "Copiază",
+        "file_too_large": "Selectează un fișier mai mic",
+        "file_type_not_allowed": "Selectează un tip de fișier compatibil",
+        "image_attachment": "Atașament imagine",
+        "input_placeholder": "Întreabă asistentul",
+        "open_media_menu": "Deschide meniul media",
+        "processing_information": "Se procesează informațiile",
+        "record_audio": "Audio",
+        "recording_in_progress": "Se înregistrează",
+        "scroll_to_bottom": "Mergi jos",
+        "send_action": "Trimite",
+        "send_audio": "Trimite audio",
+        "thinking_messages": {
+          "almost": "Aproape gata, încă un moment",
+          "connecting": "Conectare idei",
+          "processing": "Procesare informații",
+          "refining": "Rafinare detalii",
+          "structuring": "Structurare răspuns"
+        },
+        "upload_file": "Încarcă fișier",
+        "voice_mode": {
+          "dismiss": "Închide",
+          "enter": "Pornește modul vocal",
+          "error_title": "Modul vocal indisponibil",
+          "exit": "Ieși din modul vocal",
+          "listening": "Ascult",
+          "processing": "Se transcrie",
+          "retry": "Încearcă din nou",
+          "speaking": "Asistentul vorbește"
+        }
+      },
       "copy_summary": "Copiază rezumatul",
       "disclaimer": {
         "description": "Desk Copilot te poate ajuta cu:",
@@ -1129,11 +1163,21 @@
         "connected_to": "Conectat la",
         "created_on": "Creat pe",
         "description": "Acest proiect este folosit exclusiv pentru a gestiona agenții IA pentru Desk Copilot. Este accesibil doar din această secțiune.",
-        "open": "Deschide"
+        "open": "Deschide",
+        "popover_change_option": "Schimbă",
+        "popover_disconnect_option": "Deconectează"
+      },
+      "disconnect_modal": {
+        "confirm": "Deconectează",
+        "description": "Acest proiect va pierde accesul la Desk Copilot până când un proiect Copilot este reconectat. Proiectul Copilot și celelalte conexiuni nu vor fi afectate.",
+        "error": "Nu s-a putut deconecta proiectul Copilot",
+        "success": "Proiect Copilot deconectat cu succes",
+        "title": "Deconectează proiectul Copilot"
       },
       "empty_state": {
         "create_button": "Creează proiect Copilot",
         "description": "Pentru a activa Desk Copilot, conectează acest proiect la un proiect Copilot unde sunt gestionați agenții tăi IA",
+        "select_button": "Selectează proiect Copilot",
         "title": "Niciun proiect Copilot conectat"
       },
       "enable_title": "Activează Desk Copilot",
@@ -1164,7 +1208,19 @@
         "success": "Proiect Copilot creat și conectat cu succes",
         "title": "Creează proiect Copilot"
       },
-      "new_badge": "Nou"
+      "new_badge": "Nou",
+      "picker_modal": {
+        "assigned_agents_tag": "{count, plural, one {{count} agent atribuit} other {{count} agenți atribuiți}}",
+        "change_button": "Schimbă",
+        "change_error": "Nu s-a putut schimba proiectul Copilot",
+        "change_success": "Proiect Copilot schimbat cu succes",
+        "change_title": "Schimbă proiectul Copilot",
+        "connect_button": "Conectează",
+        "connect_error": "Nu s-a putut conecta la proiectul Copilot",
+        "connect_success": "Proiect Copilot conectat cu succes",
+        "search_placeholder": "Caută după nume",
+        "select_title": "Selectează proiectul Copilot existent"
+      }
     },
     "changes_saved": "Modificări salvate cu succes",
     "changes_not_saved": "Eroare la salvarea modificărilor. Încearcă din nou.",
@@ -1264,6 +1320,13 @@
           "helper": "Când se atinge limita, nu se mai creează chaturi noi.",
           "input_label": "Numărul maxim de chaturi care așteaptă asistență",
           "input_placeholder": "Exemplu: 50"
+        }
+      },
+      "bond_flows_queue": {
+        "select": {
+          "label": "Fluxuri asociate",
+          "placeholder": "Selectează unul sau mai multe",
+          "tooltip": "Asociază fluxuri acestei cozi pentru a defini ce fluxuri sunt disponibile la filtrarea după ea. Fluxurile care nu sunt asociate niciunei cozi sunt considerate generale și sunt disponibile când nu se aplică niciun filtru de coadă."
         }
       },
       "message": {
@@ -1548,7 +1611,7 @@
     "title": "Mesaj în masă",
     "form": {
       "title": "Trimite mesaj în masă",
-      "shipping_history": "Istoric trimiteri",
+      "shipping_history": "Istoric mesaje",
       "no_shipping_history": "Niciun mesaj nu a fost trimis",
       "no_contacts_filtered_alert": "Niciun contact nu corespunde filtrelor selectate. Încearcă să ajustezi filtrele.",
       "contacts_count_disclaimer": "{count, plural, one {Acest mesaj va fi trimis către {count} contact. Numărul de destinatari se poate schimba în timpul livrării din cauza transferurilor de conversație, închiderilor de conversație sau interacțiunilor care au loc simultan.} few {Acest mesaj va fi trimis către {count} contacte. Numărul de destinatari se poate schimba în timpul livrării din cauza transferurilor de conversație, închiderilor de conversație sau interacțiunilor care au loc simultan.} other {Acest mesaj va fi trimis către {count} de contacte. Numărul de destinatari se poate schimba în timpul livrării din cauza transferurilor de conversație, închiderilor de conversație sau interacțiunilor care au loc simultan.}}",
@@ -1556,24 +1619,26 @@
         "title": "Destinatari",
         "title_tooltip": "Acest mesaj va fi livrat tuturor contactelor care corespund filtrelor selectate. Folosește această funcție pentru comunicări operaționale precum întârzieri, incidente, actualizări.",
         "select_the_contacts_status": "Selectează statusul contactelor",
-        "contacts_in_service": "Contacte în curs de deservire",
-        "contacts_waiting_for_service": "Contacte în așteptare",
+        "contacts_in_service": "Contacte din chaturile de asistență",
+        "contacts_waiting_for_service": "Contacte care așteaptă asistență",
         "filters": {
           "queues": {
+            "all": "Toate cozile",
             "label": "Selectează o coadă",
-            "all": "Toate cozile"
+            "placeholder": "Selectează cel puțin o coadă"
           },
           "representatives": {
+            "all": "Toți reprezentanții",
             "label": "Selectează un reprezentant",
-            "all": "Toți reprezentanții"
+            "placeholder": "Selectează cel puțin un reprezentant"
           }
         }
       },
       "message": {
         "title": "Mesaj",
         "input_label": "Definește conținutul mesajului",
-        "input_placeholder": "Exemplu: Experimentăm o instabilitate a sistemului, de aceea ne ia puțin mai mult să răspundem.",
-        "input_helper": "Mesajul va fi trimis exact așa cum a fost scris"
+        "input_placeholder": "Exemplu: Ne confruntăm cu o instabilitate la nivelul sistemului. Din acest motiv, ne ia puțin mai mult timp să răspundem.",
+        "input_helper": "Mesajul va fi trimis exact așa cum a fost introdus"
       },
       "confirmation": {
         "title": "Asigură-te că toate câmpurile sunt completate corect și confirmă verificarea",
@@ -1588,7 +1653,7 @@
       "last_message_disclaimer": "Mesajul \"{text}\" a fost trimis în ultima oră - la {time}.",
       "sent_by": "Trimis de",
       "status": "Status",
-      "status_failed": "Eșec la trimitere",
+      "status_failed": "Trimitere nereușită",
       "status_sent": "Trimis"
     },
     "toast": {
@@ -1606,8 +1671,8 @@
   },
   "message_dictation": {
     "tooltip": {
-      "activate": "Activare mod vocal (shift + V)",
-      "stop": "Oprire mod vocal (esc)"
+      "activate": "Activare mod vocal (Shift + V)",
+      "stop": "Oprire mod vocal (Esc)"
     },
     "button": {
       "activate": "Mod vocal",

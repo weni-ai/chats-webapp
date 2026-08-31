@@ -847,6 +847,40 @@
       }
     },
     "desk_copilot": {
+      "assistant": {
+        "attach_action": "Adjuntar archivo",
+        "cancel_recording": "Cancelar grabación",
+        "copy_action": "Copiar",
+        "file_too_large": "Selecciona un archivo más pequeño",
+        "file_type_not_allowed": "Selecciona un tipo de archivo compatible",
+        "image_attachment": "Adjunto de imagen",
+        "input_placeholder": "Pregunta al asistente",
+        "open_media_menu": "Abrir menú de medios",
+        "processing_information": "Procesando información",
+        "record_audio": "Audio",
+        "recording_in_progress": "Grabando",
+        "scroll_to_bottom": "Ir al final",
+        "send_action": "Enviar",
+        "send_audio": "Enviar audio",
+        "thinking_messages": {
+          "almost": "Casi listo, un momento más",
+          "connecting": "Conectando ideas",
+          "processing": "Procesando información",
+          "refining": "Refinando detalles",
+          "structuring": "Estructurando respuesta"
+        },
+        "upload_file": "Subir archivo",
+        "voice_mode": {
+          "dismiss": "Descartar",
+          "enter": "Iniciar modo de voz",
+          "error_title": "Modo de voz no disponible",
+          "exit": "Salir del modo de voz",
+          "listening": "Escuchando",
+          "processing": "Transcribiendo",
+          "retry": "Inténtalo de nuevo",
+          "speaking": "Asistente hablando"
+        }
+      },
       "copy_summary": "Copiar resumen",
       "disclaimer": {
         "description": "Desk Copilot puede ayudarte con:",
@@ -1150,11 +1184,21 @@
         "connected_to": "Conectado el",
         "created_on": "Creado el",
         "description": "Este proyecto se usa exclusivamente para gestionar los agentes de IA de Desk Copilot. Solo es accesible desde esta sección.",
-        "open": "Abrir"
+        "open": "Abrir",
+        "popover_change_option": "Cambiar",
+        "popover_disconnect_option": "Desconectar"
+      },
+      "disconnect_modal": {
+        "confirm": "Desconectar",
+        "description": "Este proyecto perderá el acceso a Desk Copilot hasta que se reconecte un proyecto Copilot. El proyecto Copilot y las demás conexiones no se verán afectados.",
+        "error": "No se pudo desconectar el proyecto Copilot",
+        "success": "Proyecto Copilot desconectado con éxito",
+        "title": "Desconectar proyecto Copilot"
       },
       "empty_state": {
         "create_button": "Crear proyecto Copilot",
         "description": "Para activar Desk Copilot, conecta este proyecto a un proyecto Copilot donde se gestionan tus agentes de IA",
+        "select_button": "Seleccionar proyecto Copilot",
         "title": "Ningún proyecto Copilot conectado"
       },
       "enable_title": "Activar Desk Copilot",
@@ -1185,7 +1229,19 @@
         "success": "Proyecto Copilot creado y conectado con éxito",
         "title": "Crear proyecto Copilot"
       },
-      "new_badge": "Nuevo"
+      "new_badge": "Nuevo",
+      "picker_modal": {
+        "assigned_agents_tag": "{count, plural, one {{count} agente asignado} other {{count} agentes asignados}}",
+        "change_button": "Cambiar",
+        "change_error": "No se pudo cambiar el proyecto Copilot",
+        "change_success": "Proyecto Copilot cambiado con éxito",
+        "change_title": "Cambiar proyecto Copilot",
+        "connect_button": "Conectar",
+        "connect_error": "No se pudo conectar al proyecto Copilot",
+        "connect_success": "Proyecto Copilot conectado con éxito",
+        "search_placeholder": "Buscar por nombre",
+        "select_title": "Seleccionar proyecto Copilot existente"
+      }
     },
     "changes_saved": "Cambios guardados con éxito",
     "changes_not_saved": "Error al guardar cambios. Vuelve a intentarlo.",
@@ -1295,6 +1351,13 @@
           "helper": "Cuando se alcanza el límite no se crean nuevos chats.",
           "input_label": "Número máximo de chats esperando soporte",
           "input_placeholder": "Ejemplo: 50"
+        }
+      },
+      "bond_flows_queue": {
+        "select": {
+          "label": "Flujos asociados",
+          "placeholder": "Selecciona uno o más flujos",
+          "tooltip": "Asocia flujos a esta cola para definir qué flujos están disponibles al filtrar por ella. Los flujos que no están asociados a ninguna cola se consideran generales y están disponibles cuando no se aplica ningún filtro de cola."
         }
       },
       "message": {
@@ -1605,40 +1668,42 @@
       "contacts_count_disclaimer": "{count, plural, one {Este mensaje se enviará a {count} contacto. El número de destinatarios puede cambiar durante la entrega debido a transferencias de conversación, cierres de conversación o interacciones que ocurren simultáneamente.} other {Este mensaje se enviará a {count} contactos. El número de destinatarios puede cambiar durante la entrega debido a transferencias de conversación, cierres de conversación o interacciones que ocurren simultáneamente.}}",
       "recipients": {
         "title": "Destinatarios",
-        "title_tooltip": "Este mensaje se entregará a todos los contactos que coincidan con los filtros seleccionados. Usa esta función para comunicaciones operativas como retrasos, incidentes, actualizaciones.",
-        "select_the_contacts_status": "Selecciona el estado de los contactos",
-        "contacts_in_service": "Contactos en atención",
-        "contacts_waiting_for_service": "Contactos esperando atención",
+        "title_tooltip": "Este mensaje se entregará a todos los contactos que coincidan con los filtros seleccionados. Usa esta función para comunicaciones operativas como retrasos, incidentes o actualizaciones.",
+        "select_the_contacts_status": "Selecciona el status de los contactos",
+        "contacts_in_service": "Contactos en chats de soporte",
+        "contacts_waiting_for_service": "Contactos esperando chat de soporte",
         "filters": {
           "queues": {
+            "all": "Todas las colas",
             "label": "Selecciona una cola",
-            "all": "Todas las colas"
+            "placeholder": "Selecciona al menos una cola"
           },
           "representatives": {
+            "all": "Todos los representantes",
             "label": "Selecciona un representante",
-            "all": "Todos los representantes"
+            "placeholder": "Selecciona al menos un representante"
           }
         }
       },
       "message": {
         "title": "Mensaje",
         "input_label": "Define el contenido del mensaje",
-        "input_placeholder": "Ejemplo: Estamos experimentando inestabilidad en el sistema, por eso nos está tomando un poco más responder.",
-        "input_helper": "El mensaje se enviará exactamente como se escribió"
+        "input_placeholder": "Ejemplo: Estamos experimentando inestabilidad en el sistema, por eso nos está tomando un poco más de tiempo responder.",
+        "input_helper": "El mensaje se enviará tal como se ingresó"
       },
       "confirmation": {
         "title": "Asegúrate de que todos los campos estén completados correctamente y confirma la verificación",
-        "checkbox_label": "Lo revisé y estoy listo para enviarlo"
+        "checkbox_label": "Lo verifiqué y estoy listo para enviar"
       },
       "send": "{count, plural, =0 {Enviar a todos (0 contactos)} one {Enviar a todos ({count} contacto)} other {Enviar a todos ({count} contactos)}}",
       "sending": "{count, plural, one {Enviando el mensaje a {count} contacto} other {Enviando el mensaje a {count} contactos}}"
     },
     "history": {
       "filter_by_sender": "Filtrar por remitente",
-      "filter_by_status": "Filtrar por estado",
-      "last_message_disclaimer": "El mensaje \"{text}\" se envió en la última hora - a las {time}.",
+      "filter_by_status": "Filtrar por status",
+      "last_message_disclaimer": "El mensaje \"{text}\" se envió durante la hora pasada a las {time}.",
       "sent_by": "Enviado por",
-      "status": "Estado",
+      "status": "Status",
       "status_failed": "Error al enviar",
       "status_sent": "Enviado"
     },
