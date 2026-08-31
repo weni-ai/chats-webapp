@@ -108,6 +108,7 @@
 <script setup lang="ts">
 import { computed, onMounted, ref, watch } from 'vue';
 import { storeToRefs } from 'pinia';
+import { UnnnicCallAlert } from '@weni/unnnic-system';
 import SummaryMessage from './SummaryMessage.vue';
 import Disclaimer from './Disclaimer.vue';
 import Cart from './Cart.vue';
@@ -120,6 +121,7 @@ import { useCopilotChat } from '@/composables/assistant/useCopilotChat';
 import { useProductCart } from '@/composables/assistant/useProductCart';
 import { useVoiceMode } from '@/composables/assistant/useVoiceMode';
 import { useCopilotConnection } from '@/composables/useCopilotConnection';
+import i18n from '@/plugins/i18n';
 import { useConfig } from '@/store/modules/config';
 import { useRooms } from '@/store/modules/chats/rooms';
 import { useRoomMessages } from '@/store/modules/chats/roomMessages';
@@ -239,9 +241,21 @@ async function handlePlaceOrder() {
     return;
   }
 
-  await sendOrder(productItems);
-  clearCart();
-  currentView.value = 'chat';
+  try {
+    await sendOrder(productItems);
+    clearCart();
+    currentView.value = 'chat';
+  } catch (error) {
+    console.error('Failed to place order:', error);
+    UnnnicCallAlert({
+      props: {
+        text: i18n.global.t(
+          'contact_info.desk_copilot.assistant.cart.place_order_error',
+        ),
+        type: 'error',
+      },
+    });
+  }
 }
 
 watch(productCartTotalQuantity, (quantity) => {
