@@ -31,7 +31,7 @@ export function useProductCart() {
     items.value.reduce((acc, item) => {
       const price = parseProductPrice(item.price);
       const salePrice = parseProductPrice(item.sale_price);
-      if (!salePrice || price === salePrice) {
+      if (!salePrice || salePrice >= price) {
         return acc;
       }
       return acc + (price - salePrice) * item.quantity;
