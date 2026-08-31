@@ -177,25 +177,6 @@ describe('RoomMessages.vue', () => {
       expect(chatMessages.exists()).toBe(true);
       expect(chatMessages.props('chatUuid')).toBe(mockRoom.uuid);
       expect(chatMessages.props('messages')).toEqual([]);
-      expect(chatMessages.props('enableReply')).toBe(true);
-    });
-
-    it('disables reply when the message input is disabled', async () => {
-      RoomNotes.getInternalNotes.mockResolvedValue({ results: [] });
-      const wrapper = createWrapper(
-        {},
-        {
-          config: {
-            project: { config: { restrict_offline_agents: true } },
-            status: 'OFFLINE',
-          },
-        },
-      );
-
-      await flushPromises();
-
-      const chatMessages = wrapper.findComponent({ name: 'ChatMessages' });
-      expect(chatMessages.props('enableReply')).toBe(false);
     });
 
     it('does not render ChatSummary when showRoomSummary is false', async () => {

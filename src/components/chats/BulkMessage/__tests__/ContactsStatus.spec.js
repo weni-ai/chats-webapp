@@ -24,8 +24,8 @@ describe('ContactsStatus', () => {
     expect(
       wrapper.find('[data-testid="contacts-status-waiting"]').exists(),
     ).toBe(true);
-    expect(wrapper.text()).toContain('Contacts in support chats');
-    expect(wrapper.text()).toContain('Contacts waiting for support');
+    expect(wrapper.text()).toContain('Contacts in service');
+    expect(wrapper.text()).toContain('Contacts waiting for service');
   });
 
   it('should emit update:status removing ongoing when toggled off', () => {
