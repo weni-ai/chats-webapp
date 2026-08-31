@@ -9,9 +9,7 @@
         size="small"
         iconCenter="arrow_back"
         data-testid="desk-copilot-cart-back"
-        :aria-label="
-          $t('contact_info.desk_copilot.assistant.cart.back_action')
-        "
+        :aria-label="$t('contact_info.desk_copilot.assistant.cart.back_action')"
         @click="emit('back')"
       />
       <CartBadge
@@ -57,7 +55,9 @@
                     v-if="hasSalePrice(item)"
                     class="desk-copilot-cart__item-price--original"
                   >
-                    {{ formatPriceWithCurrency(item.price, itemCurrency(item)) }}
+                    {{
+                      formatPriceWithCurrency(item.price, itemCurrency(item))
+                    }}
                   </span>
                   <span class="desk-copilot-cart__item-price--current">
                     {{
@@ -78,7 +78,9 @@
               clickable
               data-testid="desk-copilot-cart-remove-item"
               :aria-label="
-                $t('contact_info.desk_copilot.assistant.cart.remove_item_action')
+                $t(
+                  'contact_info.desk_copilot.assistant.cart.remove_item_action',
+                )
               "
               @click="emit('remove', item.product_retailer_id)"
             />
@@ -93,10 +95,7 @@
             />
             <p class="desk-copilot-cart__item-total">
               {{
-                formatPriceWithCurrency(
-                  itemLineTotal(item),
-                  itemCurrency(item),
-                )
+                formatPriceWithCurrency(itemLineTotal(item), itemCurrency(item))
               }}
             </p>
           </section>
@@ -143,7 +142,9 @@
           data-testid="desk-copilot-cart-place-order"
           @click="emit('placeOrder')"
         >
-          {{ $t('contact_info.desk_copilot.assistant.cart.place_order_action') }}
+          {{
+            $t('contact_info.desk_copilot.assistant.cart.place_order_action')
+          }}
         </UnnnicButton>
       </footer>
     </section>
