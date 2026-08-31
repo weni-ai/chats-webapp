@@ -269,7 +269,7 @@ function itemLineTotal(item: CartProductItem) {
     height: 40px;
     overflow: hidden;
     border-radius: $unnnic-radius-2;
-    background-color: $unnnic-color-bg-soft;
+    background-color: $unnnic-color-bg-base-soft;
   }
 
   &__item-image {
