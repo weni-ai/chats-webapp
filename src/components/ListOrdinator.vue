@@ -1,5 +1,6 @@
 <template>
   <UnnnicRadioGroup
+    data-testid="list-ordinator"
     :modelValue="props.modelValue"
     :label="props.label"
     @update:model-value="emit('update:model-value', $event)"
@@ -8,6 +9,7 @@
       v-for="ordinator in props.ordinators"
       :key="ordinator"
       :value="ordinator"
+      :data-testid="`list-ordinator-option-${ordinator}`"
     >
       {{ $t(`order_by.option.${ordinator}`) }}
     </UnnnicRadio>

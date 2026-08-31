@@ -29,7 +29,6 @@
       :resendMessage="roomResendMessage"
       :isLoading="isLoadingMessages || isLoadingInternalNotes"
       :isClosedChat="!!room?.ended_at"
-      :enableReply="false"
       @scroll-top="searchForMoreMessages"
       @open-room-contact-info="$emit('open-room-contact-info')"
     />
@@ -41,6 +40,7 @@ import { mapActions, mapState, mapWritableState } from 'pinia';
 import { useRooms } from '@/store/modules/chats/rooms';
 import { useRoomMessages } from '@/store/modules/chats/roomMessages';
 import { useConfig } from '@/store/modules/config';
+import { useMessageManager } from '@/store/modules/chats/messageManager';
 import { useFeatureFlag } from '@/store/modules/featureFlag';
 import { useAssistedSalesFeatureFlag } from '@/composables/useAssistedSalesFeatureFlag';
 
@@ -110,6 +110,7 @@ export default {
     ...mapState(useConfig, {
       enableRoomSummary: (store) => store.project?.config?.has_chats_summary,
     }),
+    ...mapWritableState(useMessageManager, ['isDisabledInput', 'replyMessage']),
     ...mapState(useFeatureFlag, ['featureFlags']),
 
     isAssistedSalesEnabled() {
@@ -172,6 +173,11 @@ export default {
           }
         }
       },
+    },
+    isDisabledInput() {
+      if (this.isDisabledInput) {
+        this.replyMessage = null;
+      }
     },
   },
 

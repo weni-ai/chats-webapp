@@ -12,6 +12,15 @@
       class="message-manager-v2__input-area"
     >
       <FloatingActions :visible="showFloatingActions" />
+      <ReplyMessage
+        v-if="replyMessage"
+        class="message-manager-v2__reply-preview"
+        :replyMessage="replyMessage"
+        :messageType="replyMessage.user ? 'sent' : 'received'"
+        showClose
+        data-testid="reply-message-preview"
+        @close="replyMessage = null"
+      />
       <MessageManagerTextBox
         ref="messageManagerTextBox"
         @keydown="onKeyDown"
@@ -43,6 +52,7 @@ import MessageManagerTextBox from './TextBox/index.vue';
 import FloatingActions from './TextBox/FloatingActions.vue';
 import SuggestionBox from './SuggestionBox/index.vue';
 import CoPilot from './CoPilot.vue';
+import ReplyMessage from '@/components/chats/Message/ReplyMessage.vue';
 
 import { useDiscussions } from '@/store/modules/chats/discussions';
 import { useMessageManager } from '@/store/modules/chats/messageManager';
@@ -81,6 +91,7 @@ const {
   inputMessageFocused,
   isDisabledInput,
   isDictationListening,
+  replyMessage,
 } = storeToRefs(messageManager);
 
 const keyboardEvent = ref<KeyboardEvent | null>(null);
@@ -164,6 +175,12 @@ watch(
   },
 );
 
+watch(replyMessage, (message) => {
+  if (message) {
+    focusMessageManagerTextBox();
+  }
+});
+
 onMounted(() => {
   handleOpenMeActiveRoom();
 });
@@ -178,10 +195,18 @@ onMounted(() => {
   grid-template-rows: auto auto;
   gap: $unnnic-space-2;
   margin-right: $unnnic-space-2;
+  margin-left: $unnnic-space-2;
   align-items: end;
 
   &__input-area {
     position: relative;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: $unnnic-space-1;
+  }
+
+  &__reply-preview {
     width: 100%;
   }
 }

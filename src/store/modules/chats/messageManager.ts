@@ -27,7 +27,6 @@ export const useMessageManager = defineStore('messageManager', () => {
 
   const isDictationListening = ref(false);
 
-  // This could be implemented in the future; the code addresses the scenario, but the feature is currently disabled.
   const replyMessage = ref(null);
 
   const { t } = i18n.global;

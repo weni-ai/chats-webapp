@@ -52,6 +52,16 @@ vi.mock('../CoPilot.vue', () => ({
   },
 }));
 
+vi.mock('@/components/chats/Message/ReplyMessage.vue', () => ({
+  default: {
+    name: 'ReplyMessage',
+    template:
+      '<div data-testid="reply-message-preview" @click="$emit(\'close\')" />',
+    props: ['replyMessage', 'messageType', 'showClose'],
+    emits: ['close'],
+  },
+}));
+
 const createWrapper = (props = {}, piniaState = {}) => {
   const pinia = createPinia();
   setActivePinia(pinia);
@@ -157,6 +167,34 @@ describe('MessageManager', () => {
       expect(
         wrapper.find('[data-testid="disabled-input-disclaimer"]').exists(),
       ).toBe(true);
+    });
+
+    it('renders reply preview when replyMessage is set and clears on close', async () => {
+      const wrapper = createWrapper({ isLoading: false });
+      const messageManagerStore = useMessageManager();
+
+      messageManagerStore.replyMessage = {
+        uuid: 'msg-1',
+        user: { first_name: 'Agent' },
+        text: 'Original message',
+        contact: { name: 'Contact' },
+        media: [],
+      };
+      await wrapper.vm.$nextTick();
+
+      expect(
+        wrapper.find('[data-testid="reply-message-preview"]').exists(),
+      ).toBe(true);
+
+      await wrapper
+        .findComponent({ name: 'ReplyMessage' })
+        .vm.$emit('close');
+      await wrapper.vm.$nextTick();
+
+      expect(messageManagerStore.replyMessage).toBeNull();
+      expect(
+        wrapper.find('[data-testid="reply-message-preview"]').exists(),
+      ).toBe(false);
     });
 
     it('renders suggestion box outside discussions', () => {

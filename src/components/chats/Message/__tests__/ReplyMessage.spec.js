@@ -139,6 +139,16 @@ describe('ReplyMessage', () => {
     expect(wrapper.emitted('close')).toBeTruthy();
   });
 
+  it('applies composer styles when showClose is true', async () => {
+    await wrapper.setProps({
+      showClose: true,
+      replyMessage: { ...messageTextMock, user: {} },
+    });
+
+    expect(wrapper.classes()).toContain('reply-message--composer');
+    expect(wrapper.classes()).toContain('reply-message--you');
+  });
+
   it('applies correct class and text for user message', async () => {
     await wrapper.setProps({ replyMessage: { ...messageTextMock, user: {} } });
 
@@ -161,5 +171,62 @@ describe('ReplyMessage', () => {
     const contactName = wrapper.find('[data-testid="contact-name"]');
 
     expect(contactName.text()).toBe('Contact');
+  });
+
+  it('applies correct class and text for bulk message', async () => {
+    await wrapper.setProps({
+      replyMessage: {
+        ...messageTextMock,
+        bulk_message: {
+          sent_by: { name: 'Agent Name', email: 'agent@example.com' },
+        },
+      },
+    });
+
+    expect(wrapper.classes()).toContain('reply-message--you');
+
+    const contactName = wrapper.find('[data-testid="contact-name"]');
+
+    expect(contactName.text()).toBe(
+      wrapper.vm.$t('automatic_message.bulk_message', {
+        sender: 'Agent Name',
+      }),
+    );
+  });
+
+  it('uses email username as sender when bulk message has no name', async () => {
+    await wrapper.setProps({
+      replyMessage: {
+        ...messageTextMock,
+        bulk_message: {
+          sent_by: { email: 'agent@example.com' },
+        },
+      },
+    });
+
+    const contactName = wrapper.find('[data-testid="contact-name"]');
+
+    expect(contactName.text()).toBe(
+      wrapper.vm.$t('automatic_message.bulk_message', {
+        sender: 'agent',
+      }),
+    );
+  });
+
+  it('applies correct class and text for automatic message', async () => {
+    await wrapper.setProps({
+      replyMessage: {
+        ...messageTextMock,
+        is_automatic_message: true,
+      },
+    });
+
+    expect(wrapper.classes()).toContain('reply-message--you');
+
+    const contactName = wrapper.find('[data-testid="contact-name"]');
+
+    expect(contactName.text()).toBe(
+      wrapper.vm.$t('chats.search_messages.automated_support'),
+    );
   });
 });

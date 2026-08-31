@@ -30,6 +30,7 @@
 
           <div class="modal-delete-transfer__body__radios">
             <UnnnicRadio
+              data-testid="modal-delete-transfer-action-transfer"
               :modelValue="selectedAction"
               value="transfer"
               size="md"
@@ -38,6 +39,7 @@
               {{ $t('delete_modal.transfer_chats') }}
             </UnnnicRadio>
             <UnnnicRadio
+              data-testid="modal-delete-transfer-action-end-all"
               :modelValue="selectedAction"
               value="end_all"
               size="md"
@@ -84,6 +86,7 @@
         <div class="modal-delete-transfer__body__confirm">
           <UnnnicInput
             v-model="confirmText"
+            data-testid="modal-delete-transfer-confirm-input"
             :label="$t(`delete_modal.type_name_${type}`)"
             :placeholder="name"
           />
@@ -95,12 +98,14 @@
 
       <UnnnicDialogFooter>
         <UnnnicButton
+          data-testid="modal-delete-transfer-cancel"
           :text="$t('cancel')"
           type="tertiary"
           :disabled="isLoading"
           @click="emit('cancel')"
         />
         <UnnnicButton
+          data-testid="modal-delete-transfer-confirm"
           :text="$t('delete_modal.delete_button')"
           type="warning"
           :disabled="!isFormValid"
