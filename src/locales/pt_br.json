@@ -857,6 +857,7 @@
           "back_action": "Voltar",
           "discount": "Desconto",
           "place_order_action": "Fazer pedido",
+          "place_order_error": "Não foi possível fazer o pedido devido a um problema técnico",
           "remove_item_action": "Remover item",
           "subtotal": "Subtotal",
           "title": "Carrinho",

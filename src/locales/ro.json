@@ -829,6 +829,7 @@
           "back_action": "Înapoi",
           "discount": "Reducere",
           "place_order_action": "Plasează comanda",
+          "place_order_error": "Nu s-a putut plasa comanda din cauza unei probleme tehnice",
           "remove_item_action": "Elimină articol",
           "subtotal": "Subtotal",
           "title": "Coș",

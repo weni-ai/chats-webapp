@@ -857,6 +857,7 @@
           "back_action": "Back",
           "discount": "Discount",
           "place_order_action": "Place order",
+          "place_order_error": "Order couldn't be placed due to a technical issue",
           "remove_item_action": "Remove item",
           "subtotal": "Subtotal",
           "title": "Cart",
