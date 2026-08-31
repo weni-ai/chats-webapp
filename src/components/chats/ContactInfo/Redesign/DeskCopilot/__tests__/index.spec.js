@@ -98,6 +98,7 @@ function mockCopilotChat({
       acceptAttribute: '',
     }),
     sendMessage: vi.fn(),
+    sendOrder: vi.fn(),
     sendAttachment: vi.fn(),
     startRecording: vi.fn(),
     stopRecording: vi.fn(),
@@ -175,6 +176,10 @@ const createWrapper = (props = {}, piniaState = {}) =>
           template: '<div data-testid="assistant-cart-badge" />',
           props: ['count'],
         },
+        Cart: {
+          name: 'DeskCopilotCart',
+          template: '<div data-testid="desk-copilot-cart" />',
+        },
         UnnnicButton: {
           name: 'UnnnicButton',
           inheritAttrs: false,
@@ -214,7 +219,6 @@ describe('DeskCopilotTab', () => {
       connection: defaultConnection,
     });
     mockCopilotChat({
-      cartCount: 1,
       suggestions: ['Ask about color'],
     });
     wrapper = createWrapper();
@@ -229,7 +233,7 @@ describe('DeskCopilotTab', () => {
     ).toBe(true);
     expect(wrapper.find('[data-testid="assistant-input"]').exists()).toBe(true);
     expect(wrapper.find('[data-testid="assistant-cart-badge"]').exists()).toBe(
-      true,
+      false,
     );
     expect(useCopilotChat).toHaveBeenCalled();
     const [, roomUuid] = useCopilotChat.mock.calls[0];
