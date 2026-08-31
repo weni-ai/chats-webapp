@@ -177,7 +177,6 @@ describe('RoomMessages.vue', () => {
       expect(chatMessages.exists()).toBe(true);
       expect(chatMessages.props('chatUuid')).toBe(mockRoom.uuid);
       expect(chatMessages.props('messages')).toEqual([]);
-      expect(chatMessages.props('enableReply')).toBe(false);
     });
 
     it('does not render ChatSummary when showRoomSummary is false', async () => {

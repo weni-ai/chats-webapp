@@ -77,7 +77,7 @@
                 :title="messageFormatTitle(new Date(message.created_on))"
                 :signature="messageSignature(message)"
                 :mediaType="isGeolocation(message.media?.[0]) ? 'geo' : ''"
-                :enableReply="enableReply"
+                :enableReply="!!message.external_id && !isDisabledInput"
                 :replyMessage="message.replied_message"
                 :automatic="
                   !!message.bulk_message || message.is_automatic_message
@@ -131,7 +131,7 @@
                   :status="messageStatus({ message })"
                   :title="messageFormatTitle(new Date(message.created_on))"
                   :signature="messageSignature(message)"
-                  :enableReply="enableReply"
+                  :enableReply="!!message.external_id && !isDisabledInput"
                   :replyMessage="message.replied_message"
                   :highlighted="message.uuid === toScrollMessage?.uuid"
                   data-testid="chat-message"
@@ -194,7 +194,7 @@
                   :status="messageStatus({ message })"
                   :title="messageFormatTitle(new Date(message.created_on))"
                   :signature="messageSignature(message)"
-                  :enableReply="enableReply"
+                  :enableReply="!!message.external_id && !isDisabledInput"
                   :replyMessage="message.replied_message"
                   data-testid="chat-message"
                   :highlighted="message.uuid === toScrollMessage?.uuid"
@@ -322,10 +322,6 @@ export default {
       type: Array,
       required: true,
     },
-    enableReply: {
-      type: Boolean,
-      default: false,
-    },
     messagesNext: {
       type: String,
       required: true,
@@ -411,6 +407,7 @@ export default {
     }),
     ...mapState(useDashboard, ['viewedAgent']),
     ...mapState(useRoomMessages, ['roomMessagesNext']),
+    ...mapState(useMessageManager, ['isDisabledInput']),
     ...mapWritableState(useMessageManager, ['replyMessage', 'inputMessage']),
     ...mapWritableState(useRoomMessages, [
       'toScrollNote',
@@ -950,16 +947,13 @@ export default {
   overflow: hidden;
   position: relative;
   height: 100%;
-
-  &--view-mode {
-    padding-left: $unnnic-space-4;
-  }
 }
 
 .chat-messages {
   overflow: hidden auto;
 
   padding-right: $unnnic-space-4;
+  padding-left: $unnnic-space-4;
 
   height: 100%;
 

@@ -9,6 +9,7 @@ export async function sendRoomMessageBySocket({
   text,
   aiTextImprovement,
   requestId,
+  externalId,
 }) {
   if (!isSocketOpen()) {
     throw new SocketNotConnectedError();
@@ -23,6 +24,10 @@ export async function sendRoomMessageBySocket({
     room,
     text,
   };
+
+  if (externalId) {
+    content.reply_to = { external_id: externalId };
+  }
 
   if (aiTextImprovement) {
     content.ai_text_improvement = aiTextImprovement;

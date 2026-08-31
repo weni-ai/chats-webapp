@@ -1,145 +1,154 @@
 <!-- This component was migrated from unnnic. -->
 <template>
   <section
-    class="unnnic-chats-message"
+    class="unnnic-chats-message-wrapper"
     :class="{
       sent: type === 'sent',
-      automatic: automatic,
-      sending: status === 'sending',
-      failed: status === 'failed',
-      'is-document': isDocument,
-      'is-media': isMedia,
-      'is-image': isImage,
-      'is-video': isVideo,
-      'is-geo': isGeolocation,
-      highlighted: highlighted,
+      received: type === 'received',
+      'is-replyable': canReply,
     }"
+    data-testid="message-wrapper"
     @mouseover="isHovering = true"
     @mouseleave="isHovering = false"
-    @click="status === 'failed' ? $emit('click') : undefined"
+    @click="handleMessageClick"
   >
-    <ReplyMessage
-      v-if="replyMessage"
-      class="unnnic-chats-message__reply-message"
-      :replyMessage="replyMessage"
-      :messageType="type"
-      data-testid="reply-message"
-      @click="$emit('click-reply-message')"
-    />
-    <p
-      v-if="signature"
-      class="unnnic-chats-message__signature"
-    >
-      {{ signature }}
-    </p>
-    <main
-      class="unnnic-chats-message__main"
+    <section
+      class="unnnic-chats-message"
       :class="{
+        sent: type === 'sent',
+        automatic: automatic,
+        sending: status === 'sending',
         'is-document': isDocument,
         'is-media': isMedia,
         'is-image': isImage,
         'is-video': isVideo,
         'is-geo': isGeolocation,
+        highlighted: highlighted,
       }"
     >
-      <UnnnicIcon
-        v-if="isGeolocation"
-        class="geolocation-icon"
-        icon="location_on"
-        size="avatar-nano"
+      <ReplyMessage
+        v-if="replyMessage"
+        class="unnnic-chats-message__reply-message"
+        :replyMessage="replyMessage"
+        :messageType="type"
+        data-testid="reply-message"
+        @click.stop="$emit('click-reply-message')"
       />
-      <ChatsMessageText
-        v-if="isText"
-        :text="slotText"
-        :isAutomatic="automatic"
-        :automaticType="automaticType"
-        :bulkMessageSender="bulkMessageSender"
-      />
-      <div
-        v-if="isDocument"
-        class="unnnic-chats-message__document"
+      <p
+        v-if="signature"
+        class="unnnic-chats-message__signature"
       >
-        <UnnnicIconLoading
-          v-if="status === 'sending'"
-          scheme="fg-base"
-          size="lg"
-        />
+        {{ signature }}
+      </p>
+      <main
+        class="unnnic-chats-message__main"
+        :class="{
+          'is-document': isDocument,
+          'is-media': isMedia,
+          'is-image': isImage,
+          'is-video': isVideo,
+          'is-geo': isGeolocation,
+        }"
+      >
         <UnnnicIcon
-          v-else-if="status === 'failed'"
-          icon="upload"
-          scheme="fg-base"
-          size="lg"
+          v-if="isGeolocation"
+          class="geolocation-icon"
+          icon="location_on"
+          size="avatar-nano"
         />
-        <UnnnicIcon
-          v-else
-          icon="article"
-          scheme="fg-base"
-          size="lg"
+        <ChatsMessageText
+          v-if="isText"
+          :text="slotText"
+          :isAutomatic="automatic"
+          :automaticType="automaticType"
+          :bulkMessageSender="bulkMessageSender"
         />
-        <p
-          class="unnnic-chats-message__document__text"
-          @click="$emit('click')"
+        <div
+          v-if="isDocument"
+          class="unnnic-chats-message__document"
         >
-          {{ documentName }}
-        </p>
-      </div>
-      <div
-        v-else-if="isMedia && !isGeolocation"
-        class="unnnic-chats-message__media__container"
-        :class="{ failed: failedToSendMedia }"
-        @click="onClickMedia"
-      >
-        <slot />
-        <ChatsMessageStatusBackdrop
-          v-if="(sendingMedia || failedToSendMedia) && (isImage || isVideo)"
-          :status="status"
-          @click.stop="status === 'failed' ? $emit('click') : () => {}"
+          <UnnnicIconLoading
+            v-if="status === 'sending'"
+            scheme="fg-base"
+            size="lg"
+          />
+          <UnnnicIcon
+            v-else-if="status === 'failed'"
+            icon="upload"
+            scheme="fg-base"
+            size="lg"
+          />
+          <UnnnicIcon
+            v-else
+            icon="article"
+            scheme="fg-base"
+            size="lg"
+          />
+          <p
+            class="unnnic-chats-message__document__text"
+            @click="onDocumentClick"
+          >
+            {{ documentName }}
+          </p>
+        </div>
+        <div
+          v-else-if="isMedia && !isGeolocation"
+          class="unnnic-chats-message__media__container"
+          :class="{ failed: failedToSendMedia }"
+          @click="onClickMedia"
+        >
+          <slot />
+          <ChatsMessageStatusBackdrop
+            v-if="(sendingMedia || failedToSendMedia) && (isImage || isVideo)"
+            :status="status"
+            @click.stop="status === 'failed' ? $emit('click') : () => {}"
+          />
+        </div>
+
+        <UnnnicIconLoading
+          v-if="sendingMedia"
+          size="avatar-nano"
+          scheme="fg-base"
         />
-      </div>
 
-      <UnnnicIconLoading
-        v-if="sendingMedia"
-        size="avatar-nano"
-        scheme="fg-base"
-      />
+        <section class="unnnic-chats-message__time-container">
+          <p class="unnnic-chats-message__time">
+            {{ formattedTime }}
+          </p>
+          <UnnnicIcon
+            v-if="type === 'sent'"
+            :icon="messageStatusIcon"
+            size="sm"
+            :scheme="status === 'read' ? 'fg-info' : 'fg-muted'"
+          />
+        </section>
+      </main>
+    </section>
 
-      <section
-        v-if="
-          enableReply && isHovering && !['sending', 'failed'].includes(status)
-        "
-        class="unnnic-chats-message__tooltip"
+    <section
+      v-if="showReplyButton"
+      class="unnnic-chats-message__reply-action"
+      data-testid="reply-action"
+    >
+      <UnnnicToolTip
+        enabled
+        :text="$t('reply')"
+        side="top"
       >
-        <UnnnicToolTip
-          enabled
-          size="right"
-          :text="$t('reply')"
-          :side="type === 'sent' ? 'bottom' : 'right'"
+        <button
+          type="button"
+          class="unnnic-chats-message__reply-button"
+          data-testid="reply-icon"
+          @click.stop="$emit('reply')"
         >
           <UnnnicIcon
             icon="reply"
-            clickable
-            scheme="fg-base"
-            size="avatar-nano"
-            data-testid="reply-icon"
-            @click.stop="$emit('reply')"
+            scheme="fg-emphasized"
+            size="sm"
           />
-        </UnnnicToolTip>
-      </section>
-      <section
-        v-else
-        class="unnnic-chats-message__time-container"
-      >
-        <p class="unnnic-chats-message__time">
-          {{ formattedTime }}
-        </p>
-        <UnnnicIcon
-          v-if="type === 'sent'"
-          :icon="messageStatusIcon"
-          size="sm"
-          :scheme="status === 'read' ? 'fg-info' : 'fg-muted'"
-        />
-      </section>
-    </main>
+        </button>
+      </UnnnicToolTip>
+    </section>
   </section>
 </template>
 
@@ -226,6 +235,12 @@ export default {
   },
 
   computed: {
+    canReply() {
+      return this.enableReply && !['sending', 'failed'].includes(this.status);
+    },
+    showReplyButton() {
+      return this.canReply && this.isHovering;
+    },
     formattedTime() {
       const date = new Date(this.time);
       const hours = date.getHours();
@@ -281,8 +296,24 @@ export default {
   },
 
   methods: {
-    onClickMedia() {
+    handleMessageClick() {
+      if (this.canReply) {
+        this.$emit('reply');
+      }
+    },
+    onDocumentClick(event) {
+      if (this.canReply) {
+        return;
+      }
+      event.stopPropagation();
+      this.$emit('click');
+    },
+    onClickMedia(event) {
+      if (this.canReply) {
+        return;
+      }
       if (this.isImage || this.isVideo) {
+        event.stopPropagation();
         this.$emit('click-image');
       }
     },
@@ -295,40 +326,77 @@ $defaultLineHeight: $unnnic-font-size-body-gt + $unnnic-line-height-medium;
 
 .is-media .unnnic-chats-message__reply-message {
   cursor: pointer;
-  margin: (-$unnnic-space-1) (-$unnnic-space-1) 0px (-$unnnic-space-1);
+}
+
+.unnnic-chats-message-wrapper {
+  display: flex;
+  align-items: center;
+  gap: $unnnic-space-1;
+  width: fit-content;
+  max-width: 100%;
+
+  &.sent {
+    flex-direction: row-reverse;
+    margin-left: auto;
+
+    .unnnic-chats-message__reply-button {
+      :deep(.unnnic-icon),
+      :deep(svg) {
+        transform: scaleX(-1);
+      }
+    }
+  }
+
+  &.is-replyable {
+    cursor: pointer;
+  }
 }
 
 .unnnic-chats-message {
   width: fit-content;
   min-width: 70px;
-  max-width: 500px;
+  max-width: 460px;
 
   display: grid;
   gap: $unnnic-space-1;
 
-  border-radius: $unnnic-border-radius-md;
+  border-radius: $unnnic-radius-2;
 
-  padding: $unnnic-space-2 $unnnic-space-3;
+  padding: $unnnic-space-2 $unnnic-space-4;
 
   background-color: $unnnic-color-bg-base;
 
   font: $unnnic-font-body;
 
-  box-shadow: 0px 2px 5px 0px rgba(0, 0, 0, 0.1);
+  box-shadow: $unnnic-shadow-1;
 
-  &.failed {
-    cursor: pointer;
+  &__reply-action {
+    display: flex;
+    align-items: center;
+    flex-shrink: 0;
   }
 
-  &__tooltip {
+  &__reply-button {
     display: flex;
-    justify-content: end;
-    min-width: 50.88px;
+    align-items: center;
+    justify-content: center;
+    gap: $unnnic-space-1;
+    padding: $unnnic-space-3;
+    border: none;
+    border-radius: $unnnic-radius-2;
+    background: transparent;
+    cursor: pointer;
+
+    :deep(.unnnic-icon),
+    :deep(svg) {
+      width: 20px;
+      height: 20px;
+    }
   }
 
   &__reply-message {
     cursor: pointer;
-    margin: (-$unnnic-space-1) (-$unnnic-space-2) 0px (-$unnnic-space-2);
+    width: 100%;
   }
 
   &.highlighted {
@@ -374,7 +442,7 @@ $defaultLineHeight: $unnnic-font-size-body-gt + $unnnic-line-height-medium;
         .media {
           overflow: hidden;
 
-          border-radius: $unnnic-border-radius-md;
+          border-radius: $unnnic-radius-2;
 
           min-height: 200px;
           max-height: 300px;
@@ -452,7 +520,8 @@ $defaultLineHeight: $unnnic-font-size-body-gt + $unnnic-line-height-medium;
     &-container {
       display: flex;
       align-items: center;
-      gap: $unnnic-space-1;
+      gap: $unnnic-spacing-nano;
+      flex-shrink: 0;
     }
   }
 

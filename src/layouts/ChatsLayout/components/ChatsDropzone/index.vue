@@ -102,8 +102,6 @@ export default {
 
   overflow: hidden;
 
-  padding-left: $unnnic-spacing-inline-sm;
-
   &.dragging {
     position: relative;
 
