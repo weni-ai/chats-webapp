@@ -1714,7 +1714,7 @@
       },
       "partial_success": {
         "button": "Ver envíos",
-        "message": "{success, plural, one {{failed, plural, one {Mensaje enviado a {success} contacto, {failed} falló.} other {Mensaje enviado a {success} contacto, {failed} fallaron.}}} other {{failed, plural, one {Mensaje enviado a {success} contactos, {failed} falló.} other {Mensaje enviado a {success} contactos, {failed} fallaron.}}}}"
+        "message": "{success, plural, one {Mensaje enviado a {success} contacto; {failed} falló.} other {Mensaje enviado a {success} contactos;{failed} fallaron.}}"
       },
       "success": {
         "message": "{count, plural, one {Mensaje enviado a {count} contacto} other {Mensaje enviado a {count} contactos}}"

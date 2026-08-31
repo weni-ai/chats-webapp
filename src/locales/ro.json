@@ -1663,7 +1663,7 @@
       },
       "partial_success": {
         "button": "Vezi trimiteri",
-        "message": "{success, plural, one {{failed, plural, one {Mesaj trimis către {success} contact, {failed} a eșuat.} few {Mesaj trimis către {success} contact, {failed} au eșuat.} other {Mesaj trimis către {success} contact, {failed} au eșuat.}}} few {{failed, plural, one {Mesaj trimis către {success} contacte, {failed} a eșuat.} few {Mesaj trimis către {success} contacte, {failed} au eșuat.} other {Mesaj trimis către {success} contacte, {failed} au eșuat.}}} other {{failed, plural, one {Mesaj trimis către {success} de contacte, {failed} a eșuat.} few {Mesaj trimis către {success} de contacte, {failed} au eșuat.} other {Mesaj trimis către {success} de contacte, {failed} au eșuat.}}}}"
+        "message": "{success, plural, one {Mesaj trimis către {success} contact, {failed} a eșuat.} other {Mesaj trimis către {success} contacte, {failed} au eșuat.}}"
       },
       "success": {
         "message": "{count, plural, one {Mesaj trimis către {count} contact} few {Mesaj trimis către {count} contacte} other {Mesaj trimis către {count} de contacte}}"
