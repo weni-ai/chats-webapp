@@ -29,7 +29,6 @@
       :resendMessage="roomResendMessage"
       :isLoading="isLoadingMessages || isLoadingInternalNotes"
       :isClosedChat="!!room?.ended_at"
-      :enableReply="!isDisabledInput"
       @scroll-top="searchForMoreMessages"
       @open-room-contact-info="$emit('open-room-contact-info')"
     />

@@ -77,8 +77,11 @@ export default {
       text,
       user_email,
       seen,
-      replied_message_id: repliedMessageId,
     };
+
+    if (repliedMessageId) {
+      payload.reply_to = { external_id: repliedMessageId };
+    }
 
     if (aiTextImprovement) {
       payload.ai_text_improvement = aiTextImprovement;
