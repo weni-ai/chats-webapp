@@ -9,8 +9,14 @@ export function parseProductPrice(price: string | number | undefined): number {
     return 0;
   }
 
-  const normalized = price.replace(/[^0-9.,]/g, '').replace(',', '.');
-  const parsed = Number.parseFloat(normalized);
+  const normalized = price.replace(/[^0-9.,]/g, '');
+  const lastComma = normalized.lastIndexOf(',');
+  const lastDot = normalized.lastIndexOf('.');
+  const decimal = lastComma > lastDot ? ',' : '.';
+  const cleaned = normalized.replace(/[.,]/g, (match, index) =>
+    index === normalized.lastIndexOf(decimal) ? '.' : '',
+  );
+  const parsed = Number.parseFloat(cleaned);
   return Number.isFinite(parsed) ? parsed : 0;
 }
 
