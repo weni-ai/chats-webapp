@@ -258,7 +258,7 @@ const previousMedia = () => {
     flex-shrink: 0;
     border-radius: $unnnic-radius-2;
     overflow: hidden;
-    background-color: $unnnic-color-bg-soft;
+    background-color: $unnnic-color-bg-base-soft;
 
     &--interactive {
       cursor: pointer;
