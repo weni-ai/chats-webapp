@@ -16,7 +16,10 @@ import type { CopilotConnection } from '@/services/api/resources/chats/copilot';
 import { copilotSocketManager } from '@/services/copilot/copilotSocketManager';
 import { extractCartCount } from '@/services/assistant/cartCount';
 import { mapServiceMessage } from '@/services/assistant/messageMapper';
-import type { AssistantMessage } from '@/services/assistant/types';
+import type {
+  AssistantMessage,
+  OrderProductItem,
+} from '@/services/assistant/types';
 
 type ConnectionRef = Ref<CopilotConnection | undefined>;
 type RoomUuidRef = Ref<string | undefined>;
@@ -338,6 +341,18 @@ export function useCopilotChat(
     activeService.sendMessage(trimmed);
   }
 
+  async function sendOrder(productItems: OrderProductItem[]) {
+    if (
+      !activeService ||
+      !Array.isArray(productItems) ||
+      productItems.length === 0
+    ) {
+      return;
+    }
+
+    await activeService.sendOrder(productItems);
+  }
+
   async function sendAttachment(file: File) {
     if (!file || !activeService) {
       return;
@@ -434,6 +449,7 @@ export function useCopilotChat(
     fileConfig,
     lastStreamingText,
     sendMessage,
+    sendOrder,
     sendAttachment,
     startRecording,
     stopRecording,
