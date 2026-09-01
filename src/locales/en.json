@@ -1694,8 +1694,8 @@
       "contacts_count_disclaimer": "{count, plural, one {This message will be sent to {count} contact. The number of recipients may change during delivery due to conversation transfers, conversation closures, or interactions taking place simultaneously.} other {This message will be sent to {count} contacts. The number of recipients may change during delivery due to conversation transfers, conversation closures, or interactions taking place simultaneously.}}",
       "recipients": {
         "at_least_one_status_must_be_selected": "At least one status must be selected",
-        "contacts_in_service": "Contacts in service",
-        "contacts_waiting_for_service": "Contacts waiting for service",
+        "contacts_in_service": "Contacts in support chats",
+        "contacts_waiting_for_service": "Contacts waiting for support",
         "filters": {
           "queues": {
             "all": "All queues",
@@ -1739,7 +1739,7 @@
         "message": "Couldn't send the message. Try again."
       },
       "partial_success": {
-        "button": "View shipments",
+        "button": "View sends",
         "message": "{success, plural, one {Message sent to {success} contact, {failed} failed.} other {Message sent to {success} contacts, {failed} failed.}}"
       },
       "success": {
