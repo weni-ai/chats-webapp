@@ -345,6 +345,7 @@ async function handleCopy() {
     flex-direction: column;
     gap: $unnnic-space-2;
     width: 100%;
+    min-width: 0;
     padding: $unnnic-space-3 $unnnic-space-4;
     border: 1px solid $unnnic-color-border-base;
     border-radius: $unnnic-radius-2;
@@ -352,6 +353,13 @@ async function handleCopy() {
 
     &--with-carousel {
       max-width: 100%;
+      // Let the carousel use the full card width up to the right border
+      padding-right: 0;
+      overflow: visible;
+
+      .ai-message__suggestion-text {
+        padding-right: $unnnic-space-4;
+      }
     }
   }
 
