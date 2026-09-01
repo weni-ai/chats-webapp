@@ -5,6 +5,8 @@ import ChatMessages from '../index.vue';
 import { useDashboard } from '@/store/modules/dashboard';
 import { useMessageManager } from '@/store/modules/chats/messageManager';
 import { useRooms } from '@/store/modules/chats/rooms';
+import { useFeatureFlag } from '@/store/modules/featureFlag';
+import { MEDIA_MESSAGES_WITH_TEXT_FEATURE_FLAG } from '@/composables/useMediaMessagesWithTextFeatureFlag';
 import moment from 'moment';
 
 // Mock components
@@ -54,6 +56,21 @@ vi.mock('./ChatMessagesFeedbackMessage.vue', () => ({
   default: {
     name: 'ChatMessagesFeedbackMessage',
     template: '<div class="mock-feedback-message">Feedback Message</div>',
+  },
+}));
+
+vi.mock('../MediasGrid.vue', () => ({
+  default: {
+    name: 'ChatMessagesMediasGrid',
+    props: ['medias'],
+    template: '<div data-testid="medias-grid" />',
+  },
+}));
+
+vi.mock('../ChatMessageAudio/ChatMessageAudio.vue', () => ({
+  default: {
+    name: 'ChatMessageAudio',
+    template: '<div data-testid="chat-message-audio" />',
   },
 }));
 
@@ -265,6 +282,66 @@ describe('ChatMessages', () => {
         Element.prototype.scrollIntoView = originalScrollIntoView;
         vi.useRealTimers();
       }
+    });
+  });
+
+  describe('combined media messages', () => {
+    const mediaMessage = {
+      uuid: 'media-1',
+      text: 'Look at this',
+      created_on: '2024-03-20T10:00:00Z',
+      user: { email: 'agent@example.com', first_name: 'Agent' },
+      media: [
+        {
+          uuid: 'm1',
+          content_type: 'image/jpeg',
+          url: 'https://example.com/1.jpg',
+        },
+        {
+          uuid: 'm2',
+          content_type: 'image/png',
+          url: 'https://example.com/2.png',
+        },
+      ],
+    };
+
+    const mediaMessageProps = {
+      messages: [mediaMessage],
+      messagesSorted: [
+        {
+          date: '2024-03-20',
+          minutes: [
+            {
+              minute: '10:00',
+              messages: [mediaMessage],
+            },
+          ],
+        },
+      ],
+    };
+
+    it('renders one bubble per media when the flag is off', async () => {
+      await wrapper.setProps(mediaMessageProps);
+      await wrapper.vm.$nextTick();
+
+      const bubbles = wrapper.findAll('[data-testid="chat-message"]');
+      expect(bubbles).toHaveLength(3);
+      expect(wrapper.find('[data-testid="medias-grid"]').exists()).toBe(false);
+    });
+
+    it('renders a single bubble with the media grid and text below when the flag is on', async () => {
+      const featureFlagStore = useFeatureFlag();
+      featureFlagStore.featureFlags = {
+        active_features: [MEDIA_MESSAGES_WITH_TEXT_FEATURE_FLAG],
+      };
+
+      await wrapper.setProps(mediaMessageProps);
+      await wrapper.vm.$nextTick();
+
+      const bubbles = wrapper.findAll('[data-testid="chat-message"]');
+      expect(bubbles).toHaveLength(1);
+      expect(wrapper.find('[data-testid="medias-grid"]').exists()).toBe(true);
+      expect(bubbles[0].text()).toContain('Look at this');
     });
   });
 });

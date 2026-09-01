@@ -1669,9 +1669,7 @@
       "no_contacts_filtered_alert": "Nenhum contato corresponde aos filtros selecionados. Tente ajustar seus filtros.",
       "contacts_count_disclaimer": "{count, plural, one {Esta mensagem será enviada para {count} contato. O número de destinatários pode mudar durante a entrega devido a transferências de conversa, encerramentos de conversa ou interações ocorrendo simultaneamente.} other {Esta mensagem será enviada para {count} contatos. O número de destinatários pode mudar durante a entrega devido a transferências de conversa, encerramentos de conversa ou interações ocorrendo simultaneamente.}}",
       "recipients": {
-        "title": "Destinatários",
-        "title_tooltip": "Esta mensagem será entregue a todos os contatos que correspondem aos filtros selecionados. Use este recurso para comunicações operacionais, como atrasos, incidentes e atualizações.",
-        "select_the_contacts_status": "Selecione o status do contato",
+        "at_least_one_status_must_be_selected": "Selecione pelo menos um status",
         "contacts_in_service": "Contatos em atendimento",
         "contacts_waiting_for_service": "Contatos aguardando atendimento",
         "filters": {
@@ -1685,7 +1683,10 @@
             "label": "Selecione um atendente",
             "placeholder": "Selecione pelo menos um representante"
           }
-        }
+        },
+        "select_the_contacts_status": "Selecione o status dos contatos",
+        "title": "Destinatários",
+        "title_tooltip": "Esta mensagem será entregue a todos os contatos que correspondem aos filtros selecionados. Use este recurso para comunicações operacionais como atrasos, incidentes, atualizações."
       },
       "message": {
         "title": "Mensagem",
@@ -1715,7 +1716,7 @@
       },
       "partial_success": {
         "button": "Ver envios",
-        "message": "{success, plural, one {{failed, plural, one {Mensagem enviada para {success} contato, {failed} falhou.} other {Mensagem enviada para {success} contato, {failed} falharam.}}} other {{failed, plural, one {Mensagem enviada para {success} contatos, {failed} falhou.} other {Mensagem enviada para {success} contatos, {failed} falharam.}}}}"
+        "message": "{success, plural, one {Mensagem enviada para {success} contato, {failed} falhou.} other {Mensagem enviada para {success} contatos, {failed} falharam.}}"
       },
       "success": {
         "message": "{count, plural, one {Mensagem enviada para {count} contato} other {Mensagem enviada para {count} contatos}}"
