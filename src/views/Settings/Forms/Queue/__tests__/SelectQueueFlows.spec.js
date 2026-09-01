@@ -1,5 +1,6 @@
 import { flushPromises, mount } from '@vue/test-utils';
 import { describe, expect, it, vi, beforeEach } from 'vitest';
+import { createTestingPinia } from '@pinia/testing';
 
 import FlowsTrigger from '@/services/api/resources/chats/flowsTrigger';
 
@@ -24,6 +25,7 @@ describe('SelectQueueFlows', () => {
     wrapper = mount(SelectQueueFlows, {
       props: { modelValue: [] },
       global: {
+        plugins: [createTestingPinia()],
         stubs: {
           UnnnicSelect: true,
           TagGroup: true,
@@ -47,7 +49,7 @@ describe('SelectQueueFlows', () => {
   it('fetches flows on mount', async () => {
     await flushPromises();
 
-    expect(FlowsTrigger.getFlows).toHaveBeenCalledWith(undefined, {
+    expect(FlowsTrigger.getFlows).toHaveBeenCalledWith('', {
       verify_chats_tag: true,
     });
     expect(wrapper.vm.flows).toEqual([
