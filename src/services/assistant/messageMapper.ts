@@ -1,4 +1,4 @@
-import type { Message } from '@weni/webchat-service';
+import type { Message, ProductCarouselItem } from '@weni/webchat-service';
 import type { AssistantMessage, AssistantMessageType } from './types';
 
 type QuickReplyEntry = string | { title?: string; text?: string };
@@ -49,6 +49,23 @@ function asOptionalNumber(value: unknown): number | undefined {
     : undefined;
 }
 
+function normalizeProductCarouselItems(
+  items?: ProductCarouselItem[],
+): ProductCarouselItem[] {
+  if (!Array.isArray(items)) {
+    return [];
+  }
+
+  return items.filter(
+    (item) =>
+      item &&
+      typeof item.product_retailer_id === 'string' &&
+      item.product_retailer_id.trim() &&
+      typeof item.name === 'string' &&
+      item.name.trim(),
+  );
+}
+
 export function mapServiceMessage(message: Message): AssistantMessage {
   const metadata = message.metadata || {};
   const suggestion = asOptionalString(metadata.suggestion);
@@ -62,6 +79,14 @@ export function mapServiceMessage(message: Message): AssistantMessage {
     asOptionalNumber(metadata.size) ||
     asOptionalNumber((metadata as { file_size?: number }).file_size);
   const duration = asOptionalNumber(metadata.duration);
+
+  const productItems = normalizeProductCarouselItems(
+    message.product_carousel?.product_items,
+  );
+  const productCarouselText =
+    asOptionalString(message.product_carousel?.text) ||
+    asOptionalString(message.text) ||
+    '';
 
   return {
     id: message.id,
@@ -77,5 +102,12 @@ export function mapServiceMessage(message: Message): AssistantMessage {
     quickReplies: normalizeQuickReplies(message.quick_replies),
     status: message.status || '',
     timestamp: message.timestamp || Date.now(),
+    productCarousel:
+      productItems.length > 0
+        ? {
+            text: productCarouselText,
+            items: productItems,
+          }
+        : undefined,
   };
 }
