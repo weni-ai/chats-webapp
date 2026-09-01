@@ -23,10 +23,6 @@
     <section
       v-if="hasOverflow"
       class="product-carousel__nav"
-      :class="{
-        'product-carousel__nav--can-scroll-left': canScrollLeft,
-        'product-carousel__nav--can-scroll-right': canScrollRight,
-      }"
       data-testid="product-carousel-nav"
     >
       <UnnnicButton
@@ -181,7 +177,8 @@ watch(
 .product-carousel {
   position: relative;
   width: 100%;
-  max-width: 306px;
+  min-width: 0;
+  max-width: 100%;
 
   &:hover .product-carousel__nav {
     opacity: 1;
@@ -194,6 +191,9 @@ watch(
   &__track {
     display: flex;
     gap: $unnnic-space-2;
+    width: 100%;
+    min-width: 0;
+    padding-right: $unnnic-space-4;
     overflow-x: auto;
     overflow-y: hidden;
     scroll-behavior: smooth;
@@ -217,36 +217,6 @@ watch(
     opacity: 0;
     transition: opacity 0.2s ease;
     z-index: 1;
-
-    &::before,
-    &::after {
-      content: '';
-      position: absolute;
-      top: 0;
-      bottom: 0;
-      width: 46px;
-      pointer-events: none;
-      opacity: 0;
-      transition: opacity 0.2s ease;
-    }
-
-    &::before {
-      left: 0;
-      background: linear-gradient(to right, $unnnic-color-bg-base, transparent);
-    }
-
-    &::after {
-      right: 0;
-      background: linear-gradient(to left, $unnnic-color-bg-base, transparent);
-    }
-
-    &--can-scroll-left::before {
-      opacity: 1;
-    }
-
-    &--can-scroll-right::after {
-      opacity: 1;
-    }
   }
 
   &__nav-button {
@@ -254,6 +224,14 @@ watch(
     z-index: 1;
     pointer-events: none;
     box-shadow: $unnnic-shadow-1;
+
+    &--left {
+      margin-left: $unnnic-space-1;
+    }
+
+    &--right {
+      margin-right: $unnnic-space-5;
+    }
 
     &--hidden {
       visibility: hidden;
