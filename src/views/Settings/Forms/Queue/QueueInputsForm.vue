@@ -40,7 +40,10 @@
       class="sector-queues-form__bond-flows"
       data-testid="queue-bond-flows"
     >
-      <SelectQueueFlows v-model="queueForm.selected_flows" />
+      <SelectQueueFlows
+        v-model="queueForm.selected_flows"
+        :projectToListFlows="projectToListFlows"
+      />
     </section>
 
     <UnnnicDisclaimer
@@ -92,6 +95,10 @@ export default {
     canLoadMoreCurrentAgents: {
       type: Boolean,
       default: false,
+    },
+    projectToListFlows: {
+      type: String,
+      required: true,
     },
   },
   emits: ['update:modelValue', 'load-more-current-agents'],
