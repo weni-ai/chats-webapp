@@ -50,15 +50,10 @@
 </template>
 
 <script setup lang="ts">
-import { computed, nextTick, onMounted, ref, watch } from 'vue';
-import { storeToRefs } from 'pinia';
+import { computed, nextTick, ref, watch } from 'vue';
 
 import FlowsTrigger from '@/services/api/resources/chats/flowsTrigger.js';
 import TagGroup from '@/components/TagGroup.vue';
-
-import { useConfig } from '@/store/modules/config';
-import { useSettings } from '@/store/modules/settings';
-import { getProject } from '@/utils/config';
 
 defineOptions({ name: 'SelectQueueFlows' });
 
@@ -79,6 +74,7 @@ interface QueueFlowTag {
 
 interface SelectQueueFlowsProps {
   modelValue?: string[];
+  projectToListFlows: string;
 }
 
 const props = withDefaults(defineProps<SelectQueueFlowsProps>(), {
@@ -88,11 +84,6 @@ const props = withDefaults(defineProps<SelectQueueFlowsProps>(), {
 const emit = defineEmits<{
   'update:modelValue': [value: string[]];
 }>();
-
-const configStore = useConfig();
-const { enableGroupsMode } = storeToRefs(configStore);
-const settingsStore = useSettings();
-const { currentSector } = storeToRefs(settingsStore);
 
 const flowSelection = ref('');
 const flows = ref<QueueFlow[]>([]);
@@ -154,13 +145,12 @@ async function getFlows() {
   loadingFlows.value = true;
 
   try {
-    const projectUuid = enableGroupsMode.value
-      ? currentSector.value.config.secondary_project
-      : getProject();
-
-    const response: QueueFlow[] = await FlowsTrigger.getFlows(projectUuid, {
-      verify_chats_tag: true,
-    });
+    const response: QueueFlow[] = await FlowsTrigger.getFlows(
+      props.projectToListFlows,
+      {
+        verify_chats_tag: true,
+      },
+    );
 
     flows.value = response.map(({ uuid, name }) => ({ uuid, name }));
   } catch (error) {
@@ -171,9 +161,15 @@ async function getFlows() {
   }
 }
 
-onMounted(() => {
-  getFlows();
-});
+watch(
+  () => props.projectToListFlows,
+  (value) => {
+    if (value) {
+      getFlows();
+    }
+  },
+  { immediate: true },
+);
 </script>
 
 <style lang="scss" scoped>
