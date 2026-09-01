@@ -19,6 +19,17 @@
     />
 
     <template v-else>
+      <header
+        v-if="isConfigured && productCartTotalQuantity > 0"
+        class="desk-copilot__cart-header"
+        data-testid="desk-copilot-cart-header"
+      >
+        <CartBadge
+          :count="productCartTotalQuantity"
+          @click="currentView = 'cart'"
+        />
+      </header>
+
       <section
         ref="listRef"
         class="desk-copilot__chat"
@@ -27,12 +38,6 @@
         <SummaryMessage v-if="enableRoomSummary" />
 
         <template v-if="isConfigured">
-          <CartBadge
-            v-if="productCartTotalQuantity > 0"
-            :count="productCartTotalQuantity"
-            @click="currentView = 'cart'"
-          />
-
           <AssistantMessageList
             :messages="messages"
             :isThinking="isThinking"
@@ -279,12 +284,21 @@ onMounted(() => {
   min-height: 0;
   overflow: hidden;
 
+  &__cart-header {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    flex-shrink: 0;
+    width: 100%;
+  }
+
   &__chat {
     display: flex;
     flex-direction: column;
     gap: $unnnic-space-3;
     flex: 1;
     min-height: 0;
+    min-width: 0;
     overflow: hidden auto;
     padding-bottom: $unnnic-space-2;
   }
