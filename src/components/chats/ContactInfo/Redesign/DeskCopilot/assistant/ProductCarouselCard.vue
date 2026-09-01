@@ -85,7 +85,7 @@
       >
         <UnnnicIcon
           icon="delete"
-          size="sm"
+          size="md"
           scheme="fg-critical"
           clickable
           data-testid="product-carousel-card-remove"
