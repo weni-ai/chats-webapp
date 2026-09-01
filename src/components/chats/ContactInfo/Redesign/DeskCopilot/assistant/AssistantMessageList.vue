@@ -109,6 +109,7 @@ const emit = defineEmits<{
   flex-direction: column;
   gap: $unnnic-space-3;
   width: 100%;
+  min-width: 0;
 
   &__loading {
     display: flex;
