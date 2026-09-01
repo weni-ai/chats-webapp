@@ -47,9 +47,25 @@
               </section>
 
               <section class="desk-copilot-cart__item-details">
-                <h3 class="desk-copilot-cart__item-title">
-                  {{ item.name }}
-                </h3>
+                <section class="desk-copilot-cart__item-title-row">
+                  <h3 class="desk-copilot-cart__item-title">
+                    {{ item.name }}
+                  </h3>
+                  <UnnnicIcon
+                    class="desk-copilot-cart__item-remove"
+                    icon="delete"
+                    size="md"
+                    scheme="fg-critical"
+                    clickable
+                    data-testid="desk-copilot-cart-remove-item"
+                    :aria-label="
+                      $t(
+                        'contact_info.desk_copilot.assistant.cart.remove_item_action',
+                      )
+                    "
+                    @click="emit('remove', item.product_retailer_id)"
+                  />
+                </section>
                 <section class="desk-copilot-cart__item-price">
                   <span
                     v-if="hasSalePrice(item)"
@@ -70,20 +86,6 @@
                 </section>
               </section>
             </section>
-
-            <UnnnicIcon
-              icon="delete"
-              size="sm"
-              scheme="fg-critical"
-              clickable
-              data-testid="desk-copilot-cart-remove-item"
-              :aria-label="
-                $t(
-                  'contact_info.desk_copilot.assistant.cart.remove_item_action',
-                )
-              "
-              @click="emit('remove', item.product_retailer_id)"
-            />
           </section>
 
           <section class="desk-copilot-cart__item-bottom">
@@ -247,8 +249,6 @@ function itemLineTotal(item: CartProductItem) {
 
   &__item-top {
     display: flex;
-    align-items: flex-start;
-    gap: $unnnic-space-2;
     width: 100%;
   }
 
@@ -286,11 +286,25 @@ function itemLineTotal(item: CartProductItem) {
     min-width: 0;
   }
 
+  &__item-title-row {
+    display: flex;
+    align-items: center;
+    gap: $unnnic-space-2;
+    width: 100%;
+    min-width: 0;
+  }
+
   &__item-title {
+    flex: 1;
+    min-width: 0;
     font: $unnnic-font-action;
     color: $unnnic-color-fg-emphasized;
     word-break: break-word;
     white-space: pre-wrap;
+  }
+
+  &__item-remove {
+    flex-shrink: 0;
   }
 
   &__item-price {
