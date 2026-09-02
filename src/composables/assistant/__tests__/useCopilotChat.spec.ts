@@ -24,6 +24,7 @@ const serviceMock = {
     sttToken: 'stt',
     ttsToken: 'tts',
   })),
+  setCustomField: vi.fn(),
   isConnected: vi.fn(() => false),
   on: vi.fn((event: string, cb: (..._args: unknown[]) => void) => {
     if (!listeners.has(event)) {
@@ -332,5 +333,38 @@ describe('useCopilotChat', () => {
 
     emit(SERVICE_EVENTS.RECORDING_STOPPED);
     expect(isRecording.value).toBe(false);
+  });
+
+  it('sets sellerEmail custom field when the service attaches', async () => {
+    const connection = ref<CopilotConnection | undefined>(connectionValue);
+    const roomUuid = ref<string | undefined>('room-1');
+    const agentEmail = ref<string | undefined>('agent@example.com');
+
+    useCopilotChat(connection, roomUuid, agentEmail);
+    await nextTick();
+
+    expect(serviceMock.setCustomField).toHaveBeenCalledWith(
+      'sellerEmail',
+      'agent@example.com',
+    );
+  });
+
+  it('sets sellerEmail when agent email arrives after the service is attached', async () => {
+    const connection = ref<CopilotConnection | undefined>(connectionValue);
+    const roomUuid = ref<string | undefined>('room-1');
+    const agentEmail = ref<string | undefined>(undefined);
+
+    useCopilotChat(connection, roomUuid, agentEmail);
+    await nextTick();
+
+    expect(serviceMock.setCustomField).not.toHaveBeenCalled();
+
+    agentEmail.value = 'late-agent@example.com';
+    await nextTick();
+
+    expect(serviceMock.setCustomField).toHaveBeenCalledWith(
+      'sellerEmail',
+      'late-agent@example.com',
+    );
   });
 });
