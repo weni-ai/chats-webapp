@@ -1198,7 +1198,7 @@
         "assigned_agents": "Agentes atribuídos",
         "badge": "Copilot",
         "connected_by": "Conectado por",
-        "connected_to": "Conectado em",
+        "connected_to": "Conectado a",
         "created_on": "Criado em",
         "description": "Este projeto é usado exclusivamente para gerenciar os agentes de IA do Desk Copilot. O acesso é feito apenas por esta seção.",
         "open": "Abrir",
@@ -1214,7 +1214,7 @@
       },
       "empty_state": {
         "create_button": "Criar projeto Copilot",
-        "description": "Para ativar o Desk Copilot, conecte este projeto a um projeto Copilot onde seus agentes de IA são gerenciados",
+        "description": "Para ativar o Desk Copilot, conecte este projeto a um projeto Copilot no qual seus agentes de IA são gerenciados.",
         "select_button": "Selecionar projeto Copilot",
         "title": "Nenhum projeto Copilot conectado"
       },
@@ -1229,7 +1229,7 @@
           "title": "Atualizações automáticas"
         },
         "centralized_agents": {
-          "description": "Gerencie todos os agentes de IA em um único projeto Copilot.",
+          "description": "Gerencie todos os agentes de IA em um único projeto Copilot",
           "title": "Agentes de IA centralizados"
         },
         "learn_more": "Saiba mais",

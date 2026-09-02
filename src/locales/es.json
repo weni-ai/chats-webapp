@@ -1198,7 +1198,7 @@
         "assigned_agents": "Agentes asignados",
         "badge": "Copilot",
         "connected_by": "Conectado por",
-        "connected_to": "Conectado el",
+        "connected_to": "Conectado a",
         "created_on": "Creado el",
         "description": "Este proyecto se usa exclusivamente para gestionar los agentes de IA de Desk Copilot. Solo es accesible desde esta sección.",
         "open": "Abrir",
@@ -1214,14 +1214,14 @@
       },
       "empty_state": {
         "create_button": "Crear proyecto Copilot",
-        "description": "Para activar Desk Copilot, conecta este proyecto a un proyecto Copilot donde se gestionan tus agentes de IA",
+        "description": "Para activar Desk Copilot, conecta este proyecto a un proyecto Copilot donde se gestionan tus agentes de IA.",
         "select_button": "Seleccionar proyecto Copilot",
-        "title": "Ningún proyecto Copilot conectado"
+        "title": "No hay ningún proyecto Copilot conectado"
       },
       "enable_title": "Activar Desk Copilot",
       "info": {
         "ai_assistance": {
-          "description": "Ayuda a tus representantes durante las conversaciones con sugerencias generadas por IA, ítems recomendados y próximas acciones.",
+          "description": "Ayuda a tus representantes durante las conversaciones con sugerencias generadas por IA, ítems recomendados y las mejores próximas acciones.",
           "title": "Asistencia de IA"
         },
         "automatic_updates": {
@@ -1234,7 +1234,7 @@
         },
         "learn_more": "Saber más",
         "shared_across_projects": {
-          "description": "Un proyecto Copilot puede compartirse entre varios proyectos Live Desk para mantener el conocimiento de IA consistente.",
+          "description": "Un proyecto Copilot se puede compartir entre varios proyectos de Live Desk para mantener consistente el conocimiento de la IA.",
           "title": "Compartido entre proyectos"
         },
         "title": "Cómo funciona Desk Copilot"

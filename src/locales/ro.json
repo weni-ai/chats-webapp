@@ -1179,7 +1179,7 @@
         "connected_by": "Conectat de",
         "connected_to": "Conectat la",
         "created_on": "Creat pe",
-        "description": "Acest proiect este folosit exclusiv pentru a gestiona agenții IA pentru Desk Copilot. Este accesibil doar din această secțiune.",
+        "description": "Acest proiect este folosit exclusiv pentru a gestiona agenții AI pentru Desk Copilot. Este accesibil doar din această secțiune.",
         "open": "Deschide",
         "popover_change_option": "Schimbă",
         "popover_disconnect_option": "Deconectează"
@@ -1193,27 +1193,27 @@
       },
       "empty_state": {
         "create_button": "Creează proiect Copilot",
-        "description": "Pentru a activa Desk Copilot, conectează acest proiect la un proiect Copilot unde sunt gestionați agenții tăi IA",
+        "description": "Pentru a activa Desk Copilot, conectează acest proiect la un proiect Copilot unde sunt gestionați agenții tăi AI",
         "select_button": "Selectează proiect Copilot",
         "title": "Niciun proiect Copilot conectat"
       },
       "enable_title": "Activează Desk Copilot",
       "info": {
         "ai_assistance": {
-          "description": "Ajută-ți reprezentanții în timpul conversațiilor cu sugestii generate de IA, elemente recomandate și următoarele acțiuni.",
-          "title": "Asistență IA"
+          "description": "Ajută-ți reprezentanții în timpul conversațiilor cu sugestii generate de AI, elemente recomandate și următoarele acțiuni.",
+          "title": "Asistență AI"
         },
         "automatic_updates": {
           "description": "Modificările făcute în proiectul Copilot se reflectă în fiecare proiect Live Desk conectat.",
           "title": "Actualizări automate"
         },
         "centralized_agents": {
-          "description": "Gestionează toți agenții IA într-un singur proiect Copilot.",
-          "title": "Agenți IA centralizați"
+          "description": "Gestionează toți agenții AI într-un singur proiect Copilot",
+          "title": "Agenți AI centralizați"
         },
         "learn_more": "Află mai multe",
         "shared_across_projects": {
-          "description": "Un proiect Copilot poate fi partajat între mai multe proiecte Live Desk pentru a menține cunoștințele IA consistente.",
+          "description": "Un proiect Copilot poate fi partajat între mai multe proiecte Live Desk pentru a menține cunoștințele AI consecvente.",
           "title": "Partajat între proiecte"
         },
         "title": "Cum funcționează Desk Copilot"
