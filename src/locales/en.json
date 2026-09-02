@@ -359,7 +359,7 @@
           "custom": "Custom flows",
           "default": "Default CSAT survey (recommended)",
           "label": "Survey type",
-          "tooltip": "Choose between the default CSAT survey and a custom flow previously configured in the Flows module."
+          "tooltip": "Choose between the default CSAT survey and a custom flow configured in the Flows module."
         }
       },
       "automatic_message": {

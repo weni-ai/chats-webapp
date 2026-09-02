@@ -341,7 +341,7 @@
         "tooltip": "Cada mensaje mostrará el nombre del representante que respondió",
         "switch_active": "Mostrar el nombre del representante en los mensajes",
         "switch_disabled": "Mostrar el nombre del representante en los mensajes",
-        "hint": "Cada mensaje intercambiado tendrá el nombre del representante que está respondiendo.",
+        "hint": "Cada mensaje enviado mostrará el nombre del representante que está respondiendo.",
         "switch_label": "Utilizar firma"
       },
       "csat": {
@@ -908,7 +908,7 @@
           "sales_arguments": "Argumentos de venta"
         },
         "title": "Ve más allá de los resúmenes de conversación",
-        "title_without_summary": "Desbloquea todo tu potencial con Desk Copilot"
+        "title_without_summary": "Aprovecha todo el potencial de Desk Copilot"
       },
       "summary_title": "Resumen de esta conversación"
     }
