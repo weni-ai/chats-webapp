@@ -1280,8 +1280,8 @@
         "hint": "Si esta opción está activa, los representantes offline o en pausa no podrán responder a chats en curso."
       },
       "block_link_contact_agents": {
-        "switch_label": "Bloquear la vinculación de contactos por los representantes",
-        "hint": "Si esta opción está activa, los representantes no podrán vincular contactos a ellos"
+        "switch_label": "Impedir que los representantes se vinculen contactos",
+        "hint": "Si esta opción está activa, los representantes no podrán vincularse contactos a sí mismos"
       },
       "bulk_transfer": {
         "tooltip": "Esta función permite a los representantes transferir diferentes contactos a la vez",
