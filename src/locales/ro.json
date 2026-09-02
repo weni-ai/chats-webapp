@@ -1091,7 +1091,19 @@
         "helper": "Doar contactele în curs de deservire pot primi acest mesaj",
         "label": "Contacte"
       },
-      "send": "{count, plural, =0 {Trimite către toate (0 contacte)} one {Trimite către toate ({count} contact)} other {Trimite către toate ({count} contacte)}}"
+      "send": "{count, plural, =0 {Trimite către toate (0 contacte)} one {Trimite către toate ({count} contact)} other {Trimite către toate ({count} contacte)}}",
+      "sending": "{count, plural, one {Se trimite mesajul către {count} contact} few {Se trimite mesajul către {count} contacte} other {Se trimite mesajul către {count} de contacte}}",
+      "toast": {
+        "error": {
+          "message": "Nu s-a putut trimite mesajul. Încearcă din nou."
+        },
+        "partial_success": {
+          "message": "{success, plural, one {Mesaj trimis către {success} contact, {failed} eșuat.} few {Mesaj trimis către {success} contacte, {failed} eșuate.} other {Mesaj trimis către {success} de contacte, {failed} eșuate.}}"
+        },
+        "success": {
+          "message": "{count, plural, one {Mesaj trimis către {count} contact} few {Mesaj trimis către {count} contacte} other {Mesaj trimis către {count} de contacte}}"
+        }
+      }
     }
   },
   "discard": "Șterge",

@@ -1122,7 +1122,19 @@
         "helper": "Apenas contatos em atendimento podem receber esta mensagem",
         "label": "Contatos"
       },
-      "send": "{count, plural, =0 {Enviar para todos (0 contatos)} one {Enviar para todos ({count} contato)} other {Enviar para todos ({count} contatos)}}"
+      "send": "{count, plural, =0 {Enviar para todos (0 contatos)} one {Enviar para todos ({count} contato)} other {Enviar para todos ({count} contatos)}}",
+      "sending": "{count, plural, one {Enviando a mensagem para {count} contato} other {Enviando a mensagem para {count} contatos}}",
+      "toast": {
+        "error": {
+          "message": "Não foi possível enviar a mensagem. Tente novamente."
+        },
+        "partial_success": {
+          "message": "{success, plural, one {Mensagem enviada para {success} contato, {failed} falhou.} other {Mensagem enviada para {success} contatos, {failed} falharam.}}"
+        },
+        "success": {
+          "message": "{count, plural, one {Mensagem enviada para {count} contato} other {Mensagem enviada para {count} contatos}}"
+        }
+      }
     }
   },
   "discard": "Descartar",

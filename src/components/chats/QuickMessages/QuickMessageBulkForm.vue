@@ -31,6 +31,7 @@
         data-testid="quick-message-bulk-cancel-button"
         :text="$t('cancel')"
         type="tertiary"
+        :disabled="isSending"
         @click="emit('close')"
       />
       <UnnnicButton
@@ -42,9 +43,21 @@
           })
         "
         :disabled="!canSend"
+        :loading="isSending"
         @click="handleSend"
       />
     </footer>
+
+    <ModalProgressBar
+      v-if="isSending || !!sendingUuid"
+      data-testid="quick-message-bulk-progress-modal"
+      :modelValue="percentageSent"
+      :title="
+        $t('quick_messages.bulk.sending', {
+          count: totalToSend || selectedContactsCount,
+        })
+      "
+    />
   </section>
 </template>
 
@@ -53,6 +66,10 @@ import { computed, ref } from 'vue';
 import { storeToRefs } from 'pinia';
 
 import { useRooms } from '@/store/modules/chats/rooms';
+import { useBulkQuickMessageSend } from '@/store/modules/chats/bulkQuickMessageSend';
+
+import ModalProgressBar from '@/components/chats/BulkMessage/ModalProgressBar.vue';
+import QuickMessageService from '@/services/api/resources/chats/quickMessage';
 
 import i18n from '@/plugins/i18n';
 
@@ -60,18 +77,23 @@ defineOptions({
   name: 'QuickMessageBulkForm',
 });
 
-defineProps({
+const props = defineProps({
   quickMessage: {
     type: Object,
     default: null,
   },
 });
 
-const emit = defineEmits(['close', 'send']);
+const emit = defineEmits(['close']);
 
 const { t } = i18n.global;
 const roomsStore = useRooms();
 const { agentRooms } = storeToRefs(roomsStore);
+
+const bulkQuickMessageSendStore = useBulkQuickMessageSend();
+const { isSending, sendingUuid, percentageSent, totalToSend } = storeToRefs(
+  bulkQuickMessageSendStore,
+);
 
 const selectedContacts = ref(['all']);
 const agreeToSend = ref(false);
@@ -100,7 +122,9 @@ const selectedContactsCount = computed(() => {
 });
 
 const canSend = computed(() => {
-  return agreeToSend.value && selectedContactsCount.value > 0;
+  return (
+    agreeToSend.value && selectedContactsCount.value > 0 && !isSending.value
+  );
 });
 
 const updateSelectedContacts = (contacts) => {
@@ -108,13 +132,28 @@ const updateSelectedContacts = (contacts) => {
 };
 
 const handleSend = async () => {
-  if (!canSend.value) return;
+  if (!canSend.value || !props.quickMessage?.text) return;
 
-  const rooms = selectedContacts.value.includes('all')
+  const contacts = selectedContacts.value.includes('all')
     ? null
     : selectedContacts.value;
 
-  emit('send', { rooms });
+  try {
+    isSending.value = true;
+    const { status, uuid } = await QuickMessageService.sendBulk({
+      text: props.quickMessage.text,
+      contacts,
+    });
+
+    if (status === 'PROCESSING') {
+      bulkQuickMessageSendStore.sendingUuid = uuid;
+    } else {
+      isSending.value = false;
+    }
+  } catch (error) {
+    console.error('Error sending quick message in bulk', error);
+    isSending.value = false;
+  }
 };
 </script>
 
