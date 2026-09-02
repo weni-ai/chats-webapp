@@ -9,13 +9,17 @@
       </p>
 
       <UnnnicMultiSelect
+        ref="contactsSelectRef"
         class="quick-message-bulk-form__contacts"
         data-testid="quick-message-bulk-contacts-select"
+        infiniteScroll
         :options="contactsOptions"
         :modelValue="selectedContacts"
         :label="$t('quick_messages.bulk.contacts.label')"
         :message="$t('quick_messages.bulk.contacts.helper')"
+        :infiniteScrollCanLoadMore="canLoadMoreContacts"
         @update:model-value="updateSelectedContacts"
+        @scroll-end="loadMoreContacts"
       />
 
       <UnnnicCheckbox
@@ -62,11 +66,12 @@
 </template>
 
 <script setup>
-import { computed, ref } from 'vue';
+import { computed, onMounted, ref, useTemplateRef } from 'vue';
 import { storeToRefs } from 'pinia';
 
 import { useRooms } from '@/store/modules/chats/rooms';
 import { useBulkQuickMessageSend } from '@/store/modules/chats/bulkQuickMessageSend';
+import { useRoomCounters } from '@/store/modules/chats/roomCounters';
 
 import ModalProgressBar from '@/components/chats/BulkMessage/ModalProgressBar.vue';
 import QuickMessageService from '@/services/api/resources/chats/quickMessage';
@@ -76,6 +81,8 @@ import i18n from '@/plugins/i18n';
 defineOptions({
   name: 'QuickMessageBulkForm',
 });
+
+const ROOMS_LIMIT = 30;
 
 const props = defineProps({
   quickMessage: {
@@ -88,15 +95,20 @@ const emit = defineEmits(['close']);
 
 const { t } = i18n.global;
 const roomsStore = useRooms();
-const { agentRooms } = storeToRefs(roomsStore);
+const { agentRooms, hasNextRooms, orderBy } = storeToRefs(roomsStore);
+const roomCountersStore = useRoomCounters();
+const { counts: roomsCounts } = storeToRefs(roomCountersStore);
 
 const bulkQuickMessageSendStore = useBulkQuickMessageSend();
 const { isSending, sendingUuid, percentageSent, totalToSend } = storeToRefs(
   bulkQuickMessageSendStore,
 );
 
+const contactsSelectRef = useTemplateRef('contactsSelectRef');
 const selectedContacts = ref(['all']);
 const agreeToSend = ref(false);
+const ongoingPage = ref(0);
+const isLoadingContacts = ref(false);
 
 const contactsOptions = computed(() => {
   const allOption = {
@@ -105,8 +117,8 @@ const contactsOptions = computed(() => {
   };
 
   const roomOptions = agentRooms.value.map((room) => ({
-    label: room.contact?.name || room.uuid,
-    value: room.uuid,
+    label: room.contact.name || room.uuid,
+    value: room.contact.uuid,
     disabled: selectedContacts.value.includes('all'),
   }));
 
@@ -115,17 +127,61 @@ const contactsOptions = computed(() => {
 
 const selectedContactsCount = computed(() => {
   if (selectedContacts.value.includes('all')) {
-    return agentRooms.value.length;
+    return roomsCounts.value.ongoing;
   }
 
   return selectedContacts.value.length;
 });
+
+const canLoadMoreContacts = () =>
+  Boolean(hasNextRooms.value.ongoing) && !isLoadingContacts.value;
 
 const canSend = computed(() => {
   return (
     agreeToSend.value && selectedContactsCount.value > 0 && !isSending.value
   );
 });
+
+const syncOngoingPage = () => {
+  if (agentRooms.value.length === 0) {
+    ongoingPage.value = -1;
+    return;
+  }
+
+  ongoingPage.value = Math.max(
+    0,
+    Math.ceil(agentRooms.value.length / ROOMS_LIMIT) - 1,
+  );
+};
+
+const finishContactsInfiniteScroll = () => {
+  contactsSelectRef.value?.finishInfiniteScroll?.();
+};
+
+const loadMoreContacts = async () => {
+  if (!canLoadMoreContacts()) {
+    finishContactsInfiniteScroll();
+    return;
+  }
+
+  isLoadingContacts.value = true;
+  ongoingPage.value += 1;
+
+  try {
+    await roomsStore.getAll({
+      offset: ongoingPage.value * ROOMS_LIMIT,
+      limit: ROOMS_LIMIT,
+      concat: true,
+      roomsType: 'ongoing',
+      order: orderBy.value.ongoing,
+    });
+  } catch (error) {
+    console.error('Error loading more contacts for bulk quick message', error);
+  } finally {
+    isLoadingContacts.value = false;
+    finishContactsInfiniteScroll();
+  }
+};
 
 const updateSelectedContacts = (contacts) => {
   selectedContacts.value = contacts.includes('all') ? ['all'] : contacts;
@@ -155,6 +211,10 @@ const handleSend = async () => {
     isSending.value = false;
   }
 };
+
+onMounted(() => {
+  syncOngoingPage();
+});
 </script>
 
 <style lang="scss" scoped>
