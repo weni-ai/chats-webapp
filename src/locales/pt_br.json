@@ -1280,8 +1280,8 @@
         "hint": "Se essa opção estiver ativada, atendentes offline ou em pausa não poderão responder a chats em andamento."
       },
       "block_link_contact_agents": {
-        "switch_label": "Bloquear a vinculação de contatos pelos atendentes",
-        "hint": "Se essa opção estiver ativada, os atendentes não poderão vincular contatos a eles"
+        "switch_label": "Impedir que atendentes vinculem contatos",
+        "hint": "Se essa opção estiver ativada, os atendentes não poderão vincular contatos a si mesmos"
       },
       "bulk_transfer": {
         "tooltip": "Esta função permite que os atendentes transfiram diferentes contatos de uma só vez",
