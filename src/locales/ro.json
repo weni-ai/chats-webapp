@@ -1081,7 +1081,18 @@
     "no_suggestions": "Nu s-au găsit rezultate pentru comanda rapidă introdusă",
     "disclaimer": "Tastează / (slash) în câmpul mesaj pentru a vedea mesajele rapide",
     "action_open": "Deschide mesajele rapide (/)",
-    "action_close": "Închide mesajele rapide"
+    "action_close": "Închide mesajele rapide",
+    "bulk": {
+      "confirmation": {
+        "checkbox_label": "Am verificat toate câmpurile și vreau să trimit"
+      },
+      "contacts": {
+        "all": "Toate contactele",
+        "helper": "Doar contactele în curs de deservire pot primi acest mesaj",
+        "label": "Contacte"
+      },
+      "send": "{count, plural, =0 {Trimite către toate (0 contacte)} one {Trimite către toate ({count} contact)} other {Trimite către toate ({count} contacte)}}"
+    }
   },
   "discard": "Șterge",
   "on_boarding": {

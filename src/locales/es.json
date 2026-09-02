@@ -1096,7 +1096,6 @@
     "delete_description": "¿Realmente deseas eliminar el mensaje rápido {shortcut}?",
     "shortcut_tooltip": "Escribe /{shortcut} para usarlo",
     "new": "Nuevo mensaje rápido",
-    "description_new": "Mensaje rápido en el departamento {sector}",
     "add": "Agregar mensaje rápido",
     "edit": "Editar mensaje rápido",
     "available_shortcuts": "Atajos disponibles",
@@ -1106,13 +1105,25 @@
     "message_field_placeholder": "Ejemplo: Hola, ¿cómo estás? ¿En qué puedo ayudarte hoy?",
     "successfully_added": "Mensaje rápido agregado",
     "successfully_updated": "Mensaje rápido actualizado",
-    "successfully_deleted": "Mensaje rápido eliminado con éxito",
-    "error_deleting": "No se pudo eliminar el mensaje rápido.",
     "error": "Error al configurar mensaje rápido",
     "no_suggestions": "No se encontraron resultados para el atajo ingresado",
     "disclaimer": "Escribe / (barra) en el campo de mensaje para ver los mensajes rápidos",
     "action_open": "Abrir mensajes rápidos (/)",
-    "action_close": "Cerrar mensajes rápidos"
+    "action_close": "Cerrar mensajes rápidos",
+    "description_new": "Mensaje rápido en el sector {sector}",
+    "error_deleting": "No se pudo eliminar el mensaje rápido.",
+    "successfully_deleted": "Mensaje rápido eliminado con éxito",
+    "bulk": {
+      "confirmation": {
+        "checkbox_label": "Revisé todos los campos y quiero enviarlo"
+      },
+      "contacts": {
+        "all": "Todos los contactos",
+        "helper": "Solo los contactos en atención pueden recibir este mensaje",
+        "label": "Contactos"
+      },
+      "send": "{count, plural, =0 {Enviar a todos (0 contactos)} one {Enviar a todos ({count} contacto)} other {Enviar a todos ({count} contactos)}}"
+    }
   },
   "discard": "Descartar",
   "on_boarding": {
