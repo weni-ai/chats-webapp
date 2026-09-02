@@ -67,6 +67,7 @@ import { storeToRefs } from 'pinia';
 
 import { useRooms } from '@/store/modules/chats/rooms';
 import { useBulkQuickMessageSend } from '@/store/modules/chats/bulkQuickMessageSend';
+import { useRoomCounters } from '@/store/modules/chats/roomCounters';
 
 import ModalProgressBar from '@/components/chats/BulkMessage/ModalProgressBar.vue';
 import QuickMessageService from '@/services/api/resources/chats/quickMessage';
@@ -89,6 +90,8 @@ const emit = defineEmits(['close']);
 const { t } = i18n.global;
 const roomsStore = useRooms();
 const { agentRooms } = storeToRefs(roomsStore);
+const roomCountersStore = useRoomCounters();
+const { counts: roomsCounts } = storeToRefs(roomCountersStore);
 
 const bulkQuickMessageSendStore = useBulkQuickMessageSend();
 const { isSending, sendingUuid, percentageSent, totalToSend } = storeToRefs(
@@ -105,8 +108,8 @@ const contactsOptions = computed(() => {
   };
 
   const roomOptions = agentRooms.value.map((room) => ({
-    label: room.contact?.name || room.uuid,
-    value: room.uuid,
+    label: room.contact.name || room.uuid,
+    value: room.contact.uuid,
     disabled: selectedContacts.value.includes('all'),
   }));
 
@@ -115,7 +118,7 @@ const contactsOptions = computed(() => {
 
 const selectedContactsCount = computed(() => {
   if (selectedContacts.value.includes('all')) {
-    return agentRooms.value.length;
+    return roomsCounts.value.ongoing;
   }
 
   return selectedContacts.value.length;
