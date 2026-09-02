@@ -85,7 +85,7 @@ const createWrapper = ({
         CopyValueButton: {
           name: 'CopyValueButton',
           template: '<button data-testid="copy-summary" />',
-          props: ['value', 'copyTooltipKey'],
+          props: ['value', 'copyTooltipKey', 'fillChatInput'],
         },
         FeedbackModal: true,
       },
