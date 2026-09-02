@@ -20,19 +20,23 @@
     <template #item="{ item }">
       <UnnnicTableRow :headers="headers">
         <template #contact>
-          {{ item.contact?.name }}
+          <p :title="item.contact?.name">{{ item.contact?.name }}</p>
         </template>
 
         <template #queue>
-          {{ item.queue?.name }}
+          <p :title="item.queue?.name">{{ item.queue?.name }}</p>
         </template>
 
         <template #sentBy>
-          {{ item.sent_by?.name }}
+          <p :title="item.sent_by?.name">{{ item.sent_by?.name }}</p>
         </template>
 
         <template #date>
           {{ $d(new Date(item.date)) }}
+        </template>
+
+        <template #message>
+          <p :title="item.message">{{ item.message }}</p>
         </template>
 
         <template #status>

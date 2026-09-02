@@ -847,6 +847,56 @@
       }
     },
     "desk_copilot": {
+      "assistant": {
+        "add_to_cart_action": "Agregar al carrito",
+        "attach_action": "Adjuntar archivo",
+        "cancel_recording": "Cancelar grabación",
+        "carousel_scroll_left_action": "Desplazar a la izquierda",
+        "carousel_scroll_right_action": "Desplazar a la derecha",
+        "cart": {
+          "back_action": "Volver",
+          "discount": "Descuento",
+          "place_order_action": "Realizar pedido",
+          "place_order_error": "No se pudo realizar el pedido debido a un problema técnico",
+          "remove_item_action": "Eliminar ítem",
+          "subtotal": "Subtotal",
+          "title": "Carrito",
+          "total": "Total"
+        },
+        "copy_action": "Copiar",
+        "decrease_quantity_action": "Disminuir cantidad",
+        "file_too_large": "Selecciona un archivo más pequeño",
+        "file_type_not_allowed": "Selecciona un tipo de archivo compatible",
+        "image_attachment": "Adjunto de imagen",
+        "increase_quantity_action": "Aumentar cantidad",
+        "input_placeholder": "Pregunta al asistente",
+        "open_media_menu": "Abrir menú de medios",
+        "processing_information": "Procesando información",
+        "record_audio": "Audio",
+        "recording_in_progress": "Grabando",
+        "remove_suggestion_action": "Eliminar sugerencia",
+        "scroll_to_bottom": "Ir al final",
+        "send_action": "Enviar",
+        "send_audio": "Enviar audio",
+        "thinking_messages": {
+          "almost": "Casi listo, un momento más",
+          "connecting": "Conectando ideas",
+          "processing": "Procesando información",
+          "refining": "Refinando detalles",
+          "structuring": "Estructurando respuesta"
+        },
+        "upload_file": "Subir archivo",
+        "voice_mode": {
+          "dismiss": "Descartar",
+          "enter": "Iniciar modo de voz",
+          "error_title": "Modo de voz no disponible",
+          "exit": "Salir del modo de voz",
+          "listening": "Escuchando",
+          "processing": "Transcribiendo",
+          "retry": "Inténtalo de nuevo",
+          "speaking": "Asistente hablando"
+        }
+      },
       "copy_summary": "Copiar resumen",
       "disclaimer": {
         "description": "Desk Copilot puede ayudarte con:",
@@ -1634,11 +1684,9 @@
       "no_contacts_filtered_alert": "Ningún contacto coincide con los filtros seleccionados. Intenta ajustar los filtros.",
       "contacts_count_disclaimer": "{count, plural, one {Este mensaje se enviará a {count} contacto. El número de destinatarios puede cambiar durante la entrega debido a transferencias de conversación, cierres de conversación o interacciones que ocurren simultáneamente.} other {Este mensaje se enviará a {count} contactos. El número de destinatarios puede cambiar durante la entrega debido a transferencias de conversación, cierres de conversación o interacciones que ocurren simultáneamente.}}",
       "recipients": {
-        "title": "Destinatarios",
-        "title_tooltip": "Este mensaje se entregará a todos los contactos que coincidan con los filtros seleccionados. Usa esta función para comunicaciones operativas como retrasos, incidentes, actualizaciones.",
-        "select_the_contacts_status": "Selecciona el estado de los contactos",
-        "contacts_in_service": "Contactos en atención",
-        "contacts_waiting_for_service": "Contactos esperando atención",
+        "at_least_one_status_must_be_selected": "Selecciona al menos un estado",
+        "contacts_in_service": "Contactos en chats de soporte",
+        "contacts_waiting_for_service": "Contactos esperando chat de soporte",
         "filters": {
           "queues": {
             "all": "Todas las colas",
@@ -1650,17 +1698,20 @@
             "label": "Selecciona un representante",
             "placeholder": "Selecciona al menos un representante"
           }
-        }
+        },
+        "select_the_contacts_status": "Selecciona el estado de los contactos",
+        "title": "Destinatarios",
+        "title_tooltip": "Este mensaje se entregará a todos los contactos que coincidan con los filtros seleccionados. Usa esta función para comunicaciones operativas como retrasos, incidentes, actualizaciones."
       },
       "message": {
         "title": "Mensaje",
         "input_label": "Define el contenido del mensaje",
-        "input_placeholder": "Ejemplo: Estamos experimentando inestabilidad en el sistema, por eso nos está tomando un poco más responder.",
-        "input_helper": "El mensaje se enviará exactamente como se escribió"
+        "input_placeholder": "Ejemplo: Estamos experimentando inestabilidad en el sistema, por eso nos está tomando un poco más de tiempo responder.",
+        "input_helper": "El mensaje se enviará tal como se ingresó"
       },
       "confirmation": {
         "title": "Asegúrate de que todos los campos estén completados correctamente y confirma la verificación",
-        "checkbox_label": "Lo revisé y estoy listo para enviarlo"
+        "checkbox_label": "Lo verifiqué y estoy listo para enviar"
       },
       "send": "{count, plural, =0 {Enviar a todos (0 contactos)} one {Enviar a todos ({count} contacto)} other {Enviar a todos ({count} contactos)}}",
       "sending": "{count, plural, one {Enviando el mensaje a {count} contacto} other {Enviando el mensaje a {count} contactos}}"
@@ -1680,7 +1731,7 @@
       },
       "partial_success": {
         "button": "Ver envíos",
-        "message": "{success, plural, one {{failed, plural, one {Mensaje enviado a {success} contacto, {failed} falló.} other {Mensaje enviado a {success} contacto, {failed} fallaron.}}} other {{failed, plural, one {Mensaje enviado a {success} contactos, {failed} falló.} other {Mensaje enviado a {success} contactos, {failed} fallaron.}}}}"
+        "message": "{success, plural, one {Mensaje enviado a {success} contacto; {failed} falló.} other {Mensaje enviado a {success} contactos;{failed} fallaron.}}"
       },
       "success": {
         "message": "{count, plural, one {Mensaje enviado a {count} contacto} other {Mensaje enviado a {count} contactos}}"

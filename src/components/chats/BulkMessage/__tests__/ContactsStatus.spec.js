@@ -24,8 +24,8 @@ describe('ContactsStatus', () => {
     expect(
       wrapper.find('[data-testid="contacts-status-waiting"]').exists(),
     ).toBe(true);
-    expect(wrapper.text()).toContain('Contacts in service');
-    expect(wrapper.text()).toContain('Contacts waiting for service');
+    expect(wrapper.text()).toContain('Contacts in support chats');
+    expect(wrapper.text()).toContain('Contacts waiting for support');
   });
 
   it('should emit update:status removing ongoing when toggled off', () => {
@@ -59,5 +59,19 @@ describe('ContactsStatus', () => {
 
     expect(ongoing.props('modelValue')).toBe(true);
     expect(waiting.props('modelValue')).toBe(false);
+  });
+
+  it('should show error helper when no status is selected', () => {
+    wrapper = createWrapper([]);
+
+    expect(wrapper.text()).toContain('At least one status must be selected');
+  });
+
+  it('should not show error helper when at least one status is selected', () => {
+    wrapper = createWrapper(['ongoing']);
+
+    expect(wrapper.text()).not.toContain(
+      'At least one status must be selected',
+    );
   });
 });

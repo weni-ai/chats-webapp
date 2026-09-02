@@ -127,8 +127,6 @@ describe('App.vue', () => {
     window.location = {
       href: 'http://localhost:3000',
     };
-
-    window.parent.postMessage = vi.fn();
   });
 
   afterEach(() => {
