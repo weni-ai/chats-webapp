@@ -7,7 +7,7 @@
       class="desk-copilot-summary__icon"
       icon="bi:stars"
       size="sm"
-      scheme="fg-emphasized"
+      scheme="fg-accent"
     />
 
     <section class="desk-copilot-summary__body">
