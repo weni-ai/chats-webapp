@@ -108,8 +108,8 @@ const contactsOptions = computed(() => {
   };
 
   const roomOptions = agentRooms.value.map((room) => ({
-    label: room.contact?.name || room.uuid,
-    value: room.uuid,
+    label: room.contact.name || room.uuid,
+    value: room.contact.uuid,
     disabled: selectedContacts.value.includes('all'),
   }));
 
