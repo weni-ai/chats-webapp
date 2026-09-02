@@ -821,7 +821,7 @@
     "alert_detached": "Contacto desvinculado",
     "header": {
       "desk_copilot": "Desk Copilot",
-      "information": "Información"
+      "information": "Detalles del chat"
     },
     "linked_contact": "Contacto vinculado al representante {name}",
     "see_contact_history": "Ver historial",

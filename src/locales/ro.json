@@ -793,7 +793,7 @@
     "alert_detached": "Contact neasociat",
     "header": {
       "desk_copilot": "Desk Copilot",
-      "information": "Informații"
+      "information": "Detalii chat"
     },
     "linked_contact": "Contact asociat reprezentantului {name}",
     "see_contact_history": "Vezi istoric",
