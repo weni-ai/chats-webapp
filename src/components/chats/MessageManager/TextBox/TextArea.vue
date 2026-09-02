@@ -87,6 +87,7 @@ const { featureFlags } = storeToRefs(featureFlagStore);
 const messageManager = useMessageManager();
 const {
   inputMessage,
+  inputFocusRequestId,
   isInternalNote,
   mediaUploadFiles,
   isAudioRecorderVisible,
@@ -234,13 +235,17 @@ watch(
   { flush: 'post' },
 );
 
-onMounted(() => {
-  nextTick(adjustTextareaHeight);
-});
-
 const focus = () => {
   textInputRef.value?.focus();
 };
+
+watch(inputFocusRequestId, () => {
+  nextTick(focus);
+});
+
+onMounted(() => {
+  nextTick(adjustTextareaHeight);
+});
 
 defineExpose({
   focus,
