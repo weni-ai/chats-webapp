@@ -2,6 +2,7 @@ import { describe, it, expect, afterEach, beforeEach, vi } from 'vitest';
 import { mount } from '@vue/test-utils';
 import { createPinia, setActivePinia } from 'pinia';
 import AiMessage from '../AiMessage.vue';
+import { useMessageManager } from '@/store/modules/chats/messageManager';
 
 vi.mock('@weni/unnnic-system', () => ({
   UnnnicCallAlert: vi.fn(),
@@ -91,13 +92,9 @@ describe('AssistantAiMessage', () => {
       value: { writeText },
     });
 
+    const messageManager = useMessageManager();
     wrapper = createWrapper();
     await wrapper.find('[data-testid="assistant-ai-copy"]').trigger('click');
-
-    const { useMessageManager } = await import(
-      '@/store/modules/chats/messageManager'
-    );
-    const messageManager = useMessageManager();
 
     expect(writeText).toHaveBeenCalledWith('Suggested reply for the customer');
     expect(messageManager.inputMessage).toBe(
