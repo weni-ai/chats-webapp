@@ -89,7 +89,7 @@ export default {
     await http.delete(`/authorization/sector/${managerUuid}/`);
   },
 
-  async tags(sectorUuid, { limit = 20, next = '' }) {
+  async tags(sectorUuid, { limit = 20, next = '', search = '' } = {}) {
     const endpoint = '/tag/';
     const nextParams = next
       ? getURLParams({ URL: next, endpoint, returnObject: true })
@@ -99,6 +99,7 @@ export default {
       ...nextParams,
       sector: sectorUuid,
       limit: nextParams.limit || limit,
+      ...(search ? { search } : {}),
     };
 
     const response = await http.get(endpoint, {

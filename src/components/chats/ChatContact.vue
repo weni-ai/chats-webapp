@@ -163,7 +163,7 @@
             :scheme="schemePin"
           />
         </button>
-        <UnnnicTooltip
+        <UnnnicToolTip
           v-else-if="newMessageIndicator"
           class="chats-contact__infos__new-message-indicator-tooltip"
           :enabled="!!newMessageIndicatorTooltip"
@@ -174,7 +174,7 @@
             class="chats-contact__infos__new-message-indicator"
             data-testid="new-message-indicator"
           />
-        </UnnnicTooltip>
+        </UnnnicToolTip>
         <p
           v-else-if="(unreadMessages && !selected) || forceShowUnreadMessages"
           class="chats-contact__infos__unread-messages"

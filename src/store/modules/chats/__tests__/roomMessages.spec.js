@@ -3,9 +3,11 @@ import { setActivePinia, createPinia } from 'pinia';
 import { useRoomMessages } from '../roomMessages';
 import { useRooms } from '../rooms';
 import Message from '@/services/api/resources/chats/message';
+import Media from '@/services/api/resources/chats/media';
 import RoomNotes from '@/services/api/resources/chats/roomNotes';
 import { useFeatureFlag } from '@/store/modules/featureFlag';
 import { sendRoomMessageBySocket } from '@/services/api/websocket/messages';
+import { MEDIA_MESSAGES_WITH_TEXT_FEATURE_FLAG } from '@/composables/useMediaMessagesWithTextFeatureFlag';
 
 vi.mock('../rooms');
 vi.mock('@/store/modules/profile', () => ({
@@ -21,6 +23,11 @@ vi.mock('@/services/api/resources/chats/message', () => ({
     getByRoom: vi.fn(),
     sendRoomMessage: vi.fn(),
     sendRoomMedia: vi.fn(),
+  },
+}));
+vi.mock('@/services/api/resources/chats/media', () => ({
+  default: {
+    uploadRoomMedia: vi.fn(),
   },
 }));
 vi.mock('@/services/api/resources/chats/roomNotes', () => ({
@@ -265,6 +272,111 @@ describe('useRoomMessages Store', () => {
         repliedMessageId: undefined,
       }),
     );
+    expect(
+      Message.sendRoomMedia.mock.calls[0][1].createMessage,
+    ).toBeUndefined();
+  });
+
+  it('should upload all medias via v2 and create one message when the media with text flag is enabled', async () => {
+    globalThis.URL.createObjectURL = vi.fn(() => 'blob:preview');
+    useFeatureFlag.mockReturnValue({
+      featureFlags: {
+        active_features: [MEDIA_MESSAGES_WITH_TEXT_FEATURE_FLAG],
+      },
+    });
+    Media.uploadRoomMedia
+      .mockResolvedValueOnce({ uuid: 'uploaded-1' })
+      .mockResolvedValueOnce({ uuid: 'uploaded-2' });
+    Message.sendRoomMessage.mockResolvedValue({
+      uuid: 'msg-1',
+      text: 'caption',
+      media: [{ uuid: 'uploaded-1' }, { uuid: 'uploaded-2' }],
+    });
+    const file1 = new File(['x'], 'image.png', { type: 'image/png' });
+    const file2 = new File(['y'], 'photo.jpg', { type: 'image/jpeg' });
+
+    await roomMessagesStore.sendRoomMedias({
+      files: [file1, file2],
+      text: 'caption',
+      updateLoadingFiles: vi.fn(),
+      repliedMessage: null,
+      roomUuid: 'room-123',
+    });
+
+    expect(Media.uploadRoomMedia).toHaveBeenCalledTimes(2);
+    expect(Message.sendRoomMessage).toHaveBeenCalledWith(
+      'room-123',
+      expect.objectContaining({
+        text: 'caption',
+        media: ['uploaded-1', 'uploaded-2'],
+      }),
+    );
+    expect(Message.sendRoomMedia).not.toHaveBeenCalled();
+  });
+
+  it('should not create a message when a v2 upload fails', async () => {
+    vi.spyOn(console, 'error').mockImplementation(() => {});
+    globalThis.URL.createObjectURL = vi.fn(() => 'blob:preview');
+    useFeatureFlag.mockReturnValue({
+      featureFlags: {
+        active_features: [MEDIA_MESSAGES_WITH_TEXT_FEATURE_FLAG],
+      },
+    });
+    Media.uploadRoomMedia.mockRejectedValue(new Error('upload failed'));
+    const file = new File(['x'], 'image.png', { type: 'image/png' });
+
+    await roomMessagesStore.sendRoomMedias({
+      files: [file],
+      text: 'caption',
+      updateLoadingFiles: vi.fn(),
+      repliedMessage: null,
+      roomUuid: 'room-123',
+    });
+
+    expect(Message.sendRoomMessage).not.toHaveBeenCalled();
+    expect(Message.sendRoomMedia).not.toHaveBeenCalled();
+  });
+
+  it('should create media message via socket when the feature flag is enabled', async () => {
+    globalThis.URL.createObjectURL = vi.fn(() => 'blob:preview');
+    useFeatureFlag.mockReturnValue({
+      featureFlags: { active_features: ['weniChatsSocketMessageSend'] },
+    });
+    crypto.randomUUID.mockReturnValue('req-media-1');
+    sendRoomMessageBySocket.mockResolvedValue({
+      uuid: 'server-media-1',
+      text: '',
+      room: 'room-123',
+    });
+    Message.sendRoomMedia.mockImplementation(async (_roomId, options) => {
+      const messageResponse = await options.createMessage();
+      return {
+        media_response: { content_type: 'image/png' },
+        message_response: { ...messageResponse, media: [] },
+      };
+    });
+    const file = new File(['x'], 'image.png', { type: 'image/png' });
+
+    await roomMessagesStore.sendRoomMedias({
+      files: [file],
+      updateLoadingFiles: vi.fn(),
+      repliedMessage: null,
+      roomUuid: 'room-123',
+    });
+
+    expect(Message.sendRoomMedia).toHaveBeenCalledWith(
+      'room-123',
+      expect.objectContaining({
+        user_email: 'test@test.com',
+        media: file,
+        createMessage: expect.any(Function),
+      }),
+    );
+    expect(sendRoomMessageBySocket).toHaveBeenCalledWith({
+      room: 'room-123',
+      text: '',
+      requestId: 'req-media-1',
+    });
   });
 
   it('should not send room medias when roomUuid is missing', async () => {
@@ -277,6 +389,50 @@ describe('useRoomMessages Store', () => {
     });
 
     expect(Message.sendRoomMedia).not.toHaveBeenCalled();
+  });
+
+  it('should resend room media via socket when the feature flag is enabled', async () => {
+    useFeatureFlag.mockReturnValue({
+      featureFlags: { active_features: ['weniChatsSocketMessageSend'] },
+    });
+    crypto.randomUUID.mockReturnValue('req-resend-media-1');
+    sendRoomMessageBySocket.mockResolvedValue({
+      uuid: 'server-media-2',
+      text: '',
+      room: 'room-123',
+    });
+    Message.sendRoomMedia.mockImplementation(async (_roomId, options) => {
+      await options.createMessage();
+      return { content_type: 'image/png' };
+    });
+
+    const file = new File(['x'], 'image.png', { type: 'image/png' });
+    const message = {
+      uuid: 'old-media',
+      text: '',
+      room: 'room-123',
+      user: { email: 'test@test.com' },
+      media: [{ preview: 'blob:preview', file, content_type: 'image/png' }],
+    };
+
+    await roomMessagesStore.resendRoomMedia({
+      message,
+      media: message.media[0],
+      roomUuid: 'room-123',
+    });
+
+    expect(Message.sendRoomMedia).toHaveBeenCalledWith(
+      'room-123',
+      expect.objectContaining({
+        media: file,
+        createMessage: expect.any(Function),
+      }),
+    );
+    expect(sendRoomMessageBySocket).toHaveBeenCalledWith({
+      room: 'room-123',
+      text: '',
+      requestId: 'req-resend-media-1',
+    });
   });
 
   it('should send a room internal note with roomUuid', async () => {

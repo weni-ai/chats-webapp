@@ -3,10 +3,16 @@
     class="send-flow"
     data-testid="send-flow-container"
   >
-    <section>
+    <section class="send-flow__fields">
       <SelectProjects
         v-if="isProjectPrincipal"
         v-model="projectUuidFlow"
+      />
+      <SelectQueue
+        v-if="enableFilterQueues"
+        v-model="selectedQueue"
+        data-testid="select-queue"
+        :isDisabled="isCheckingTemplate"
       />
       <SelectFlow
         v-model="selectedFlow"
@@ -15,6 +21,7 @@
           isCheckingTemplate || (isProjectPrincipal && !projectUuidFlow)
         "
         :projectUuidFlow="projectUuidFlow"
+        :queue="selectedQueue"
       />
     </section>
 
@@ -53,6 +60,7 @@
 </template>
 
 <script>
+import { mapState } from 'pinia';
 import callUnnnicAlert from '@/utils/callUnnnicAlert';
 
 import ModalProgressBarFalse from '@/components/ModalProgressBarFalse.vue';
@@ -60,8 +68,11 @@ import ModalProgressBarFalse from '@/components/ModalProgressBarFalse.vue';
 import FlowsTriggerAPI from '@/services/api/resources/chats/flowsTrigger';
 
 import SelectFlow from './SelectFlow.vue';
+import SelectQueue from './SelectQueue.vue';
 import SendFlowButton from './SendFlowButton.vue';
 import SelectProjects from './SelectProjects.vue';
+
+import { useFeatureFlag } from '@/store/modules/featureFlag';
 import { hasTemplateVariables } from '@/utils/flowTemplates';
 
 export default {
@@ -69,6 +80,7 @@ export default {
 
   components: {
     SelectFlow,
+    SelectQueue,
     SendFlowButton,
     ModalProgressBarFalse,
     SelectProjects,
@@ -101,6 +113,7 @@ export default {
       showProgressBar: false,
 
       selectedFlow: '',
+      selectedQueue: '',
       projectUuidFlow: '',
 
       isCheckingTemplate: false,
@@ -109,6 +122,14 @@ export default {
   },
 
   computed: {
+    ...mapState(useFeatureFlag, ['featureFlags']),
+
+    enableFilterQueues() {
+      return this.featureFlags?.active_features?.includes(
+        'weniChatsFilterFlowsByQueue',
+      );
+    },
+
     noHasContacts() {
       return !this.selectedContact && this.contacts.length === 0;
     },
@@ -206,6 +227,11 @@ export default {
   flex-direction: column;
 
   height: 100%;
+
+  &__fields {
+    display: grid;
+    gap: $unnnic-space-4;
+  }
 
   &__handlers {
     display: grid;

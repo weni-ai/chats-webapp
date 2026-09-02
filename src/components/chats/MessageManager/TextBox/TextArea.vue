@@ -67,6 +67,7 @@ import MessageManagerTextBoxMedias from './Medias.vue';
 import { useMessageManager } from '@/store/modules/chats/messageManager';
 import { useAiTextImprovement } from '@/store/modules/chats/aiTextImprovement';
 import { useFeatureFlag } from '@/store/modules/featureFlag';
+import { useMediaMessagesWithTextFeatureFlag } from '@/composables/useMediaMessagesWithTextFeatureFlag';
 
 import i18n from '@/plugins/i18n';
 
@@ -102,12 +103,20 @@ const MAX_TEXTAREA_ROWS = 5;
 
 const textInputRef = useTemplateRef<HTMLTextAreaElement>('textInput');
 
+const isMediaMessagesWithTextEnabled = computed(() =>
+  useMediaMessagesWithTextFeatureFlag(featureFlags.value),
+);
+
 const showTextareaInput = computed(() => {
   if (isAudioRecorderVisible.value) {
     return false;
   }
 
-  if (mediaUploadFiles.value.length > 0 && !isInternalNote.value) {
+  if (
+    mediaUploadFiles.value.length > 0 &&
+    !isInternalNote.value &&
+    !isMediaMessagesWithTextEnabled.value
+  ) {
     return false;
   }
 

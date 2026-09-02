@@ -70,7 +70,7 @@ export default {
 
   async sendRoomMessage(
     roomId,
-    { text, user_email, seen, repliedMessageId, aiTextImprovement },
+    { text, user_email, seen, repliedMessageId, aiTextImprovement, media },
   ) {
     const payload = {
       room: roomId,
@@ -82,6 +82,10 @@ export default {
 
     if (aiTextImprovement) {
       payload.ai_text_improvement = aiTextImprovement;
+    }
+
+    if (Array.isArray(media) && media.length) {
+      payload.media = media;
     }
 
     const response = await http.post('/msg/', payload);
@@ -100,31 +104,42 @@ export default {
 
   async sendRoomMedia(
     roomId,
-    { user_email, media, updateLoadingFiles, repliedMessageId },
+    { user_email, media, updateLoadingFiles, repliedMessageId, createMessage },
   ) {
-    const msg = await this.sendRoomMessage(roomId, {
-      text: '',
-      user_email,
-      seen: true,
-    });
-    updateLoadingFiles?.(msg.uuid, 0);
+    const msg = createMessage
+      ? await createMessage()
+      : await this.sendRoomMessage(roomId, {
+          text: '',
+          user_email,
+          seen: true,
+        });
+
+    const messageResponse = {
+      ...msg,
+      media: Array.isArray(msg.media) ? [...msg.media] : [],
+    };
+
+    updateLoadingFiles?.(messageResponse.uuid, 0);
     const response = await http.postForm(
       '/media/',
       {
         content_type: media.type,
-        message: msg.uuid,
+        message: messageResponse.uuid,
         media_file: media,
         replied_message_id: repliedMessageId,
       },
       {
         onUploadProgress: (event) => {
           const progress = event.loaded / event.total;
-          updateLoadingFiles?.(msg.uuid, progress);
+          updateLoadingFiles?.(messageResponse.uuid, progress);
         },
       },
     );
 
-    return { message_response: msg, media_response: response.data };
+    return {
+      message_response: messageResponse,
+      media_response: response.data,
+    };
   },
 
   async sendDiscussionMedia(discussionUuid, { media, updateLoadingFiles }) {

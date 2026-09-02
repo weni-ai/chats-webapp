@@ -40,15 +40,13 @@
         <SelectFilters
           :queues="selectedQueues"
           :representatives="selectedRepresentatives"
+          :enableRepresentativesFilter="enableRepresentativesFilter"
           @update:queues="selectedQueues = $event"
           @update:representatives="selectedRepresentatives = $event"
         />
 
         <UnnnicDisclaimer
-          v-if="
-            (contactsCount > 0 || filtersForm.status.length > 0) &&
-            !isLoadingContactsCount
-          "
+          v-if="hasRequiredFilters && !isLoadingContactsCount"
           :type="contactsCount === 0 ? 'error' : 'informational'"
           :description="
             contactsCount === 0
@@ -176,8 +174,24 @@ const filtersForm = computed(() => ({
 
 const contactsCount = ref<number>(0);
 
+const enableRepresentativesFilter = computed(() => {
+  return selectedContactsStatus.value.includes('ongoing');
+});
+
+const hasRequiredFilters = computed(
+  () =>
+    selectedContactsStatus.value.length > 0 &&
+    selectedQueues.value.length > 0 &&
+    (selectedRepresentatives.value.length > 0 ||
+      !enableRepresentativesFilter.value),
+);
+
 const validForm = computed(() => {
-  return message.value.trim().length > 0 && contactsCount.value > 0;
+  return (
+    hasRequiredFilters.value &&
+    message.value.trim().length > 0 &&
+    contactsCount.value > 0
+  );
 });
 
 const handleShippingHistory = () => {
@@ -234,7 +248,7 @@ const checkIfHasShippingHistory = async () => {
 watchDebounced(
   filtersForm,
   () => {
-    if (filtersForm.value.status.length > 0) {
+    if (hasRequiredFilters.value) {
       getContactsCount();
     } else {
       contactsCount.value = 0;
@@ -282,6 +296,8 @@ onMounted(() => {
     flex-direction: column;
     gap: $unnnic-space-6;
     padding: $unnnic-space-2;
+    min-width: 0;
+    overflow-x: hidden;
     overflow-y: auto;
   }
 
