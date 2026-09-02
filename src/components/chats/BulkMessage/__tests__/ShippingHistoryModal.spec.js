@@ -30,7 +30,38 @@ describe('ShippingHistoryModal', () => {
     status: 'SUCCESS',
   };
 
-  const createWrapper = () => mount(ShippingHistoryModal);
+  const createWrapper = () =>
+    mount(ShippingHistoryModal, {
+      global: {
+        stubs: {
+          Filters: {
+            name: 'ShippingHistoryFilters',
+            props: ['date', 'sender', 'status', 'senderOptions'],
+            template: '<div data-testid="shipping-history-filters" />',
+          },
+          HistoryTable: {
+            name: 'ShippingHistoryTable',
+            props: ['items', 'loading', 'headers'],
+            template: `
+              <div
+                v-if="loading"
+                data-testid="shipping-history-loading"
+              />
+              <div
+                v-else-if="items.length > 0"
+                data-testid="shipping-history-table"
+              />
+              <p
+                v-else
+                data-testid="shipping-history-no-results"
+              >
+                No results
+              </p>
+            `,
+          },
+        },
+      },
+    });
 
   beforeEach(() => {
     vi.clearAllMocks();
@@ -71,6 +102,8 @@ describe('ShippingHistoryModal', () => {
       sender: undefined,
       status: undefined,
     });
+    expect(wrapper.vm.historyItems).toHaveLength(1);
+    expect(wrapper.vm.isTableLoading).toBe(false);
     expect(
       wrapper.find('[data-testid="shipping-history-table"]').exists(),
     ).toBe(true);
