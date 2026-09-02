@@ -1293,7 +1293,7 @@
         "switch_inactive": "Bloquear transferencias de chats a representantes offline"
       },
       "hide_desk_copilot_tab": {
-        "hint": "Si esta opción está activa, los representantes solo ven la pestaña de información en el panel del contacto",
+        "hint": "Si esta opción está activa, los representantes solo ven la pestaña de Detalles del chat en el panel lateral.",
         "switch_label": "Ocultar pestaña Desk Copilot"
       },
       "hide_moderators_from_transfer": {

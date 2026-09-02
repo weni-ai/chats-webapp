@@ -1293,7 +1293,7 @@
         "switch_inactive": "Block chat transfers to offline representatives"
       },
       "hide_desk_copilot_tab": {
-        "hint": "When enabled, representatives only see the Information tab in the contact panel",
+        "hint": "When enabled, representatives only see the Chat details tab in the side panel.",
         "switch_label": "Hide Desk Copilot tab"
       },
       "hide_moderators_from_transfer": {
