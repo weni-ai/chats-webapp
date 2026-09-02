@@ -869,7 +869,8 @@
           "speaking": "Asistentul vorbește"
         }
       },
-      "copy_summary": "Copiază rezumatul",
+      "copied_to_message_input": "Text copiat în câmpul mesajului",
+      "copy_summary": "Copiază în câmpul mesajului",
       "disclaimer": {
         "description": "Desk Copilot te poate ajuta cu:",
         "enable_button": "Activează Desk Copilot",
