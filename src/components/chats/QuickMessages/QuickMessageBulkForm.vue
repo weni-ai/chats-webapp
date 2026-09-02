@@ -134,7 +134,7 @@ const selectedContactsCount = computed(() => {
 });
 
 const canLoadMoreContacts = () =>
-  hasNextRooms.value.ongoing && !isLoadingContacts.value;
+  Boolean(hasNextRooms.value.ongoing) && !isLoadingContacts.value;
 
 const canSend = computed(() => {
   return (

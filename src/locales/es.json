@@ -1098,7 +1098,6 @@
     "delete_description": "¿Realmente deseas eliminar el mensaje rápido {shortcut}?",
     "shortcut_tooltip": "Escribe /{shortcut} para usarlo",
     "new": "Nuevo mensaje rápido",
-    "description_new": "Mensaje rápido en el departamento {sector}",
     "add": "Agregar mensaje rápido",
     "edit": "Editar mensaje rápido",
     "available_shortcuts": "Atajos disponibles",
