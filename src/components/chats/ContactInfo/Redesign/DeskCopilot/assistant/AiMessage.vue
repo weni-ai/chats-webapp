@@ -137,9 +137,8 @@
 
 <script setup lang="ts">
 import { computed, ref } from 'vue';
-import { UnnnicCallAlert } from '@weni/unnnic-system';
-import i18n from '@/plugins/i18n';
 import { useStreamingBuffer } from '@/composables/assistant/useStreamingBuffer';
+import { copyTextToContactInput } from '@/composables/assistant/useCopyToContactInput';
 import type {
   AssistantMessageType,
   ProductCarouselItem,
@@ -279,27 +278,7 @@ function handleRemoveSuggestion(product: ProductCarouselItem) {
 }
 
 async function handleCopy() {
-  if (!suggestionText.value || !navigator.clipboard) {
-    return;
-  }
-
-  try {
-    await navigator.clipboard.writeText(suggestionText.value);
-    UnnnicCallAlert({
-      props: {
-        text: i18n.global.t('contact_info.value_copied'),
-        type: 'success',
-      },
-    });
-  } catch (error) {
-    console.error('Failed to copy suggestion:', error);
-    UnnnicCallAlert({
-      props: {
-        text: i18n.global.t('contact_info.error_copying_value'),
-        type: 'error',
-      },
-    });
-  }
+  await copyTextToContactInput(suggestionText.value);
 }
 </script>
 
