@@ -897,7 +897,8 @@
           "speaking": "Asistente hablando"
         }
       },
-      "copy_summary": "Copiar resumen",
+      "copied_to_message_input": "Texto copiado al campo de mensaje",
+      "copy_summary": "Copiar al campo de mensaje",
       "disclaimer": {
         "description": "Desk Copilot puede ayudarte con:",
         "enable_button": "Activar Desk Copilot",

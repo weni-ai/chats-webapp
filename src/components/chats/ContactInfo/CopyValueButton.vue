@@ -21,6 +21,7 @@
 <script setup>
 import { UnnnicCallAlert } from '@weni/unnnic-system';
 import i18n from '@/plugins/i18n';
+import { copyTextToContactInput } from '@/composables/assistant/useCopyToContactInput';
 
 defineOptions({
   name: 'CopyValueButton',
@@ -39,6 +40,10 @@ const props = defineProps({
     type: String,
     default: undefined,
   },
+  fillChatInput: {
+    type: Boolean,
+    default: false,
+  },
 });
 
 const fireErrorToast = () => {
@@ -50,8 +55,13 @@ const fireErrorToast = () => {
   });
 };
 
-const copyValue = () => {
+const copyValue = async () => {
   if (!props.value) {
+    return;
+  }
+
+  if (props.fillChatInput) {
+    await copyTextToContactInput(props.value);
     return;
   }
 
@@ -63,7 +73,6 @@ const copyValue = () => {
 
   navigator.clipboard
     .writeText(props.value)
-
     .then(() => {
       UnnnicCallAlert({
         props: {

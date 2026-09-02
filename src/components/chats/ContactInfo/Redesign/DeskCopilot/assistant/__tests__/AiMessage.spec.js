@@ -1,6 +1,8 @@
-import { describe, it, expect, afterEach, vi } from 'vitest';
+import { describe, it, expect, afterEach, beforeEach, vi } from 'vitest';
 import { mount } from '@vue/test-utils';
+import { createPinia, setActivePinia } from 'pinia';
 import AiMessage from '../AiMessage.vue';
+import { useMessageManager } from '@/store/modules/chats/messageManager';
 
 vi.mock('@weni/unnnic-system', () => ({
   UnnnicCallAlert: vi.fn(),
@@ -38,6 +40,10 @@ const createWrapper = (props = {}) =>
 
 describe('AssistantAiMessage', () => {
   let wrapper;
+
+  beforeEach(() => {
+    setActivePinia(createPinia());
+  });
 
   afterEach(() => {
     wrapper?.unmount();
@@ -77,6 +83,23 @@ describe('AssistantAiMessage', () => {
     expect(wrapper.emitted('send')?.[0]).toEqual([
       'Suggested reply for the customer',
     ]);
+  });
+
+  it('copies the suggestion into the contact chat input', async () => {
+    const writeText = vi.fn().mockResolvedValue(undefined);
+    Object.defineProperty(navigator, 'clipboard', {
+      configurable: true,
+      value: { writeText },
+    });
+
+    const messageManager = useMessageManager();
+    wrapper = createWrapper();
+    await wrapper.find('[data-testid="assistant-ai-copy"]').trigger('click');
+
+    expect(writeText).toHaveBeenCalledWith('Suggested reply for the customer');
+    expect(messageManager.inputMessage).toBe(
+      'Suggested reply for the customer',
+    );
   });
 
   it('shows a caret inside the suggestion box and hides actions while streaming', () => {
