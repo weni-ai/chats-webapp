@@ -5,7 +5,8 @@ export type AssistantMessageType =
   | 'audio'
   | 'image'
   | 'video'
-  | 'file';
+  | 'file'
+  | 'order';
 
 export type ProductCarouselItem = {
   product_retailer_id: string;
