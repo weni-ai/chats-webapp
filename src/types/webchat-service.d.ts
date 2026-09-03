@@ -103,6 +103,7 @@ declare module '@weni/webchat-service' {
     VIDEO: string;
     AUDIO: string;
     FILE: string;
+    ORDER: string;
     [key: string]: string;
   };
 
