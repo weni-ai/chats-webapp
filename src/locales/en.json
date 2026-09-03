@@ -1207,9 +1207,9 @@
       },
       "disconnect_modal": {
         "confirm": "Disconnect",
-        "description": "This project will lose access to Desk Copilot feature until a Copilot Project is reconnected. The Copilot Project itself and its other connections will not be affected.",
+        "description": "This project will lose access to the Desk Copilot feature until the Copilot Project is reconnected. The Copilot Project itself and its other connections won't be affected.",
         "error": "Unable to disconnect the Copilot Project.",
-        "success": "The Copilot Project has been disconnected!",
+        "success": "Copilot Project disconnected successfully",
         "title": "Disconnect Copilot Project"
       },
       "empty_state": {
