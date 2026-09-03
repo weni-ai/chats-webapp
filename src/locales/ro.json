@@ -1193,6 +1193,7 @@
       },
       "empty_state": {
         "create_button": "Creează proiect Copilot",
+        "create_disabled_tooltip": "Nu ai permisiunea de a crea un proiect Copilot",
         "description": "Pentru a activa Desk Copilot, conectează acest proiect la un proiect Copilot unde sunt gestionați agenții tăi IA",
         "select_button": "Selectează proiect Copilot",
         "title": "Niciun proiect Copilot conectat"
