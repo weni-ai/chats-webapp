@@ -1214,6 +1214,7 @@
       },
       "empty_state": {
         "create_button": "Create Copilot Project",
+        "create_disabled_tooltip": "You don't have permission to create a Copilot Project",
         "description": "To enable Desk Copilot, connect this project to a Copilot Project where your AI Agents are managed",
         "select_button": "Select Copilot Project",
         "title": "No Copilot Project connected"

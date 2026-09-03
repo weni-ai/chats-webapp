@@ -8,12 +8,18 @@ import CopilotProjectService, {
 
 const linkedProject = ref<CopilotProject | null>(null);
 const isLoading = ref(false);
+const canCreateProject = ref(false);
+const isLoadingCanCreate = ref(false);
 let fetchPromise: Promise<void> | null = null;
+let canCreatePromise: Promise<void> | null = null;
 
 export function resetCopilotProjectState() {
   linkedProject.value = null;
   isLoading.value = false;
+  canCreateProject.value = false;
+  isLoadingCanCreate.value = false;
   fetchPromise = null;
+  canCreatePromise = null;
 }
 
 export function useCopilotProject() {
@@ -91,15 +97,49 @@ export function useCopilotProject() {
     linkedProject.value = null;
   }
 
+  async function fetchCanCreate(force = false) {
+    const projectUuid = project.value?.uuid;
+
+    if (!projectUuid) {
+      canCreateProject.value = false;
+      return;
+    }
+
+    if (canCreatePromise !== null && !force) {
+      return canCreatePromise;
+    }
+
+    isLoadingCanCreate.value = true;
+    canCreatePromise = (async () => {
+      try {
+        canCreateProject.value =
+          await CopilotProjectService.canCreate(projectUuid);
+      } catch {
+        canCreateProject.value = false;
+      } finally {
+        isLoadingCanCreate.value = false;
+      }
+    })();
+
+    return canCreatePromise;
+  }
+
   const isLinked = computed(() => !!linkedProject.value);
   const showNewBadge = computed(() => !linkedProject.value);
+  const isCreateDisabled = computed(
+    () => isLoadingCanCreate.value || !canCreateProject.value,
+  );
 
   return {
     linkedProject,
     isLoading,
+    canCreateProject,
+    isLoadingCanCreate,
+    isCreateDisabled,
     isLinked,
     showNewBadge,
     fetchLinkedProject,
+    fetchCanCreate,
     setLinkedProject,
     createProject,
     changeLinkedProject,
