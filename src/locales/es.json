@@ -1207,7 +1207,7 @@
       },
       "disconnect_modal": {
         "confirm": "Desconectar",
-        "description": "Este proyecto perderá el acceso a Desk Copilot hasta que se reconecte un proyecto Copilot. El proyecto Copilot y las demás conexiones no se verán afectados.",
+        "description": "Este proyecto perderá el acceso a la funcionalidad Desk Copilot hasta que se reconecte el proyecto Copilot. El propio proyecto Copilot y sus demás conexiones no se verán afectados.",
         "error": "No se pudo desconectar el proyecto Copilot",
         "success": "Proyecto Copilot desconectado con éxito",
         "title": "Desconectar proyecto Copilot"

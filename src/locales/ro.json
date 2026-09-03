@@ -1187,7 +1187,7 @@
       "disconnect_modal": {
         "confirm": "Deconectează",
         "description": "Acest proiect va pierde accesul la Desk Copilot până când un proiect Copilot este reconectat. Proiectul Copilot și celelalte conexiuni nu vor fi afectate.",
-        "error": "Nu s-a putut deconecta proiectul Copilot",
+        "error": "Nu s-a putut deconecta proiectul Copilot.",
         "success": "Proiect Copilot deconectat cu succes",
         "title": "Deconectează proiectul Copilot"
       },
