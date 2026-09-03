@@ -1215,7 +1215,7 @@
       "empty_state": {
         "create_button": "Create Copilot Project",
         "description": "To activate Desk Copilot, connect this project to a Copilot Project where your AI agents are managed",
-        "select_button": "Select Copilot Project",
+        "select_button": "Select Copilot project",
         "title": "No Copilot Project connected"
       },
       "enable_title": "Activate Desk Copilot",
@@ -1250,14 +1250,14 @@
       "picker_modal": {
         "assigned_agents_tag": "{count, plural, one {{count} assigned agent} other {{count} assigned agents}}",
         "change_button": "Change",
-        "change_error": "Unable to change the Copilot Project.",
-        "change_success": "The Copilot Project has been changed!",
-        "change_title": "Change Copilot Project",
+        "change_error": "Couldn't change Copilot project",
+        "change_success": "Copilot project changed successfully",
+        "change_title": "Change Copilot project",
         "connect_button": "Connect",
-        "connect_error": "Error connecting to copilot project.",
-        "connect_success": "Copilot project connected!",
+        "connect_error": "Error connecting to Copilot project",
+        "connect_success": "Copilot project connected successfully",
         "search_placeholder": "Search by name",
-        "select_title": "Select Existing Copilot Project"
+        "select_title": "Select existing Copilot project"
       }
     },
     "changes_saved": "Changes saved successfully",

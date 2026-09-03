@@ -1254,7 +1254,7 @@
         "change_success": "Proyecto Copilot cambiado con éxito",
         "change_title": "Cambiar proyecto Copilot",
         "connect_button": "Conectar",
-        "connect_error": "No se pudo conectar al proyecto Copilot",
+        "connect_error": "Error al conectar con el proyecto Copilot",
         "connect_success": "Proyecto Copilot conectado con éxito",
         "search_placeholder": "Buscar por nombre",
         "select_title": "Seleccionar proyecto Copilot existente"

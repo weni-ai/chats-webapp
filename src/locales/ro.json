@@ -1229,12 +1229,12 @@
       "picker_modal": {
         "assigned_agents_tag": "{count, plural, one {{count} agent atribuit} other {{count} agenți atribuiți}}",
         "change_button": "Schimbă",
-        "change_error": "Nu s-a putut schimba proiectul Copilot",
-        "change_success": "Proiect Copilot schimbat cu succes",
+        "change_error": "Nu s-a putut schimba proiectul Copilot.",
+        "change_success": "Proiectul Copilot a fost schimbat cu succes",
         "change_title": "Schimbă proiectul Copilot",
         "connect_button": "Conectează",
         "connect_error": "Nu s-a putut conecta la proiectul Copilot",
-        "connect_success": "Proiect Copilot conectat cu succes",
+        "connect_success": "Proiectul Copilot a fost conectat cu succes",
         "search_placeholder": "Caută după nume",
         "select_title": "Selectează proiectul Copilot existent"
       }
