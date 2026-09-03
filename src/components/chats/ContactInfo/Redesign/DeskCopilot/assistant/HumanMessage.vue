@@ -21,14 +21,16 @@
     <p
       v-else
       class="human-message__text"
+      data-testid="assistant-human-message-text"
     >
-      {{ text }}
+      {{ displayText }}
     </p>
   </section>
 </template>
 
 <script setup lang="ts">
 import { computed } from 'vue';
+import i18n from '@/plugins/i18n';
 import type { AssistantMessageType } from '@/services/assistant/types';
 import AudioMessage from './media/AudioMessage.vue';
 import ImageMessage from './media/ImageMessage.vue';
@@ -52,7 +54,19 @@ const props = withDefaults(
   },
 );
 
-const isMedia = computed(() => props.type !== 'text');
+const isMedia = computed(() =>
+  ['audio', 'image', 'video', 'file'].includes(props.type),
+);
+
+const displayText = computed(() => {
+  if (props.type === 'order') {
+    return i18n.global.t(
+      'contact_info.desk_copilot.assistant.cart.place_order_action',
+    );
+  }
+
+  return props.text;
+});
 </script>
 
 <style lang="scss" scoped>
