@@ -34,6 +34,8 @@ function normalizeMessageType(type?: string): AssistantMessageType {
     case 'file':
     case 'document':
       return type === 'document' ? 'file' : type;
+    case 'order':
+      return 'order';
     default:
       return 'text';
   }
