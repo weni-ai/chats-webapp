@@ -8,8 +8,8 @@
       data-testid="select-queue-input"
       :options="queues"
       :disabled="isDisabled || isLoading"
-      :label="$t('select_queue')"
-      :placeholder="$t('search_or_select')"
+      :label="$t('filter_by_queue')"
+      :placeholder="$t('type_to_search_or_select')"
       returnObject
       clearable
       enableSearch

@@ -66,6 +66,7 @@
             :modelValue="queue"
             :agentsOptions="agentsOptions"
             :canLoadMoreCurrentAgents="!isLoadingCurrentAgents"
+            :projectToListFlows="projectToListFlows"
             @load-more-current-agents="listQueueAgents"
             @update:model-value="queues[index] = $event"
           />
@@ -101,6 +102,8 @@ import { useConfig } from '@/store/modules/config';
 import { cloneDeep } from 'lodash';
 import { removeDuplicatedItems } from '@/utils/array';
 
+import { getProject } from '@/utils/config';
+
 export default {
   name: 'FormQueue',
   components: { QueueInputsForm, FillDefaultOption },
@@ -124,6 +127,7 @@ export default {
 
   data() {
     return {
+      getProject,
       agentsPage: 0,
       agentsLimitPerPage: 50,
       editingAutomaticMessage: false,
@@ -163,6 +167,12 @@ export default {
       set(value) {
         this.$emit('update:modelValue', value);
       },
+    },
+    projectToListFlows() {
+      if (this.enableGroupsMode) {
+        return this.sector?.config?.secondary_project;
+      }
+      return getProject();
     },
   },
 

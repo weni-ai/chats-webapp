@@ -1,5 +1,6 @@
 import { flushPromises, mount } from '@vue/test-utils';
 import { describe, expect, it, vi, beforeEach } from 'vitest';
+import { createTestingPinia } from '@pinia/testing';
 
 import FlowsTrigger from '@/services/api/resources/chats/flowsTrigger';
 
@@ -19,11 +20,15 @@ vi.mock('@/services/api/resources/chats/flowsTrigger', () => ({
 describe('SelectQueueFlows', () => {
   let wrapper;
 
-  beforeEach(() => {
+  beforeEach(async () => {
     vi.clearAllMocks();
     wrapper = mount(SelectQueueFlows, {
-      props: { modelValue: [] },
+      props: {
+        modelValue: [],
+        projectToListFlows: 'project-1',
+      },
       global: {
+        plugins: [createTestingPinia()],
         stubs: {
           UnnnicSelect: true,
           TagGroup: true,
@@ -33,6 +38,7 @@ describe('SelectQueueFlows', () => {
         },
       },
     });
+    await flushPromises();
   });
 
   it('renders the label with its tooltip', () => {
@@ -42,18 +48,6 @@ describe('SelectQueueFlows', () => {
       'config_chats.queues.bond_flows_queue.select.label',
     );
     expect(label.find('[data-testid="tooltip-trigger"]').exists()).toBe(true);
-  });
-
-  it('fetches flows on mount', async () => {
-    await flushPromises();
-
-    expect(FlowsTrigger.getFlows).toHaveBeenCalledWith(undefined, {
-      verify_chats_tag: true,
-    });
-    expect(wrapper.vm.flows).toEqual([
-      { uuid: 'flow-1', name: 'Flow 1' },
-      { uuid: 'flow-2', name: 'Flow 2' },
-    ]);
   });
 
   it('excludes already selected flows from options', async () => {

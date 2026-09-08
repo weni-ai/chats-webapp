@@ -193,6 +193,8 @@
   "audio_recorder": {
     "discard_button": "Elimină"
   },
+  "type_to_search_or_select": "Digitează pentru căutare sau selecție",
+  "filter_by_queue": "Filtră după coadă",
   "attachment": "Atașează",
   "internal_note": "Notă internă",
   "internal_note_with_attachment_tooltip": "Notă internă cu atașament",
