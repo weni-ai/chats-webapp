@@ -4,7 +4,7 @@
     data-testid="assistant-ai-message"
     :class="{
       'ai-message--streaming': isStreamingOrBuffering,
-      'ai-message--with-carousel': hasProductCarousel,
+      'ai-message--with-carousel': hasProductCatalog,
     }"
   >
     <UnnnicIcon
@@ -40,10 +40,10 @@
         </p>
 
         <section
-          v-if="suggestionText || isStreamingOrBuffering || hasProductCarousel"
+          v-if="suggestionText || isStreamingOrBuffering || hasProductCatalog"
           class="ai-message__suggestion"
           :class="{
-            'ai-message__suggestion--with-carousel': hasProductCarousel,
+            'ai-message__suggestion--with-carousel': hasProductCatalog,
           }"
           data-testid="assistant-ai-suggestion"
         >
@@ -70,6 +70,19 @@
             @increment="emit('incrementCartItem', $event)"
             @decrement="emit('decrementCartItem', $event)"
           />
+
+          <ProductListSections
+            v-else-if="hasProductList && !isStreamingOrBuffering"
+            :sections="productList?.sections || []"
+            :header="productList?.header"
+            :getQuantity="getQuantity"
+            :dismissedIds="dismissedIds"
+            data-testid="assistant-ai-product-list"
+            @add="emit('addToCart', $event)"
+            @remove="handleRemoveSuggestion"
+            @increment="emit('incrementCartItem', $event)"
+            @decrement="emit('decrementCartItem', $event)"
+          />
         </section>
 
         <section
@@ -79,7 +92,7 @@
         >
           <section class="ai-message__actions-left">
             <UnnnicButton
-              v-if="!hasProductCarousel"
+              v-if="!hasProductCatalog"
               type="tertiary"
               size="small"
               data-testid="assistant-ai-copy"
@@ -142,11 +155,13 @@ import { copyTextToContactInput } from '@/composables/assistant/useCopyToContact
 import type {
   AssistantMessageType,
   ProductCarouselItem,
+  ProductListSection,
 } from '@/services/assistant/types';
 import AudioMessage from './media/AudioMessage.vue';
 import ImageMessage from './media/ImageMessage.vue';
 import FileMessage from './media/FileMessage.vue';
 import ProductCarousel from './ProductCarousel.vue';
+import ProductListSections from './ProductListSections.vue';
 
 defineOptions({
   name: 'AssistantAiMessage',
@@ -164,6 +179,11 @@ const props = withDefaults(
       text: string;
       items: ProductCarouselItem[];
     };
+    productList?: {
+      text: string;
+      header?: string;
+      sections: ProductListSection[];
+    };
     getQuantity?: (productId: string) => number;
   }>(),
   {
@@ -173,6 +193,7 @@ const props = withDefaults(
     media: undefined,
     filename: undefined,
     productCarousel: undefined,
+    productList: undefined,
     getQuantity: () => 0,
   },
 );
@@ -192,11 +213,25 @@ const isStreaming = computed(() => props.status === 'streaming');
 const hasProductCarousel = computed(
   () => (props.productCarousel?.items?.length || 0) > 0,
 );
+const hasProductList = computed(
+  () => (props.productList?.sections?.length || 0) > 0,
+);
+const hasProductCatalog = computed(
+  () => hasProductCarousel.value || hasProductList.value,
+);
 
 const sourceText = computed(() => {
   if (hasProductCarousel.value) {
     return (
       props.productCarousel?.text?.trim() ||
+      props.suggestion?.trim() ||
+      props.text.trim()
+    );
+  }
+
+  if (hasProductList.value) {
+    return (
+      props.productList?.text?.trim() ||
       props.suggestion?.trim() ||
       props.text.trim()
     );
@@ -220,7 +255,7 @@ const isStreamingOrBuffering = computed(
 );
 
 const leadingText = computed(() => {
-  if (isStreamingOrBuffering.value || hasProductCarousel.value) {
+  if (isStreamingOrBuffering.value || hasProductCatalog.value) {
     return '';
   }
 
@@ -232,7 +267,7 @@ const leadingText = computed(() => {
 });
 
 const suggestionText = computed(() => {
-  if (hasProductCarousel.value && !isStreamingOrBuffering.value) {
+  if (hasProductCatalog.value && !isStreamingOrBuffering.value) {
     return sourceText.value;
   }
 
@@ -250,7 +285,7 @@ const suggestionText = computed(() => {
 const displayedSuggestionText = computed(() => suggestionText.value);
 
 const sendText = computed(() => {
-  if (hasProductCarousel.value) {
+  if (hasProductCatalog.value) {
     return sourceText.value;
   }
 
@@ -262,7 +297,7 @@ const showActions = computed(() => {
     return false;
   }
 
-  if (hasProductCarousel.value) {
+  if (hasProductCatalog.value) {
     return !!sendText.value;
   }
 
