@@ -33,7 +33,7 @@
       <UnnnicButton
         class="quick-message-bulk-form__footer-button"
         data-testid="quick-message-bulk-cancel-button"
-        :text="$t('cancel')"
+        :text="$t('back')"
         type="tertiary"
         :disabled="isSending"
         @click="emit('close')"
