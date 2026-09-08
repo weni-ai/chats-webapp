@@ -39,6 +39,7 @@
         :media="message.media"
         :filename="message.filename"
         :productCarousel="message.productCarousel"
+        :productList="message.productList"
         :getQuantity="getQuantity"
         @send="emit('send', $event)"
         @word-revealed="emit('wordRevealed')"
