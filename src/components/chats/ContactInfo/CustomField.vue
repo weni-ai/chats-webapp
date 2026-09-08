@@ -5,6 +5,7 @@
       <component
         :is="isEditable && isCurrent ? 'label' : 'h3'"
         class="title"
+        :for="isEditable && isCurrent ? textareaId : undefined"
         tabindex="0"
       >
         {{ title }}:
@@ -34,15 +35,16 @@
           </h4>
         </UnnnicToolTip>
 
-        <input
+        <textarea
           v-show="showInput"
-          :ref="'custom_field_input_' + title"
-          type="text"
+          :id="textareaId"
+          ref="textarea"
+          rows="1"
           :value="value"
           maxlength="500"
           @input="updateValue"
           @blur="saveValue"
-          @keypress.enter="saveValue"
+          @keydown.enter.prevent="saveValue"
         />
       </section>
     </section>
@@ -106,17 +108,20 @@ export default {
     showInput() {
       return this.isEditable && this.isCurrent;
     },
+    textareaId() {
+      return `custom-field-${String(this.title).replace(/[^\w-]+/g, '-')}`;
+    },
   },
 
   watch: {
     isCurrent(isCurrent) {
       if (isCurrent) {
         this.$nextTick(() => {
-          const inputRef = `custom_field_input_${this.title}`;
-          const input = this.$refs[inputRef];
+          const textarea = this.$refs.textarea;
 
-          if (input) {
-            input.focus();
+          if (textarea) {
+            textarea.focus();
+            this.adjustTextareaHeight();
           }
         });
       }
@@ -137,6 +142,14 @@ export default {
         key: this.title,
         value: event.target.value || '',
       });
+      this.adjustTextareaHeight();
+    },
+    adjustTextareaHeight() {
+      const textarea = this.$refs.textarea;
+      if (!textarea) return;
+
+      textarea.style.height = 'auto';
+      textarea.style.height = `${textarea.scrollHeight}px`;
     },
     updateCurrentCustomField(customField) {
       this.$emit('update-current-custom-field', customField);
@@ -151,42 +164,48 @@ export default {
 <style lang="scss" scoped>
 .custom-field {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   gap: $unnnic-space-2;
+  width: 100%;
+  min-width: 0;
 
   &__content {
     display: flex;
-    align-items: center;
+    align-items: flex-start;
+    flex-wrap: wrap;
     gap: $unnnic-space-1;
+    flex: 1;
+    min-width: 0;
   }
 
   .title {
+    flex: 0 1 auto;
+    max-width: 100%;
     font: $unnnic-font-emphasis;
     color: $unnnic-color-fg-base;
     font-weight: $unnnic-font-weight-bold;
+    overflow-wrap: anywhere;
   }
 
   .description {
+    flex: 1 1 12ch;
+    min-width: 0;
+    max-width: 100%;
     font: $unnnic-font-body;
     color: $unnnic-color-fg-base;
-
     cursor: default;
-  }
-
-  .description {
     border: 1px solid transparent;
     border-radius: $unnnic-border-radius-sm;
-
     display: flex;
+    overflow-wrap: anywhere;
 
-    max-width: 100%;
-
-    overflow: hidden;
-
-    > .tooltip {
-      display: flex;
-
+    > .tooltip,
+    :deep(.unnnic-tooltip) {
+      display: block;
+      min-width: 0;
+      max-width: 100%;
       width: 100%;
+      white-space: normal;
     }
 
     &.editable {
@@ -199,25 +218,40 @@ export default {
 
     &.current {
       width: 100%;
+      flex-basis: 100%;
       border: 1px solid $unnnic-color-border-soft;
 
-      input {
+      textarea {
+        display: block;
         width: 100%;
+        max-height: ($unnnic-font-size-body-gt + $unnnic-line-height-md) * 8;
         border: none;
         border-radius: $unnnic-border-radius-sm;
         padding: 0;
         outline: none;
+        resize: none;
+        overflow-x: hidden;
+        overflow-y: auto;
+        font: $unnnic-font-body;
         font-size: $unnnic-font-size-body-gt;
         color: $unnnic-color-fg-base;
+        white-space: pre-wrap;
+        overflow-wrap: anywhere;
       }
     }
 
+    a,
     h4 {
       width: 100%;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
+      max-width: 100%;
+      min-width: 0;
+      white-space: pre-wrap;
+      overflow-wrap: anywhere;
     }
+  }
+
+  :deep(.copy-value-button) {
+    flex-shrink: 0;
   }
 }
 </style>
