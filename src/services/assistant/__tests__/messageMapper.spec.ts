@@ -141,4 +141,29 @@ describe('mapServiceMessage', () => {
 
     expect(mapped.productCarousel).toBeUndefined();
   });
+
+  it('maps order messages to the order type', () => {
+    const mapped = mapServiceMessage(
+      buildMessage({
+        type: 'order',
+        text: '',
+        direction: 'outgoing',
+        order: {
+          product_items: [
+            {
+              product_retailer_id: 'sku-1',
+              name: 'Tile',
+              price: 27,
+              image: 'https://example.com/tile.png',
+              quantity: 2,
+            },
+          ],
+        },
+      }),
+    );
+
+    expect(mapped.direction).toBe('human');
+    expect(mapped.type).toBe('order');
+    expect(mapped.text).toBe('');
+  });
 });
