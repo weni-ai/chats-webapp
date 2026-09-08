@@ -78,14 +78,15 @@ describe('buildRoomContext', () => {
     expect(result.length).toBeLessThanOrEqual(25);
   });
 
-  it('truncates a single oversized line to maxChars', () => {
+  it('truncates a single oversized line while preserving the role label', () => {
     const longText = 'x'.repeat(100);
     const result = buildRoomContext(
       [msg({ text: longText, contact: { name: 'Cliente' } })],
       { maxChars: 30 },
     );
 
+    expect(result.startsWith('Contact: ')).toBe(true);
     expect(result.length).toBe(30);
-    expect(result.endsWith('x'.repeat(30))).toBe(true);
+    expect(result).toBe(`Contact: ${'x'.repeat(21)}`);
   });
 });

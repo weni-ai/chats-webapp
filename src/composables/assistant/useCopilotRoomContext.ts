@@ -1,11 +1,4 @@
-import {
-  getCurrentInstance,
-  getCurrentScope,
-  onScopeDispose,
-  onUnmounted,
-  watch,
-  type Ref,
-} from 'vue';
+import { getCurrentScope, onScopeDispose, watch, type Ref } from 'vue';
 
 import type { CopilotConnection } from '@/services/api/resources/chats/copilot';
 import { copilotSocketManager } from '@/services/copilot/copilotSocketManager';
@@ -41,17 +34,6 @@ function createDebouncedFn(fn: () => void, waitMs: number) {
   };
 
   return { run, cancel };
-}
-
-function onTeardown(callback: () => void) {
-  if (getCurrentInstance()) {
-    onUnmounted(callback);
-    return;
-  }
-
-  if (getCurrentScope()) {
-    onScopeDispose(callback);
-  }
 }
 
 export function useCopilotRoomContext(
@@ -101,7 +83,9 @@ export function useCopilotRoomContext(
     { deep: true },
   );
 
-  onTeardown(() => {
-    debouncedSend.cancel();
-  });
+  if (getCurrentScope()) {
+    onScopeDispose(() => {
+      debouncedSend.cancel();
+    });
+  }
 }

@@ -92,7 +92,18 @@ export function buildRoomContext(
   }
 
   if (result.length > maxChars) {
-    return result.slice(-maxChars);
+    const colonIndex = result.indexOf(': ');
+    if (colonIndex !== -1) {
+      const prefix = result.slice(0, colonIndex + 2);
+      if (prefix.length >= maxChars) {
+        return result.slice(0, maxChars);
+      }
+
+      const textBudget = maxChars - prefix.length;
+      return prefix + result.slice(prefix.length, prefix.length + textBudget);
+    }
+
+    return result.slice(0, maxChars);
   }
 
   return result;
