@@ -170,4 +170,16 @@ export default {
 
     await http.delete(`/project/copilot/remove/${copilotProjectUuid}`);
   },
+
+  async canCreate(projectUuid: string): Promise<boolean> {
+    if (IS_MOCKED) {
+      return true;
+    }
+
+    const response = await http.get<{ can_create?: boolean }>(
+      `/project/copilot/can_create/${projectUuid}`,
+    );
+
+    return response.data?.can_create === true;
+  },
 };

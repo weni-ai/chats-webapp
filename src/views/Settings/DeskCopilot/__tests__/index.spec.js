@@ -13,6 +13,7 @@ import CopilotProjectService from '@/services/api/resources/chats/copilotProject
 vi.mock('@/services/api/resources/chats/copilotProject', () => ({
   default: {
     getLinkedProject: vi.fn().mockResolvedValue(null),
+    canCreate: vi.fn().mockResolvedValue(true),
     create: vi.fn(),
     update: vi.fn(),
     listExistingProjects: vi.fn().mockResolvedValue([]),
@@ -55,7 +56,8 @@ const createWrapper = () =>
         },
         EmptyState: {
           template:
-            '<section data-testid="desk-copilot-empty-state" @click="$emit(\'open-create-modal\')" @dblclick="$emit(\'open-select-modal\')" />',
+            '<section data-testid="desk-copilot-empty-state" :data-create-disabled="String(isCreateDisabled)" @click="$emit(\'open-create-modal\')" @dblclick="$emit(\'open-select-modal\')" />',
+          props: ['isCreateDisabled'],
         },
         ConnectedProjectCard: {
           template:
@@ -184,5 +186,23 @@ describe('DeskCopilotSettings', () => {
     expect(
       wrapper.find('[data-testid="desk-copilot-connected-card"]').exists(),
     ).toBe(false);
+  });
+
+  it('calls canCreate when the settings tab mounts', async () => {
+    CopilotProjectService.getLinkedProject.mockResolvedValue(null);
+    CopilotProjectService.canCreate.mockResolvedValue(false);
+    const wrapper = createWrapper();
+    await wrapper.vm.$nextTick();
+    await Promise.resolve();
+    await wrapper.vm.$nextTick();
+    await Promise.resolve();
+    await wrapper.vm.$nextTick();
+
+    expect(CopilotProjectService.canCreate).toHaveBeenCalledWith('desk-uuid');
+    expect(
+      wrapper
+        .find('[data-testid="desk-copilot-empty-state"]')
+        .attributes('data-create-disabled'),
+    ).toBe('true');
   });
 });

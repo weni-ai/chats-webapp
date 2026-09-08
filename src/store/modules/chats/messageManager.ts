@@ -65,6 +65,16 @@ export const useMessageManager = defineStore('messageManager', () => {
     navigator.clipboard.writeText(inputMessage.value);
   }
 
+  const inputFocusRequestId = ref(0);
+
+  function setInputMessage(text: string, options: { focus?: boolean } = {}) {
+    inputMessage.value = text ?? '';
+
+    if (options.focus) {
+      inputFocusRequestId.value += 1;
+    }
+  }
+
   function clearInputs() {
     inputMessage.value = '';
     audioMessage.value = null;
@@ -238,6 +248,7 @@ export const useMessageManager = defineStore('messageManager', () => {
   return {
     inputMessageFocused,
     inputMessage,
+    inputFocusRequestId,
     audioMessage,
     audioRecorderStatus,
     mediaUploadFiles,
@@ -260,5 +271,6 @@ export const useMessageManager = defineStore('messageManager', () => {
     addMediaUploadFiles,
     clearInputs,
     copyInputMessageToClipboard,
+    setInputMessage,
   };
 });

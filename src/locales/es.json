@@ -342,7 +342,7 @@
         "tooltip": "Cada mensaje mostrará el nombre del representante que respondió",
         "switch_active": "Mostrar el nombre del representante en los mensajes",
         "switch_disabled": "Mostrar el nombre del representante en los mensajes",
-        "hint": "Cada mensaje intercambiado tendrá el nombre del representante que está respondiendo.",
+        "hint": "Cada mensaje enviado mostrará el nombre del representante que está respondiendo.",
         "switch_label": "Utilizar firma"
       },
       "csat": {
@@ -822,7 +822,7 @@
     "alert_detached": "Contacto desvinculado",
     "header": {
       "desk_copilot": "Desk Copilot",
-      "information": "Información"
+      "information": "Detalles del chat"
     },
     "linked_contact": "Contacto vinculado al representante {name}",
     "see_contact_history": "Ver historial",
@@ -898,7 +898,8 @@
           "speaking": "Asistente hablando"
         }
       },
-      "copy_summary": "Copiar resumen",
+      "copied_to_message_input": "Texto copiado al campo de mensaje",
+      "copy_summary": "Copiar al campo de mensaje",
       "disclaimer": {
         "description": "Desk Copilot puede ayudarte con:",
         "enable_button": "Activar Desk Copilot",
@@ -909,7 +910,7 @@
           "sales_arguments": "Argumentos de venta"
         },
         "title": "Ve más allá de los resúmenes de conversación",
-        "title_without_summary": "Desbloquea todo tu potencial con Desk Copilot"
+        "title_without_summary": "Aprovecha todo el potencial de Desk Copilot"
       },
       "summary_title": "Resumen de esta conversación"
     }
@@ -1222,7 +1223,7 @@
         "assigned_agents": "Agentes asignados",
         "badge": "Copilot",
         "connected_by": "Conectado por",
-        "connected_to": "Conectado el",
+        "connected_to": "Conectado a",
         "created_on": "Creado el",
         "description": "Este proyecto se usa exclusivamente para gestionar los agentes de IA de Desk Copilot. Solo es accesible desde esta sección.",
         "open": "Abrir",
@@ -1238,14 +1239,15 @@
       },
       "empty_state": {
         "create_button": "Crear proyecto Copilot",
-        "description": "Para activar Desk Copilot, conecta este proyecto a un proyecto Copilot donde se gestionan tus agentes de IA",
+        "create_disabled_tooltip": "No tienes permiso para crear un proyecto Copilot",
+        "description": "Para activar Desk Copilot, conecta este proyecto a un proyecto Copilot donde se gestionan tus agentes de IA.",
         "select_button": "Seleccionar proyecto Copilot",
-        "title": "Ningún proyecto Copilot conectado"
+        "title": "No hay ningún proyecto Copilot conectado"
       },
       "enable_title": "Activar Desk Copilot",
       "info": {
         "ai_assistance": {
-          "description": "Ayuda a tus representantes durante las conversaciones con sugerencias generadas por IA, ítems recomendados y próximas acciones.",
+          "description": "Ayuda a tus representantes durante las conversaciones con sugerencias generadas por IA, ítems recomendados y las mejores próximas acciones.",
           "title": "Asistencia de IA"
         },
         "automatic_updates": {
@@ -1258,7 +1260,7 @@
         },
         "learn_more": "Saber más",
         "shared_across_projects": {
-          "description": "Un proyecto Copilot puede compartirse entre varios proyectos Live Desk para mantener el conocimiento de IA consistente.",
+          "description": "Un proyecto Copilot se puede compartir entre varios proyectos de Live Desk para mantener consistente el conocimiento de la IA.",
           "title": "Compartido entre proyectos"
         },
         "title": "Cómo funciona Desk Copilot"
@@ -1304,8 +1306,8 @@
         "hint": "Si esta opción está activa, los representantes offline o en pausa no podrán responder a chats en curso."
       },
       "block_link_contact_agents": {
-        "switch_label": "Bloquear la vinculación de contactos por los representantes",
-        "hint": "Si esta opción está activa, los representantes no podrán vincular contactos a ellos"
+        "switch_label": "Impedir que los representantes se vinculen contactos",
+        "hint": "Si esta opción está activa, los representantes no podrán vincularse contactos a sí mismos"
       },
       "bulk_transfer": {
         "tooltip": "Esta función permite a los representantes transferir diferentes contactos a la vez",

@@ -130,6 +130,7 @@ import i18n from '@/plugins/i18n';
 import { useConfig } from '@/store/modules/config';
 import { useRooms } from '@/store/modules/chats/rooms';
 import { useRoomMessages } from '@/store/modules/chats/roomMessages';
+import { useProfile } from '@/store/modules/profile';
 
 defineOptions({
   name: 'DeskCopilotTab',
@@ -152,7 +153,9 @@ const emit = defineEmits<{
 
 const { project } = storeToRefs(useConfig());
 const { activeRoom } = storeToRefs(useRooms());
+const { me } = storeToRefs(useProfile());
 const roomMessagesStore = useRoomMessages();
+const agentEmail = computed(() => me.value?.email || undefined);
 
 const currentView = ref<'chat' | 'cart'>('chat');
 
@@ -181,7 +184,7 @@ const {
   stopRecording,
   cancelRecording,
   requestVoiceTokens,
-} = useCopilotChat(connection, roomUuid);
+} = useCopilotChat(connection, roomUuid, agentEmail);
 
 const {
   items: cartItems,
