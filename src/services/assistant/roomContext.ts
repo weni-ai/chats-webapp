@@ -15,6 +15,16 @@ export type BuildRoomContextOptions = {
 const DEFAULT_LIMIT = 20;
 const DEFAULT_MAX_CHARS = 4000;
 
+/**
+ * Stable English role labels for the Copilot `setContext` payload.
+ * Intentionally NOT localized: backend protocol constants (same approach as
+ * webchat-react product context labels). Not rendered in the chats-webapp UI.
+ */
+const ROLE_LABEL = {
+  contact: 'Contact',
+  agent: 'Agent',
+} as const;
+
 function isValidJson(message: string): boolean {
   try {
     const parsedObject = JSON.parse(message);
@@ -24,13 +34,13 @@ function isValidJson(message: string): boolean {
   }
 }
 
-function resolveRole(message: RawRoomMessage): 'contato' | 'agente' | null {
+function resolveRoleLabel(message: RawRoomMessage): string | null {
   if (message.contact) {
-    return 'contato';
+    return ROLE_LABEL.contact;
   }
 
   if (message.user) {
-    return 'agente';
+    return ROLE_LABEL.agent;
   }
 
   return null;
@@ -46,17 +56,17 @@ function toContextLine(message: RawRoomMessage): string | null {
     return null;
   }
 
-  const role = resolveRole(message);
-  if (!role) {
+  const roleLabel = resolveRoleLabel(message);
+  if (!roleLabel) {
     return null;
   }
 
-  return `${role === 'contato' ? 'Contato' : 'Agente'}: ${text}`;
+  return `${roleLabel}: ${text}`;
 }
 
 /**
  * Serializes the latest room messages into a plain-text context string
- * for Copilot `setContext`.
+ * for Copilot `setContext` (backend payload, not UI copy).
  */
 export function buildRoomContext(
   messages: RawRoomMessage[],
