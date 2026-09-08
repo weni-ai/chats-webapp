@@ -34,6 +34,11 @@ const createWrapper = (props = {}) =>
           template: '<div data-testid="assistant-ai-product-carousel" />',
           props: ['products', 'getQuantity', 'dismissedIds'],
         },
+        ProductListSections: {
+          name: 'ProductListSections',
+          template: '<div data-testid="assistant-ai-product-list" />',
+          props: ['sections', 'header', 'getQuantity', 'dismissedIds'],
+        },
       },
     },
   });
@@ -154,5 +159,43 @@ describe('AssistantAiMessage', () => {
 
     await wrapper.find('[data-testid="assistant-ai-send"]').trigger('click');
     expect(wrapper.emitted('send')?.[0]).toEqual(['Check these products']);
+  });
+
+  it('renders product list sections and hides copy action for list messages', async () => {
+    wrapper = createWrapper({
+      text: 'Available TVs',
+      suggestion: undefined,
+      productList: {
+        text: 'Available TVs',
+        header: 'TV selection',
+        sections: [
+          {
+            title: 'TV 32',
+            items: [
+              {
+                product_retailer_id: 'tv-32-1',
+                name: 'Smart TV 32"',
+                price: 1099,
+                currency: 'BRL',
+                image: 'https://example.com/tv32.png',
+              },
+            ],
+          },
+        ],
+      },
+    });
+
+    expect(
+      wrapper.find('[data-testid="assistant-ai-product-list"]').exists(),
+    ).toBe(true);
+    expect(
+      wrapper.find('[data-testid="assistant-ai-product-carousel"]').exists(),
+    ).toBe(false);
+    expect(wrapper.find('[data-testid="assistant-ai-copy"]').exists()).toBe(
+      false,
+    );
+
+    await wrapper.find('[data-testid="assistant-ai-send"]').trigger('click');
+    expect(wrapper.emitted('send')?.[0]).toEqual(['Available TVs']);
   });
 });
