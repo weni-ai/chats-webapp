@@ -23,13 +23,22 @@
         data-testid="desk-copilot-select-button"
         @click="emit('open-select-modal')"
       />
-      <UnnnicButton
-        type="secondary"
-        size="small"
-        :text="$t('config_chats.desk_copilot.empty_state.create_button')"
-        data-testid="desk-copilot-create-button"
-        @click="emit('open-create-modal')"
-      />
+      <UnnnicToolTip
+        :enabled="isCreateDisabled"
+        :text="
+          $t('config_chats.desk_copilot.empty_state.create_disabled_tooltip')
+        "
+        side="bottom"
+      >
+        <UnnnicButton
+          type="secondary"
+          size="small"
+          :text="$t('config_chats.desk_copilot.empty_state.create_button')"
+          :disabled="isCreateDisabled"
+          data-testid="desk-copilot-create-button"
+          @click="handleCreateClick"
+        />
+      </UnnnicToolTip>
     </section>
   </section>
 </template>
@@ -39,10 +48,27 @@ defineOptions({
   name: 'DeskCopilotEmptyState',
 });
 
+const props = withDefaults(
+  defineProps<{
+    isCreateDisabled?: boolean;
+  }>(),
+  {
+    isCreateDisabled: false,
+  },
+);
+
 const emit = defineEmits<{
   'open-create-modal': [];
   'open-select-modal': [];
 }>();
+
+function handleCreateClick() {
+  if (props.isCreateDisabled) {
+    return;
+  }
+
+  emit('open-create-modal');
+}
 </script>
 
 <style lang="scss" scoped>
