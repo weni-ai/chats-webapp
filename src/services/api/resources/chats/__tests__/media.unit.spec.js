@@ -5,6 +5,10 @@ import http from '@/services/api/http';
 vi.mock('@/services/api/http', () => ({
   default: {
     get: vi.fn(),
+    postForm: vi.fn(),
+    defaults: {
+      baseURL: 'https://api.example.com/v1',
+    },
   },
 }));
 
@@ -687,6 +691,56 @@ describe('Media service', () => {
         expect(result).toBe(mockBlob);
         expect(result.type).toBe(mediaType.type);
       }
+    });
+  });
+
+  describe('uploadRoomMedia', () => {
+    it('should upload media to v2 with room, content_type and media_file', async () => {
+      const mediaFile = new File(['image'], 'photo.jpg', {
+        type: 'image/jpeg',
+      });
+      const mockResponse = {
+        data: { uuid: 'media-uuid-1', url: 'https://cdn.example.com/photo.jpg' },
+      };
+      http.postForm.mockResolvedValue(mockResponse);
+
+      const result = await mediaService.uploadRoomMedia('room-123', {
+        media: mediaFile,
+      });
+
+      expect(http.postForm).toHaveBeenCalledWith(
+        '/media/',
+        {
+          content_type: 'image/jpeg',
+          media_file: mediaFile,
+          room: 'room-123',
+        },
+        expect.objectContaining({
+          baseURL: 'https://api.example.com/v2',
+          onUploadProgress: expect.any(Function),
+        }),
+      );
+      expect(result).toEqual(mockResponse.data);
+    });
+
+    it('should report upload progress', async () => {
+      const mediaFile = new File(['image'], 'photo.jpg', {
+        type: 'image/jpeg',
+      });
+      http.postForm.mockImplementation((_url, _data, config) => {
+        config.onUploadProgress({ loaded: 50, total: 100 });
+        return Promise.resolve({ data: { uuid: 'media-uuid-2' } });
+      });
+
+      const updateLoadingFiles = vi.fn();
+      await mediaService.uploadRoomMedia('room-123', {
+        media: mediaFile,
+        updateLoadingFiles,
+        loadingKey: 'temp-1',
+      });
+
+      expect(updateLoadingFiles).toHaveBeenCalledWith('temp-1', 0);
+      expect(updateLoadingFiles).toHaveBeenCalledWith('temp-1', 0.5);
     });
   });
 });

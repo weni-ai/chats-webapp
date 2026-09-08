@@ -125,6 +125,25 @@ describe('useMessageManager Store', () => {
       );
     });
 
+    it('sends room medias with the trimmed caption text', () => {
+      const file = new File(['x'], 'image.png', { type: 'image/png' });
+      const { store, roomMessagesStore } = setup({
+        messageManager: {
+          mediaUploadFiles: [file],
+          inputMessage: '  look at this  ',
+        },
+      });
+
+      store.sendMediasMessage(ROOM_UUID);
+
+      expect(roomMessagesStore.sendRoomMedias).toHaveBeenCalledWith(
+        expect.objectContaining({
+          roomUuid: ROOM_UUID,
+          text: 'look at this',
+        }),
+      );
+    });
+
     it('sends discussion medias (without room uuid) when there is an active discussion', () => {
       const file = new File(['x'], 'image.png', { type: 'image/png' });
       const { store, roomMessagesStore, discussionMessagesStore } = setup({

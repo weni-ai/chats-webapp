@@ -9,6 +9,7 @@ export async function sendRoomMessageBySocket({
   text,
   aiTextImprovement,
   requestId,
+  media,
 }) {
   if (!isSocketOpen()) {
     throw new SocketNotConnectedError();
@@ -26,6 +27,10 @@ export async function sendRoomMessageBySocket({
 
   if (aiTextImprovement) {
     content.ai_text_improvement = aiTextImprovement;
+  }
+
+  if (Array.isArray(media) && media.length) {
+    content.media = media;
   }
 
   getActiveConnection().ws.send({

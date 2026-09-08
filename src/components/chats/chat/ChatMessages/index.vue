@@ -62,8 +62,8 @@
 
             <template v-else-if="!isInternalNoteMessage(message)">
               <ChatsMessage
-                v-if="message.text || isGeolocation(message.media?.[0])"
-                :key="message.uuid"
+                v-if="shouldRenderCombinedMediaMessage(message)"
+                :key="`combined-${message.uuid}`"
                 :ref="`message-${message.uuid}`"
                 :type="messageType(message)"
                 :class="[
@@ -76,7 +76,6 @@
                 :status="messageStatus({ message })"
                 :title="messageFormatTitle(new Date(message.created_on))"
                 :signature="messageSignature(message)"
-                :mediaType="isGeolocation(message.media?.[0]) ? 'geo' : ''"
                 :enableReply="enableReply"
                 :replyMessage="message.replied_message"
                 :automatic="
@@ -98,74 +97,18 @@
                   handlerClickReplyMessage(message.replied_message)
                 "
                 @reply="
-                  handlerMessageReply({ ...message, content_type: 'text' })
+                  handlerMessageReply({ ...message, content_type: 'media' })
                 "
-                @click="handleFailedTextClick(message)"
+                @click="handleFailedCombinedMediaClick(message)"
               >
-                {{
-                  isGeolocation(message.media?.[0])
-                    ? message.media?.[0]?.url
-                    : message.text
-                }}
-              </ChatsMessage>
-              <template v-for="media in message.media">
-                <ChatsMessage
-                  v-if="isMedia(media) && !isGeolocation(media)"
-                  :key="media.message"
-                  :ref="`message-${message.uuid}`"
-                  :type="messageType(message)"
-                  :class="[
-                    'chat-messages__message',
-                    messageType(message),
-                    { 'different-user': isMessageByTwoDifferentUsers(message) },
-                    { highlighted: highlightedMessageUuid === message.uuid },
-                  ]"
-                  :mediaType="
-                    isImage(media)
-                      ? 'image'
-                      : isVideo(media)
-                        ? 'video'
-                        : 'audio'
-                  "
-                  :time="new Date(message.created_on)"
-                  :status="messageStatus({ message })"
-                  :title="messageFormatTitle(new Date(message.created_on))"
-                  :signature="messageSignature(message)"
-                  :enableReply="enableReply"
-                  :replyMessage="message.replied_message"
-                  :highlighted="message.uuid === toScrollMessage?.uuid"
-                  data-testid="chat-message"
-                  @click-reply-message="
-                    handlerClickReplyMessage(message.replied_message)
-                  "
-                  @reply="
-                    handlerMessageReply({
-                      ...message,
-                      content_type: isImage(media)
-                        ? 'image'
-                        : isVideo(media)
-                          ? 'video'
-                          : 'audio',
-                    })
-                  "
-                  @click="
-                    resendMedia({ message, media, roomUuid: message.room })
-                  "
-                >
-                  <img
-                    v-if="isImage(media)"
-                    class="media image"
-                    :src="media.url || media.preview"
-                    @click="openFullScreen(media.url)"
-                    @keypress.enter="openFullScreen(media.url)"
-                  />
-                  <VideoPlayer
-                    v-else-if="isVideo(media)"
-                    class="media"
-                    :src="media.url || media.preview"
+                <template #medias>
+                  <ChatMessagesMediasGrid
+                    v-if="getPreviewableMedias(message).length"
+                    :medias="getPreviewableMedias(message)"
                   />
                   <ChatMessageAudio
-                    v-else-if="isAudio(media)"
+                    v-for="media in getAudioMedias(message)"
+                    :key="media.uuid || media.preview || media.url"
                     :message="message"
                     :messageStatus="messageStatus({ message, media })"
                     :isClosedChat="isClosedChat"
@@ -173,10 +116,13 @@
                       resendMedia({ message, media, roomUuid: message.room })
                     "
                   />
-                </ChatsMessage>
+                </template>
+                {{ message.text }}
+              </ChatsMessage>
+              <template v-else>
                 <ChatsMessage
-                  v-else-if="!isGeolocation(media)"
-                  :key="media.created_on"
+                  v-if="message.text || isGeolocation(message.media?.[0])"
+                  :key="message.uuid"
                   :ref="`message-${message.uuid}`"
                   :type="messageType(message)"
                   :class="[
@@ -186,29 +132,147 @@
                     { highlighted: highlightedMessageUuid === message.uuid },
                   ]"
                   :time="new Date(message.created_on)"
-                  :documentName="
-                    handleMediaName(
-                      media.url?.split('/').at(-1) || media.file?.name,
-                    )
-                  "
                   :status="messageStatus({ message })"
                   :title="messageFormatTitle(new Date(message.created_on))"
                   :signature="messageSignature(message)"
+                  :mediaType="isGeolocation(message.media?.[0]) ? 'geo' : ''"
                   :enableReply="enableReply"
                   :replyMessage="message.replied_message"
+                  :automatic="
+                    !!message.bulk_message || message.is_automatic_message
+                  "
+                  :automaticType="
+                    !!message.bulk_message
+                      ? 'bulk_message'
+                      : message.automatic_message_type || ''
+                  "
+                  :bulkMessageSender="
+                    message.bulk_message?.sent_by?.name ||
+                    message.bulk_message?.sent_by?.email
+                  "
+                  :locale="$i18n.locale"
                   data-testid="chat-message"
                   :highlighted="message.uuid === toScrollMessage?.uuid"
                   @click-reply-message="
                     handlerClickReplyMessage(message.replied_message)
                   "
                   @reply="
-                    handlerMessageReply({
-                      ...message,
-                      content_type: 'attachment',
-                    })
+                    handlerMessageReply({ ...message, content_type: 'text' })
                   "
-                  @click="documentClickHandler({ message, media })"
-                />
+                  @click="handleFailedTextClick(message)"
+                >
+                  {{
+                    isGeolocation(message.media?.[0])
+                      ? message.media?.[0]?.url
+                      : message.text
+                  }}
+                </ChatsMessage>
+                <template v-for="media in message.media">
+                  <ChatsMessage
+                    v-if="isMedia(media) && !isGeolocation(media)"
+                    :key="media.message"
+                    :ref="`message-${message.uuid}`"
+                    :type="messageType(message)"
+                    :class="[
+                      'chat-messages__message',
+                      messageType(message),
+                      {
+                        'different-user': isMessageByTwoDifferentUsers(message),
+                      },
+                      { highlighted: highlightedMessageUuid === message.uuid },
+                    ]"
+                    :mediaType="
+                      isImage(media)
+                        ? 'image'
+                        : isVideo(media)
+                          ? 'video'
+                          : 'audio'
+                    "
+                    :time="new Date(message.created_on)"
+                    :status="messageStatus({ message })"
+                    :title="messageFormatTitle(new Date(message.created_on))"
+                    :signature="messageSignature(message)"
+                    :enableReply="enableReply"
+                    :replyMessage="message.replied_message"
+                    :highlighted="message.uuid === toScrollMessage?.uuid"
+                    data-testid="chat-message"
+                    @click-reply-message="
+                      handlerClickReplyMessage(message.replied_message)
+                    "
+                    @reply="
+                      handlerMessageReply({
+                        ...message,
+                        content_type: isImage(media)
+                          ? 'image'
+                          : isVideo(media)
+                            ? 'video'
+                            : 'audio',
+                      })
+                    "
+                    @click="
+                      resendMedia({ message, media, roomUuid: message.room })
+                    "
+                  >
+                    <img
+                      v-if="isImage(media)"
+                      class="media image"
+                      :src="media.url || media.preview"
+                      @click="openFullScreen(media.url)"
+                      @keypress.enter="openFullScreen(media.url)"
+                    />
+                    <VideoPlayer
+                      v-else-if="isVideo(media)"
+                      class="media"
+                      :src="media.url || media.preview"
+                    />
+                    <ChatMessageAudio
+                      v-else-if="isAudio(media)"
+                      :message="message"
+                      :messageStatus="messageStatus({ message, media })"
+                      :isClosedChat="isClosedChat"
+                      @failed-click="
+                        resendMedia({ message, media, roomUuid: message.room })
+                      "
+                    />
+                  </ChatsMessage>
+                  <ChatsMessage
+                    v-else-if="!isGeolocation(media)"
+                    :key="media.created_on"
+                    :ref="`message-${message.uuid}`"
+                    :type="messageType(message)"
+                    :class="[
+                      'chat-messages__message',
+                      messageType(message),
+                      {
+                        'different-user': isMessageByTwoDifferentUsers(message),
+                      },
+                      { highlighted: highlightedMessageUuid === message.uuid },
+                    ]"
+                    :time="new Date(message.created_on)"
+                    :documentName="
+                      handleMediaName(
+                        media.url?.split('/').at(-1) || media.file?.name,
+                      )
+                    "
+                    :status="messageStatus({ message })"
+                    :title="messageFormatTitle(new Date(message.created_on))"
+                    :signature="messageSignature(message)"
+                    :enableReply="enableReply"
+                    :replyMessage="message.replied_message"
+                    data-testid="chat-message"
+                    :highlighted="message.uuid === toScrollMessage?.uuid"
+                    @click-reply-message="
+                      handlerClickReplyMessage(message.replied_message)
+                    "
+                    @reply="
+                      handlerMessageReply({
+                        ...message,
+                        content_type: 'attachment',
+                      })
+                    "
+                    @click="documentClickHandler({ message, media })"
+                  />
+                </template>
               </template>
             </template>
           </template>
@@ -275,6 +339,8 @@ import { useDashboard } from '@/store/modules/dashboard';
 import { useRoomMessages } from '@/store/modules/chats/roomMessages';
 import { useRooms } from '@/store/modules/chats/rooms';
 import { useMessageManager } from '@/store/modules/chats/messageManager';
+import { useFeatureFlag } from '@/store/modules/featureFlag';
+import { useMediaMessagesWithTextFeatureFlag } from '@/composables/useMediaMessagesWithTextFeatureFlag';
 
 import moment from 'moment';
 
@@ -291,6 +357,7 @@ import ChatMessagesStartFeedbacks from './ChatMessagesStartFeedbacks.vue';
 import ChatMessagesFeedbackMessage from './ChatMessagesFeedbackMessage.vue';
 import ChatMessagesInternalNote from './ChatMessageInternalNote/index.vue';
 import ChatMessageAudio from './ChatMessageAudio/ChatMessageAudio.vue';
+import ChatMessagesMediasGrid from './MediasGrid.vue';
 
 import { isString } from '@/utils/string';
 import { SEE_ALL_INTERNAL_NOTES_CHIP_CONTENT } from '@/utils/chats';
@@ -311,6 +378,7 @@ export default {
     VideoPlayer,
     ChatMessagesInternalNote,
     ChatMessageAudio,
+    ChatMessagesMediasGrid,
   },
 
   props: {
@@ -411,6 +479,7 @@ export default {
     }),
     ...mapState(useDashboard, ['viewedAgent']),
     ...mapState(useRoomMessages, ['roomMessagesNext']),
+    ...mapState(useFeatureFlag, ['featureFlags']),
     ...mapWritableState(useMessageManager, ['replyMessage', 'inputMessage']),
     ...mapWritableState(useRoomMessages, [
       'toScrollNote',
@@ -434,6 +503,9 @@ export default {
     },
     isViewMode() {
       return !!this.viewedAgent?.email;
+    },
+    isMediaMessagesWithTextEnabled() {
+      return useMediaMessagesWithTextFeatureFlag(this.featureFlags);
     },
     isSkeletonLoadingActive() {
       const { isLoading, prevChatUuid, chatUuid } = this;
@@ -557,6 +629,40 @@ export default {
     isMedia(media) {
       const { isAudio, isImage, isVideo } = this;
       return isAudio(media) || isImage(media) || isVideo(media);
+    },
+    shouldRenderCombinedMediaMessage(message) {
+      if (!this.isMediaMessagesWithTextEnabled) {
+        return false;
+      }
+
+      return (message.media || []).some(
+        (media) => media && !this.isGeolocation(media),
+      );
+    },
+    getPreviewableMedias(message) {
+      return (message.media || []).filter(
+        (media) =>
+          this.isImage(media) ||
+          this.isVideo(media) ||
+          (!this.isMedia(media) && !this.isGeolocation(media)),
+      );
+    },
+    getAudioMedias(message) {
+      return (message.media || []).filter((media) => this.isAudio(media));
+    },
+    handleFailedCombinedMediaClick(message) {
+      if (this.messageStatus({ message }) !== 'failed') {
+        return;
+      }
+
+      const firstMedia = message.media?.[0];
+      if (firstMedia) {
+        this.resendMedia({
+          message,
+          media: firstMedia,
+          roomUuid: message.room,
+        });
+      }
     },
     messageStatus({ message, media }) {
       if (message) {

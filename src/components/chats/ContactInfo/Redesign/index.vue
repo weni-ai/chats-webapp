@@ -216,6 +216,7 @@ const handleFullscreen = (url: string, images: MediaItem[]) => {
     padding: $unnnic-space-2;
     overflow: hidden auto;
     height: 100%;
+    min-width: 0;
   }
 }
 </style>

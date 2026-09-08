@@ -14,11 +14,20 @@ import { nextTick } from 'vue';
 import QueueFilter from '../QueueFilter.vue';
 import QueueService from '@/services/api/resources/chats/queues';
 import { useRooms } from '@/store/modules/chats/rooms';
+import { setSelectedQueues } from '@/utils/queuesViewStorage';
 
 vi.mock('@/services/api/resources/chats/queues', () => ({
   default: {
     getQueuesToFilter: vi.fn(),
   },
+}));
+
+vi.mock('@/utils/config', () => ({
+  getProject: vi.fn(() => 'test-project-uuid'),
+}));
+
+vi.mock('@/utils/queuesViewStorage', () => ({
+  setSelectedQueues: vi.fn(),
 }));
 
 const mockSectorsResponse = {
@@ -58,9 +67,10 @@ describe('QueueFilter.vue', () => {
   let pinia;
   let wrapper;
 
-  const createWrapper = () => {
+  const createWrapper = (props = {}) => {
     return mount(QueueFilter, {
       attachTo: document.body,
+      props,
       global: {
         plugins: [pinia],
       },
@@ -103,6 +113,7 @@ describe('QueueFilter.vue', () => {
     vi.mocked(QueueService.getQueuesToFilter).mockResolvedValue(
       mockSectorsResponse,
     );
+    vi.mocked(setSelectedQueues).mockClear();
 
     wrapper = createWrapper();
   });
@@ -146,6 +157,7 @@ describe('QueueFilter.vue', () => {
     expect(roomsStore.filterQueues).toEqual([]);
     expect(roomsStore.selectedOngoingRooms).toEqual([]);
     expect(roomsStore.selectedWaitingRooms).toEqual([]);
+    expect(setSelectedQueues).toHaveBeenCalledWith('test-project-uuid', []);
   });
 
   it('fetches queues when popover opens and renders checkboxes', async () => {
@@ -233,6 +245,45 @@ describe('QueueFilter.vue', () => {
     expect(roomsStore.filterQueues).toEqual(['queue-uuid-1', 'queue-uuid-3']);
     expect(roomsStore.selectedOngoingRooms).toEqual([]);
     expect(roomsStore.selectedWaitingRooms).toEqual([]);
+    expect(setSelectedQueues).toHaveBeenCalledWith('test-project-uuid', [
+      'queue-uuid-1',
+      'queue-uuid-3',
+    ]);
+  });
+
+  it('does not persist queues when applying in view mode', async () => {
+    wrapper.unmount();
+    wrapper = createWrapper({ isViewMode: true });
+
+    await openPopoverByTrigger();
+
+    await findQueueOption('queue-uuid-1')
+      .find('input[type="checkbox"]')
+      .setValue(true);
+
+    await wrapper
+      .find('[data-testid="queue-filter-apply-button"]')
+      .trigger('click');
+
+    const roomsStore = useRooms();
+    expect(roomsStore.filterQueues).toEqual(['queue-uuid-1']);
+    expect(setSelectedQueues).not.toHaveBeenCalled();
+  });
+
+  it('does not persist queues when clearing in view mode', async () => {
+    wrapper.unmount();
+    wrapper = createWrapper({ isViewMode: true });
+
+    const roomsStore = useRooms();
+    roomsStore.filterQueues = ['queue-uuid-1'];
+    await nextTick();
+
+    await wrapper
+      .find('[data-testid="queue-filter-close-icon"]')
+      .trigger('click');
+
+    expect(roomsStore.filterQueues).toEqual([]);
+    expect(setSelectedQueues).not.toHaveBeenCalled();
   });
 
   it('disables apply when no queue is selected', async () => {
@@ -260,6 +311,7 @@ describe('QueueFilter.vue', () => {
     expect(roomsStore.filterQueues).toEqual([]);
     expect(roomsStore.selectedOngoingRooms).toEqual([]);
     expect(roomsStore.selectedWaitingRooms).toEqual([]);
+    expect(setSelectedQueues).toHaveBeenCalledWith('test-project-uuid', []);
   });
 
   it('prefills selected queues from filterQueues when opening popover', async () => {

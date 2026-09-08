@@ -1067,6 +1067,81 @@ describe('RoomCard.vue', () => {
       wrapper.unmount();
     });
 
+    it('waiting room + bulk message from current user: prefixes lastMessage.text with You:', () => {
+      const wrapper = createWrapper({
+        roomType: 'waiting',
+        room: {
+          ...mockRoom,
+          user: null,
+          unread_msgs: 0,
+          last_message: {
+            ...mockRoom.last_message,
+            user: null,
+            contact: null,
+            text: 'teste disparo',
+            bulk_message: {
+              sent_by: { email: 'agent@weni.ai', name: 'Agent User' },
+            },
+          },
+        },
+      });
+
+      expect(wrapper.vm.displayedLastMessage.text).toMatch(/: teste disparo$/);
+      expect(wrapper.vm.displayedLastMessage.isFromUser).toBe(true);
+
+      wrapper.unmount();
+    });
+
+    it('waiting room + bulk message from another agent: still prefixes lastMessage.text with You:', () => {
+      const wrapper = createWrapper({
+        roomType: 'waiting',
+        room: {
+          ...mockRoom,
+          user: null,
+          unread_msgs: 0,
+          last_message: {
+            ...mockRoom.last_message,
+            user: null,
+            contact: null,
+            text: 'teste disparo',
+            bulk_message: {
+              sent_by: { email: 'other-agent@weni.ai', name: 'Other Agent' },
+            },
+          },
+        },
+      });
+
+      expect(wrapper.vm.displayedLastMessage.text).toMatch(/: teste disparo$/);
+      expect(wrapper.vm.displayedLastMessage.isFromUser).toBe(true);
+
+      wrapper.unmount();
+    });
+
+    it('in_progress + bulk message: prefixes lastMessage.text with You:', () => {
+      const wrapper = createWrapper({
+        roomType: 'in_progress',
+        room: {
+          ...mockRoom,
+          unread_msgs: 0,
+          last_message: {
+            ...mockRoom.last_message,
+            user: null,
+            contact: null,
+            text: 'teste disparo',
+            bulk_message: {
+              sent_by: { email: 'other-agent@weni.ai', name: 'Other Agent' },
+            },
+          },
+        },
+      });
+
+      expect(wrapper.vm.isLastMessageFromBot).toBe(false);
+      expect(wrapper.vm.displayedLastMessage.text).toMatch(/: teste disparo$/);
+      expect(wrapper.vm.displayedLastMessage.isFromUser).toBe(true);
+
+      wrapper.unmount();
+    });
+
     it('lastMessage.user equals me.email + missing text: still prefixes with You:', () => {
       const room = {
         ...mockRoom,

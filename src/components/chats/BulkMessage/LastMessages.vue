@@ -37,5 +37,12 @@ const props = defineProps<{
   display: flex;
   flex-direction: column;
   gap: $unnnic-space-2;
+  min-width: 0;
+  max-width: 100%;
+
+  :deep(.unnnic-disclaimer__content),
+  :deep(.unnnic-disclaimer__description) {
+    word-break: break-word;
+  }
 }
 </style>

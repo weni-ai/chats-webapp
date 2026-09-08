@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { sendMedias, resendMedia } from '@/utils/messages';
+import { sendMedias, sendMediasWithText, resendMedia } from '@/utils/messages';
 import { useRooms } from '@/store/modules/chats/rooms';
 
 vi.mock('@/store/modules/profile', () => ({
@@ -160,6 +160,95 @@ describe('Messages utils', () => {
       });
 
       expect(mockAddFailedMessage).toHaveBeenCalledTimes(2);
+      expect(mockUpdateMessage).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('sendMediasWithText', () => {
+    let mockUploadItemMedia;
+    let mockCreateItemMessage;
+    let mockAddMessage;
+    let mockAddFailedMessage;
+    let mockAddSortedMessage;
+    let mockUpdateMessage;
+
+    beforeEach(() => {
+      mockUploadItemMedia = vi.fn();
+      mockCreateItemMessage = vi.fn();
+      mockAddMessage = vi.fn();
+      mockAddFailedMessage = vi.fn();
+      mockAddSortedMessage = vi.fn();
+      mockUpdateMessage = vi.fn();
+      vi.clearAllMocks();
+      window.URL.createObjectURL = () => 'url';
+    });
+
+    it('should wait for all uploads before creating the message', async () => {
+      const media1 = new File(['content1'], 'file1.jpg', {
+        type: 'image/jpeg',
+      });
+      const media2 = new File(['content2'], 'file2.png', { type: 'image/png' });
+
+      mockUploadItemMedia
+        .mockResolvedValueOnce({ uuid: 'uploaded-1' })
+        .mockResolvedValueOnce({ uuid: 'uploaded-2' });
+      mockCreateItemMessage.mockResolvedValue({
+        uuid: 'server-msg',
+        text: 'caption',
+        media: [{ uuid: 'uploaded-1' }, { uuid: 'uploaded-2' }],
+      });
+
+      await sendMediasWithText({
+        itemType: 'room',
+        itemUuid: 'uuid1',
+        itemUser: { id: 1 },
+        medias: [media1, media2],
+        text: 'caption',
+        uploadItemMedia: mockUploadItemMedia,
+        createItemMessage: mockCreateItemMessage,
+        addMessage: mockAddMessage,
+        addFailedMessage: mockAddFailedMessage,
+        addSortedMessage: mockAddSortedMessage,
+        updateMessage: mockUpdateMessage,
+      });
+
+      expect(mockUploadItemMedia).toHaveBeenCalledTimes(2);
+      expect(mockCreateItemMessage).toHaveBeenCalledWith({
+        text: 'caption',
+        media: ['uploaded-1', 'uploaded-2'],
+      });
+      expect(mockAddFailedMessage).not.toHaveBeenCalled();
+      expect(mockUpdateMessage).toHaveBeenCalledTimes(1);
+    });
+
+    it('should not create the message when any upload fails', async () => {
+      vi.spyOn(console, 'error').mockImplementation(() => {});
+
+      const media1 = new File(['content1'], 'file1.jpg', {
+        type: 'image/jpeg',
+      });
+      const media2 = new File(['content2'], 'file2.png', { type: 'image/png' });
+
+      mockUploadItemMedia
+        .mockResolvedValueOnce({ uuid: 'uploaded-1' })
+        .mockRejectedValueOnce(new Error('upload failed'));
+
+      await sendMediasWithText({
+        itemType: 'room',
+        itemUuid: 'uuid1',
+        itemUser: { id: 1 },
+        medias: [media1, media2],
+        text: 'caption',
+        uploadItemMedia: mockUploadItemMedia,
+        createItemMessage: mockCreateItemMessage,
+        addMessage: mockAddMessage,
+        addFailedMessage: mockAddFailedMessage,
+        addSortedMessage: mockAddSortedMessage,
+        updateMessage: mockUpdateMessage,
+      });
+
+      expect(mockCreateItemMessage).not.toHaveBeenCalled();
+      expect(mockAddFailedMessage).toHaveBeenCalledTimes(1);
       expect(mockUpdateMessage).not.toHaveBeenCalled();
     });
   });

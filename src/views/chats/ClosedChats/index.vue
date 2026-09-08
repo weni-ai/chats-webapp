@@ -291,9 +291,9 @@ export default {
 
   // Fill the parent (`#app`) instead of the browser viewport. `100vh/100vw`
   // ignore the host chrome (sidebar + topbar) when running as a federated
-  // module and produce phantom scrollbars. In iframe/standalone the parent
-  // already spans the full viewport (`html, body, #app { height: 100% }`),
-  // so `100%` is equivalent there.
+  // module and produce phantom scrollbars. In standalone the parent already
+  // spans the full viewport (`html, body, #app { height: 100% }`), so `100%`
+  // is equivalent there.
   height: 100%;
   width: 100%;
 

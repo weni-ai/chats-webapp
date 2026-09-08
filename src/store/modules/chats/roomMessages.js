@@ -3,11 +3,13 @@ import { defineStore } from 'pinia';
 import { useRooms } from './rooms';
 
 import Message from '@/services/api/resources/chats/message';
+import Media from '@/services/api/resources/chats/media';
 import RoomNotes from '@/services/api/resources/chats/roomNotes';
 
 import { useMessageManager } from './messageManager';
 import { useFeatureFlag } from '@/store/modules/featureFlag';
 import { useSocketMessageFeatureFlag } from '@/composables/useSocketMessageFeatureFlag';
+import { useMediaMessagesWithTextFeatureFlag } from '@/composables/useMediaMessagesWithTextFeatureFlag';
 import { sendRoomMessageBySocket } from '@/services/api/websocket/messages';
 
 import {
@@ -17,6 +19,7 @@ import {
   treatMessages,
   sendMessage,
   sendMedias,
+  sendMediasWithText,
   resendMedia,
   resendMessage,
   removeFromGroupedMessages,
@@ -296,6 +299,8 @@ export const useRoomMessages = defineStore('roomMessages', {
       updateLoadingFiles,
       repliedMessage,
       roomUuid,
+      text = '',
+      aiTextImprovement = null,
     }) {
       const roomsStore = useRooms();
       const { activeRoom } = roomsStore;
@@ -305,6 +310,61 @@ export const useRoomMessages = defineStore('roomMessages', {
       const useSocket = useSocketMessageFeatureFlag(
         featureFlagStore.featureFlags,
       );
+      const useMediaWithText = useMediaMessagesWithTextFeatureFlag(
+        featureFlagStore.featureFlags,
+      );
+
+      const createMediaMessage = ({ text: messageText, media }) => {
+        if (useSocket) {
+          const requestId = crypto.randomUUID();
+          return sendRoomMessageBySocket({
+            room: roomUuid,
+            text: messageText,
+            media,
+            aiTextImprovement,
+            requestId,
+          });
+        }
+
+        return Message.sendRoomMessage(roomUuid, {
+          text: messageText,
+          user_email: activeRoom.user.email,
+          seen: true,
+          repliedMessageId: repliedMessage?.uuid,
+          aiTextImprovement,
+          media,
+        });
+      };
+
+      if (useMediaWithText) {
+        await sendMediasWithText({
+          itemType: 'room',
+          itemUuid: roomUuid,
+          itemUser: activeRoom.user,
+          medias,
+          text,
+          repliedMessage,
+          uploadItemMedia: (media, loadingKey) =>
+            Media.uploadRoomMedia(roomUuid, {
+              media,
+              updateLoadingFiles,
+              loadingKey,
+            }),
+          createItemMessage: createMediaMessage,
+          addMessage: (message) => this.handlingAddMessage({ message }),
+          addSortedMessage: (message) => this.addRoomMessageSorted({ message }),
+          addFailedMessage: (message) =>
+            this.addFailedMessage({
+              message,
+            }),
+          updateMessage: ({ message, toUpdateMessageUuid }) =>
+            this.updateMessage({
+              message,
+              toUpdateMessageUuid,
+            }),
+        });
+        return;
+      }
 
       await sendMedias({
         itemType: 'room',
@@ -540,6 +600,61 @@ export const useRoomMessages = defineStore('roomMessages', {
       const useSocket = useSocketMessageFeatureFlag(
         featureFlagStore.featureFlags,
       );
+      const useMediaWithText = useMediaMessagesWithTextFeatureFlag(
+        featureFlagStore.featureFlags,
+      );
+
+      if (useMediaWithText) {
+        if (isMessageFromCurrentUser(message)) {
+          this.removeMessageFromFaileds(message.uuid);
+          if (!this.roomMessagesSendingUuids.includes(message.uuid)) {
+            this.roomMessagesSendingUuids.push(message.uuid);
+          }
+        }
+
+        await sendMediasWithText({
+          itemType: 'room',
+          itemUuid: roomUuid,
+          itemUser: activeRoom.user,
+          medias: message.media?.length ? message.media : [media],
+          text: message.text || '',
+          repliedMessage: message.replied_message,
+          existingMessage: message,
+          uploadItemMedia: (file, loadingKey) =>
+            Media.uploadRoomMedia(roomUuid, {
+              media: file,
+              loadingKey,
+            }),
+          createItemMessage: ({ text: messageText, media: mediaUuids }) => {
+            if (useSocket) {
+              const requestId = crypto.randomUUID();
+              return sendRoomMessageBySocket({
+                room: roomUuid,
+                text: messageText,
+                media: mediaUuids,
+                requestId,
+              });
+            }
+
+            return Message.sendRoomMessage(roomUuid, {
+              text: messageText,
+              user_email: activeRoom.user.email,
+              seen: true,
+              media: mediaUuids,
+            });
+          },
+          addMessage: () => {},
+          addSortedMessage: () => {},
+          addFailedMessage: (failedMessage) =>
+            this.addFailedMessage({ message: failedMessage }),
+          updateMessage: ({ message: updatedMessage, toUpdateMessageUuid }) =>
+            this.updateMessage({
+              message: updatedMessage,
+              toUpdateMessageUuid,
+            }),
+        });
+        return;
+      }
 
       await resendMedia({
         itemUuid: roomUuid,

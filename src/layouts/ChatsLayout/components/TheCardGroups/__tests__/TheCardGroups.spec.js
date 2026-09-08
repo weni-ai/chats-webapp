@@ -31,6 +31,14 @@ vi.mock('@weni/unnnic-system', () => ({
   },
 }));
 
+vi.mock('@/utils/config', () => ({
+  getProject: vi.fn(() => 'test-project-uuid'),
+}));
+
+vi.mock('@/utils/queuesViewStorage', () => ({
+  getSelectedQueues: vi.fn(() => []),
+}));
+
 const mockRooms = [
   {
     uuid: 'room-1',
@@ -752,7 +760,7 @@ describe('TheCardGroups.vue', () => {
 
   describe('watcher tests', () => {
     it('posts unread messages update to parent window', async () => {
-      const postMessageSpy = vi.spyOn(window.parent, 'postMessage');
+      const dispatchEventSpy = vi.spyOn(window, 'dispatchEvent');
 
       wrapper = createWrapper();
       const roomsStore = useRooms();
@@ -762,13 +770,17 @@ describe('TheCardGroups.vue', () => {
 
       await wrapper.vm.$nextTick();
 
-      expect(postMessageSpy).toHaveBeenCalledWith(
-        {
-          event: 'chats:update-unread-messages',
-          unreadMessages: 1,
-        },
-        '*',
+      expect(dispatchEventSpy).toHaveBeenCalledWith(
+        expect.objectContaining({
+          type: 'chatsToHost',
+          detail: {
+            event: 'chats:update-unread-messages',
+            unreadMessages: 1,
+          },
+        }),
       );
+
+      dispatchEventSpy.mockRestore();
     });
 
     describe('rooms_queue refetch on empty', () => {
@@ -901,6 +913,40 @@ describe('TheCardGroups.vue', () => {
 
       expect(roomsStore.getAll).toHaveBeenCalled();
       expect(discussionsStore.getAll).toHaveBeenCalled();
+    });
+
+    it('hydrates filterQueues from storage in normal mode', async () => {
+      const { getSelectedQueues } = await import('@/utils/queuesViewStorage');
+      vi.mocked(getSelectedQueues).mockReturnValueOnce([
+        'queue-uuid-1',
+        'queue-uuid-2',
+      ]);
+
+      const roomsStore = useRooms();
+      roomsStore.filterQueues = [];
+
+      wrapper = createWrapper({ isViewMode: false });
+      await flushPromises();
+
+      expect(getSelectedQueues).toHaveBeenCalled();
+      expect(roomsStore.filterQueues).toEqual([
+        'queue-uuid-1',
+        'queue-uuid-2',
+      ]);
+    });
+
+    it('resets filterQueues in view mode without reading storage', async () => {
+      const { getSelectedQueues } = await import('@/utils/queuesViewStorage');
+      vi.mocked(getSelectedQueues).mockClear();
+
+      const roomsStore = useRooms();
+      roomsStore.filterQueues = ['queue-uuid-1'];
+
+      wrapper = createWrapper({ isViewMode: true });
+      await flushPromises();
+
+      expect(getSelectedQueues).not.toHaveBeenCalled();
+      expect(roomsStore.filterQueues).toEqual([]);
     });
   });
 

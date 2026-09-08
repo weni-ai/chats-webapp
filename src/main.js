@@ -1,7 +1,6 @@
 import { createApp, watch } from 'vue';
 import { createPinia } from 'pinia';
 import moment from 'moment';
-import env from './utils/env';
 
 import App from './App.vue';
 
@@ -9,7 +8,6 @@ import i18n from './plugins/i18n';
 import UnnnicSystem from './plugins/UnnnicSystem';
 import vMaskV3 from './plugins/vmask3';
 import { createAppRouter } from './router';
-import { getJwtToken } from './utils/jwt';
 import { useConfig } from './store/modules/config';
 import { safeImport, isFederatedModule } from './utils/moduleFederation';
 
@@ -19,9 +17,9 @@ import 'plyr/dist/plyr.css';
 import './styles/global.scss';
 
 // When consumed as a remote, `connect/sharedStore` resolves to the host's
-// Pinia-backed shared store. In standalone/iframe mode the rspack alias points
-// it at a stub that returns `null`, so `safeImport` yields `{}` and we fall
-// back to the legacy token/postMessage handshake.
+// Pinia-backed shared store. In standalone mode the rspack alias points it at
+// a stub that returns `null`, so `safeImport` yields `{}` and token/project
+// come from local storage / config instead.
 const { useSharedStore } = await safeImport(
   () => import('connect/sharedStore'),
   'connect/sharedStore',
@@ -48,9 +46,8 @@ export default async function mountChatsApp({
   themeEnforcementActive = null,
 } = {}) {
   if (!isFederatedModule) {
-    await getJwtToken();
     // The host owns the document-level service worker; only register it when
-    // chats runs on its own origin (standalone / iframe).
+    // chats runs on its own origin (standalone).
     await import('./registerServiceWorker');
   }
 
@@ -94,11 +91,10 @@ export default async function mountChatsApp({
       { immediate: true },
     );
 
-    // Federated: the legacy getLanguage/setLanguage postMessage handshake can't
-    // reach the host (same document, no iframe). Mirror the host's account
-    // language from the shared store instead. Composition mode (`legacy: false`)
-    // exposes `i18n.global.locale` as a Ref — assign `.value` so Accept-Language
-    // headers, `$i18n.locale` watchers, and moment dates stay in sync.
+    // Federated: mirror the host's account language from the shared store.
+    // Composition mode (`legacy: false`) exposes `i18n.global.locale` as a Ref
+    // — assign `.value` so Accept-Language headers, `$i18n.locale` watchers,
+    // and moment dates stay in sync.
     watch(
       () => sharedStore.user?.language,
       (language) => {
@@ -170,7 +166,7 @@ export default async function mountChatsApp({
   return { app, router };
 }
 
-// Standalone / iframe: bootstrap immediately into the local `#app`.
+// Standalone: bootstrap immediately into the local `#app`.
 // Federated: the host (connect) calls the exported `mountChatsApp` with its own
 // container id. Never auto-mount when federated — doing so would mount chats on
 // top of the host's `#app` root and break its DOM (nextSibling errors).

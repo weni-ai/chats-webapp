@@ -313,6 +313,82 @@ export async function sendMedias({
   );
 }
 
+export async function sendMediasWithText({
+  itemType,
+  itemUuid,
+  itemUser,
+  medias,
+  text = '',
+  repliedMessage,
+  uploadItemMedia,
+  createItemMessage,
+  addMessage,
+  addFailedMessage,
+  addSortedMessage,
+  updateMessage,
+  existingMessage = null,
+}) {
+  if (!itemUuid) {
+    return;
+  }
+
+  const files = medias
+    .map((media) => (media instanceof File ? media : media?.file))
+    .filter(Boolean);
+
+  if (!files.length) {
+    return;
+  }
+
+  let temporaryMessage = existingMessage;
+
+  if (!temporaryMessage) {
+    const temporaryMedias = files.map((file) => ({
+      preview: URL.createObjectURL(file),
+      file,
+      content_type: file.type,
+    }));
+
+    temporaryMessage = createTemporaryMessage({
+      itemType,
+      itemUuid,
+      itemUser,
+      message: text,
+      repliedMessage,
+      medias: temporaryMedias,
+    });
+
+    addMessage(temporaryMessage);
+    addSortedMessage(temporaryMessage);
+  }
+
+  try {
+    const uploadedMedias = await Promise.all(
+      files.map((file) => uploadItemMedia(file, temporaryMessage.uuid)),
+    );
+
+    const mediaUuids = uploadedMedias.map(
+      (uploaded) => uploaded.uuid || uploaded.id,
+    );
+
+    const sentMessage = await createItemMessage({
+      text: text || existingMessage?.text || '',
+      media: mediaUuids,
+    });
+
+    updateMessage({
+      message: {
+        ...sentMessage,
+        media: sentMessage.media?.length ? sentMessage.media : uploadedMedias,
+      },
+      toUpdateMessageUuid: temporaryMessage.uuid,
+    });
+  } catch (error) {
+    addFailedMessage(temporaryMessage);
+    console.error('An error occurred while sending the media', error);
+  }
+}
+
 export async function resendMedia({
   itemUuid,
   sendItemMedia,

@@ -282,6 +282,53 @@ describe('Message service', () => {
       });
       expect(result).toEqual(mockResponse.data);
     });
+
+    it('should send a message with media uuids', async () => {
+      const mockResponse = {
+        data: {
+          uuid: 'msg-media-1',
+          text: 'caption',
+          media: ['uuid-2', 'uuid-1'],
+        },
+      };
+      http.post.mockResolvedValue(mockResponse);
+
+      const result = await messageService.sendRoomMessage('room-123', {
+        text: 'caption',
+        user_email: 'user@example.com',
+        seen: true,
+        media: ['uuid-2', 'uuid-1'],
+      });
+
+      expect(http.post).toHaveBeenCalledWith('/msg/', {
+        room: 'room-123',
+        text: 'caption',
+        user_email: 'user@example.com',
+        seen: true,
+        replied_message_id: undefined,
+        media: ['uuid-2', 'uuid-1'],
+      });
+      expect(result).toEqual(mockResponse.data);
+    });
+
+    it('should omit media from the payload when the array is empty', async () => {
+      http.post.mockResolvedValue({ data: { uuid: 'msg-1', text: 'Hi' } });
+
+      await messageService.sendRoomMessage('room-123', {
+        text: 'Hi',
+        user_email: 'user@example.com',
+        seen: true,
+        media: [],
+      });
+
+      expect(http.post).toHaveBeenCalledWith('/msg/', {
+        room: 'room-123',
+        text: 'Hi',
+        user_email: 'user@example.com',
+        seen: true,
+        replied_message_id: undefined,
+      });
+    });
   });
 
   describe('sendDiscussionMessage', () => {

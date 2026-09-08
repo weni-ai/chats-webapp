@@ -16,6 +16,8 @@ import { storeToRefs } from 'pinia';
 import { useMessageManager } from '@/store/modules/chats/messageManager';
 import { useDiscussions } from '@/store/modules/chats/discussions';
 import { useAiTextImprovement } from '@/store/modules/chats/aiTextImprovement';
+import { useFeatureFlag } from '@/store/modules/featureFlag';
+import { useMediaMessagesWithTextFeatureFlag } from '@/composables/useMediaMessagesWithTextFeatureFlag';
 
 import ActionItem from './ActionItem.vue';
 
@@ -46,8 +48,12 @@ const {
 
 const { activeDiscussion } = storeToRefs(useDiscussions());
 const { isLoading: isAiLoading } = storeToRefs(useAiTextImprovement());
+const { featureFlags } = storeToRefs(useFeatureFlag());
 
 const isInDiscussion = computed(() => !!activeDiscussion.value?.uuid);
+const isMediaMessagesWithTextEnabled = computed(() =>
+  useMediaMessagesWithTextFeatureFlag(featureFlags.value),
+);
 
 const isValidInputMessage = computed(() =>
   isSuggestionBoxOpen.value
@@ -60,7 +66,10 @@ const isDisabled = computed(() => {
     return true;
   }
 
-  const hasBlockingInput = !isInternalNote.value && isValidInputMessage.value;
+  const hasBlockingInput =
+    !isInternalNote.value &&
+    !isMediaMessagesWithTextEnabled.value &&
+    isValidInputMessage.value;
 
   return (
     hasBlockingInput ||
@@ -71,7 +80,7 @@ const isDisabled = computed(() => {
 });
 
 function handleClick() {
-  if (isInternalNote.value) {
+  if (isInternalNote.value || isMediaMessagesWithTextEnabled.value) {
     audioMessage.value = null;
     audioRecorderStatus.value = 'idle';
   } else {

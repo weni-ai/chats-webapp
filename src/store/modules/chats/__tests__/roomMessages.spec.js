@@ -3,9 +3,11 @@ import { setActivePinia, createPinia } from 'pinia';
 import { useRoomMessages } from '../roomMessages';
 import { useRooms } from '../rooms';
 import Message from '@/services/api/resources/chats/message';
+import Media from '@/services/api/resources/chats/media';
 import RoomNotes from '@/services/api/resources/chats/roomNotes';
 import { useFeatureFlag } from '@/store/modules/featureFlag';
 import { sendRoomMessageBySocket } from '@/services/api/websocket/messages';
+import { MEDIA_MESSAGES_WITH_TEXT_FEATURE_FLAG } from '@/composables/useMediaMessagesWithTextFeatureFlag';
 
 vi.mock('../rooms');
 vi.mock('@/store/modules/profile', () => ({
@@ -21,6 +23,11 @@ vi.mock('@/services/api/resources/chats/message', () => ({
     getByRoom: vi.fn(),
     sendRoomMessage: vi.fn(),
     sendRoomMedia: vi.fn(),
+  },
+}));
+vi.mock('@/services/api/resources/chats/media', () => ({
+  default: {
+    uploadRoomMedia: vi.fn(),
   },
 }));
 vi.mock('@/services/api/resources/chats/roomNotes', () => ({
@@ -268,6 +275,66 @@ describe('useRoomMessages Store', () => {
     expect(
       Message.sendRoomMedia.mock.calls[0][1].createMessage,
     ).toBeUndefined();
+  });
+
+  it('should upload all medias via v2 and create one message when the media with text flag is enabled', async () => {
+    globalThis.URL.createObjectURL = vi.fn(() => 'blob:preview');
+    useFeatureFlag.mockReturnValue({
+      featureFlags: {
+        active_features: [MEDIA_MESSAGES_WITH_TEXT_FEATURE_FLAG],
+      },
+    });
+    Media.uploadRoomMedia
+      .mockResolvedValueOnce({ uuid: 'uploaded-1' })
+      .mockResolvedValueOnce({ uuid: 'uploaded-2' });
+    Message.sendRoomMessage.mockResolvedValue({
+      uuid: 'msg-1',
+      text: 'caption',
+      media: [{ uuid: 'uploaded-1' }, { uuid: 'uploaded-2' }],
+    });
+    const file1 = new File(['x'], 'image.png', { type: 'image/png' });
+    const file2 = new File(['y'], 'photo.jpg', { type: 'image/jpeg' });
+
+    await roomMessagesStore.sendRoomMedias({
+      files: [file1, file2],
+      text: 'caption',
+      updateLoadingFiles: vi.fn(),
+      repliedMessage: null,
+      roomUuid: 'room-123',
+    });
+
+    expect(Media.uploadRoomMedia).toHaveBeenCalledTimes(2);
+    expect(Message.sendRoomMessage).toHaveBeenCalledWith(
+      'room-123',
+      expect.objectContaining({
+        text: 'caption',
+        media: ['uploaded-1', 'uploaded-2'],
+      }),
+    );
+    expect(Message.sendRoomMedia).not.toHaveBeenCalled();
+  });
+
+  it('should not create a message when a v2 upload fails', async () => {
+    vi.spyOn(console, 'error').mockImplementation(() => {});
+    globalThis.URL.createObjectURL = vi.fn(() => 'blob:preview');
+    useFeatureFlag.mockReturnValue({
+      featureFlags: {
+        active_features: [MEDIA_MESSAGES_WITH_TEXT_FEATURE_FLAG],
+      },
+    });
+    Media.uploadRoomMedia.mockRejectedValue(new Error('upload failed'));
+    const file = new File(['x'], 'image.png', { type: 'image/png' });
+
+    await roomMessagesStore.sendRoomMedias({
+      files: [file],
+      text: 'caption',
+      updateLoadingFiles: vi.fn(),
+      repliedMessage: null,
+      roomUuid: 'room-123',
+    });
+
+    expect(Message.sendRoomMessage).not.toHaveBeenCalled();
+    expect(Message.sendRoomMedia).not.toHaveBeenCalled();
   });
 
   it('should create media message via socket when the feature flag is enabled', async () => {

@@ -98,6 +98,7 @@ function mockCopilotChat({
       acceptAttribute: '',
     }),
     sendMessage: vi.fn(),
+    sendOrder: vi.fn(),
     sendAttachment: vi.fn(),
     startRecording: vi.fn(),
     stopRecording: vi.fn(),
@@ -120,7 +121,7 @@ const createWrapper = (props = {}, piniaState = {}) =>
               isLoadingActiveRoomSummary: false,
             },
             profile: {
-              me: { project_permission_role: 1 },
+              me: { email: 'agent@example.com', project_permission_role: 1 },
             },
             config: {
               project: { config: { has_chats_summary: true } },
@@ -175,6 +176,10 @@ const createWrapper = (props = {}, piniaState = {}) =>
           template: '<div data-testid="assistant-cart-badge" />',
           props: ['count'],
         },
+        Cart: {
+          name: 'DeskCopilotCart',
+          template: '<div data-testid="desk-copilot-cart" />',
+        },
         UnnnicButton: {
           name: 'UnnnicButton',
           inheritAttrs: false,
@@ -214,7 +219,6 @@ describe('DeskCopilotTab', () => {
       connection: defaultConnection,
     });
     mockCopilotChat({
-      cartCount: 1,
       suggestions: ['Ask about color'],
     });
     wrapper = createWrapper();
@@ -229,11 +233,12 @@ describe('DeskCopilotTab', () => {
     ).toBe(true);
     expect(wrapper.find('[data-testid="assistant-input"]').exists()).toBe(true);
     expect(wrapper.find('[data-testid="assistant-cart-badge"]').exists()).toBe(
-      true,
+      false,
     );
     expect(useCopilotChat).toHaveBeenCalled();
-    const [, roomUuid] = useCopilotChat.mock.calls[0];
+    const [, roomUuid, agentEmail] = useCopilotChat.mock.calls[0];
     expect(roomUuid.value).toBe('room-1');
+    expect(agentEmail.value).toBe('agent@example.com');
   });
 
   it('sends the AI suggestion directly to the active room', async () => {

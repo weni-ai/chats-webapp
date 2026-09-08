@@ -1,14 +1,9 @@
 import i18n from '@/plugins/i18n';
-import iframessa from 'iframessa';
-import logo from '../assets/vtex-logo.svg';
 import isMobile from 'is-mobile';
 import { emitToHost } from './hostBridge';
-import { isFederatedModule } from './moduleFederation';
-
-iframessa.register('chats');
 
 function buildNotificationOptions({ message = '', image = '', title }) {
-  const options = {
+  return {
     silent: true,
     body: image ? `${i18n.global.t('media')}\n${message}` : message,
     // Same contact reuses the toast (latest message wins). Without
@@ -16,15 +11,6 @@ function buildNotificationOptions({ message = '', image = '', title }) {
     tag: title,
     requireInteraction: true,
   };
-
-  // Federated: Connect overrides icon/badge with its same-origin VTEX
-  // favicon. Passing the chats remote asset URL breaks the toast icon.
-  if (!isFederatedModule) {
-    options.badge = logo;
-    options.icon = logo;
-  }
-
-  return options;
 }
 
 export function sendWindowNotification({
@@ -46,25 +32,15 @@ export function sendWindowNotification({
     return;
   }
 
-  // Federated: same document/origin as Connect — route via hostBridge so the
-  // host owns the Notification API (mirrors unread/theme).
-  if (isFederatedModule) {
-    emitToHost('chats:notification', { title, options });
-    return;
-  }
-
-  // Iframe / standalone: host listens via iframessa (cross-origin).
-  iframessa.emit('notification', [title, options]);
+  // Route via hostBridge so Connect owns the Notification API (same document
+  // when federated; CustomEvent is a no-op with no host listener in standalone).
+  emitToHost('chats:notification', { title, options });
 }
 
 export function requestPermission() {
-  if (isFederatedModule) {
-    emitToHost('chats:notification-request-permission');
-    return;
-  }
-
   if (isMobile() && Notification.permission !== 'granted') {
     Notification.requestPermission();
   }
-  iframessa.emit('notification.requestPermission');
+
+  emitToHost('chats:notification-request-permission');
 }

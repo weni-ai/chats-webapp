@@ -70,7 +70,7 @@ export default {
 
   async sendRoomMessage(
     roomId,
-    { text, user_email, seen, repliedMessageId, aiTextImprovement },
+    { text, user_email, seen, repliedMessageId, aiTextImprovement, media },
   ) {
     const payload = {
       room: roomId,
@@ -82,6 +82,10 @@ export default {
 
     if (aiTextImprovement) {
       payload.ai_text_improvement = aiTextImprovement;
+    }
+
+    if (Array.isArray(media) && media.length) {
+      payload.media = media;
     }
 
     const response = await http.post('/msg/', payload);

@@ -16,10 +16,16 @@ import type { CopilotConnection } from '@/services/api/resources/chats/copilot';
 import { copilotSocketManager } from '@/services/copilot/copilotSocketManager';
 import { extractCartCount } from '@/services/assistant/cartCount';
 import { mapServiceMessage } from '@/services/assistant/messageMapper';
-import type { AssistantMessage } from '@/services/assistant/types';
+import type {
+  AssistantMessage,
+  OrderProductItem,
+} from '@/services/assistant/types';
 
 type ConnectionRef = Ref<CopilotConnection | undefined>;
 type RoomUuidRef = Ref<string | undefined>;
+type AgentEmailRef = Ref<string | undefined>;
+
+const SELLER_EMAIL_CUSTOM_FIELD = 'sellerEmail';
 
 const DEFAULT_FILE_CONFIG: FileConfig = {
   allowedTypes: [],
@@ -30,6 +36,7 @@ const DEFAULT_FILE_CONFIG: FileConfig = {
 export function useCopilotChat(
   connection: ConnectionRef,
   roomUuid: RoomUuidRef,
+  agentEmail: AgentEmailRef = ref(undefined),
 ) {
   const messages = ref<AssistantMessage[]>([]);
   const isThinking = ref(false);
@@ -291,6 +298,16 @@ export function useCopilotChat(
     copilotSocketManager.scheduleEviction(activeRoomUuid, activeConnection);
   }
 
+  function applySellerEmail(service: WeniWebchatService) {
+    const email = agentEmail.value?.trim();
+
+    if (!email) {
+      return;
+    }
+
+    service.setCustomField(SELLER_EMAIL_CUSTOM_FIELD, email);
+  }
+
   function attachService(
     currentConnection: CopilotConnection,
     currentRoomUuid: string,
@@ -321,6 +338,7 @@ export function useCopilotChat(
     activeRoomUuid = currentRoomUuid;
     activeConnection = currentConnection;
     subscribe(service);
+    applySellerEmail(service);
     syncMessagesFromService(service);
     syncFileConfig(service);
     isLoadingHistory.value = !service.isConnected();
@@ -336,6 +354,18 @@ export function useCopilotChat(
     }
 
     activeService.sendMessage(trimmed);
+  }
+
+  async function sendOrder(productItems: OrderProductItem[]) {
+    if (
+      !activeService ||
+      !Array.isArray(productItems) ||
+      productItems.length === 0
+    ) {
+      return;
+    }
+
+    await activeService.sendOrder(productItems);
   }
 
   async function sendAttachment(file: File) {
@@ -413,6 +443,14 @@ export function useCopilotChat(
     { immediate: true },
   );
 
+  watch(agentEmail, (email) => {
+    if (!email?.trim() || !activeService) {
+      return;
+    }
+
+    applySellerEmail(activeService);
+  });
+
   if (getCurrentInstance()) {
     onUnmounted(() => {
       scheduleActiveRoomEviction();
@@ -434,6 +472,7 @@ export function useCopilotChat(
     fileConfig,
     lastStreamingText,
     sendMessage,
+    sendOrder,
     sendAttachment,
     startRecording,
     stopRecording,

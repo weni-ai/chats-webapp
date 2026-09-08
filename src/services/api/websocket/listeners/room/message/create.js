@@ -7,7 +7,8 @@ import { useRoomMessages } from '@/store/modules/chats/roomMessages';
 import { getRoomType } from '@/utils/room';
 
 const checkAndUpdateRoomLastMessage = (room, message) => {
-  const itsMessageSystem = !message.contact && !message.user;
+  const itsMessageSystem =
+    !message.contact && !message.user && !message.bulk_message;
   const itsEmptyMessage = !message.text?.trim() && !message.media?.length;
 
   if (itsMessageSystem) return;
@@ -24,6 +25,10 @@ const checkAndUpdateRoomLastMessage = (room, message) => {
   room.last_interaction = message.created_on;
 };
 
+const isMessageFromMe = (message, meEmail) =>
+  meEmail === message.user?.email ||
+  meEmail === message.bulk_message?.sent_by?.email;
+
 export default async (message, { app }) => {
   const roomsStore = useRooms();
   const roomMessagesStore = useRoomMessages();
@@ -33,11 +38,25 @@ export default async (message, { app }) => {
 
   if (findRoom) {
     const roomType = getRoomType(findRoom);
+    const isBulkMessage = !!message.bulk_message;
+    const isFromMe = isMessageFromMe(message, app.me.email);
+    const isCurrentRoom =
+      app.$route.name === 'room' && app.$route.params.roomId === message.room;
+    const isViewModeCurrentRoom =
+      app.$route.params.viewedAgent && activeRoom?.uuid === message.room;
 
-    if (app.me.email === message.user?.email) {
+    if (isFromMe) {
       if (!message.internal_note) {
         checkAndUpdateRoomLastMessage(findRoom, message);
       }
+
+      if (isBulkMessage) {
+        if (isCurrentRoom || isViewModeCurrentRoom) {
+          roomMessagesStore.addMessage(message);
+        }
+        return;
+      }
+
       if (!message.is_automatic_message) {
         return;
       }
@@ -61,11 +80,6 @@ export default async (message, { app }) => {
         console.log(error);
       }
     }
-
-    const isCurrentRoom =
-      app.$route.name === 'room' && app.$route.params.roomId === message.room;
-    const isViewModeCurrentRoom =
-      app.$route.params.viewedAgent && activeRoom?.uuid === message.room;
 
     if (isCurrentRoom || isViewModeCurrentRoom) {
       roomMessagesStore.addMessage(message);
