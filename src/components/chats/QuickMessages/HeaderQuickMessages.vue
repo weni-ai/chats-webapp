@@ -26,5 +26,6 @@ defineEmits(['close']);
   font: $unnnic-font-display-3;
   color: $unnnic-color-fg-emphasized;
   border-bottom: 1px solid $unnnic-color-border-soft;
+  flex-shrink: 0;
 }
 </style>
