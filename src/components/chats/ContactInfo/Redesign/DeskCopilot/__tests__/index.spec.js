@@ -24,6 +24,10 @@ vi.mock('@/composables/assistant/useCopilotChat', () => ({
   useCopilotChat: vi.fn(),
 }));
 
+vi.mock('@/composables/assistant/useCopilotRoomContext', () => ({
+  useCopilotRoomContext: vi.fn(),
+}));
+
 vi.mock('@/composables/assistant/useVoiceMode', () => ({
   useVoiceMode: vi.fn(() => ({
     canEnterVoiceMode: computed(() => false),

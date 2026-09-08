@@ -123,6 +123,7 @@ import SuggestionChips from './assistant/SuggestionChips.vue';
 import CartBadge from './assistant/CartBadge.vue';
 import { useAutoScroll } from '@/composables/assistant/useAutoScroll';
 import { useCopilotChat } from '@/composables/assistant/useCopilotChat';
+import { useCopilotRoomContext } from '@/composables/assistant/useCopilotRoomContext';
 import { useProductCart } from '@/composables/assistant/useProductCart';
 import { useVoiceMode } from '@/composables/assistant/useVoiceMode';
 import { useCopilotConnection } from '@/composables/useCopilotConnection';
@@ -155,6 +156,7 @@ const { project } = storeToRefs(useConfig());
 const { activeRoom } = storeToRefs(useRooms());
 const { me } = storeToRefs(useProfile());
 const roomMessagesStore = useRoomMessages();
+const { roomMessages } = storeToRefs(roomMessagesStore);
 const agentEmail = computed(() => me.value?.email || undefined);
 
 const currentView = ref<'chat' | 'cart'>('chat');
@@ -185,6 +187,8 @@ const {
   cancelRecording,
   requestVoiceTokens,
 } = useCopilotChat(connection, roomUuid, agentEmail);
+
+useCopilotRoomContext(connection, roomUuid, roomMessages);
 
 const {
   items: cartItems,
