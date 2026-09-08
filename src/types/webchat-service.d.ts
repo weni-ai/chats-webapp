@@ -68,6 +68,15 @@ declare module '@weni/webchat-service' {
       text?: string;
       product_items?: ProductCarouselItem[];
     };
+    product_list?: {
+      text?: string;
+      buttonText?: string;
+      sections?: Array<{
+        title?: string;
+        product_items?: ProductCarouselItem[];
+      }>;
+    };
+    header?: string;
     order?: {
       product_items?: OrderProductItem[];
     };
