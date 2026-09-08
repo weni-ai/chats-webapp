@@ -51,7 +51,7 @@ describe('useCopilotRoomContext', () => {
     expect(copilotSocketManager.setRoomContext).toHaveBeenCalledWith(
       'room-1',
       connectionValue,
-      'Contato: Oi',
+      'Contact: Oi',
     );
   });
 
@@ -113,7 +113,7 @@ describe('useCopilotRoomContext', () => {
     expect(copilotSocketManager.setRoomContext).toHaveBeenCalledWith(
       'room-1',
       connectionValue,
-      'Contato: Oi\nContato: Tudo bem?',
+      'Contact: Oi\nContact: Tudo bem?',
     );
   });
 
@@ -133,7 +133,7 @@ describe('useCopilotRoomContext', () => {
     expect(copilotSocketManager.setRoomContext).toHaveBeenCalledWith(
       'room-2',
       connectionValue,
-      'Contato: Sala 2',
+      'Contact: Sala 2',
     );
   });
 

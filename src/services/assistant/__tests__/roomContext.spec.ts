@@ -29,11 +29,11 @@ describe('buildRoomContext', () => {
 
   it('classifies contact and agent messages', () => {
     const result = buildRoomContext([
-      msg({ text: 'Oi', contact: { name: 'Cliente' } }),
-      msg({ text: 'Olá!', user: { email: 'agent@weni.ai' } }),
+      msg({ text: 'Hi', contact: { name: 'Cliente' } }),
+      msg({ text: 'Hello!', user: { email: 'agent@weni.ai' } }),
     ]);
 
-    expect(result).toBe('Contato: Oi\nAgente: Olá!');
+    expect(result).toBe('Contact: Hi\nAgent: Hello!');
   });
 
   it('filters internal notes, system JSON and messages without role', () => {
@@ -45,10 +45,10 @@ describe('buildRoomContext', () => {
       }),
       msg({ text: '{"type":"flow"}', contact: { name: 'Cliente' } }),
       msg({ text: 'sem papel' }),
-      msg({ text: 'válida', contact: { name: 'Cliente' } }),
+      msg({ text: 'valid', contact: { name: 'Cliente' } }),
     ]);
 
-    expect(result).toBe('Contato: válida');
+    expect(result).toBe('Contact: valid');
   });
 
   it('keeps only the last N messages according to limit', () => {
@@ -61,7 +61,7 @@ describe('buildRoomContext', () => {
     );
 
     expect(buildRoomContext(messages, { limit: 2 })).toBe(
-      'Contato: m3\nContato: m4',
+      'Contact: m3\nContact: m4',
     );
   });
 
@@ -72,11 +72,9 @@ describe('buildRoomContext', () => {
       msg({ text: 'cccccccccc', contact: { name: 'Cliente' } }),
     ];
 
-    // "Contato: aaaaaaaaaa" = 19 chars; with newlines each line is longer.
-    // With a tight maxChars only the newest line(s) should remain.
     const result = buildRoomContext(messages, { maxChars: 25 });
 
-    expect(result).toBe('Contato: cccccccccc');
+    expect(result).toBe('Contact: cccccccccc');
     expect(result.length).toBeLessThanOrEqual(25);
   });
 
