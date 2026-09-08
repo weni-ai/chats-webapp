@@ -342,7 +342,7 @@
         "tooltip": "Cada mensagem exibirá o nome do atendente que respondeu",
         "switch_active": "Exibir nome do atendente nas mensagens",
         "switch_disabled": "Exibir nome do atendente nas mensagens",
-        "hint": "Cada mensagem trocada terá o nome do atendente que está respondendo.",
+        "hint": "Cada mensagem enviada exibirá o nome do atendente que está respondendo.",
         "switch_label": "Usar assinatura"
       },
       "csat": {
@@ -822,7 +822,7 @@
     "alert_detached": "Contato desvinculado",
     "header": {
       "desk_copilot": "Desk Copilot",
-      "information": "Informações"
+      "information": "Detalhes do chat"
     },
     "linked_contact": "Contato vinculado ao atendente {name}",
     "see_contact_history": "Ver histórico",
@@ -849,17 +849,33 @@
     },
     "desk_copilot": {
       "assistant": {
+        "add_to_cart_action": "Adicionar ao carrinho",
         "attach_action": "Anexar arquivo",
         "cancel_recording": "Cancelar gravação",
+        "carousel_scroll_left_action": "Rolar à esquerda",
+        "carousel_scroll_right_action": "Rolar à direita",
+        "cart": {
+          "back_action": "Voltar",
+          "discount": "Desconto",
+          "place_order_action": "Fazer pedido",
+          "place_order_error": "Não foi possível fazer o pedido devido a um problema técnico",
+          "remove_item_action": "Remover item",
+          "subtotal": "Subtotal",
+          "title": "Carrinho",
+          "total": "Total"
+        },
         "copy_action": "Copiar",
+        "decrease_quantity_action": "Diminuir quantidade",
         "file_too_large": "Selecione um arquivo menor",
         "file_type_not_allowed": "Selecione um tipo de arquivo compatível",
         "image_attachment": "Anexo de imagem",
+        "increase_quantity_action": "Aumentar quantidade",
         "input_placeholder": "Pergunte ao assistente",
         "open_media_menu": "Abrir menu de mídia",
         "processing_information": "Processando informações",
         "record_audio": "Áudio",
         "recording_in_progress": "Gravando",
+        "remove_suggestion_action": "Remover sugestão",
         "scroll_to_bottom": "Ir ao final",
         "send_action": "Enviar",
         "send_audio": "Enviar áudio",
@@ -882,7 +898,8 @@
           "speaking": "Assistente falando"
         }
       },
-      "copy_summary": "Copiar resumo",
+      "copied_to_message_input": "Texto copiado para o campo de mensagem",
+      "copy_summary": "Copiar para o campo de mensagem",
       "disclaimer": {
         "description": "O Desk Copilot pode ajudar você com:",
         "enable_button": "Ativar Desk Copilot",
@@ -893,7 +910,7 @@
           "sales_arguments": "Argumentos de venda"
         },
         "title": "Vá além dos resumos de conversa",
-        "title_without_summary": "Desbloqueie todo o seu potencial com o Desk Copilot"
+        "title_without_summary": "Explore todo o seu potencial com o Desk Copilot"
       },
       "summary_title": "Resumo desta conversa"
     }
@@ -1183,7 +1200,7 @@
         "assigned_agents": "Agentes atribuídos",
         "badge": "Copilot",
         "connected_by": "Conectado por",
-        "connected_to": "Conectado em",
+        "connected_to": "Conectado a",
         "created_on": "Criado em",
         "description": "Este projeto é usado exclusivamente para gerenciar os agentes de IA do Desk Copilot. O acesso é feito apenas por esta seção.",
         "open": "Abrir",
@@ -1199,7 +1216,8 @@
       },
       "empty_state": {
         "create_button": "Criar projeto Copilot",
-        "description": "Para ativar o Desk Copilot, conecte este projeto a um projeto Copilot onde seus agentes de IA são gerenciados",
+        "create_disabled_tooltip": "Você não tem permissão para criar um projeto Copilot",
+        "description": "Para ativar o Desk Copilot, conecte este projeto a um projeto Copilot no qual seus agentes de IA são gerenciados.",
         "select_button": "Selecionar projeto Copilot",
         "title": "Nenhum projeto Copilot conectado"
       },
@@ -1214,7 +1232,7 @@
           "title": "Atualizações automáticas"
         },
         "centralized_agents": {
-          "description": "Gerencie todos os agentes de IA em um único projeto Copilot.",
+          "description": "Gerencie todos os agentes de IA em um único projeto Copilot",
           "title": "Agentes de IA centralizados"
         },
         "learn_more": "Saiba mais",
@@ -1265,8 +1283,8 @@
         "hint": "Se essa opção estiver ativada, atendentes offline ou em pausa não poderão responder a chats em andamento."
       },
       "block_link_contact_agents": {
-        "switch_label": "Bloquear a vinculação de contatos pelos atendentes",
-        "hint": "Se essa opção estiver ativada, os atendentes não poderão vincular contatos a eles"
+        "switch_label": "Impedir que atendentes vinculem contatos",
+        "hint": "Se essa opção estiver ativada, os atendentes não poderão vincular contatos a si mesmos"
       },
       "bulk_transfer": {
         "tooltip": "Esta função permite que os atendentes transfiram diferentes contatos de uma só vez",

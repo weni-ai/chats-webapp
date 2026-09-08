@@ -360,7 +360,7 @@
           "custom": "Custom flows",
           "default": "Default CSAT survey (recommended)",
           "label": "Survey type",
-          "tooltip": "Choose between the default CSAT survey and a custom flow previously configured in the Flows module."
+          "tooltip": "Choose between the default CSAT survey and a custom flow configured in the Flows module."
         }
       },
       "automatic_message": {
@@ -822,7 +822,7 @@
     "alert_detached": "Unlinked contact",
     "header": {
       "desk_copilot": "Desk Copilot",
-      "information": "Information"
+      "information": "Chat details"
     },
     "linked_contact": "Contact linked to representative {name}",
     "see_contact_history": "View history",
@@ -849,17 +849,33 @@
     },
     "desk_copilot": {
       "assistant": {
+        "add_to_cart_action": "Add to cart",
         "attach_action": "Attach file",
         "cancel_recording": "Cancel recording",
+        "carousel_scroll_left_action": "Scroll left",
+        "carousel_scroll_right_action": "Scroll right",
+        "cart": {
+          "back_action": "Back",
+          "discount": "Discount",
+          "place_order_action": "Place order",
+          "place_order_error": "Order couldn't be placed due to a technical issue",
+          "remove_item_action": "Remove item",
+          "subtotal": "Subtotal",
+          "title": "Cart",
+          "total": "Total"
+        },
         "copy_action": "Copy",
+        "decrease_quantity_action": "Decrease quantity",
         "file_too_large": "Select a smaller file",
         "file_type_not_allowed": "Select a supported file type",
         "image_attachment": "Image attachment",
+        "increase_quantity_action": "Increase quantity",
         "input_placeholder": "Ask the assistant",
         "open_media_menu": "Open media menu",
         "processing_information": "Processing information",
         "record_audio": "Audio",
         "recording_in_progress": "Recording",
+        "remove_suggestion_action": "Remove suggestion",
         "scroll_to_bottom": "Go to bottom",
         "send_action": "Send",
         "send_audio": "Send audio",
@@ -882,7 +898,8 @@
           "speaking": "Assistant speaking"
         }
       },
-      "copy_summary": "Copy summary",
+      "copied_to_message_input": "Text copied to the message field",
+      "copy_summary": "Copy to message field",
       "disclaimer": {
         "description": "Desk Copilot can help you with:",
         "enable_button": "Enable Desk Copilot",
@@ -1185,7 +1202,7 @@
         "connected_by": "Connected by",
         "connected_to": "Connected to",
         "created_on": "Created on",
-        "description": "This project is used exclusively to manage the AI agents for the Desk Copilot. It is accessible only through this section.",
+        "description": "This project is used exclusively to manage the AI agents for the Desk Copilot. It can only be accessed from this section.",
         "open": "Open",
         "popover_change_option": "Change",
         "popover_disconnect_option": "Disconnect"
@@ -1199,23 +1216,24 @@
       },
       "empty_state": {
         "create_button": "Create Copilot Project",
-        "description": "To enable Desk Copilot, connect this project to a Copilot Project where your AI Agents are managed",
+        "create_disabled_tooltip": "You don't have permission to create a Copilot Project",
+        "description": "To activate Desk Copilot, connect this project to a Copilot Project where your AI agents are managed",
         "select_button": "Select Copilot Project",
         "title": "No Copilot Project connected"
       },
-      "enable_title": "Enable Desk Copilot",
+      "enable_title": "Activate Desk Copilot",
       "info": {
         "ai_assistance": {
-          "description": "Assist your representatives during conversations with AI-powered suggestions, recommended items, and next-best actions.",
-          "title": "AI Assistance"
+          "description": "Assist your representatives with AI-powered suggestions, recommended items, and next-best actions during conversations.",
+          "title": "AI assistance"
         },
         "automatic_updates": {
-          "description": "Changes made to your Copilot Project are reflected across every connected Live Desk project.",
+          "description": "Changes made to your Copilot Project are reflected across all connected Live Desk projects.",
           "title": "Automatic updates"
         },
         "centralized_agents": {
-          "description": "Manage all AI Agents in one Copilot Project.",
-          "title": "Centralized AI Agents"
+          "description": "Manage all AI agents in one Copilot Project",
+          "title": "Centralized AI agents"
         },
         "learn_more": "Learn more",
         "shared_across_projects": {
