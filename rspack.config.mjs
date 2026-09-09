@@ -58,4 +58,10 @@ export default defineWeniConfig({
     });
     return config;
   },
+  sharedDeps: {
+    'vue-router': {
+      singleton: true,
+      requiredVersion: pkg.dependencies['vue-router'],
+    },
+  },
 });
