@@ -89,10 +89,7 @@ const disclaimerItems = [
 ] as const;
 
 const showEnableButton = computed(
-  () =>
-    isUserAdmin(me.value?.project_permission_role) &&
-    !props.isHistory &&
-    !props.isViewMode,
+  () => isUserAdmin(me.value?.project_permission_role) && !props.isViewMode,
 );
 
 function handleEnable() {
