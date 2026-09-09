@@ -3,109 +3,120 @@
     class="desk-copilot"
     data-testid="desk-copilot"
   >
-    <Cart
-      v-if="currentView === 'cart'"
-      :items="cartItems"
-      :totalQuantity="productCartTotalQuantity"
-      :currency="cartCurrency"
-      :subtotal="cartSubtotal"
-      :discount="cartDiscount"
-      :total="cartTotal"
-      @back="currentView = 'chat'"
-      @remove="removeCartItem"
-      @increment="incrementCartItem"
-      @decrement="decrementCartItem"
-      @place-order="handlePlaceOrder"
+    <DeskCopilotHistoryView
+      v-if="isHistory"
+      :isConfigured="isConfigured"
+      :isLoadingConnection="isLoadingConnection"
+      :roomUuid="roomUuid"
+      :enableRoomSummary="enableRoomSummary"
+      :isViewMode="isViewMode"
     />
 
     <template v-else>
-      <header
-        v-if="isConfigured && productCartTotalQuantity > 0"
-        class="desk-copilot__cart-header"
-        data-testid="desk-copilot-cart-header"
-      >
-        <CartBadge
-          :count="productCartTotalQuantity"
-          @click="currentView = 'cart'"
-        />
-      </header>
+      <Cart
+        v-if="currentView === 'cart'"
+        :items="cartItems"
+        :totalQuantity="productCartTotalQuantity"
+        :currency="cartCurrency"
+        :subtotal="cartSubtotal"
+        :discount="cartDiscount"
+        :total="cartTotal"
+        @back="currentView = 'chat'"
+        @remove="removeCartItem"
+        @increment="incrementCartItem"
+        @decrement="decrementCartItem"
+        @place-order="handlePlaceOrder"
+      />
 
-      <section
-        ref="listRef"
-        class="desk-copilot__chat"
-        data-testid="desk-copilot-chat"
-      >
-        <SummaryMessage v-if="enableRoomSummary" />
+      <template v-else>
+        <header
+          v-if="isConfigured && productCartTotalQuantity > 0"
+          class="desk-copilot__cart-header"
+          data-testid="desk-copilot-cart-header"
+        >
+          <CartBadge
+            :count="productCartTotalQuantity"
+            @click="currentView = 'cart'"
+          />
+        </header>
+
+        <section
+          ref="listRef"
+          class="desk-copilot__chat"
+          data-testid="desk-copilot-chat"
+        >
+          <SummaryMessage v-if="enableRoomSummary" />
+
+          <template v-if="isConfigured">
+            <AssistantMessageList
+              :messages="messages"
+              :isThinking="isThinking"
+              :isTyping="isTyping"
+              :isLoadingHistory="isLoadingHistory"
+              :isVoiceModeActive="isVoiceModeActive"
+              :voicePartialTranscript="voicePartialTranscript"
+              :getQuantity="getCartQuantity"
+              @send="handleSendSuggestionToRoom"
+              @word-revealed="scrollToBottomIfNear()"
+              @add-to-cart="addCartItem"
+              @increment-cart-item="incrementCartItem"
+              @decrement-cart-item="decrementCartItem"
+            />
+
+            <section
+              v-if="showGoToBottom"
+              class="desk-copilot__go-to-bottom"
+            >
+              <UnnnicButton
+                class="desk-copilot__go-to-bottom-button"
+                type="tertiary"
+                size="small"
+                iconCenter="arrow_downward"
+                data-testid="assistant-scroll-to-bottom"
+                :aria-label="
+                  $t('contact_info.desk_copilot.assistant.scroll_to_bottom')
+                "
+                @click="scrollToBottom()"
+              />
+            </section>
+          </template>
+          <div ref="bottomAnchorRef" />
+        </section>
 
         <template v-if="isConfigured">
-          <AssistantMessageList
-            :messages="messages"
-            :isThinking="isThinking"
-            :isTyping="isTyping"
-            :isLoadingHistory="isLoadingHistory"
-            :isVoiceModeActive="isVoiceModeActive"
-            :voicePartialTranscript="voicePartialTranscript"
-            :getQuantity="getCartQuantity"
-            @send="handleSendSuggestionToRoom"
-            @word-revealed="scrollToBottomIfNear()"
-            @add-to-cart="addCartItem"
-            @increment-cart-item="incrementCartItem"
-            @decrement-cart-item="decrementCartItem"
+          <SuggestionChips
+            v-if="!isVoiceModePageActive && !isRecording"
+            :suggestions="suggestions"
+            @select="sendMessage"
           />
-
-          <section
-            v-if="showGoToBottom"
-            class="desk-copilot__go-to-bottom"
-          >
-            <UnnnicButton
-              class="desk-copilot__go-to-bottom-button"
-              type="tertiary"
-              size="small"
-              iconCenter="arrow_downward"
-              data-testid="assistant-scroll-to-bottom"
-              :aria-label="
-                $t('contact_info.desk_copilot.assistant.scroll_to_bottom')
-              "
-              @click="scrollToBottom()"
-            />
-          </section>
+          <AssistantInput
+            :isRecording="isRecording"
+            :recordingDurationMs="recordingDurationMs"
+            :isAudioRecordingSupported="isAudioRecordingSupported"
+            :canEnterVoiceMode="canEnterVoiceMode"
+            :isVoiceModePageActive="isVoiceModePageActive"
+            :voiceModeState="voiceModeState"
+            :voiceError="voiceError"
+            :fileConfig="fileConfig"
+            @send="sendMessage"
+            @attach="sendAttachment"
+            @start-recording="startRecording"
+            @stop-recording="stopRecording"
+            @cancel-recording="cancelRecording"
+            @voice-enter="enter"
+            @voice-exit="exit"
+            @voice-retry="retry"
+            @voice-dismiss="dismissError"
+          />
         </template>
-        <div ref="bottomAnchorRef" />
-      </section>
 
-      <template v-if="isConfigured">
-        <SuggestionChips
-          v-if="!isVoiceModePageActive && !isRecording"
-          :suggestions="suggestions"
-          @select="sendMessage"
-        />
-        <AssistantInput
-          :isRecording="isRecording"
-          :recordingDurationMs="recordingDurationMs"
-          :isAudioRecordingSupported="isAudioRecordingSupported"
-          :canEnterVoiceMode="canEnterVoiceMode"
-          :isVoiceModePageActive="isVoiceModePageActive"
-          :voiceModeState="voiceModeState"
-          :voiceError="voiceError"
-          :fileConfig="fileConfig"
-          @send="sendMessage"
-          @attach="sendAttachment"
-          @start-recording="startRecording"
-          @stop-recording="stopRecording"
-          @cancel-recording="cancelRecording"
-          @voice-enter="enter"
-          @voice-exit="exit"
-          @voice-retry="retry"
-          @voice-dismiss="dismissError"
+        <Disclaimer
+          v-if="!isLoadingConnection && !isConfigured"
+          :hasSummary="enableRoomSummary"
+          :isHistory="isHistory"
+          :isViewMode="isViewMode"
         />
       </template>
-
-      <Disclaimer
-        v-if="!isLoadingConnection && !isConfigured"
-        :hasSummary="enableRoomSummary"
-        :isHistory="isHistory"
-        :isViewMode="isViewMode"
-      />
     </template>
   </section>
 </template>
@@ -117,6 +128,7 @@ import { UnnnicCallAlert } from '@weni/unnnic-system';
 import SummaryMessage from './SummaryMessage.vue';
 import Disclaimer from './Disclaimer.vue';
 import Cart from './Cart.vue';
+import DeskCopilotHistoryView from './DeskCopilotHistoryView.vue';
 import AssistantMessageList from './assistant/AssistantMessageList.vue';
 import AssistantInput from './assistant/AssistantInput.vue';
 import SuggestionChips from './assistant/SuggestionChips.vue';
@@ -137,7 +149,7 @@ defineOptions({
   name: 'DeskCopilotTab',
 });
 
-withDefaults(
+const props = withDefaults(
   defineProps<{
     isHistory?: boolean;
     isViewMode?: boolean;
@@ -168,6 +180,15 @@ const {
 } = useCopilotConnection(activeRoom);
 
 const roomUuid = computed(() => activeRoom.value?.uuid);
+
+// Avoid opening socket / room context for closed rooms (history).
+const liveConnection = computed(() =>
+  props.isHistory ? undefined : connection.value,
+);
+const liveRoomUuid = computed(() =>
+  props.isHistory ? undefined : roomUuid.value,
+);
+
 const {
   messages,
   isThinking,
@@ -186,9 +207,9 @@ const {
   stopRecording,
   cancelRecording,
   requestVoiceTokens,
-} = useCopilotChat(connection, roomUuid, agentEmail);
+} = useCopilotChat(liveConnection, liveRoomUuid, agentEmail);
 
-useCopilotRoomContext(connection, roomUuid, roomMessages);
+useCopilotRoomContext(liveConnection, liveRoomUuid, roomMessages);
 
 const {
   items: cartItems,
