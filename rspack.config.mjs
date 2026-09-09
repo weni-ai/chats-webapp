@@ -56,13 +56,6 @@ export default defineWeniConfig({
       }
       return rule;
     });
-    // Remove pinia from shared plugins
-    for (const plugin of config.plugins ?? []) {
-      const shared = plugin?._options?.shared;
-      if (shared && 'pinia' in shared) {
-        delete shared.pinia;
-      }
-    }
     return config;
   },
 });
