@@ -11,6 +11,7 @@ import {
 vi.mock('@/services/api/resources/chats/copilotProject', () => ({
   default: {
     getLinkedProject: vi.fn(),
+    canCreate: vi.fn(),
     create: vi.fn(),
     update: vi.fn(),
     listExistingProjects: vi.fn(),
@@ -172,5 +173,44 @@ describe('useCopilotProject', () => {
 
     await expect(disconnectLinkedProject()).rejects.toThrow('network');
     expect(project.value).toEqual(linkedProject);
+  });
+
+  it('loads canCreate and enables creation when allowed', async () => {
+    CopilotProjectService.canCreate.mockResolvedValue(true);
+
+    const { fetchCanCreate, canCreateProject, isCreateDisabled } =
+      useCopilotProject();
+
+    expect(isCreateDisabled.value).toBe(true);
+
+    await fetchCanCreate(true);
+
+    expect(CopilotProjectService.canCreate).toHaveBeenCalledWith('desk-uuid');
+    expect(canCreateProject.value).toBe(true);
+    expect(isCreateDisabled.value).toBe(false);
+  });
+
+  it('disables creation when canCreate is false', async () => {
+    CopilotProjectService.canCreate.mockResolvedValue(false);
+
+    const { fetchCanCreate, canCreateProject, isCreateDisabled } =
+      useCopilotProject();
+
+    await fetchCanCreate(true);
+
+    expect(canCreateProject.value).toBe(false);
+    expect(isCreateDisabled.value).toBe(true);
+  });
+
+  it('disables creation when canCreate request fails', async () => {
+    CopilotProjectService.canCreate.mockRejectedValue(new Error('network'));
+
+    const { fetchCanCreate, canCreateProject, isCreateDisabled } =
+      useCopilotProject();
+
+    await fetchCanCreate(true);
+
+    expect(canCreateProject.value).toBe(false);
+    expect(isCreateDisabled.value).toBe(true);
   });
 });

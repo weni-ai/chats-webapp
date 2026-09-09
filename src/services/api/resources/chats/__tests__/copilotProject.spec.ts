@@ -216,4 +216,34 @@ describe('copilotProject service', () => {
       );
     });
   });
+
+  describe('canCreate', () => {
+    it('returns true when the API allows project creation', async () => {
+      http.get.mockResolvedValue({ data: { can_create: true } });
+
+      await expect(CopilotProjectService.canCreate('desk-uuid')).resolves.toBe(
+        true,
+      );
+
+      expect(http.get).toHaveBeenCalledWith(
+        '/project/copilot/can_create/desk-uuid',
+      );
+    });
+
+    it('returns false when the API denies project creation', async () => {
+      http.get.mockResolvedValue({ data: { can_create: false } });
+
+      await expect(CopilotProjectService.canCreate('desk-uuid')).resolves.toBe(
+        false,
+      );
+    });
+
+    it('returns false when can_create is missing from the payload', async () => {
+      http.get.mockResolvedValue({ data: {} });
+
+      await expect(CopilotProjectService.canCreate('desk-uuid')).resolves.toBe(
+        false,
+      );
+    });
+  });
 });

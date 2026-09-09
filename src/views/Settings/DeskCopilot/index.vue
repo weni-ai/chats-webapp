@@ -15,6 +15,7 @@
 
       <EmptyState
         v-if="!isLoading && !linkedProject"
+        :isCreateDisabled="isCreateDisabled"
         @open-create-modal="showCreateModal = true"
         @open-select-modal="openPicker('connect')"
       />
@@ -58,8 +59,14 @@ defineOptions({
 
 type PickerMode = 'connect' | 'change';
 
-const { linkedProject, isLoading, fetchLinkedProject, setLinkedProject } =
-  useCopilotProject();
+const {
+  linkedProject,
+  isLoading,
+  isCreateDisabled,
+  fetchLinkedProject,
+  fetchCanCreate,
+  setLinkedProject,
+} = useCopilotProject();
 const { fetchProjects } = useCopilotProjectsList();
 
 const showCreateModal = ref(false);
@@ -79,6 +86,7 @@ function handleCreated(project: CopilotProject) {
 
 onMounted(() => {
   fetchLinkedProject();
+  fetchCanCreate(true);
   fetchProjects();
 });
 </script>

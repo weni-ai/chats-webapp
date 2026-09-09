@@ -38,8 +38,14 @@
         :type="message.type"
         :media="message.media"
         :filename="message.filename"
+        :productCarousel="message.productCarousel"
+        :productList="message.productList"
+        :getQuantity="getQuantity"
         @send="emit('send', $event)"
         @word-revealed="emit('wordRevealed')"
+        @add-to-cart="emit('addToCart', $event)"
+        @increment-cart-item="emit('incrementCartItem', $event)"
+        @decrement-cart-item="emit('decrementCartItem', $event)"
       />
     </template>
 
@@ -55,7 +61,10 @@
 </template>
 
 <script setup lang="ts">
-import type { AssistantMessage } from '@/services/assistant/types';
+import type {
+  AssistantMessage,
+  ProductCarouselItem,
+} from '@/services/assistant/types';
 import HumanMessage from './HumanMessage.vue';
 import AiMessage from './AiMessage.vue';
 import ThinkingIndicator from './ThinkingIndicator.vue';
@@ -73,6 +82,7 @@ withDefaults(
     isLoadingHistory?: boolean;
     isVoiceModeActive?: boolean;
     voicePartialTranscript?: string;
+    getQuantity?: (productId: string) => number;
   }>(),
   {
     messages: () => [],
@@ -81,12 +91,16 @@ withDefaults(
     isLoadingHistory: false,
     isVoiceModeActive: false,
     voicePartialTranscript: '',
+    getQuantity: () => 0,
   },
 );
 
 const emit = defineEmits<{
   send: [text: string];
   wordRevealed: [];
+  addToCart: [product: ProductCarouselItem];
+  incrementCartItem: [product: ProductCarouselItem];
+  decrementCartItem: [product: ProductCarouselItem];
 }>();
 </script>
 
@@ -96,6 +110,7 @@ const emit = defineEmits<{
   flex-direction: column;
   gap: $unnnic-space-3;
   width: 100%;
+  min-width: 0;
 
   &__loading {
     display: flex;

@@ -32,6 +32,22 @@ declare module '@weni/webchat-service' {
     size?: number;
   };
 
+  export type ProductCarouselItem = {
+    product_retailer_id: string;
+    name: string;
+    price: string | number;
+    image: string;
+    sale_price?: string | number;
+    currency?: string;
+    description?: string;
+    seller_id?: string;
+    product_url?: string;
+  };
+
+  export type OrderProductItem = ProductCarouselItem & {
+    quantity: number;
+  };
+
   export type Message = {
     id: string;
     type: string;
@@ -47,6 +63,22 @@ declare module '@weni/webchat-service' {
       size?: number;
       duration?: number;
       suggestion?: string;
+    };
+    product_carousel?: {
+      text?: string;
+      product_items?: ProductCarouselItem[];
+    };
+    product_list?: {
+      text?: string;
+      buttonText?: string;
+      sections?: Array<{
+        title?: string;
+        product_items?: ProductCarouselItem[];
+      }>;
+    };
+    header?: string;
+    order?: {
+      product_items?: OrderProductItem[];
     };
   };
 
@@ -80,6 +112,7 @@ declare module '@weni/webchat-service' {
     VIDEO: string;
     AUDIO: string;
     FILE: string;
+    ORDER: string;
     [key: string]: string;
   };
 
@@ -101,6 +134,7 @@ declare module '@weni/webchat-service' {
     sendMessage(_text: string, _options?: Record<string, unknown>): void;
     sendAttachment(_file: File): void | Promise<void>;
     sendAudio(_payload: SendAudioPayload): void | Promise<void>;
+    sendOrder(_productItems: OrderProductItem[]): Promise<unknown>;
     startRecording(): Promise<void>;
     stopRecording(): Promise<void>;
     cancelRecording(): void;
@@ -109,6 +143,7 @@ declare module '@weni/webchat-service' {
     getFileConfig(): FileConfig;
     getAllowedFileTypes(): string[];
     requestVoiceTokens(_timeout?: number): Promise<VoiceTokens>;
+    setCustomField(_field: string, _value: unknown): void;
     setSessionId(_id: string): Promise<void>;
     on(_event: string, _cb: (..._args: unknown[]) => void): void;
     off(_event: string, _cb: (..._args: unknown[]) => void): void;

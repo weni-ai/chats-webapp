@@ -25,7 +25,17 @@ const createWrapper = (props = {}) =>
         AiMessage: {
           name: 'AssistantAiMessage',
           template: '<div data-testid="assistant-ai-message" />',
-          props: ['text', 'suggestion', 'status', 'type', 'media', 'filename'],
+          props: [
+            'text',
+            'suggestion',
+            'status',
+            'type',
+            'media',
+            'filename',
+            'productCarousel',
+            'productList',
+            'getQuantity',
+          ],
         },
         ThinkingIndicator: {
           name: 'AssistantThinkingIndicator',
@@ -121,5 +131,43 @@ describe('AssistantMessageList', () => {
 
     const aiMessage = wrapper.findComponent({ name: 'AssistantAiMessage' });
     expect(aiMessage.props('status')).toBe('streaming');
+  });
+
+  it('passes productList to AiMessage when present', () => {
+    const productList = {
+      text: 'Available TVs',
+      header: 'TV selection',
+      sections: [
+        {
+          title: 'TV 32',
+          items: [
+            {
+              product_retailer_id: 'tv-32-1',
+              name: 'Smart TV 32"',
+              price: 1099,
+              currency: 'BRL',
+              image: 'https://example.com/tv32.png',
+            },
+          ],
+        },
+      ],
+    };
+
+    wrapper = createWrapper({
+      messages: [
+        {
+          id: 'ai-2',
+          direction: 'ai',
+          text: 'Available TVs',
+          quickReplies: [],
+          status: 'delivered',
+          timestamp: 1,
+          productList,
+        },
+      ],
+    });
+
+    const aiMessage = wrapper.findComponent({ name: 'AssistantAiMessage' });
+    expect(aiMessage.props('productList')).toEqual(productList);
   });
 });

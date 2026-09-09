@@ -1,6 +1,8 @@
-import { describe, it, expect, afterEach, vi } from 'vitest';
+import { describe, it, expect, afterEach, beforeEach, vi } from 'vitest';
 import { mount } from '@vue/test-utils';
+import { createPinia, setActivePinia } from 'pinia';
 import AiMessage from '../AiMessage.vue';
+import { useMessageManager } from '@/store/modules/chats/messageManager';
 
 vi.mock('@weni/unnnic-system', () => ({
   UnnnicCallAlert: vi.fn(),
@@ -27,12 +29,26 @@ const createWrapper = (props = {}) =>
           name: 'UnnnicToolTip',
           template: '<div><slot /></div>',
         },
+        ProductCarousel: {
+          name: 'ProductCarousel',
+          template: '<div data-testid="assistant-ai-product-carousel" />',
+          props: ['products', 'getQuantity', 'dismissedIds'],
+        },
+        ProductListSections: {
+          name: 'ProductListSections',
+          template: '<div data-testid="assistant-ai-product-list" />',
+          props: ['sections', 'header', 'getQuantity', 'dismissedIds'],
+        },
       },
     },
   });
 
 describe('AssistantAiMessage', () => {
   let wrapper;
+
+  beforeEach(() => {
+    setActivePinia(createPinia());
+  });
 
   afterEach(() => {
     wrapper?.unmount();
@@ -74,6 +90,23 @@ describe('AssistantAiMessage', () => {
     ]);
   });
 
+  it('copies the suggestion into the contact chat input', async () => {
+    const writeText = vi.fn().mockResolvedValue(undefined);
+    Object.defineProperty(navigator, 'clipboard', {
+      configurable: true,
+      value: { writeText },
+    });
+
+    const messageManager = useMessageManager();
+    wrapper = createWrapper();
+    await wrapper.find('[data-testid="assistant-ai-copy"]').trigger('click');
+
+    expect(writeText).toHaveBeenCalledWith('Suggested reply for the customer');
+    expect(messageManager.inputMessage).toBe(
+      'Suggested reply for the customer',
+    );
+  });
+
   it('shows a caret inside the suggestion box and hides actions while streaming', () => {
     wrapper = createWrapper({
       text: 'Hello world',
@@ -93,5 +126,76 @@ describe('AssistantAiMessage', () => {
     expect(wrapper.find('[data-testid="assistant-ai-actions"]').exists()).toBe(
       false,
     );
+  });
+
+  it('renders product carousel and hides copy action for carousel messages', async () => {
+    wrapper = createWrapper({
+      text: 'Check these products',
+      suggestion: undefined,
+      productCarousel: {
+        text: 'Check these products',
+        items: [
+          {
+            product_retailer_id: 'sku-1',
+            name: 'Tile',
+            price: 32,
+            sale_price: 27,
+            currency: 'BRL',
+            image: 'https://example.com/tile.png',
+          },
+        ],
+      },
+    });
+
+    expect(
+      wrapper.find('[data-testid="assistant-ai-product-carousel"]').exists(),
+    ).toBe(true);
+    expect(wrapper.find('[data-testid="assistant-ai-copy"]').exists()).toBe(
+      false,
+    );
+    expect(wrapper.find('[data-testid="assistant-ai-send"]').exists()).toBe(
+      true,
+    );
+
+    await wrapper.find('[data-testid="assistant-ai-send"]').trigger('click');
+    expect(wrapper.emitted('send')?.[0]).toEqual(['Check these products']);
+  });
+
+  it('renders product list sections and hides copy action for list messages', async () => {
+    wrapper = createWrapper({
+      text: 'Available TVs',
+      suggestion: undefined,
+      productList: {
+        text: 'Available TVs',
+        header: 'TV selection',
+        sections: [
+          {
+            title: 'TV 32',
+            items: [
+              {
+                product_retailer_id: 'tv-32-1',
+                name: 'Smart TV 32"',
+                price: 1099,
+                currency: 'BRL',
+                image: 'https://example.com/tv32.png',
+              },
+            ],
+          },
+        ],
+      },
+    });
+
+    expect(
+      wrapper.find('[data-testid="assistant-ai-product-list"]').exists(),
+    ).toBe(true);
+    expect(
+      wrapper.find('[data-testid="assistant-ai-product-carousel"]').exists(),
+    ).toBe(false);
+    expect(wrapper.find('[data-testid="assistant-ai-copy"]').exists()).toBe(
+      false,
+    );
+
+    await wrapper.find('[data-testid="assistant-ai-send"]').trigger('click');
+    expect(wrapper.emitted('send')?.[0]).toEqual(['Available TVs']);
   });
 });

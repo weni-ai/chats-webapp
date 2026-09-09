@@ -5,19 +5,36 @@
     icon="bolt"
     :close="() => $emit('close')"
   >
-    <HeaderQuickMessages @close="$emit('close')" />
-    <section class="quick-messages-disclaimer-container">
-      <UnnnicDisclaimer
-        class="quick-messages-disclaimer"
-        type="informational"
-        :description="$t('quick_messages.disclaimer')"
+    <template #header>
+      <HeaderQuickMessages
+        :title="$t('quick_messages.title')"
+        @close="$emit('close')"
       />
-    </section>
+    </template>
 
-    <AsideSlotTemplateSection class="messages-section__container">
+    <AsideSlotTemplateSection
+      v-if="showBulkForm"
+      class="messages-section__container"
+    >
+      <QuickMessageBulkForm
+        :quickMessage="messageToSendInBulk"
+        @close="closeBulkForm"
+      />
+    </AsideSlotTemplateSection>
+
+    <AsideSlotTemplateSection
+      v-else
+      class="messages-section__container"
+    >
+      <section class="quick-messages-disclaimer-container">
+        <UnnnicDisclaimer
+          class="quick-messages-disclaimer"
+          type="informational"
+          :description="$t('quick_messages.disclaimer')"
+        />
+      </section>
       <QuickMessagesList
         showNewButton
-        withHandlers
         showExpand
         :title="$t('quick_messages.personal')"
         :quickMessages="quickMessages"
@@ -26,6 +43,7 @@
         @edit-quick-message="quickMessageToEdit = $event"
         @delete-quick-message="quickMessageToDelete = $event"
         @open-new-quick-message="openQuickMessageCreation"
+        @send-in-bulk="openBulkForm"
       />
       <QuickMessagesList
         :title="$t('quick_messages.shared')"
@@ -36,6 +54,7 @@
         :hasMore="hasMoreQuickMessagesSharedByProject"
         @select-quick-message="selectQuickMessage"
         @load-more="loadMoreSharedByProject"
+        @send-in-bulk="openBulkForm"
       />
     </AsideSlotTemplateSection>
 
@@ -77,6 +96,7 @@ import HeaderQuickMessages from './HeaderQuickMessages.vue';
 import QuickMessagesList from './QuickMessagesList.vue';
 import ModalQuickMessages from './ModalEditQuickMessages.vue';
 import ModalDeleteQuickMessage from './ModalDeleteQuickMessage.vue';
+import QuickMessageBulkForm from './QuickMessageBulkForm.vue';
 
 import { useQuickMessages } from '@/store/modules/chats/quickMessages';
 import { useQuickMessageShared } from '@/store/modules/chats/quickMessagesShared';
@@ -91,6 +111,7 @@ export default {
     ModalQuickMessages,
     ModalDeleteQuickMessage,
     HeaderQuickMessages,
+    QuickMessageBulkForm,
   },
   emits: ['close', 'select-quick-message'],
 
@@ -102,6 +123,8 @@ export default {
       quickMessageToEdit: null,
       isLoadingUpdateQuickMessage: false,
       isLoadingDeleteQuickMessage: false,
+      messageToSendInBulk: null,
+      showBulkForm: false,
     };
   },
   computed: {
@@ -225,17 +248,22 @@ export default {
         this.$emit('select-quick-message', quickMessage);
       }
     },
+    openBulkForm(quickMessage) {
+      this.showBulkForm = true;
+      this.messageToSendInBulk = quickMessage;
+    },
+    closeBulkForm() {
+      this.showBulkForm = false;
+      this.messageToSendInBulk = null;
+    },
   },
 };
 </script>
 
 <style lang="scss" scoped>
-:deep(.aside-slot-template__sections) {
-  flex: unset;
-}
-
 .quick-messages-disclaimer-container {
   margin: $unnnic-space-2;
+  flex-shrink: 0;
 }
 
 .messages-section__container {

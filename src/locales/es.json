@@ -341,7 +341,7 @@
         "tooltip": "Cada mensaje mostrará el nombre del representante que respondió",
         "switch_active": "Mostrar el nombre del representante en los mensajes",
         "switch_disabled": "Mostrar el nombre del representante en los mensajes",
-        "hint": "Cada mensaje intercambiado tendrá el nombre del representante que está respondiendo.",
+        "hint": "Cada mensaje enviado mostrará el nombre del representante que está respondiendo.",
         "switch_label": "Utilizar firma"
       },
       "csat": {
@@ -821,7 +821,7 @@
     "alert_detached": "Contacto desvinculado",
     "header": {
       "desk_copilot": "Desk Copilot",
-      "information": "Información"
+      "information": "Detalles del chat"
     },
     "linked_contact": "Contacto vinculado al representante {name}",
     "see_contact_history": "Ver historial",
@@ -848,17 +848,33 @@
     },
     "desk_copilot": {
       "assistant": {
+        "add_to_cart_action": "Agregar al carrito",
         "attach_action": "Adjuntar archivo",
         "cancel_recording": "Cancelar grabación",
+        "carousel_scroll_left_action": "Desplazar a la izquierda",
+        "carousel_scroll_right_action": "Desplazar a la derecha",
+        "cart": {
+          "back_action": "Volver",
+          "discount": "Descuento",
+          "place_order_action": "Realizar pedido",
+          "place_order_error": "No se pudo realizar el pedido debido a un problema técnico",
+          "remove_item_action": "Eliminar ítem",
+          "subtotal": "Subtotal",
+          "title": "Carrito",
+          "total": "Total"
+        },
         "copy_action": "Copiar",
+        "decrease_quantity_action": "Disminuir cantidad",
         "file_too_large": "Selecciona un archivo más pequeño",
         "file_type_not_allowed": "Selecciona un tipo de archivo compatible",
         "image_attachment": "Adjunto de imagen",
+        "increase_quantity_action": "Aumentar cantidad",
         "input_placeholder": "Pregunta al asistente",
         "open_media_menu": "Abrir menú de medios",
         "processing_information": "Procesando información",
         "record_audio": "Audio",
         "recording_in_progress": "Grabando",
+        "remove_suggestion_action": "Eliminar sugerencia",
         "scroll_to_bottom": "Ir al final",
         "send_action": "Enviar",
         "send_audio": "Enviar audio",
@@ -881,7 +897,8 @@
           "speaking": "Asistente hablando"
         }
       },
-      "copy_summary": "Copiar resumen",
+      "copied_to_message_input": "Texto copiado al campo de mensaje",
+      "copy_summary": "Copiar al campo de mensaje",
       "disclaimer": {
         "description": "Desk Copilot puede ayudarte con:",
         "enable_button": "Activar Desk Copilot",
@@ -892,7 +909,7 @@
           "sales_arguments": "Argumentos de venta"
         },
         "title": "Ve más allá de los resúmenes de conversación",
-        "title_without_summary": "Desbloquea todo tu potencial con Desk Copilot"
+        "title_without_summary": "Aprovecha todo el potencial de Desk Copilot"
       },
       "summary_title": "Resumen de esta conversación"
     }
@@ -1072,6 +1089,7 @@
     "example_message_description": "Los mensajes rápidos son respuestas predefinidas que ayudan a estandarizar el servicio de atención al cliente. Todos los representantes de este departamento pueden usarlos, y puedes agregar nuevos a continuación.",
     "personal": "Tus mensajes",
     "shared": "Mensajes compartidos",
+    "send_in_bulk": "Enviar en masa",
     "delete": "Eliminar mensaje rápido",
     "delete_your_quick_message": "Eliminar tu mensaje rápido",
     "delete_confirm": "¿Realmente deseas eliminar el mensaje rápido?",
@@ -1079,7 +1097,6 @@
     "delete_description": "¿Realmente deseas eliminar el mensaje rápido {shortcut}?",
     "shortcut_tooltip": "Escribe /{shortcut} para usarlo",
     "new": "Nuevo mensaje rápido",
-    "description_new": "Mensaje rápido en el departamento {sector}",
     "add": "Agregar mensaje rápido",
     "edit": "Editar mensaje rápido",
     "available_shortcuts": "Atajos disponibles",
@@ -1089,13 +1106,37 @@
     "message_field_placeholder": "Ejemplo: Hola, ¿cómo estás? ¿En qué puedo ayudarte hoy?",
     "successfully_added": "Mensaje rápido agregado",
     "successfully_updated": "Mensaje rápido actualizado",
-    "successfully_deleted": "Mensaje rápido eliminado con éxito",
-    "error_deleting": "No se pudo eliminar el mensaje rápido.",
     "error": "Error al configurar mensaje rápido",
     "no_suggestions": "No se encontraron resultados para el atajo ingresado",
     "disclaimer": "Escribe / (barra) en el campo de mensaje para ver los mensajes rápidos",
     "action_open": "Abrir mensajes rápidos (/)",
-    "action_close": "Cerrar mensajes rápidos"
+    "action_close": "Cerrar mensajes rápidos",
+    "description_new": "Mensaje rápido en el sector {sector}",
+    "error_deleting": "No se pudo eliminar el mensaje rápido.",
+    "successfully_deleted": "Mensaje rápido eliminado con éxito",
+    "bulk": {
+      "confirmation": {
+        "checkbox_label": "Revisé todos los campos y quiero enviarlo"
+      },
+      "contacts": {
+        "all": "Todos los contactos",
+        "helper": "Solo los contactos en atención pueden recibir este mensaje",
+        "label": "Contactos"
+      },
+      "send": "{count, plural, =0 {Enviar a todos (0 contactos)} one {Enviar a todos ({count} contacto)} other {Enviar a todos ({count} contactos)}}",
+      "sending": "{count, plural, one {Enviando el mensaje a {count} contacto} other {Enviando el mensaje a {count} contactos}}",
+      "toast": {
+        "error": {
+          "message": "No se pudo enviar el mensaje. Inténtalo de nuevo."
+        },
+        "partial_success": {
+          "message": "{success, plural, one {Mensaje enviado a {success} contacto, {failed} falló.} other {Mensaje enviado a {success} contactos, {failed} fallaron.}}"
+        },
+        "success": {
+          "message": "{count, plural, one {Mensaje enviado a {count} contacto} other {Mensaje enviado a {count} contactos}}"
+        }
+      }
+    }
   },
   "discard": "Descartar",
   "on_boarding": {
@@ -1181,7 +1222,7 @@
         "assigned_agents": "Agentes asignados",
         "badge": "Copilot",
         "connected_by": "Conectado por",
-        "connected_to": "Conectado el",
+        "connected_to": "Conectado a",
         "created_on": "Creado el",
         "description": "Este proyecto se usa exclusivamente para gestionar los agentes de IA de Desk Copilot. Solo es accesible desde esta sección.",
         "open": "Abrir",
@@ -1197,14 +1238,15 @@
       },
       "empty_state": {
         "create_button": "Crear proyecto Copilot",
-        "description": "Para activar Desk Copilot, conecta este proyecto a un proyecto Copilot donde se gestionan tus agentes de IA",
+        "create_disabled_tooltip": "No tienes permiso para crear un proyecto Copilot",
+        "description": "Para activar Desk Copilot, conecta este proyecto a un proyecto Copilot donde se gestionan tus agentes de IA.",
         "select_button": "Seleccionar proyecto Copilot",
-        "title": "Ningún proyecto Copilot conectado"
+        "title": "No hay ningún proyecto Copilot conectado"
       },
       "enable_title": "Activar Desk Copilot",
       "info": {
         "ai_assistance": {
-          "description": "Ayuda a tus representantes durante las conversaciones con sugerencias generadas por IA, ítems recomendados y próximas acciones.",
+          "description": "Ayuda a tus representantes durante las conversaciones con sugerencias generadas por IA, ítems recomendados y las mejores próximas acciones.",
           "title": "Asistencia de IA"
         },
         "automatic_updates": {
@@ -1217,7 +1259,7 @@
         },
         "learn_more": "Saber más",
         "shared_across_projects": {
-          "description": "Un proyecto Copilot puede compartirse entre varios proyectos Live Desk para mantener el conocimiento de IA consistente.",
+          "description": "Un proyecto Copilot se puede compartir entre varios proyectos de Live Desk para mantener consistente el conocimiento de la IA.",
           "title": "Compartido entre proyectos"
         },
         "title": "Cómo funciona Desk Copilot"
@@ -1263,8 +1305,8 @@
         "hint": "Si esta opción está activa, los representantes offline o en pausa no podrán responder a chats en curso."
       },
       "block_link_contact_agents": {
-        "switch_label": "Bloquear la vinculación de contactos por los representantes",
-        "hint": "Si esta opción está activa, los representantes no podrán vincular contactos a ellos"
+        "switch_label": "Impedir que los representantes se vinculen contactos",
+        "hint": "Si esta opción está activa, los representantes no podrán vincularse contactos a sí mismos"
       },
       "bulk_transfer": {
         "tooltip": "Esta función permite a los representantes transferir diferentes contactos a la vez",

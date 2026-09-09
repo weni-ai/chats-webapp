@@ -48,6 +48,12 @@ export const useMessageManager = defineStore('messageManager', () => {
     );
   });
 
+  watch(audioMessage, (newAudioMessage) => {
+    if (!newAudioMessage) {
+      audioRecorderStatus.value = 'idle';
+    }
+  });
+
   watch(
     [() => activeRoom.value?.uuid, () => activeDiscussion.value?.uuid],
     () => {
@@ -58,6 +64,16 @@ export const useMessageManager = defineStore('messageManager', () => {
   function copyInputMessageToClipboard() {
     if (!inputMessage.value) return;
     navigator.clipboard.writeText(inputMessage.value);
+  }
+
+  const inputFocusRequestId = ref(0);
+
+  function setInputMessage(text: string, options: { focus?: boolean } = {}) {
+    inputMessage.value = text ?? '';
+
+    if (options.focus) {
+      inputFocusRequestId.value += 1;
+    }
   }
 
   function clearInputs() {
@@ -233,6 +249,7 @@ export const useMessageManager = defineStore('messageManager', () => {
   return {
     inputMessageFocused,
     inputMessage,
+    inputFocusRequestId,
     audioMessage,
     audioRecorderStatus,
     mediaUploadFiles,
@@ -255,5 +272,6 @@ export const useMessageManager = defineStore('messageManager', () => {
     addMediaUploadFiles,
     clearInputs,
     copyInputMessageToClipboard,
+    setInputMessage,
   };
 });

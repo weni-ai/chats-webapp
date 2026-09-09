@@ -19,8 +19,12 @@
 import { computed, onMounted, onUnmounted, watch } from 'vue';
 import { storeToRefs } from 'pinia';
 
-import { useSpeechRecognition } from '@/composables/useSpeechRecognition';
+import {
+  toSpeechRecognitionLang,
+  useSpeechRecognition,
+} from '@/composables/useSpeechRecognition';
 import { useMessageManager } from '@/store/modules/chats/messageManager';
+import { useRooms } from '@/store/modules/chats/rooms';
 
 import i18n from '@/plugins/i18n';
 
@@ -30,13 +34,21 @@ defineOptions({
 
 const { t } = i18n.global;
 
+const roomsStore = useRooms();
+const { activeRoom } = storeToRefs(roomsStore);
+
 const messageManagerStore = useMessageManager();
 const { isDictationListening, inputMessage, isDisabledInput } =
   storeToRefs(messageManagerStore);
 
+const speechLang = computed(() =>
+  toSpeechRecognitionLang(i18n.global.locale.value),
+);
+
 const voiceRecognition = useSpeechRecognition({
   continuous: true,
   interimResults: true,
+  lang: speechLang,
 });
 
 const startDictation = () => {
@@ -119,11 +131,19 @@ watch(
   },
 );
 
+watch(
+  () => activeRoom.value?.uuid,
+  () => {
+    stopDictation();
+  },
+);
+
 onMounted(() => {
   window.addEventListener('keydown', handleKeyDown);
 });
 
 onUnmounted(() => {
+  stopDictation();
   window.removeEventListener('keydown', handleKeyDown);
 });
 </script>

@@ -83,4 +83,193 @@ describe('mapServiceMessage', () => {
     expect(mapped.size).toBe(1234);
     expect(mapped.duration).toBe(2.5);
   });
+
+  it('maps product_carousel items when present', () => {
+    const mapped = mapServiceMessage(
+      buildMessage({
+        text: 'Check these products',
+        product_carousel: {
+          text: 'Check these products',
+          product_items: [
+            {
+              product_retailer_id: '1276545',
+              name: 'Nike Air Zoom Pegasus',
+              price: 599.9,
+              sale_price: 499.9,
+              currency: 'BRL',
+              image: 'https://example.com/shoe.png',
+              description: 'Running shoe',
+              seller_id: '1',
+            },
+            {
+              product_retailer_id: '',
+              name: 'Invalid item',
+              price: 10,
+              image: '',
+            },
+          ],
+        },
+      }),
+    );
+
+    expect(mapped.productCarousel).toEqual({
+      text: 'Check these products',
+      items: [
+        {
+          product_retailer_id: '1276545',
+          name: 'Nike Air Zoom Pegasus',
+          price: 599.9,
+          sale_price: 499.9,
+          currency: 'BRL',
+          image: 'https://example.com/shoe.png',
+          description: 'Running shoe',
+          seller_id: '1',
+        },
+      ],
+    });
+  });
+
+  it('omits productCarousel when product_items is empty', () => {
+    const mapped = mapServiceMessage(
+      buildMessage({
+        product_carousel: {
+          text: 'No products',
+          product_items: [],
+        },
+      }),
+    );
+
+    expect(mapped.productCarousel).toBeUndefined();
+  });
+
+  it('maps product_list sections when present', () => {
+    const mapped = mapServiceMessage(
+      buildMessage({
+        text: 'Available TVs',
+        header: 'TV selection',
+        product_list: {
+          text: 'Available TVs',
+          buttonText: 'View TVs',
+          sections: [
+            {
+              title: 'TV 32',
+              product_items: [
+                {
+                  product_retailer_id: 'tv-32-1',
+                  name: 'Smart TV 32"',
+                  price: 1099,
+                  currency: 'BRL',
+                  image: 'https://example.com/tv32.png',
+                },
+              ],
+            },
+            {
+              title: 'TV 50',
+              product_items: [
+                {
+                  product_retailer_id: 'tv-50-1',
+                  name: 'Smart TV 50"',
+                  price: 2299,
+                  currency: 'BRL',
+                  image: 'https://example.com/tv50.png',
+                },
+                {
+                  product_retailer_id: '',
+                  name: 'Invalid',
+                  price: 10,
+                  image: '',
+                },
+              ],
+            },
+            {
+              title: 'Empty section',
+              product_items: [],
+            },
+          ],
+        },
+      }),
+    );
+
+    expect(mapped.productList).toEqual({
+      text: 'Available TVs',
+      header: 'TV selection',
+      sections: [
+        {
+          title: 'TV 32',
+          items: [
+            {
+              product_retailer_id: 'tv-32-1',
+              name: 'Smart TV 32"',
+              price: 1099,
+              currency: 'BRL',
+              image: 'https://example.com/tv32.png',
+            },
+          ],
+        },
+        {
+          title: 'TV 50',
+          items: [
+            {
+              product_retailer_id: 'tv-50-1',
+              name: 'Smart TV 50"',
+              price: 2299,
+              currency: 'BRL',
+              image: 'https://example.com/tv50.png',
+            },
+          ],
+        },
+      ],
+    });
+  });
+
+  it('omits productList when all sections are empty', () => {
+    const mapped = mapServiceMessage(
+      buildMessage({
+        product_list: {
+          text: 'No products',
+          sections: [
+            { title: 'Empty', product_items: [] },
+            {
+              title: 'Invalid only',
+              product_items: [
+                {
+                  product_retailer_id: '',
+                  name: '',
+                  price: 0,
+                  image: '',
+                },
+              ],
+            },
+          ],
+        },
+      }),
+    );
+
+    expect(mapped.productList).toBeUndefined();
+  });
+
+  it('maps order messages to the order type', () => {
+    const mapped = mapServiceMessage(
+      buildMessage({
+        type: 'order',
+        text: '',
+        direction: 'outgoing',
+        order: {
+          product_items: [
+            {
+              product_retailer_id: 'sku-1',
+              name: 'Tile',
+              price: 27,
+              image: 'https://example.com/tile.png',
+              quantity: 2,
+            },
+          ],
+        },
+      }),
+    );
+
+    expect(mapped.direction).toBe('human');
+    expect(mapped.type).toBe('order');
+    expect(mapped.text).toBe('');
+  });
 });
