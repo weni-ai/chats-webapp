@@ -41,6 +41,7 @@
         :productCarousel="message.productCarousel"
         :productList="message.productList"
         :getQuantity="getQuantity"
+        :readOnly="readOnly"
         @send="emit('send', $event)"
         @word-revealed="emit('wordRevealed')"
         @add-to-cart="emit('addToCart', $event)"
@@ -83,6 +84,7 @@ withDefaults(
     isVoiceModeActive?: boolean;
     voicePartialTranscript?: string;
     getQuantity?: (productId: string) => number;
+    readOnly?: boolean;
   }>(),
   {
     messages: () => [],
@@ -92,6 +94,7 @@ withDefaults(
     isVoiceModeActive: false,
     voicePartialTranscript: '',
     getQuantity: () => 0,
+    readOnly: false,
   },
 );
 
