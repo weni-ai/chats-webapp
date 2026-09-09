@@ -24,6 +24,10 @@ vi.mock('@/composables/assistant/useCopilotChat', () => ({
   useCopilotChat: vi.fn(),
 }));
 
+vi.mock('@/composables/assistant/useCopilotRoomContext', () => ({
+  useCopilotRoomContext: vi.fn(),
+}));
+
 vi.mock('@/composables/assistant/useVoiceMode', () => ({
   useVoiceMode: vi.fn(() => ({
     canEnterVoiceMode: computed(() => false),
@@ -121,7 +125,7 @@ const createWrapper = (props = {}, piniaState = {}) =>
               isLoadingActiveRoomSummary: false,
             },
             profile: {
-              me: { project_permission_role: 1 },
+              me: { email: 'agent@example.com', project_permission_role: 1 },
             },
             config: {
               project: { config: { has_chats_summary: true } },
@@ -236,8 +240,9 @@ describe('DeskCopilotTab', () => {
       false,
     );
     expect(useCopilotChat).toHaveBeenCalled();
-    const [, roomUuid] = useCopilotChat.mock.calls[0];
+    const [, roomUuid, agentEmail] = useCopilotChat.mock.calls[0];
     expect(roomUuid.value).toBe('room-1');
+    expect(agentEmail.value).toBe('agent@example.com');
   });
 
   it('sends the AI suggestion directly to the active room', async () => {

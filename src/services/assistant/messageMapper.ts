@@ -34,6 +34,8 @@ function normalizeMessageType(type?: string): AssistantMessageType {
     case 'file':
     case 'document':
       return type === 'document' ? 'file' : type;
+    case 'order':
+      return 'order';
     default:
       return 'text';
   }
@@ -66,6 +68,38 @@ function normalizeProductCarouselItems(
   );
 }
 
+function normalizeProductListSections(
+  sections?: Array<{
+    title?: string;
+    product_items?: ProductCarouselItem[];
+  }>,
+): Array<{ title: string; items: ProductCarouselItem[] }> {
+  if (!Array.isArray(sections)) {
+    return [];
+  }
+
+  return sections
+    .map((section) => {
+      if (!section || typeof section !== 'object') {
+        return null;
+      }
+
+      const items = normalizeProductCarouselItems(section.product_items);
+      if (items.length === 0) {
+        return null;
+      }
+
+      return {
+        title: asOptionalString(section.title) || '',
+        items,
+      };
+    })
+    .filter(
+      (section): section is { title: string; items: ProductCarouselItem[] } =>
+        section !== null,
+    );
+}
+
 export function mapServiceMessage(message: Message): AssistantMessage {
   const metadata = message.metadata || {};
   const suggestion = asOptionalString(metadata.suggestion);
@@ -88,6 +122,15 @@ export function mapServiceMessage(message: Message): AssistantMessage {
     asOptionalString(message.text) ||
     '';
 
+  const productListSections = normalizeProductListSections(
+    message.product_list?.sections,
+  );
+  const productListText =
+    asOptionalString(message.product_list?.text) ||
+    asOptionalString(message.text) ||
+    '';
+  const productListHeader = asOptionalString(message.header);
+
   return {
     id: message.id,
     direction: message.direction === 'outgoing' ? 'human' : 'ai',
@@ -107,6 +150,14 @@ export function mapServiceMessage(message: Message): AssistantMessage {
         ? {
             text: productCarouselText,
             items: productItems,
+          }
+        : undefined,
+    productList:
+      productListSections.length > 0
+        ? {
+            text: productListText,
+            header: productListHeader,
+            sections: productListSections,
           }
         : undefined,
   };

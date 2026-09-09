@@ -198,6 +198,7 @@ const isCurrentCustomField = (key: string): boolean => {
   border: 1px solid $unnnic-color-border-base;
   border-radius: $unnnic-radius-2;
   overflow: hidden;
+  min-width: 0;
 
   &__header {
     display: flex;
@@ -234,6 +235,7 @@ const isCurrentCustomField = (key: string): boolean => {
     display: flex;
     flex-direction: column;
     gap: $unnnic-space-1;
+    min-width: 0;
   }
 
   &__status,
@@ -268,6 +270,8 @@ const isCurrentCustomField = (key: string): boolean => {
     display: flex;
     flex-direction: column;
     gap: $unnnic-space-1;
+    min-width: 0;
+    width: 100%;
   }
 
   &__slide {

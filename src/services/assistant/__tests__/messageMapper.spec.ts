@@ -141,4 +141,135 @@ describe('mapServiceMessage', () => {
 
     expect(mapped.productCarousel).toBeUndefined();
   });
+
+  it('maps product_list sections when present', () => {
+    const mapped = mapServiceMessage(
+      buildMessage({
+        text: 'Available TVs',
+        header: 'TV selection',
+        product_list: {
+          text: 'Available TVs',
+          buttonText: 'View TVs',
+          sections: [
+            {
+              title: 'TV 32',
+              product_items: [
+                {
+                  product_retailer_id: 'tv-32-1',
+                  name: 'Smart TV 32"',
+                  price: 1099,
+                  currency: 'BRL',
+                  image: 'https://example.com/tv32.png',
+                },
+              ],
+            },
+            {
+              title: 'TV 50',
+              product_items: [
+                {
+                  product_retailer_id: 'tv-50-1',
+                  name: 'Smart TV 50"',
+                  price: 2299,
+                  currency: 'BRL',
+                  image: 'https://example.com/tv50.png',
+                },
+                {
+                  product_retailer_id: '',
+                  name: 'Invalid',
+                  price: 10,
+                  image: '',
+                },
+              ],
+            },
+            {
+              title: 'Empty section',
+              product_items: [],
+            },
+          ],
+        },
+      }),
+    );
+
+    expect(mapped.productList).toEqual({
+      text: 'Available TVs',
+      header: 'TV selection',
+      sections: [
+        {
+          title: 'TV 32',
+          items: [
+            {
+              product_retailer_id: 'tv-32-1',
+              name: 'Smart TV 32"',
+              price: 1099,
+              currency: 'BRL',
+              image: 'https://example.com/tv32.png',
+            },
+          ],
+        },
+        {
+          title: 'TV 50',
+          items: [
+            {
+              product_retailer_id: 'tv-50-1',
+              name: 'Smart TV 50"',
+              price: 2299,
+              currency: 'BRL',
+              image: 'https://example.com/tv50.png',
+            },
+          ],
+        },
+      ],
+    });
+  });
+
+  it('omits productList when all sections are empty', () => {
+    const mapped = mapServiceMessage(
+      buildMessage({
+        product_list: {
+          text: 'No products',
+          sections: [
+            { title: 'Empty', product_items: [] },
+            {
+              title: 'Invalid only',
+              product_items: [
+                {
+                  product_retailer_id: '',
+                  name: '',
+                  price: 0,
+                  image: '',
+                },
+              ],
+            },
+          ],
+        },
+      }),
+    );
+
+    expect(mapped.productList).toBeUndefined();
+  });
+
+  it('maps order messages to the order type', () => {
+    const mapped = mapServiceMessage(
+      buildMessage({
+        type: 'order',
+        text: '',
+        direction: 'outgoing',
+        order: {
+          product_items: [
+            {
+              product_retailer_id: 'sku-1',
+              name: 'Tile',
+              price: 27,
+              image: 'https://example.com/tile.png',
+              quantity: 2,
+            },
+          ],
+        },
+      }),
+    );
+
+    expect(mapped.direction).toBe('human');
+    expect(mapped.type).toBe('order');
+    expect(mapped.text).toBe('');
+  });
 });

@@ -1089,6 +1089,7 @@
     "example_message_description": "Los mensajes rápidos son respuestas predefinidas que ayudan a estandarizar el servicio de atención al cliente. Todos los representantes de este departamento pueden usarlos, y puedes agregar nuevos a continuación.",
     "personal": "Tus mensajes",
     "shared": "Mensajes compartidos",
+    "send_in_bulk": "Enviar en masa",
     "delete": "Eliminar mensaje rápido",
     "delete_your_quick_message": "Eliminar tu mensaje rápido",
     "delete_confirm": "¿Realmente deseas eliminar el mensaje rápido?",
@@ -1096,7 +1097,6 @@
     "delete_description": "¿Realmente deseas eliminar el mensaje rápido {shortcut}?",
     "shortcut_tooltip": "Escribe /{shortcut} para usarlo",
     "new": "Nuevo mensaje rápido",
-    "description_new": "Mensaje rápido en el departamento {sector}",
     "add": "Agregar mensaje rápido",
     "edit": "Editar mensaje rápido",
     "available_shortcuts": "Atajos disponibles",
@@ -1106,13 +1106,37 @@
     "message_field_placeholder": "Ejemplo: Hola, ¿cómo estás? ¿En qué puedo ayudarte hoy?",
     "successfully_added": "Mensaje rápido agregado",
     "successfully_updated": "Mensaje rápido actualizado",
-    "successfully_deleted": "Mensaje rápido eliminado con éxito",
-    "error_deleting": "No se pudo eliminar el mensaje rápido.",
     "error": "Error al configurar mensaje rápido",
     "no_suggestions": "No se encontraron resultados para el atajo ingresado",
     "disclaimer": "Escribe / (barra) en el campo de mensaje para ver los mensajes rápidos",
     "action_open": "Abrir mensajes rápidos (/)",
-    "action_close": "Cerrar mensajes rápidos"
+    "action_close": "Cerrar mensajes rápidos",
+    "description_new": "Mensaje rápido en el sector {sector}",
+    "error_deleting": "No se pudo eliminar el mensaje rápido.",
+    "successfully_deleted": "Mensaje rápido eliminado con éxito",
+    "bulk": {
+      "confirmation": {
+        "checkbox_label": "Revisé todos los campos y quiero enviarlo"
+      },
+      "contacts": {
+        "all": "Todos los contactos",
+        "helper": "Solo los contactos en atención pueden recibir este mensaje",
+        "label": "Contactos"
+      },
+      "send": "{count, plural, =0 {Enviar a todos (0 contactos)} one {Enviar a todos ({count} contacto)} other {Enviar a todos ({count} contactos)}}",
+      "sending": "{count, plural, one {Enviando el mensaje a {count} contacto} other {Enviando el mensaje a {count} contactos}}",
+      "toast": {
+        "error": {
+          "message": "No se pudo enviar el mensaje. Inténtalo de nuevo."
+        },
+        "partial_success": {
+          "message": "{success, plural, one {Mensaje enviado a {success} contacto, {failed} falló.} other {Mensaje enviado a {success} contactos, {failed} fallaron.}}"
+        },
+        "success": {
+          "message": "{count, plural, one {Mensaje enviado a {count} contacto} other {Mensaje enviado a {count} contactos}}"
+        }
+      }
+    }
   },
   "discard": "Descartar",
   "on_boarding": {
@@ -1214,6 +1238,7 @@
       },
       "empty_state": {
         "create_button": "Crear proyecto Copilot",
+        "create_disabled_tooltip": "No tienes permiso para crear un proyecto Copilot",
         "description": "Para activar Desk Copilot, conecta este proyecto a un proyecto Copilot donde se gestionan tus agentes de IA.",
         "select_button": "Seleccionar proyecto Copilot",
         "title": "No hay ningún proyecto Copilot conectado"
@@ -1293,7 +1318,7 @@
         "switch_inactive": "Bloquear transferencias de chats a representantes offline"
       },
       "hide_desk_copilot_tab": {
-        "hint": "Si esta opción está activa, los representantes solo ven la pestaña de información en el panel del contacto",
+        "hint": "Si esta opción está activa, los representantes solo ven la pestaña de Detalles del chat en el panel lateral.",
         "switch_label": "Ocultar pestaña Desk Copilot"
       },
       "hide_moderators_from_transfer": {

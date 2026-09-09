@@ -1089,6 +1089,7 @@
     "example_message_description": "Quick messages are predefined responses that help standardize customer service. All representatives in this department can use them, and you can add new ones below.",
     "personal": "Your messages",
     "shared": "Shared messages",
+    "send_in_bulk": "Send in bulk",
     "delete": "Delete quick message",
     "delete_your_quick_message": "Delete your quick message",
     "delete_confirm": "Are you sure you want to delete the quick message?",
@@ -1112,7 +1113,30 @@
     "no_suggestions": "No results found for the entered shortcut",
     "disclaimer": "Type / (slash) shortcut in the message field to view quick messages",
     "action_open": "Open quick messages (/)",
-    "action_close": "Close quick messages"
+    "action_close": "Close quick messages",
+    "bulk": {
+      "confirmation": {
+        "checkbox_label": "I've checked all the fields and I'm ready to send it"
+      },
+      "contacts": {
+        "all": "All contacts",
+        "helper": "Only contacts in service can receive this message",
+        "label": "Contacts"
+      },
+      "send": "{count, plural, =0 {Send to all (0 contacts)} one {Send to all ({count} contact)} other {Send to all ({count} contacts)}}",
+      "sending": "{count, plural, one {Sending the message to {count} contact} other {Sending the message to {count} contacts}}",
+      "toast": {
+        "error": {
+          "message": "Couldn't send the message. Try again."
+        },
+        "partial_success": {
+          "message": "{success, plural, one {Message sent to {success} contact, {failed} failed.} other {Message sent to {success} contacts, {failed} failed.}}"
+        },
+        "success": {
+          "message": "{count, plural, one {Message sent to {count} contact} other {Message sent to {count} contacts}}"
+        }
+      }
+    }
   },
   "discard": "Discard",
   "on_boarding": {
@@ -1214,6 +1238,7 @@
       },
       "empty_state": {
         "create_button": "Create Copilot Project",
+        "create_disabled_tooltip": "You don't have permission to create a Copilot Project",
         "description": "To activate Desk Copilot, connect this project to a Copilot Project where your AI agents are managed",
         "select_button": "Select Copilot project",
         "title": "No Copilot Project connected"
@@ -1293,7 +1318,7 @@
         "switch_inactive": "Block chat transfers to offline representatives"
       },
       "hide_desk_copilot_tab": {
-        "hint": "When enabled, representatives only see the Information tab in the contact panel",
+        "hint": "When enabled, representatives only see the Chat details tab in the side panel.",
         "switch_label": "Hide Desk Copilot tab"
       },
       "hide_moderators_from_transfer": {
