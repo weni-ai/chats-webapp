@@ -29,6 +29,7 @@
         :products="section.items"
         :getQuantity="getQuantity"
         :dismissedIds="dismissedIds"
+        :readOnly="readOnly"
         @add="emit('add', $event)"
         @remove="emit('remove', $event)"
         @increment="emit('increment', $event)"
@@ -55,10 +56,12 @@ withDefaults(
     header?: string;
     getQuantity: (productId: string) => number;
     dismissedIds?: string[];
+    readOnly?: boolean;
   }>(),
   {
     header: undefined,
     dismissedIds: () => [],
+    readOnly: false,
   },
 );
 
