@@ -115,10 +115,21 @@ describe('DeskCopilotDisclaimer', () => {
     ).toBe(false);
   });
 
-  it('hides the enable button in history or view mode', () => {
+  it('shows the enable button in history mode for admin users', () => {
     wrapper = createWrapper({
       projectPermissionRole: 1,
       props: { isHistory: true },
+    });
+
+    expect(
+      wrapper.find('[data-testid="desk-copilot-enable-button"]').exists(),
+    ).toBe(true);
+  });
+
+  it('hides the enable button in view mode', () => {
+    wrapper = createWrapper({
+      projectPermissionRole: 1,
+      props: { isViewMode: true },
     });
 
     expect(
