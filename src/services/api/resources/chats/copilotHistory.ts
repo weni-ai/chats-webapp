@@ -26,8 +26,6 @@ export default {
   /**
    * Lists Copilot messages for a closed room via the chats-engine proxy of
    * GET /api/v2/internals/messages (contact_urn = room uuid).
-   *
-   * TODO: confirm the exact proxy path with the backend.
    */
   async getMessages({
     roomUuid,
