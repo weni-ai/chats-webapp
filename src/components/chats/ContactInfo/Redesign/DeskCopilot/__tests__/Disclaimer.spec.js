@@ -99,7 +99,9 @@ describe('DeskCopilotDisclaimer', () => {
     ).toBe('contact_info.desk_copilot.disclaimer.title_without_summary');
   });
 
-  it('shows the enable button for admin users', () => {
+  it('shows the enable button for admin users, including history screens', () => {
+    // Intentional: Figma keeps Enable visible for admins on closed-room history.
+    // View-mode is the only screen that hides it (besides non-admin roles).
     wrapper = createWrapper({ projectPermissionRole: 1 });
 
     expect(
@@ -115,10 +117,10 @@ describe('DeskCopilotDisclaimer', () => {
     ).toBe(false);
   });
 
-  it('hides the enable button in history or view mode', () => {
+  it('hides the enable button in view mode', () => {
     wrapper = createWrapper({
       projectPermissionRole: 1,
-      props: { isHistory: true },
+      props: { isViewMode: true },
     });
 
     expect(

@@ -1399,7 +1399,7 @@
         "select": {
           "label": "Associated flows",
           "placeholder": "Select one or more flows",
-          "tooltip": "Associate flows with this queue to define which flows are available when filtering by this queue. Flows that aren't associated with any queue are considered general and are available when no queue filter is applied."
+          "tooltip": "Associate flows with this queue to define which flows will be available when filtering by this queue. Flows that aren't associated with any queue are considered general and are available when no queue filter is applied."
         }
       },
       "message": {
@@ -1709,7 +1709,7 @@
       "no_contacts_filtered_alert": "No contacts match the selected filters. Try adjusting your filters.",
       "contacts_count_disclaimer": "{count, plural, one {This message will be sent to {count} contact. The number of recipients may change during delivery due to conversation transfers, conversation closures, or interactions taking place simultaneously.} other {This message will be sent to {count} contacts. The number of recipients may change during delivery due to conversation transfers, conversation closures, or interactions taking place simultaneously.}}",
       "recipients": {
-        "at_least_one_status_must_be_selected": "At least one status must be selected",
+        "at_least_one_status_must_be_selected": "Select at least one status",
         "contacts_in_service": "Contacts in support chats",
         "contacts_waiting_for_service": "Contacts waiting for support",
         "filters": {
@@ -1724,7 +1724,7 @@
             "placeholder": "Select at least one representative"
           }
         },
-        "select_the_contacts_status": "Select the contacts status",
+        "select_the_contacts_status": "Select contact status",
         "title": "Recipients",
         "title_tooltip": "This message will be delivered to all contacts matching the selected filters. Use this feature for operational communications such as delays, incidents, updates."
       },

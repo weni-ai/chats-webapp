@@ -64,14 +64,14 @@ describe('ContactsStatus', () => {
   it('should show error helper when no status is selected', () => {
     wrapper = createWrapper([]);
 
-    expect(wrapper.text()).toContain('At least one status must be selected');
+    expect(wrapper.text()).toContain('Select at least one status');
   });
 
   it('should not show error helper when at least one status is selected', () => {
     wrapper = createWrapper(['ongoing']);
 
     expect(wrapper.text()).not.toContain(
-      'At least one status must be selected',
+      'Select at least one status',
     );
   });
 });

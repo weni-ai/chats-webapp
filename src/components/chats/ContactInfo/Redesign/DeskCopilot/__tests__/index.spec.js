@@ -153,12 +153,12 @@ const createWrapper = (props = {}, piniaState = {}) =>
         DeskCopilotDisclaimer: {
           name: 'DeskCopilotDisclaimer',
           template: '<div data-testid="desk-copilot-disclaimer" />',
-          props: ['hasSummary', 'isHistory', 'isViewMode'],
+          props: ['hasSummary', 'isViewMode'],
         },
         Disclaimer: {
           name: 'DeskCopilotDisclaimer',
           template: '<div data-testid="desk-copilot-disclaimer" />',
-          props: ['hasSummary', 'isHistory', 'isViewMode'],
+          props: ['hasSummary', 'isViewMode'],
         },
         AssistantMessageList: {
           name: 'AssistantMessageList',
@@ -183,6 +183,17 @@ const createWrapper = (props = {}, piniaState = {}) =>
         Cart: {
           name: 'DeskCopilotCart',
           template: '<div data-testid="desk-copilot-cart" />',
+        },
+        DeskCopilotHistoryView: {
+          name: 'DeskCopilotHistoryView',
+          template: '<div data-testid="desk-copilot-history" />',
+          props: [
+            'isConfigured',
+            'isLoadingConnection',
+            'roomUuid',
+            'enableRoomSummary',
+            'isViewMode',
+          ],
         },
         UnnnicButton: {
           name: 'UnnnicButton',
@@ -312,5 +323,36 @@ describe('DeskCopilotTab', () => {
     expect(
       wrapper.find('[data-testid="assistant-history-loading"]').exists(),
     ).toBe(true);
+  });
+
+  it('renders the history view and disables live chat when isHistory', async () => {
+    mockCopilotConnection({
+      isConfigured: true,
+      connection: defaultConnection,
+    });
+    mockCopilotChat();
+    wrapper = createWrapper({ isHistory: true });
+
+    await flushPromises();
+
+    expect(wrapper.find('[data-testid="desk-copilot-history"]').exists()).toBe(
+      true,
+    );
+    expect(wrapper.find('[data-testid="desk-copilot-chat"]').exists()).toBe(
+      false,
+    );
+    expect(wrapper.find('[data-testid="assistant-input"]').exists()).toBe(
+      false,
+    );
+
+    const historyView = wrapper.findComponent({
+      name: 'DeskCopilotHistoryView',
+    });
+    expect(historyView.props('isConfigured')).toBe(true);
+    expect(historyView.props('roomUuid')).toBe('room-1');
+    expect(historyView.props('enableRoomSummary')).toBe(true);
+
+    const [, roomUuidArg] = useCopilotChat.mock.calls[0];
+    expect(roomUuidArg.value).toBeUndefined();
   });
 });
