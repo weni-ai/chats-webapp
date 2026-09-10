@@ -870,7 +870,7 @@
         "image_attachment": "Adjunto de imagen",
         "increase_quantity_action": "Aumentar cantidad",
         "input_placeholder": "Pregunta al asistente",
-        "open_media_menu": "Abrir menú de medios",
+        "open_media_menu": "Abrir menú multimedia",
         "processing_information": "Procesando información",
         "record_audio": "Audio",
         "recording_in_progress": "Grabando",
@@ -885,7 +885,7 @@
           "refining": "Refinando detalles",
           "structuring": "Estructurando respuesta"
         },
-        "upload_file": "Subir archivo",
+        "upload_file": "Cargar archivo",
         "voice_mode": {
           "dismiss": "Descartar",
           "enter": "Iniciar modo de voz",
