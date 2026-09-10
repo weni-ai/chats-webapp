@@ -64,6 +64,7 @@
             :products="productCarousel?.items || []"
             :getQuantity="getQuantity"
             :dismissedIds="dismissedIds"
+            :readOnly="readOnly"
             data-testid="assistant-ai-product-carousel"
             @add="emit('addToCart', $event)"
             @remove="handleRemoveSuggestion"
@@ -77,6 +78,7 @@
             :header="productList?.header"
             :getQuantity="getQuantity"
             :dismissedIds="dismissedIds"
+            :readOnly="readOnly"
             data-testid="assistant-ai-product-list"
             @add="emit('addToCart', $event)"
             @remove="handleRemoveSuggestion"
@@ -86,7 +88,7 @@
         </section>
 
         <section
-          v-if="showActions"
+          v-if="showActions && !readOnly"
           class="ai-message__actions"
           data-testid="assistant-ai-actions"
         >
@@ -185,6 +187,7 @@ const props = withDefaults(
       sections: ProductListSection[];
     };
     getQuantity?: (productId: string) => number;
+    readOnly?: boolean;
   }>(),
   {
     suggestion: undefined,
@@ -195,6 +198,7 @@ const props = withDefaults(
     productCarousel: undefined,
     productList: undefined,
     getQuantity: () => 0,
+    readOnly: false,
   },
 );
 

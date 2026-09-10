@@ -39,6 +39,7 @@ const createWrapper = ({
   isLoading = false,
   userEmail = 'agent@weni.ai',
   meEmail = 'agent@weni.ai',
+  readOnly = false,
 } = {}) => {
   const pinia = createPinia();
   setActivePinia(pinia);
@@ -66,6 +67,7 @@ const createWrapper = ({
   });
 
   return mount(SummaryMessage, {
+    props: { readOnly },
     global: {
       plugins: [pinia],
       mocks: {
@@ -160,5 +162,19 @@ describe('DeskCopilotSummaryMessage', () => {
       text: '',
       tags: [],
     });
+  });
+
+  it('hides feedback thumbs when readOnly', () => {
+    wrapper = createWrapper({ readOnly: true });
+
+    expect(
+      wrapper.find('[data-testid="desk-copilot-summary-actions"]').exists(),
+    ).toBe(true);
+    expect(
+      wrapper.find('[data-testid="desk-copilot-summary-thumb-up"]').exists(),
+    ).toBe(false);
+    expect(
+      wrapper.find('[data-testid="desk-copilot-summary-thumb-down"]').exists(),
+    ).toBe(false);
   });
 });
