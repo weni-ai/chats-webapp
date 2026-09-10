@@ -1399,7 +1399,7 @@
         "select": {
           "label": "Flujos asociados",
           "placeholder": "Selecciona uno o más flujos",
-          "tooltip": "Asocia flujos a esta cola para definir qué flujos están disponibles al filtrar por ella. Los flujos que no están asociados a ninguna cola se consideran generales y están disponibles cuando no se aplica ningún filtro de cola."
+          "tooltip": "Asocia flujos con esta cola para definir qué flujos estarán disponibles al filtrar por esta cola. Los flujos que no estén asociados a ninguna cola se consideran generales y están disponibles cuando no se aplica ningún filtro de cola."
         }
       },
       "message": {
