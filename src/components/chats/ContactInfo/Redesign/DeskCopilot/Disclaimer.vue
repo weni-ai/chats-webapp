@@ -63,12 +63,10 @@ defineOptions({
 const props = withDefaults(
   defineProps<{
     hasSummary?: boolean;
-    isHistory?: boolean;
     isViewMode?: boolean;
   }>(),
   {
     hasSummary: false,
-    isHistory: false,
     isViewMode: false,
   },
 );
