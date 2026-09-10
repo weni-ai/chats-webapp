@@ -63,9 +63,14 @@ const { messages, isLoading } = useCopilotHistory(roomUuidRef);
   flex-direction: column;
   gap: $unnnic-space-3;
   flex: 1;
+  height: 100%;
   min-height: 0;
   min-width: 0;
   overflow: hidden auto;
   padding-bottom: $unnnic-space-2;
+
+  :deep(.desk-copilot-disclaimer) {
+    margin-top: auto;
+  }
 }
 </style>
