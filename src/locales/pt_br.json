@@ -1726,7 +1726,7 @@
         },
         "select_the_contacts_status": "Selecione o status dos contatos",
         "title": "Destinatários",
-        "title_tooltip": "Esta mensagem será entregue a todos os contatos que correspondem aos filtros selecionados. Use este recurso para comunicações operacionais como atrasos, incidentes, atualizações."
+        "title_tooltip": "Esta mensagem será entregue a todos os contatos que correspondem aos filtros selecionados. Use este recurso para comunicações operacionais, como atrasos, incidentes e atualizações."
       },
       "message": {
         "title": "Mensagem",
