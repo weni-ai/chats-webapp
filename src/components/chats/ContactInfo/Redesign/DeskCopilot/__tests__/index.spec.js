@@ -153,12 +153,12 @@ const createWrapper = (props = {}, piniaState = {}) =>
         DeskCopilotDisclaimer: {
           name: 'DeskCopilotDisclaimer',
           template: '<div data-testid="desk-copilot-disclaimer" />',
-          props: ['hasSummary', 'isHistory', 'isViewMode'],
+          props: ['hasSummary', 'isViewMode'],
         },
         Disclaimer: {
           name: 'DeskCopilotDisclaimer',
           template: '<div data-testid="desk-copilot-disclaimer" />',
-          props: ['hasSummary', 'isHistory', 'isViewMode'],
+          props: ['hasSummary', 'isViewMode'],
         },
         AssistantMessageList: {
           name: 'AssistantMessageList',
