@@ -198,4 +198,18 @@ describe('AssistantAiMessage', () => {
     await wrapper.find('[data-testid="assistant-ai-send"]').trigger('click');
     expect(wrapper.emitted('send')?.[0]).toEqual(['Available TVs']);
   });
+
+  it('hides actions when readOnly', () => {
+    wrapper = createWrapper({ readOnly: true });
+
+    expect(wrapper.find('[data-testid="assistant-ai-actions"]').exists()).toBe(
+      false,
+    );
+    expect(wrapper.find('[data-testid="assistant-ai-copy"]').exists()).toBe(
+      false,
+    );
+    expect(wrapper.find('[data-testid="assistant-ai-send"]').exists()).toBe(
+      false,
+    );
+  });
 });

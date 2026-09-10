@@ -1399,7 +1399,7 @@
         "select": {
           "label": "Fluxos associados",
           "placeholder": "Selecione um ou mais fluxos",
-          "tooltip": "Associe fluxos a esta fila para definir quais fluxos ficam disponíveis ao filtrar por ela. Fluxos que não estão associados a nenhuma fila são considerados gerais e ficam disponíveis quando nenhum filtro de fila é aplicado."
+          "tooltip": "Associe fluxos a esta fila para definir quais ficam disponíveis ao filtrar por ela. Fluxos que não estão associados a nenhuma fila são considerados gerais e ficam disponíveis quando nenhum filtro de fila é aplicado."
         }
       },
       "message": {
@@ -1721,7 +1721,7 @@
           "representatives": {
             "all": "Todos os atendentes",
             "label": "Selecione um atendente",
-            "placeholder": "Selecione pelo menos um representante"
+            "placeholder": "Selecione pelo menos um atendente"
           }
         },
         "select_the_contacts_status": "Selecione o status dos contatos",

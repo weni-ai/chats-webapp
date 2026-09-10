@@ -52,7 +52,7 @@
           fillChatInput
           copyTooltipKey="contact_info.desk_copilot.copy_summary"
         />
-        <template v-if="canSendFeedback">
+        <template v-if="canSendFeedback && !readOnly">
           <UnnnicToolTip
             enabled
             :text="$t('chats.summary.feedback.positive')"
@@ -108,6 +108,15 @@ import Room from '@/services/api/resources/chats/room';
 defineOptions({
   name: 'DeskCopilotSummaryMessage',
 });
+
+withDefaults(
+  defineProps<{
+    readOnly?: boolean;
+  }>(),
+  {
+    readOnly: false,
+  },
+);
 
 const roomsStore = useRooms();
 const { activeRoom, isLoadingActiveRoomSummary, roomsSummary } =

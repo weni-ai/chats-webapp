@@ -1399,7 +1399,7 @@
         "select": {
           "label": "Associated flows",
           "placeholder": "Select one or more flows",
-          "tooltip": "Associate flows with this queue to define which flows are available when filtering by this queue. Flows that aren't associated with any queue are considered general and are available when no queue filter is applied."
+          "tooltip": "Associate flows with this queue to define which flows will be available when filtering by this queue. Flows that aren't associated with any queue are considered general and are available when no queue filter is applied."
         }
       },
       "message": {

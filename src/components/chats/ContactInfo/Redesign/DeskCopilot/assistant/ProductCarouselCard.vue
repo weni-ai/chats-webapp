@@ -57,13 +57,13 @@
     </section>
 
     <ProductQuantityControls
-      v-if="quantity > 0"
+      v-if="!readOnly && quantity > 0"
       :quantity="quantity"
       @decrement="emit('decrement')"
       @increment="emit('increment')"
     />
     <section
-      v-else
+      v-else-if="!readOnly"
       class="product-carousel-card__actions"
     >
       <UnnnicButton
@@ -116,6 +116,7 @@ defineOptions({
 const props = defineProps<{
   product: ProductCarouselItem;
   quantity: number;
+  readOnly?: boolean;
 }>();
 
 const emit = defineEmits<{

@@ -35,6 +35,7 @@ const createWrapper = (props = {}) =>
             'productCarousel',
             'productList',
             'getQuantity',
+            'readOnly',
           ],
         },
         ThinkingIndicator: {
@@ -169,5 +170,24 @@ describe('AssistantMessageList', () => {
 
     const aiMessage = wrapper.findComponent({ name: 'AssistantAiMessage' });
     expect(aiMessage.props('productList')).toEqual(productList);
+  });
+
+  it('passes readOnly to AiMessage', () => {
+    wrapper = createWrapper({
+      readOnly: true,
+      messages: [
+        {
+          id: 'ai-3',
+          direction: 'ai',
+          text: 'History reply',
+          quickReplies: [],
+          status: 'delivered',
+          timestamp: 1,
+        },
+      ],
+    });
+
+    const aiMessage = wrapper.findComponent({ name: 'AssistantAiMessage' });
+    expect(aiMessage.props('readOnly')).toBe(true);
   });
 });

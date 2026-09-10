@@ -41,7 +41,7 @@ const createWrapper = (props = {}) =>
         ProductCarousel: {
           name: 'ProductCarousel',
           template: '<div data-testid="product-carousel" />',
-          props: ['products', 'getQuantity', 'dismissedIds'],
+          props: ['products', 'getQuantity', 'dismissedIds', 'readOnly'],
           emits: ['add', 'remove', 'increment', 'decrement'],
         },
       },
@@ -81,5 +81,12 @@ describe('ProductListSections', () => {
     await carousel.vm.$emit('add', sections[0].items[0]);
 
     expect(wrapper.emitted('add')?.[0]).toEqual([sections[0].items[0]]);
+  });
+
+  it('passes readOnly to ProductCarousel', () => {
+    wrapper = createWrapper({ readOnly: true });
+
+    const carousel = wrapper.findComponent({ name: 'ProductCarousel' });
+    expect(carousel.props('readOnly')).toBe(true);
   });
 });
