@@ -335,7 +335,7 @@ describe('useCopilotChat', () => {
     expect(isRecording.value).toBe(false);
   });
 
-  it('sets sellerEmail custom field when the service attaches', async () => {
+  it('sets seller_email custom field when the service attaches', async () => {
     const connection = ref<CopilotConnection | undefined>(connectionValue);
     const roomUuid = ref<string | undefined>('room-1');
     const agentEmail = ref<string | undefined>('agent@example.com');
@@ -344,12 +344,12 @@ describe('useCopilotChat', () => {
     await nextTick();
 
     expect(serviceMock.setCustomField).toHaveBeenCalledWith(
-      'sellerEmail',
+      'seller_email',
       'agent@example.com',
     );
   });
 
-  it('sets sellerEmail when agent email arrives after the service is attached', async () => {
+  it('sets seller_email when agent email arrives after the service is attached', async () => {
     const connection = ref<CopilotConnection | undefined>(connectionValue);
     const roomUuid = ref<string | undefined>('room-1');
     const agentEmail = ref<string | undefined>(undefined);
@@ -363,7 +363,7 @@ describe('useCopilotChat', () => {
     await nextTick();
 
     expect(serviceMock.setCustomField).toHaveBeenCalledWith(
-      'sellerEmail',
+      'seller_email',
       'late-agent@example.com',
     );
   });
