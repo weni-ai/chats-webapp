@@ -25,7 +25,7 @@ type ConnectionRef = Ref<CopilotConnection | undefined>;
 type RoomUuidRef = Ref<string | undefined>;
 type AgentEmailRef = Ref<string | undefined>;
 
-const SELLER_EMAIL_CUSTOM_FIELD = 'sellerEmail';
+const SELLER_EMAIL_CUSTOM_FIELD = 'seller_email';
 
 const DEFAULT_FILE_CONFIG: FileConfig = {
   allowedTypes: [],
