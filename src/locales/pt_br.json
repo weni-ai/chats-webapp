@@ -1320,7 +1320,7 @@
         "switch_inactive": "Bloquear a transferência de chats para atendentes offline"
       },
       "hide_desk_copilot_tab": {
-        "hint": "Quando ativada, os atendentes veem apenas a aba de informações no painel do contato",
+        "hint": "Quando essa opção está ativada, os atendentes veem apenas a aba Detalhes do chat no painel lateral.",
         "switch_label": "Ocultar aba Desk Copilot"
       },
       "hide_moderators_from_transfer": {
@@ -1401,7 +1401,7 @@
         "select": {
           "label": "Fluxos associados",
           "placeholder": "Selecione um ou mais fluxos",
-          "tooltip": "Associe fluxos a esta fila para definir quais fluxos ficam disponíveis ao filtrar por ela. Fluxos que não estão associados a nenhuma fila são considerados gerais e ficam disponíveis quando nenhum filtro de fila é aplicado."
+          "tooltip": "Associe fluxos a esta fila para definir quais ficam disponíveis ao filtrar por ela. Fluxos que não estão associados a nenhuma fila são considerados gerais e ficam disponíveis quando nenhum filtro de fila é aplicado."
         }
       },
       "message": {
@@ -1721,14 +1721,14 @@
             "placeholder": "Selecione pelo menos uma fila"
           },
           "representatives": {
-            "all": "Todos os representantes",
-            "label": "Selecione um representante",
-            "placeholder": "Selecione pelo menos um representante"
+            "all": "Todos os atendentes",
+            "label": "Selecione um atendente",
+            "placeholder": "Selecione pelo menos um atendente"
           }
         },
         "select_the_contacts_status": "Selecione o status dos contatos",
         "title": "Destinatários",
-        "title_tooltip": "Esta mensagem será entregue a todos os contatos que correspondem aos filtros selecionados. Use este recurso para comunicações operacionais como atrasos, incidentes, atualizações."
+        "title_tooltip": "Esta mensagem será entregue a todos os contatos que correspondem aos filtros selecionados. Use este recurso para comunicações operacionais, como atrasos, incidentes e atualizações."
       },
       "message": {
         "title": "Mensagem",

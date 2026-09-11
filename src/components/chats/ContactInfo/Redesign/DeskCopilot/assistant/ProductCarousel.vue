@@ -13,6 +13,7 @@
         :key="product.product_retailer_id"
         :product="product"
         :quantity="getQuantity(product.product_retailer_id)"
+        :readOnly="readOnly"
         @add="emit('add', product)"
         @remove="handleRemove(product)"
         @increment="emit('increment', product)"
@@ -76,9 +77,11 @@ const props = withDefaults(
     products: ProductCarouselItem[];
     getQuantity: (productId: string) => number;
     dismissedIds?: string[];
+    readOnly?: boolean;
   }>(),
   {
     dismissedIds: () => [],
+    readOnly: false,
   },
 );
 

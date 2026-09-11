@@ -1233,16 +1233,16 @@
       },
       "disconnect_modal": {
         "confirm": "Disconnect",
-        "description": "This project will lose access to Desk Copilot feature until a Copilot Project is reconnected. The Copilot Project itself and its other connections will not be affected.",
+        "description": "This project will lose access to the Desk Copilot feature until the Copilot Project is reconnected. The Copilot Project itself and its other connections won't be affected.",
         "error": "Unable to disconnect the Copilot Project.",
-        "success": "The Copilot Project has been disconnected!",
+        "success": "Copilot Project disconnected successfully",
         "title": "Disconnect Copilot Project"
       },
       "empty_state": {
         "create_button": "Create Copilot Project",
         "create_disabled_tooltip": "You don't have permission to create a Copilot Project",
         "description": "To activate Desk Copilot, connect this project to a Copilot Project where your AI agents are managed",
-        "select_button": "Select Copilot Project",
+        "select_button": "Select Copilot project",
         "title": "No Copilot Project connected"
       },
       "enable_title": "Activate Desk Copilot",
@@ -1277,14 +1277,14 @@
       "picker_modal": {
         "assigned_agents_tag": "{count, plural, one {{count} assigned agent} other {{count} assigned agents}}",
         "change_button": "Change",
-        "change_error": "Unable to change the Copilot Project.",
-        "change_success": "The Copilot Project has been changed!",
-        "change_title": "Change Copilot Project",
+        "change_error": "Couldn't change Copilot project",
+        "change_success": "Copilot project changed successfully",
+        "change_title": "Change Copilot project",
         "connect_button": "Connect",
-        "connect_error": "Error connecting to copilot project.",
-        "connect_success": "Copilot project connected!",
+        "connect_error": "Error connecting to Copilot project",
+        "connect_success": "Copilot project connected successfully",
         "search_placeholder": "Search by name",
-        "select_title": "Select Existing Copilot Project"
+        "select_title": "Select existing Copilot project"
       }
     },
     "changes_saved": "Changes saved successfully",
@@ -1320,7 +1320,7 @@
         "switch_inactive": "Block chat transfers to offline representatives"
       },
       "hide_desk_copilot_tab": {
-        "hint": "When enabled, representatives only see the Information tab in the contact panel",
+        "hint": "When enabled, representatives only see the Chat details tab in the side panel.",
         "switch_label": "Hide Desk Copilot tab"
       },
       "hide_moderators_from_transfer": {
@@ -1401,7 +1401,7 @@
         "select": {
           "label": "Associated flows",
           "placeholder": "Select one or more flows",
-          "tooltip": "Associate flows with this queue to define which flows are available when filtering by this queue. Flows that aren't associated with any queue are considered general and are available when no queue filter is applied."
+          "tooltip": "Associate flows with this queue to define which flows will be available when filtering by this queue. Flows that aren't associated with any queue are considered general and are available when no queue filter is applied."
         }
       },
       "message": {
@@ -1711,7 +1711,7 @@
       "no_contacts_filtered_alert": "No contacts match the selected filters. Try adjusting your filters.",
       "contacts_count_disclaimer": "{count, plural, one {This message will be sent to {count} contact. The number of recipients may change during delivery due to conversation transfers, conversation closures, or interactions taking place simultaneously.} other {This message will be sent to {count} contacts. The number of recipients may change during delivery due to conversation transfers, conversation closures, or interactions taking place simultaneously.}}",
       "recipients": {
-        "at_least_one_status_must_be_selected": "At least one status must be selected",
+        "at_least_one_status_must_be_selected": "Select at least one status",
         "contacts_in_service": "Contacts in support chats",
         "contacts_waiting_for_service": "Contacts waiting for support",
         "filters": {
@@ -1726,7 +1726,7 @@
             "placeholder": "Select at least one representative"
           }
         },
-        "select_the_contacts_status": "Select the contacts status",
+        "select_the_contacts_status": "Select contact status",
         "title": "Recipients",
         "title_tooltip": "This message will be delivered to all contacts matching the selected filters. Use this feature for operational communications such as delays, incidents, updates."
       },
