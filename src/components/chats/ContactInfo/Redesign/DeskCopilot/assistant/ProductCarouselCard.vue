@@ -5,10 +5,13 @@
   >
     <section class="product-carousel-card__image-container">
       <img
-        v-if="product.image"
+        v-if="showProductImage"
         class="product-carousel-card__image"
         :src="product.image"
         :alt="product.name"
+        referrerpolicy="no-referrer"
+        data-testid="product-carousel-card-image"
+        @error="hasImageError = true"
       />
       <UnnnicIcon
         v-else
@@ -16,6 +19,7 @@
         icon="image"
         size="lg"
         scheme="fg-muted"
+        data-testid="product-carousel-card-image-placeholder"
       />
     </section>
 
@@ -128,9 +132,13 @@ const emit = defineEmits<{
 
 const titleRef = ref<HTMLElement | null>(null);
 const isTitleTruncated = ref(false);
+const hasImageError = ref(false);
 let resizeObserver: ResizeObserver | null = null;
 
 const productCurrency = computed(() => props.product.currency || 'BRL');
+const showProductImage = computed(
+  () => !!props.product.image && !hasImageError.value,
+);
 
 const hasSalePrice = computed(() => {
   const salePrice = parseProductPrice(props.product.sale_price);
@@ -171,6 +179,13 @@ watch(
   async () => {
     await nextTick();
     syncTitleTruncation();
+  },
+);
+
+watch(
+  () => props.product.image,
+  () => {
+    hasImageError.value = false;
   },
 );
 </script>
