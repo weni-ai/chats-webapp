@@ -35,7 +35,7 @@
         <template #actions>
           <section class="view-mode__contact-actions">
             <UnnnicToolTip
-              v-if="enableRoomSummary"
+              v-if="showSummaryIcon"
               enabled
               :text="
                 openActiveRoomSummary
@@ -180,6 +180,8 @@ import { useDashboard } from '@/store/modules/dashboard';
 import { useProfile } from '@/store/modules/profile';
 import { useRoomMessages } from '@/store/modules/chats/roomMessages';
 import { useConfig } from '@/store/modules/config';
+import { useFeatureFlag } from '@/store/modules/featureFlag';
+import { useAssistedSalesFeatureFlag } from '@/composables/useAssistedSalesFeatureFlag';
 
 import ChatsLayout from '@/layouts/ChatsLayout/index.vue';
 import ChatHeaderLoading from '@/views/loadings/chat/ChatHeader.vue';
@@ -240,6 +242,15 @@ export default {
       enableRoomSummary: (store) => store.project?.config?.has_chats_summary,
       project: (store) => store.project,
     }),
+    ...mapState(useFeatureFlag, ['featureFlags']),
+
+    isAssistedSalesEnabled() {
+      return useAssistedSalesFeatureFlag(this.featureFlags);
+    },
+
+    showSummaryIcon() {
+      return this.enableRoomSummary && !this.isAssistedSalesEnabled;
+    },
 
     isBulkActionsEnabled() {
       const canBulkTransfer = this.project?.config?.can_use_bulk_transfer;
