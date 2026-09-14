@@ -157,6 +157,34 @@ describe('HomeChatHeaders.vue', () => {
     );
   });
 
+  it('hides the summary icon when assisted sales (Desk Copilot) is enabled', async () => {
+    store = createTestingPinia({
+      createSpy: vi.fn,
+      initialState: {
+        rooms: {
+          activeRoom: {
+            uuid: 'room-42',
+            contact: { name: 'John Doe' },
+          },
+          isCanSendMessageActiveRoom: true,
+          openActiveRoomSummary: false,
+        },
+        discussions: { activeDiscussion: null },
+        config: { project: { config: { has_chats_summary: true } } },
+        featureFlag: {
+          featureFlags: {
+            active_features: ['weniChatsAssistedSales'],
+          },
+        },
+      },
+    });
+    wrapper = createWrapper({ store });
+
+    await wrapper.vm.$nextTick();
+
+    expect(wrapper.find('[data-testid="summary-icon"]').exists()).toBe(false);
+  });
+
   it('emits openModalCloseChat event when close button is clicked', async () => {
     roomStore.activeRoom = { contact: { name: 'John Doe' } };
     await wrapper.vm.$nextTick();

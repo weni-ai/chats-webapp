@@ -13,7 +13,7 @@
       <template #actions>
         <section class="home-chat-headers__actions">
           <UnnnicToolTip
-            v-if="enableRoomSummary"
+            v-if="showSummaryIcon"
             enabled
             :text="
               openActiveRoomSummary
@@ -154,6 +154,8 @@ import { useDiscussions } from '@/store/modules/chats/discussions';
 import { useConfig } from '@/store/modules/config';
 import { useProfile } from '@/store/modules/profile';
 import { useRoomMessages } from '@/store/modules/chats/roomMessages';
+import { useFeatureFlag } from '@/store/modules/featureFlag';
+import { useAssistedSalesFeatureFlag } from '@/composables/useAssistedSalesFeatureFlag';
 
 import ChatHeaderLoading from '@/views/loadings/chat/ChatHeader.vue';
 import ChatHeaderSendFlow from '@/components/chats/chat/ChatHeaderSendFlow.vue';
@@ -221,6 +223,15 @@ export default {
     ...mapState(useConfig, {
       enableRoomSummary: (store) => store.project?.config?.has_chats_summary,
     }),
+    ...mapState(useFeatureFlag, ['featureFlags']),
+
+    isAssistedSalesEnabled() {
+      return useAssistedSalesFeatureFlag(this.featureFlags);
+    },
+
+    showSummaryIcon() {
+      return this.enableRoomSummary && !this.isAssistedSalesEnabled;
+    },
 
     canEndDiscussion() {
       const isOwnDiscussion =

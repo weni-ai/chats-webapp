@@ -33,16 +33,20 @@
             <section class="desk-copilot-cart__item-info">
               <section class="desk-copilot-cart__item-image-container">
                 <img
-                  v-if="item.image"
+                  v-if="showItemImage(item)"
                   class="desk-copilot-cart__item-image"
                   :src="item.image"
                   :alt="item.name"
+                  referrerpolicy="no-referrer"
+                  data-testid="desk-copilot-cart-item-image"
+                  @error="handleImageError(item.product_retailer_id)"
                 />
                 <UnnnicIcon
                   v-else
                   icon="image"
                   size="sm"
                   scheme="fg-muted"
+                  data-testid="desk-copilot-cart-item-image-placeholder"
                 />
               </section>
 
@@ -154,6 +158,7 @@
 </template>
 
 <script setup lang="ts">
+import { ref } from 'vue';
 import {
   formatPriceWithCurrency,
   parseProductPrice,
@@ -182,6 +187,18 @@ const emit = defineEmits<{
   decrement: [item: CartProductItem];
   placeOrder: [];
 }>();
+
+const failedImageIds = ref(new Set<string>());
+
+function showItemImage(item: CartProductItem) {
+  return !!item.image && !failedImageIds.value.has(item.product_retailer_id);
+}
+
+function handleImageError(productId: string) {
+  const next = new Set(failedImageIds.value);
+  next.add(productId);
+  failedImageIds.value = next;
+}
 
 function itemCurrency(item: CartProductItem) {
   return item.currency || 'BRL';
