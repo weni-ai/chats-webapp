@@ -80,4 +80,31 @@ describe('ProductCarouselCard', () => {
       wrapper.find('[data-testid="product-quantity-controls"]').exists(),
     ).toBe(false);
   });
+
+  it('loads catalog images without sending a referrer', () => {
+    wrapper = createWrapper();
+
+    expect(
+      wrapper.find('[data-testid="product-carousel-card-image"]').attributes(
+        'referrerpolicy',
+      ),
+    ).toBe('no-referrer');
+  });
+
+  it('shows the image placeholder when the catalog image fails to load', async () => {
+    wrapper = createWrapper();
+
+    await wrapper
+      .find('[data-testid="product-carousel-card-image"]')
+      .trigger('error');
+
+    expect(
+      wrapper.find('[data-testid="product-carousel-card-image"]').exists(),
+    ).toBe(false);
+    expect(
+      wrapper
+        .find('[data-testid="product-carousel-card-image-placeholder"]')
+        .exists(),
+    ).toBe(true);
+  });
 });
