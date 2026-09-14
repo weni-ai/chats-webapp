@@ -120,7 +120,12 @@ const createWrapper = (props = {}, piniaState = {}) =>
           createSpy: vi.fn,
           initialState: {
             rooms: {
-              activeRoom: { uuid: 'room-1', queue: { sector: 'sector-1' } },
+              activeRoom: {
+                uuid: 'room-1',
+                user: { email: 'agent@example.com' },
+                is_waiting: false,
+                queue: { sector: 'sector-1' },
+              },
               roomsSummary: {},
               isLoadingActiveRoomSummary: false,
             },
@@ -354,5 +359,87 @@ describe('DeskCopilotTab', () => {
 
     const [, roomUuidArg] = useCopilotChat.mock.calls[0];
     expect(roomUuidArg.value).toBeUndefined();
+  });
+
+  it('hides the chat input in view mode', async () => {
+    mockCopilotConnection({
+      isConfigured: true,
+      connection: defaultConnection,
+    });
+    mockCopilotChat({ suggestions: ['Ask about color'] });
+    wrapper = createWrapper({ isViewMode: true });
+
+    await flushPromises();
+
+    expect(
+      wrapper.find('[data-testid="assistant-message-list"]').exists(),
+    ).toBe(true);
+    expect(wrapper.find('[data-testid="assistant-input"]').exists()).toBe(
+      false,
+    );
+    expect(
+      wrapper.find('[data-testid="assistant-suggestion-chips"]').exists(),
+    ).toBe(false);
+  });
+
+  it('hides the chat input for waiting rooms without an assigned agent', async () => {
+    mockCopilotConnection({
+      isConfigured: true,
+      connection: defaultConnection,
+    });
+    mockCopilotChat({ suggestions: ['Ask about color'] });
+    wrapper = createWrapper(
+      {},
+      {
+        rooms: {
+          activeRoom: {
+            uuid: 'room-waiting',
+            user: null,
+            is_waiting: false,
+            queue: { sector: 'sector-1' },
+          },
+          roomsSummary: {},
+          isLoadingActiveRoomSummary: false,
+        },
+      },
+    );
+
+    await flushPromises();
+
+    expect(wrapper.find('[data-testid="assistant-input"]').exists()).toBe(
+      false,
+    );
+    expect(
+      wrapper.find('[data-testid="assistant-suggestion-chips"]').exists(),
+    ).toBe(false);
+  });
+
+  it('hides the chat input when the room is marked as waiting', async () => {
+    mockCopilotConnection({
+      isConfigured: true,
+      connection: defaultConnection,
+    });
+    mockCopilotChat();
+    wrapper = createWrapper(
+      {},
+      {
+        rooms: {
+          activeRoom: {
+            uuid: 'room-waiting',
+            user: { email: 'agent@example.com' },
+            is_waiting: true,
+            queue: { sector: 'sector-1' },
+          },
+          roomsSummary: {},
+          isLoadingActiveRoomSummary: false,
+        },
+      },
+    );
+
+    await flushPromises();
+
+    expect(wrapper.find('[data-testid="assistant-input"]').exists()).toBe(
+      false,
+    );
   });
 });
