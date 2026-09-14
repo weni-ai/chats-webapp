@@ -85,9 +85,9 @@ describe('ProductCarouselCard', () => {
     wrapper = createWrapper();
 
     expect(
-      wrapper.find('[data-testid="product-carousel-card-image"]').attributes(
-        'referrerpolicy',
-      ),
+      wrapper
+        .find('[data-testid="product-carousel-card-image"]')
+        .attributes('referrerpolicy'),
     ).toBe('no-referrer');
   });
 
