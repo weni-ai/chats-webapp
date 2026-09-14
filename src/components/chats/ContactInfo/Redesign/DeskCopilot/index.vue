@@ -83,7 +83,7 @@
           <div ref="bottomAnchorRef" />
         </section>
 
-        <template v-if="isConfigured">
+        <template v-if="isConfigured && canChatWithCopilot">
           <SuggestionChips
             v-if="!isVoiceModePageActive && !isRecording"
             :suggestions="suggestions"
@@ -254,6 +254,14 @@ const {
 
 const enableRoomSummary = computed(
   () => !!project.value?.config?.has_chats_summary,
+);
+
+// Only ongoing rooms (assigned agent, not waiting/view-mode) can talk to Copilot.
+const canChatWithCopilot = computed(
+  () =>
+    !props.isViewMode &&
+    !!activeRoom.value?.user &&
+    !activeRoom.value?.is_waiting,
 );
 
 async function handleSendSuggestionToRoom(text: string) {
