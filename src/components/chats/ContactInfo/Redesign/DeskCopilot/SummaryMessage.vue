@@ -49,7 +49,7 @@
       >
         <CopyValueButton
           :value="summaryText"
-          fillChatInput
+          :fillChatInput="!readOnly"
           copyTooltipKey="contact_info.desk_copilot.copy_summary"
         />
         <template v-if="canSendFeedback && !readOnly">
