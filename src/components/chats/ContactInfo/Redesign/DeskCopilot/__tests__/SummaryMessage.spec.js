@@ -176,5 +176,8 @@ describe('DeskCopilotSummaryMessage', () => {
     expect(
       wrapper.find('[data-testid="desk-copilot-summary-thumb-down"]').exists(),
     ).toBe(false);
+    expect(
+      wrapper.findComponent({ name: 'CopyValueButton' }).props('fillChatInput'),
+    ).toBe(false);
   });
 });
