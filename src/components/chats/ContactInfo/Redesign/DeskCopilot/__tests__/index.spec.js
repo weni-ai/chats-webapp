@@ -150,10 +150,12 @@ const createWrapper = (props = {}, piniaState = {}) =>
         DeskCopilotSummaryMessage: {
           name: 'DeskCopilotSummaryMessage',
           template: '<div data-testid="desk-copilot-summary" />',
+          props: ['readOnly'],
         },
         SummaryMessage: {
           name: 'DeskCopilotSummaryMessage',
           template: '<div data-testid="desk-copilot-summary" />',
+          props: ['readOnly'],
         },
         DeskCopilotDisclaimer: {
           name: 'DeskCopilotDisclaimer',
@@ -169,7 +171,13 @@ const createWrapper = (props = {}, piniaState = {}) =>
           name: 'AssistantMessageList',
           template:
             '<div data-testid="assistant-message-list" @click="$emit(\'send\', \'Suggested text\')"><div v-if="isLoadingHistory" data-testid="assistant-history-loading" /></div>',
-          props: ['messages', 'isThinking', 'isTyping', 'isLoadingHistory'],
+          props: [
+            'messages',
+            'isThinking',
+            'isTyping',
+            'isLoadingHistory',
+            'readOnly',
+          ],
         },
         AssistantInput: {
           name: 'AssistantInput',
@@ -255,6 +263,14 @@ describe('DeskCopilotTab', () => {
     expect(wrapper.find('[data-testid="assistant-cart-badge"]').exists()).toBe(
       false,
     );
+    expect(
+      wrapper
+        .findComponent({ name: 'DeskCopilotSummaryMessage' })
+        .props('readOnly'),
+    ).toBe(false);
+    expect(
+      wrapper.findComponent({ name: 'AssistantMessageList' }).props('readOnly'),
+    ).toBe(false);
     expect(useCopilotChat).toHaveBeenCalled();
     const [, roomUuid, agentEmail] = useCopilotChat.mock.calls[0];
     expect(roomUuid.value).toBe('room-1');
@@ -380,6 +396,14 @@ describe('DeskCopilotTab', () => {
     expect(
       wrapper.find('[data-testid="assistant-suggestion-chips"]').exists(),
     ).toBe(false);
+    expect(
+      wrapper
+        .findComponent({ name: 'DeskCopilotSummaryMessage' })
+        .props('readOnly'),
+    ).toBe(true);
+    expect(
+      wrapper.findComponent({ name: 'AssistantMessageList' }).props('readOnly'),
+    ).toBe(true);
   });
 
   it('hides the chat input for waiting rooms without an assigned agent', async () => {
@@ -412,6 +436,9 @@ describe('DeskCopilotTab', () => {
     expect(
       wrapper.find('[data-testid="assistant-suggestion-chips"]').exists(),
     ).toBe(false);
+    expect(
+      wrapper.findComponent({ name: 'AssistantMessageList' }).props('readOnly'),
+    ).toBe(true);
   });
 
   it('hides the chat input when the room is marked as waiting', async () => {
@@ -441,5 +468,38 @@ describe('DeskCopilotTab', () => {
     expect(wrapper.find('[data-testid="assistant-input"]').exists()).toBe(
       false,
     );
+    expect(
+      wrapper.findComponent({ name: 'AssistantMessageList' }).props('readOnly'),
+    ).toBe(true);
+  });
+
+  it('does not send an AI suggestion to the room while waiting', async () => {
+    mockCopilotConnection({
+      isConfigured: true,
+      connection: defaultConnection,
+    });
+    mockCopilotChat();
+    wrapper = createWrapper(
+      {},
+      {
+        rooms: {
+          activeRoom: {
+            uuid: 'room-waiting',
+            user: { email: 'agent@example.com' },
+            is_waiting: true,
+            queue: { sector: 'sector-1' },
+          },
+          roomsSummary: {},
+          isLoadingActiveRoomSummary: false,
+        },
+      },
+    );
+
+    await flushPromises();
+    await wrapper
+      .find('[data-testid="assistant-message-list"]')
+      .trigger('click');
+
+    expect(useRoomMessages().sendRoomMessage).not.toHaveBeenCalled();
   });
 });

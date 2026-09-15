@@ -14,7 +14,7 @@
 
     <template v-else>
       <Cart
-        v-if="currentView === 'cart'"
+        v-if="currentView === 'cart' && canChatWithCopilot"
         :items="cartItems"
         :totalQuantity="productCartTotalQuantity"
         :currency="cartCurrency"
@@ -30,7 +30,9 @@
 
       <template v-else>
         <header
-          v-if="isConfigured && productCartTotalQuantity > 0"
+          v-if="
+            isConfigured && canChatWithCopilot && productCartTotalQuantity > 0
+          "
           class="desk-copilot__cart-header"
           data-testid="desk-copilot-cart-header"
         >
@@ -45,7 +47,10 @@
           class="desk-copilot__chat"
           data-testid="desk-copilot-chat"
         >
-          <SummaryMessage v-if="enableRoomSummary" />
+          <SummaryMessage
+            v-if="enableRoomSummary"
+            :readOnly="!canChatWithCopilot"
+          />
 
           <template v-if="isConfigured">
             <AssistantMessageList
@@ -56,6 +61,7 @@
               :isVoiceModeActive="isVoiceModeActive"
               :voicePartialTranscript="voicePartialTranscript"
               :getQuantity="getCartQuantity"
+              :readOnly="!canChatWithCopilot"
               @send="handleSendSuggestionToRoom"
               @word-revealed="scrollToBottomIfNear()"
               @add-to-cart="addCartItem"
@@ -268,7 +274,7 @@ async function handleSendSuggestionToRoom(text: string) {
   const trimmed = text?.trim();
   const activeRoomUuid = activeRoom.value?.uuid;
 
-  if (!trimmed || !activeRoomUuid) {
+  if (!canChatWithCopilot.value || !trimmed || !activeRoomUuid) {
     return;
   }
 
@@ -276,6 +282,9 @@ async function handleSendSuggestionToRoom(text: string) {
 }
 
 async function handlePlaceOrder() {
+  if (!canChatWithCopilot.value) {
+    return;
+  }
   const productItems = toOrderProductItems();
   if (productItems.length === 0) {
     return;
@@ -300,6 +309,12 @@ async function handlePlaceOrder() {
 
 watch(productCartTotalQuantity, (quantity) => {
   if (quantity === 0 && currentView.value === 'cart') {
+    currentView.value = 'chat';
+  }
+});
+
+watch(canChatWithCopilot, (canChat) => {
+  if (!canChat && currentView.value === 'cart') {
     currentView.value = 'chat';
   }
 });
