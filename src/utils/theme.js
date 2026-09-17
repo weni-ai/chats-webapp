@@ -30,6 +30,15 @@ export function applyRouteAwareTheme(
     document.querySelector('.chats-webapp') ??
     document.documentElement;
   target.classList.toggle(DARK_CLASS, wantsDark);
+
+  // Live desk owns the document-global `.dark` that unprefixed unnnic base CSS
+  // (e.g. UnnnicSkeletonLoading in Desk Copilot) depends on. Re-assert it
+  // whenever this surface wants dark so a leftover settings MutationObserver
+  // or useTheme watcher cannot leave `<html>` stuck light after navigating
+  // settings → channels → live desk.
+  if (wantsDark) {
+    document.documentElement.classList.add(DARK_CLASS);
+  }
 }
 
 /**
