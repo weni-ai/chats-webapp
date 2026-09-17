@@ -367,4 +367,41 @@ describe('useCopilotChat', () => {
       'late-agent@example.com',
     );
   });
+
+  it('sets original_contact_urn custom field when the service attaches', async () => {
+    const connection = ref<CopilotConnection | undefined>(connectionValue);
+    const roomUuid = ref<string | undefined>('room-1');
+    const agentEmail = ref<string | undefined>(undefined);
+    const originalContactUrn = ref<string | undefined>(
+      'whatsapp:5511999998888',
+    );
+
+    useCopilotChat(connection, roomUuid, agentEmail, originalContactUrn);
+    await nextTick();
+
+    expect(serviceMock.setCustomField).toHaveBeenCalledWith(
+      'original_contact_urn',
+      'whatsapp:5511999998888',
+    );
+  });
+
+  it('sets original_contact_urn when the contact urn arrives after the service is attached', async () => {
+    const connection = ref<CopilotConnection | undefined>(connectionValue);
+    const roomUuid = ref<string | undefined>('room-1');
+    const agentEmail = ref<string | undefined>(undefined);
+    const originalContactUrn = ref<string | undefined>(undefined);
+
+    useCopilotChat(connection, roomUuid, agentEmail, originalContactUrn);
+    await nextTick();
+
+    expect(serviceMock.setCustomField).not.toHaveBeenCalled();
+
+    originalContactUrn.value = 'whatsapp:5511888887777';
+    await nextTick();
+
+    expect(serviceMock.setCustomField).toHaveBeenCalledWith(
+      'original_contact_urn',
+      'whatsapp:5511888887777',
+    );
+  });
 });

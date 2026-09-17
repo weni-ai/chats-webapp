@@ -49,7 +49,6 @@
       >
         <CopyValueButton
           :value="summaryText"
-          :fillChatInput="!readOnly"
           copyTooltipKey="contact_info.desk_copilot.copy_summary"
         />
         <template v-if="canSendFeedback && !readOnly">
@@ -109,7 +108,7 @@ defineOptions({
   name: 'DeskCopilotSummaryMessage',
 });
 
-withDefaults(
+const props = withDefaults(
   defineProps<{
     readOnly?: boolean;
   }>(),

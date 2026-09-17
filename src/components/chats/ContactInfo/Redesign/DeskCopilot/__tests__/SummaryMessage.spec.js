@@ -178,6 +178,16 @@ describe('DeskCopilotSummaryMessage', () => {
     ).toBe(false);
     expect(
       wrapper.findComponent({ name: 'CopyValueButton' }).props('fillChatInput'),
-    ).toBe(false);
+    ).toBeFalsy();
+  });
+
+  it('copies the summary without filling the chat input', () => {
+    wrapper = createWrapper();
+
+    const copyButton = wrapper.findComponent({ name: 'CopyValueButton' });
+    expect(copyButton.props('fillChatInput')).toBeFalsy();
+    expect(copyButton.props('copyTooltipKey')).toBe(
+      'contact_info.desk_copilot.copy_summary',
+    );
   });
 });
