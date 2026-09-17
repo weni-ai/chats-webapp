@@ -180,4 +180,24 @@ describe('DeskCopilotSummaryMessage', () => {
       wrapper.findComponent({ name: 'CopyValueButton' }).props('fillChatInput'),
     ).toBe(false);
   });
+
+  it('uses the message-field copy tooltip when not readOnly', () => {
+    wrapper = createWrapper();
+
+    expect(
+      wrapper
+        .findComponent({ name: 'CopyValueButton' })
+        .props('copyTooltipKey'),
+    ).toBe('contact_info.desk_copilot.copy_summary');
+  });
+
+  it('uses the plain value copy tooltip when readOnly', () => {
+    wrapper = createWrapper({ readOnly: true });
+
+    expect(
+      wrapper
+        .findComponent({ name: 'CopyValueButton' })
+        .props('copyTooltipKey'),
+    ).toBe('contact_info.desk_copilot.copy_summary_value');
+  });
 });
