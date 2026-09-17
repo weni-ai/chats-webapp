@@ -9,6 +9,7 @@ import {
 describe('applyRouteAwareTheme', () => {
   afterEach(() => {
     document.body.innerHTML = '';
+    document.documentElement.classList.remove('dark');
   });
 
   it('applies dark mode to the provided mount container', () => {
@@ -54,6 +55,42 @@ describe('applyRouteAwareTheme', () => {
     applyRouteAwareTheme('dark', '/rooms', liveDesk, false);
 
     expect(liveDesk.classList.contains('dark')).toBe(true);
+  });
+
+  it('re-asserts .dark on documentElement when live desk wants dark', () => {
+    document.documentElement.classList.remove('dark');
+    const liveDesk = document.createElement('div');
+    liveDesk.className = 'chats-webapp';
+    document.body.appendChild(liveDesk);
+
+    applyRouteAwareTheme('dark', '/rooms', liveDesk, false);
+
+    expect(liveDesk.classList.contains('dark')).toBe(true);
+    expect(document.documentElement.classList.contains('dark')).toBe(true);
+  });
+
+  it('does not assert documentElement.dark when forceLight (settings) is set', () => {
+    document.documentElement.classList.remove('dark');
+    const settings = document.createElement('div');
+    settings.className = 'chats-webapp';
+    document.body.appendChild(settings);
+
+    applyRouteAwareTheme('dark', '/settings/chats', settings, true);
+
+    expect(settings.classList.contains('dark')).toBe(false);
+    expect(document.documentElement.classList.contains('dark')).toBe(false);
+  });
+
+  it('does not assert documentElement.dark on light-only routes', () => {
+    document.documentElement.classList.remove('dark');
+    const settings = document.createElement('div');
+    settings.className = 'chats-webapp';
+    document.body.appendChild(settings);
+
+    applyRouteAwareTheme('dark', '/settings/chats', settings, false);
+
+    expect(settings.classList.contains('dark')).toBe(false);
+    expect(document.documentElement.classList.contains('dark')).toBe(false);
   });
 
 });

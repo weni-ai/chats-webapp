@@ -24,8 +24,10 @@ import type {
 type ConnectionRef = Ref<CopilotConnection | undefined>;
 type RoomUuidRef = Ref<string | undefined>;
 type AgentEmailRef = Ref<string | undefined>;
+type ContactUrnRef = Ref<string | undefined>;
 
 const SELLER_EMAIL_CUSTOM_FIELD = 'seller_email';
+const ORIGINAL_CONTACT_URN_CUSTOM_FIELD = 'original_contact_urn';
 
 const DEFAULT_FILE_CONFIG: FileConfig = {
   allowedTypes: [],
@@ -37,6 +39,7 @@ export function useCopilotChat(
   connection: ConnectionRef,
   roomUuid: RoomUuidRef,
   agentEmail: AgentEmailRef = ref(undefined),
+  originalContactUrn: ContactUrnRef = ref(undefined),
 ) {
   const messages = ref<AssistantMessage[]>([]);
   const isThinking = ref(false);
@@ -298,14 +301,16 @@ export function useCopilotChat(
     copilotSocketManager.scheduleEviction(activeRoomUuid, activeConnection);
   }
 
-  function applySellerEmail(service: WeniWebchatService) {
+  function applySessionCustomFields(service: WeniWebchatService) {
     const email = agentEmail.value?.trim();
-
-    if (!email) {
-      return;
+    if (email) {
+      service.setCustomField(SELLER_EMAIL_CUSTOM_FIELD, email);
     }
 
-    service.setCustomField(SELLER_EMAIL_CUSTOM_FIELD, email);
+    const contactUrn = originalContactUrn.value?.trim();
+    if (contactUrn) {
+      service.setCustomField(ORIGINAL_CONTACT_URN_CUSTOM_FIELD, contactUrn);
+    }
   }
 
   function attachService(
@@ -338,7 +343,7 @@ export function useCopilotChat(
     activeRoomUuid = currentRoomUuid;
     activeConnection = currentConnection;
     subscribe(service);
-    applySellerEmail(service);
+    applySessionCustomFields(service);
     syncMessagesFromService(service);
     syncFileConfig(service);
     isLoadingHistory.value = !service.isConnected();
@@ -443,12 +448,12 @@ export function useCopilotChat(
     { immediate: true },
   );
 
-  watch(agentEmail, (email) => {
-    if (!email?.trim() || !activeService) {
+  watch([agentEmail, originalContactUrn], () => {
+    if (!activeService) {
       return;
     }
 
-    applySellerEmail(activeService);
+    applySessionCustomFields(activeService);
   });
 
   if (getCurrentInstance()) {

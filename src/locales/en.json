@@ -873,7 +873,7 @@
         "input_placeholder": "Ask the assistant",
         "open_media_menu": "Open media menu",
         "processing_information": "Processing information",
-        "record_audio": "Audio",
+        "record_audio": "Record audio",
         "recording_in_progress": "Recording",
         "remove_suggestion_action": "Remove suggestion",
         "scroll_to_bottom": "Go to bottom",
@@ -891,7 +891,7 @@
           "dismiss": "Dismiss",
           "enter": "Start voice mode",
           "error_title": "Voice mode unavailable",
-          "exit": "Exit voice mode",
+          "exit": "Stop voice mode",
           "listening": "Listening",
           "processing": "Transcribing",
           "retry": "Try again",
@@ -899,7 +899,7 @@
         }
       },
       "copied_to_message_input": "Text copied to the message field",
-      "copy_summary": "Copy to message field",
+      "copy_summary": "Copy summary",
       "disclaimer": {
         "description": "Desk Copilot can help you with:",
         "enable_button": "Enable Desk Copilot",

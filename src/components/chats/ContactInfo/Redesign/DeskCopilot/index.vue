@@ -175,6 +175,7 @@ const { me } = storeToRefs(useProfile());
 const roomMessagesStore = useRoomMessages();
 const { roomMessages } = storeToRefs(roomMessagesStore);
 const agentEmail = computed(() => me.value?.email || undefined);
+const originalContactUrn = computed(() => activeRoom.value?.urn || undefined);
 
 const currentView = ref<'chat' | 'cart'>('chat');
 
@@ -212,7 +213,12 @@ const {
   stopRecording,
   cancelRecording,
   requestVoiceTokens,
-} = useCopilotChat(liveConnection, liveRoomUuid, agentEmail);
+} = useCopilotChat(
+  liveConnection,
+  liveRoomUuid,
+  agentEmail,
+  originalContactUrn,
+);
 
 useCopilotRoomContext(liveConnection, liveRoomUuid, roomMessages);
 

@@ -873,14 +873,14 @@
         "input_placeholder": "Pergunte ao assistente",
         "open_media_menu": "Abrir menu de mídia",
         "processing_information": "Processando informações",
-        "record_audio": "Áudio",
-        "recording_in_progress": "Gravando",
+        "record_audio": "Gravar áudio",
+        "recording_in_progress": "Gravação",
         "remove_suggestion_action": "Remover sugestão",
         "scroll_to_bottom": "Ir ao final",
         "send_action": "Enviar",
         "send_audio": "Enviar áudio",
         "thinking_messages": {
-          "almost": "Quase pronto, só mais um momento",
+          "almost": "Quase pronto, só mais um instante",
           "connecting": "Conectando ideias",
           "processing": "Processando informações",
           "refining": "Refinando detalhes",
@@ -888,7 +888,7 @@
         },
         "upload_file": "Enviar arquivo",
         "voice_mode": {
-          "dismiss": "Dispensar",
+          "dismiss": "Fechar",
           "enter": "Iniciar modo de voz",
           "error_title": "Modo de voz indisponível",
           "exit": "Sair do modo de voz",
@@ -899,7 +899,7 @@
         }
       },
       "copied_to_message_input": "Texto copiado para o campo de mensagem",
-      "copy_summary": "Copiar para o campo de mensagem",
+      "copy_summary": "Copiar resumo",
       "disclaimer": {
         "description": "O Desk Copilot pode ajudar você com:",
         "enable_button": "Ativar Desk Copilot",
