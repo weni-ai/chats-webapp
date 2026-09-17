@@ -49,8 +49,7 @@
       >
         <CopyValueButton
           :value="summaryText"
-          :fillChatInput="!readOnly"
-          :copyTooltipKey="copySummaryTooltipKey"
+          copyTooltipKey="contact_info.desk_copilot.copy_summary"
         />
         <template v-if="canSendFeedback && !readOnly">
           <UnnnicToolTip
@@ -159,14 +158,6 @@ const canSendFeedback = computed(
 
 const showActions = computed(
   () => !isLoadingActiveRoomSummary.value && !!summaryText.value,
-);
-
-// readOnly copies the raw value (clipboard); otherwise it fills the chat
-// input, same as the live Copilot flow, so the tooltip must reflect that.
-const copySummaryTooltipKey = computed(() =>
-  props.readOnly
-    ? 'contact_info.desk_copilot.copy_summary_value'
-    : 'contact_info.desk_copilot.copy_summary',
 );
 
 async function typeWriter(text: string, speed: number) {

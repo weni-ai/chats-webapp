@@ -178,26 +178,16 @@ describe('DeskCopilotSummaryMessage', () => {
     ).toBe(false);
     expect(
       wrapper.findComponent({ name: 'CopyValueButton' }).props('fillChatInput'),
-    ).toBe(false);
+    ).toBeFalsy();
   });
 
-  it('uses the message-field copy tooltip when not readOnly', () => {
+  it('copies the summary without filling the chat input', () => {
     wrapper = createWrapper();
 
-    expect(
-      wrapper
-        .findComponent({ name: 'CopyValueButton' })
-        .props('copyTooltipKey'),
-    ).toBe('contact_info.desk_copilot.copy_summary');
-  });
-
-  it('uses the plain value copy tooltip when readOnly', () => {
-    wrapper = createWrapper({ readOnly: true });
-
-    expect(
-      wrapper
-        .findComponent({ name: 'CopyValueButton' })
-        .props('copyTooltipKey'),
-    ).toBe('contact_info.desk_copilot.copy_summary_value');
+    const copyButton = wrapper.findComponent({ name: 'CopyValueButton' });
+    expect(copyButton.props('fillChatInput')).toBeFalsy();
+    expect(copyButton.props('copyTooltipKey')).toBe(
+      'contact_info.desk_copilot.copy_summary',
+    );
   });
 });
