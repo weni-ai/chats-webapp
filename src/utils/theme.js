@@ -22,14 +22,28 @@ export function applyRouteAwareTheme(
     theme === 'dark' && !forceLight && !isLightOnlyRoute(routePath);
   // Toggle on this instance's `.chats-webapp` mount container (not `<html>`)
   // so the unnnic dark-mode overrides — which postcss-prefixwrap rewrites as
-  // `.chats-webapp .dark` / `.chats-webapp.dark` — actually match. In
-  // federation the host may keep two mounts alive (live desk + settings);
-  // `querySelector` would always hit the first one and leak theme state.
-  const target =
-    mountContainer ??
-    document.querySelector('.chats-webapp') ??
-    document.documentElement;
-  target.classList.toggle(DARK_CLASS, wantsDark);
+  // `.chats-webapp .dark` / `.chats-webapp.dark` — actually match.
+  //
+  // Deliberately NOT falling back to `document.querySelector('.chats-webapp')`
+  // when `mountContainer` is missing: federation can keep two DOM nodes with
+  // that class alive at once (live desk `#chats-app` + settings
+  // `#chats-settings-app`, the latter only removed when Settings' own
+  // `<RouterView>` unmounts). Guessing via `querySelector` would silently pick
+  // whichever one is first in the DOM — possibly the wrong, forced-light one —
+  // and leave the live desk container's own `.dark` class stale. Every caller
+  // in this codebase always resolves `mountContainer` explicitly
+  // (`chatsThemeMountContainer`, provided per-mount in `main.js`); if that ever
+  // comes back empty, no-op loudly instead of guessing wrong silently.
+  if (!mountContainer) {
+    if (process.env.NODE_ENV !== 'production') {
+      // eslint-disable-next-line no-console
+      console.warn(
+        '[chats] applyRouteAwareTheme called without a mount container — skipping to avoid theming the wrong `.chats-webapp` instance.',
+      );
+    }
+    return;
+  }
+  mountContainer.classList.toggle(DARK_CLASS, wantsDark);
 
   // Live desk owns the document-global `.dark` that unprefixed unnnic base CSS
   // (e.g. UnnnicSkeletonLoading in Desk Copilot) depends on. Re-assert it

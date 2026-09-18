@@ -1,4 +1,4 @@
-import { afterEach, describe, expect, it } from 'vitest';
+import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import {
   applyRouteAwareTheme,
@@ -91,6 +91,24 @@ describe('applyRouteAwareTheme', () => {
 
     expect(settings.classList.contains('dark')).toBe(false);
     expect(document.documentElement.classList.contains('dark')).toBe(false);
+  });
+
+  it('no-ops instead of guessing via querySelector when mountContainer is missing', () => {
+    // Regression: a stray `#chats-settings-app` (forced light, still in the DOM
+    // until Settings' own `<RouterView>` unmounts it) must never be picked as
+    // a fallback target for the live-desk instance's theme application.
+    const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
+    const settings = document.createElement('div');
+    settings.className = 'chats-webapp';
+    document.body.appendChild(settings);
+
+    applyRouteAwareTheme('dark', '/rooms', null, false);
+
+    expect(settings.classList.contains('dark')).toBe(false);
+    expect(document.documentElement.classList.contains('dark')).toBe(false);
+    expect(warnSpy).toHaveBeenCalled();
+
+    warnSpy.mockRestore();
   });
 
 });
