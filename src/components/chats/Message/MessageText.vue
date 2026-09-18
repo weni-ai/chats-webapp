@@ -63,11 +63,23 @@ export default {
 
 <style lang="scss" scoped>
 .unnnic-chats-message__text {
+  // Color must live on the `<p>` itself. Inherited color from the container
+  // loses to any later `p { color: #3D3D3D }` (light fg-base hex) injected by
+  // another federated module (e.g. channels/integrations). That is rgb(61,61,61)
+  // — the unreadable dark-on-dark text — while `--unnnic-color-fg-emphasized`
+  // on the same node stays `#fff`.
+  margin: 0;
+  color: $unnnic-color-fg-emphasized;
+
+  :deep(*) {
+    color: inherit;
+  }
+
   &__container {
     display: flex;
     flex-direction: column;
-    gap: $unnnic-spacing-sm;
-    padding: $unnnic-spacing-nano 0;
+    gap: $unnnic-space-4;
+    padding: $unnnic-space-1 0;
     font-size: $unnnic-font-size-body-gt;
     color: $unnnic-color-fg-emphasized;
     line-height: $unnnic-font-size-body-gt + $unnnic-line-height-medium;
