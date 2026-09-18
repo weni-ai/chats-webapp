@@ -433,7 +433,7 @@ $defaultLineHeight: $unnnic-font-size-body-gt + $unnnic-line-height-medium;
   }
 
   &.sending {
-    .unnnic-chats-message__text {
+    :deep(.unnnic-chats-message__text) {
       color: $unnnic-color-fg-muted;
     }
   }
@@ -516,6 +516,7 @@ $defaultLineHeight: $unnnic-font-size-body-gt + $unnnic-line-height-medium;
     }
   }
 
+  :deep(.unnnic-chats-message__text),
   &__text,
   &__document__text,
   &__signature {
