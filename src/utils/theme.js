@@ -109,6 +109,74 @@ export function stopLightThemeEnforcement() {
 }
 
 /**
+ * Mirror of light-theme enforcement for the live desk. After settings →
+ * channels → live desk the container paints correctly for one frame (eager
+ * `.dark` apply) and then a leftover `useTheme()` watcher or host toggle
+ * strips `.dark` from `<html>` and/or the mount container. Unprefixed unnnic
+ * tokens on the host stay dark (sidebar inspect) while chats-prefixed
+ * selectors that need `.chats-webapp.dark` lose the class — dark bubbles,
+ * light text. While live desk wants dark, re-assert both classes.
+ */
+let darkThemeEnforcementCount = 0;
+let darkKeepObserver = null;
+let darkKeepContainer = null;
+
+function assertDarkClasses() {
+  if (typeof document === 'undefined') return;
+  document.documentElement.classList.add(DARK_CLASS);
+  darkKeepContainer?.classList.add(DARK_CLASS);
+}
+
+export function startDarkThemeEnforcement(mountContainer) {
+  if (typeof document === 'undefined') return;
+
+  darkKeepContainer = mountContainer || darkKeepContainer;
+  darkThemeEnforcementCount += 1;
+  if (darkThemeEnforcementCount > 1) {
+    assertDarkClasses();
+    return;
+  }
+
+  assertDarkClasses();
+
+  if (typeof MutationObserver === 'undefined') return;
+
+  darkKeepObserver = new MutationObserver(() => {
+    const htmlMissingDark =
+      !document.documentElement.classList.contains(DARK_CLASS);
+    const containerMissingDark =
+      !!darkKeepContainer && !darkKeepContainer.classList.contains(DARK_CLASS);
+    if (htmlMissingDark || containerMissingDark) {
+      assertDarkClasses();
+    }
+  });
+
+  darkKeepObserver.observe(document.documentElement, {
+    attributes: true,
+    attributeFilter: ['class'],
+  });
+  if (darkKeepContainer) {
+    darkKeepObserver.observe(darkKeepContainer, {
+      attributes: true,
+      attributeFilter: ['class'],
+    });
+  }
+}
+
+export function stopDarkThemeEnforcement() {
+  if (darkThemeEnforcementCount === 0) return;
+
+  darkThemeEnforcementCount -= 1;
+  if (darkThemeEnforcementCount > 0) return;
+
+  if (darkKeepObserver) {
+    darkKeepObserver.disconnect();
+    darkKeepObserver = null;
+  }
+  darkKeepContainer = null;
+}
+
+/**
  * Broadcasts the current theme to the Connect host so it can react (e.g. dark
  * class on the document shell). Uses the same `chatsToHost` CustomEvent
  * contract as redirects and unread counts.

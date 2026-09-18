@@ -2,7 +2,9 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import {
   applyRouteAwareTheme,
+  startDarkThemeEnforcement,
   startLightThemeEnforcement,
+  stopDarkThemeEnforcement,
   stopLightThemeEnforcement,
 } from '../theme';
 
@@ -117,7 +119,10 @@ describe('light theme enforcement', () => {
   afterEach(() => {
     // Guard against test leaks: drop `.dark` and force-drain the refcount.
     document.documentElement.classList.remove('dark');
-    for (let i = 0; i < 8; i += 1) stopLightThemeEnforcement();
+    for (let i = 0; i < 8; i += 1) {
+      stopLightThemeEnforcement();
+      stopDarkThemeEnforcement();
+    }
   });
 
   it('strips the initial `.dark` class from documentElement on start', () => {
@@ -170,5 +175,52 @@ describe('light theme enforcement', () => {
     await new Promise((resolve) => setTimeout(resolve, 0));
 
     expect(document.documentElement.classList.contains('dark')).toBe(true);
+  });
+});
+
+describe('dark theme enforcement', () => {
+  afterEach(() => {
+    document.body.innerHTML = '';
+    document.documentElement.classList.remove('dark');
+    for (let i = 0; i < 8; i += 1) {
+      stopLightThemeEnforcement();
+      stopDarkThemeEnforcement();
+    }
+  });
+
+  it('re-asserts .dark on html and the mount container when stripped', async () => {
+    const liveDesk = document.createElement('div');
+    liveDesk.className = 'chats-webapp';
+    document.body.appendChild(liveDesk);
+
+    startDarkThemeEnforcement(liveDesk);
+
+    expect(document.documentElement.classList.contains('dark')).toBe(true);
+    expect(liveDesk.classList.contains('dark')).toBe(true);
+
+    document.documentElement.classList.remove('dark');
+    liveDesk.classList.remove('dark');
+    await new Promise((resolve) => setTimeout(resolve, 0));
+
+    expect(document.documentElement.classList.contains('dark')).toBe(true);
+    expect(liveDesk.classList.contains('dark')).toBe(true);
+
+    stopDarkThemeEnforcement();
+  });
+
+  it('stops re-asserting after stopDarkThemeEnforcement', async () => {
+    const liveDesk = document.createElement('div');
+    liveDesk.className = 'chats-webapp dark';
+    document.body.appendChild(liveDesk);
+
+    startDarkThemeEnforcement(liveDesk);
+    stopDarkThemeEnforcement();
+
+    document.documentElement.classList.remove('dark');
+    liveDesk.classList.remove('dark');
+    await new Promise((resolve) => setTimeout(resolve, 0));
+
+    expect(document.documentElement.classList.contains('dark')).toBe(false);
+    expect(liveDesk.classList.contains('dark')).toBe(false);
   });
 });
