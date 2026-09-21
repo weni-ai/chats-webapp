@@ -9,6 +9,7 @@
       :contactName="headerRoomTitle"
       clickable
       @click="emitOpenRoomContactInfo"
+      @back="room = null"
     >
       <template #actions>
         <section class="home-chat-headers__actions">
@@ -41,7 +42,9 @@
               />
             </section>
           </UnnnicToolTip>
+          <!-- TODO: Not working on mobile. Future fix. -->
           <UnnnicToolTip
+            v-if="!isMobile"
             enabled
             :text="$t('chats.search_messages.title')"
             side="left"
@@ -195,14 +198,15 @@ export default {
 
   data() {
     return {
+      isMobile: isMobile(),
       isModalTransferRoomsOpened: false,
       isModalCloseDiscussionOpened: false,
     };
   },
 
   computed: {
+    ...mapWritableState(useRooms, { room: 'activeRoom' }),
     ...mapState(useRooms, {
-      room: (store) => store.activeRoom,
       isLoadingCanSendMessageStatus: (store) =>
         store.isLoadingCanSendMessageStatus,
       isCanSendMessageActiveRoom: (store) => store.isCanSendMessageActiveRoom,
