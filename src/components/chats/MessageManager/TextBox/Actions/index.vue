@@ -10,7 +10,10 @@
         @improvement-received="emit('improvementReceived', $event)"
         @improvement-cancelled="emit('improvementCancelled')"
       />
-      <EmojiAction @focus-input="emit('focusInput')" />
+      <EmojiAction
+        v-if="!isMobile()"
+        @focus-input="emit('focusInput')"
+      />
       <hr class="text-box__actions__divider" />
       <AudioAction @toggle-audio-recording="emit('toggleAudioRecording')" />
       <AttachAction @open-upload-files="emit('openUploadFiles')" />
@@ -45,6 +48,7 @@ import AttachAction from './AttachAction.vue';
 import InternalNoteAction from './InternalNoteAction.vue';
 import DictationAction from './DictationAction.vue';
 import SendAction from './SendAction.vue';
+import isMobile from 'is-mobile';
 
 defineOptions({
   name: 'MessageManagerTextBoxActions',
