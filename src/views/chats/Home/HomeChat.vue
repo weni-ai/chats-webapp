@@ -408,6 +408,8 @@ export default {
   display: flex;
   flex-direction: column;
 
+  width: 100%;
+  min-width: 0;
   height: 100%;
   max-height: 100%;
 

@@ -99,8 +99,16 @@ export default {
   gap: $unnnic-spacing-nano;
 
   height: 100%;
+  width: 100%;
+  min-width: 0;
 
   overflow: hidden;
+
+  > * {
+    min-width: 0;
+  }
+
+  padding-left: $unnnic-spacing-inline-sm;
 
   &.dragging {
     position: relative;
