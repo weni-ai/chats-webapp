@@ -88,10 +88,14 @@ export default async function mountChatsApp({
   basePath = '',
   themeEnforcementActive = null,
 } = {}) {
-  if (!isFederatedModule) {
-    // The host owns the document-level service worker; only register it when
-    // chats runs on its own origin (standalone).
-    await import('./registerServiceWorker');
+  if (!isFederatedModule && 'serviceWorker' in navigator) {
+    // Drop a worker left by the old production build so it stops controlling
+    // this origin. The rspack build no longer ships a service worker.
+    navigator.serviceWorker.getRegistrations().then((registrations) => {
+      registrations.forEach((registration) => {
+        registration.unregister();
+      });
+    });
   }
 
   const app = createApp(App);
