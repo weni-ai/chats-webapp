@@ -198,7 +198,6 @@ export default {
 
   data() {
     return {
-      isMobile: isMobile(),
       isModalTransferRoomsOpened: false,
       isModalCloseDiscussionOpened: false,
     };
