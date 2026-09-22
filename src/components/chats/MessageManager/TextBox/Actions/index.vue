@@ -141,8 +141,12 @@ const emit = defineEmits<{
       flex-shrink: 0;
     }
     &__divider {
-      height: stretch;
-      border: 1px solid $unnnic-color-border-soft;
+      align-self: stretch;
+      width: 1px;
+      height: auto;
+      margin: 0;
+      border: none;
+      border-left: 1px solid $unnnic-color-border-soft;
     }
   }
 }

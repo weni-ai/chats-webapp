@@ -11,6 +11,7 @@
       @click="clickable ? emit('click') : null"
     >
       <UnnnicChatsUserAvatar
+        v-if="!isMobile()"
         :username="contactName"
         scheme="bg-muted"
         textColor="fg-emphasized"
