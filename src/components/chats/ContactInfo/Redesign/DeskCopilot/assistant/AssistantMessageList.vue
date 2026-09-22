@@ -43,6 +43,7 @@
         :getQuantity="getQuantity"
         :readOnly="readOnly"
         @send="emit('send', $event)"
+        @send-catalog="emit('sendCatalog', $event)"
         @word-revealed="emit('wordRevealed')"
         @add-to-cart="emit('addToCart', $event)"
         @increment-cart-item="emit('incrementCartItem', $event)"
@@ -66,6 +67,7 @@ import type {
   AssistantMessage,
   ProductCarouselItem,
 } from '@/services/assistant/types';
+import type { CatalogPayload } from '@/services/assistant/buildCatalogPayload';
 import HumanMessage from './HumanMessage.vue';
 import AiMessage from './AiMessage.vue';
 import ThinkingIndicator from './ThinkingIndicator.vue';
@@ -100,6 +102,7 @@ withDefaults(
 
 const emit = defineEmits<{
   send: [text: string];
+  sendCatalog: [payload: { catalog: CatalogPayload; text: string }];
   wordRevealed: [];
   addToCart: [product: ProductCarouselItem];
   incrementCartItem: [product: ProductCarouselItem];
