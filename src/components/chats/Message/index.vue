@@ -148,6 +148,10 @@
         />
       </section>
     </main>
+    <slot
+      v-if="$slots.extra"
+      name="extra"
+    />
   </section>
 </template>
 
