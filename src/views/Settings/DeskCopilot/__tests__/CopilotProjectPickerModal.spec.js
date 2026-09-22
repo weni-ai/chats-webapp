@@ -19,6 +19,7 @@ import { buildCopilotProjectUrl } from '@/utils/copilotProject';
 import i18n from '@/plugins/i18n';
 
 const projects = ref([]);
+const fetchProjects = vi.fn();
 
 vi.mock('@/services/api/resources/chats/copilotProject', () => ({
   default: {
@@ -42,6 +43,7 @@ vi.mock('@/utils/copilotProject', () => ({
 vi.mock('@/composables/useCopilotProjectsList', () => ({
   useCopilotProjectsList: () => ({
     projects,
+    fetchProjects,
   }),
 }));
 
@@ -78,6 +80,7 @@ const updatedProject = {
   createdOn: '2026-07-30T00:00:00Z',
   connectedOn: '2026-07-30T00:00:00Z',
   uuid: 'copilot-uuid-2',
+  projectUuid: 'desk-uuid-2',
   connectedBy: 'edu',
 };
 
@@ -152,6 +155,12 @@ describe('CopilotProjectPickerModal', () => {
     window.open = originalOpen;
   });
 
+  it('requests the project list when the modal opens', () => {
+    wrapper = createWrapper({ mode: 'connect' });
+
+    expect(fetchProjects).toHaveBeenCalledWith(true);
+  });
+
   it('renders the connect title', () => {
     wrapper = createWrapper({ mode: 'connect' });
 
@@ -215,9 +224,9 @@ describe('CopilotProjectPickerModal', () => {
       },
       seconds: 5,
     });
-    expect(buildCopilotProjectUrl).toHaveBeenCalledWith('copilot-uuid-2');
+    expect(buildCopilotProjectUrl).toHaveBeenCalledWith('desk-uuid-2');
     expect(window.open).toHaveBeenCalledWith(
-      'https://dash.stg.cloud.weni.ai/projects/copilot-uuid-2',
+      'https://dash.stg.cloud.weni.ai/projects/desk-uuid-2',
       '_blank',
       'noopener,noreferrer',
     );

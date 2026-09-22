@@ -88,7 +88,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted, ref, watch } from 'vue';
+import { computed, ref, watch } from 'vue';
 import { storeToRefs } from 'pinia';
 import { useRouter, useRoute } from 'vue-router';
 
@@ -121,7 +121,7 @@ const route = useRoute();
 const configStore = useConfig();
 const { isSecondaryProject, enableGroupsMode } = storeToRefs(configStore);
 
-const { featureFlags } = storeToRefs(useFeatureFlag());
+const { featureFlags, featureFlagsLoaded } = storeToRefs(useFeatureFlag());
 const isAssistedSalesEnabled = computed(() =>
   useAssistedSalesFeatureFlag(featureFlags.value),
 );
@@ -231,11 +231,14 @@ const openNewGroupDrawer = () => {
   showNewGroupDrawer.value = true;
 };
 
-onMounted(() => {
-  if (isAssistedSalesEnabled.value) {
+watch(
+  [featureFlagsLoaded, isAssistedSalesEnabled],
+  ([loaded, enabled]) => {
+    if (!loaded || !enabled) return;
     fetchLinkedProject();
-  }
-});
+  },
+  { immediate: true },
+);
 </script>
 
 <style lang="scss" scoped>

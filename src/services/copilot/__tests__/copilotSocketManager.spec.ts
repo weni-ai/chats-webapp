@@ -61,6 +61,40 @@ describe('copilotSocketManager', () => {
     expect(service.session.sessionKey).toBe('session:channel-1:room-1');
   });
 
+  it('strips a wss:// prefix from socketUrl before handing it to the service', () => {
+    // @weni/webchat-service builds the address as `wss://${socketUrl}/ws`
+    // and only strips a leading http(s)://. A connection whose socketUrl
+    // already includes wss:// would otherwise produce a malformed
+    // `wss://wss://host/ws` address.
+    copilotSocketManager.getOrCreateService('room-1', connection);
+
+    expect(MockService).toHaveBeenCalledWith(
+      expect.objectContaining({ socketUrl: 'websocket.weni.ai' }),
+    );
+  });
+
+  it('strips a plain ws:// prefix from socketUrl before handing it to the service', () => {
+    copilotSocketManager.getOrCreateService('room-1', {
+      ...connection,
+      socketUrl: 'ws://websocket.weni.ai',
+    });
+
+    expect(MockService).toHaveBeenCalledWith(
+      expect.objectContaining({ socketUrl: 'websocket.weni.ai' }),
+    );
+  });
+
+  it('keeps a bare host socketUrl unchanged', () => {
+    copilotSocketManager.getOrCreateService('room-1', {
+      ...connection,
+      socketUrl: 'websocket.weni.ai',
+    });
+
+    expect(MockService).toHaveBeenCalledWith(
+      expect.objectContaining({ socketUrl: 'websocket.weni.ai' }),
+    );
+  });
+
   it('reuses the same service instance for the same room and channel', () => {
     const first = copilotSocketManager.getOrCreateService('room-1', connection);
     const second = copilotSocketManager.getOrCreateService('room-1', {

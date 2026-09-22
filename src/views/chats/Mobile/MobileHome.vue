@@ -1,5 +1,6 @@
 <!-- This component was migrated from unnnic. -->
 <template>
+  <CopilotConnectionLoader />
   <MobileChat
     v-if="showActiveChat"
     @transferred-contact="handleChatTransfer"
@@ -59,6 +60,7 @@
 <script>
 import { mapState } from 'pinia';
 import { useConfig } from '@/store/modules/config';
+import CopilotConnectionLoader from '@/layouts/ChatsLayout/components/CopilotConnectionLoader.vue';
 import { useDiscussions } from '@/store/modules/chats/discussions';
 import { useRooms } from '@/store/modules/chats/rooms';
 
@@ -90,6 +92,7 @@ export default {
     QuickMessages,
     MobileChat,
     ChatsHeader,
+    CopilotConnectionLoader,
   },
 
   data() {
@@ -112,7 +115,6 @@ export default {
     ...mapState(useDiscussions, {
       discussion: (store) => store.activeDiscussion,
     }),
-
     navs() {
       return [
         {

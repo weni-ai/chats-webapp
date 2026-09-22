@@ -113,7 +113,7 @@ const emit = defineEmits<{
 }>();
 
 const { linkedProject, changeLinkedProject } = useCopilotProject();
-const { projects } = useCopilotProjectsList();
+const { projects, fetchProjects } = useCopilotProjectsList();
 
 const searchTerm = ref('');
 const selectedUuid = ref('');
@@ -170,6 +170,7 @@ watch(
   (isVisible) => {
     if (!isVisible) return;
 
+    fetchProjects(true);
     searchTerm.value = '';
     selectedUuid.value = isChangeMode.value
       ? (linkedProject.value?.uuid ?? '')
@@ -208,7 +209,9 @@ async function submit() {
 
     if (!isChangeMode.value) {
       window.open(
-        buildCopilotProjectUrl(updatedProject.uuid),
+        buildCopilotProjectUrl(
+          updatedProject.projectUuid || updatedProject.uuid,
+        ),
         '_blank',
         'noopener,noreferrer',
       );
