@@ -260,7 +260,7 @@ export default {
     display: flex;
     flex-direction: column;
     gap: $unnnic-space-2;
-    max-height: 240px;
+    max-height: 140px;
     overflow-y: auto;
     border: 1px solid $unnnic-color-border-base;
     border-radius: $unnnic-radius-4;
