@@ -209,7 +209,9 @@ async function submit() {
 
     if (!isChangeMode.value) {
       window.open(
-        buildCopilotProjectUrl(updatedProject.uuid),
+        buildCopilotProjectUrl(
+          updatedProject.projectUuid || updatedProject.uuid,
+        ),
         '_blank',
         'noopener,noreferrer',
       );
