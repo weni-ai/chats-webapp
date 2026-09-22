@@ -1,12 +1,14 @@
 import { computed, ref, toValue, watch, type MaybeRefOrGetter } from 'vue';
 import { storeToRefs } from 'pinia';
 
+import { useAssistedSalesFeatureFlag } from '@/composables/useAssistedSalesFeatureFlag';
 import Copilot, {
   extractSectorUuid,
   type CopilotConnection,
   type CopilotConnectionItem,
 } from '@/services/api/resources/chats/copilot';
 import { useConfig } from '@/store/modules/config';
+import { useFeatureFlag } from '@/store/modules/featureFlag';
 
 export type CopilotRoom = {
   uuid?: string;
@@ -33,11 +35,24 @@ export function useCopilotConnection(
   room?: MaybeRefOrGetter<CopilotRoom | null | undefined>,
 ) {
   const { isPrimaryProject, project } = storeToRefs(useConfig());
+  const { featureFlags, featureFlagsLoaded } = storeToRefs(useFeatureFlag());
   const isPrincipal = computed(() => !!isPrimaryProject.value);
+  const isAssistedSalesEnabled = computed(() =>
+    useAssistedSalesFeatureFlag(featureFlags.value),
+  );
+
+  const canLoadConnections = computed(
+    () =>
+      featureFlagsLoaded.value &&
+      isAssistedSalesEnabled.value &&
+      !!project.value?.uuid,
+  );
 
   async function loadConnections(force = false) {
     const nextIsPrincipal = isPrincipal.value;
     const nextProjectUuid = project.value?.uuid || null;
+
+    if (!nextProjectUuid) return;
 
     if (
       !force &&
@@ -95,8 +110,9 @@ export function useCopilotConnection(
   }
 
   watch(
-    [isPrincipal, () => project.value?.uuid],
-    () => {
+    [canLoadConnections, isPrincipal, () => project.value?.uuid],
+    ([ready]) => {
+      if (!ready) return;
       loadConnections();
     },
     { immediate: true },
