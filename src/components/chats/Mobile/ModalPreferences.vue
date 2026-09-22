@@ -187,7 +187,7 @@ export default {
 .modal-preferences {
   &__content {
     display: grid;
-    gap: $unnnic-spacing-sm;
+    gap: $unnnic-space-4;
     padding: $unnnic-space-6;
   }
 }
@@ -216,9 +216,9 @@ export default {
   }
 
   &__icon {
-    width: $unnnic-spacing-xs;
-    height: $unnnic-spacing-xs;
-    border-radius: 50%;
+    width: $unnnic-space-2;
+    height: $unnnic-space-2;
+    border-radius: $unnnic-radius-full;
     flex-shrink: 0;
     background-color: $unnnic-color-fg-base;
   }
@@ -242,14 +242,15 @@ export default {
     text-overflow: ellipsis;
     white-space: nowrap;
     color: $unnnic-color-fg-base;
-    font-family: $unnnic-font-family-secondary;
-    font-size: $unnnic-font-size-body-gt;
-    line-height: $unnnic-font-size-body-gt + $unnnic-line-height-md;
   }
 
   &__label {
     flex: 1;
-    font-weight: $unnnic-font-weight-bold;
+    font: $unnnic-font-action;
+  }
+
+  &__item-label {
+    font: $unnnic-font-body;
   }
 
   &__list {
@@ -261,7 +262,7 @@ export default {
     gap: $unnnic-space-2;
     max-height: 240px;
     overflow-y: auto;
-    border: 1px solid $unnnic-color-border-soft;
+    border: 1px solid $unnnic-color-border-base;
     border-radius: $unnnic-radius-4;
     background: $unnnic-color-bg-base;
   }
