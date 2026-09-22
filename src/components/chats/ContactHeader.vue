@@ -1,10 +1,17 @@
 <template>
   <section class="contact-header">
+    <UnnnicIcon
+      v-if="isMobile()"
+      icon="arrow_back"
+      clickable
+      @click="emit('back')"
+    />
     <section
       :class="['contact-header__container', { clickable }]"
       @click="clickable ? emit('click') : null"
     >
       <UnnnicChatsUserAvatar
+        v-if="!isMobile()"
         :username="contactName"
         scheme="bg-muted"
         textColor="fg-emphasized"
@@ -24,6 +31,7 @@
 
 <script setup>
 import { computed, useSlots } from 'vue';
+import isMobile from 'is-mobile';
 
 defineProps({
   contactName: {
@@ -35,7 +43,7 @@ defineProps({
     default: false,
   },
 });
-const emit = defineEmits(['click']);
+const emit = defineEmits(['click', 'back']);
 const slots = useSlots();
 
 const hasActionsSlot = computed(() => !!slots.actions?.());
@@ -53,6 +61,7 @@ const hasActionsSlot = computed(() => !!slots.actions?.());
   min-height: var(--chats-column-header-height, 57px);
   width: 100%;
   border-bottom: 1px solid $unnnic-color-border-soft;
+  gap: $unnnic-space-2;
 
   &__name {
     font: $unnnic-font-action;

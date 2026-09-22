@@ -16,22 +16,12 @@ vi.mock('@/utils/hostBridge', () => ({
   emitToHost: vi.fn(),
 }));
 
-Object.defineProperty(global, 'Notification', {
-  value: {
-    permission: 'default',
-    requestPermission: vi.fn(() => Promise.resolve('granted')),
-  },
-  writable: true,
-});
+const NotificationMock = vi.fn();
+NotificationMock.permission = 'default';
+NotificationMock.requestPermission = vi.fn(() => Promise.resolve('granted'));
 
-Object.defineProperty(global, 'navigator', {
-  value: {
-    serviceWorker: {
-      ready: Promise.resolve({
-        showNotification: vi.fn(),
-      }),
-    },
-  },
+Object.defineProperty(global, 'Notification', {
+  value: NotificationMock,
   writable: true,
 });
 
@@ -70,7 +60,7 @@ describe('sendWindowNotification', () => {
     });
   });
 
-  it('should show a notification via serviceWorker on mobile with granted permission', async () => {
+  it('should show a Notification on standalone when permission is granted', async () => {
     vi.mocked(isMobile).mockReturnValue(true);
     Notification.permission = 'granted';
     const { sendWindowNotification, emitToHost } = await loadNotifications();
@@ -80,16 +70,12 @@ describe('sendWindowNotification', () => {
       message: 'Mobile Message',
     });
 
-    const serviceWorker = await navigator.serviceWorker.ready;
-    expect(serviceWorker.showNotification).toHaveBeenCalledWith(
-      'Mobile Notification',
-      {
-        silent: true,
-        body: 'Mobile Message',
-        tag: 'Mobile Notification',
-        requireInteraction: true,
-      },
-    );
+    expect(Notification).toHaveBeenCalledWith('Mobile Notification', {
+      silent: true,
+      body: 'Mobile Message',
+      tag: 'Mobile Notification',
+      requireInteraction: true,
+    });
     expect(emitToHost).not.toHaveBeenCalled();
   });
 
