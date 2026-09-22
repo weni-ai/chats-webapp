@@ -246,11 +246,11 @@ export default {
 
   &__label {
     flex: 1;
-    @include unnnic-font-action;
+    font: $unnnic-font-action;
   }
 
   &__item-label {
-    @include unnnic-font-body;
+    font: $unnnic-font-body;
   }
 
   &__list {
@@ -260,7 +260,7 @@ export default {
     display: flex;
     flex-direction: column;
     gap: $unnnic-space-2;
-    max-height: 240px;
+    max-height: 140px;
     overflow-y: auto;
     border: 1px solid $unnnic-color-border-base;
     border-radius: $unnnic-radius-4;
