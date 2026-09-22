@@ -852,13 +852,13 @@
         "add_to_cart_action": "Adicionar ao carrinho",
         "attach_action": "Anexar arquivo",
         "cancel_recording": "Cancelar gravação",
-        "carousel_scroll_left_action": "Rolar à esquerda",
-        "carousel_scroll_right_action": "Rolar à direita",
+        "carousel_scroll_left_action": "Rolar para a esquerda",
+        "carousel_scroll_right_action": "Rolar para a direita",
         "cart": {
           "back_action": "Voltar",
           "discount": "Desconto",
-          "place_order_action": "Fazer pedido",
-          "place_order_error": "Não foi possível fazer o pedido devido a um problema técnico",
+          "place_order_action": "Realizar pedido",
+          "place_order_error": "Não foi possível realizar o pedido devido a um problema técnico",
           "remove_item_action": "Remover item",
           "subtotal": "Subtotal",
           "title": "Carrinho",
@@ -1240,7 +1240,7 @@
       },
       "empty_state": {
         "create_button": "Criar projeto Copilot",
-        "create_disabled_tooltip": "Você não tem permissão para criar um projeto Copilot",
+        "create_disabled_tooltip": "Você não tem permissão para criar um projeto do Copilot",
         "description": "Para ativar o Desk Copilot, conecte este projeto a um projeto Copilot no qual seus agentes de IA são gerenciados.",
         "select_button": "Selecionar projeto Copilot",
         "title": "Nenhum projeto Copilot conectado"

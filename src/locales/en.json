@@ -858,7 +858,7 @@
           "back_action": "Back",
           "discount": "Discount",
           "place_order_action": "Place order",
-          "place_order_error": "Order couldn't be placed due to a technical issue",
+          "place_order_error": "Couldn't place order due to a technical issue",
           "remove_item_action": "Remove item",
           "subtotal": "Subtotal",
           "title": "Cart",
@@ -1240,7 +1240,7 @@
       },
       "empty_state": {
         "create_button": "Create Copilot Project",
-        "create_disabled_tooltip": "You don't have permission to create a Copilot Project",
+        "create_disabled_tooltip": "You don't have permission to create a Copilot project",
         "description": "To activate Desk Copilot, connect this project to a Copilot Project where your AI agents are managed",
         "select_button": "Select Copilot project",
         "title": "No Copilot Project connected"

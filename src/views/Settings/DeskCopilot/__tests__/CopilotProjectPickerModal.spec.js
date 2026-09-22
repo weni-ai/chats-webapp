@@ -19,6 +19,7 @@ import { buildCopilotProjectUrl } from '@/utils/copilotProject';
 import i18n from '@/plugins/i18n';
 
 const projects = ref([]);
+const fetchProjects = vi.fn();
 
 vi.mock('@/services/api/resources/chats/copilotProject', () => ({
   default: {
@@ -42,6 +43,7 @@ vi.mock('@/utils/copilotProject', () => ({
 vi.mock('@/composables/useCopilotProjectsList', () => ({
   useCopilotProjectsList: () => ({
     projects,
+    fetchProjects,
   }),
 }));
 
@@ -150,6 +152,12 @@ describe('CopilotProjectPickerModal', () => {
 
   afterAll(() => {
     window.open = originalOpen;
+  });
+
+  it('requests the project list when the modal opens', () => {
+    wrapper = createWrapper({ mode: 'connect' });
+
+    expect(fetchProjects).toHaveBeenCalledWith(true);
   });
 
   it('renders the connect title', () => {

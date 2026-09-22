@@ -1,4 +1,4 @@
-import { computed, ref } from 'vue';
+import { computed, ref, watch } from 'vue';
 import { storeToRefs } from 'pinia';
 
 import { useConfig } from '@/store/modules/config';
@@ -18,13 +18,32 @@ export function resetCopilotProjectsListState() {
   fetchGeneration = 0;
 }
 
+function readOrgUuid(value: unknown): string | undefined {
+  if (typeof value === 'string' && value) return value;
+
+  if (value && typeof value === 'object' && 'uuid' in value) {
+    const uuid = (value as { uuid?: unknown }).uuid;
+    return typeof uuid === 'string' && uuid ? uuid : undefined;
+  }
+
+  return undefined;
+}
+
 export function useCopilotProjectsList() {
   const { project } = storeToRefs(useConfig());
+  const orgUuid = computed(() => {
+    const current = project.value as
+      | { org?: unknown; organization?: unknown }
+      | null
+      | undefined;
+
+    return readOrgUuid(current?.org ?? current?.organization);
+  });
 
   async function fetchProjects(force = false) {
-    const orgUuid = project.value?.org;
+    const currentOrgUuid = orgUuid.value;
 
-    if (!orgUuid) {
+    if (!currentOrgUuid) {
       projects.value = [];
       return;
     }
@@ -38,7 +57,7 @@ export function useCopilotProjectsList() {
     fetchPromise = (async () => {
       try {
         const result =
-          await CopilotProjectService.listExistingProjects(orgUuid);
+          await CopilotProjectService.listExistingProjects(currentOrgUuid);
 
         if (generation !== fetchGeneration) return;
 
@@ -56,6 +75,11 @@ export function useCopilotProjectsList() {
 
     return fetchPromise;
   }
+
+  watch(orgUuid, (next, previous) => {
+    if (!next || next === previous) return;
+    fetchProjects(true);
+  });
 
   const hasMultipleProjects = computed(() => projects.value.length > 1);
 

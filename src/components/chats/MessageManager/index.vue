@@ -202,13 +202,7 @@ onMounted(() => {
   &__input-area {
     position: relative;
     width: 100%;
-    display: flex;
-    flex-direction: column;
-    gap: $unnnic-space-1;
-  }
-
-  &__reply-preview {
-    width: 100%;
+    min-width: 0;
   }
 }
 </style>

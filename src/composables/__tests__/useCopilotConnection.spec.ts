@@ -1,8 +1,11 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { setActivePinia, createPinia } from 'pinia';
-import { ref } from 'vue';
+import { nextTick, ref } from 'vue';
+import { flushPromises } from '@vue/test-utils';
 
+import { ASSISTED_SALES_FEATURE_FLAG } from '@/composables/useAssistedSalesFeatureFlag';
 import { useConfig } from '@/store/modules/config';
+import { useFeatureFlag } from '@/store/modules/featureFlag';
 import Copilot from '@/services/api/resources/chats/copilot';
 import {
   resetCopilotConnectionState,
@@ -43,6 +46,66 @@ describe('useCopilotConnection', () => {
       name: 'Desk',
       config: {},
     };
+  });
+
+  function enableAssistedSales() {
+    const featureFlagStore = useFeatureFlag();
+    featureFlagStore.featureFlags = {
+      active_features: [ASSISTED_SALES_FEATURE_FLAG],
+    };
+    featureFlagStore.featureFlagsLoaded = true;
+  }
+
+  it('does not list connections before the feature flag resolves', async () => {
+    useCopilotConnection();
+    await nextTick();
+
+    expect(Copilot.listConnections).not.toHaveBeenCalled();
+  });
+
+  it('lists connections after the flag is loaded and the project uuid exists', async () => {
+    Copilot.listConnections.mockResolvedValue([]);
+    useCopilotConnection();
+    enableAssistedSales();
+    await nextTick();
+    await flushPromises();
+
+    expect(Copilot.listConnections).toHaveBeenCalledWith({
+      isPrincipal: false,
+    });
+  });
+
+  it('does not list connections when the flag is loaded but disabled', async () => {
+    useCopilotConnection();
+    const featureFlagStore = useFeatureFlag();
+    featureFlagStore.featureFlagsLoaded = true;
+    featureFlagStore.featureFlags = { active_features: [] };
+    await nextTick();
+
+    expect(Copilot.listConnections).not.toHaveBeenCalled();
+  });
+
+  it('waits for the project uuid before listing connections', async () => {
+    Copilot.listConnections.mockResolvedValue([]);
+    const configStore = useConfig();
+    configStore.project = { uuid: '', name: 'Desk', config: {} };
+    enableAssistedSales();
+
+    useCopilotConnection();
+    await nextTick();
+    expect(Copilot.listConnections).not.toHaveBeenCalled();
+
+    configStore.project = {
+      uuid: 'project-uuid',
+      name: 'Desk',
+      config: {},
+    };
+    await nextTick();
+    await flushPromises();
+
+    expect(Copilot.listConnections).toHaveBeenCalledWith({
+      isPrincipal: false,
+    });
   });
 
   it('is not configured when there are no connections', async () => {
