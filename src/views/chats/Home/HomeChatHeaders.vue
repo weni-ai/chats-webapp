@@ -42,9 +42,7 @@
               />
             </section>
           </UnnnicToolTip>
-          <!-- TODO: Not working on mobile. Future fix. -->
           <UnnnicToolTip
-            v-if="!isMobile"
             enabled
             :text="$t('chats.search_messages.title')"
             side="left"
@@ -150,7 +148,6 @@
 <script>
 import { format as dateFnsFormat, subYears as dateFnsSubYears } from 'date-fns';
 import { mapActions, mapState, mapWritableState } from 'pinia';
-import isMobile from 'is-mobile';
 
 import { useRooms } from '@/store/modules/chats/rooms';
 import { useDiscussions } from '@/store/modules/chats/discussions';
@@ -241,10 +238,6 @@ export default {
         this.me?.email === this.discussion?.created_by?.email;
 
       return isOwnDiscussion || isUserAdmin(this.me?.project_permission_role);
-    },
-
-    isMobile() {
-      return isMobile();
     },
 
     isShowingRoomHeader() {
