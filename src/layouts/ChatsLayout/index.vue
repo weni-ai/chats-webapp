@@ -246,6 +246,8 @@ section.chats-layout {
     grid-column: 2;
 
     height: 100%;
+    min-width: 0;
+    overflow: hidden;
 
     background-color: $unnnic-color-bg-base-soft;
   }
