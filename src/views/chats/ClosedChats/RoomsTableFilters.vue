@@ -74,7 +74,6 @@
           v-model="filterDate"
           data-testid="filter-date-mobile-select"
           :options="datesToFilter"
-          :label="$t('date')"
           :placeholder="$t('filter.dates.last_7_days')"
           returnObject
           enableSearch
