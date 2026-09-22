@@ -155,8 +155,11 @@ const metadata = computed(() => [
 ]);
 
 function openProject() {
+  const projectUuid =
+    props.linkedProject.projectUuid || props.linkedProject.uuid;
+
   window.open(
-    buildCopilotProjectUrl(props.linkedProject.uuid),
+    buildCopilotProjectUrl(projectUuid),
     '_blank',
     'noopener,noreferrer',
   );
