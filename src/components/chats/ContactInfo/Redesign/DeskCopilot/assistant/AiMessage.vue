@@ -334,12 +334,16 @@ async function handleSend() {
       return;
     }
 
+
     isSending.value = true;
     try {
-      emit('sendCatalog', { catalog, text: sendText.value });
+      await new Promise((resolve, reject) => {
+        emit('sendCatalog', { catalog, text: sendText.value, resolve, reject });
+      });
     } finally {
       isSending.value = false;
     }
+
     return;
   }
 
