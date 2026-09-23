@@ -57,6 +57,26 @@ const mockContacts = [
 
 const mockGroups = [{ uuid: 'group-1', name: 'Group A' }];
 
+const segmentedControlStub = {
+  name: 'UnnnicSegmentedControl',
+  props: ['modelValue', 'defaultValue'],
+  emits: ['update:modelValue'],
+  template: '<div class="unnnic-segmented-control"><slot /></div>',
+};
+
+const segmentedControlListStub = {
+  name: 'UnnnicSegmentedControlList',
+  template: '<div class="unnnic-segmented-control-list"><slot /></div>',
+};
+
+const segmentedControlTriggerStub = {
+  name: 'UnnnicSegmentedControlTrigger',
+  props: ['value', 'disabled'],
+  inheritAttrs: false,
+  template:
+    '<button class="unnnic-segmented-control-trigger" :data-testid="$attrs[\'data-testid\']"><slot /></button>',
+};
+
 const createStubs = () => ({
   AsideSlotTemplate: {
     template: `
@@ -97,9 +117,10 @@ const createStubs = () => ({
   },
   UnnnicInput: {
     props: ['modelValue', 'placeholder', 'iconLeft'],
+    inheritAttrs: false,
     template: `
       <input
-        data-testid="flows-trigger-search"
+        :data-testid="$attrs['data-testid']"
         :value="modelValue"
         @input="$emit('update:modelValue', $event.target.value)"
       />
@@ -117,6 +138,12 @@ const createStubs = () => ({
   UnnnicSkeletonLoading: {
     template: '<div data-testid="flows-trigger-skeleton" />',
   },
+  UnnnicTabs: segmentedControlStub,
+  UnnnicSegmentedControl: segmentedControlStub,
+  SegmentedControlList: segmentedControlListStub,
+  UnnnicSegmentedControlList: segmentedControlListStub,
+  SegmentedControlTrigger: segmentedControlTriggerStub,
+  UnnnicSegmentedControlTrigger: segmentedControlTriggerStub,
   SelectedContactsSection: {
     props: ['contacts'],
     template: `
@@ -279,7 +306,10 @@ describe('FlowsTrigger/index.vue', () => {
       expect(FlowsAPI.getContacts).toHaveBeenCalledWith('', '');
       expect(FlowsTriggerService.getListOfGroups).toHaveBeenCalledWith('');
       expect(wrapper.vm.isProjectPrincipal).toBe(false);
-      expect(wrapper.vm.listOfContacts).toHaveLength(3);
+      expect(
+        wrapper.findComponent({ name: 'FlowsTriggerAllContacts' }).vm
+          .listOfContacts,
+      ).toHaveLength(3);
       expect(wrapper.vm.listOfGroups).toEqual(mockGroups);
     });
 
@@ -323,8 +353,11 @@ describe('FlowsTrigger/index.vue', () => {
 
     it('should show no results message when search returns empty list', async () => {
       const wrapper = await createWrapper();
+      const allContacts = wrapper.findComponent({
+        name: 'FlowsTriggerAllContacts',
+      });
 
-      await wrapper.setData({
+      await allContacts.setData({
         searchUrn: 'xyz',
         listOfContacts: [],
         isContactsLoading: false,
@@ -525,19 +558,76 @@ describe('FlowsTrigger/index.vue', () => {
     });
   });
 
+  describe('views', () => {
+    it('should keep an independent search field on each view', async () => {
+      const wrapper = await createWrapper();
+
+      expect(wrapper.find('[data-testid="flows-contact-card"]').exists()).toBe(
+        true,
+      );
+      expect(
+        wrapper.find('[data-testid="flows-trigger-search"]').exists(),
+      ).toBe(true);
+      expect(
+        wrapper.find('[data-testid="flows-trigger-expired-window"]').exists(),
+      ).toBe(false);
+
+      await wrapper
+        .find('[data-testid="flows-trigger-search"]')
+        .setValue('alice');
+
+      const segmented = wrapper.findComponent({
+        name: 'UnnnicSegmentedControl',
+      });
+      segmented.vm.$emit('update:modelValue', 'expired_window');
+      await wrapper.vm.$nextTick();
+
+      expect(wrapper.find('[data-testid="flows-contact-card"]').exists()).toBe(
+        false,
+      );
+      expect(
+        wrapper.find('[data-testid="flows-trigger-search"]').exists(),
+      ).toBe(false);
+      expect(
+        wrapper.find('[data-testid="flows-trigger-expired-search"]').element
+          .value,
+      ).toBe('');
+
+      await wrapper
+        .find('[data-testid="flows-trigger-expired-search"]')
+        .setValue('expired');
+
+      segmented.vm.$emit('update:modelValue', 'all_contacts');
+      await wrapper.vm.$nextTick();
+
+      expect(
+        wrapper.find('[data-testid="flows-trigger-search"]').element.value,
+      ).toBe('');
+      expect(
+        wrapper.find('[data-testid="flows-trigger-expired-search"]').exists(),
+      ).toBe(false);
+    });
+  });
+
   describe('helpers and computed', () => {
     it('should build contact urn subtitle', async () => {
       const wrapper = await createWrapper();
+      const allContacts = wrapper.findComponent({
+        name: 'FlowsTriggerAllContacts',
+      });
 
-      expect(wrapper.vm.getContactUrn(mockContacts[0])).toBe(
+      expect(allContacts.vm.getContactUrn(mockContacts[0])).toBe(
         'tel:+5511999999999',
       );
     });
 
     it('should build already open room message with agent', async () => {
       const wrapper = await createWrapper();
+      const allContacts = wrapper.findComponent({
+        name: 'FlowsTriggerAllContacts',
+      });
 
-      const message = wrapper.vm.alreadyOpenRoomMessage({
+      const message = allContacts.vm.alreadyOpenRoomMessage({
         contactName: 'Alice',
         queue: 'Support',
         agent: 'John',
@@ -550,8 +640,11 @@ describe('FlowsTrigger/index.vue', () => {
 
     it('should build already open room message without agent', async () => {
       const wrapper = await createWrapper();
+      const allContacts = wrapper.findComponent({
+        name: 'FlowsTriggerAllContacts',
+      });
 
-      const message = wrapper.vm.alreadyOpenRoomMessage({
+      const message = allContacts.vm.alreadyOpenRoomMessage({
         contactName: 'Alice',
         queue: 'Support',
       });
