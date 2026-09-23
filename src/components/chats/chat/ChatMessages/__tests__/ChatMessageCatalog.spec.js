@@ -37,8 +37,16 @@ const createWrapper = (props = {}) =>
       ...props,
     },
     global: {
+      mocks: {
+        $t: (key) => key,
+      },
       stubs: {
         UnnnicIcon: true,
+        UnnnicButton: true,
+        UnnnicToolTip: {
+          name: 'UnnnicToolTip',
+          template: '<div><slot /></div>',
+        },
       },
     },
   });
@@ -50,25 +58,22 @@ describe('ChatMessageCatalog', () => {
     wrapper?.unmount();
   });
 
-  it('renders the header and product names', () => {
+  it('renders the header and product names via the Copilot carousel', () => {
     wrapper = createWrapper();
 
     expect(
       wrapper.find('[data-testid="chat-message-catalog-header"]').text(),
     ).toBe('Novidades');
-    expect(
-      wrapper.find('[data-testid="chat-message-catalog-item-sku-1"]').exists(),
-    ).toBe(true);
-    expect(
-      wrapper.find('[data-testid="chat-message-catalog-item-sku-2"]').exists(),
-    ).toBe(true);
-    expect(
-      wrapper
-        .find(
-          '[data-testid="chat-message-catalog-item-sku-1"] [data-testid="chat-message-catalog-name"]',
-        )
-        .text(),
-    ).toBe('Tile');
+    expect(wrapper.find('[data-testid="product-carousel"]').exists()).toBe(
+      true,
+    );
+
+    const titles = wrapper.findAll(
+      '[data-testid="product-carousel-card-title"]',
+    );
+    expect(titles).toHaveLength(2);
+    expect(titles[0].text()).toBe('Tile');
+    expect(titles[1].text()).toBe('Rug');
   });
 
   it('loads catalog images without sending a referrer', () => {
@@ -76,7 +81,7 @@ describe('ChatMessageCatalog', () => {
 
     expect(
       wrapper
-        .find('[data-testid="chat-message-catalog-image"]')
+        .find('[data-testid="product-carousel-card-image"]')
         .attributes('referrerpolicy'),
     ).toBe('no-referrer');
   });
@@ -84,11 +89,10 @@ describe('ChatMessageCatalog', () => {
   it('shows a placeholder when the product has no image', () => {
     wrapper = createWrapper();
 
+    const cards = wrapper.findAll('[data-testid="product-carousel-card"]');
     expect(
-      wrapper
-        .find(
-          '[data-testid="chat-message-catalog-item-sku-2"] [data-testid="chat-message-catalog-image-placeholder"]',
-        )
+      cards[1]
+        .find('[data-testid="product-carousel-card-image-placeholder"]')
         .exists(),
     ).toBe(true);
   });
@@ -103,6 +107,17 @@ describe('ChatMessageCatalog', () => {
 
     expect(
       wrapper.find('[data-testid="chat-message-catalog-header"]').exists(),
+    ).toBe(false);
+  });
+
+  it('does not show cart or dismiss actions in read-only mode', () => {
+    wrapper = createWrapper();
+
+    expect(
+      wrapper.find('[data-testid="product-carousel-card-add"]').exists(),
+    ).toBe(false);
+    expect(
+      wrapper.find('[data-testid="product-carousel-card-remove"]').exists(),
     ).toBe(false);
   });
 });
