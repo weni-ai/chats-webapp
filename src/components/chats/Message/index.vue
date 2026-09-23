@@ -159,6 +159,10 @@
         </button>
       </UnnnicToolTip>
     </section>
+    <slot
+      v-if="$slots.extra"
+      name="extra"
+    />
   </section>
 </template>
 

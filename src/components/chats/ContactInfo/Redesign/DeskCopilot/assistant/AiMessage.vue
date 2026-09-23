@@ -105,8 +105,10 @@
             <UnnnicButton
               type="secondary"
               size="small"
+              :loading="isSending"
+              :disabled="isSending"
               data-testid="assistant-ai-send"
-              @click="emit('send', sendText)"
+              @click="handleSend"
             >
               {{ $t('contact_info.desk_copilot.assistant.send_action') }}
             </UnnnicButton>
@@ -154,6 +156,8 @@
 import { computed, ref } from 'vue';
 import { useStreamingBuffer } from '@/composables/assistant/useStreamingBuffer';
 import { copyTextToContactInput } from '@/composables/assistant/useCopyToContactInput';
+import { buildCatalogPayload } from '@/services/assistant/buildCatalogPayload';
+import type { CatalogPayload } from '@/services/assistant/buildCatalogPayload';
 import type {
   AssistantMessageType,
   ProductCarouselItem,
@@ -204,6 +208,7 @@ const props = withDefaults(
 
 const emit = defineEmits<{
   send: [text: string];
+  sendCatalog: [payload: { catalog: CatalogPayload; text: string }];
   wordRevealed: [];
   addToCart: [product: ProductCarouselItem];
   incrementCartItem: [product: ProductCarouselItem];
@@ -212,6 +217,7 @@ const emit = defineEmits<{
 
 const feedbackLiked = ref<boolean | null>(null);
 const dismissedIds = ref<string[]>([]);
+const isSending = ref(false);
 
 const isStreaming = computed(() => props.status === 'streaming');
 const hasProductCarousel = computed(
@@ -302,11 +308,47 @@ const showActions = computed(() => {
   }
 
   if (hasProductCatalog.value) {
-    return !!sendText.value;
+    return true;
   }
 
   return !!suggestionText.value;
 });
+
+async function handleSend() {
+  if (isSending.value) {
+    return;
+  }
+
+  if (hasProductCatalog.value) {
+    const catalog = hasProductCarousel.value
+      ? buildCatalogPayload({
+          carouselItems: props.productCarousel?.items,
+          dismissedIds: dismissedIds.value,
+        })
+      : buildCatalogPayload({
+          productList: props.productList,
+          dismissedIds: dismissedIds.value,
+        });
+
+    if (!catalog) {
+      return;
+    }
+
+
+    isSending.value = true;
+    try {
+      await new Promise((resolve, reject) => {
+        emit('sendCatalog', { catalog, text: sendText.value, resolve, reject });
+      });
+    } finally {
+      isSending.value = false;
+    }
+
+    return;
+  }
+
+  emit('send', sendText.value);
+}
 
 function handleRemoveSuggestion(product: ProductCarouselItem) {
   if (dismissedIds.value.includes(product.product_retailer_id)) {

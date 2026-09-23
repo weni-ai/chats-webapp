@@ -11,6 +11,7 @@ export async function sendRoomMessageBySocket({
   requestId,
   media,
   externalId,
+  catalog,
 }) {
   if (!isSocketOpen()) {
     throw new SocketNotConnectedError();
@@ -36,6 +37,10 @@ export async function sendRoomMessageBySocket({
 
   if (Array.isArray(media) && media.length) {
     content.media = media;
+  }
+
+  if (catalog) {
+    content.catalog = catalog;
   }
 
   getActiveConnection().ws.send({

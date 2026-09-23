@@ -295,6 +295,36 @@ export const useRoomMessages = defineStore('roomMessages', {
       });
     },
 
+    async sendRoomCatalogMessage(catalog, text = '', roomUuid = '') {
+      const roomsStore = useRooms();
+      const { activeRoom } = roomsStore;
+
+      if (!activeRoom || !roomUuid || !catalog) return;
+
+      const requestId = crypto.randomUUID();
+
+      await sendMessage({
+        itemType: 'room',
+        itemUuid: roomUuid,
+        itemUser: activeRoom.user,
+        message: text,
+        catalog,
+        uuid: requestId,
+        sendItemMessage: () =>
+          sendRoomMessageBySocket({
+            room: roomUuid,
+            text,
+            catalog,
+            requestId,
+          }),
+        addMessage: (message) => this.handlingAddMessage({ message }),
+        addSortedMessage: (message) => this.addRoomMessageSorted({ message }),
+        updateMessage: ({ message, toUpdateMessageUuid }) =>
+          this.updateMessage({ message, toUpdateMessageUuid }),
+        addFailedMessage: (message) => this.addFailedMessage({ message }),
+      });
+    },
+
     async sendRoomMedias({
       files: medias,
       updateLoadingFiles,
@@ -548,8 +578,9 @@ export const useRoomMessages = defineStore('roomMessages', {
       const useSocket = useSocketMessageFeatureFlag(
         featureFlagStore.featureFlags,
       );
+      const catalog = message.catalog || null;
 
-      if (useSocket) {
+      if (useSocket || catalog) {
         const requestId = crypto.randomUUID();
 
         await resendMessage({
@@ -560,6 +591,7 @@ export const useRoomMessages = defineStore('roomMessages', {
               room: roomUuid,
               text: message.text,
               requestId,
+              ...(catalog ? { catalog } : {}),
             }),
           updateMessage: ({ message: updatedMessage, toUpdateMessageUuid }) =>
             this.updateMessage({

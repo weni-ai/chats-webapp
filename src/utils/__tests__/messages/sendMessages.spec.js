@@ -87,6 +87,7 @@ describe('Messages utils', () => {
         seen: true,
         created_on: expect.any(String),
         internal_note: null,
+        catalog: null,
       };
 
       expect(mockAddMessage).toHaveBeenCalledWith(expectedMessage);

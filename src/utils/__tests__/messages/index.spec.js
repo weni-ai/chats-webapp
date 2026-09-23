@@ -99,6 +99,32 @@ describe('Messages utils', () => {
       expect(result.uuid).toBe('custom-request-id');
       expect(result.text).toBe('Hello');
     });
+
+    it('should include catalog when provided', () => {
+      const catalog = {
+        carousel: true,
+        products: [
+          {
+            product: 'product',
+            product_retailer_ids: ['sku-1'],
+            product_retailer_info: [
+              { retailer_id: 'sku-1', name: 'Tile', price: '32' },
+            ],
+          },
+        ],
+      };
+      const result = createTemporaryMessage({
+        message: 'Check these products',
+        catalog,
+      });
+
+      expect(result.catalog).toEqual(catalog);
+    });
+
+    it('should default catalog to null', () => {
+      const result = createTemporaryMessage({ message: 'Hello' });
+      expect(result.catalog).toBeNull();
+    });
   });
 
   describe('isValidJson', () => {

@@ -249,6 +249,109 @@ describe('useRoomMessages Store', () => {
     expect(Message.sendRoomMessage).not.toHaveBeenCalled();
   });
 
+  it('should send a catalog message via socket even when the socket flag is off', async () => {
+    crypto.randomUUID.mockReturnValue('req-catalog-1');
+    const catalog = {
+      carousel: true,
+      products: [
+        {
+          product: 'product',
+          product_retailer_ids: ['sku-1'],
+          product_retailer_info: [
+            { retailer_id: 'sku-1', name: 'Tile', price: '32' },
+          ],
+        },
+      ],
+    };
+    sendRoomMessageBySocket.mockResolvedValue({
+      uuid: 'server-catalog',
+      text: 'Check these products',
+      catalog,
+      room: 'room-123',
+    });
+
+    await roomMessagesStore.sendRoomCatalogMessage(
+      catalog,
+      'Check these products',
+      'room-123',
+    );
+
+    expect(sendRoomMessageBySocket).toHaveBeenCalledWith({
+      room: 'room-123',
+      text: 'Check these products',
+      catalog,
+      requestId: 'req-catalog-1',
+    });
+    expect(Message.sendRoomMessage).not.toHaveBeenCalled();
+    expect(roomMessagesStore.roomMessages[0].catalog).toEqual(catalog);
+  });
+
+  it('should mark the catalog message as failed when socket send rejects', async () => {
+    crypto.randomUUID.mockReturnValue('req-catalog-fail');
+    sendRoomMessageBySocket.mockRejectedValue(new Error('timeout'));
+    const errorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+
+    await roomMessagesStore.sendRoomCatalogMessage(
+      {
+        carousel: true,
+        products: [
+          {
+            product: 'product',
+            product_retailer_ids: ['sku-1'],
+            product_retailer_info: [],
+          },
+        ],
+      },
+      'Check these products',
+      'room-123',
+    );
+
+    expect(roomMessagesStore.roomMessagesFailedUuids).toContain(
+      'req-catalog-fail',
+    );
+    errorSpy.mockRestore();
+  });
+
+  it('should resend a catalog message via socket even when the socket flag is off', async () => {
+    crypto.randomUUID.mockReturnValue('req-catalog-resend');
+    const catalog = {
+      carousel: true,
+      products: [
+        {
+          product: 'product',
+          product_retailer_ids: ['sku-1'],
+          product_retailer_info: [
+            { retailer_id: 'sku-1', name: 'Tile', price: '32' },
+          ],
+        },
+      ],
+    };
+    sendRoomMessageBySocket.mockResolvedValue({
+      uuid: 'server-catalog-2',
+      text: 'Check these products',
+      catalog,
+    });
+
+    await roomMessagesStore.resendRoomMessage({
+      message: {
+        uuid: 'old-catalog',
+        text: 'Check these products',
+        catalog,
+        room: 'room-123',
+        user: { email: 'test@test.com' },
+      },
+      roomUuid: 'room-123',
+    });
+
+    expect(sendRoomMessageBySocket).toHaveBeenCalledWith({
+      room: 'room-123',
+      text: 'Check these products',
+      catalog,
+      requestId: 'req-catalog-resend',
+    });
+    expect(Message.sendRoomMessage).not.toHaveBeenCalled();
+  });
+
   it('should send room medias with roomUuid', async () => {
     globalThis.URL.createObjectURL = vi.fn(() => 'blob:preview');
     Message.sendRoomMedia.mockResolvedValue({
