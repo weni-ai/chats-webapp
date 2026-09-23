@@ -159,7 +159,9 @@ describe('AssistantAiMessage', () => {
 
     await wrapper.find('[data-testid="assistant-ai-send"]').trigger('click');
     expect(wrapper.emitted('send')).toBeFalsy();
-    expect(wrapper.emitted('sendCatalog')?.[0][0]).toEqual({
+
+    const payload = wrapper.emitted('sendCatalog')?.[0][0];
+    expect(payload).toMatchObject({
       text: 'Check these products',
       catalog: {
         carousel: true,
@@ -181,6 +183,8 @@ describe('AssistantAiMessage', () => {
         ],
       },
     });
+    expect(payload.resolve).toEqual(expect.any(Function));
+    expect(payload.reject).toEqual(expect.any(Function));
   });
 
   it('renders product list sections and hides copy action for list messages', async () => {
