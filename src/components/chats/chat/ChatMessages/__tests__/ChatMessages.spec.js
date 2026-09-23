@@ -74,6 +74,14 @@ vi.mock('../ChatMessageAudio/ChatMessageAudio.vue', () => ({
   },
 }));
 
+vi.mock('../ChatMessageCatalog.vue', () => ({
+  default: {
+    name: 'ChatMessageCatalog',
+    props: ['catalog'],
+    template: '<div data-testid="chat-message-catalog" />',
+  },
+}));
+
 describe('ChatMessages', () => {
   let wrapper;
   let pinia;
@@ -343,5 +351,47 @@ describe('ChatMessages', () => {
       expect(wrapper.find('[data-testid="medias-grid"]').exists()).toBe(true);
       expect(bubbles[0].text()).toContain('Look at this');
     });
+  });
+
+  it('renders the catalog preview when the message has catalog products', async () => {
+    const message = {
+      uuid: 'catalog-1',
+      text: 'Check these products',
+      created_on: '2024-03-20T10:00:00Z',
+      user: { email: 'agent@example.com', first_name: 'Agent' },
+      media: [],
+      catalog: {
+        carousel: true,
+        products: [
+          {
+            product: 'product',
+            product_retailer_ids: ['sku-1'],
+            product_retailer_info: [
+              { retailer_id: 'sku-1', name: 'Tile', price: '32' },
+            ],
+          },
+        ],
+      },
+    };
+
+    await wrapper.setProps({
+      messages: [message],
+      messagesSorted: [
+        {
+          date: '2024-03-20',
+          minutes: [
+            {
+              minute: '10:00',
+              messages: [message],
+            },
+          ],
+        },
+      ],
+    });
+    await wrapper.vm.$nextTick();
+
+    expect(wrapper.find('[data-testid="chat-message-catalog"]').exists()).toBe(
+      true,
+    );
   });
 });
