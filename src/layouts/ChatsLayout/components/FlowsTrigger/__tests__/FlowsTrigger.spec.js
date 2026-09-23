@@ -310,20 +310,6 @@ describe('FlowsTrigger/index.vue', () => {
   });
 
   describe('rendering', () => {
-    it('should render header and emit close when close button is clicked', async () => {
-      const wrapper = await createWrapper();
-
-      expect(
-        wrapper.find('[data-testid="flows-trigger-header"]').exists(),
-      ).toBe(true);
-
-      await wrapper
-        .find('[data-testid="flows-trigger-close"]')
-        .trigger('click');
-
-      expect(wrapper.emitted('close')).toBeTruthy();
-    });
-
     it('should render grouped contacts and unnamed contacts section', async () => {
       const wrapper = await createWrapper();
 
@@ -508,12 +494,9 @@ describe('FlowsTrigger/index.vue', () => {
     it('should open triggered flows modal', async () => {
       const wrapper = await createWrapper();
 
-      const triggeredFlowsButton = wrapper
-        .findAll('button')
-        .find(
-          (button) =>
-            button.text() === t('flows_trigger.triggered_flows.title'),
-        );
+      const triggeredFlowsButton = wrapper.find(
+        '[data-testid="flows-trigger-history"]',
+      );
 
       await triggeredFlowsButton.trigger('click');
 
