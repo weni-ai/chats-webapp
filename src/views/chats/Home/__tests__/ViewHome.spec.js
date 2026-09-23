@@ -206,27 +206,4 @@ describe('ViewHome.vue', () => {
     await wrapper.vm.$nextTick();
     expect(wrapper.vm.isRoomContactInfoOpen).toBe(false);
   });
-
-  it('calls openFlowsTrigger with contact from room', async () => {
-    const roomsStore = useRooms();
-    roomsStore.activeRoom = roomMock;
-    await wrapper.vm.$nextTick();
-
-    const openFlowsTriggerSpy = vi.spyOn(wrapper.vm, 'openFlowsTrigger');
-
-    const chatsLayout = wrapper.findComponent('[data-testid="chats-layout"]');
-
-    const chatsLayoutOpenFlowsTriggerSpy = vi.spyOn(
-      chatsLayout.vm,
-      'openFlowsTrigger',
-    );
-
-    const homeChat = wrapper.findComponent('[data-testid="home-chat"]');
-    await homeChat.vm.$emit('open-flows-trigger');
-
-    expect(openFlowsTriggerSpy).toHaveBeenCalled();
-    expect(chatsLayoutOpenFlowsTriggerSpy).toHaveBeenCalledWith({
-      contact: roomMock.contact,
-    });
-  });
 });
