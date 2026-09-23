@@ -170,7 +170,7 @@ const createWrapper = (props = {}, piniaState = {}) =>
         AssistantMessageList: {
           name: 'AssistantMessageList',
           template:
-            '<div data-testid="assistant-message-list" @click="$emit(\'send\', \'Suggested text\')"><div v-if="isLoadingHistory" data-testid="assistant-history-loading" /></div>',
+            "<div data-testid=\"assistant-message-list\" @click=\"$emit('send', 'Suggested text')\" @dblclick=\"$emit('sendCatalog', { catalog: { carousel: true, products: [{ product: 'product', product_retailer_ids: ['sku-1'], product_retailer_info: [] }] }, text: 'Check these products' })\"><div v-if=\"isLoadingHistory\" data-testid=\"assistant-history-loading\" /></div>",
           props: [
             'messages',
             'isThinking',
@@ -295,6 +295,36 @@ describe('DeskCopilotTab', () => {
       'Suggested text',
       null,
       null,
+      'room-1',
+    );
+  });
+
+  it('sends a catalog suggestion directly to the active room', async () => {
+    mockCopilotConnection({
+      isConfigured: true,
+      connection: defaultConnection,
+    });
+    mockCopilotChat();
+    wrapper = createWrapper();
+
+    await flushPromises();
+    await wrapper
+      .find('[data-testid="assistant-message-list"]')
+      .trigger('dblclick');
+
+    const roomMessages = useRoomMessages();
+    expect(roomMessages.sendRoomCatalogMessage).toHaveBeenCalledWith(
+      {
+        carousel: true,
+        products: [
+          {
+            product: 'product',
+            product_retailer_ids: ['sku-1'],
+            product_retailer_info: [],
+          },
+        ],
+      },
+      'Check these products',
       'room-1',
     );
   });
