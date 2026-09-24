@@ -102,7 +102,14 @@ withDefaults(
 
 const emit = defineEmits<{
   send: [text: string];
-  sendCatalog: [payload: { catalog: CatalogPayload; text: string }];
+  sendCatalog: [
+    payload: {
+      catalog: CatalogPayload;
+      text: string;
+      resolve?: () => void;
+      reject?: (error?: unknown) => void;
+    },
+  ];
   wordRevealed: [];
   addToCart: [product: ProductCarouselItem];
   incrementCartItem: [product: ProductCarouselItem];

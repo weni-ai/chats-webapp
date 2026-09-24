@@ -394,4 +394,47 @@ describe('ChatMessages', () => {
       true,
     );
   });
+
+  it('renders the catalog preview in closed chats', async () => {
+    const message = {
+      uuid: 'catalog-closed-1',
+      text: 'Check these products',
+      created_on: '2024-03-20T10:00:00Z',
+      user: { email: 'agent@example.com', first_name: 'Agent' },
+      media: [],
+      catalog: {
+        carousel: true,
+        products: [
+          {
+            product: 'product',
+            product_retailer_ids: ['sku-1'],
+            product_retailer_info: [
+              { retailer_id: 'sku-1', name: 'Tile', price: '32' },
+            ],
+          },
+        ],
+      },
+    };
+
+    await wrapper.setProps({
+      isClosedChat: true,
+      messages: [message],
+      messagesSorted: [
+        {
+          date: '2024-03-20',
+          minutes: [
+            {
+              minute: '10:00',
+              messages: [message],
+            },
+          ],
+        },
+      ],
+    });
+    await wrapper.vm.$nextTick();
+
+    expect(wrapper.find('[data-testid="chat-message-catalog"]').exists()).toBe(
+      true,
+    );
+  });
 });
