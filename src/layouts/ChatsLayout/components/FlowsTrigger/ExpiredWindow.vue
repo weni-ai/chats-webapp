@@ -82,6 +82,9 @@
         </UnnnicPopoverContent>
       </UnnnicPopover>
     </header>
+    <section class="flows-trigger-expired-window__contacts">
+      TODO: Implement contacts list
+    </section>
   </section>
 </template>
 
