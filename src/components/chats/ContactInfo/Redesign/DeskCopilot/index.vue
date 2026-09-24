@@ -342,9 +342,13 @@ const isSendingCatalog = ref(false);
 async function handleSendCatalogToRoom({
   catalog,
   text,
+  resolve,
+  reject,
 }: {
   catalog: CatalogPayload;
   text: string;
+  resolve?: () => void;
+  reject?: (error?: unknown) => void;
 }) {
   const activeRoomUuid = activeRoom.value?.uuid;
 
@@ -354,6 +358,7 @@ async function handleSendCatalogToRoom({
     !catalog ||
     !activeRoomUuid
   ) {
+    resolve?.();
     return;
   }
 
@@ -364,6 +369,9 @@ async function handleSendCatalogToRoom({
       text?.trim() || '',
       activeRoomUuid,
     );
+    resolve?.();
+  } catch (error) {
+    reject?.(error);
   } finally {
     isSendingCatalog.value = false;
   }
