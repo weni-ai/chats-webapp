@@ -1078,6 +1078,10 @@
         "agent_name": "Representative name",
         "agent_email": "Representative email"
       }
+    },
+    "views": {
+      "all_contacts": "All contacts",
+      "expired_window": "Expired window"
     }
   },
   "quick_messages": {
