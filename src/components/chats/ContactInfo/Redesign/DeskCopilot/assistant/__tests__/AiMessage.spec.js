@@ -259,6 +259,23 @@ describe('AssistantAiMessage', () => {
       messageId: 'msg-1',
       liked: true,
     });
+    expect(wrapper.vm.feedbackLiked).toBe(true);
+  });
+
+  it('reverts liked when sending positive feedback fails', async () => {
+    const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+    CopilotFeedback.sendMessageFeedback.mockRejectedValue(
+      new Error('Network error'),
+    );
+    wrapper = createWrapper();
+
+    await wrapper
+      .find('[data-testid="assistant-ai-thumb-up"]')
+      .trigger('click');
+    await flushPromises();
+
+    expect(wrapper.vm.feedbackLiked).toBeNull();
+    consoleSpy.mockRestore();
   });
 
   it('opens the feedback modal on thumb down', async () => {

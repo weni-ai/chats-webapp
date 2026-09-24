@@ -345,6 +345,7 @@ async function handleCopy() {
 }
 
 async function handleThumbUp() {
+  const likedBeforeThumbUp = feedbackLiked.value;
   feedbackLiked.value = true;
   const roomUuid = activeRoom.value?.uuid;
   if (!roomUuid || !props.messageId) return;
@@ -356,6 +357,7 @@ async function handleThumbUp() {
       liked: true,
     });
   } catch (error) {
+    feedbackLiked.value = likedBeforeThumbUp;
     console.error(error);
   }
 }
