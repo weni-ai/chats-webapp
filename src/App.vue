@@ -39,8 +39,11 @@ import { useTheme } from '@weni/unnnic-system';
 
 import {
   applyRouteAwareTheme,
+  isLightOnlyRoute,
   notifyParentOfTheme,
+  startDarkThemeEnforcement,
   startLightThemeEnforcement,
+  stopDarkThemeEnforcement,
   stopLightThemeEnforcement,
 } from '@/utils/theme';
 
@@ -155,6 +158,14 @@ export default {
 
       return !!unref(activeRef);
     },
+
+    shouldEnforceDarkTheme() {
+      return (
+        this.resolvedTheme === 'dark' &&
+        !this.shouldEnforceLightTheme &&
+        !isLightOnlyRoute(this.$route.path)
+      );
+    },
   },
 
   watch: {
@@ -258,9 +269,24 @@ export default {
       immediate: true,
       handler(active, wasActive) {
         if (active && !wasActive) {
+          stopDarkThemeEnforcement();
           startLightThemeEnforcement();
         } else if (!active && wasActive) {
           stopLightThemeEnforcement();
+        }
+      },
+    },
+
+    // Keep `.dark` on `<html>` and this mount after the first paint. Settings
+    // → channels → live desk otherwise looks correct for one frame (eager
+    // apply) and then a leftover useTheme/host toggle strips the class.
+    shouldEnforceDarkTheme: {
+      immediate: true,
+      handler(active, wasActive) {
+        if (active && !wasActive) {
+          startDarkThemeEnforcement(this.chatsThemeMountContainer);
+        } else if (!active && wasActive) {
+          stopDarkThemeEnforcement();
         }
       },
     },
@@ -284,6 +310,9 @@ export default {
   beforeUnmount() {
     if (this.shouldEnforceLightTheme) {
       stopLightThemeEnforcement();
+    }
+    if (this.shouldEnforceDarkTheme) {
+      stopDarkThemeEnforcement();
     }
   },
 

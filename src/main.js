@@ -10,11 +10,54 @@ import vMaskV3 from './plugins/vmask3';
 import { createAppRouter } from './router';
 import { useConfig } from './store/modules/config';
 import { safeImport, isFederatedModule } from './utils/moduleFederation';
+import { applyRouteAwareTheme } from './utils/theme';
 
 import '@weni/unnnic-system/dist/style.css';
 import 'plyr/dist/plyr.css';
 
 import './styles/global.scss';
+
+const THEME_STORAGE_KEY = 'unnnic-theme';
+
+/**
+ * Best-effort synchronous read of the raw preference `useTheme()` (unnnic)
+ * persists. Mirrors its own `readStoredPreference` — kept here instead of
+ * imported so this stays a plain, side-effect-free read with no dependency
+ * on the composable's module-level singleton being initialized yet.
+ */
+function readRawThemePreference() {
+  try {
+    const stored = localStorage.getItem(THEME_STORAGE_KEY);
+    return stored === 'dark' ? 'dark' : 'light';
+  } catch {
+    return 'light';
+  }
+}
+
+/**
+ * Paint this container's `.dark` class *before* `app.mount()` runs, using a
+ * synchronous localStorage read instead of waiting for App.vue's
+ * `routeAwareTheme` watcher (which only fires once Vue's reactivity has
+ * settled, a tick after mount). Re-mounting live desk after a settings →
+ * channels → live desk round trip must not depend on watcher ordering
+ * relative to any other chats instance's teardown — the container should
+ * already be in the right state at first paint. The reactive watcher still
+ * runs right after mount and remains the source of truth for later theme
+ * changes (e.g. `system` preference, or the user toggling dark mode).
+ */
+function applyEagerContainerTheme(containerEl, { initialRoute, basePath }) {
+  if (!containerEl) return;
+
+  const forceLightTheme = !!basePath;
+  const routePath = initialRoute?.path || (forceLightTheme ? '/settings' : '/');
+
+  applyRouteAwareTheme(
+    readRawThemePreference(),
+    routePath,
+    containerEl,
+    forceLightTheme,
+  );
+}
 
 // When consumed as a remote, `connect/sharedStore` resolves to the host's
 // Pinia-backed shared store. In standalone mode the rspack alias points it at
@@ -120,10 +163,13 @@ export default async function mountChatsApp({
   // here instead of relying on the runtime route path, which is fragile during
   // navigation transitions and across the theme state shared between the two
   // chats mounts (live desk + settings) of the same remote.
-  app.provide('chatsForceLightTheme', !!basePath);
+  const forceLightTheme = !!basePath;
+  app.provide('chatsForceLightTheme', forceLightTheme);
   if (basePath) {
     app.provide('chatsThemeEnforcementActive', themeEnforcementActive);
   }
+
+  applyEagerContainerTheme(containerEl, { initialRoute, basePath });
 
   // Federated: mount into a private child node instead of the host-owned
   // container element. The host's virtual DOM owns `#${containerId}`; mounting
