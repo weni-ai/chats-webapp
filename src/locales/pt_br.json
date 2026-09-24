@@ -1080,6 +1080,10 @@
         "agent_name": "Nome do atendente",
         "agent_email": "Email do atendente"
       }
+    },
+    "views": {
+      "all_contacts": "Todos os contatos",
+      "expired_window": "Janela expirada"
     }
   },
   "quick_messages": {

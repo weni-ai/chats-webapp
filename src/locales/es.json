@@ -1080,6 +1080,10 @@
         "agent_name": "Nombre del representante",
         "agent_email": "Email del representante"
       }
+    },
+    "views": {
+      "all_contacts": "Todos los contactos",
+      "expired_window": "Ventana expirada"
     }
   },
   "quick_messages": {
