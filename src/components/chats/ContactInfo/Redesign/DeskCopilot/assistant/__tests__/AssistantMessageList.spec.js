@@ -26,6 +26,7 @@ const createWrapper = (props = {}) =>
           name: 'AssistantAiMessage',
           template: '<div data-testid="assistant-ai-message" />',
           props: [
+            'messageId',
             'text',
             'suggestion',
             'status',
@@ -132,6 +133,7 @@ describe('AssistantMessageList', () => {
 
     const aiMessage = wrapper.findComponent({ name: 'AssistantAiMessage' });
     expect(aiMessage.props('status')).toBe('streaming');
+    expect(aiMessage.props('messageId')).toBe('ai-1');
   });
 
   it('passes productList to AiMessage when present', () => {
