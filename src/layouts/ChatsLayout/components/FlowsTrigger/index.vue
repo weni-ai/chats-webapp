@@ -57,6 +57,7 @@
       class="flows-trigger"
     >
       <UnnnicSegmentedControl
+        v-if="enableExpiredWindowFeature"
         v-model="activeView"
         class="flows-trigger__view-switch"
         data-testid="flows-trigger-views"
@@ -78,9 +79,8 @@
       </UnnnicSegmentedControl>
 
       <section class="flows-trigger__view">
-        <FlowsTriggerExpiredWindow v-if="activeView === 'expired_window'" />
         <FlowsTriggerAllContacts
-          v-if="activeView === 'all_contacts'"
+          v-if="activeView === 'all_contacts' || !enableExpiredWindowFeature"
           ref="allContacts"
           :projectUuidFlow="projectUuidFlow"
           :selectedContacts="listOfGroupAndContactsSelected"
@@ -89,6 +89,11 @@
           @toggle="setContacts"
           @select-contact="selectedContactHandler"
           @remove-contact="selectedContactHandler"
+        />
+        <FlowsTriggerExpiredWindow
+          v-else-if="
+            activeView === 'expired_window' && enableExpiredWindowFeature
+          "
         />
       </section>
       <UnnnicButton
@@ -180,6 +185,7 @@ import { mapState } from 'pinia';
 import { useRooms } from '@/store/modules/chats/rooms';
 import { useConfig } from '@/store/modules/config';
 import { useProfile } from '@/store/modules/profile';
+import { useFeatureFlag } from '@/store/modules/featureFlag';
 
 import AsideSlotTemplate from '@/components/layouts/chats/AsideSlotTemplate/index.vue';
 import AsideSlotTemplateSection from '@/components/layouts/chats/AsideSlotTemplate/Section.vue';
@@ -230,7 +236,7 @@ export default {
   emits: ['close'],
 
   data: () => ({
-    activeView: 'all_contacts',
+    activeView: 'expired_window',
 
     search: '',
     listOfGroups: [],
@@ -261,6 +267,9 @@ export default {
   }),
 
   computed: {
+    ...mapState(useFeatureFlag, {
+      activeFeatures: (store) => store.featureFlags.active_features,
+    }),
     ...mapState(useConfig, {
       project: (store) => store.project,
     }),
@@ -268,6 +277,10 @@ export default {
       room: (store) => store.activeRoom,
     }),
     ...mapState(useProfile, ['me']),
+
+    enableExpiredWindowFeature() {
+      return this.activeFeatures.includes('weniChatsFlow24hWindow');
+    },
 
     hasCachedTemplateVariables() {
       return hasTemplateVariables(this.cachedTemplate?.templates ?? []);
