@@ -32,6 +32,7 @@
       />
       <AiMessage
         v-else
+        :messageId="message.id"
         :text="message.text"
         :suggestion="message.suggestion"
         :status="message.status"
