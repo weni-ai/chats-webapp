@@ -10,7 +10,7 @@
       :options="templates"
       :disabled="isDisabled || loadingFlows"
       :label="$t('flows_trigger.select')"
-      :placeholder="$t('search_or_select')"
+      :placeholder="$t('type_to_search_or_select')"
       returnObject
       clearable
       enableSearch
