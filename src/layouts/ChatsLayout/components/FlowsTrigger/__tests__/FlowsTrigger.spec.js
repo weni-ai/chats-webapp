@@ -153,6 +153,7 @@ const createStubs = () => ({
     `,
   },
   FlowsContactCard: {
+    name: 'FlowsContactCard',
     props: ['name', 'subtitle', 'selected', 'unnamed'],
     template: `
       <button
@@ -307,8 +308,7 @@ describe('FlowsTrigger/index.vue', () => {
       expect(FlowsTriggerService.getListOfGroups).toHaveBeenCalledWith('');
       expect(wrapper.vm.isProjectPrincipal).toBe(false);
       expect(
-        wrapper.findComponent({ name: 'FlowsTriggerAllContacts' }).vm
-          .listOfContacts,
+        wrapper.findAll('[data-testid="flows-contact-card"]'),
       ).toHaveLength(3);
       expect(wrapper.vm.listOfGroups).toEqual(mockGroups);
     });
@@ -352,16 +352,19 @@ describe('FlowsTrigger/index.vue', () => {
     });
 
     it('should show no results message when search returns empty list', async () => {
+      vi.useFakeTimers();
       const wrapper = await createWrapper();
-      const allContacts = wrapper.findComponent({
-        name: 'FlowsTriggerAllContacts',
+
+      FlowsAPI.getContacts.mockResolvedValue({
+        data: { results: [] },
+        next: null,
       });
 
-      await allContacts.setData({
-        searchUrn: 'xyz',
-        listOfContacts: [],
-        isContactsLoading: false,
-      });
+      await wrapper
+        .find('[data-testid="flows-trigger-search"]')
+        .setValue('xyz');
+      await vi.advanceTimersByTimeAsync(500);
+      await flushPromises();
 
       expect(wrapper.find('.flows-trigger__groups__no-results').exists()).toBe(
         true,
@@ -612,26 +615,29 @@ describe('FlowsTrigger/index.vue', () => {
   describe('helpers and computed', () => {
     it('should build contact urn subtitle', async () => {
       const wrapper = await createWrapper();
-      const allContacts = wrapper.findComponent({
-        name: 'FlowsTriggerAllContacts',
-      });
+      const alice = wrapper
+        .findAllComponents({ name: 'FlowsContactCard' })
+        .find((card) => card.props('name') === 'Alice');
 
-      expect(allContacts.vm.getContactUrn(mockContacts[0])).toBe(
-        'tel:+5511999999999',
-      );
+      expect(alice.props('subtitle')).toBe('tel:+5511999999999');
     });
 
     it('should build already open room message with agent', async () => {
       const wrapper = await createWrapper();
-      const allContacts = wrapper.findComponent({
-        name: 'FlowsTriggerAllContacts',
+
+      await wrapper.setData({
+        openedRoomsAlerts: [
+          {
+            contactName: 'Alice',
+            queue: 'Support',
+            agent: 'John',
+          },
+        ],
       });
 
-      const message = allContacts.vm.alreadyOpenRoomMessage({
-        contactName: 'Alice',
-        queue: 'Support',
-        agent: 'John',
-      });
+      const message = wrapper
+        .find('[data-testid="flows-trigger-already-open"]')
+        .text();
 
       expect(message).toContain('Alice');
       expect(message).toContain('John');
@@ -640,14 +646,19 @@ describe('FlowsTrigger/index.vue', () => {
 
     it('should build already open room message without agent', async () => {
       const wrapper = await createWrapper();
-      const allContacts = wrapper.findComponent({
-        name: 'FlowsTriggerAllContacts',
+
+      await wrapper.setData({
+        openedRoomsAlerts: [
+          {
+            contactName: 'Alice',
+            queue: 'Support',
+          },
+        ],
       });
 
-      const message = allContacts.vm.alreadyOpenRoomMessage({
-        contactName: 'Alice',
-        queue: 'Support',
-      });
+      const message = wrapper
+        .find('[data-testid="flows-trigger-already-open"]')
+        .text();
 
       expect(message).toContain('Alice');
       expect(message).toContain('Support');

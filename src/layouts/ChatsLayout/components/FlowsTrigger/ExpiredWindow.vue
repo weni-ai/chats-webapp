@@ -14,14 +14,14 @@
   </section>
 </template>
 
-<script>
-export default {
-  name: 'FlowsTriggerExpiredWindow',
+<script setup>
+import { ref } from 'vue';
 
-  data: () => ({
-    searchUrn: '',
-  }),
-};
+defineOptions({
+  name: 'FlowsTriggerExpiredWindow',
+});
+
+const searchUrn = ref('');
 </script>
 
 <style lang="scss" scoped>

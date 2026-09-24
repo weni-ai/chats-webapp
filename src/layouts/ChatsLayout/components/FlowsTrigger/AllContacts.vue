@@ -93,210 +93,214 @@
   </section>
 </template>
 
-<script>
+<script setup>
+import {
+  computed,
+  onBeforeUnmount,
+  onMounted,
+  reactive,
+  ref,
+  watch,
+} from 'vue';
+import { useI18n } from 'vue-i18n';
+
 import SelectedContactsSection from '@/components/chats/FlowsTrigger/SelectedContactsSection.vue';
 import FlowsContactCard from '@/components/chats/FlowsTrigger/FlowsContactCard.vue';
 import FlowsContactsLoading from '@/views/loadings/FlowsTrigger/FlowsContactsLoading.vue';
 import FlowsAPI from '@/services/api/resources/flows/flowsTrigger.js';
 
-export default {
+defineOptions({
   name: 'FlowsTriggerAllContacts',
+});
 
-  components: {
-    FlowsContactCard,
-    FlowsContactsLoading,
-    SelectedContactsSection,
+const props = defineProps({
+  projectUuidFlow: {
+    type: String,
+    default: '',
   },
-
-  props: {
-    projectUuidFlow: {
-      type: String,
-      default: '',
-    },
-    selectedContacts: {
-      type: Array,
-      default: () => [],
-    },
-    openedRoomsAlerts: {
-      type: Array,
-      default: () => [],
-    },
-    selected: {
-      type: Array,
-      default: () => [],
-    },
+  selectedContacts: {
+    type: Array,
+    default: () => [],
   },
+  openedRoomsAlerts: {
+    type: Array,
+    default: () => [],
+  },
+  selected: {
+    type: Array,
+    default: () => [],
+  },
+});
 
-  emits: ['toggle', 'select-contact', 'remove-contact'],
+defineEmits(['toggle', 'select-contact', 'remove-contact']);
 
-  data: () => ({
-    letterColapse: {},
-    isContactsLoading: true,
-    search: '',
-    searchUrn: '',
-    timerId: 0,
-    listOfContacts: [],
-  }),
+const { t } = useI18n();
 
-  computed: {
-    showNoResults() {
-      return (
-        !this.isContactsLoading &&
-        !!this.searchUrn &&
-        this.listOfContacts.length === 0
+const letterColapse = reactive({});
+const isContactsLoading = ref(true);
+const search = ref('');
+const searchUrn = ref('');
+const listOfContacts = ref([]);
+const hasNext = ref(null);
+let timerId = 0;
+
+const showNoResults = computed(
+  () =>
+    !isContactsLoading.value &&
+    !!searchUrn.value &&
+    listOfContacts.value.length === 0,
+);
+
+const letters = computed(() => {
+  const grouped = {};
+  const UNNAMED_KEY = 'unnamed_contact';
+
+  const hasValidName = (item) =>
+    item.name != null && String(item.name).trim() !== '';
+
+  const getGroupKey = (element) => {
+    if (!hasValidName(element)) return UNNAMED_KEY;
+    const first = element.name[0];
+    return /\d/.test(first)
+      ? first
+      : first
+          .toUpperCase()
+          .normalize('NFD')
+          .replace(/[\u0300-\u036f]/g, '');
+  };
+
+  listOfContacts.value
+    .filter(
+      (item) =>
+        item.urns?.[0] &&
+        (hasValidName(item)
+          ? item.name.toUpperCase().includes(search.value.toUpperCase())
+          : true),
+    )
+    .forEach((element) => {
+      const groupKey = getGroupKey(element);
+
+      grouped[groupKey] = grouped[groupKey] || [];
+
+      const contactAlreadyExist = grouped[groupKey].some((pushedContact) =>
+        pushedContact.urns.some((pushedUrn) =>
+          element.urns.some(
+            (elementUrn) =>
+              elementUrn.scheme === pushedUrn.scheme &&
+              elementUrn.path === pushedUrn.path,
+          ),
+        ),
       );
-    },
 
-    lettersWithoutUnnamed() {
-      return Object.keys(this.letters).reduce((acc, key) => {
-        if (key !== 'unnamed_contact') {
-          acc[key] = this.letters[key];
-        }
-        return acc;
-      }, {});
-    },
-
-    letters() {
-      const letters = {};
-      const UNNAMED_KEY = 'unnamed_contact';
-
-      const hasValidName = (item) =>
-        item.name != null && String(item.name).trim() !== '';
-
-      const getGroupKey = (element) => {
-        if (!hasValidName(element)) return UNNAMED_KEY;
-        const first = element.name[0];
-        return /\d/.test(first)
-          ? first
-          : first
-              .toUpperCase()
-              .normalize('NFD')
-              .replace(/[\u0300-\u036f]/g, '');
-      };
-
-      this.listOfContacts
-        .filter(
-          (item) =>
-            item.urns?.[0] &&
-            (hasValidName(item)
-              ? item.name.toUpperCase().includes(this.search.toUpperCase())
-              : true),
-        )
-        .forEach((element) => {
-          const groupKey = getGroupKey(element);
-
-          letters[groupKey] = letters[groupKey] || [];
-
-          const contactAlreadyExist = letters[groupKey].some((pushedContact) =>
-            pushedContact.urns.some((pushedUrn) =>
-              element.urns.some(
-                (elementUrn) =>
-                  elementUrn.scheme === pushedUrn.scheme &&
-                  elementUrn.path === pushedUrn.path,
-              ),
-            ),
-          );
-
-          if (!contactAlreadyExist) letters[groupKey].push(element);
-          if (this.letterColapse[groupKey] === undefined) {
-            this.letterColapse[groupKey] = true;
-          }
-        });
-
-      return letters;
-    },
-  },
-
-  watch: {
-    searchUrn() {
-      if (this.timerId !== 0) clearTimeout(this.timerId);
-      this.timerId = setTimeout(() => {
-        this.contactList(null, true);
-      }, 500);
-    },
-    projectUuidFlow(newProjectUuidFlow) {
-      if (newProjectUuidFlow) {
-        this.contactList();
+      if (!contactAlreadyExist) grouped[groupKey].push(element);
+      if (letterColapse[groupKey] === undefined) {
+        letterColapse[groupKey] = true;
       }
-    },
-  },
+    });
 
-  mounted() {
-    this.contactList();
-  },
+  return grouped;
+});
 
-  beforeUnmount() {
-    if (this.timerId !== 0) clearTimeout(this.timerId);
-  },
+const lettersWithoutUnnamed = computed(() =>
+  Object.keys(letters.value).reduce((acc, key) => {
+    if (key !== 'unnamed_contact') {
+      acc[key] = letters.value[key];
+    }
+    return acc;
+  }, {}),
+);
 
-  methods: {
-    async contactList(next, cleanList = false) {
-      if (!this.searchUrn || this.searchUrn.length >= 3) {
-        if (cleanList) this.listOfContacts = [];
-        this.isContactsLoading = true;
-        try {
-          const response = await FlowsAPI.getContacts(
-            this.searchUrn,
-            this.projectUuidFlow,
-          );
+async function contactList(next, cleanList = false) {
+  if (!searchUrn.value || searchUrn.value.length >= 3) {
+    if (cleanList) listOfContacts.value = [];
+    isContactsLoading.value = true;
+    try {
+      const response = await FlowsAPI.getContacts(
+        searchUrn.value,
+        props.projectUuidFlow,
+      );
 
-          this.listOfContacts = this.listOfContacts
-            .concat(response.data?.results || [])
-            .filter((contact) => contact);
+      listOfContacts.value = listOfContacts.value
+        .concat(response.data?.results || [])
+        .filter((contact) => contact);
 
-          this.hasNext = response.next;
+      hasNext.value = response.next;
 
-          this.listOfContacts.sort((a, b) => a.name?.localeCompare(b.name));
-        } catch (error) {
-          console.error('contactList', error);
-        } finally {
-          this.isContactsLoading = false;
-        }
-      }
-    },
+      listOfContacts.value.sort((a, b) => a.name?.localeCompare(b.name));
+    } catch (error) {
+      console.error('contactList', error);
+    } finally {
+      isContactsLoading.value = false;
+    }
+  }
+}
 
-    handleScroll(target) {
-      // Pagination temporarily removed, remove the condition below to work again.
-      if (this.hasNext || !this.hasNext) return;
+function searchForMoreContacts() {
+  if (hasNext.value) {
+    contactList(hasNext.value, false);
+  }
+}
 
-      if (this.isContactsLoading) return;
-      if (
-        target.offsetHeight + Math.ceil(target.scrollTop) >=
-        target.scrollHeight
-      ) {
-        this.searchForMoreContacts();
-      }
-    },
+function handleScroll(target) {
+  // Pagination temporarily removed, remove the condition below to work again.
+  if (hasNext.value || !hasNext.value) return;
 
-    searchForMoreContacts() {
-      if (this.hasNext) {
-        this.contactList(this.hasNext, false);
-      }
-    },
+  if (isContactsLoading.value) return;
+  if (
+    target.offsetHeight + Math.ceil(target.scrollTop) >=
+    target.scrollHeight
+  ) {
+    searchForMoreContacts();
+  }
+}
 
-    getContactUrn(item) {
-      const urn = item.urns?.[0];
-      return urn ? `${urn?.scheme}:${urn?.path}` : '';
-    },
+function getContactUrn(item) {
+  const urn = item.urns?.[0];
+  return urn ? `${urn?.scheme}:${urn?.path}` : '';
+}
 
-    alreadyOpenRoomMessage(contact) {
-      const opening = this.$t('flows_trigger.already_open_room.open', {
-        contact: contact.contactName,
+function alreadyOpenRoomMessage(contact) {
+  const opening = t('flows_trigger.already_open_room.open', {
+    contact: contact.contactName,
+  });
+
+  const detail = contact.agent
+    ? t('flows_trigger.already_open_room.with_agent', {
+        agent: contact.agent,
+        queue: contact.queue,
+      })
+    : t('flows_trigger.already_open_room.in_queue_awaiting', {
+        queue: contact.queue,
       });
 
-      const detail = contact.agent
-        ? this.$t('flows_trigger.already_open_room.with_agent', {
-            agent: contact.agent,
-            queue: contact.queue,
-          })
-        : this.$t('flows_trigger.already_open_room.in_queue_awaiting', {
-            queue: contact.queue,
-          });
+  return `${opening} ${detail}`;
+}
 
-      return `${opening} ${detail}`;
-    },
+watch(searchUrn, () => {
+  if (timerId !== 0) clearTimeout(timerId);
+  timerId = setTimeout(() => {
+    contactList(null, true);
+  }, 500);
+});
+
+watch(
+  () => props.projectUuidFlow,
+  (newProjectUuidFlow) => {
+    if (newProjectUuidFlow) {
+      contactList();
+    }
   },
-};
+);
+
+onMounted(() => {
+  contactList();
+});
+
+onBeforeUnmount(() => {
+  if (timerId !== 0) clearTimeout(timerId);
+});
+
+defineExpose({ contactList });
 </script>
 
 <style lang="scss" scoped>
