@@ -86,11 +86,13 @@
       </section>
     </section>
 
-    <FeedbackModal
-      v-if="showFeedbackModal && activeRoom?.uuid"
-      :hasFeedback="hasFeedback"
-      :roomUuid="activeRoom.uuid"
-      @close="handleCloseFeedbackModal"
+    <AiFeedbackModal
+      v-model="showFeedbackModal"
+      :tags="feedbackTags"
+      :isLoadingTags="isLoadingTags"
+      :isSubmitting="isSubmittingFeedback"
+      @submit="handleSubmitFeedback"
+      @cancel="handleCancelFeedback"
     />
   </section>
 </template>
@@ -100,8 +102,12 @@ import { computed, onUnmounted, ref, watch } from 'vue';
 import { storeToRefs } from 'pinia';
 import { useRooms } from '@/store/modules/chats/rooms';
 import { useProfile } from '@/store/modules/profile';
+import { UnnnicCallAlert } from '@weni/unnnic-system';
 import CopyValueButton from '@/components/chats/ContactInfo/CopyValueButton.vue';
-import FeedbackModal from '@/layouts/ChatsLayout/components/ChatSummary/FeedbackModal.vue';
+import AiFeedbackModal, {
+  type AiFeedbackTag,
+} from '@/components/chats/ContactInfo/Redesign/DeskCopilot/AiFeedbackModal.vue';
+import i18n from '@/plugins/i18n';
 import Room from '@/services/api/resources/chats/room';
 
 defineOptions({
@@ -138,7 +144,10 @@ const activeRoomSummary = computed(() => {
 const animatedText = ref('');
 const isTyping = ref(false);
 const showFeedbackModal = ref(false);
-const hasFeedback = ref(false);
+const previousLiked = ref<boolean | null>(null);
+const feedbackTags = ref<AiFeedbackTag[]>([]);
+const isLoadingTags = ref(false);
+const isSubmittingFeedback = ref(false);
 const skipAnimation = ref(!!activeRoomSummary.value.summary);
 
 let animationAbortController: AbortController | null = null;
@@ -224,15 +233,19 @@ watch(
   { immediate: true },
 );
 
+function setFeedbackLiked(liked: boolean | null) {
+  if (!activeRoomSummary.value.feedback) {
+    activeRoomSummary.value.feedback = { liked };
+  } else {
+    activeRoomSummary.value.feedback.liked = liked;
+  }
+}
+
 function handleThumbUp() {
   const roomUuid = activeRoom.value?.uuid;
   if (!roomUuid) return;
 
-  if (!activeRoomSummary.value.feedback) {
-    activeRoomSummary.value.feedback = { liked: true };
-  } else {
-    activeRoomSummary.value.feedback.liked = true;
-  }
+  setFeedbackLiked(true);
   Room.sendSummaryFeedback({
     roomUuid,
     liked: true,
@@ -241,19 +254,71 @@ function handleThumbUp() {
   });
 }
 
-function handleThumbDown() {
-  if (!activeRoomSummary.value.feedback) {
-    activeRoomSummary.value.feedback = { liked: false };
-  } else {
-    activeRoomSummary.value.feedback.liked = false;
-  }
-  hasFeedback.value = true;
+async function handleThumbDown() {
+  if (!activeRoom.value?.uuid) return;
+
+  previousLiked.value = feedbackLiked.value;
+  setFeedbackLiked(false);
   showFeedbackModal.value = true;
+  isLoadingTags.value = true;
+
+  try {
+    const { results } = await Room.getSummaryFeedbackTags();
+    feedbackTags.value = Object.entries(results || {}).map(([key, value]) => ({
+      uuid: key,
+      name: String(value),
+    }));
+  } catch (error) {
+    console.error(error);
+    feedbackTags.value = [];
+  } finally {
+    isLoadingTags.value = false;
+  }
 }
 
-function handleCloseFeedbackModal() {
+function handleCancelFeedback() {
+  setFeedbackLiked(previousLiked.value);
   showFeedbackModal.value = false;
-  hasFeedback.value = false;
+}
+
+async function handleSubmitFeedback({
+  tags,
+  text,
+}: {
+  tags: string[];
+  text: string;
+}) {
+  const roomUuid = activeRoom.value?.uuid;
+  if (!roomUuid) return;
+
+  isSubmittingFeedback.value = true;
+  try {
+    await Room.sendSummaryFeedback({
+      roomUuid,
+      liked: false,
+      text,
+      tags,
+    });
+    UnnnicCallAlert({
+      props: {
+        text: i18n.global.t('chats.summary.feedback.sended'),
+        type: 'success',
+      },
+      seconds: 5,
+    });
+    showFeedbackModal.value = false;
+  } catch (error) {
+    console.error(error);
+    UnnnicCallAlert({
+      props: {
+        text: i18n.global.t('contact_info.desk_copilot.feedback.error'),
+        type: 'error',
+      },
+      seconds: 5,
+    });
+  } finally {
+    isSubmittingFeedback.value = false;
+  }
 }
 
 onUnmounted(() => {
