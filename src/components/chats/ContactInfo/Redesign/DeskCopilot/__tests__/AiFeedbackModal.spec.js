@@ -41,11 +41,19 @@ const createWrapper = (props = {}) =>
         UnnnicDialogHeader: { template: '<div><slot /></div>' },
         UnnnicDialogTitle: { template: '<h1><slot /></h1>' },
         UnnnicDialogFooter: { template: '<div><slot /></div>' },
+        UnnnicDialogClose: { template: '<div><slot /></div>' },
         UnnnicButton: {
           name: 'UnnnicButton',
           props: ['text', 'type', 'disabled', 'loading'],
           template:
             '<button :data-testid="$attrs[\'data-testid\']" :disabled="disabled" @click="$emit(\'click\')">{{ text }}</button>',
+          inheritAttrs: false,
+        },
+        UnnnicChip: {
+          name: 'UnnnicChip',
+          props: ['text', 'type', 'isClickable', 'isSelected'],
+          template:
+            '<button :data-testid="$attrs[\'data-testid\']" @click="$emit(\'click\')">{{ text }}</button>',
           inheritAttrs: false,
         },
         UnnnicTextArea: {
@@ -62,13 +70,6 @@ const createWrapper = (props = {}) =>
         UnnnicSkeletonLoading: {
           name: 'UnnnicSkeletonLoading',
           template: '<div class="skeleton-stub" />',
-        },
-        UnnnicTag: {
-          name: 'UnnnicTag',
-          props: ['text', 'clickable', 'disabled'],
-          template:
-            '<button :data-testid="$attrs[\'data-testid\']" @click="$emit(\'click\')">{{ text }}</button>',
-          inheritAttrs: false,
         },
       },
     },
@@ -90,12 +91,12 @@ describe('AiFeedbackModal', () => {
     expect(wrapper.text()).toContain(
       'contact_info.desk_copilot.feedback.title',
     );
-    expect(wrapper.find('[data-testid="tag__incorrect_answer"]').text()).toBe(
-      'Incorrect answer',
-    );
-    expect(wrapper.find('[data-testid="tag__incomplete_answer"]').text()).toBe(
-      'Incomplete answer',
-    );
+    expect(
+      wrapper.find('[data-testid="tag__incorrect_answer"]').text(),
+    ).toContain('Incorrect answer');
+    expect(
+      wrapper.find('[data-testid="tag__incomplete_answer"]').text(),
+    ).toContain('Incomplete answer');
   });
 
   it('disables submit when there is no tag and no text', () => {

@@ -4,7 +4,7 @@
     class="ai-feedback-modal"
     data-testid="ai-feedback-modal"
   >
-    <UnnnicDialogContent>
+    <UnnnicDialogContent size="medium">
       <UnnnicDialogHeader>
         <UnnnicDialogTitle>
           {{ $t('contact_info.desk_copilot.feedback.title') }}
@@ -24,14 +24,22 @@
             height="32px"
           />
         </section>
-        <TagGroup
+        <section
           v-else
-          v-model="selectedTags"
-          :tags="tags"
-          selectable
-          flex
+          class="ai-feedback-modal__tags"
           data-testid="ai-feedback-modal-tags"
-        />
+        >
+          <UnnnicChip
+            v-for="tag in tags"
+            :key="tag.uuid"
+            type="multiple"
+            isClickable
+            :isSelected="isTagSelected(tag)"
+            :text="tag.name"
+            :data-testid="`tag__${tag.uuid}`"
+            @click="toggleTag(tag)"
+          />
+        </section>
         <UnnnicTextArea
           v-model="feedbackText"
           :placeholder="$t('contact_info.desk_copilot.feedback.placeholder')"
@@ -41,13 +49,15 @@
         />
       </section>
       <UnnnicDialogFooter>
-        <UnnnicButton
-          :text="$t('cancel')"
-          type="tertiary"
-          :disabled="isSubmitting"
-          data-testid="ai-feedback-modal-cancel"
-          @click="handleCancel"
-        />
+        <UnnnicDialogClose>
+          <UnnnicButton
+            :text="$t('cancel')"
+            type="tertiary"
+            :disabled="isSubmitting"
+            data-testid="ai-feedback-modal-cancel"
+            @click="handleCancel"
+          />
+        </UnnnicDialogClose>
         <UnnnicButton
           :text="$t('submit')"
           type="primary"
@@ -63,7 +73,6 @@
 
 <script setup lang="ts">
 import { computed, ref, watch } from 'vue';
-import TagGroup from '@/components/TagGroup.vue';
 
 export type AiFeedbackTag = {
   uuid: string;
@@ -126,6 +135,21 @@ watch(
   },
 );
 
+function isTagSelected(tag: AiFeedbackTag) {
+  return selectedTags.value.some((item) => item.uuid === tag.uuid);
+}
+
+function toggleTag(tag: AiFeedbackTag) {
+  if (isTagSelected(tag)) {
+    selectedTags.value = selectedTags.value.filter(
+      (item) => item.uuid !== tag.uuid,
+    );
+    return;
+  }
+
+  selectedTags.value = [...selectedTags.value, tag];
+}
+
 function handleCancel() {
   open.value = false;
 }
@@ -147,15 +171,16 @@ function handleSubmit() {
   &__content {
     display: flex;
     flex-direction: column;
-    gap: $unnnic-space-6;
+    gap: $unnnic-space-4;
     padding: $unnnic-space-6;
-    overflow-y: auto;
   }
 
+  &__tags,
   &__tags-loading {
     display: flex;
     flex-wrap: wrap;
-    gap: $unnnic-space-2;
+    gap: $unnnic-space-3;
+    width: 100%;
   }
 }
 </style>
