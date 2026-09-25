@@ -31,6 +31,15 @@ type SendMessageFeedbackPayload = {
   tags?: string[];
 };
 
+export type CopilotMessageFeedback = {
+  uuid?: string;
+  room?: string;
+  message_id: string;
+  liked: boolean;
+  text?: string;
+  tags?: string[];
+};
+
 const allowedTags = new Set<string>(COPILOT_MESSAGE_FEEDBACK_TAG_KEYS);
 
 export function normalizeFeedbackTags(
@@ -39,6 +48,31 @@ export function normalizeFeedbackTags(
   return tags.filter((tag): tag is CopilotMessageFeedbackTag =>
     allowedTags.has(tag),
   );
+}
+
+function isNotFound(error: unknown) {
+  return (
+    typeof error === 'object' &&
+    error !== null &&
+    'response' in error &&
+    (error as { response?: { status?: number } }).response?.status === 404
+  );
+}
+
+function parseFeedbackList(data: unknown): CopilotMessageFeedback[] {
+  if (Array.isArray(data)) {
+    return data;
+  }
+
+  if (
+    data &&
+    typeof data === 'object' &&
+    Array.isArray((data as { results?: unknown }).results)
+  ) {
+    return (data as { results: CopilotMessageFeedback[] }).results;
+  }
+
+  return [];
 }
 
 export default {
@@ -65,5 +99,47 @@ export default {
       tags: normalizeFeedbackTags(tags),
     });
     return response.data;
+  },
+
+  async getRoomFeedbacks({ roomUuid }: { roomUuid: string }) {
+    try {
+      const response = await http.get(`/room/${roomUuid}/copilot/feedback/`);
+      return parseFeedbackList(response.data);
+    } catch (error) {
+      if (isNotFound(error)) {
+        return [];
+      }
+
+      console.error(error);
+      return [];
+    }
+  },
+
+  async getMessageFeedback({
+    roomUuid,
+    messageId,
+  }: {
+    roomUuid: string;
+    messageId: string;
+  }) {
+    try {
+      const response = await http.get(`/room/${roomUuid}/copilot/feedback/`, {
+        params: { message_id: messageId },
+      });
+      const data = response.data;
+
+      if (data && typeof data.liked === 'boolean' && data.message_id) {
+        return data as CopilotMessageFeedback;
+      }
+
+      return parseFeedbackList(data)[0] ?? null;
+    } catch (error) {
+      if (isNotFound(error)) {
+        return null;
+      }
+
+      console.error(error);
+      return null;
+    }
   },
 };
