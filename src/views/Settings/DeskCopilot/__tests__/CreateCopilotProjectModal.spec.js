@@ -51,6 +51,7 @@ const createdProject = {
   createdOn: '2026-07-30T00:00:00Z',
   connectedOn: '2026-07-30T00:00:00Z',
   uuid: 'copilot-uuid',
+  projectUuid: 'desk-uuid',
   connectedBy: 'edu',
 };
 
@@ -136,9 +137,9 @@ describe('CreateCopilotProjectModal', () => {
       },
       seconds: 5,
     });
-    expect(buildCopilotProjectUrl).toHaveBeenCalledWith('copilot-uuid');
+    expect(buildCopilotProjectUrl).toHaveBeenCalledWith('desk-uuid');
     expect(window.open).toHaveBeenCalledWith(
-      'https://dash.stg.cloud.weni.ai/projects/copilot-uuid',
+      'https://dash.stg.cloud.weni.ai/projects/desk-uuid',
       '_blank',
       'noopener,noreferrer',
     );

@@ -11,17 +11,60 @@
       </UnnnicDialogHeader>
       <section class="modal-preferences__content">
         <UnnnicLabel label="Status" />
-        <UnnnicSwitch
-          v-model="configStatus"
-          :disabled="loadingStatus"
-          :textRight="
-            storeStatus === 'ONLINE'
-              ? $t('status.online')
-              : $t('status.offline')
-          "
-          size="medium"
-          @update:model-value="updateStatus"
-        />
+        <div
+          class="agent-status"
+          :class="{ 'agent-status--disabled': isUpdatingStatus }"
+        >
+          <button
+            type="button"
+            class="agent-status__trigger"
+            data-testid="agent-status-trigger"
+            :disabled="isUpdatingStatus"
+            @click="toggleStatusList"
+          >
+            <span
+              class="agent-status__icon"
+              data-testid="agent-status-icon"
+              :class="`agent-status--${selectedStatus.color}`"
+            />
+            <span
+              class="agent-status__label"
+              data-testid="agent-status-label"
+              :title="selectedStatus.label"
+            >
+              {{ selectedStatus.label }}
+            </span>
+            <UnnnicIcon
+              size="md"
+              :icon="isStatusListOpen ? 'expand_less' : 'expand_more'"
+              scheme="fg-base"
+            />
+          </button>
+          <ul
+            v-if="isStatusListOpen"
+            class="agent-status__list"
+            data-testid="agent-status-list"
+          >
+            <li
+              v-for="status in filteredStatuses"
+              :key="status.value"
+              class="agent-status__item"
+              data-testid="agent-status-item"
+              @click="selectStatus(status)"
+            >
+              <span
+                class="agent-status__icon"
+                :class="`agent-status--${status.color}`"
+              />
+              <span
+                class="agent-status__item-label"
+                :title="status.label"
+              >
+                {{ status.label }}
+              </span>
+            </li>
+          </ul>
+        </div>
 
         <UnnnicLabel :label="$t('preferences.notifications.title')" />
         <UnnnicSwitch
@@ -60,30 +103,52 @@
 </template>
 
 <script>
+import { ref } from 'vue';
+import { unnnicToastManager } from '@weni/unnnic-system';
+
 import { PREFERENCES_SOUND } from '@/services/api/websocket/soundNotification.js';
 
-import { mapActions, mapState } from 'pinia';
-import { useConfig } from '@/store/modules/config';
 import { moduleStorage } from '@/utils/storage';
+import { useAgentStatus } from '@/composables/useAgentStatus';
 
 export default {
   name: 'ModalPreferences',
   emits: ['close', 'open-quick-messages', 'back-to-home'],
 
-  data() {
+  setup() {
+    const isStatusListOpen = ref(false);
+    const agentStatus = useAgentStatus({
+      notify: ({ props }) => {
+        const showToast =
+          props.scheme === 'feedback-red'
+            ? unnnicToastManager.error
+            : unnnicToastManager.success;
+
+        showToast(props.text);
+      },
+      onStatusApplied: () => {
+        isStatusListOpen.value = false;
+      },
+    });
+
+    const toggleStatusList = () => {
+      if (agentStatus.isUpdatingStatus.value) return;
+      isStatusListOpen.value = !isStatusListOpen.value;
+    };
+
     return {
-      isOpen: true,
-      loadingStatus: false,
-      configStatus: false,
-      configSound: false,
-      supportedLanguages: ['pt-br', 'en', 'es'],
+      isStatusListOpen,
+      toggleStatusList,
+      ...agentStatus,
     };
   },
 
-  computed: {
-    ...mapState(useConfig, {
-      storeStatus: (store) => store.status,
-    }),
+  data() {
+    return {
+      isOpen: true,
+      configSound: false,
+      supportedLanguages: ['pt-br', 'en', 'es'],
+    };
   },
 
   watch: {
@@ -92,19 +157,12 @@ export default {
     },
   },
 
-  async created() {
-    this.getStatus();
-
-    this.configStatus = this.storeStatus === 'ONLINE';
+  created() {
+    this.refreshData();
     this.configSound = moduleStorage.getItem(PREFERENCES_SOUND) === 'yes';
   },
 
   methods: {
-    ...mapActions(useConfig, {
-      getStatus: 'getStatus',
-      storeUpdateStatus: 'updateStatus',
-    }),
-
     updateLanguage(language) {
       const { supportedLanguages } = this;
       if (!supportedLanguages.includes(language)) {
@@ -121,14 +179,6 @@ export default {
     updateSound() {
       moduleStorage.setItem(PREFERENCES_SOUND, this.configSound ? 'yes' : 'no');
     },
-
-    async updateStatus(status) {
-      this.loadingStatus = true;
-
-      await this.storeUpdateStatus(status ? 'ONLINE' : 'OFFLINE');
-
-      this.loadingStatus = false;
-    },
   },
 };
 </script>
@@ -137,8 +187,98 @@ export default {
 .modal-preferences {
   &__content {
     display: grid;
-    gap: $unnnic-spacing-sm;
+    gap: $unnnic-space-4;
     padding: $unnnic-space-6;
+  }
+}
+
+.agent-status {
+  display: flex;
+  flex-direction: column;
+  gap: $unnnic-space-2;
+  min-width: 0;
+
+  &--disabled {
+    opacity: 0.6;
+    pointer-events: none;
+  }
+
+  &__trigger {
+    display: flex;
+    align-items: center;
+    gap: $unnnic-space-2;
+    width: 100%;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    cursor: pointer;
+    text-align: left;
+  }
+
+  &__icon {
+    width: $unnnic-space-2;
+    height: $unnnic-space-2;
+    border-radius: $unnnic-radius-full;
+    flex-shrink: 0;
+    background-color: $unnnic-color-fg-base;
+  }
+
+  &--green {
+    background-color: $unnnic-color-bg-green-strong;
+  }
+
+  &--gray {
+    background-color: $unnnic-color-bg-muted;
+  }
+
+  &--brown {
+    background-color: $unnnic-color-bg-orange-strong;
+  }
+
+  &__label,
+  &__item-label {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    color: $unnnic-color-fg-base;
+  }
+
+  &__label {
+    flex: 1;
+    font: $unnnic-font-action;
+  }
+
+  &__item-label {
+    font: $unnnic-font-body;
+  }
+
+  &__list {
+    list-style: none;
+    margin: 0;
+    padding: $unnnic-space-2;
+    display: flex;
+    flex-direction: column;
+    gap: $unnnic-space-2;
+    max-height: 140px;
+    overflow-y: auto;
+    border: 1px solid $unnnic-color-border-base;
+    border-radius: $unnnic-radius-4;
+    background: $unnnic-color-bg-base;
+  }
+
+  &__item {
+    display: flex;
+    align-items: center;
+    gap: $unnnic-space-2;
+    padding: $unnnic-space-2;
+    cursor: pointer;
+    min-width: 0;
+
+    &:hover {
+      background: $unnnic-color-bg-base-soft;
+      border-radius: $unnnic-radius-1;
+    }
   }
 }
 </style>

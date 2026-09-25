@@ -6,8 +6,9 @@
       @keypress.enter="removeProject"
     >
       <img
-        :src="weniChatsLogo"
-        alt="Weni Live Desk"
+        :src="vtexLogo"
+        alt="VTEX Logo"
+        width="50"
       />
     </header>
 
@@ -27,7 +28,7 @@
 
       <UnnnicButton
         class="main__logout"
-        iconCenter="logout"
+        iconLeft="logout"
         type="tertiary"
         size="large"
         :text="$t('logout')"
@@ -45,7 +46,7 @@ import ProjectSelector from '@/components/chats/Mobile/ProjectSelector.vue';
 
 import Keycloak from '@/services/keycloak';
 
-import weniChatsLogo from '@/assets/weni-chats-logo.svg';
+import vtexLogo from '@/assets/vtex-logo.svg';
 
 import env from '@/utils/env';
 
@@ -54,7 +55,7 @@ export default {
   components: { ProjectSelector },
   data() {
     return {
-      weniChatsLogo,
+      vtexLogo,
       appEnviroment: env('CHATS_ENVIRONMENT'),
       route: 'orgs',
       organizationUuid: '',

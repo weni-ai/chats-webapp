@@ -1,4 +1,5 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
+import { flushPromises } from '@vue/test-utils';
 import { setActivePinia, createPinia } from 'pinia';
 
 import { useConfig } from '@/store/modules/config';
@@ -93,6 +94,50 @@ describe('useCopilotProjectsList', () => {
 
     expect(projects.value).toEqual([]);
     expect(isLoading.value).toBe(false);
+  });
+
+  it('loads projects when the org uuid becomes available', async () => {
+    const configStore = useConfig();
+    configStore.project = {
+      uuid: 'desk-uuid',
+      name: 'Sales 123',
+      config: {},
+    };
+    CopilotProjectService.listExistingProjects.mockResolvedValue(
+      existingProjects,
+    );
+
+    const { projects } = useCopilotProjectsList();
+    configStore.project = {
+      ...configStore.project,
+      org: 'org-uuid',
+    };
+    await flushPromises();
+
+    expect(CopilotProjectService.listExistingProjects).toHaveBeenCalledWith(
+      'org-uuid',
+    );
+    expect(projects.value).toEqual(existingProjects);
+  });
+
+  it('loads projects when the org is an object with uuid', async () => {
+    const configStore = useConfig();
+    configStore.project = {
+      uuid: 'desk-uuid',
+      name: 'Sales 123',
+      config: {},
+      organization: { uuid: 'org-from-object' },
+    };
+    CopilotProjectService.listExistingProjects.mockResolvedValue(
+      existingProjects,
+    );
+
+    const { fetchProjects } = useCopilotProjectsList();
+    await fetchProjects(true);
+
+    expect(CopilotProjectService.listExistingProjects).toHaveBeenCalledWith(
+      'org-from-object',
+    );
   });
 
   it('clears the list when the org uuid is missing', async () => {

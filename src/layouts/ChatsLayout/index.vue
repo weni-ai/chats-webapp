@@ -6,6 +6,8 @@
       isViewMode && 'view-mode',
     ]"
   >
+    <CopilotConnectionLoader />
+
     <slot
       v-if="isRoomListVisible"
       name="room-list"
@@ -81,6 +83,7 @@ import ChatsLayoutFooterButton from './components/FooterButton/index.vue';
 import ViewOptions from './components/ViewOptions/index.vue';
 import BulkMessage from '@/components/chats/BulkMessage/index.vue';
 import StatusBar from '@/components/StatusBar.vue';
+import CopilotConnectionLoader from './components/CopilotConnectionLoader.vue';
 
 import Sector from '@/services/api/resources/settings/sector.js';
 import FlowsTrigger from '@/services/api/resources/chats/flowsTrigger.js';
@@ -96,6 +99,7 @@ export default {
     ViewOptions,
     StatusBar,
     BulkMessage,
+    CopilotConnectionLoader,
   },
 
   props: {
@@ -246,6 +250,8 @@ section.chats-layout {
     grid-column: 2;
 
     height: 100%;
+    min-width: 0;
+    overflow: hidden;
 
     background-color: $unnnic-color-bg-base-soft;
   }

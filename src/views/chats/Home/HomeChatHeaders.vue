@@ -9,6 +9,7 @@
       :contactName="headerRoomTitle"
       clickable
       @click="emitOpenRoomContactInfo"
+      @back="room = null"
     >
       <template #actions>
         <section class="home-chat-headers__actions">
@@ -147,7 +148,6 @@
 <script>
 import { format as dateFnsFormat, subYears as dateFnsSubYears } from 'date-fns';
 import { mapActions, mapState, mapWritableState } from 'pinia';
-import isMobile from 'is-mobile';
 
 import { useRooms } from '@/store/modules/chats/rooms';
 import { useDiscussions } from '@/store/modules/chats/discussions';
@@ -201,8 +201,8 @@ export default {
   },
 
   computed: {
+    ...mapWritableState(useRooms, { room: 'activeRoom' }),
     ...mapState(useRooms, {
-      room: (store) => store.activeRoom,
       isLoadingCanSendMessageStatus: (store) =>
         store.isLoadingCanSendMessageStatus,
       isCanSendMessageActiveRoom: (store) => store.isCanSendMessageActiveRoom,
@@ -238,10 +238,6 @@ export default {
         this.me?.email === this.discussion?.created_by?.email;
 
       return isOwnDiscussion || isUserAdmin(this.me?.project_permission_role);
-    },
-
-    isMobile() {
-      return isMobile();
     },
 
     isShowingRoomHeader() {

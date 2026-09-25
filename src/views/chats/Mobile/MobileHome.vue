@@ -1,5 +1,6 @@
 <!-- This component was migrated from unnnic. -->
 <template>
+  <CopilotConnectionLoader />
   <MobileChat
     v-if="showActiveChat"
     @transferred-contact="handleChatTransfer"
@@ -49,7 +50,6 @@
         @back-to-home="homeBack"
       />
     </main>
-
     <ChatsNavbar
       v-model="currentTab"
       :links="navs"
@@ -60,6 +60,7 @@
 <script>
 import { mapState } from 'pinia';
 import { useConfig } from '@/store/modules/config';
+import CopilotConnectionLoader from '@/layouts/ChatsLayout/components/CopilotConnectionLoader.vue';
 import { useDiscussions } from '@/store/modules/chats/discussions';
 import { useRooms } from '@/store/modules/chats/rooms';
 
@@ -91,6 +92,7 @@ export default {
     QuickMessages,
     MobileChat,
     ChatsHeader,
+    CopilotConnectionLoader,
   },
 
   data() {
@@ -113,7 +115,6 @@ export default {
     ...mapState(useDiscussions, {
       discussion: (store) => store.activeDiscussion,
     }),
-
     navs() {
       return [
         {
@@ -272,25 +273,31 @@ export default {
 
 <style lang="scss" scoped>
 .mobile-home {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 0;
   overflow: hidden;
-
-  display: grid;
-  grid-template-rows: 1fr auto;
-
-  height: 100vh;
 
   &__main {
     position: relative;
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    min-height: 0;
+    overflow: auto;
+  }
 
-    overflow: hidden;
+  :deep(.unnnic-chats-navbar) {
+    flex-shrink: 0;
   }
 
   &__tab__chats {
     overflow: hidden;
+    flex: 1;
+    min-height: 0;
 
     padding: $unnnic-spacing-xs $unnnic-spacing-sm 0;
-
-    height: 100%;
   }
 
   &__chats-list {

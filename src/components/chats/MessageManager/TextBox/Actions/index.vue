@@ -10,7 +10,10 @@
         @improvement-received="emit('improvementReceived', $event)"
         @improvement-cancelled="emit('improvementCancelled')"
       />
-      <EmojiAction @focus-input="emit('focusInput')" />
+      <EmojiAction
+        v-if="!isMobile()"
+        @focus-input="emit('focusInput')"
+      />
       <hr class="text-box__actions__divider" />
       <AudioAction @toggle-audio-recording="emit('toggleAudioRecording')" />
       <AttachAction @open-upload-files="emit('openUploadFiles')" />
@@ -20,7 +23,6 @@
         @focus-input="emit('focusInput')"
       />
     </section>
-
     <DictationAction v-if="shouldShowDictationAction" />
     <SendAction
       v-else
@@ -46,6 +48,7 @@ import AttachAction from './AttachAction.vue';
 import InternalNoteAction from './InternalNoteAction.vue';
 import DictationAction from './DictationAction.vue';
 import SendAction from './SendAction.vue';
+import isMobile from 'is-mobile';
 
 defineOptions({
   name: 'MessageManagerTextBoxActions',
@@ -107,21 +110,43 @@ const emit = defineEmits<{
     gap: $unnnic-space-2;
     align-items: center;
     justify-content: space-between;
+    width: 100%;
+    min-width: 0;
+
+    > :last-child {
+      flex-shrink: 0;
+    }
+
     &__items {
       display: flex;
       flex-direction: row;
       align-items: center;
       gap: $unnnic-space-2;
+      flex: 1 1 0;
+      width: 0;
+      min-width: 0;
+      overflow-x: auto;
+      overscroll-behavior-x: contain;
+      scrollbar-width: thin;
+
+      > * {
+        flex-shrink: 0;
+      }
     }
     &__item {
       display: flex;
       flex-direction: row;
       align-items: center;
       gap: $unnnic-space-2;
+      flex-shrink: 0;
     }
     &__divider {
-      height: stretch;
-      border: 1px solid $unnnic-color-border-soft;
+      align-self: stretch;
+      width: 1px;
+      height: auto;
+      margin: 0;
+      border: none;
+      border-left: 1px solid $unnnic-color-border-soft;
     }
   }
 }
