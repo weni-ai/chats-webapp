@@ -1,22 +1,25 @@
 import http from '@/services/api/http';
 import i18n from '@/plugins/i18n';
 
-export const COPILOT_MESSAGE_FEEDBACK_TAG_KEYS = [
-  'incorrect_answer',
-  'incomplete_answer',
-  'confusing_answer',
-  'no_items_found',
-  'out_of_context_items',
-  'did_not_load',
-  'slow_to_load',
-  'unclear_interface',
-] as const;
+export enum CopilotMessageFeedbackTag {
+  IncorrectAnswer = 'incorrect_answer',
+  IncompleteAnswer = 'incomplete_answer',
+  ConfusingAnswer = 'confusing_answer',
+  NoItemsFound = 'no_items_found',
+  OutOfContextItems = 'out_of_context_items',
+  DidNotLoad = 'did_not_load',
+  SlowToLoad = 'slow_to_load',
+  UnclearInterface = 'unclear_interface',
+}
 
-export type CopilotMessageFeedbackTagKey =
-  (typeof COPILOT_MESSAGE_FEEDBACK_TAG_KEYS)[number];
+export const COPILOT_MESSAGE_FEEDBACK_TAG_KEYS = Object.values(
+  CopilotMessageFeedbackTag,
+);
 
-export type CopilotMessageFeedbackTag = {
-  uuid: CopilotMessageFeedbackTagKey;
+export type CopilotMessageFeedbackTagKey = CopilotMessageFeedbackTag;
+
+export type CopilotMessageFeedbackTagItem = {
+  key: CopilotMessageFeedbackTag;
   name: string;
 };
 
@@ -28,10 +31,20 @@ type SendMessageFeedbackPayload = {
   tags?: string[];
 };
 
+const allowedTags = new Set<string>(COPILOT_MESSAGE_FEEDBACK_TAG_KEYS);
+
+export function normalizeFeedbackTags(
+  tags: string[] = [],
+): CopilotMessageFeedbackTag[] {
+  return tags.filter((tag): tag is CopilotMessageFeedbackTag =>
+    allowedTags.has(tag),
+  );
+}
+
 export default {
-  getMessageFeedbackTags(): CopilotMessageFeedbackTag[] {
+  getMessageFeedbackTags(): CopilotMessageFeedbackTagItem[] {
     return COPILOT_MESSAGE_FEEDBACK_TAG_KEYS.map((key) => ({
-      uuid: key,
+      key,
       name: i18n.global.t(
         `contact_info.desk_copilot.feedback.message_tags.${key}`,
       ),
@@ -49,7 +62,7 @@ export default {
       message_id: messageId,
       liked,
       text,
-      tags,
+      tags: normalizeFeedbackTags(tags),
     });
     return response.data;
   },
