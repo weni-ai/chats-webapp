@@ -13,7 +13,7 @@ vi.mock('@weni/unnnic-system', () => ({
 vi.mock('@/services/api/resources/chats/copilotFeedback', () => ({
   default: {
     getMessageFeedbackTags: vi.fn(() => [
-      { uuid: 'incorrect_answer', name: 'Incorrect answer' },
+      { key: 'incorrect_answer', name: 'Incorrect answer' },
     ]),
     sendMessageFeedback: vi.fn(),
   },
@@ -288,7 +288,7 @@ describe('AssistantAiMessage', () => {
     const modal = wrapper.findComponent({ name: 'AiFeedbackModal' });
     expect(modal.props('modelValue')).toBe(true);
     expect(modal.props('tags')).toEqual([
-      { uuid: 'incorrect_answer', name: 'Incorrect answer' },
+      { key: 'incorrect_answer', name: 'Incorrect answer' },
     ]);
     expect(wrapper.vm.feedbackLiked).toBe(false);
   });
