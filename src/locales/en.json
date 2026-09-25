@@ -898,7 +898,7 @@
         }
       },
       "copied_to_message_input": "Text copied to the message field",
-      "copy_summary": "Copy summary",
+      "copy_summary": "Copy to message field",
       "disclaimer": {
         "description": "Desk Copilot can help you with:",
         "enable_button": "Enable Desk Copilot",
