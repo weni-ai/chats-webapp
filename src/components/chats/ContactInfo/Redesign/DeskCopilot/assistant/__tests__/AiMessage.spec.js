@@ -158,7 +158,33 @@ describe('AssistantAiMessage', () => {
     );
 
     await wrapper.find('[data-testid="assistant-ai-send"]').trigger('click');
-    expect(wrapper.emitted('send')?.[0]).toEqual(['Check these products']);
+    expect(wrapper.emitted('send')).toBeFalsy();
+
+    const payload = wrapper.emitted('sendCatalog')?.[0][0];
+    expect(payload).toMatchObject({
+      text: 'Check these products',
+      catalog: {
+        carousel: true,
+        products: [
+          {
+            product: 'product',
+            product_retailer_ids: ['sku-1'],
+            product_retailer_info: [
+              {
+                retailer_id: 'sku-1',
+                name: 'Tile',
+                price: '32',
+                sale_price: '27',
+                currency: 'BRL',
+                image: 'https://example.com/tile.png',
+              },
+            ],
+          },
+        ],
+      },
+    });
+    expect(payload.resolve).toEqual(expect.any(Function));
+    expect(payload.reject).toEqual(expect.any(Function));
   });
 
   it('renders product list sections and hides copy action for list messages', async () => {
@@ -196,7 +222,20 @@ describe('AssistantAiMessage', () => {
     );
 
     await wrapper.find('[data-testid="assistant-ai-send"]').trigger('click');
-    expect(wrapper.emitted('send')?.[0]).toEqual(['Available TVs']);
+    expect(wrapper.emitted('send')).toBeFalsy();
+    expect(wrapper.emitted('sendCatalog')?.[0][0]).toMatchObject({
+      text: 'Available TVs',
+      catalog: {
+        carousel: true,
+        header: 'TV selection',
+        products: [
+          {
+            product: 'TV 32',
+            product_retailer_ids: ['tv-32-1'],
+          },
+        ],
+      },
+    });
   });
 
   it('hides actions when readOnly', () => {
