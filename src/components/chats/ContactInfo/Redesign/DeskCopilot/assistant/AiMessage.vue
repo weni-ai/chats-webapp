@@ -159,7 +159,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref } from 'vue';
+import { computed, ref, watch } from 'vue';
 import { storeToRefs } from 'pinia';
 import { UnnnicCallAlert } from '@weni/unnnic-system';
 import { useStreamingBuffer } from '@/composables/assistant/useStreamingBuffer';
@@ -203,6 +203,7 @@ const props = withDefaults(
     getQuantity?: (productId: string) => number;
     readOnly?: boolean;
     messageId?: string;
+    liked?: boolean | null;
   }>(),
   {
     suggestion: undefined,
@@ -215,6 +216,7 @@ const props = withDefaults(
     getQuantity: () => 0,
     readOnly: false,
     messageId: '',
+    liked: null,
   },
 );
 
@@ -229,11 +231,25 @@ const emit = defineEmits<{
 const roomsStore = useRooms();
 const { activeRoom } = storeToRefs(roomsStore);
 
-const feedbackLiked = ref<boolean | null>(null);
+const feedbackLiked = ref<boolean | null>(props.liked ?? null);
 const previousLiked = ref<boolean | null>(null);
 const showFeedbackModal = ref(false);
 const isSubmittingFeedback = ref(false);
 const dismissedIds = ref<string[]>([]);
+const hasLocalFeedbackChange = ref(false);
+
+watch(
+  () => props.liked,
+  (liked) => {
+    if (hasLocalFeedbackChange.value) {
+      return;
+    }
+
+    if (liked === true || liked === false) {
+      feedbackLiked.value = liked;
+    }
+  },
+);
 
 const feedbackTags = computed(() => CopilotFeedback.getMessageFeedbackTags());
 
@@ -345,6 +361,7 @@ async function handleCopy() {
 }
 
 async function handleThumbUp() {
+  hasLocalFeedbackChange.value = true;
   const likedBeforeThumbUp = feedbackLiked.value;
   feedbackLiked.value = true;
   const roomUuid = activeRoom.value?.uuid;
@@ -363,6 +380,7 @@ async function handleThumbUp() {
 }
 
 function handleThumbDown() {
+  hasLocalFeedbackChange.value = true;
   previousLiked.value = feedbackLiked.value;
   feedbackLiked.value = false;
   showFeedbackModal.value = true;
