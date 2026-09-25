@@ -76,7 +76,7 @@ const createWrapper = (props = {}) =>
           name: 'AssistantMessageList',
           template:
             '<div data-testid="assistant-message-list"><div v-if="isLoadingHistory" data-testid="assistant-history-loading" /></div>',
-          props: ['messages', 'isLoadingHistory', 'readOnly'],
+          props: ['messages', 'isLoadingHistory', 'readOnly', 'roomUuid'],
         },
         Disclaimer: {
           name: 'DeskCopilotDisclaimer',
@@ -150,6 +150,7 @@ describe('DeskCopilotHistoryView', () => {
     const list = wrapper.findComponent({ name: 'AssistantMessageList' });
     expect(list.exists()).toBe(true);
     expect(list.props('readOnly')).toBe(true);
+    expect(list.props('roomUuid')).toBe('room-1');
     expect(list.props('messages')).toHaveLength(1);
   });
 

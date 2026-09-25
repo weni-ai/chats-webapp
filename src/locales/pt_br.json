@@ -912,6 +912,23 @@
         "title": "Vá além dos resumos de conversa",
         "title_without_summary": "Explore todo o seu potencial com o Desk Copilot"
       },
+      "feedback": {
+        "error": "Não foi possível enviar o feedback. Tente novamente.",
+        "message_tags": {
+          "confusing_answer": "Resposta confusa",
+          "did_not_load": "Não carregou",
+          "incomplete_answer": "Resposta incompleta",
+          "incorrect_answer": "Resposta incorreta",
+          "no_items_found": "Nenhum item encontrado",
+          "out_of_context_items": "Itens sugeridos fora de contexto",
+          "slow_to_load": "Demorou para carregar",
+          "unclear_interface": "Interface pouco clara"
+        },
+        "other": "Outro",
+        "placeholder": "Digite seu feedback aqui",
+        "sended": "Seu feedback foi enviado.",
+        "title": "O que precisa ser melhorado?"
+      },
       "summary_title": "Resumo desta conversa"
     }
   },

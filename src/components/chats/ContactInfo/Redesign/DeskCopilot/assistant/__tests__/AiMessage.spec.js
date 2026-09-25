@@ -1,18 +1,37 @@
 import { describe, it, expect, afterEach, beforeEach, vi } from 'vitest';
-import { mount } from '@vue/test-utils';
+import { mount, flushPromises } from '@vue/test-utils';
 import { createPinia, setActivePinia } from 'pinia';
 import AiMessage from '../AiMessage.vue';
 import { useMessageManager } from '@/store/modules/chats/messageManager';
+import { useRooms } from '@/store/modules/chats/rooms';
+import CopilotFeedback from '@/services/api/resources/chats/copilotFeedback';
 
 vi.mock('@weni/unnnic-system', () => ({
   UnnnicCallAlert: vi.fn(),
 }));
 
-const createWrapper = (props = {}) =>
-  mount(AiMessage, {
+vi.mock('@/services/api/resources/chats/copilotFeedback', () => ({
+  default: {
+    getMessageFeedbackTags: vi.fn(() => [
+      { key: 'incorrect_answer', name: 'Incorrect answer' },
+    ]),
+    sendMessageFeedback: vi.fn(),
+  },
+}));
+
+const createWrapper = (props = {}) => {
+  const roomsStore = useRooms();
+  roomsStore.$patch({
+    activeRoom: {
+      uuid: 'room-1',
+    },
+  });
+
+  return mount(AiMessage, {
     props: {
       text: 'Intro text',
       suggestion: 'Suggested reply for the customer',
+      messageId: 'msg-1',
       ...props,
     },
     global: {
@@ -20,10 +39,17 @@ const createWrapper = (props = {}) =>
         $t: (key) => key,
       },
       stubs: {
-        UnnnicIcon: true,
+        UnnnicIcon: {
+          name: 'UnnnicIcon',
+          template:
+            '<button class="unnnic-icon" :data-testid="$attrs[\'data-testid\']" @click="$emit(\'click\')" />',
+          inheritAttrs: false,
+        },
         UnnnicButton: {
           name: 'UnnnicButton',
-          template: '<button @click="$emit(\'click\')"><slot /></button>',
+          template:
+            '<button :data-testid="$attrs[\'data-testid\']" @click="$emit(\'click\')"><slot /></button>',
+          inheritAttrs: false,
         },
         UnnnicToolTip: {
           name: 'UnnnicToolTip',
@@ -39,9 +65,15 @@ const createWrapper = (props = {}) =>
           template: '<div data-testid="assistant-ai-product-list" />',
           props: ['sections', 'header', 'getQuantity', 'dismissedIds'],
         },
+        AiFeedbackModal: {
+          name: 'AiFeedbackModal',
+          template: '<div data-testid="ai-feedback-modal" />',
+          props: ['modelValue', 'tags', 'isLoadingTags', 'isSubmitting'],
+        },
       },
     },
   });
+};
 
 describe('AssistantAiMessage', () => {
   let wrapper;
@@ -246,5 +278,107 @@ describe('AssistantAiMessage', () => {
     expect(wrapper.find('[data-testid="assistant-ai-send"]').exists()).toBe(
       false,
     );
+  });
+
+  it('hydrates the thumb from persisted liked state', () => {
+    wrapper = createWrapper({ liked: false });
+
+    expect(wrapper.vm.feedbackLiked).toBe(false);
+  });
+
+  it('sends positive feedback on thumb up', async () => {
+    CopilotFeedback.sendMessageFeedback.mockResolvedValue({});
+    wrapper = createWrapper();
+
+    await wrapper
+      .find('[data-testid="assistant-ai-thumb-up"]')
+      .trigger('click');
+    await flushPromises();
+
+    expect(CopilotFeedback.sendMessageFeedback).toHaveBeenCalledWith({
+      roomUuid: 'room-1',
+      messageId: 'msg-1',
+      liked: true,
+    });
+    expect(wrapper.vm.feedbackLiked).toBe(true);
+  });
+
+  it('reverts liked when sending positive feedback fails', async () => {
+    const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+    CopilotFeedback.sendMessageFeedback.mockRejectedValue(
+      new Error('Network error'),
+    );
+    wrapper = createWrapper();
+
+    await wrapper
+      .find('[data-testid="assistant-ai-thumb-up"]')
+      .trigger('click');
+    await flushPromises();
+
+    expect(wrapper.vm.feedbackLiked).toBeNull();
+    consoleSpy.mockRestore();
+  });
+
+  it('opens the feedback modal on thumb down', async () => {
+    wrapper = createWrapper();
+
+    await wrapper
+      .find('[data-testid="assistant-ai-thumb-down"]')
+      .trigger('click');
+
+    const modal = wrapper.findComponent({ name: 'AiFeedbackModal' });
+    expect(modal.props('modelValue')).toBe(true);
+    expect(modal.props('tags')).toEqual([
+      { key: 'incorrect_answer', name: 'Incorrect answer' },
+    ]);
+    expect(wrapper.vm.feedbackLiked).toBe(false);
+  });
+
+  it('sends negative feedback when the modal is submitted', async () => {
+    CopilotFeedback.sendMessageFeedback.mockResolvedValue({});
+    wrapper = createWrapper();
+
+    await wrapper
+      .find('[data-testid="assistant-ai-thumb-down"]')
+      .trigger('click');
+    await wrapper
+      .findComponent({ name: 'AiFeedbackModal' })
+      .vm.$emit('submit', {
+        tags: ['incorrect_answer'],
+        text: 'Wrong items',
+      });
+    await flushPromises();
+
+    expect(CopilotFeedback.sendMessageFeedback).toHaveBeenCalledWith({
+      roomUuid: 'room-1',
+      messageId: 'msg-1',
+      liked: false,
+      text: 'Wrong items',
+      tags: ['incorrect_answer'],
+    });
+    expect(
+      wrapper.findComponent({ name: 'AiFeedbackModal' }).props('modelValue'),
+    ).toBe(false);
+  });
+
+  it('reverts liked when the feedback modal is cancelled', async () => {
+    wrapper = createWrapper();
+
+    await wrapper
+      .find('[data-testid="assistant-ai-thumb-up"]')
+      .trigger('click');
+    await wrapper
+      .find('[data-testid="assistant-ai-thumb-down"]')
+      .trigger('click');
+
+    expect(wrapper.vm.feedbackLiked).toBe(false);
+
+    await wrapper.findComponent({ name: 'AiFeedbackModal' }).vm.$emit('cancel');
+    await wrapper.vm.$nextTick();
+
+    expect(wrapper.vm.feedbackLiked).toBe(true);
+    expect(
+      wrapper.findComponent({ name: 'AiFeedbackModal' }).props('modelValue'),
+    ).toBe(false);
   });
 });
