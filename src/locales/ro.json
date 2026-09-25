@@ -1089,7 +1089,7 @@
       },
       "contacts": {
         "all": "Toate contactele",
-        "helper": "Doar contactele în curs de deservire pot primi acest mesaj",
+        "helper": "Doar contactele dintr-un chat de asistență pot primi acest mesaj",
         "label": "Contacte"
       },
       "send": "{count, plural, =0 {Trimite către toate (0 contacte)} one {Trimite către toate ({count} contact)} other {Trimite către toate ({count} contacte)}}",

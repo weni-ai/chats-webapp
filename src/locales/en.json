@@ -1120,7 +1120,7 @@
       },
       "contacts": {
         "all": "All contacts",
-        "helper": "Only contacts in service can receive this message",
+        "helper": "Only contacts in a support chat can receive this message",
         "label": "Contacts"
       },
       "send": "{count, plural, =0 {Send to all (0 contacts)} one {Send to all ({count} contact)} other {Send to all ({count} contacts)}}",
