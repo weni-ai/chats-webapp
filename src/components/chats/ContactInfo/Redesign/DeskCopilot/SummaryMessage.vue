@@ -265,7 +265,7 @@ async function handleThumbDown() {
   try {
     const { results } = await Room.getSummaryFeedbackTags();
     feedbackTags.value = Object.entries(results || {}).map(([key, value]) => ({
-      uuid: key,
+      key,
       name: String(value),
     }));
   } catch (error) {
