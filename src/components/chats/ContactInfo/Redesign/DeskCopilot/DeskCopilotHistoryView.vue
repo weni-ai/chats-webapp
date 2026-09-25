@@ -13,6 +13,7 @@
       :messages="messages"
       :isLoadingHistory="isLoading"
       :readOnly="true"
+      :roomUuid="roomUuid"
     />
 
     <Disclaimer
