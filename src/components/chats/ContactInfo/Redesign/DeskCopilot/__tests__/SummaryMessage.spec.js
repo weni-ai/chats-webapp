@@ -220,7 +220,7 @@ describe('DeskCopilotSummaryMessage', () => {
     const modal = wrapper.findComponent({ name: 'AiFeedbackModal' });
     expect(modal.props('modelValue')).toBe(true);
     expect(modal.props('tags')).toEqual([
-      { uuid: 'incorrect_summary', name: 'Incorrect summary' },
+      { key: 'incorrect_summary', name: 'Incorrect summary' },
     ]);
     expect(useRooms().roomsSummary['room-1'].feedback.liked).toBe(false);
   });
