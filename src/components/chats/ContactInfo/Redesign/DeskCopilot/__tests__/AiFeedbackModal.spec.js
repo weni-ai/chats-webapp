@@ -16,8 +16,8 @@ afterAll(() => {
 });
 
 const tags = [
-  { uuid: 'incorrect_answer', name: 'Incorrect answer' },
-  { uuid: 'incomplete_answer', name: 'Incomplete answer' },
+  { key: 'incorrect_answer', name: 'Incorrect answer' },
+  { key: 'incomplete_answer', name: 'Incomplete answer' },
 ];
 
 const createWrapper = (props = {}) =>
