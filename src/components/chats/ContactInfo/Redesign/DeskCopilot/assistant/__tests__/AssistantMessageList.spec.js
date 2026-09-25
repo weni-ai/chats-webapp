@@ -1,14 +1,33 @@
-import { describe, it, expect, afterEach, vi } from 'vitest';
-import { mount } from '@vue/test-utils';
+import { describe, it, expect, afterEach, beforeEach, vi } from 'vitest';
+import { mount, flushPromises } from '@vue/test-utils';
+import { createPinia, setActivePinia } from 'pinia';
 import AssistantMessageList from '../AssistantMessageList.vue';
+import { useRooms } from '@/store/modules/chats/rooms';
+import CopilotFeedback from '@/services/api/resources/chats/copilotFeedback';
 
-const createWrapper = (props = {}) =>
-  mount(AssistantMessageList, {
+vi.mock('@/services/api/resources/chats/copilotFeedback', () => ({
+  default: {
+    getRoomFeedbacks: vi.fn(),
+    getMessageFeedbackTags: vi.fn(() => []),
+    sendMessageFeedback: vi.fn(),
+  },
+}));
+
+const createWrapper = (props = {}) => {
+  const pinia = createPinia();
+  setActivePinia(pinia);
+  const roomsStore = useRooms();
+  roomsStore.$patch({
+    activeRoom: { uuid: 'room-1' },
+  });
+
+  return mount(AssistantMessageList, {
     props: {
       messages: [],
       ...props,
     },
     global: {
+      plugins: [pinia],
       mocks: {
         $t: (key) => key,
       },
@@ -37,6 +56,7 @@ const createWrapper = (props = {}) =>
             'productList',
             'getQuantity',
             'readOnly',
+            'liked',
           ],
         },
         ThinkingIndicator: {
@@ -50,9 +70,14 @@ const createWrapper = (props = {}) =>
       },
     },
   });
+};
 
 describe('AssistantMessageList', () => {
   let wrapper;
+
+  beforeEach(() => {
+    CopilotFeedback.getRoomFeedbacks.mockResolvedValue([]);
+  });
 
   afterEach(() => {
     wrapper?.unmount();
@@ -191,5 +216,32 @@ describe('AssistantMessageList', () => {
 
     const aiMessage = wrapper.findComponent({ name: 'AssistantAiMessage' });
     expect(aiMessage.props('readOnly')).toBe(true);
+  });
+
+  it('passes persisted liked state from room feedback', async () => {
+    CopilotFeedback.getRoomFeedbacks.mockResolvedValue([
+      { message_id: 'ai-1', liked: true, text: '', tags: [] },
+    ]);
+
+    wrapper = createWrapper({
+      messages: [
+        {
+          id: 'ai-1',
+          direction: 'ai',
+          text: 'Hello world',
+          quickReplies: [],
+          status: 'delivered',
+          timestamp: 1,
+        },
+      ],
+    });
+    await flushPromises();
+
+    expect(CopilotFeedback.getRoomFeedbacks).toHaveBeenCalledWith({
+      roomUuid: 'room-1',
+    });
+    expect(
+      wrapper.findComponent({ name: 'AssistantAiMessage' }).props('liked'),
+    ).toBe(true);
   });
 });

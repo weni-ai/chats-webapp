@@ -245,6 +245,12 @@ describe('AssistantAiMessage', () => {
     );
   });
 
+  it('hydrates the thumb from persisted liked state', () => {
+    wrapper = createWrapper({ liked: false });
+
+    expect(wrapper.vm.feedbackLiked).toBe(false);
+  });
+
   it('sends positive feedback on thumb up', async () => {
     CopilotFeedback.sendMessageFeedback.mockResolvedValue({});
     wrapper = createWrapper();

@@ -3,6 +3,7 @@ import { vi, describe, it, expect, beforeEach } from 'vitest';
 vi.mock('@/services/api/http', () => ({
   default: {
     post: vi.fn(),
+    get: vi.fn(),
   },
 }));
 
@@ -101,5 +102,85 @@ describe('CopilotFeedback service', () => {
       text: '',
       tags: [],
     });
+  });
+
+  it('lists room feedbacks to hydrate thumbs', async () => {
+    http.get.mockResolvedValue({
+      data: {
+        results: [
+          { message_id: 'msg-1', liked: true, text: '', tags: [] },
+          {
+            message_id: 'msg-2',
+            liked: false,
+            text: '',
+            tags: ['slow_to_load'],
+          },
+        ],
+      },
+    });
+
+    const result = await CopilotFeedback.getRoomFeedbacks({
+      roomUuid: 'room-1',
+    });
+
+    expect(http.get).toHaveBeenCalledWith('/room/room-1/copilot/feedback/');
+    expect(result).toEqual([
+      { message_id: 'msg-1', liked: true, text: '', tags: [] },
+      {
+        message_id: 'msg-2',
+        liked: false,
+        text: '',
+        tags: ['slow_to_load'],
+      },
+    ]);
+  });
+
+  it('returns an empty list when room feedback is not found', async () => {
+    http.get.mockRejectedValue({ response: { status: 404 } });
+
+    await expect(
+      CopilotFeedback.getRoomFeedbacks({ roomUuid: 'room-1' }),
+    ).resolves.toEqual([]);
+  });
+
+  it('gets feedback for a single message', async () => {
+    http.get.mockResolvedValue({
+      data: {
+        uuid: 'fb-uuid',
+        room: 'room-1',
+        message_id: 'msg-1',
+        liked: true,
+        text: '',
+        tags: [],
+      },
+    });
+
+    const result = await CopilotFeedback.getMessageFeedback({
+      roomUuid: 'room-1',
+      messageId: 'msg-1',
+    });
+
+    expect(http.get).toHaveBeenCalledWith('/room/room-1/copilot/feedback/', {
+      params: { message_id: 'msg-1' },
+    });
+    expect(result).toEqual({
+      uuid: 'fb-uuid',
+      room: 'room-1',
+      message_id: 'msg-1',
+      liked: true,
+      text: '',
+      tags: [],
+    });
+  });
+
+  it('returns null when message feedback is not found', async () => {
+    http.get.mockRejectedValue({ response: { status: 404 } });
+
+    await expect(
+      CopilotFeedback.getMessageFeedback({
+        roomUuid: 'room-1',
+        messageId: 'msg-1',
+      }),
+    ).resolves.toBeNull();
   });
 });
