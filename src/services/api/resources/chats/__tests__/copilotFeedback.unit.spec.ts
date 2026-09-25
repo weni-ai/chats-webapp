@@ -15,7 +15,9 @@ vi.mock('@/plugins/i18n', () => ({
 }));
 
 import CopilotFeedback, {
+  CopilotMessageFeedbackTag,
   COPILOT_MESSAGE_FEEDBACK_TAG_KEYS,
+  normalizeFeedbackTags,
 } from '../copilotFeedback';
 import http from '@/services/api/http';
 
@@ -24,26 +26,40 @@ describe('CopilotFeedback service', () => {
     vi.clearAllMocks();
   });
 
-  it('returns the provisional i18n tag list', () => {
+  it('exposes the tag enum values as a string list', () => {
     expect(COPILOT_MESSAGE_FEEDBACK_TAG_KEYS).toEqual([
-      'incorrect_answer',
-      'incomplete_answer',
-      'confusing_answer',
-      'no_items_found',
-      'out_of_context_items',
-      'did_not_load',
-      'slow_to_load',
-      'unclear_interface',
+      CopilotMessageFeedbackTag.IncorrectAnswer,
+      CopilotMessageFeedbackTag.IncompleteAnswer,
+      CopilotMessageFeedbackTag.ConfusingAnswer,
+      CopilotMessageFeedbackTag.NoItemsFound,
+      CopilotMessageFeedbackTag.OutOfContextItems,
+      CopilotMessageFeedbackTag.DidNotLoad,
+      CopilotMessageFeedbackTag.SlowToLoad,
+      CopilotMessageFeedbackTag.UnclearInterface,
     ]);
     expect(CopilotFeedback.getMessageFeedbackTags()).toEqual(
       COPILOT_MESSAGE_FEEDBACK_TAG_KEYS.map((key) => ({
-        uuid: key,
+        key,
         name: `contact_info.desk_copilot.feedback.message_tags.${key}`,
       })),
     );
   });
 
-  it('posts message feedback to the provisional endpoint', async () => {
+  it('keeps only known enum values in tags', () => {
+    expect(
+      normalizeFeedbackTags([
+        CopilotMessageFeedbackTag.IncorrectAnswer,
+        'Incorrect answer',
+        'unknown_tag',
+        CopilotMessageFeedbackTag.DidNotLoad,
+      ]),
+    ).toEqual([
+      CopilotMessageFeedbackTag.IncorrectAnswer,
+      CopilotMessageFeedbackTag.DidNotLoad,
+    ]);
+  });
+
+  it('posts message feedback with enum tags, never translated labels', async () => {
     http.post.mockResolvedValue({ data: { ok: true } });
 
     const result = await CopilotFeedback.sendMessageFeedback({
@@ -51,14 +67,21 @@ describe('CopilotFeedback service', () => {
       messageId: 'msg-1',
       liked: false,
       text: 'Needs work',
-      tags: ['incorrect_answer'],
+      tags: [
+        CopilotMessageFeedbackTag.IncorrectAnswer,
+        'Resposta incorreta',
+        CopilotMessageFeedbackTag.OutOfContextItems,
+      ],
     });
 
     expect(http.post).toHaveBeenCalledWith('/room/room-1/copilot/feedback/', {
       message_id: 'msg-1',
       liked: false,
       text: 'Needs work',
-      tags: ['incorrect_answer'],
+      tags: [
+        CopilotMessageFeedbackTag.IncorrectAnswer,
+        CopilotMessageFeedbackTag.OutOfContextItems,
+      ],
     });
     expect(result).toEqual({ ok: true });
   });
