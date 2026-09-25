@@ -31,12 +31,12 @@
         >
           <UnnnicChip
             v-for="tag in tags"
-            :key="tag.uuid"
+            :key="tag.key"
             type="multiple"
             isClickable
             :isSelected="isTagSelected(tag)"
             :text="tag.name"
-            :data-testid="`tag__${tag.uuid}`"
+            :data-testid="`tag__${tag.key}`"
             @click="toggleTag(tag)"
           />
         </section>
@@ -75,7 +75,7 @@
 import { computed, ref, watch } from 'vue';
 
 export type AiFeedbackTag = {
-  uuid: string;
+  key: string;
   name: string;
 };
 
@@ -136,13 +136,13 @@ watch(
 );
 
 function isTagSelected(tag: AiFeedbackTag) {
-  return selectedTags.value.some((item) => item.uuid === tag.uuid);
+  return selectedTags.value.some((item) => item.key === tag.key);
 }
 
 function toggleTag(tag: AiFeedbackTag) {
   if (isTagSelected(tag)) {
     selectedTags.value = selectedTags.value.filter(
-      (item) => item.uuid !== tag.uuid,
+      (item) => item.key !== tag.key,
     );
     return;
   }
@@ -160,7 +160,7 @@ function handleSubmit() {
   }
 
   emit('submit', {
-    tags: selectedTags.value.map((tag) => tag.uuid),
+    tags: selectedTags.value.map((tag) => tag.key),
     text: feedbackText.value.trim(),
   });
 }
