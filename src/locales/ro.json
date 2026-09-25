@@ -1099,7 +1099,7 @@
           "message": "Nu s-a putut trimite mesajul. Încearcă din nou."
         },
         "partial_success": {
-          "message": "{success, plural, one {Mesaj trimis către {success} contact, {failed} eșuat.} few {Mesaj trimis către {success} contacte, {failed} eșuate.} other {Mesaj trimis către {success} de contacte, {failed} eșuate.}}"
+          "message": "{success, plural, one {Mesaj trimis către {success} contact, erori: {failed}.} few {Mesaj trimis către {success} contacte, erori: {failed}.} other {Mesaj trimis către {success} de contacte, erori: {failed}.}}"
         },
         "success": {
           "message": "{count, plural, one {Mesaj trimis către {count} contact} few {Mesaj trimis către {count} contacte} other {Mesaj trimis către {count} de contacte}}"
