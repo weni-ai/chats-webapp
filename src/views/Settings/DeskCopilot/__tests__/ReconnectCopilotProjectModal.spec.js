@@ -11,7 +11,7 @@ import { mount, config } from '@vue/test-utils';
 import { createTestingPinia } from '@pinia/testing';
 import { setActivePinia } from 'pinia';
 
-import DisconnectCopilotProjectModal from '../DisconnectCopilotProjectModal.vue';
+import ReconnectCopilotProjectModal from '../ReconnectCopilotProjectModal.vue';
 import {
   resetCopilotProjectState,
   useCopilotProject,
@@ -22,10 +22,10 @@ import i18n from '@/plugins/i18n';
 
 vi.mock('@/services/api/resources/chats/copilotProject', () => ({
   default: {
-    remove: vi.fn(),
+    reconnect: vi.fn(),
     getLinkedProject: vi.fn(),
     create: vi.fn(),
-    reconnect: vi.fn(),
+    remove: vi.fn(),
     canCreate: vi.fn(),
   },
 }));
@@ -46,18 +46,21 @@ afterAll(() => {
   }
 });
 
-const linkedProject = {
+const disconnectedProject = {
   name: 'Sales 123',
   assignedAgents: 3,
   createdOn: '2026-07-30T00:00:00Z',
   connectedOn: '2026-07-30T00:00:00Z',
   uuid: 'copilot-uuid',
+  projectUuid: 'desk-uuid',
   connectedBy: 'edu',
-  isConnected: true,
+  isConnected: false,
+  disconnectedBy: 'ana',
+  disconnectedOn: '2026-09-10T00:00:00Z',
 };
 
 const createWrapper = () =>
-  mount(DisconnectCopilotProjectModal, {
+  mount(ReconnectCopilotProjectModal, {
     props: {
       modelValue: true,
     },
@@ -103,7 +106,7 @@ const createWrapper = () =>
     },
   });
 
-describe('DisconnectCopilotProjectModal', () => {
+describe('ReconnectCopilotProjectModal', () => {
   let wrapper;
 
   beforeEach(() => {
@@ -123,28 +126,28 @@ describe('DisconnectCopilotProjectModal', () => {
       }),
     );
     const { setLinkedProject } = useCopilotProject();
-    setLinkedProject(linkedProject);
+    setLinkedProject(disconnectedProject);
     wrapper = createWrapper();
   });
 
-  it('renders the disconnect title', () => {
+  it('renders the reconnect title', () => {
     expect(
-      wrapper.find('[data-testid="disconnect-copilot-project-title"]').text(),
-    ).toBe('config_chats.desk_copilot.disconnect_modal.title');
+      wrapper.find('[data-testid="reconnect-copilot-project-title"]').text(),
+    ).toBe('config_chats.desk_copilot.reconnect_modal.title');
   });
 
-  it('disconnects the project, shows a toast and closes the modal', async () => {
-    CopilotProjectService.remove.mockResolvedValue();
-    CopilotProjectService.getLinkedProject.mockResolvedValue({
-      ...linkedProject,
-      isConnected: false,
-      disconnectedBy: 'edu',
-      disconnectedOn: '2026-09-10T00:00:00Z',
+  it('reconnects the project, shows a toast and closes the modal', async () => {
+    CopilotProjectService.reconnect.mockResolvedValue({
+      ...disconnectedProject,
+      isConnected: true,
+      connectedBy: 'edu',
     });
 
-    await wrapper.vm.disconnect();
+    await wrapper.vm.reconnect();
 
-    expect(CopilotProjectService.remove).toHaveBeenCalledWith('copilot-uuid');
+    expect(CopilotProjectService.reconnect).toHaveBeenCalledWith(
+      'copilot-uuid',
+    );
     expect(callUnnnicAlert).toHaveBeenCalledWith({
       props: {
         text: expect.any(String),
@@ -155,11 +158,11 @@ describe('DisconnectCopilotProjectModal', () => {
     expect(wrapper.emitted('update:modelValue').at(-1)).toEqual([false]);
   });
 
-  it('shows an error toast, closes the modal and keeps the project connected', async () => {
-    CopilotProjectService.remove.mockRejectedValue(new Error('API Error'));
+  it('shows an error toast, closes the modal and keeps the project disconnected', async () => {
+    CopilotProjectService.reconnect.mockRejectedValue(new Error('API Error'));
     const { linkedProject: project } = useCopilotProject();
 
-    await wrapper.vm.disconnect();
+    await wrapper.vm.reconnect();
 
     expect(callUnnnicAlert).toHaveBeenCalledWith({
       props: {
@@ -169,6 +172,6 @@ describe('DisconnectCopilotProjectModal', () => {
       seconds: 5,
     });
     expect(wrapper.emitted('update:modelValue').at(-1)).toEqual([false]);
-    expect(project.value?.isConnected).toBe(true);
+    expect(project.value?.isConnected).toBe(false);
   });
 });

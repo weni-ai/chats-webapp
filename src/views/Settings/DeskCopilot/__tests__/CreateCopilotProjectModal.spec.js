@@ -53,6 +53,7 @@ const createdProject = {
   uuid: 'copilot-uuid',
   projectUuid: 'desk-uuid',
   connectedBy: 'edu',
+  isConnected: true,
 };
 
 const createWrapper = () =>
