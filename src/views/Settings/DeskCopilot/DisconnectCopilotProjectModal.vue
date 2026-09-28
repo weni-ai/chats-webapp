@@ -99,6 +99,7 @@ async function disconnect() {
       },
       seconds: 5,
     });
+    isOpen.value = false;
   } finally {
     isSaving.value = false;
   }
