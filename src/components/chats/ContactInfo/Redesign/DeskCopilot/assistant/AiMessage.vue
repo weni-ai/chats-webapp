@@ -125,7 +125,7 @@
                 clickable
                 scheme="fg-base"
                 data-testid="assistant-ai-thumb-up"
-                @click="feedbackLiked = true"
+                @click="handleThumbUp"
               />
             </UnnnicToolTip>
             <UnnnicToolTip
@@ -140,25 +140,39 @@
                 clickable
                 scheme="fg-base"
                 data-testid="assistant-ai-thumb-down"
-                @click="feedbackLiked = false"
+                @click="handleThumbDown"
               />
             </UnnnicToolTip>
           </section>
         </section>
       </template>
     </section>
+
+    <AiFeedbackModal
+      v-model="showFeedbackModal"
+      :tags="feedbackTags"
+      :isSubmitting="isSubmittingFeedback"
+      @submit="handleSubmitFeedback"
+      @cancel="handleCancelFeedback"
+    />
   </section>
 </template>
 
 <script setup lang="ts">
-import { computed, ref } from 'vue';
+import { computed, ref, watch } from 'vue';
+import { storeToRefs } from 'pinia';
+import { UnnnicCallAlert } from '@weni/unnnic-system';
 import { useStreamingBuffer } from '@/composables/assistant/useStreamingBuffer';
 import { copyTextToContactInput } from '@/composables/assistant/useCopyToContactInput';
+import i18n from '@/plugins/i18n';
+import CopilotFeedback from '@/services/api/resources/chats/copilotFeedback';
 import type {
   AssistantMessageType,
   ProductCarouselItem,
   ProductListSection,
 } from '@/services/assistant/types';
+import { useRooms } from '@/store/modules/chats/rooms';
+import AiFeedbackModal from '@/components/chats/ContactInfo/Redesign/DeskCopilot/AiFeedbackModal.vue';
 import AudioMessage from './media/AudioMessage.vue';
 import ImageMessage from './media/ImageMessage.vue';
 import FileMessage from './media/FileMessage.vue';
@@ -188,6 +202,8 @@ const props = withDefaults(
     };
     getQuantity?: (productId: string) => number;
     readOnly?: boolean;
+    messageId?: string;
+    liked?: boolean | null;
   }>(),
   {
     suggestion: undefined,
@@ -199,6 +215,8 @@ const props = withDefaults(
     productList: undefined,
     getQuantity: () => 0,
     readOnly: false,
+    messageId: '',
+    liked: null,
   },
 );
 
@@ -210,8 +228,30 @@ const emit = defineEmits<{
   decrementCartItem: [product: ProductCarouselItem];
 }>();
 
-const feedbackLiked = ref<boolean | null>(null);
+const roomsStore = useRooms();
+const { activeRoom } = storeToRefs(roomsStore);
+
+const feedbackLiked = ref<boolean | null>(props.liked ?? null);
+const previousLiked = ref<boolean | null>(null);
+const showFeedbackModal = ref(false);
+const isSubmittingFeedback = ref(false);
 const dismissedIds = ref<string[]>([]);
+const hasLocalFeedbackChange = ref(false);
+
+watch(
+  () => props.liked,
+  (liked) => {
+    if (hasLocalFeedbackChange.value) {
+      return;
+    }
+
+    if (liked === true || liked === false) {
+      feedbackLiked.value = liked;
+    }
+  },
+);
+
+const feedbackTags = computed(() => CopilotFeedback.getMessageFeedbackTags());
 
 const isStreaming = computed(() => props.status === 'streaming');
 const hasProductCarousel = computed(
@@ -318,6 +358,78 @@ function handleRemoveSuggestion(product: ProductCarouselItem) {
 
 async function handleCopy() {
   await copyTextToContactInput(suggestionText.value);
+}
+
+async function handleThumbUp() {
+  hasLocalFeedbackChange.value = true;
+  const likedBeforeThumbUp = feedbackLiked.value;
+  feedbackLiked.value = true;
+  const roomUuid = activeRoom.value?.uuid;
+  if (!roomUuid || !props.messageId) return;
+
+  try {
+    await CopilotFeedback.sendMessageFeedback({
+      roomUuid,
+      messageId: props.messageId,
+      liked: true,
+    });
+  } catch (error) {
+    feedbackLiked.value = likedBeforeThumbUp;
+    console.error(error);
+  }
+}
+
+function handleThumbDown() {
+  hasLocalFeedbackChange.value = true;
+  previousLiked.value = feedbackLiked.value;
+  feedbackLiked.value = false;
+  showFeedbackModal.value = true;
+}
+
+function handleCancelFeedback() {
+  feedbackLiked.value = previousLiked.value;
+  showFeedbackModal.value = false;
+}
+
+async function handleSubmitFeedback({
+  tags,
+  text,
+}: {
+  tags: string[];
+  text: string;
+}) {
+  const roomUuid = activeRoom.value?.uuid;
+  if (!roomUuid || !props.messageId) return;
+
+  isSubmittingFeedback.value = true;
+  try {
+    await CopilotFeedback.sendMessageFeedback({
+      roomUuid,
+      messageId: props.messageId,
+      liked: false,
+      text,
+      tags,
+    });
+    UnnnicCallAlert({
+      props: {
+        text: i18n.global.t('contact_info.desk_copilot.feedback.sended'),
+        type: 'success',
+      },
+      seconds: 5,
+    });
+    showFeedbackModal.value = false;
+  } catch (error) {
+    console.error(error);
+    UnnnicCallAlert({
+      props: {
+        text: i18n.global.t('contact_info.desk_copilot.feedback.error'),
+        type: 'error',
+      },
+      seconds: 5,
+    });
+  } finally {
+    isSubmittingFeedback.value = false;
+  }
 }
 </script>
 

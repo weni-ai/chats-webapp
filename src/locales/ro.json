@@ -883,6 +883,23 @@
         "title": "Mergi dincolo de rezumatele conversațiilor",
         "title_without_summary": "Deblochează-ți tot potențialul cu Desk Copilot"
       },
+      "feedback": {
+        "error": "Nu am putut trimite feedbackul. Încearcă din nou.",
+        "message_tags": {
+          "confusing_answer": "Răspuns confuz",
+          "did_not_load": "Nu s-a încărcat",
+          "incomplete_answer": "Răspuns incomplet",
+          "incorrect_answer": "Răspuns incorect",
+          "no_items_found": "Nu s-au găsit articole",
+          "out_of_context_items": "Articolele sugerate erau în afara contextului",
+          "slow_to_load": "A durat prea mult să se încarce",
+          "unclear_interface": "Interfață neclară"
+        },
+        "other": "Altceva",
+        "placeholder": "Introdu feedbackul aici",
+        "sended": "Feedbackul tău a fost trimis.",
+        "title": "Ce trebuie îmbunătățit?"
+      },
       "summary_title": "Rezumatul acestei conversații"
     }
   },

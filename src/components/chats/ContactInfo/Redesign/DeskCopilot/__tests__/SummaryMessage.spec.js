@@ -7,7 +7,7 @@ import {
   afterAll,
   vi,
 } from 'vitest';
-import { mount, config } from '@vue/test-utils';
+import { mount, config, flushPromises } from '@vue/test-utils';
 import { createPinia, setActivePinia } from 'pinia';
 import SummaryMessage from '../SummaryMessage.vue';
 import { useRooms } from '@/store/modules/chats/rooms';
@@ -15,11 +15,22 @@ import { useProfile } from '@/store/modules/profile';
 import Room from '@/services/api/resources/chats/room';
 import i18n from '@/plugins/i18n';
 
+import { UnnnicCallAlert } from '@weni/unnnic-system';
+
 vi.mock('@/services/api/resources/chats/room', () => ({
   default: {
     sendSummaryFeedback: vi.fn(),
+    getSummaryFeedbackTags: vi.fn(),
   },
 }));
+
+vi.mock('@weni/unnnic-system', async (importOriginal) => {
+  const actual = await importOriginal();
+  return {
+    ...actual,
+    UnnnicCallAlert: vi.fn(),
+  };
+});
 
 beforeAll(() => {
   config.global.plugins = (config.global.plugins || []).filter(
@@ -89,7 +100,11 @@ const createWrapper = ({
           template: '<button data-testid="copy-summary" />',
           props: ['value', 'copyTooltipKey', 'fillChatInput'],
         },
-        FeedbackModal: true,
+        AiFeedbackModal: {
+          name: 'AiFeedbackModal',
+          template: '<div data-testid="ai-feedback-modal" />',
+          props: ['modelValue', 'tags', 'isLoadingTags', 'isSubmitting'],
+        },
       },
     },
   });
@@ -189,5 +204,82 @@ describe('DeskCopilotSummaryMessage', () => {
     expect(copyButton.props('copyTooltipKey')).toBe(
       'contact_info.desk_copilot.copy_summary',
     );
+  });
+
+  it('opens the feedback modal on thumb down', async () => {
+    Room.getSummaryFeedbackTags.mockResolvedValue({
+      results: { incorrect_summary: 'Incorrect summary' },
+    });
+    wrapper = createWrapper();
+
+    await wrapper
+      .find('[data-testid="desk-copilot-summary-thumb-down"]')
+      .trigger('click');
+    await flushPromises();
+
+    const modal = wrapper.findComponent({ name: 'AiFeedbackModal' });
+    expect(modal.props('modelValue')).toBe(true);
+    expect(modal.props('tags')).toEqual([
+      { key: 'incorrect_summary', name: 'Incorrect summary' },
+    ]);
+    expect(useRooms().roomsSummary['room-1'].feedback.liked).toBe(false);
+  });
+
+  it('sends negative feedback when the modal is submitted', async () => {
+    Room.getSummaryFeedbackTags.mockResolvedValue({
+      results: { incorrect_summary: 'Incorrect summary' },
+    });
+    Room.sendSummaryFeedback.mockResolvedValue({});
+    wrapper = createWrapper();
+
+    await wrapper
+      .find('[data-testid="desk-copilot-summary-thumb-down"]')
+      .trigger('click');
+    await flushPromises();
+
+    await wrapper
+      .findComponent({ name: 'AiFeedbackModal' })
+      .vm.$emit('submit', {
+        tags: ['incorrect_summary'],
+        text: 'Needs work',
+      });
+    await flushPromises();
+
+    expect(Room.sendSummaryFeedback).toHaveBeenCalledWith({
+      roomUuid: 'room-1',
+      liked: false,
+      text: 'Needs work',
+      tags: ['incorrect_summary'],
+    });
+    expect(UnnnicCallAlert).toHaveBeenCalledWith(
+      expect.objectContaining({
+        props: expect.objectContaining({ type: 'success' }),
+      }),
+    );
+    expect(
+      wrapper.findComponent({ name: 'AiFeedbackModal' }).props('modelValue'),
+    ).toBe(false);
+  });
+
+  it('resets liked when the feedback modal is cancelled', async () => {
+    Room.getSummaryFeedbackTags.mockResolvedValue({
+      results: { incorrect_summary: 'Incorrect summary' },
+    });
+    wrapper = createWrapper();
+
+    await wrapper
+      .find('[data-testid="desk-copilot-summary-thumb-down"]')
+      .trigger('click');
+    await flushPromises();
+
+    expect(useRooms().roomsSummary['room-1'].feedback.liked).toBe(false);
+
+    await wrapper.findComponent({ name: 'AiFeedbackModal' }).vm.$emit('cancel');
+    await wrapper.vm.$nextTick();
+
+    expect(useRooms().roomsSummary['room-1'].feedback.liked).toBeNull();
+    expect(
+      wrapper.findComponent({ name: 'AiFeedbackModal' }).props('modelValue'),
+    ).toBe(false);
   });
 });

@@ -911,6 +911,23 @@
         "title": "Go beyond conversation summaries",
         "title_without_summary": "Unlock your full potential with Desk Copilot"
       },
+      "feedback": {
+        "error": "Couldn't send your feedback. Try again.",
+        "message_tags": {
+          "confusing_answer": "Confusing answer",
+          "did_not_load": "Did not load",
+          "incomplete_answer": "Incomplete answer",
+          "incorrect_answer": "Incorrect answer",
+          "no_items_found": "No items found",
+          "out_of_context_items": "Suggested items were out of context",
+          "slow_to_load": "Took a long time to load",
+          "unclear_interface": "Unclear interface"
+        },
+        "other": "Other",
+        "placeholder": "Enter your feedback here",
+        "sended": "Your feedback has been submitted.",
+        "title": "What needs to be improved?"
+      },
       "summary_title": "Summary of this conversation"
     }
   },
