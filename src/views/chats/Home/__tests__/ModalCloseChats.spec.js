@@ -1,5 +1,5 @@
-import { flushPromises, mount } from '@vue/test-utils';
-import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { enableAutoUnmount, flushPromises, mount } from '@vue/test-utils';
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { createTestingPinia } from '@pinia/testing';
 
 import ModalCloseChat from '../ModalCloseChat.vue';
@@ -8,6 +8,19 @@ import Queue from '@/services/api/resources/settings/queue';
 import Room from '@/services/api/resources/chats/room';
 
 const roomMock = { uuid: '123', queue: { uuid: '456' } };
+
+vi.mock('@vueuse/core', async (importOriginal) => {
+  const actual = await importOriginal();
+  return {
+    ...actual,
+    watchDebounced: vi.fn((source, cb) => {
+      return actual.watchDebounced(source, cb, {
+        debounce: 0,
+        maxWait: 0,
+      });
+    }),
+  };
+});
 
 vi.mock('@/services/api/resources/settings/queue', () => ({
   default: {
@@ -108,6 +121,8 @@ const createWrapper = (queueTagsMock) => {
   });
 };
 
+enableAutoUnmount(afterEach);
+
 describe('ModalCloseChats.vue', () => {
   let wrapper;
 
@@ -115,6 +130,10 @@ describe('ModalCloseChats.vue', () => {
     Queue.tags.mockReset();
     Queue.tags.mockResolvedValue(tagsResponse);
     wrapper = createWrapper();
+  });
+
+  afterEach(async () => {
+    await flushPromises();
   });
 
   it('should loads tags correctly in classifyRoom', async () => {
