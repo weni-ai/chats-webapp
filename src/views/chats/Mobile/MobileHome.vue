@@ -171,6 +171,15 @@ export default {
     $route: {
       immediate: true,
       async handler(newRoute) {
+        const shouldOpenHistory =
+          newRoute.name === 'home' && newRoute.query?.view === 'history';
+
+        if (shouldOpenHistory) {
+          await resetChats();
+          this.updateCurrentTab('history');
+          return;
+        }
+
         if (
           (!this.room?.uuid && !this.discussion?.uuid) ||
           newRoute.name === 'home'

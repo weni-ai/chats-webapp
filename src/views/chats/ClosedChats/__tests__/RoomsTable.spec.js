@@ -52,6 +52,7 @@ describe('RoomsTable.vue', () => {
           $route: { query: currentRouteQuery },
           $router: {
             push: vi.fn(),
+            replace: vi.fn(),
           },
         },
         stubs: {
@@ -305,6 +306,50 @@ describe('RoomsTable.vue', () => {
       );
 
       getHistoryRoomsSpy.mockRestore();
+    });
+
+    it('does not reapply the route query after filters change', async () => {
+      wrapper = createWrapper(
+        {},
+        {},
+        {
+          contact: 'abc-123',
+          email: 'test@example.com',
+          document: '12345678900',
+          startDate: '2025-01-01',
+          view: 'history',
+          from: 'room-1',
+        },
+      );
+
+      expect(wrapper.vm.filters.contact).toBe(
+        'contact=abc-123 email=test@example.com document=12345678900',
+      );
+      expect(wrapper.vm.filters.date.start).toBe('2025-01-01');
+      expect(wrapper.vm.$router.replace).toHaveBeenCalledWith({
+        query: { view: 'history', from: 'room-1' },
+      });
+
+      await wrapper.setData({
+        filters: {
+          ...wrapper.vm.filters,
+          contact: '',
+          sector: [{ value: 'sector-1', label: 'Support' }],
+          date: { start: '2023-02-01', end: '2023-02-28' },
+        },
+      });
+
+      History.getHistoryRooms.mockClear();
+      await wrapper.vm.getHistoryRooms();
+
+      const params = History.getHistoryRooms.mock.calls[0][0];
+      expect(params.contact).toBeUndefined();
+      expect(params.email).toBeUndefined();
+      expect(params.document).toBeUndefined();
+      expect(params.search).toBeUndefined();
+      expect(params.sector).toBe('sector-1');
+      expect(params.ended_at_after).toBe('2023-02-01');
+      expect(params.ended_at_before).toBe('2023-02-28');
     });
 
     it('calls getHistoryRooms with unified query params', async () => {

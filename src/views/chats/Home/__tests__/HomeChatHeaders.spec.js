@@ -1,11 +1,16 @@
 import { mount } from '@vue/test-utils';
 import { beforeEach, describe, vi } from 'vitest';
 import { createTestingPinia } from '@pinia/testing';
+import isMobile from 'is-mobile';
 
 import { useRooms } from '@/store/modules/chats/rooms';
 import { useDiscussions } from '@/store/modules/chats/discussions';
 
 import HomeChatHeaders from '../HomeChatHeaders.vue';
+
+vi.mock('is-mobile', () => ({
+  default: vi.fn(() => false),
+}));
 
 const mockRouter = { push: vi.fn() };
 
@@ -209,6 +214,7 @@ describe('HomeChatHeaders.vue', () => {
   describe('openHistory', () => {
     beforeEach(() => {
       vi.clearAllMocks();
+      isMobile.mockReturnValue(false);
     });
 
     it('does not navigate when has_history is false', async () => {
@@ -304,6 +310,40 @@ describe('HomeChatHeaders.vue', () => {
         }),
       );
       expect(mockRouter.push.mock.calls[0][0].query.contact).toBeUndefined();
+    });
+
+    it('navigates to home history on mobile with the same filters', async () => {
+      isMobile.mockReturnValue(true);
+      roomStore.activeRoom = {
+        uuid: 'room-1',
+        urn: 'whatsapp:5511999998888',
+        contact: {
+          name: 'John Doe',
+          external_id: 'abc-123',
+          email: 'john@example.com',
+          document: '234.234.243-20',
+        },
+        protocol: 'whatsapp',
+        has_history: true,
+      };
+      await wrapper.vm.$nextTick();
+
+      wrapper.vm.openHistory();
+
+      expect(mockRouter.push).toHaveBeenCalledWith(
+        expect.objectContaining({
+          name: 'home',
+          query: expect.objectContaining({
+            contact: 'abc-123',
+            email: 'john@example.com',
+            document: '23423424320',
+            protocol: 'whatsapp',
+            from: 'room-1',
+            view: 'history',
+            startDate: expect.any(String),
+          }),
+        }),
+      );
     });
 
     it('sanitizes document with various special characters', async () => {
