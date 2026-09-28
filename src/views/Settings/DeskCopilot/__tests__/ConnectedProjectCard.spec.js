@@ -11,24 +11,15 @@ import {
 import { mount, config } from '@vue/test-utils';
 import moment from 'moment';
 import { createTestingPinia } from '@pinia/testing';
-import { ref } from 'vue';
 
 import ConnectedProjectCard from '../ConnectedProjectCard.vue';
 import i18n from '@/plugins/i18n';
 import UnnnicSystemPlugin from '@/plugins/UnnnicSystem.js';
 
-const hasMultipleProjects = ref(true);
-
 vi.mock('@/utils/copilotProject', () => ({
   buildCopilotProjectUrl: vi.fn(
     (uuid) => `https://dash.stg.cloud.weni.ai/projects/${uuid}`,
   ),
-}));
-
-vi.mock('@/composables/useCopilotProjectsList', () => ({
-  useCopilotProjectsList: () => ({
-    hasMultipleProjects,
-  }),
 }));
 
 beforeAll(() => {
@@ -58,37 +49,23 @@ const linkedProject = {
   uuid: 'copilot-uuid',
   projectUuid: 'desk-uuid',
   connectedBy: 'edu',
+  isConnected: true,
 };
 
-const createWrapper = () =>
+const disconnectedProject = {
+  ...linkedProject,
+  isConnected: false,
+  disconnectedBy: 'ana',
+  disconnectedOn: '2026-09-10T00:00:00Z',
+};
+
+const createWrapper = (project = linkedProject, readOnly = false) =>
   mount(ConnectedProjectCard, {
-    props: { linkedProject },
+    props: { linkedProject: project, readOnly },
     global: {
       plugins: [createTestingPinia()],
       mocks: {
         $t: (key) => key,
-      },
-      stubs: {
-        UnnnicPopover: {
-          name: 'UnnnicPopover',
-          template:
-            '<div data-testid="desk-copilot-more-popover"><slot /></div>',
-        },
-        UnnnicPopoverTrigger: {
-          name: 'UnnnicPopoverTrigger',
-          template: '<div><slot /></div>',
-        },
-        UnnnicPopoverContent: {
-          name: 'UnnnicPopoverContent',
-          template: '<div><slot /></div>',
-        },
-        UnnnicPopoverOption: {
-          name: 'UnnnicPopoverOption',
-          inheritAttrs: false,
-          template:
-            '<button v-bind="$attrs" @click="$emit(\'click\')">{{ label }}</button>',
-          props: ['label', 'icon', 'scheme'],
-        },
       },
     },
   });
@@ -99,7 +76,6 @@ describe('DeskCopilot ConnectedProjectCard', () => {
 
   beforeEach(() => {
     window.open = vi.fn();
-    hasMultipleProjects.value = true;
     wrapper = createWrapper();
   });
 
@@ -121,6 +97,9 @@ describe('DeskCopilot ConnectedProjectCard', () => {
     expect(wrapper.find('[data-testid="desk-copilot-created-on"]').text()).toBe(
       moment(linkedProject.createdOn).format('L'),
     );
+    expect(
+      wrapper.find('[data-testid="desk-copilot-connected-on"]').text(),
+    ).toBe(moment(linkedProject.connectedOn).format('L'));
   });
 
   it('opens the copilot project in a new tab', async () => {
@@ -135,48 +114,73 @@ describe('DeskCopilot ConnectedProjectCard', () => {
     );
   });
 
-  it('shows the change option when there are multiple projects', () => {
+  it('shows open and disconnect actions when connected', () => {
     expect(
-      wrapper.find('[data-testid="desk-copilot-more-popover"]').exists(),
+      wrapper.find('[data-testid="desk-copilot-open-button"]').exists(),
     ).toBe(true);
     expect(
-      wrapper.find('[data-testid="desk-copilot-change-option"]').exists(),
+      wrapper.find('[data-testid="desk-copilot-disconnect-button"]').exists(),
     ).toBe(true);
     expect(
-      wrapper.find('[data-testid="desk-copilot-disconnect-option"]').exists(),
-    ).toBe(true);
-  });
-
-  it('hides the change option when there is a single project', async () => {
-    hasMultipleProjects.value = false;
-    wrapper.unmount();
-    wrapper = createWrapper();
-    await wrapper.vm.$nextTick();
-
-    expect(
-      wrapper.find('[data-testid="desk-copilot-more-popover"]').exists(),
-    ).toBe(true);
-    expect(
-      wrapper.find('[data-testid="desk-copilot-change-option"]').exists(),
+      wrapper.find('[data-testid="desk-copilot-reconnect-button"]').exists(),
     ).toBe(false);
-    expect(
-      wrapper.find('[data-testid="desk-copilot-disconnect-option"]').exists(),
-    ).toBe(true);
-  });
-
-  it('emits open-change-modal when change is clicked', async () => {
-    await wrapper
-      .find('[data-testid="desk-copilot-change-option"]')
-      .trigger('click');
-
-    expect(wrapper.emitted('open-change-modal')).toBeTruthy();
   });
 
   it('emits open-disconnect-modal when disconnect is clicked', async () => {
     await wrapper
-      .find('[data-testid="desk-copilot-disconnect-option"]')
+      .find('[data-testid="desk-copilot-disconnect-button"]')
       .trigger('click');
 
     expect(wrapper.emitted('open-disconnect-modal')).toBeTruthy();
+  });
+
+  it('shows reconnect and disconnect metadata when disconnected', async () => {
+    wrapper.unmount();
+    wrapper = createWrapper(disconnectedProject);
+    await wrapper.vm.$nextTick();
+
+    expect(
+      wrapper.find('[data-testid="desk-copilot-reconnect-button"]').exists(),
+    ).toBe(true);
+    expect(
+      wrapper.find('[data-testid="desk-copilot-open-button"]').exists(),
+    ).toBe(false);
+    expect(
+      wrapper.find('[data-testid="desk-copilot-disconnect-button"]').exists(),
+    ).toBe(false);
+    expect(
+      wrapper.find('[data-testid="desk-copilot-disconnected-by"]').text(),
+    ).toBe('ana');
+    expect(
+      wrapper.find('[data-testid="desk-copilot-disconnected-on"]').text(),
+    ).toBe(moment(disconnectedProject.disconnectedOn).format('L'));
+  });
+
+  it('emits open-reconnect-modal when reconnect is clicked', async () => {
+    wrapper.unmount();
+    wrapper = createWrapper(disconnectedProject);
+    await wrapper.vm.$nextTick();
+
+    await wrapper
+      .find('[data-testid="desk-copilot-reconnect-button"]')
+      .trigger('click');
+
+    expect(wrapper.emitted('open-reconnect-modal')).toBeTruthy();
+  });
+
+  it('hides actions in readOnly mode', async () => {
+    wrapper.unmount();
+    wrapper = createWrapper(linkedProject, true);
+    await wrapper.vm.$nextTick();
+
+    expect(
+      wrapper.find('[data-testid="desk-copilot-open-button"]').exists(),
+    ).toBe(false);
+    expect(
+      wrapper.find('[data-testid="desk-copilot-disconnect-button"]').exists(),
+    ).toBe(false);
+    expect(
+      wrapper.find('[data-testid="desk-copilot-reconnect-button"]').exists(),
+    ).toBe(false);
   });
 });
