@@ -86,42 +86,7 @@
         <hr class="view-options__separator" />
 
         <section class="view-options__preferences">
-          <section class="view-options__group">
-            <p class="view-options__group-label">
-              {{ $t('preferences.appearance.live_desk_theme') }}
-            </p>
-            <section
-              class="view-options__theme"
-              :aria-label="$t('preferences.appearance.live_desk_theme')"
-            >
-              <UnnnicButton
-                class="view-options__theme-button"
-                :class="{
-                  'view-options__theme-button--selected': !isDark,
-                }"
-                type="secondary"
-                size="small"
-                iconLeft="clear_day"
-                :text="$t('preferences.appearance.light')"
-                :aria-pressed="!isDark"
-                data-testid="theme-light-button"
-                @click="setTheme('light')"
-              />
-              <UnnnicButton
-                class="view-options__theme-button"
-                :class="{
-                  'view-options__theme-button--selected': isDark,
-                }"
-                type="secondary"
-                size="small"
-                iconLeft="dark_mode"
-                :text="$t('preferences.appearance.dark')"
-                :aria-pressed="isDark"
-                data-testid="theme-dark-button"
-                @click="setTheme('dark')"
-              />
-            </section>
-          </section>
+          <ThemeSelector />
 
           <section
             v-if="!isViewMode"
@@ -154,6 +119,7 @@ import { computed, onBeforeMount, ref } from 'vue';
 import { useRouter } from 'vue-router';
 
 import ViewButton from './ViewButton.vue';
+import ThemeSelector from '@/components/chats/ThemeSelector.vue';
 
 import { useProfile } from '@/store/modules/profile';
 import { useFeatureFlag } from '@/store/modules/featureFlag';
@@ -161,7 +127,6 @@ import { useFeatureFlag } from '@/store/modules/featureFlag';
 import { PREFERENCES_SOUND } from '@/services/api/websocket/soundNotification.js';
 import { moduleStorage } from '@/utils/storage';
 import { emitToHost } from '@/utils/hostBridge';
-import { useTheme } from '@weni/unnnic-system';
 import { storeToRefs } from 'pinia';
 
 defineOptions({
@@ -199,9 +164,6 @@ const VIEW_OPTIONS_NEW_SEEN_KEY = 'viewOptionsNewSeen';
 const isOpen = ref(false);
 const sound = ref(false);
 const showNewBadge = ref(false);
-
-const { resolvedTheme, setTheme } = useTheme();
-const isDark = computed(() => resolvedTheme.value === 'dark');
 
 const showBulkMessageButton = computed(() => {
   const ADMIN_ROLE = 1;
@@ -340,33 +302,6 @@ section.chats-layout .sidebar .chats-layout-footer {
     font-weight: $unnnic-font-weight-regular;
     line-height: $unnnic-font-size-body-gt + $unnnic-line-height-md;
     color: $unnnic-color-fg-base;
-  }
-
-  &__theme {
-    display: flex;
-    gap: $unnnic-space-2;
-  }
-
-  &__theme-button.unnnic-button.unnnic-button--secondary {
-    flex: 1 0 0;
-    width: 100%;
-    min-width: 0;
-    padding: $unnnic-space-3 $unnnic-space-4;
-
-    .unnnic-button__label {
-      color: $unnnic-color-fg-emphasized;
-    }
-  }
-
-  &__theme-button--selected.unnnic-button.unnnic-button--secondary {
-    background-color: $unnnic-color-bg-accent-plain;
-    box-shadow: inset 0 0 0 1px $unnnic-color-border-accent-strong;
-
-    &:hover:enabled,
-    &:active:enabled {
-      background-color: $unnnic-color-bg-accent-plain;
-      box-shadow: inset 0 0 0 1px $unnnic-color-border-accent-strong;
-    }
   }
 }
 </style>

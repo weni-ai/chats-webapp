@@ -74,42 +74,7 @@
           @update:model-value="updateSound"
         />
 
-        <section class="modal-preferences__theme-group">
-          <p class="modal-preferences__theme-label">
-            {{ $t('preferences.appearance.live_desk_theme') }}
-          </p>
-          <section
-            class="modal-preferences__theme"
-            :aria-label="$t('preferences.appearance.live_desk_theme')"
-          >
-            <UnnnicButton
-              class="modal-preferences__theme-button"
-              :class="{
-                'modal-preferences__theme-button--selected': !isDark,
-              }"
-              type="secondary"
-              size="small"
-              iconLeft="clear_day"
-              :text="$t('preferences.appearance.light')"
-              :aria-pressed="!isDark"
-              data-testid="theme-light-button"
-              @click="setTheme('light')"
-            />
-            <UnnnicButton
-              class="modal-preferences__theme-button"
-              :class="{
-                'modal-preferences__theme-button--selected': isDark,
-              }"
-              type="secondary"
-              size="small"
-              iconLeft="dark_mode"
-              :text="$t('preferences.appearance.dark')"
-              :aria-pressed="isDark"
-              data-testid="theme-dark-button"
-              @click="setTheme('dark')"
-            />
-          </section>
-        </section>
+        <ThemeSelector />
 
         <UnnnicLabel :label="$t('language')" />
         <UnnnicLanguageSelect
@@ -140,9 +105,10 @@
 </template>
 
 <script>
-import { computed, ref } from 'vue';
-import { unnnicToastManager, useTheme } from '@weni/unnnic-system';
+import { ref } from 'vue';
+import { unnnicToastManager } from '@weni/unnnic-system';
 
+import ThemeSelector from '@/components/chats/ThemeSelector.vue';
 import { PREFERENCES_SOUND } from '@/services/api/websocket/soundNotification.js';
 
 import { moduleStorage } from '@/utils/storage';
@@ -150,12 +116,12 @@ import { useAgentStatus } from '@/composables/useAgentStatus';
 
 export default {
   name: 'ModalPreferences',
+  components: {
+    ThemeSelector,
+  },
   emits: ['close', 'open-quick-messages', 'back-to-home'],
 
   setup() {
-    const { resolvedTheme, setTheme } = useTheme();
-    const isDark = computed(() => resolvedTheme.value === 'dark');
-
     const isStatusListOpen = ref(false);
     const agentStatus = useAgentStatus({
       notify: ({ props }) => {
@@ -179,8 +145,6 @@ export default {
     return {
       isStatusListOpen,
       toggleStatusList,
-      isDark,
-      setTheme,
       ...agentStatus,
     };
   },
@@ -231,49 +195,6 @@ export default {
     display: grid;
     gap: $unnnic-space-4;
     padding: $unnnic-space-6;
-  }
-
-  &__theme-group {
-    display: flex;
-    flex-direction: column;
-    gap: $unnnic-space-2;
-  }
-
-  &__theme-label {
-    margin: 0;
-
-    font-family: $unnnic-font-family-secondary;
-    font-size: $unnnic-font-size-body-gt;
-    font-weight: $unnnic-font-weight-regular;
-    line-height: $unnnic-font-size-body-gt + $unnnic-line-height-md;
-    color: $unnnic-color-fg-base;
-  }
-
-  &__theme {
-    display: flex;
-    gap: $unnnic-space-2;
-  }
-
-  &__theme-button.unnnic-button.unnnic-button--secondary {
-    flex: 1 0 0;
-    width: 100%;
-    min-width: 0;
-    padding: $unnnic-space-3 $unnnic-space-4;
-
-    :deep(.unnnic-button__label) {
-      color: $unnnic-color-fg-emphasized;
-    }
-  }
-
-  &__theme-button--selected.unnnic-button.unnnic-button--secondary {
-    background-color: $unnnic-color-bg-accent-plain;
-    box-shadow: inset 0 0 0 1px $unnnic-color-border-accent-strong;
-
-    &:hover:enabled,
-    &:active:enabled {
-      background-color: $unnnic-color-bg-accent-plain;
-      box-shadow: inset 0 0 0 1px $unnnic-color-border-accent-strong;
-    }
   }
 }
 
