@@ -146,6 +146,7 @@
 </template>
 
 <script>
+import isMobile from 'is-mobile';
 import { format as dateFnsFormat, subYears as dateFnsSubYears } from 'date-fns';
 import { mapActions, mapState, mapWritableState } from 'pinia';
 
@@ -310,8 +311,10 @@ export default {
         'yyyy-MM-dd',
       );
 
+      const routeName = isMobile() ? 'closed-rooms.mobile' : 'closed-rooms';
+
       this.$router.push({
-        name: 'closed-rooms',
+        name: routeName,
         query: {
           ...buildHistoryContactQuery(this.room),
           protocol: this.room.protocol,
