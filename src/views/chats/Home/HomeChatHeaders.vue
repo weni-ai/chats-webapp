@@ -311,16 +311,27 @@ export default {
         'yyyy-MM-dd',
       );
 
-      const routeName = isMobile() ? 'closed-rooms.mobile' : 'closed-rooms';
+      const query = {
+        ...buildHistoryContactQuery(this.room),
+        protocol: this.room.protocol,
+        startDate: A_YEAR_AGO,
+        from: this.room.uuid,
+      };
+
+      if (isMobile()) {
+        this.$router.push({
+          name: 'home',
+          query: {
+            ...query,
+            view: 'history',
+          },
+        });
+        return;
+      }
 
       this.$router.push({
-        name: routeName,
-        query: {
-          ...buildHistoryContactQuery(this.room),
-          protocol: this.room.protocol,
-          startDate: A_YEAR_AGO,
-          from: this.room.uuid,
-        },
+        name: 'closed-rooms',
+        query,
       });
     },
     openTransferModal() {
