@@ -122,4 +122,40 @@ describe('useCopilotHistory', () => {
     ]);
     expect(hasMore.value).toBe(false);
   });
+
+  it('filters unanswered trigger messages from history', async () => {
+    CopilotHistory.getMessages.mockResolvedValue({
+      next: null,
+      previous: null,
+      results: [
+        {
+          id: 2,
+          contact: null,
+          urn: 'room-1',
+          channel: null,
+          direction: 'out',
+          text: 'Visible reply',
+          created_on: '2024-01-01T12:01:00Z',
+        },
+        {
+          id: 1,
+          contact: null,
+          urn: 'room-1',
+          channel: null,
+          direction: 'in',
+          text: '[desk_copilot:unanswered_messages]\nContact: Oi',
+          created_on: '2024-01-01T12:00:00Z',
+        },
+      ],
+    });
+
+    const roomUuid = ref<string | undefined>('room-1');
+    const { messages, isLoading } = useCopilotHistory(roomUuid);
+
+    await vi.waitFor(() => expect(isLoading.value).toBe(false));
+
+    expect(messages.value.map((message) => message.text)).toEqual([
+      'Visible reply',
+    ]);
+  });
 });

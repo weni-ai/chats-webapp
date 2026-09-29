@@ -13,7 +13,9 @@ import { createTestingPinia } from '@pinia/testing';
 import DeskCopilotTab from '../index.vue';
 import { useCopilotConnection } from '@/composables/useCopilotConnection';
 import { useCopilotChat } from '@/composables/assistant/useCopilotChat';
+import { useCopilotRoomContext } from '@/composables/assistant/useCopilotRoomContext';
 import { useRoomMessages } from '@/store/modules/chats/roomMessages';
+import { ASSISTED_SALES_FEATURE_FLAG } from '@/composables/useAssistedSalesFeatureFlag';
 import i18n from '@/plugins/i18n';
 
 vi.mock('@/composables/useCopilotConnection', () => ({
@@ -25,7 +27,9 @@ vi.mock('@/composables/assistant/useCopilotChat', () => ({
 }));
 
 vi.mock('@/composables/assistant/useCopilotRoomContext', () => ({
-  useCopilotRoomContext: vi.fn(),
+  useCopilotRoomContext: vi.fn(() => ({
+    markContextAsProcessed: vi.fn(),
+  })),
 }));
 
 vi.mock('@/composables/assistant/useVoiceMode', () => ({
@@ -90,6 +94,7 @@ function mockCopilotChat({
     isThinking: ref(isThinking),
     isTyping: ref(isTyping),
     isLoadingHistory: ref(isLoadingHistory),
+    isConnected: ref(true),
     cartCount: ref(cartCount),
     suggestions: ref(suggestions),
     isRecording: ref(false),
@@ -102,6 +107,7 @@ function mockCopilotChat({
       acceptAttribute: '',
     }),
     sendMessage: vi.fn(),
+    sendHiddenMessage: vi.fn().mockResolvedValue(undefined),
     sendOrder: vi.fn(),
     sendAttachment: vi.fn(),
     startRecording: vi.fn(),
@@ -531,5 +537,56 @@ describe('DeskCopilotTab', () => {
       .trigger('click');
 
     expect(useRoomMessages().sendRoomMessage).not.toHaveBeenCalled();
+  });
+
+  it('does not enable proactive processing when assisted sales is off', async () => {
+    mockCopilotConnection({
+      isConfigured: true,
+      connection: defaultConnection,
+    });
+    mockCopilotChat();
+    wrapper = createWrapper(
+      {},
+      {
+        config: {
+          project: { uuid: 'project-1', config: { has_chats_summary: true } },
+        },
+        featureFlag: {
+          featureFlags: { active_features: [] },
+          featureFlagsLoaded: true,
+        },
+      },
+    );
+
+    await flushPromises();
+
+    expect(useCopilotRoomContext).toHaveBeenCalled();
+    const options = useCopilotRoomContext.mock.calls[0][0];
+    expect(options.enabled.value).toBe(false);
+  });
+
+  it('enables proactive processing when assisted sales is on for an assigned desktop room', async () => {
+    mockCopilotConnection({
+      isConfigured: true,
+      connection: defaultConnection,
+    });
+    mockCopilotChat();
+    wrapper = createWrapper(
+      {},
+      {
+        config: {
+          project: { uuid: 'project-1', config: { has_chats_summary: true } },
+        },
+        featureFlag: {
+          featureFlags: { active_features: [ASSISTED_SALES_FEATURE_FLAG] },
+          featureFlagsLoaded: true,
+        },
+      },
+    );
+
+    await flushPromises();
+
+    const options = useCopilotRoomContext.mock.calls[0][0];
+    expect(options.enabled.value).toBe(true);
   });
 });

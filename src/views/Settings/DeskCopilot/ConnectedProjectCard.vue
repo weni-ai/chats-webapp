@@ -36,55 +36,35 @@
         </section>
       </section>
 
-      <section class="desk-copilot-connected-card__actions">
+      <section
+        v-if="!readOnly"
+        class="desk-copilot-connected-card__actions"
+      >
+        <template v-if="linkedProject.isConnected">
+          <UnnnicButton
+            type="secondary"
+            size="large"
+            iconLeft="arrow_outward"
+            :text="$t('config_chats.desk_copilot.connected.open')"
+            data-testid="desk-copilot-open-button"
+            @click="openProject"
+          />
+          <UnnnicButton
+            type="warning"
+            size="large"
+            :text="$t('config_chats.desk_copilot.connected.disconnect')"
+            data-testid="desk-copilot-disconnect-button"
+            @click="emit('open-disconnect-modal')"
+          />
+        </template>
         <UnnnicButton
-          type="secondary"
+          v-else
+          type="primary"
           size="large"
-          iconLeft="arrow_outward"
-          :text="$t('config_chats.desk_copilot.connected.open')"
-          data-testid="desk-copilot-open-button"
-          @click="openProject"
+          :text="$t('config_chats.desk_copilot.connected.reconnect')"
+          data-testid="desk-copilot-reconnect-button"
+          @click="emit('open-reconnect-modal')"
         />
-        <UnnnicPopover
-          :open="openPopover"
-          data-testid="desk-copilot-more-popover"
-          @update:open="openPopover = $event"
-        >
-          <UnnnicPopoverTrigger>
-            <UnnnicButton
-              type="tertiary"
-              size="small"
-              iconCenter="more_vert"
-              data-testid="desk-copilot-more-button"
-            />
-          </UnnnicPopoverTrigger>
-          <UnnnicPopoverContent
-            size="small"
-            side="bottom"
-            align="end"
-          >
-            <UnnnicPopoverOption
-              v-if="hasMultipleProjects"
-              :label="
-                $t('config_chats.desk_copilot.connected.popover_change_option')
-              "
-              icon="edit_square"
-              data-testid="desk-copilot-change-option"
-              @click="handleChange"
-            />
-            <UnnnicPopoverOption
-              :label="
-                $t(
-                  'config_chats.desk_copilot.connected.popover_disconnect_option',
-                )
-              "
-              icon="delete"
-              scheme="fg-critical"
-              data-testid="desk-copilot-disconnect-option"
-              @click="handleDisconnect"
-            />
-          </UnnnicPopoverContent>
-        </UnnnicPopover>
       </section>
     </section>
 
@@ -102,57 +82,81 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref } from 'vue';
+import { computed } from 'vue';
 import moment from 'moment';
 
 import type { CopilotProject } from '@/services/api/resources/chats/copilotProject';
 import { buildCopilotProjectUrl } from '@/utils/copilotProject';
-import { useCopilotProjectsList } from '@/composables/useCopilotProjectsList';
 
 defineOptions({
   name: 'DeskCopilotConnectedProjectCard',
 });
 
-const props = defineProps<{
-  linkedProject: CopilotProject;
-}>();
+const props = withDefaults(
+  defineProps<{
+    linkedProject: CopilotProject;
+    readOnly?: boolean;
+  }>(),
+  {
+    readOnly: false,
+  },
+);
 
 const emit = defineEmits<{
-  'open-change-modal': [];
   'open-disconnect-modal': [];
+  'open-reconnect-modal': [];
 }>();
 
-const { hasMultipleProjects } = useCopilotProjectsList();
-const openPopover = ref(false);
-
-function formatDate(value: string) {
+function formatDate(value?: string) {
   if (!value) return '–';
   const date = moment(value);
   return date.isValid() ? date.format('L') : '–';
 }
 
-const metadata = computed(() => [
-  {
+const metadata = computed(() => {
+  const createdOn = {
     labelKey: 'config_chats.desk_copilot.connected.created_on',
     value: formatDate(props.linkedProject.createdOn),
     testId: 'desk-copilot-created-on',
-  },
-  {
-    labelKey: 'config_chats.desk_copilot.connected.connected_to',
-    value: formatDate(props.linkedProject.connectedOn),
-    testId: 'desk-copilot-connected-on',
-  },
-  {
-    labelKey: 'config_chats.desk_copilot.connected.connected_by',
-    value: props.linkedProject.connectedBy || '–',
-    testId: 'desk-copilot-connected-by',
-  },
-  {
+  };
+  const assignedAgents = {
     labelKey: 'config_chats.desk_copilot.connected.assigned_agents',
     value: String(props.linkedProject.assignedAgents ?? '–'),
     testId: 'desk-copilot-assigned-agents',
-  },
-]);
+  };
+
+  if (props.linkedProject.isConnected) {
+    return [
+      createdOn,
+      {
+        labelKey: 'config_chats.desk_copilot.connected.connected_to',
+        value: formatDate(props.linkedProject.connectedOn),
+        testId: 'desk-copilot-connected-on',
+      },
+      {
+        labelKey: 'config_chats.desk_copilot.connected.connected_by',
+        value: props.linkedProject.connectedBy || '–',
+        testId: 'desk-copilot-connected-by',
+      },
+      assignedAgents,
+    ];
+  }
+
+  return [
+    createdOn,
+    {
+      labelKey: 'config_chats.desk_copilot.connected.disconnect_on',
+      value: formatDate(props.linkedProject.disconnectedOn),
+      testId: 'desk-copilot-disconnected-on',
+    },
+    {
+      labelKey: 'config_chats.desk_copilot.connected.disconnect_by',
+      value: props.linkedProject.disconnectedBy || '–',
+      testId: 'desk-copilot-disconnected-by',
+    },
+    assignedAgents,
+  ];
+});
 
 function openProject() {
   const projectUuid =
@@ -163,16 +167,6 @@ function openProject() {
     '_blank',
     'noopener,noreferrer',
   );
-}
-
-function handleChange() {
-  openPopover.value = false;
-  emit('open-change-modal');
-}
-
-function handleDisconnect() {
-  openPopover.value = false;
-  emit('open-disconnect-modal');
 }
 </script>
 
