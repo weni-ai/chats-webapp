@@ -130,6 +130,7 @@
 import { computed, onMounted, ref, watch } from 'vue';
 import { storeToRefs } from 'pinia';
 import { UnnnicCallAlert } from '@weni/unnnic-system';
+import isMobile from 'is-mobile';
 import SummaryMessage from './SummaryMessage.vue';
 import Disclaimer from './Disclaimer.vue';
 import Cart from './Cart.vue';
@@ -144,11 +145,13 @@ import { useCopilotRoomContext } from '@/composables/assistant/useCopilotRoomCon
 import { useProductCart } from '@/composables/assistant/useProductCart';
 import { useVoiceMode } from '@/composables/assistant/useVoiceMode';
 import { useCopilotConnection } from '@/composables/useCopilotConnection';
+import { useAssistedSalesFeatureFlag } from '@/composables/useAssistedSalesFeatureFlag';
 import i18n from '@/plugins/i18n';
 import { useConfig } from '@/store/modules/config';
 import { useRooms } from '@/store/modules/chats/rooms';
 import { useRoomMessages } from '@/store/modules/chats/roomMessages';
 import { useProfile } from '@/store/modules/profile';
+import { useFeatureFlag } from '@/store/modules/featureFlag';
 
 defineOptions({
   name: 'DeskCopilotTab',
@@ -172,10 +175,14 @@ const emit = defineEmits<{
 const { project } = storeToRefs(useConfig());
 const { activeRoom } = storeToRefs(useRooms());
 const { me } = storeToRefs(useProfile());
+const { featureFlags, featureFlagsLoaded } = storeToRefs(useFeatureFlag());
 const roomMessagesStore = useRoomMessages();
 const { roomMessages } = storeToRefs(roomMessagesStore);
 const agentEmail = computed(() => me.value?.email || undefined);
 const originalContactUrn = computed(() => activeRoom.value?.urn || undefined);
+const isAssistedSalesEnabled = computed(() =>
+  useAssistedSalesFeatureFlag(featureFlags.value),
+);
 
 const currentView = ref<'chat' | 'cart'>('chat');
 
@@ -200,13 +207,15 @@ const {
   isThinking,
   isTyping,
   isLoadingHistory,
+  isConnected,
   suggestions,
   isRecording,
   recordingDurationMs,
   isAudioRecordingSupported,
   isVoiceEnabledByServer,
   fileConfig,
-  sendMessage,
+  sendMessage: sendCopilotMessage,
+  sendHiddenMessage,
   sendOrder,
   sendAttachment,
   startRecording,
@@ -220,7 +229,12 @@ const {
   originalContactUrn,
 );
 
-useCopilotRoomContext(liveConnection, liveRoomUuid, roomMessages);
+const markContextAsProcessedRef = ref(() => {});
+
+function sendMessage(text: string) {
+  markContextAsProcessedRef.value();
+  sendCopilotMessage(text);
+}
 
 const {
   items: cartItems,
@@ -256,6 +270,47 @@ const {
   requestVoiceTokens,
 });
 
+const canChatWithCopilot = computed(
+  () =>
+    !props.isViewMode &&
+    !!activeRoom.value?.user &&
+    !activeRoom.value?.is_waiting,
+);
+
+const canRunProactive = computed(
+  () =>
+    featureFlagsLoaded.value &&
+    isAssistedSalesEnabled.value &&
+    isConfigured.value &&
+    !props.isHistory &&
+    !props.isViewMode &&
+    !!activeRoom.value?.user &&
+    !activeRoom.value?.is_waiting &&
+    activeRoom.value?.user?.email === me.value?.email &&
+    !isMobile(),
+);
+
+const isReady = computed(() => isConnected.value && !isLoadingHistory.value);
+const isBusy = computed(
+  () => isThinking.value || isTyping.value || isVoiceModeActive.value,
+);
+const storageScope = computed(() => ({
+  projectUuid: project.value?.uuid,
+  agentEmail: agentEmail.value,
+}));
+
+const { markContextAsProcessed } = useCopilotRoomContext({
+  connection: liveConnection,
+  roomUuid: liveRoomUuid,
+  roomMessages,
+  enabled: canRunProactive,
+  isReady,
+  isBusy,
+  sendHiddenMessage,
+  storageScope,
+});
+markContextAsProcessedRef.value = markContextAsProcessed;
+
 const {
   listRef,
   bottomAnchorRef,
@@ -266,14 +321,6 @@ const {
 
 const enableRoomSummary = computed(
   () => !!project.value?.config?.has_chats_summary,
-);
-
-// Only ongoing rooms (assigned agent, not waiting/view-mode) can talk to Copilot.
-const canChatWithCopilot = computed(
-  () =>
-    !props.isViewMode &&
-    !!activeRoom.value?.user &&
-    !activeRoom.value?.is_waiting,
 );
 
 async function handleSendSuggestionToRoom(text: string) {
