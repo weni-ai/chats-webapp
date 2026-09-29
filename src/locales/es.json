@@ -911,6 +911,23 @@
         "title": "Ve más allá de los resúmenes de conversación",
         "title_without_summary": "Aprovecha todo el potencial de Desk Copilot"
       },
+      "feedback": {
+        "error": "No se pudo enviar el feedback. Inténtalo de nuevo.",
+        "message_tags": {
+          "confusing_answer": "Respuesta confusa",
+          "did_not_load": "No cargó",
+          "incomplete_answer": "Respuesta incompleta",
+          "incorrect_answer": "Respuesta incorrecta",
+          "no_items_found": "No se encontraron artículos",
+          "out_of_context_items": "Los artículos sugeridos estaban fuera de contexto",
+          "slow_to_load": "Tardó mucho en cargar",
+          "unclear_interface": "Interfaz poco clara"
+        },
+        "other": "Otro",
+        "placeholder": "Escribe tu feedback aquí",
+        "sended": "Tu feedback ha sido enviado.",
+        "title": "¿Qué hay que mejorar?"
+      },
       "summary_title": "Resumen de esta conversación"
     }
   },
@@ -1101,6 +1118,7 @@
     "delete_description": "¿Realmente deseas eliminar el mensaje rápido {shortcut}?",
     "shortcut_tooltip": "Escribe /{shortcut} para usarlo",
     "new": "Nuevo mensaje rápido",
+    "description_new": "Mensaje rápido en el sector {sector}",
     "add": "Agregar mensaje rápido",
     "edit": "Editar mensaje rápido",
     "available_shortcuts": "Atajos disponibles",
@@ -1110,21 +1128,20 @@
     "message_field_placeholder": "Ejemplo: Hola, ¿cómo estás? ¿En qué puedo ayudarte hoy?",
     "successfully_added": "Mensaje rápido agregado",
     "successfully_updated": "Mensaje rápido actualizado",
+    "successfully_deleted": "Mensaje rápido eliminado con éxito",
+    "error_deleting": "No se pudo eliminar el mensaje rápido.",
     "error": "Error al configurar mensaje rápido",
     "no_suggestions": "No se encontraron resultados para el atajo ingresado",
     "disclaimer": "Escribe / (barra) en el campo de mensaje para ver los mensajes rápidos",
     "action_open": "Abrir mensajes rápidos (/)",
     "action_close": "Cerrar mensajes rápidos",
-    "description_new": "Mensaje rápido en el sector {sector}",
-    "error_deleting": "No se pudo eliminar el mensaje rápido.",
-    "successfully_deleted": "Mensaje rápido eliminado con éxito",
     "bulk": {
       "confirmation": {
-        "checkbox_label": "Revisé todos los campos y quiero enviarlo"
+        "checkbox_label": "He revisado todos los campos y quiero enviar el mensaje"
       },
       "contacts": {
         "all": "Todos los contactos",
-        "helper": "Solo los contactos en atención pueden recibir este mensaje",
+        "helper": "Solo los contactos que están en un chat de soporte pueden recibir este mensaje",
         "label": "Contactos"
       },
       "send": "{count, plural, =0 {Enviar a todos (0 contactos)} one {Enviar a todos ({count} contacto)} other {Enviar a todos ({count} contactos)}}",
@@ -1226,25 +1243,30 @@
         "assigned_agents": "Agentes asignados",
         "badge": "Copilot",
         "connected_by": "Conectado por",
-        "connected_to": "Conectado a",
+        "connected_to": "Conectado el",
         "created_on": "Creado el",
-        "description": "Este proyecto se usa exclusivamente para gestionar los agentes de IA de Desk Copilot. Solo es accesible desde esta sección.",
+        "description": "Este proyecto se usa para gestionar los agentes de IA de Desk Copilot. Solo es accesible desde esta sección.",
+        "disconnect": "Desconectar",
+        "disconnect_by": "Desconectado por",
+        "disconnect_on": "Desconectado el",
         "open": "Abrir",
-        "popover_change_option": "Cambiar",
-        "popover_disconnect_option": "Desconectar"
+        "reconnect": "Reconectar"
       },
       "disconnect_modal": {
         "confirm": "Desconectar",
-        "description": "Este proyecto perderá el acceso a la funcionalidad Desk Copilot hasta que se reconecte el proyecto Copilot. El propio proyecto Copilot y sus demás conexiones no se verán afectados.",
-        "error": "No se pudo desconectar el proyecto Copilot",
-        "success": "Proyecto Copilot desconectado con éxito",
+        "description": "Este proyecto perderá el acceso a Desk Copilot hasta que se reconecte un proyecto Copilot.",
+        "error": "No se pudo desconectar el proyecto Copilot.",
+        "success": "¡El proyecto Copilot se desconectó!",
         "title": "Desconectar proyecto Copilot"
+      },
+      "disconnected_disclaimer": {
+        "description": "Para activar Desk Copilot, debes reconectar el proyecto Copilot.",
+        "title": "El proyecto Copilot está desconectado"
       },
       "empty_state": {
         "create_button": "Crear proyecto Copilot",
         "create_disabled_tooltip": "No tienes permiso para crear un proyecto Copilot",
         "description": "Para activar Desk Copilot, conecta este proyecto a un proyecto Copilot donde se gestionan tus agentes de IA.",
-        "select_button": "Seleccionar proyecto Copilot",
         "title": "No hay ningún proyecto Copilot conectado"
       },
       "enable_title": "Activar Desk Copilot",
@@ -1270,23 +1292,19 @@
       },
       "modal": {
         "disclaimer": "Este proyecto Copilot se creará y se conectará automáticamente a este proyecto.",
-        "error": "No se pudo crear el proyecto Copilot debido a un problema técnico",
+        "error": "Error al crear y conectar el proyecto Copilot.",
         "input_label": "Define el nombre del proyecto Copilot",
-        "success": "Proyecto Copilot creado y conectado con éxito",
+        "success": "¡Proyecto Copilot creado y conectado!",
         "title": "Crear proyecto Copilot"
       },
       "new_badge": "Nuevo",
-      "picker_modal": {
-        "assigned_agents_tag": "{count, plural, one {{count} agente asignado} other {{count} agentes asignados}}",
-        "change_button": "Cambiar",
-        "change_error": "No se pudo cambiar el proyecto Copilot",
-        "change_success": "Proyecto Copilot cambiado con éxito",
-        "change_title": "Cambiar proyecto Copilot",
-        "connect_button": "Conectar",
-        "connect_error": "Error al conectar con el proyecto Copilot",
-        "connect_success": "Proyecto Copilot conectado con éxito",
-        "search_placeholder": "Buscar por nombre",
-        "select_title": "Seleccionar proyecto Copilot existente"
+      "no_permission_disclaimer": "Solo los usuarios con permiso de Administrador o Contribuidor pueden activar Desk Copilot. Contacta a uno de estos usuarios de tu equipo para activar la función.",
+      "reconnect_modal": {
+        "confirm": "Reconectar",
+        "description": "Este proyecto recuperará el acceso a Desk Copilot al reconectar el proyecto Copilot.",
+        "error": "No se pudo reconectar el proyecto Copilot.",
+        "success": "¡El proyecto Copilot se reconectó!",
+        "title": "Reconectar proyecto Copilot"
       }
     },
     "changes_saved": "Cambios guardados con éxito",

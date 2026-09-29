@@ -146,7 +146,20 @@ import History from '@/services/api/resources/chats/history';
 import TagGroup from '@/components/TagGroup.vue';
 import ModalClosedChatsFilters from '@/components/chats/Mobile/ModalClosedChatsFilters.vue';
 
-import { parseHistoryContactFilter } from '@/utils/room';
+import {
+  formatHistoryContactFilter,
+  parseHistoryContactFilter,
+} from '@/utils/room';
+
+const HISTORY_ROUTE_QUERY_KEYS = [
+  'contact',
+  'email',
+  'document',
+  'contactUrn',
+  'startDate',
+  'endDate',
+  'protocol',
+];
 
 import ClosedChatsRoomsTableFilters from './RoomsTableFilters.vue';
 
@@ -225,6 +238,10 @@ export default {
     },
   },
 
+  created() {
+    this.seedFiltersFromRoute();
+  },
+
   methods: {
     async getHistoryRooms(paginate) {
       this.isTableLoading = true;
@@ -244,13 +261,6 @@ export default {
       const tagsToReq = tag.map((tag) => tag.label).join(',');
       const sectionToReq = sector[0]?.value === 'all' ? '' : sector[0]?.value;
 
-      const {
-        contact: routeContact,
-        email,
-        document,
-        contactUrn: legacyContactUrn,
-      } = this.$route.query;
-
       const historyParams = {
         offset,
         limit: roomsLimit,
@@ -269,12 +279,6 @@ export default {
           if (parsed.email) historyParams.email = parsed.email;
           if (parsed.document) historyParams.document = parsed.document;
         }
-      } else if (legacyContactUrn?.includes(',')) {
-        historyParams.search = legacyContactUrn;
-      } else {
-        if (routeContact) historyParams.contact = routeContact;
-        if (email) historyParams.email = email;
-        if (document) historyParams.document = document;
       }
 
       try {
@@ -288,6 +292,55 @@ export default {
 
       this.isTableLoading = false;
       this.isPagesLoading = false;
+    },
+
+    seedFiltersFromRoute() {
+      const { contact, email, document, contactUrn, startDate, endDate } =
+        this.$route.query;
+      const hasContactFilter =
+        contact || email || document || contactUrn?.includes(',');
+      const hasDateFilter = startDate || endDate;
+
+      if (!hasContactFilter && !hasDateFilter) return;
+
+      const nextFilters = {
+        ...this.filters,
+        date: { ...this.filters.date },
+      };
+
+      if (contact || email || document) {
+        nextFilters.contact = formatHistoryContactFilter({
+          contact,
+          email,
+          document,
+        });
+      } else if (contactUrn?.includes(',')) {
+        nextFilters.contact = contactUrn;
+      }
+
+      if (startDate || endDate) {
+        nextFilters.date = {
+          start: startDate || nextFilters.date.start,
+          end: endDate || moment().format('YYYY-MM-DD'),
+        };
+      }
+
+      this.filters = nextFilters;
+      this.clearHistoryRouteQuery();
+    },
+
+    clearHistoryRouteQuery() {
+      const query = { ...this.$route.query };
+      const hasHistoryQuery = HISTORY_ROUTE_QUERY_KEYS.some(
+        (key) => query[key],
+      );
+      if (!hasHistoryQuery) return;
+
+      HISTORY_ROUTE_QUERY_KEYS.forEach((key) => {
+        delete query[key];
+      });
+
+      this.$router.replace({ query });
     },
 
     handleShowModalFilters() {
