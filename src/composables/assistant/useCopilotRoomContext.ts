@@ -62,6 +62,21 @@ function createDebouncedFn(fn: () => void, waitMs: number) {
   return { run, cancel };
 }
 
+function processedPayload(pending: RawRoomMessage[]) {
+  const lastMessage = pending.at(-1);
+  if (!lastMessage?.uuid) {
+    return null;
+  }
+
+  return {
+    messageUuid: lastMessage.uuid,
+    createdOn: lastMessage.created_on || '',
+    processedUuids: pending
+      .map((message) => message.uuid)
+      .filter((uuid): uuid is string => !!uuid),
+  };
+}
+
 export function useCopilotRoomContext({
   connection,
   roomUuid,
@@ -77,6 +92,7 @@ export function useCopilotRoomContext({
   let alreadyEligible = false;
   let queuedRetry = false;
   let awaitingInitialLoad = false;
+  let hasBoundRoom = false;
   let burstSilenceTimer: ReturnType<typeof setTimeout> | null = null;
   let burstMaxTimer: ReturnType<typeof setTimeout> | null = null;
   let transcriptionTimer: ReturnType<typeof setTimeout> | null = null;
@@ -161,21 +177,6 @@ export function useCopilotRoomContext({
   function getPending() {
     const lastProcessed = getLastProcessed(storageScope.value, roomUuid.value);
     return findUnansweredMessages(getScopedMessages(), lastProcessed);
-  }
-
-  function processedPayload(pending: RawRoomMessage[]) {
-    const lastMessage = pending.at(-1);
-    if (!lastMessage?.uuid) {
-      return null;
-    }
-
-    return {
-      messageUuid: lastMessage.uuid,
-      createdOn: lastMessage.created_on || '',
-      processedUuids: pending
-        .map((message) => message.uuid)
-        .filter((uuid): uuid is string => !!uuid),
-    };
   }
 
   function scheduleBurst() {
@@ -298,9 +299,10 @@ export function useCopilotRoomContext({
       const previousConnection = previous?.[0];
       const previousRoomUuid = previous?.[1];
       const roomChanged =
-        previous !== undefined &&
+        hasBoundRoom &&
         (connection.value !== previousConnection ||
           roomUuid.value !== previousRoomUuid);
+      hasBoundRoom = true;
 
       if (roomChanged) {
         lastSentContext = null;
