@@ -20,6 +20,7 @@ type RoomMessagesRef = Ref<RawRoomMessage[]>;
 export type CopilotReadStorageScope = {
   projectUuid?: string;
   agentEmail?: string;
+  channelUuid?: string;
 };
 
 export type UseCopilotRoomContextOptions = {
@@ -75,10 +76,27 @@ export function useCopilotRoomContext({
   let inFlight = false;
   let alreadyEligible = false;
   let queuedRetry = false;
+  let awaitingInitialLoad = false;
   let burstSilenceTimer: ReturnType<typeof setTimeout> | null = null;
   let burstMaxTimer: ReturnType<typeof setTimeout> | null = null;
   let transcriptionTimer: ReturnType<typeof setTimeout> | null = null;
   let transcriptionWaitElapsed = false;
+
+  function getScopedMessages() {
+    const currentRoomUuid = roomUuid.value;
+    if (!currentRoomUuid) {
+      return [];
+    }
+
+    return roomMessages.value.filter(
+      (message) => message.room === currentRoomUuid,
+    );
+  }
+
+  function hasCompleteScope() {
+    const scope = storageScope.value;
+    return !!(scope?.projectUuid && scope?.agentEmail && scope?.channelUuid);
+  }
 
   function sendContextNow() {
     const currentConnection = connection.value;
@@ -88,7 +106,7 @@ export function useCopilotRoomContext({
       return;
     }
 
-    const context = buildRoomContext(roomMessages.value);
+    const context = buildRoomContext(getScopedMessages());
     if (!context || context === lastSentContext) {
       return;
     }
@@ -135,13 +153,29 @@ export function useCopilotRoomContext({
       !!isReady.value &&
       !!connection.value?.channelUuid &&
       !!roomUuid.value &&
-      typeof sendHiddenMessage === 'function'
+      typeof sendHiddenMessage === 'function' &&
+      hasCompleteScope()
     );
   }
 
   function getPending() {
     const lastProcessed = getLastProcessed(storageScope.value, roomUuid.value);
-    return findUnansweredMessages(roomMessages.value, lastProcessed);
+    return findUnansweredMessages(getScopedMessages(), lastProcessed);
+  }
+
+  function processedPayload(pending: RawRoomMessage[]) {
+    const lastMessage = pending.at(-1);
+    if (!lastMessage?.uuid) {
+      return null;
+    }
+
+    return {
+      messageUuid: lastMessage.uuid,
+      createdOn: lastMessage.created_on || '',
+      processedUuids: pending
+        .map((message) => message.uuid)
+        .filter((uuid): uuid is string => !!uuid),
+    };
   }
 
   function scheduleBurst() {
@@ -177,15 +211,27 @@ export function useCopilotRoomContext({
     inFlight = true;
 
     try {
-      sendContextNow();
-      await sendHiddenMessage(buildUnansweredTrigger(pending));
+      const trigger = buildUnansweredTrigger(pending);
+      if (
+        roomUuid.value !== currentRoomUuid ||
+        connection.value?.channelUuid !== currentConnection.channelUuid
+      ) {
+        return;
+      }
 
-      const lastMessage = pending.at(-1);
-      if (lastMessage?.uuid) {
-        markProcessed(storageScope.value, currentRoomUuid, {
-          messageUuid: lastMessage.uuid,
-          createdOn: lastMessage.created_on,
-        });
+      sendContextNow();
+      await sendHiddenMessage(trigger);
+
+      if (
+        roomUuid.value !== currentRoomUuid ||
+        connection.value?.channelUuid !== currentConnection.channelUuid
+      ) {
+        return;
+      }
+
+      const payload = processedPayload(pending);
+      if (payload) {
+        markProcessed(storageScope.value, currentRoomUuid, payload);
       }
     } catch (error) {
       console.error(
@@ -235,20 +281,13 @@ export function useCopilotRoomContext({
   function markContextAsProcessed() {
     const currentRoomUuid = roomUuid.value;
     const pending = getPending();
+    const payload = processedPayload(pending);
 
-    if (!currentRoomUuid || !pending.length) {
+    if (!currentRoomUuid || !payload) {
       return;
     }
 
-    const lastMessage = pending.at(-1);
-    if (!lastMessage?.uuid) {
-      return;
-    }
-
-    markProcessed(storageScope.value, currentRoomUuid, {
-      messageUuid: lastMessage.uuid,
-      createdOn: lastMessage.created_on,
-    });
+    markProcessed(storageScope.value, currentRoomUuid, payload);
     cancelBurstTimers();
     cancelTranscriptionTimer();
   }
@@ -259,12 +298,14 @@ export function useCopilotRoomContext({
       const previousConnection = previous?.[0];
       const previousRoomUuid = previous?.[1];
       const roomChanged =
-        connection.value !== previousConnection ||
-        roomUuid.value !== previousRoomUuid;
+        previous !== undefined &&
+        (connection.value !== previousConnection ||
+          roomUuid.value !== previousRoomUuid);
 
       if (roomChanged) {
         lastSentContext = null;
         alreadyEligible = false;
+        awaitingInitialLoad = true;
         cancelBurstTimers();
         cancelTranscriptionTimer();
       }
@@ -289,6 +330,15 @@ export function useCopilotRoomContext({
       }
 
       alreadyEligible = true;
+
+      if (awaitingInitialLoad) {
+        if (getScopedMessages().length) {
+          awaitingInitialLoad = false;
+          void tryFire();
+        }
+        return;
+      }
+
       void tryFire();
     },
     { immediate: true },
@@ -297,7 +347,23 @@ export function useCopilotRoomContext({
   watch(
     roomMessages,
     () => {
+      const scopedMessages = getScopedMessages();
+
+      if (!scopedMessages.length) {
+        cancelBurstTimers();
+        cancelTranscriptionTimer();
+        lastSentContext = null;
+        debouncedSend.run();
+        return;
+      }
+
       debouncedSend.run();
+
+      if (awaitingInitialLoad) {
+        awaitingInitialLoad = false;
+        void tryFire();
+        return;
+      }
 
       if (!canRunProactive()) {
         return;
