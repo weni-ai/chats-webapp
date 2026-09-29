@@ -182,6 +182,11 @@ import { useRoomMessages } from '@/store/modules/chats/roomMessages';
 import { useConfig } from '@/store/modules/config';
 import { useFeatureFlag } from '@/store/modules/featureFlag';
 import { useAssistedSalesFeatureFlag } from '@/composables/useAssistedSalesFeatureFlag';
+import {
+  openDeskCopilotTab,
+  shouldOpenDeskCopilotAfterTakeOver,
+} from '@/composables/useContactInfoTab';
+import { moduleStorage } from '@/utils/storage';
 
 import ChatsLayout from '@/layouts/ChatsLayout/index.vue';
 import ChatHeaderLoading from '@/views/loadings/chat/ChatHeader.vue';
@@ -326,6 +331,10 @@ export default {
         email: '',
         name: '',
       });
+      if (shouldOpenDeskCopilotAfterTakeOver(this.room)) {
+        openDeskCopilotTab();
+        moduleStorage.setItem('isRoomContactInfoOpen', true);
+      }
       this.$router.push({ name: 'room', params: { roomId: this.room.uuid } });
     },
     openTransferModal() {
