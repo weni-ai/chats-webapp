@@ -63,6 +63,7 @@
               :getQuantity="getCartQuantity"
               :readOnly="!canChatWithCopilot"
               @send="handleSendSuggestionToRoom"
+              @send-catalog="handleSendCatalogToRoom"
               @word-revealed="scrollToBottomIfNear()"
               @add-to-cart="addCartItem"
               @increment-cart-item="incrementCartItem"
@@ -145,6 +146,7 @@ import { useCopilotRoomContext } from '@/composables/assistant/useCopilotRoomCon
 import { useProductCart } from '@/composables/assistant/useProductCart';
 import { useVoiceMode } from '@/composables/assistant/useVoiceMode';
 import { useCopilotConnection } from '@/composables/useCopilotConnection';
+import type { CatalogPayload } from '@/services/assistant/buildCatalogPayload';
 import { useAssistedSalesFeatureFlag } from '@/composables/useAssistedSalesFeatureFlag';
 import i18n from '@/plugins/i18n';
 import { useConfig } from '@/store/modules/config';
@@ -333,6 +335,38 @@ async function handleSendSuggestionToRoom(text: string) {
   }
 
   await roomMessagesStore.sendRoomMessage(trimmed, null, null, activeRoomUuid);
+}
+
+const isSendingCatalog = ref(false);
+
+async function handleSendCatalogToRoom({
+  catalog,
+  text,
+}: {
+  catalog: CatalogPayload;
+  text: string;
+}) {
+  const activeRoomUuid = activeRoom.value?.uuid;
+
+  if (
+    isSendingCatalog.value ||
+    !canChatWithCopilot.value ||
+    !catalog ||
+    !activeRoomUuid
+  ) {
+    return;
+  }
+
+  isSendingCatalog.value = true;
+  try {
+    await roomMessagesStore.sendRoomCatalogMessage(
+      catalog,
+      text?.trim() || '',
+      activeRoomUuid,
+    );
+  } finally {
+    isSendingCatalog.value = false;
+  }
 }
 
 async function handlePlaceOrder() {

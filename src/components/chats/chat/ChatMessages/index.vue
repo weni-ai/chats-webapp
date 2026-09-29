@@ -121,7 +121,11 @@
               </ChatsMessage>
               <template v-else>
                 <ChatsMessage
-                  v-if="message.text || isGeolocation(message.media?.[0])"
+                  v-if="
+                    message.text ||
+                    isGeolocation(message.media?.[0]) ||
+                    hasCatalog(message)
+                  "
                   :key="message.uuid"
                   :ref="`message-${message.uuid}`"
                   :type="messageType(message)"
@@ -166,6 +170,12 @@
                       ? message.media?.[0]?.url
                       : message.text
                   }}
+                  <template
+                    v-if="hasCatalog(message)"
+                    #extra
+                  >
+                    <ChatMessageCatalog :catalog="message.catalog" />
+                  </template>
                 </ChatsMessage>
                 <template v-for="media in message.media">
                   <ChatsMessage
@@ -358,6 +368,7 @@ import ChatMessagesFeedbackMessage from './ChatMessagesFeedbackMessage.vue';
 import ChatMessagesInternalNote from './ChatMessageInternalNote/index.vue';
 import ChatMessageAudio from './ChatMessageAudio/ChatMessageAudio.vue';
 import ChatMessagesMediasGrid from './MediasGrid.vue';
+import ChatMessageCatalog from './ChatMessageCatalog.vue';
 
 import { isString } from '@/utils/string';
 import { SEE_ALL_INTERNAL_NOTES_CHIP_CONTENT } from '@/utils/chats';
@@ -379,6 +390,7 @@ export default {
     ChatMessagesInternalNote,
     ChatMessageAudio,
     ChatMessagesMediasGrid,
+    ChatMessageCatalog,
   },
 
   props: {
@@ -729,6 +741,14 @@ export default {
         message.user?.email === this.viewedAgent.email
         ? 'sent'
         : 'received';
+    },
+
+    hasCatalog(message) {
+      return (
+        !!message?.catalog &&
+        Array.isArray(message.catalog.products) &&
+        message.catalog.products.length > 0
+      );
     },
 
     isMessageByTwoDifferentUsers(message) {
