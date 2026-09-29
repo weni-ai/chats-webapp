@@ -28,6 +28,8 @@ vi.mock('@/services/api/resources/chats/flowsTrigger.js', () => ({
     getListOfGroups: vi.fn(),
     checkContact: vi.fn(),
     sendFlow: vi.fn(),
+    listOutOfWhatsappWindowContacts: vi.fn(),
+    startOutOfWhatsappWindowFlow: vi.fn(),
   },
 }));
 
@@ -214,6 +216,12 @@ const setupDefaultMocks = () => {
   });
   FlowsTriggerService.checkContact.mockResolvedValue({ show_warning: false });
   FlowsTriggerService.sendFlow.mockResolvedValue({});
+  FlowsTriggerService.listOutOfWhatsappWindowContacts.mockResolvedValue({
+    results: [],
+    next: null,
+    count: 0,
+  });
+  FlowsTriggerService.startOutOfWhatsappWindowFlow.mockResolvedValue({});
 };
 
 const createWrapper = async ({
@@ -491,6 +499,35 @@ describe('FlowsTrigger/index.vue', () => {
         },
         seconds: 5,
       });
+      expect(wrapper.emitted('close')).toBeTruthy();
+    });
+
+    it('should start the expired window flow with ignored contacts', async () => {
+      const wrapper = await createWrapper({
+        piniaState: {
+          featureFlag: {
+            featureFlags: { active_features: ['weniChatsFlow24hWindow'] },
+          },
+        },
+      });
+      wrapper.vm.expiredIgnoredContacts = ['contact-2'];
+      wrapper.vm.expiredSelectedCount = 1;
+      wrapper.vm.selectedFlow = 'flow-uuid-1';
+      wrapper.vm.projectUuidFlow = 'project-uuid-1';
+
+      await wrapper.vm.sendFlowToContacts();
+      await flushPromises();
+
+      expect(
+        FlowsTriggerService.startOutOfWhatsappWindowFlow,
+      ).toHaveBeenCalledWith(
+        {
+          flow: 'flow-uuid-1',
+          ignored_contacts: ['contact-2'],
+        },
+        'project-uuid-1',
+      );
+      expect(FlowsTriggerService.sendFlow).not.toHaveBeenCalled();
       expect(wrapper.emitted('close')).toBeTruthy();
     });
 

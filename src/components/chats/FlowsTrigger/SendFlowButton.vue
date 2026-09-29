@@ -56,6 +56,14 @@ export default {
       type: Object,
       default: null,
     },
+    expiredWindow: {
+      type: Boolean,
+      default: false,
+    },
+    ignoredContacts: {
+      type: Array,
+      default: () => [],
+    },
   },
   emits: ['send-flow-started', 'send-flow-finished', 'back-to-contact-list'],
 
@@ -71,6 +79,7 @@ export default {
     }),
     ...mapState(useProfile, ['me']),
     noHasContacts() {
+      if (this.expiredWindow) return false;
       return !this.selectedContact && this.contacts.length === 0;
     },
     hasTemplateVariables() {
@@ -101,6 +110,34 @@ export default {
       this.isLoading = true;
       this.$emit('send-flow-started');
 
+      let hasError = false;
+      try {
+        hasError = this.expiredWindow
+          ? await this.sendExpiredWindowFlow()
+          : await this.sendFlowToContacts(params);
+      } finally {
+        this.$emit('send-flow-finished', { hasError });
+        this.isLoading = false;
+      }
+    },
+
+    async sendExpiredWindowFlow() {
+      try {
+        await FlowsTrigger.startOutOfWhatsappWindowFlow(
+          {
+            flow: this.selectedFlow,
+            ignored_contacts: this.ignoredContacts,
+          },
+          this.projectUuidFlow,
+        );
+        return false;
+      } catch (error) {
+        console.error(error);
+        return true;
+      }
+    },
+
+    async sendFlowToContacts(params) {
       const contactsToSendFlow = this.selectedContact
         ? [this.selectedContact]
         : this.contacts;
@@ -132,12 +169,8 @@ export default {
         }
       };
 
-      try {
-        await Promise.all(contactsToSendFlow.map(sendFlowToContact));
-      } finally {
-        this.$emit('send-flow-finished', { hasError });
-        this.isLoading = false;
-      }
+      await Promise.all(contactsToSendFlow.map(sendFlowToContact));
+      return hasError;
     },
   },
 };

@@ -29,6 +29,7 @@ vi.mock('@/services/api/resources/chats/flowsTrigger', () => ({
   default: {
     sendFlow: vi.fn(),
     getFlowTemplates: vi.fn(),
+    startOutOfWhatsappWindowFlow: vi.fn(),
   },
 }));
 
@@ -314,5 +315,35 @@ describe('SendFlowButton', () => {
       ([payload]) => payload.contacts,
     );
     expect(contactsCalled).toEqual([['c1'], ['c2'], ['c3']]);
+  });
+
+  it('issues one expired-window POST with ignored contacts', async () => {
+    FlowsTrigger.startOutOfWhatsappWindowFlow.mockResolvedValue({});
+
+    await wrapper.setProps({
+      selectedFlow: 'flow-uuid',
+      projectUuidFlow: 'project-uuid',
+      expiredWindow: true,
+      ignoredContacts: ['contact-2'],
+      contacts: [],
+      cachedTemplate: cachedTemplateWithVariables,
+    });
+
+    await wrapper.vm.doSendFlow({
+      nomecontato: 'static text',
+    });
+
+    expect(FlowsTrigger.sendFlow).not.toHaveBeenCalled();
+    expect(FlowsTrigger.startOutOfWhatsappWindowFlow).toHaveBeenCalledTimes(1);
+    expect(FlowsTrigger.startOutOfWhatsappWindowFlow).toHaveBeenCalledWith(
+      {
+        flow: 'flow-uuid',
+        ignored_contacts: ['contact-2'],
+      },
+      'project-uuid',
+    );
+    expect(wrapper.emitted('send-flow-finished')[0][0]).toEqual({
+      hasError: false,
+    });
   });
 });

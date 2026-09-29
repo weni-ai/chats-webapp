@@ -50,6 +50,8 @@
         :projectUuidFlow="projectUuidFlow"
         :isCheckingTemplate="isCheckingTemplate"
         :cachedTemplate="cachedTemplate"
+        :expiredWindow="expiredWindow"
+        :ignoredContacts="ignoredContacts"
         data-testid="send-flow-button"
         @back-to-contact-list="backToContactList"
         @send-flow-started="openModalProgress"
@@ -99,6 +101,14 @@ export default {
       type: Boolean,
       default: false,
     },
+    expiredWindow: {
+      type: Boolean,
+      default: false,
+    },
+    ignoredContacts: {
+      type: Array,
+      default: () => [],
+    },
   },
   emits: [
     'back',
@@ -131,6 +141,7 @@ export default {
     },
 
     noHasContacts() {
+      if (this.expiredWindow) return false;
       return !this.selectedContact && this.contacts.length === 0;
     },
   },

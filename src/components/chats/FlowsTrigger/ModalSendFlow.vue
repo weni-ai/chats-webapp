@@ -27,6 +27,8 @@
           :isProjectPrincipal="isProjectPrincipal"
           :isCheckingTemplate="isCheckingTemplate"
           :cachedTemplate="cachedTemplate"
+          :expiredWindow="expiredWindow"
+          :ignoredContacts="ignoredContacts"
           data-testid="send-flow-button"
           @send-flow-finished="finishSendFlow"
         />
@@ -80,6 +82,14 @@ export default {
     isProjectPrincipal: {
       type: Boolean,
       default: false,
+    },
+    expiredWindow: {
+      type: Boolean,
+      default: false,
+    },
+    ignoredContacts: {
+      type: Array,
+      default: () => [],
     },
   },
   emits: ['close', 'send-flow-finished'],
