@@ -8,13 +8,9 @@ export type CopilotProject = {
   uuid: string;
   projectUuid?: string;
   connectedBy?: string;
-};
-
-export type CopilotProjectSummary = {
-  name: string;
-  assignedAgents: number;
-  uuid: string;
-  projectUuid?: string;
+  isConnected: boolean;
+  disconnectedBy?: string;
+  disconnectedOn?: string;
 };
 
 type CopilotProjectResponse = {
@@ -26,6 +22,9 @@ type CopilotProjectResponse = {
   project_uuid?: string;
   connected_by?: string;
   connect_by?: string;
+  is_connected?: boolean;
+  disconnect_by?: string;
+  disconnect_on?: string;
 };
 
 const IS_MOCKED = false;
@@ -38,6 +37,7 @@ const MOCKED_COPILOT_PROJECT: CopilotProject = {
   uuid: '1234567890',
   projectUuid: 'project-1234567890',
   connectedBy: 'test@example.com',
+  isConnected: true,
 };
 
 export function normalizeCopilotProject(data: unknown): CopilotProject | null {
@@ -61,28 +61,12 @@ export function normalizeCopilotProject(data: unknown): CopilotProject | null {
       ? String(project.project_uuid)
       : undefined,
     connectedBy: String(project.connected_by ?? project.connect_by ?? ''),
-  };
-}
-
-export function normalizeCopilotProjectSummary(
-  data: unknown,
-): CopilotProjectSummary | null {
-  if (!data || typeof data !== 'object' || Array.isArray(data)) {
-    return null;
-  }
-
-  const project = data as CopilotProjectResponse;
-
-  if (!project.uuid) {
-    return null;
-  }
-
-  return {
-    name: String(project.name ?? ''),
-    assignedAgents: Number(project.assigned_agents ?? 0),
-    uuid: String(project.uuid),
-    projectUuid: project.project_uuid
-      ? String(project.project_uuid)
+    isConnected: project.is_connected !== false,
+    disconnectedBy: project.disconnect_by
+      ? String(project.disconnect_by)
+      : undefined,
+    disconnectedOn: project.disconnect_on
+      ? String(project.disconnect_on)
       : undefined,
   };
 }
@@ -97,33 +81,6 @@ export default {
       `/project/copilot/linked_project/${projectUuid}`,
     );
     return normalizeCopilotProject(response.data);
-  },
-
-  async listExistingProjects(
-    orgUuid: string,
-  ): Promise<CopilotProjectSummary[]> {
-    if (IS_MOCKED) {
-      return [
-        {
-          name: MOCKED_COPILOT_PROJECT.name,
-          assignedAgents: MOCKED_COPILOT_PROJECT.assignedAgents,
-          uuid: MOCKED_COPILOT_PROJECT.uuid,
-          projectUuid: MOCKED_COPILOT_PROJECT.projectUuid,
-        },
-      ];
-    }
-
-    const response = await http.get<CopilotProjectResponse[]>(
-      `/project/copilot/list_existing_projects/${orgUuid}`,
-    );
-
-    if (!Array.isArray(response.data)) {
-      return [];
-    }
-
-    return response.data
-      .map(normalizeCopilotProjectSummary)
-      .filter((project): project is CopilotProjectSummary => project !== null);
   },
 
   async create(name: string, projectUuid: string): Promise<CopilotProject> {
@@ -142,17 +99,14 @@ export default {
     return project;
   },
 
-  async update(
-    currentProjectUuid: string,
-    newCopilotProjectUuid: string,
-  ): Promise<CopilotProject> {
+  async reconnect(copilotProjectUuid: string): Promise<CopilotProject> {
     if (IS_MOCKED) {
-      return MOCKED_COPILOT_PROJECT;
+      return { ...MOCKED_COPILOT_PROJECT, isConnected: true };
     }
 
     const response = await http.put<CopilotProjectResponse>(
-      `/project/copilot/update/${currentProjectUuid}`,
-      { new_uuid: newCopilotProjectUuid },
+      `/project/copilot/update/${copilotProjectUuid}`,
+      { is_connected: true },
     );
     const project = normalizeCopilotProject(response.data);
 
@@ -160,7 +114,7 @@ export default {
       throw new Error('Invalid copilot project response');
     }
 
-    return project;
+    return { ...project, isConnected: true };
   },
 
   async remove(copilotProjectUuid: string): Promise<void> {

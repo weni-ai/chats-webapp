@@ -146,6 +146,7 @@
 </template>
 
 <script>
+import isMobile from 'is-mobile';
 import { format as dateFnsFormat, subYears as dateFnsSubYears } from 'date-fns';
 import { mapActions, mapState, mapWritableState } from 'pinia';
 
@@ -310,14 +311,27 @@ export default {
         'yyyy-MM-dd',
       );
 
+      const query = {
+        ...buildHistoryContactQuery(this.room),
+        protocol: this.room.protocol,
+        startDate: A_YEAR_AGO,
+        from: this.room.uuid,
+      };
+
+      if (isMobile()) {
+        this.$router.push({
+          name: 'home',
+          query: {
+            ...query,
+            view: 'history',
+          },
+        });
+        return;
+      }
+
       this.$router.push({
         name: 'closed-rooms',
-        query: {
-          ...buildHistoryContactQuery(this.room),
-          protocol: this.room.protocol,
-          startDate: A_YEAR_AGO,
-          from: this.room.uuid,
-        },
+        query,
       });
     },
     openTransferModal() {
