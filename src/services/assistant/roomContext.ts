@@ -11,6 +11,7 @@ export type RawRoomMessage = {
   uuid?: string;
   text?: string | null;
   created_on?: string;
+  room?: string;
   contact?: unknown;
   user?: unknown;
   internal_note?: unknown;
