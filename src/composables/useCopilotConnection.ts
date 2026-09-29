@@ -4,7 +4,6 @@ import { storeToRefs } from 'pinia';
 import { useAssistedSalesFeatureFlag } from '@/composables/useAssistedSalesFeatureFlag';
 import Copilot, {
   extractSectorUuid,
-  getMockCopilotConnection,
   type CopilotConnection,
   type CopilotConnectionItem,
 } from '@/services/api/resources/chats/copilot';
@@ -84,11 +83,6 @@ export function useCopilotConnection(
   }
 
   const connection = computed<CopilotConnection | undefined>(() => {
-    const mockConnection = getMockCopilotConnection();
-    if (mockConnection) {
-      return mockConnection;
-    }
-
     if (!connections.value.length) {
       return undefined;
     }
@@ -137,10 +131,6 @@ export function useCopilotConnection(
 export function isCopilotConnectionConfigured(
   room?: CopilotRoom | null,
 ): boolean {
-  if (getMockCopilotConnection()) {
-    return true;
-  }
-
   if (!connections.value.length) {
     return false;
   }
