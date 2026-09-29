@@ -48,6 +48,12 @@ declare module '@weni/webchat-service' {
     quantity: number;
   };
 
+  export type SendMessageOptions = {
+    hidden?: boolean;
+    fromConversationStarter?: boolean;
+    [key: string]: unknown;
+  };
+
   export type Message = {
     id: string;
     type: string;
@@ -56,6 +62,7 @@ declare module '@weni/webchat-service' {
     timestamp: number;
     direction: 'incoming' | 'outgoing';
     status: string;
+    hidden?: boolean;
     quick_replies?: Array<string | { title?: string; text?: string }>;
     metadata?: Record<string, unknown> & {
       filename?: string;
@@ -91,6 +98,10 @@ declare module '@weni/webchat-service' {
     TYPING_START: string;
     TYPING_STOP: string;
     CART_UPDATED: string;
+    CONNECTED: string;
+    DISCONNECTED: string;
+    RECONNECTING: string;
+    RECONNECT_SCHEDULED: string;
     CONNECTION_STATUS_CHANGED: string;
     HISTORY_LOADED: string;
     STATE_CHANGED: string;
@@ -128,10 +139,13 @@ declare module '@weni/webchat-service' {
     destroy(): void;
     isConnected(): boolean;
     isConnecting(): boolean;
+    isReconnecting(): boolean;
+    reconnectNow(): Promise<unknown>;
+    getConnectionStatus(): string;
     setContext(_context: string): void;
     getContext(): string;
     getMessages(): Message[];
-    sendMessage(_text: string, _options?: Record<string, unknown>): void;
+    sendMessage(_text: string, _options?: SendMessageOptions): void;
     sendAttachment(_file: File): void | Promise<void>;
     sendAudio(_payload: SendAudioPayload): void | Promise<void>;
     sendOrder(_productItems: OrderProductItem[]): Promise<unknown>;

@@ -51,7 +51,11 @@ function ensureConnected(service: WeniWebchatService, key: string) {
     return;
   }
 
-  service.connect().catch((error) => {
+  const reconnect = service.isReconnecting?.()
+    ? service.reconnectNow()
+    : service.connect();
+
+  reconnect.catch((error) => {
     console.error(`Failed to reconnect copilot service for ${key}:`, error);
   });
 }
