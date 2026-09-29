@@ -10,7 +10,12 @@ import { markProcessed } from '@/utils/copilotReadStorage';
 
 const processedByRoom: Record<
   string,
-  { messageUuid: string; createdOn: string; processedAt: number }
+  {
+    messageUuid: string;
+    createdOn: string;
+    processedAt: number;
+    processedUuids?: string[];
+  }
 > = {};
 
 vi.mock('@/services/copilot/copilotSocketManager', () => ({
@@ -23,16 +28,25 @@ vi.mock('@/utils/copilotReadStorage', () => ({
   getLastProcessed: vi.fn(
     (_scope: unknown, roomUuid: string) => processedByRoom[roomUuid] || null,
   ),
+  getProcessedUuids: vi.fn(
+    (_scope: unknown, roomUuid: string) =>
+      processedByRoom[roomUuid]?.processedUuids || [],
+  ),
   markProcessed: vi.fn(
     (
       _scope: unknown,
       roomUuid: string,
-      payload: { messageUuid: string; createdOn?: string },
+      payload: {
+        messageUuid: string;
+        createdOn?: string;
+        processedUuids?: string[];
+      },
     ) => {
       processedByRoom[roomUuid] = {
         messageUuid: payload.messageUuid,
         createdOn: payload.createdOn || '',
         processedAt: Date.now(),
+        processedUuids: payload.processedUuids || [payload.messageUuid],
       };
     },
   ),
@@ -51,18 +65,21 @@ const connectionValue: CopilotConnection = {
 const storageScopeValue = {
   projectUuid: 'project-1',
   agentEmail: 'agent@example.com',
+  channelUuid: 'channel-1',
 };
 
 function contactMessage(
   text: string,
   uuid = 'msg-1',
   createdOn = '2024-01-01T00:00:00Z',
+  room = 'room-1',
 ): RawRoomMessage {
   return {
     uuid,
     text,
     contact: { name: 'Cliente' },
     created_on: createdOn,
+    room,
   };
 }
 
@@ -70,12 +87,14 @@ function agentMessage(
   text: string,
   uuid = 'agent-1',
   createdOn = '2024-01-01T00:01:00Z',
+  room = 'room-1',
 ): RawRoomMessage {
   return {
     uuid,
     text,
     user: { email: 'agent@example.com' },
     created_on: createdOn,
+    room,
   };
 }
 
@@ -206,7 +225,9 @@ describe('useCopilotRoomContext', () => {
     vi.clearAllMocks();
 
     roomUuid.value = 'room-2';
-    roomMessages.value = [contactMessage('Sala 2')];
+    roomMessages.value = [
+      contactMessage('Sala 2', 'msg-2', '2024-01-01T00:00:00Z', 'room-2'),
+    ];
     await flush();
 
     expect(copilotSocketManager.setRoomContext).toHaveBeenCalledWith(
@@ -247,6 +268,7 @@ describe('useCopilotRoomContext', () => {
         isReady?: boolean;
         isBusy?: boolean;
         sendHiddenMessage?: ReturnType<typeof vi.fn>;
+        storageScope?: typeof storageScopeValue;
       } = {},
     ) {
       const connection = ref<CopilotConnection | undefined>(connectionValue);
@@ -257,7 +279,9 @@ describe('useCopilotRoomContext', () => {
       const isBusy = ref(overrides.isBusy ?? false);
       const sendHiddenMessage =
         overrides.sendHiddenMessage || vi.fn().mockResolvedValue(undefined);
-      const storageScope = ref(storageScopeValue);
+      const storageScope = ref(
+        overrides.storageScope || { ...storageScopeValue },
+      );
 
       const orchestrator = useCopilotRoomContext({
         connection,
@@ -402,6 +426,7 @@ describe('useCopilotRoomContext', () => {
         messageUuid: 'msg-1',
         createdOn: '2024-01-01T00:00:00Z',
         processedAt: 1,
+        processedUuids: ['msg-1'],
       };
 
       const { sendHiddenMessage } = setup({
@@ -509,6 +534,100 @@ describe('useCopilotRoomContext', () => {
       await flush();
 
       expect(sendHiddenMessage).toHaveBeenCalledTimes(1);
+    });
+
+    it('does not send the previous room context or trigger while messages are stale', async () => {
+      const { sendHiddenMessage, roomUuid, roomMessages } = setup({
+        messages: [contactMessage('Sala A', 'a-1')],
+      });
+      await flush();
+
+      expect(sendHiddenMessage).toHaveBeenCalledTimes(1);
+      expect(sendHiddenMessage.mock.calls[0][0]).toContain('Sala A');
+      vi.clearAllMocks();
+
+      roomUuid.value = 'room-2';
+      await flush();
+
+      expect(copilotSocketManager.setRoomContext).not.toHaveBeenCalled();
+      expect(sendHiddenMessage).not.toHaveBeenCalled();
+      expect(markProcessed).not.toHaveBeenCalled();
+
+      roomMessages.value = [
+        contactMessage('Sala B', 'b-1', '2024-01-01T00:00:00Z', 'room-2'),
+      ];
+      await flush();
+
+      expect(sendHiddenMessage).toHaveBeenCalledTimes(1);
+      expect(sendHiddenMessage.mock.calls[0][0]).toContain('Sala B');
+      expect(sendHiddenMessage.mock.calls[0][0]).not.toContain('Sala A');
+      expect(copilotSocketManager.setRoomContext).toHaveBeenCalledWith(
+        'room-2',
+        connectionValue,
+        'Contact: Sala B',
+      );
+    });
+
+    it('does not fire without a complete storage scope', async () => {
+      const { sendHiddenMessage } = setup({
+        messages: [contactMessage('Oi')],
+        storageScope: {
+          projectUuid: 'project-1',
+          agentEmail: 'agent@example.com',
+          channelUuid: '',
+        },
+      });
+      await flush();
+      vi.advanceTimersByTime(15000);
+      await flush();
+
+      expect(sendHiddenMessage).not.toHaveBeenCalled();
+      expect(markProcessed).not.toHaveBeenCalled();
+    });
+
+    it('does not reprocess a uuid already in processedUuids even if createdOn is newer', async () => {
+      processedByRoom['room-1'] = {
+        messageUuid: 'msg-old',
+        createdOn: '2024-01-01T00:00:00Z',
+        processedAt: 1,
+        processedUuids: ['msg-old'],
+      };
+
+      const { sendHiddenMessage } = setup({
+        messages: [
+          contactMessage('já vista', 'msg-old', '2024-01-01T00:02:00Z'),
+          contactMessage('nova', 'msg-new', '2024-01-01T00:03:00Z'),
+        ],
+      });
+      await flush();
+
+      expect(sendHiddenMessage).toHaveBeenCalledTimes(1);
+      expect(sendHiddenMessage.mock.calls[0][0]).toContain('Contact: nova');
+      expect(sendHiddenMessage.mock.calls[0][0]).not.toContain('já vista');
+    });
+
+    it('does not mark the previous room as processed if the room changes during send', async () => {
+      let resolveSend: (() => void) | undefined;
+      const sendHiddenMessage = vi.fn(
+        () =>
+          new Promise<void>((resolve) => {
+            resolveSend = resolve;
+          }),
+      );
+      const { roomUuid } = setup({
+        messages: [contactMessage('Sala A', 'a-1')],
+        sendHiddenMessage,
+      });
+      await flush();
+
+      expect(sendHiddenMessage).toHaveBeenCalledTimes(1);
+      expect(markProcessed).not.toHaveBeenCalled();
+
+      roomUuid.value = 'room-2';
+      resolveSend?.();
+      await flush();
+
+      expect(markProcessed).not.toHaveBeenCalled();
     });
   });
 });

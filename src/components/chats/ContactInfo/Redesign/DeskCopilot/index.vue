@@ -297,6 +297,7 @@ const isBusy = computed(
 const storageScope = computed(() => ({
   projectUuid: project.value?.uuid,
   agentEmail: agentEmail.value,
+  channelUuid: liveConnection.value?.channelUuid,
 }));
 
 const { markContextAsProcessed } = useCopilotRoomContext({

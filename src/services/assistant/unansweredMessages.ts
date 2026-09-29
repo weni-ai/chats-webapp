@@ -5,6 +5,7 @@ export const UNANSWERED_TRIGGER_PREFIX = '[desk_copilot:unanswered_messages]';
 export type LastProcessedMessage = {
   messageUuid?: string;
   createdOn?: string;
+  processedUuids?: string[];
 } | null;
 
 export function isUnansweredTrigger(text?: string | null): boolean {
@@ -57,31 +58,31 @@ export function findUnansweredMessages(
       (message) => isContactMessage(message) && toContextLine(message) !== null,
     );
 
-  if (!lastProcessed?.messageUuid && !lastProcessed?.createdOn) {
-    return unanswered;
+  const processedUuids = new Set(
+    (lastProcessed?.processedUuids || []).filter(Boolean),
+  );
+  if (lastProcessed?.messageUuid) {
+    processedUuids.add(lastProcessed.messageUuid);
   }
 
-  const processedIndex = lastProcessed.messageUuid
-    ? unanswered.findIndex(
-        (message) => message.uuid === lastProcessed.messageUuid,
-      )
-    : -1;
-
-  if (processedIndex >= 0) {
-    return unanswered.slice(processedIndex + 1);
+  let remaining = unanswered;
+  if (processedUuids.size) {
+    remaining = unanswered.filter(
+      (message) => !message.uuid || !processedUuids.has(message.uuid),
+    );
   }
 
-  if (lastProcessed.createdOn) {
+  if (lastProcessed?.createdOn) {
     const processedTime = Date.parse(lastProcessed.createdOn);
     if (!Number.isNaN(processedTime)) {
-      return unanswered.filter((message) => {
+      remaining = remaining.filter((message) => {
         const createdTime = Date.parse(message.created_on || '');
         return !Number.isNaN(createdTime) && createdTime > processedTime;
       });
     }
   }
 
-  return unanswered;
+  return remaining;
 }
 
 export function buildUnansweredTrigger(messages: RawRoomMessage[]): string {

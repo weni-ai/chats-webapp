@@ -127,3 +127,25 @@ export function useCopilotConnection(
     reload,
   };
 }
+
+export function isCopilotConnectionConfigured(
+  room?: CopilotRoom | null,
+): boolean {
+  if (!connections.value.length) {
+    return false;
+  }
+
+  const { isPrimaryProject } = useConfig();
+  if (!isPrimaryProject) {
+    return !!connections.value[0]?.conection;
+  }
+
+  const sectorUuid = room?.queue?.sector;
+  if (!sectorUuid) {
+    return false;
+  }
+
+  return connections.value.some(
+    (item) => extractSectorUuid(item) === sectorUuid,
+  );
+}

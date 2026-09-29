@@ -8,6 +8,7 @@ import { useConfig } from '@/store/modules/config';
 import { useFeatureFlag } from '@/store/modules/featureFlag';
 import Copilot from '@/services/api/resources/chats/copilot';
 import {
+  isCopilotConnectionConfigured,
   resetCopilotConnectionState,
   useCopilotConnection,
 } from '../useCopilotConnection';
@@ -184,5 +185,17 @@ describe('useCopilotConnection', () => {
 
     expect(isConfigured.value).toBe(false);
     expect(connection.value).toBeUndefined();
+  });
+
+  it('exposes configuration from loaded connections without a new watcher', async () => {
+    Copilot.listConnections.mockResolvedValue([
+      { conection: defaultConnection },
+    ]);
+    enableAssistedSales();
+    useCopilotConnection();
+    await nextTick();
+    await flushPromises();
+
+    expect(isCopilotConnectionConfigured()).toBe(true);
   });
 });
