@@ -116,6 +116,34 @@ describe('unansweredMessages', () => {
     ).toEqual(['c-2']);
   });
 
+  it('excludes any uuid in processedUuids even when createdOn is out of order', () => {
+    const messages = [
+      contactMessage({
+        uuid: 'c-old',
+        text: 'já vista',
+        created_on: '2024-01-01T00:06:00Z',
+      }),
+      contactMessage({
+        uuid: 'c-ancient',
+        text: 'antiga',
+        created_on: '2024-01-01T00:03:00Z',
+      }),
+      contactMessage({
+        uuid: 'c-new',
+        text: 'nova',
+        created_on: '2024-01-01T00:05:00Z',
+      }),
+    ];
+
+    expect(
+      findUnansweredMessages(messages, {
+        messageUuid: 'c-old',
+        createdOn: '2024-01-01T00:04:00Z',
+        processedUuids: ['c-old'],
+      }).map((message) => message.uuid),
+    ).toEqual(['c-new']);
+  });
+
   it('uses createdOn when the processed uuid is no longer loaded', () => {
     const messages = [
       contactMessage({

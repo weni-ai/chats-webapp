@@ -2,18 +2,27 @@ import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 
 import {
   MAX_COPILOT_READ_ROOMS,
+  MAX_PROCESSED_UUIDS,
+  buildCopilotReadEntryKey,
   buildCopilotReadStorageKey,
   clearRoom,
   getLastProcessed,
+  getProcessedUuids,
   markProcessed,
 } from '@/utils/copilotReadStorage';
 import { moduleStorage } from '@/utils/storage';
 
-const SCOPE = { projectUuid: 'project-1', agentEmail: 'agent@example.com' };
+const SCOPE = {
+  projectUuid: 'project-1',
+  agentEmail: 'agent@example.com',
+  channelUuid: 'channel-1',
+};
 const STORAGE_KEY = buildCopilotReadStorageKey(
   SCOPE.projectUuid,
   SCOPE.agentEmail,
 );
+const ROOM_1_KEY = buildCopilotReadEntryKey(SCOPE.channelUuid, 'room-1');
+const ROOM_2_KEY = buildCopilotReadEntryKey(SCOPE.channelUuid, 'room-2');
 
 describe('copilotReadStorage', () => {
   let mockLocalStorage;
@@ -46,7 +55,7 @@ describe('copilotReadStorage', () => {
     vi.useRealTimers();
   });
 
-  it('stores only identifiers for a room', () => {
+  it('stores identifiers and processed uuids for a channel and room', () => {
     const now = 1_700_000_000_000;
     vi.spyOn(Date, 'now').mockReturnValue(now);
 
@@ -56,42 +65,118 @@ describe('copilotReadStorage', () => {
     });
 
     expect(moduleStorage.getItem(STORAGE_KEY)).toEqual({
-      'room-1': {
+      [ROOM_1_KEY]: {
         messageUuid: 'msg-1',
         createdOn: '2024-01-01T00:00:00Z',
         processedAt: now,
+        processedUuids: ['msg-1'],
       },
     });
     expect(getLastProcessed(SCOPE, 'room-1').messageUuid).toBe('msg-1');
+    expect(getProcessedUuids(SCOPE, 'room-1')).toEqual(['msg-1']);
   });
 
-  it('isolates registries by project and agent', () => {
+  it('isolates registries by project, agent and channel', () => {
     markProcessed(SCOPE, 'room-1', { messageUuid: 'msg-1' });
     markProcessed(
-      { projectUuid: 'project-2', agentEmail: SCOPE.agentEmail },
+      {
+        projectUuid: 'project-2',
+        agentEmail: SCOPE.agentEmail,
+        channelUuid: SCOPE.channelUuid,
+      },
       'room-1',
       { messageUuid: 'other' },
     );
+    markProcessed({ ...SCOPE, channelUuid: 'channel-2' }, 'room-1', {
+      messageUuid: 'channel-2-msg',
+    });
 
     expect(getLastProcessed(SCOPE, 'room-1').messageUuid).toBe('msg-1');
+    expect(
+      getLastProcessed({ ...SCOPE, channelUuid: 'channel-2' }, 'room-1')
+        .messageUuid,
+    ).toBe('channel-2-msg');
   });
 
-  it('treats corrupt storage as empty', () => {
+  it('does not read or write without a complete scope', () => {
+    markProcessed(
+      { projectUuid: SCOPE.projectUuid, agentEmail: SCOPE.agentEmail },
+      'room-1',
+      { messageUuid: 'msg-1' },
+    );
+
+    expect(getLastProcessed(SCOPE, 'room-1')).toBeNull();
+    expect(
+      getLastProcessed(
+        { projectUuid: SCOPE.projectUuid, agentEmail: SCOPE.agentEmail },
+        'room-1',
+      ),
+    ).toBeNull();
+    expect(moduleStorage.getItem(STORAGE_KEY)).toBeNull();
+  });
+
+  it('treats corrupt storage as empty and ignores legacy room-only keys', () => {
     moduleStorage.setItem(STORAGE_KEY, 'not-an-object');
     expect(getLastProcessed(SCOPE, 'room-1')).toBeNull();
 
     moduleStorage.setItem(STORAGE_KEY, { 'room-1': { bad: true } });
     expect(getLastProcessed(SCOPE, 'room-1')).toBeNull();
+
+    moduleStorage.setItem(STORAGE_KEY, {
+      'room-1': {
+        messageUuid: 'legacy',
+        createdOn: '2024-01-01T00:00:00Z',
+        processedAt: 1,
+      },
+    });
+    expect(getLastProcessed(SCOPE, 'room-1')).toBeNull();
   });
 
-  it('clears a single room', () => {
+  it('accumulates processed uuids and keeps only the last 100', () => {
+    markProcessed(SCOPE, 'room-1', {
+      messageUuid: 'msg-1',
+      processedUuids: ['msg-1'],
+    });
+    markProcessed(SCOPE, 'room-1', {
+      messageUuid: 'msg-2',
+      processedUuids: ['msg-2'],
+    });
+
+    expect(getProcessedUuids(SCOPE, 'room-1')).toEqual(['msg-1', 'msg-2']);
+
+    const overflow = Array.from(
+      { length: MAX_PROCESSED_UUIDS + 5 },
+      (_, index) => `msg-${index}`,
+    );
+    markProcessed(SCOPE, 'room-1', {
+      messageUuid: overflow.at(-1),
+      processedUuids: overflow,
+    });
+
+    const stored = getProcessedUuids(SCOPE, 'room-1');
+    expect(stored).toHaveLength(MAX_PROCESSED_UUIDS);
+    expect(stored[0]).toBe('msg-5');
+    expect(stored.at(-1)).toBe(`msg-${MAX_PROCESSED_UUIDS + 4}`);
+  });
+
+  it('clears a room across every channel', () => {
     markProcessed(SCOPE, 'room-1', { messageUuid: 'msg-1' });
+    markProcessed({ ...SCOPE, channelUuid: 'channel-2' }, 'room-1', {
+      messageUuid: 'msg-channel-2',
+    });
     markProcessed(SCOPE, 'room-2', { messageUuid: 'msg-2' });
 
-    clearRoom(SCOPE, 'room-1');
+    clearRoom(
+      { projectUuid: SCOPE.projectUuid, agentEmail: SCOPE.agentEmail },
+      'room-1',
+    );
 
     expect(getLastProcessed(SCOPE, 'room-1')).toBeNull();
+    expect(
+      getLastProcessed({ ...SCOPE, channelUuid: 'channel-2' }, 'room-1'),
+    ).toBeNull();
     expect(getLastProcessed(SCOPE, 'room-2').messageUuid).toBe('msg-2');
+    expect(moduleStorage.getItem(STORAGE_KEY)[ROOM_2_KEY]).toBeDefined();
   });
 
   it('keeps at most 200 rooms and discards the oldest processed first', () => {
