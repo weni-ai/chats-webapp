@@ -4,6 +4,7 @@ import { storeToRefs } from 'pinia';
 import { useAssistedSalesFeatureFlag } from '@/composables/useAssistedSalesFeatureFlag';
 import Copilot, {
   extractSectorUuid,
+  getMockCopilotConnection,
   type CopilotConnection,
   type CopilotConnectionItem,
 } from '@/services/api/resources/chats/copilot';
@@ -83,6 +84,11 @@ export function useCopilotConnection(
   }
 
   const connection = computed<CopilotConnection | undefined>(() => {
+    const mockConnection = getMockCopilotConnection();
+    if (mockConnection) {
+      return mockConnection;
+    }
+
     if (!connections.value.length) {
       return undefined;
     }
@@ -126,4 +132,30 @@ export function useCopilotConnection(
     isPrincipal,
     reload,
   };
+}
+
+export function isCopilotConnectionConfigured(
+  room?: CopilotRoom | null,
+): boolean {
+  if (getMockCopilotConnection()) {
+    return true;
+  }
+
+  if (!connections.value.length) {
+    return false;
+  }
+
+  const { isPrimaryProject } = useConfig();
+  if (!isPrimaryProject) {
+    return !!connections.value[0]?.conection;
+  }
+
+  const sectorUuid = room?.queue?.sector;
+  if (!sectorUuid) {
+    return false;
+  }
+
+  return connections.value.some(
+    (item) => extractSectorUuid(item) === sectorUuid,
+  );
 }
