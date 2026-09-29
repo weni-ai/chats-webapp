@@ -74,6 +74,8 @@
           @update:model-value="updateSound"
         />
 
+        <ThemeSelector />
+
         <UnnnicLabel :label="$t('language')" />
         <UnnnicLanguageSelect
           v-model="$i18n.locale"
@@ -106,6 +108,7 @@
 import { ref } from 'vue';
 import { unnnicToastManager } from '@weni/unnnic-system';
 
+import ThemeSelector from '@/components/chats/ThemeSelector.vue';
 import { PREFERENCES_SOUND } from '@/services/api/websocket/soundNotification.js';
 
 import { moduleStorage } from '@/utils/storage';
@@ -113,6 +116,9 @@ import { useAgentStatus } from '@/composables/useAgentStatus';
 
 export default {
   name: 'ModalPreferences',
+  components: {
+    ThemeSelector,
+  },
   emits: ['close', 'open-quick-messages', 'back-to-home'],
 
   setup() {

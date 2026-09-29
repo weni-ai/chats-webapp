@@ -16,13 +16,6 @@
       {{ $t('config_chats.desk_copilot.empty_state.description') }}
     </p>
     <section class="desk-copilot-empty-state__actions">
-      <UnnnicButton
-        type="primary"
-        size="small"
-        :text="$t('config_chats.desk_copilot.empty_state.select_button')"
-        data-testid="desk-copilot-select-button"
-        @click="emit('open-select-modal')"
-      />
       <UnnnicToolTip
         :enabled="isCreateDisabled"
         :text="
@@ -31,7 +24,7 @@
         side="bottom"
       >
         <UnnnicButton
-          type="secondary"
+          type="primary"
           size="small"
           :text="$t('config_chats.desk_copilot.empty_state.create_button')"
           :disabled="isCreateDisabled"
@@ -59,7 +52,6 @@ const props = withDefaults(
 
 const emit = defineEmits<{
   'open-create-modal': [];
-  'open-select-modal': [];
 }>();
 
 function handleCreateClick() {
