@@ -2,6 +2,7 @@ import { ref, watch, type Ref } from 'vue';
 
 import CopilotHistory from '@/services/api/resources/chats/copilotHistory';
 import { mapHistoryMessage } from '@/services/assistant/historyMessageMapper';
+import { isUnansweredTrigger } from '@/services/assistant/unansweredMessages';
 import type { AssistantMessage } from '@/services/assistant/types';
 
 type RoomUuidRef = Ref<string | undefined>;
@@ -51,7 +52,14 @@ export function useCopilotHistory(roomUuid: RoomUuidRef) {
         return;
       }
 
-      const mapped = response.results.map(mapHistoryMessage);
+      const mapped = response.results
+        .map(mapHistoryMessage)
+        .filter(
+          (message) =>
+            !(
+              message.direction === 'human' && isUnansweredTrigger(message.text)
+            ),
+        );
       // API returns newest-first (-created_on); UI expects chronological order.
       const chronological = [...mapped].reverse();
 
