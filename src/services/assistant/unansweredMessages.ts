@@ -77,7 +77,7 @@ export function findUnansweredMessages(
     if (!Number.isNaN(processedTime)) {
       remaining = remaining.filter((message) => {
         const createdTime = Date.parse(message.created_on || '');
-        return Number.isNaN(createdTime) || createdTime > processedTime;
+        return !Number.isNaN(createdTime) && createdTime > processedTime;
       });
     }
   }
