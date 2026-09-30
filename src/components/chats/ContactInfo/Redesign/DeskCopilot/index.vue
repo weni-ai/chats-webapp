@@ -179,7 +179,10 @@ const { activeRoom } = storeToRefs(useRooms());
 const { me } = storeToRefs(useProfile());
 const { featureFlags, featureFlagsLoaded } = storeToRefs(useFeatureFlag());
 const roomMessagesStore = useRoomMessages();
-const { roomMessages } = storeToRefs(roomMessagesStore);
+const { roomMessages, roomMessagesRoomUuid } = storeToRefs(roomMessagesStore);
+const loadedMessagesRoomUuid = computed(
+  () => roomMessagesRoomUuid.value || undefined,
+);
 const agentEmail = computed(() => me.value?.email || undefined);
 const originalContactUrn = computed(() => activeRoom.value?.urn || undefined);
 const isAssistedSalesEnabled = computed(() =>
@@ -306,6 +309,7 @@ const { markContextAsProcessed } = useCopilotRoomContext({
   connection: liveConnection,
   roomUuid: liveRoomUuid,
   roomMessages,
+  messagesRoomUuid: loadedMessagesRoomUuid,
   enabled: canRunProactive,
   isReady,
   isBusy,

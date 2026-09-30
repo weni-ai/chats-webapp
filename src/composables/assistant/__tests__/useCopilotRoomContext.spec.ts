@@ -269,11 +269,15 @@ describe('useCopilotRoomContext', () => {
         isBusy?: boolean;
         sendHiddenMessage?: ReturnType<typeof vi.fn>;
         storageScope?: typeof storageScopeValue;
+        messagesRoomUuid?: string;
       } = {},
     ) {
       const connection = ref<CopilotConnection | undefined>(connectionValue);
       const roomUuid = ref<string | undefined>('room-1');
       const roomMessages = ref<RawRoomMessage[]>(overrides.messages || []);
+      const messagesRoomUuid = ref<string | undefined>(
+        overrides.messagesRoomUuid,
+      );
       const enabled = ref(overrides.enabled ?? true);
       const isReady = ref(overrides.isReady ?? true);
       const isBusy = ref(overrides.isBusy ?? false);
@@ -287,6 +291,7 @@ describe('useCopilotRoomContext', () => {
         connection,
         roomUuid,
         roomMessages,
+        messagesRoomUuid,
         enabled,
         isReady,
         isBusy,
@@ -298,6 +303,7 @@ describe('useCopilotRoomContext', () => {
         connection,
         roomUuid,
         roomMessages,
+        messagesRoomUuid,
         enabled,
         isReady,
         isBusy,
@@ -331,21 +337,28 @@ describe('useCopilotRoomContext', () => {
     });
 
     it('groups a burst of contact messages into a single processing', async () => {
-      const { sendHiddenMessage, roomMessages } = setup();
+      const { sendHiddenMessage, roomMessages } = setup({
+        messages: [agentMessage('Olá')],
+      });
       await flush();
       expect(sendHiddenMessage).not.toHaveBeenCalled();
 
-      roomMessages.value = [contactMessage('Um', 'msg-1')];
-      await flush();
       roomMessages.value = [
-        contactMessage('Um', 'msg-1'),
-        contactMessage('Dois', 'msg-2', '2024-01-01T00:00:01Z'),
+        agentMessage('Olá'),
+        contactMessage('Um', 'msg-1', '2024-01-01T00:02:00Z'),
       ];
       await flush();
       roomMessages.value = [
-        contactMessage('Um', 'msg-1'),
-        contactMessage('Dois', 'msg-2', '2024-01-01T00:00:01Z'),
-        contactMessage('Tres', 'msg-3', '2024-01-01T00:00:02Z'),
+        agentMessage('Olá'),
+        contactMessage('Um', 'msg-1', '2024-01-01T00:02:00Z'),
+        contactMessage('Dois', 'msg-2', '2024-01-01T00:02:01Z'),
+      ];
+      await flush();
+      roomMessages.value = [
+        agentMessage('Olá'),
+        contactMessage('Um', 'msg-1', '2024-01-01T00:02:00Z'),
+        contactMessage('Dois', 'msg-2', '2024-01-01T00:02:01Z'),
+        contactMessage('Tres', 'msg-3', '2024-01-01T00:02:02Z'),
       ];
       await flush();
 
@@ -361,10 +374,15 @@ describe('useCopilotRoomContext', () => {
     });
 
     it('fires at most 15s after the first pending message without a 3s pause', async () => {
-      const { sendHiddenMessage, roomMessages } = setup();
+      const { sendHiddenMessage, roomMessages } = setup({
+        messages: [agentMessage('Olá')],
+      });
       await flush();
 
-      roomMessages.value = [contactMessage('Um', 'msg-1')];
+      roomMessages.value = [
+        agentMessage('Olá'),
+        contactMessage('Um', 'msg-1', '2024-01-01T00:02:00Z'),
+      ];
       await flush();
 
       for (let index = 2; index <= 8; index += 1) {
@@ -374,7 +392,7 @@ describe('useCopilotRoomContext', () => {
           contactMessage(
             `m${index}`,
             `msg-${index}`,
-            `2024-01-01T00:00:0${index}Z`,
+            `2024-01-01T00:02:0${index}Z`,
           ),
         ];
         await flush();
@@ -389,13 +407,22 @@ describe('useCopilotRoomContext', () => {
     });
 
     it('cancels a scheduled processing when the agent replies', async () => {
-      const { sendHiddenMessage, roomMessages } = setup();
+      const { sendHiddenMessage, roomMessages } = setup({
+        messages: [agentMessage('Olá')],
+      });
       await flush();
 
-      roomMessages.value = [contactMessage('Oi')];
+      roomMessages.value = [
+        agentMessage('Olá'),
+        contactMessage('Oi', 'msg-1', '2024-01-01T00:02:00Z'),
+      ];
       await flush();
 
-      roomMessages.value = [contactMessage('Oi'), agentMessage('Resposta')];
+      roomMessages.value = [
+        agentMessage('Olá'),
+        contactMessage('Oi', 'msg-1', '2024-01-01T00:02:00Z'),
+        agentMessage('Resposta', 'agent-2', '2024-01-01T00:03:00Z'),
+      ];
       await flush();
 
       vi.advanceTimersByTime(15000);
@@ -628,6 +655,56 @@ describe('useCopilotRoomContext', () => {
       await flush();
 
       expect(markProcessed).not.toHaveBeenCalled();
+    });
+
+    it('processes API messages without a room field when the store room matches', async () => {
+      const apiMessage: RawRoomMessage = {
+        uuid: 'api-1',
+        text: 'Pergunta da API',
+        contact: { name: 'Cliente' },
+        created_on: '2024-01-01T00:00:00Z',
+      };
+
+      const { sendHiddenMessage } = setup({
+        messages: [apiMessage],
+        messagesRoomUuid: 'room-1',
+      });
+      await flush();
+
+      expect(sendHiddenMessage).toHaveBeenCalledTimes(1);
+      expect(sendHiddenMessage.mock.calls[0][0]).toContain(
+        'Contact: Pergunta da API',
+      );
+      expect(copilotSocketManager.setRoomContext).toHaveBeenCalledWith(
+        'room-1',
+        connectionValue,
+        'Contact: Pergunta da API',
+      );
+    });
+
+    it('ignores store messages while messagesRoomUuid belongs to another room', async () => {
+      const { sendHiddenMessage } = setup({
+        messages: [contactMessage('Sala A', 'a-1')],
+        messagesRoomUuid: 'room-2',
+      });
+      await flush();
+      vi.advanceTimersByTime(15000);
+      await flush();
+
+      expect(copilotSocketManager.setRoomContext).not.toHaveBeenCalled();
+      expect(sendHiddenMessage).not.toHaveBeenCalled();
+    });
+
+    it('fires immediately when a remounted orchestrator receives the first load', async () => {
+      const { sendHiddenMessage, roomMessages } = setup();
+      await flush();
+      expect(sendHiddenMessage).not.toHaveBeenCalled();
+
+      roomMessages.value = [contactMessage('Oi')];
+      await flush();
+
+      expect(sendHiddenMessage).toHaveBeenCalledTimes(1);
+      expect(sendHiddenMessage.mock.calls[0][0]).toContain('Contact: Oi');
     });
   });
 });

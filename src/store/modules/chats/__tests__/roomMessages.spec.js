@@ -71,6 +71,7 @@ describe('useRoomMessages Store', () => {
     expect(roomMessagesStore.roomMessagesFailedUuids).toEqual([]);
     expect(roomMessagesStore.roomMessagesNext).toBe('');
     expect(roomMessagesStore.roomMessagesPrevious).toBe('');
+    expect(roomMessagesStore.roomMessagesRoomUuid).toBe('');
   });
 
   it('should add a failed message', () => {
@@ -87,11 +88,13 @@ describe('useRoomMessages Store', () => {
     roomMessagesStore.roomMessages = [{ uuid: '123' }];
     roomMessagesStore.roomMessagesNext = 'next';
     roomMessagesStore.roomMessagesPrevious = 'prev';
+    roomMessagesStore.roomMessagesRoomUuid = 'room-123';
 
     roomMessagesStore.resetRoomMessages();
     expect(roomMessagesStore.roomMessages).toEqual([]);
     expect(roomMessagesStore.roomMessagesNext).toBe('');
     expect(roomMessagesStore.roomMessagesPrevious).toBe('');
+    expect(roomMessagesStore.roomMessagesRoomUuid).toBe('');
   });
 
   it('should add a message', async () => {
@@ -628,6 +631,7 @@ describe('useRoomMessages Store', () => {
     expect(roomMessagesStore.roomMessages).toEqual(mockMessages);
     expect(roomMessagesStore.roomMessagesNext).toBe('next-url');
     expect(roomMessagesStore.roomMessagesPrevious).toBe('prev-url');
+    expect(roomMessagesStore.roomMessagesRoomUuid).toBe('room-123');
   });
 
   it('should resend all failed messages in order forwarding each message room', async () => {

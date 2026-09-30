@@ -27,6 +27,7 @@ export type UseCopilotRoomContextOptions = {
   connection: ConnectionRef;
   roomUuid: RoomUuidRef;
   roomMessages: RoomMessagesRef;
+  messagesRoomUuid?: Ref<string | undefined>;
   enabled?: Ref<boolean>;
   isReady?: Ref<boolean>;
   isBusy?: Ref<boolean>;
@@ -81,6 +82,7 @@ export function useCopilotRoomContext({
   connection,
   roomUuid,
   roomMessages,
+  messagesRoomUuid = ref<string | undefined>(undefined),
   enabled = ref(false),
   isReady = ref(true),
   isBusy = ref(false),
@@ -91,7 +93,7 @@ export function useCopilotRoomContext({
   let inFlight = false;
   let alreadyEligible = false;
   let queuedRetry = false;
-  let awaitingInitialLoad = false;
+  let awaitingInitialLoad = true;
   let hasBoundRoom = false;
   let burstSilenceTimer: ReturnType<typeof setTimeout> | null = null;
   let burstMaxTimer: ReturnType<typeof setTimeout> | null = null;
@@ -104,8 +106,13 @@ export function useCopilotRoomContext({
       return [];
     }
 
+    const loadedRoomUuid = messagesRoomUuid.value;
+    if (loadedRoomUuid && loadedRoomUuid !== currentRoomUuid) {
+      return [];
+    }
+
     return roomMessages.value.filter(
-      (message) => message.room === currentRoomUuid,
+      (message) => !message.room || message.room === currentRoomUuid,
     );
   }
 
@@ -294,7 +301,7 @@ export function useCopilotRoomContext({
   }
 
   watch(
-    [connection, roomUuid, enabled, isReady, isBusy],
+    [connection, roomUuid, enabled, isReady, isBusy, messagesRoomUuid],
     (_current, previous) => {
       const previousConnection = previous?.[0];
       const previousRoomUuid = previous?.[1];

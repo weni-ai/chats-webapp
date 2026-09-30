@@ -589,5 +589,6 @@ describe('DeskCopilotTab', () => {
     const options = useCopilotRoomContext.mock.calls[0][0];
     expect(options.enabled.value).toBe(true);
     expect(options.storageScope.value.channelUuid).toBe('channel-1');
+    expect(options.messagesRoomUuid.value).toBeUndefined();
   });
 });
