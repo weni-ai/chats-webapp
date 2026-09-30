@@ -324,7 +324,7 @@ const {
   showGoToBottom,
   scrollToBottom,
   scrollToBottomIfNear,
-} = useAutoScroll(messages, isThinking, isTyping);
+} = useAutoScroll(messages, { isThinking, isTyping, isLoadingHistory });
 
 const enableRoomSummary = computed(
   () => !!project.value?.config?.has_chats_summary,
