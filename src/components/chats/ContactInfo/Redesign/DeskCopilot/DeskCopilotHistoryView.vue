@@ -1,5 +1,6 @@
 <template>
   <section
+    ref="listRef"
     class="desk-copilot-history"
     data-testid="desk-copilot-history"
   >
@@ -21,12 +22,14 @@
       :hasSummary="enableRoomSummary"
       :isViewMode="isViewMode"
     />
+    <div ref="bottomAnchorRef" />
   </section>
 </template>
 
 <script setup lang="ts">
 import { computed } from 'vue';
 
+import { useAutoScroll } from '@/composables/assistant/useAutoScroll';
 import { useCopilotHistory } from '@/composables/assistant/useCopilotHistory';
 import SummaryMessage from './SummaryMessage.vue';
 import Disclaimer from './Disclaimer.vue';
@@ -56,6 +59,9 @@ const props = withDefaults(
 const roomUuidRef = computed(() => props.roomUuid);
 
 const { messages, isLoading } = useCopilotHistory(roomUuidRef);
+const { listRef, bottomAnchorRef } = useAutoScroll(messages, {
+  isLoadingHistory: isLoading,
+});
 </script>
 
 <style lang="scss" scoped>
