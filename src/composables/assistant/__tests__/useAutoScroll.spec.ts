@@ -16,7 +16,7 @@ const TestHost = defineComponent({
       showGoToBottom,
       scrollToBottom,
       scrollToBottomIfNear,
-    } = useAutoScroll(messages, isThinking, isTyping, isLoadingHistory);
+    } = useAutoScroll(messages, { isThinking, isTyping, isLoadingHistory });
 
     return {
       messages,
