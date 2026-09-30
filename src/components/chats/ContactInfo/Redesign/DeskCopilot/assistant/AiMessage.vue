@@ -166,6 +166,8 @@ import { storeToRefs } from 'pinia';
 import { UnnnicCallAlert } from '@weni/unnnic-system';
 import { useStreamingBuffer } from '@/composables/assistant/useStreamingBuffer';
 import { copyTextToContactInput } from '@/composables/assistant/useCopyToContactInput';
+import { buildCatalogPayload } from '@/services/assistant/buildCatalogPayload';
+import type { CatalogPayload } from '@/services/assistant/buildCatalogPayload';
 import i18n from '@/plugins/i18n';
 import CopilotFeedback from '@/services/api/resources/chats/copilotFeedback';
 import type {
@@ -246,6 +248,7 @@ const previousLiked = ref<boolean | null>(null);
 const showFeedbackModal = ref(false);
 const isSubmittingFeedback = ref(false);
 const dismissedIds = ref<string[]>([]);
+const isSending = ref(false);
 const hasLocalFeedbackChange = ref(false);
 
 watch(

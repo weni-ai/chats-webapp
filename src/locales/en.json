@@ -1143,7 +1143,7 @@
       },
       "contacts": {
         "all": "All contacts",
-        "helper": "Only contacts in service can receive this message",
+        "helper": "Only contacts in a support chat can receive this message",
         "label": "Contacts"
       },
       "send": "{count, plural, =0 {Send to all (0 contacts)} one {Send to all ({count} contact)} other {Send to all ({count} contacts)}}",
@@ -1245,25 +1245,30 @@
         "assigned_agents": "Assigned agents",
         "badge": "Copilot",
         "connected_by": "Connected by",
-        "connected_to": "Connected to",
+        "connected_to": "Connected on",
         "created_on": "Created on",
-        "description": "This project is used exclusively to manage the AI agents for the Desk Copilot. It can only be accessed from this section.",
+        "description": "This project is used to manage the AI agents of Desk Copilot. It is accessible only through this section.",
+        "disconnect": "Disconnect",
+        "disconnect_by": "Disconnect by",
+        "disconnect_on": "Disconnect on",
         "open": "Open",
-        "popover_change_option": "Change",
-        "popover_disconnect_option": "Disconnect"
+        "reconnect": "Reconnect"
       },
       "disconnect_modal": {
         "confirm": "Disconnect",
-        "description": "This project will lose access to the Desk Copilot feature until the Copilot Project is reconnected. The Copilot Project itself and its other connections won't be affected.",
+        "description": "This project will lose access to Desk Copilot feature until a Copilot Project is reconnected.",
         "error": "Unable to disconnect the Copilot Project.",
-        "success": "Copilot Project disconnected successfully",
+        "success": "The Copilot Project has been disconnected!",
         "title": "Disconnect Copilot Project"
+      },
+      "disconnected_disclaimer": {
+        "description": "To enable the Desk Copilot feature, you need to reconnect the Copilot project.",
+        "title": "The Copilot project is disconnected"
       },
       "empty_state": {
         "create_button": "Create Copilot Project",
         "create_disabled_tooltip": "You don't have permission to create a Copilot project",
         "description": "To activate Desk Copilot, connect this project to a Copilot Project where your AI agents are managed",
-        "select_button": "Select Copilot project",
         "title": "No Copilot Project connected"
       },
       "enable_title": "Activate Desk Copilot",
@@ -1289,23 +1294,19 @@
       },
       "modal": {
         "disclaimer": "This Copilot Project will be created and automatically connected to this project.",
-        "error": "Copilot project couldn't be created due to a technical issue",
+        "error": "Error creating and connecting copilot project.",
         "input_label": "Define the name of the Copilot Project",
-        "success": "Copilot project created and connected successfully",
+        "success": "Copilot project created and connected!",
         "title": "Create Copilot Project"
       },
       "new_badge": "New",
-      "picker_modal": {
-        "assigned_agents_tag": "{count, plural, one {{count} assigned agent} other {{count} assigned agents}}",
-        "change_button": "Change",
-        "change_error": "Couldn't change Copilot project",
-        "change_success": "Copilot project changed successfully",
-        "change_title": "Change Copilot project",
-        "connect_button": "Connect",
-        "connect_error": "Error connecting to Copilot project",
-        "connect_success": "Copilot project connected successfully",
-        "search_placeholder": "Search by name",
-        "select_title": "Select existing Copilot project"
+      "no_permission_disclaimer": "Only users with Administrator or Contributor permissions can enable Desk Copilot. Please contact one of these users on your team to activate the feature.",
+      "reconnect_modal": {
+        "confirm": "Reconnect",
+        "description": "This project will regain access to the Desk Copilot feature by reconnecting the Copilot project.",
+        "error": "Unable to reconnect the Copilot Project.",
+        "success": "The Copilot Project has been reconnected!",
+        "title": "Reconnect Copilot Project"
       }
     },
     "changes_saved": "Changes saved successfully",

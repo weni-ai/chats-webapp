@@ -266,4 +266,41 @@ describe('ModalPreferences agent status', () => {
 
     wrapper.unmount();
   });
+
+  describe('Theme selector', () => {
+    it('renders light and dark theme buttons', () => {
+      const wrapper = createWrapper();
+
+      expect(wrapper.find('[data-testid="theme-light-button"]').exists()).toBe(
+        true,
+      );
+      expect(wrapper.find('[data-testid="theme-dark-button"]').exists()).toBe(
+        true,
+      );
+
+      wrapper.unmount();
+    });
+
+    it.each([
+      { theme: 'light', selected: 'theme-light-button' },
+      { theme: 'dark', selected: 'theme-dark-button' },
+    ])(
+      'marks $selected as selected when theme is $theme',
+      async ({ theme, selected }) => {
+        const wrapper = createWrapper();
+        const targetTestId =
+          theme === 'light' ? 'theme-light-button' : 'theme-dark-button';
+
+        await wrapper.find(`[data-testid="${targetTestId}"]`).trigger('click');
+
+        expect(
+          wrapper
+            .find(`[data-testid="${selected}"]`)
+            .attributes('aria-pressed'),
+        ).toBe('true');
+
+        wrapper.unmount();
+      },
+    );
+  });
 });
