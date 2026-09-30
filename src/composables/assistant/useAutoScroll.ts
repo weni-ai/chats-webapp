@@ -10,11 +10,19 @@ import {
 export const BOTTOM_SCROLL_THRESHOLD_PX = 100;
 const LAYOUT_PIN_MS = 1000;
 
+type UseAutoScrollOptions = {
+  isThinking?: Ref<boolean>;
+  isTyping?: Ref<boolean>;
+  isLoadingHistory?: Ref<boolean>;
+};
+
 export function useAutoScroll(
   messages: Ref<unknown>,
-  isThinking: Ref<boolean>,
-  isTyping: Ref<boolean> = ref(false),
-  isLoadingHistory: Ref<boolean> = ref(false),
+  {
+    isThinking = ref(false),
+    isTyping = ref(false),
+    isLoadingHistory = ref(false),
+  }: UseAutoScrollOptions = {},
 ) {
   const listRef = ref<HTMLElement | null>(null);
   const bottomAnchorRef = ref<HTMLElement | null>(null);
