@@ -71,6 +71,7 @@ import type {
   AssistantMessage,
   ProductCarouselItem,
 } from '@/services/assistant/types';
+import type { CatalogPayload } from '@/services/assistant/buildCatalogPayload';
 import CopilotFeedback from '@/services/api/resources/chats/copilotFeedback';
 import { useRooms } from '@/store/modules/chats/rooms';
 import HumanMessage from './HumanMessage.vue';

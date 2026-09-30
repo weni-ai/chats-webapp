@@ -133,6 +133,10 @@
           />
         </section>
       </main>
+      <slot
+        v-if="$slots.extra"
+        name="extra"
+      />
     </section>
 
     <section
@@ -317,6 +321,11 @@ export default {
 
   methods: {
     handleMessageClick() {
+      if (this.status === 'failed') {
+        this.$emit('click');
+        return;
+      }
+
       if (this.canReply) {
         this.$emit('reply');
         return;
@@ -395,6 +404,15 @@ $defaultLineHeight: $unnnic-font-size-body-gt + $unnnic-line-height-medium;
 
   box-shadow: $unnnic-shadow-1;
 
+  &.failed {
+    cursor: pointer;
+  }
+
+  &.is-medias-group {
+    max-width: 500px;
+    padding: $unnnic-space-2 $unnnic-space-3;
+  }
+
   &__reply-action {
     display: flex;
     align-items: center;
@@ -440,10 +458,6 @@ $defaultLineHeight: $unnnic-font-size-body-gt + $unnnic-line-height-medium;
     :deep(.unnnic-chats-message__text) {
       color: $unnnic-color-fg-muted;
     }
-  }
-
-  &.is-medias-group {
-    padding: $unnnic-space-2 $unnnic-space-3;
   }
 
   &.is-media {
@@ -557,6 +571,7 @@ $defaultLineHeight: $unnnic-font-size-body-gt + $unnnic-line-height-medium;
     &-container {
       display: flex;
       align-items: center;
+      align-self: flex-end;
       gap: $unnnic-spacing-nano;
       flex-shrink: 0;
     }
@@ -580,10 +595,6 @@ $defaultLineHeight: $unnnic-font-size-body-gt + $unnnic-line-height-medium;
 
   .geolocation-icon {
     align-self: center;
-  }
-
-  &__time-container {
-    align-self: flex-end;
   }
 }
 </style>

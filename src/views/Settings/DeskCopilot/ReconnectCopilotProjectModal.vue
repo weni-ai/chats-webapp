@@ -1,24 +1,24 @@
 <template>
   <UnnnicDialog
     v-model:open="isOpen"
-    data-testid="disconnect-copilot-project-modal"
+    data-testid="reconnect-copilot-project-modal"
   >
     <UnnnicDialogContent size="medium">
       <UnnnicDialogHeader>
-        <UnnnicDialogTitle data-testid="disconnect-copilot-project-title">
-          {{ $t('config_chats.desk_copilot.disconnect_modal.title') }}
+        <UnnnicDialogTitle data-testid="reconnect-copilot-project-title">
+          {{ $t('config_chats.desk_copilot.reconnect_modal.title') }}
         </UnnnicDialogTitle>
         <UnnnicDialogClose
-          data-testid="disconnect-copilot-project-close"
+          data-testid="reconnect-copilot-project-close"
           @click="close"
         />
       </UnnnicDialogHeader>
 
       <p
-        class="disconnect-copilot-project-modal__description"
-        data-testid="disconnect-copilot-project-description"
+        class="reconnect-copilot-project-modal__description"
+        data-testid="reconnect-copilot-project-description"
       >
-        {{ $t('config_chats.desk_copilot.disconnect_modal.description') }}
+        {{ $t('config_chats.desk_copilot.reconnect_modal.description') }}
       </p>
 
       <UnnnicDialogFooter>
@@ -26,15 +26,15 @@
           type="tertiary"
           :text="$t('cancel')"
           :disabled="isSaving"
-          data-testid="disconnect-copilot-project-cancel"
+          data-testid="reconnect-copilot-project-cancel"
           @click="close"
         />
         <UnnnicButton
-          type="warning"
-          :text="$t('config_chats.desk_copilot.disconnect_modal.confirm')"
+          type="primary"
+          :text="$t('config_chats.desk_copilot.reconnect_modal.confirm')"
           :loading="isSaving"
-          data-testid="disconnect-copilot-project-submit"
-          @click="disconnect"
+          data-testid="reconnect-copilot-project-submit"
+          @click="reconnect"
         />
       </UnnnicDialogFooter>
     </UnnnicDialogContent>
@@ -49,7 +49,7 @@ import callUnnnicAlert from '@/utils/callUnnnicAlert';
 import i18n from '@/plugins/i18n';
 
 defineOptions({
-  name: 'DisconnectCopilotProjectModal',
+  name: 'ReconnectCopilotProjectModal',
 });
 
 const props = defineProps<{
@@ -60,7 +60,7 @@ const emit = defineEmits<{
   'update:modelValue': [value: boolean];
 }>();
 
-const { disconnectLinkedProject } = useCopilotProject();
+const { reconnectLinkedProject } = useCopilotProject();
 const isSaving = ref(false);
 
 const isOpen = computed({
@@ -73,17 +73,17 @@ function close() {
   isOpen.value = false;
 }
 
-async function disconnect() {
+async function reconnect() {
   if (isSaving.value) return;
 
   isSaving.value = true;
   try {
-    await disconnectLinkedProject();
+    await reconnectLinkedProject();
 
     callUnnnicAlert({
       props: {
         text: i18n.global.t(
-          'config_chats.desk_copilot.disconnect_modal.success',
+          'config_chats.desk_copilot.reconnect_modal.success',
         ),
         type: 'success',
       },
@@ -94,7 +94,7 @@ async function disconnect() {
   } catch {
     callUnnnicAlert({
       props: {
-        text: i18n.global.t('config_chats.desk_copilot.disconnect_modal.error'),
+        text: i18n.global.t('config_chats.desk_copilot.reconnect_modal.error'),
         type: 'error',
       },
       seconds: 5,
@@ -105,11 +105,11 @@ async function disconnect() {
   }
 }
 
-defineExpose({ isSaving, isOpen, disconnect });
+defineExpose({ isSaving, isOpen, reconnect });
 </script>
 
 <style lang="scss" scoped>
-.disconnect-copilot-project-modal__description {
+.reconnect-copilot-project-modal__description {
   margin: 0;
   padding: $unnnic-space-6;
   font: $unnnic-font-body;

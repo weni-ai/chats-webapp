@@ -40,6 +40,12 @@ describe('DeskCopilot EmptyState', () => {
     ).toBe('config_chats.desk_copilot.empty_state.title');
   });
 
+  it('does not render the select project button', () => {
+    expect(
+      wrapper.find('[data-testid="desk-copilot-select-button"]').exists(),
+    ).toBe(false);
+  });
+
   it('emits open-create-modal when the create button is clicked', async () => {
     await wrapper
       .find('[data-testid="desk-copilot-create-button"]')
@@ -61,13 +67,5 @@ describe('DeskCopilot EmptyState', () => {
         .find('[data-testid="desk-copilot-create-button"]')
         .attributes('disabled'),
     ).toBeDefined();
-  });
-
-  it('emits open-select-modal when the select button is clicked', async () => {
-    await wrapper
-      .find('[data-testid="desk-copilot-select-button"]')
-      .trigger('click');
-
-    expect(wrapper.emitted('open-select-modal')).toBeTruthy();
   });
 });
