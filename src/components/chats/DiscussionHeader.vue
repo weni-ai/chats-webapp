@@ -4,6 +4,12 @@
       :class="['discussion-header__container', { clickable }]"
       @click="clickable ? emit('click') : null"
     >
+      <UnnnicIcon
+        v-if="isMobile()"
+        icon="arrow_back"
+        clickable
+        @click="emit('back')"
+      />
       <section class="discussion-header__avatar">
         <UnnnicIcon
           icon="communication"
@@ -22,8 +28,9 @@
   </section>
 </template>
 
-<script setup>
+<script lang="ts" setup>
 import { computed, useSlots } from 'vue';
+import isMobile from 'is-mobile';
 
 defineProps({
   discussionContact: {
@@ -40,7 +47,7 @@ defineProps({
   },
 });
 
-const emit = defineEmits(['click']);
+const emit = defineEmits(['click', 'back']);
 const slots = useSlots();
 
 const hasActionsSlot = computed(() => !!slots.actions?.());
