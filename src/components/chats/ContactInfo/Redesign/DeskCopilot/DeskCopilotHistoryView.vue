@@ -27,7 +27,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref } from 'vue';
+import { computed } from 'vue';
 
 import { useAutoScroll } from '@/composables/assistant/useAutoScroll';
 import { useCopilotHistory } from '@/composables/assistant/useCopilotHistory';
@@ -59,14 +59,9 @@ const props = withDefaults(
 const roomUuidRef = computed(() => props.roomUuid);
 
 const { messages, isLoading } = useCopilotHistory(roomUuidRef);
-const isThinking = ref(false);
-const isTyping = ref(false);
-const { listRef, bottomAnchorRef } = useAutoScroll(
-  messages,
-  isThinking,
-  isTyping,
-  isLoading,
-);
+const { listRef, bottomAnchorRef } = useAutoScroll(messages, {
+  isLoadingHistory: isLoading,
+});
 </script>
 
 <style lang="scss" scoped>
