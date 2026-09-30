@@ -76,7 +76,6 @@
                 :status="messageStatus({ message })"
                 :title="messageFormatTitle(new Date(message.created_on))"
                 :signature="messageSignature(message)"
-                :mediaType="isGeolocation(message.media?.[0]) ? 'geo' : ''"
                 :enableReply="!!message.external_id && !isDisabledInput"
                 :replyMessage="message.replied_message"
                 :automatic="
@@ -488,8 +487,8 @@ export default {
     }),
     ...mapState(useDashboard, ['viewedAgent']),
     ...mapState(useRoomMessages, ['roomMessagesNext']),
-    ...mapState(useFeatureFlag, ['featureFlags']),
     ...mapState(useMessageManager, ['isDisabledInput']),
+    ...mapState(useFeatureFlag, ['featureFlags']),
     ...mapWritableState(useMessageManager, ['replyMessage', 'inputMessage']),
     ...mapWritableState(useRoomMessages, [
       'toScrollNote',
@@ -1074,13 +1073,16 @@ export default {
   overflow: hidden;
   position: relative;
   height: 100%;
+
+  &--view-mode {
+    padding-left: $unnnic-space-4;
+  }
 }
 
 .chat-messages {
   overflow: hidden auto;
 
   padding-right: $unnnic-space-4;
-  padding-left: $unnnic-space-4;
 
   height: 100%;
 
