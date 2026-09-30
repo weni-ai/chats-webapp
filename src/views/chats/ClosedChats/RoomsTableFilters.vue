@@ -74,7 +74,6 @@
           v-model="filterDate"
           data-testid="filter-date-mobile-select"
           :options="datesToFilter"
-          :label="$t('date')"
           :placeholder="$t('filter.dates.last_7_days')"
           returnObject
           enableSearch
@@ -452,6 +451,21 @@ export default {
       }
     },
 
+    isAboutTwelveMonthsAgo(startDate) {
+      const parsed = new Date(`${startDate}T00:00:00`);
+      if (Number.isNaN(parsed.getTime())) return false;
+
+      const twelveMonthsAgo = new Date();
+      twelveMonthsAgo.setMonth(twelveMonthsAgo.getMonth() - 12);
+      twelveMonthsAgo.setHours(0, 0, 0, 0);
+
+      const diffDays =
+        Math.abs(parsed.getTime() - twelveMonthsAgo.getTime()) /
+        (1000 * 60 * 60 * 24);
+
+      return diffDays <= 2;
+    },
+
     getRelativeDate(date, type = 'extensive') {
       const getRelativeDate = (offset, unit) =>
         moment().subtract(offset, unit).format('YYYY-MM-DD');
@@ -530,22 +544,19 @@ export default {
           }
           this.selectedDatesInternal = { ...this.filterDate };
         }
-      } else {
-        if (startDate) {
-          const dateStartExtensive = this.getRelativeDate(
-            startDate,
-            'extensive',
-          );
-          const matchingDate = this.datesToFilter.find(
-            (d) => d.value === dateStartExtensive,
-          );
-          if (matchingDate) {
-            this.filterDate = matchingDate;
-          } else {
-            this.filterDate =
-              this.datesToFilter.find((obj) => obj.value === 'last_7_days') ||
-              this.datesToFilter[0];
-          }
+      } else if (startDate) {
+        const dateStartExtensive =
+          this.getRelativeDate(startDate, 'extensive') ||
+          (this.isAboutTwelveMonthsAgo(startDate) ? 'last_12_months' : null);
+        const matchingDate = this.datesToFilter.find(
+          (d) => d.value === dateStartExtensive,
+        );
+        if (matchingDate) {
+          this.filterDate = matchingDate;
+        } else {
+          this.filterDate =
+            this.datesToFilter.find((obj) => obj.value === 'last_7_days') ||
+            this.datesToFilter[0];
         }
       }
     },

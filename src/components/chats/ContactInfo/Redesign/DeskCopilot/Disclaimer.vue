@@ -63,12 +63,10 @@ defineOptions({
 const props = withDefaults(
   defineProps<{
     hasSummary?: boolean;
-    isHistory?: boolean;
     isViewMode?: boolean;
   }>(),
   {
     hasSummary: false,
-    isHistory: false,
     isViewMode: false,
   },
 );
@@ -89,10 +87,7 @@ const disclaimerItems = [
 ] as const;
 
 const showEnableButton = computed(
-  () =>
-    isUserAdmin(me.value?.project_permission_role) &&
-    !props.isHistory &&
-    !props.isViewMode,
+  () => isUserAdmin(me.value?.project_permission_role) && !props.isViewMode,
 );
 
 function handleEnable() {

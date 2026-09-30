@@ -104,35 +104,13 @@ import ModalQueuePriorizations from '@/components/ModalQueuePriorizations.vue';
 import { useConfig } from '@/store/modules/config';
 import { useProfile } from '@/store/modules/profile';
 
-import api from '@/services/api/resources/chats/pauseStatus';
-import Profile from '@/services/api/resources/profile';
-
-import i18n from '@/plugins/i18n';
-import { UnnnicCallAlert } from '@weni/unnnic-system';
 import { moduleStorage } from '@/utils/storage';
-
-interface Status {
-  value: string;
-  label: string;
-  color: string;
-  statusUuid?: string | null;
-}
+import { useAgentStatus } from '@/composables/useAgentStatus';
 
 const profileStore = useProfile();
 const configStore = useConfig();
 const { status: configStatus, customStatus: configCustomStatus } =
   storeToRefs(configStore);
-
-const statuses = ref<Status[]>([
-  { value: 'active', label: 'Online', color: 'green' },
-  { value: 'inactive', label: 'Offline', color: 'gray' },
-]);
-
-const filteredStatuses = computed(() => {
-  return statuses.value.filter(
-    (status) => status.value !== selectedStatus.value?.value,
-  );
-});
 
 const isOpenModalQueuePriorizations = ref(false);
 
@@ -145,97 +123,6 @@ const isOpen = ref(false);
 const startDate = ref<string | null>(null);
 const elapsedTime = ref<Duration | number>(0);
 let intervalId: ReturnType<typeof setInterval> | null = null;
-
-const statusAgentKey = (configStore.project as unknown as { uuid: string })
-  ?.uuid
-  ? `statusAgent-${(configStore.project as unknown as { uuid: string })?.uuid}`
-  : `statusAgent-${moduleStorage.getItem('projectUuid', '', {
-      useSession: true,
-    })}`;
-
-const selectedStatus = ref<Status>(
-  moduleStorage.getItem(statusAgentKey, '', {
-    useSession: true,
-  }) === 'ONLINE'
-    ? statuses.value[0]
-    : statuses.value[1],
-);
-
-const project = computed(() => configStore.project);
-const loadingActiveStatus = ref(false);
-const isToggling = ref(false);
-
-const handleClickOutside = (event: MouseEvent) => {
-  if (isToggling.value) return;
-
-  const target = event.target as HTMLElement;
-  const statusBar = target.closest('[class="status-bar"]');
-  if (!statusBar && isOpen.value) {
-    isOpen.value = false;
-  }
-};
-
-const fetchCustomStatuses = async () => {
-  const response = await api.getCustomStatusTypeList({
-    projectUuid: (configStore.project as unknown as { uuid: string })?.uuid,
-  });
-  statuses.value = response;
-};
-
-const handleGetActiveStatus = async () => {
-  const activeStatus = await configStore.getStatus(
-    (configStore.project as unknown as { uuid: string })?.uuid,
-  );
-  configStore.$patch({
-    status: activeStatus,
-  });
-};
-
-const updateActiveStatus = async ({
-  isActive,
-  skipRequest,
-}: {
-  isActive: boolean;
-  skipRequest: boolean;
-}) => {
-  loadingActiveStatus.value = true;
-  try {
-    let connection_status: string | null = null;
-    const statusAgent = isActive ? 'ONLINE' : 'OFFLINE';
-
-    if (!skipRequest) {
-      const {
-        data: { connection_status: connection },
-      } = await Profile.updateStatus({
-        projectUuid: (configStore.project as unknown as { uuid: string })?.uuid,
-        status: statusAgent,
-      });
-
-      moduleStorage.setItem(statusAgentKey, connection, {
-        useSession: true,
-      });
-      connection_status = connection.toLowerCase();
-    } else {
-      connection_status = statusAgent.toLowerCase();
-      moduleStorage.setItem(statusAgentKey, statusAgent, {
-        useSession: true,
-      });
-    }
-
-    configStore.setStatus(statusAgent);
-
-    const status = statuses.value.find(
-      (s) =>
-        s.value === (connection_status === 'online' ? 'active' : 'inactive'),
-    );
-    showStatusAlert(status, true);
-  } catch (e) {
-    console.error('Error to update active/inactive status', e);
-    showStatusAlert(selectedStatus.value, false);
-  } finally {
-    loadingActiveStatus.value = false;
-  }
-};
 
 const startTimer = () => {
   intervalId = setInterval(() => {
@@ -253,6 +140,45 @@ const stopTimer = () => {
   if (intervalId) clearInterval(intervalId);
 };
 
+const {
+  statuses,
+  selectedStatus,
+  filteredStatuses,
+  fetchCustomStatuses,
+  selectStatus,
+  showStatusAlert,
+  updateActiveStatus,
+  refreshData,
+  statusAgentKey,
+} = useAgentStatus({
+  setStartDate: (date) => {
+    startDate.value = date;
+  },
+  startTimer,
+  stopTimer,
+  onStatusApplied: () => {
+    isOpen.value = false;
+  },
+});
+
+// Referenced so the status actions stay on the instance the tests call.
+void fetchCustomStatuses;
+void showStatusAlert;
+void updateActiveStatus;
+
+const project = computed(() => configStore.project);
+const isToggling = ref(false);
+
+const handleClickOutside = (event: MouseEvent) => {
+  if (isToggling.value) return;
+
+  const target = event.target as HTMLElement;
+  const statusBar = target.closest('[class="status-bar"]');
+  if (!statusBar && isOpen.value) {
+    isOpen.value = false;
+  }
+};
+
 const formattedTime = computed(() => {
   if (!elapsedTime.value || typeof elapsedTime.value === 'number')
     return '00:00:00';
@@ -264,70 +190,6 @@ const formattedTime = computed(() => {
 
   return `${String(totalHours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
 });
-
-const selectStatus = async (newStatus: Status) => {
-  if (newStatus.value === selectedStatus.value.value) return;
-
-  const isOldStatusActiveOrInactive = ['active', 'inactive'].includes(
-    selectedStatus.value.value,
-  );
-  const isCustomStatus = !['active', 'inactive'].includes(newStatus.value);
-
-  try {
-    if (isOldStatusActiveOrInactive && isCustomStatus) {
-      startDate.value = new Date().toISOString();
-      const wasActive = selectedStatus.value.value === 'active';
-      await handleCreateCustomStatus(newStatus);
-      if (wasActive) {
-        moduleStorage.setItem(statusAgentKey, 'OFFLINE', {
-          useSession: true,
-        });
-        configStore.setStatus('OFFLINE');
-      }
-      startTimer();
-    } else if (!isOldStatusActiveOrInactive && isCustomStatus) {
-      await handleCloseCustomStatus(selectedStatus.value, false);
-      await handleCreateCustomStatus(newStatus);
-      startDate.value = new Date().toISOString();
-      startTimer();
-    } else if (!isOldStatusActiveOrInactive && !isCustomStatus) {
-      await handleCloseCustomStatus(
-        selectedStatus.value,
-        newStatus.value === 'active',
-      );
-      if (newStatus.value === 'active') {
-        updateActiveStatus({
-          isActive: true,
-          skipRequest: false,
-        });
-      }
-      stopTimer();
-    }
-
-    if (newStatus.value === 'active' || newStatus.value === 'inactive') {
-      updateActiveStatus({
-        isActive: newStatus.value === 'active',
-        skipRequest: !['active', 'inactive'].includes(
-          selectedStatus.value.value,
-        ),
-      });
-    } else {
-      showStatusAlert(newStatus, true);
-    }
-
-    selectedStatus.value = newStatus;
-    isOpen.value = false;
-  } catch (e) {
-    console.error('Error updating status:', e);
-    showStatusAlert(selectedStatus.value, false);
-  }
-};
-
-const refreshData = async () => {
-  await handleGetActiveStatus();
-  await fetchCustomStatuses();
-  await getActiveCustomStatusAndActiveTimer();
-};
 
 let settingsCheckInterval: ReturnType<typeof setInterval> | null = null;
 
@@ -379,93 +241,6 @@ const toggleDropdown = (event?: MouseEvent) => {
   setTimeout(() => {
     isToggling.value = false;
   }, 200);
-};
-
-const getActiveCustomStatusAndActiveTimer = async () => {
-  const activeStatus = await api.getActiveCustomStatus({
-    projectUuid: (configStore.project as unknown as { uuid: string })?.uuid,
-  });
-
-  if (activeStatus?.status_type && activeStatus.is_active) {
-    statuses.value = statuses.value.map((status) => ({
-      ...status,
-      statusUuid:
-        status.value === activeStatus.status_type ? activeStatus.uuid : null,
-    }));
-
-    selectedStatus.value =
-      statuses.value.find(
-        (status) => status.value === activeStatus.status_type,
-      ) || selectedStatus.value;
-
-    startDate.value = activeStatus.created_on;
-    startTimer();
-  }
-};
-
-const handleCloseCustomStatus = async (status: Status, isActive: boolean) => {
-  const closeStatus = (value) =>
-    api.closeCustomStatus({
-      statusUuid: value,
-      endTime: new Date().toISOString().replace('Z', '+00:00'),
-      isActive,
-    });
-
-  const activeStatus = await api.getActiveCustomStatus({
-    projectUuid: (configStore.project as unknown as { uuid: string })?.uuid,
-  });
-
-  if (!activeStatus) {
-    // No active status found, nothing to close
-    return null;
-  }
-
-  return closeStatus(activeStatus.uuid);
-};
-
-const handleCreateCustomStatus = async (status: Status) => {
-  const createStatus = (value: string) =>
-    api.createCustomStatus({
-      email: (profileStore?.me as { email: string })?.email || '',
-      statusType: value,
-    });
-
-  const response = await createStatus(status.value);
-
-  if (!status.statusUuid) {
-    statuses.value = statuses.value.map((state) => ({
-      ...state,
-      statusUuid: state.value === response.status_type ? response.uuid : null,
-    }));
-  }
-
-  return response;
-};
-
-const showStatusAlert = (status: Status | undefined, isSuccess = true) => {
-  const scheme = {
-    inactive: 'fg-emphasized',
-    error: 'feedback-red',
-    default: 'feedback-green',
-  };
-
-  const schemeKey = status?.value as keyof typeof scheme;
-  const schemeStatus = isSuccess
-    ? scheme[schemeKey] || scheme.default
-    : scheme.error;
-
-  UnnnicCallAlert({
-    props: {
-      text: isSuccess
-        ? i18n.global.t('status-bar.success', { status: status?.label })
-        : i18n.global.t('status-bar.error'),
-      icon: 'indicator',
-      scheme: schemeStatus,
-      closeText: i18n.global.t('close'),
-      position: 'bottom-right',
-    },
-    seconds: 15,
-  });
 };
 
 watch(

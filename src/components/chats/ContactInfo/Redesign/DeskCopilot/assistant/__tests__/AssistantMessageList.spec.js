@@ -1,14 +1,33 @@
-import { describe, it, expect, afterEach, vi } from 'vitest';
-import { mount } from '@vue/test-utils';
+import { describe, it, expect, afterEach, beforeEach, vi } from 'vitest';
+import { mount, flushPromises } from '@vue/test-utils';
+import { createPinia, setActivePinia } from 'pinia';
 import AssistantMessageList from '../AssistantMessageList.vue';
+import { useRooms } from '@/store/modules/chats/rooms';
+import CopilotFeedback from '@/services/api/resources/chats/copilotFeedback';
 
-const createWrapper = (props = {}) =>
-  mount(AssistantMessageList, {
+vi.mock('@/services/api/resources/chats/copilotFeedback', () => ({
+  default: {
+    getRoomFeedbacks: vi.fn(),
+    getMessageFeedbackTags: vi.fn(() => []),
+    sendMessageFeedback: vi.fn(),
+  },
+}));
+
+const createWrapper = (props = {}) => {
+  const pinia = createPinia();
+  setActivePinia(pinia);
+  const roomsStore = useRooms();
+  roomsStore.$patch({
+    activeRoom: { uuid: 'room-1' },
+  });
+
+  return mount(AssistantMessageList, {
     props: {
       messages: [],
       ...props,
     },
     global: {
+      plugins: [pinia],
       mocks: {
         $t: (key) => key,
       },
@@ -24,8 +43,22 @@ const createWrapper = (props = {}) =>
         },
         AiMessage: {
           name: 'AssistantAiMessage',
-          template: '<div data-testid="assistant-ai-message" />',
-          props: ['text', 'suggestion', 'status', 'type', 'media', 'filename'],
+          template:
+            '<div data-testid="assistant-ai-message" @click="$emit(\'sendCatalog\', { catalog: { carousel: true, products: [] }, text: \'Catalog text\' })" />',
+          props: [
+            'messageId',
+            'text',
+            'suggestion',
+            'status',
+            'type',
+            'media',
+            'filename',
+            'productCarousel',
+            'productList',
+            'getQuantity',
+            'readOnly',
+            'liked',
+          ],
         },
         ThinkingIndicator: {
           name: 'AssistantThinkingIndicator',
@@ -38,9 +71,14 @@ const createWrapper = (props = {}) =>
       },
     },
   });
+};
 
 describe('AssistantMessageList', () => {
   let wrapper;
+
+  beforeEach(() => {
+    CopilotFeedback.getRoomFeedbacks.mockResolvedValue([]);
+  });
 
   afterEach(() => {
     wrapper?.unmount();
@@ -121,5 +159,112 @@ describe('AssistantMessageList', () => {
 
     const aiMessage = wrapper.findComponent({ name: 'AssistantAiMessage' });
     expect(aiMessage.props('status')).toBe('streaming');
+    expect(aiMessage.props('messageId')).toBe('ai-1');
+  });
+
+  it('passes productList to AiMessage when present', () => {
+    const productList = {
+      text: 'Available TVs',
+      header: 'TV selection',
+      sections: [
+        {
+          title: 'TV 32',
+          items: [
+            {
+              product_retailer_id: 'tv-32-1',
+              name: 'Smart TV 32"',
+              price: 1099,
+              currency: 'BRL',
+              image: 'https://example.com/tv32.png',
+            },
+          ],
+        },
+      ],
+    };
+
+    wrapper = createWrapper({
+      messages: [
+        {
+          id: 'ai-2',
+          direction: 'ai',
+          text: 'Available TVs',
+          quickReplies: [],
+          status: 'delivered',
+          timestamp: 1,
+          productList,
+        },
+      ],
+    });
+
+    const aiMessage = wrapper.findComponent({ name: 'AssistantAiMessage' });
+    expect(aiMessage.props('productList')).toEqual(productList);
+  });
+
+  it('passes readOnly to AiMessage', () => {
+    wrapper = createWrapper({
+      readOnly: true,
+      messages: [
+        {
+          id: 'ai-3',
+          direction: 'ai',
+          text: 'History reply',
+          quickReplies: [],
+          status: 'delivered',
+          timestamp: 1,
+        },
+      ],
+    });
+
+    const aiMessage = wrapper.findComponent({ name: 'AssistantAiMessage' });
+    expect(aiMessage.props('readOnly')).toBe(true);
+  });
+
+  it('forwards sendCatalog from AiMessage', async () => {
+    wrapper = createWrapper({
+      messages: [
+        {
+          id: 'ai-4',
+          direction: 'ai',
+          text: 'Catalog text',
+          quickReplies: [],
+          status: 'delivered',
+          timestamp: 1,
+        },
+      ],
+    });
+
+    await wrapper.find('[data-testid="assistant-ai-message"]').trigger('click');
+
+    expect(wrapper.emitted('sendCatalog')?.[0][0]).toEqual({
+      catalog: { carousel: true, products: [] },
+      text: 'Catalog text',
+    });
+  });
+
+  it('passes persisted liked state from room feedback', async () => {
+    CopilotFeedback.getRoomFeedbacks.mockResolvedValue([
+      { message_id: 'ai-1', liked: true, text: '', tags: [] },
+    ]);
+
+    wrapper = createWrapper({
+      messages: [
+        {
+          id: 'ai-1',
+          direction: 'ai',
+          text: 'Hello world',
+          quickReplies: [],
+          status: 'delivered',
+          timestamp: 1,
+        },
+      ],
+    });
+    await flushPromises();
+
+    expect(CopilotFeedback.getRoomFeedbacks).toHaveBeenCalledWith({
+      roomUuid: 'room-1',
+    });
+    expect(
+      wrapper.findComponent({ name: 'AssistantAiMessage' }).props('liked'),
+    ).toBe(true);
   });
 });

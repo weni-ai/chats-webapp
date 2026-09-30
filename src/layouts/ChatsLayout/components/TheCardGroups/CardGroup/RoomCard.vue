@@ -178,7 +178,11 @@ export default {
     isLastMessageFromBot() {
       if (this.isViewMode) return false;
 
-      return !this.room.last_message?.contact && !this.room.last_message?.user;
+      return (
+        !this.room.last_message?.contact &&
+        !this.room.last_message?.user &&
+        !this.room.last_message?.bulk_message
+      );
     },
     showPendingResponse() {
       const isLastMessageValid =
@@ -208,6 +212,7 @@ export default {
     },
     displayedLastMessage() {
       const { last_message: lastMessage } = this.room;
+      const isBulkMessage = !!lastMessage?.bulk_message;
 
       const isFromMe =
         this.isProgressRoom &&
@@ -216,7 +221,7 @@ export default {
         (lastMessage?.user === this.me?.email ||
           lastMessage?.user?.email === this.me?.email);
 
-      if (!isFromMe) return lastMessage;
+      if (!isFromMe && !isBulkMessage) return lastMessage;
 
       const hasMedia =
         Array.isArray(lastMessage.media) && lastMessage.media.length > 0;

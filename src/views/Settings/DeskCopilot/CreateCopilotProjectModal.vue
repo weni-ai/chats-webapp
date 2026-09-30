@@ -118,7 +118,7 @@ async function createProject() {
     });
 
     window.open(
-      buildCopilotProjectUrl(createdProject.uuid),
+      buildCopilotProjectUrl(createdProject.projectUuid || createdProject.uuid),
       '_blank',
       'noopener,noreferrer',
     );

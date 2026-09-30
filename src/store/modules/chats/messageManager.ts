@@ -47,6 +47,12 @@ export const useMessageManager = defineStore('messageManager', () => {
     );
   });
 
+  watch(audioMessage, (newAudioMessage) => {
+    if (!newAudioMessage) {
+      audioRecorderStatus.value = 'idle';
+    }
+  });
+
   watch(
     [() => activeRoom.value?.uuid, () => activeDiscussion.value?.uuid],
     () => {
@@ -57,6 +63,16 @@ export const useMessageManager = defineStore('messageManager', () => {
   function copyInputMessageToClipboard() {
     if (!inputMessage.value) return;
     navigator.clipboard.writeText(inputMessage.value);
+  }
+
+  const inputFocusRequestId = ref(0);
+
+  function setInputMessage(text: string, options: { focus?: boolean } = {}) {
+    inputMessage.value = text ?? '';
+
+    if (options.focus) {
+      inputFocusRequestId.value += 1;
+    }
   }
 
   function clearInputs() {
@@ -197,18 +213,27 @@ export const useMessageManager = defineStore('messageManager', () => {
   }
 
   function sendMediasMessage(activeRoomUuid: string) {
+    const files = [...mediaUploadFiles.value];
+    const text = inputMessage.value.trim();
+    const repliedMessage = replyMessage.value;
+    const aiTextImprovementStore = useAiTextImprovement();
+    const aiTextImprovementPayload =
+      aiTextImprovementStore.getAiTextImprovementPayload(text);
+
     try {
       isLoadingSend.value = true;
       if (discussionsStore.activeDiscussion?.uuid) {
         discussionMessagesStore.sendDiscussionMedias({
-          files: [...mediaUploadFiles.value],
+          files,
           updateLoadingFiles: () => {},
         });
       } else {
         roomMessagesStore.sendRoomMedias({
-          files: [...mediaUploadFiles.value],
+          files,
+          text,
+          aiTextImprovement: aiTextImprovementPayload,
           updateLoadingFiles: () => {},
-          repliedMessage: replyMessage.value,
+          repliedMessage,
           roomUuid: activeRoomUuid,
         });
       }
@@ -223,6 +248,7 @@ export const useMessageManager = defineStore('messageManager', () => {
   return {
     inputMessageFocused,
     inputMessage,
+    inputFocusRequestId,
     audioMessage,
     audioRecorderStatus,
     mediaUploadFiles,
@@ -245,5 +271,6 @@ export const useMessageManager = defineStore('messageManager', () => {
     addMediaUploadFiles,
     clearInputs,
     copyInputMessageToClipboard,
+    setInputMessage,
   };
 });

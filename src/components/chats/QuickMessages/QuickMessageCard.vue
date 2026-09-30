@@ -19,54 +19,51 @@
         >
           {{ `/${quickMessage.shortcut}` }}
         </p>
-        <UnnnicPopover
-          v-if="withActions"
-          :open="openPopover"
-          @update:open="openPopover = $event"
+        <div
+          class="quick-message-card__actions"
+          @click.stop
         >
-          <UnnnicPopoverTrigger
-            class="clickable"
-            data-testid="dropdown-trigger-icon"
+          <UnnnicPopover
+            :open="openPopover"
+            @update:open="openPopover = $event"
           >
-            <UnnnicIconSvg
-              icon="more_vert"
-              size="sm"
-              scheme="fg-base"
-              @click="togglePopover"
-            />
-          </UnnnicPopoverTrigger>
-          <UnnnicPopoverContent>
-            <div class="dropdown-item-content">
-              <div
-                data-testid="dropdown-edit"
-                @click="emitEdit"
-              >
-                <div class="dropdown-item clickable">
-                  <UnnnicIconSvg
-                    class="icon"
-                    icon="edit_square"
-                    size="avatar-nano"
-                  />
-                  <span> {{ $t('edit') }} </span>
-                </div>
+            <UnnnicPopoverTrigger
+              class="clickable"
+              data-testid="dropdown-trigger-icon"
+            >
+              <UnnnicIconSvg
+                icon="more_vert"
+                size="sm"
+                scheme="fg-base"
+              />
+            </UnnnicPopoverTrigger>
+            <UnnnicPopoverContent size="small">
+              <div class="quick-message-card__popover-options">
+                <UnnnicPopoverOption
+                  data-testid="dropdown-send-in-bulk"
+                  :label="$t('quick_messages.send_in_bulk')"
+                  icon="forward"
+                  @click="emitSendInBulk"
+                />
+                <UnnnicPopoverOption
+                  v-if="!isSharedQuickMessage"
+                  data-testid="dropdown-edit"
+                  :label="$t('edit')"
+                  icon="edit_square"
+                  @click="emitEdit"
+                />
+                <UnnnicPopoverOption
+                  v-if="!isSharedQuickMessage"
+                  data-testid="dropdown-delete"
+                  :label="$t('delete')"
+                  icon="delete"
+                  scheme="fg-critical"
+                  @click="emitDelete"
+                />
               </div>
-              <div
-                data-testid="dropdown-delete"
-                @click="emitDelete"
-              >
-                <div class="dropdown-item delete clickable">
-                  <UnnnicIconSvg
-                    class="icon"
-                    icon="delete"
-                    scheme="fg-critical"
-                    size="avatar-nano"
-                  />
-                  <span> {{ $t('delete') }} </span>
-                </div>
-              </div>
-            </div>
-          </UnnnicPopoverContent>
-        </UnnnicPopover>
+            </UnnnicPopoverContent>
+          </UnnnicPopover>
+        </div>
       </section>
       <section class="quick-message-card__content">
         <p
@@ -95,10 +92,6 @@ export default {
       type: Boolean,
       default: false,
     },
-    withActions: {
-      type: Boolean,
-      default: true,
-    },
     showTooltip: {
       type: Boolean,
       default: false,
@@ -108,7 +101,8 @@ export default {
       default: 'left',
     },
   },
-  emits: ['select', 'edit', 'delete'],
+
+  emits: ['select', 'edit', 'delete', 'send-in-bulk'],
 
   data() {
     return {
@@ -116,9 +110,15 @@ export default {
       openPopover: false,
     };
   },
+  computed: {
+    isSharedQuickMessage() {
+      return !!this.quickMessage.sector;
+    },
+  },
   methods: {
-    togglePopover() {
-      this.openPopover = !this.openPopover;
+    emitSendInBulk() {
+      this.openPopover = false;
+      this.$emit('send-in-bulk', this.quickMessage);
     },
     emitEdit() {
       this.openPopover = false;
@@ -172,26 +172,11 @@ export default {
       text-overflow: ellipsis;
     }
   }
-}
 
-.dropdown-item-content {
-  display: flex;
-  justify-content: center;
-  flex-direction: column;
-  gap: $unnnic-space-2;
-
-  white-space: nowrap;
-}
-
-.dropdown-item {
-  display: flex;
-  align-items: center;
-  gap: $unnnic-space-2;
-  font: $unnnic-font-emphasis;
-  color: $unnnic-color-fg-emphasized;
-
-  &.delete {
-    color: $unnnic-color-fg-critical;
+  &__popover-options {
+    display: flex;
+    flex-direction: column;
+    gap: $unnnic-space-2;
   }
 }
 </style>

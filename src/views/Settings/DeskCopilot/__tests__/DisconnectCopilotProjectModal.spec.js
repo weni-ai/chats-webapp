@@ -25,8 +25,8 @@ vi.mock('@/services/api/resources/chats/copilotProject', () => ({
     remove: vi.fn(),
     getLinkedProject: vi.fn(),
     create: vi.fn(),
-    update: vi.fn(),
-    listExistingProjects: vi.fn(),
+    reconnect: vi.fn(),
+    canCreate: vi.fn(),
   },
 }));
 
@@ -53,6 +53,7 @@ const linkedProject = {
   connectedOn: '2026-07-30T00:00:00Z',
   uuid: 'copilot-uuid',
   connectedBy: 'edu',
+  isConnected: true,
 };
 
 const createWrapper = () =>
@@ -61,7 +62,19 @@ const createWrapper = () =>
       modelValue: true,
     },
     global: {
-      plugins: [createTestingPinia()],
+      plugins: [
+        createTestingPinia({
+          initialState: {
+            config: {
+              project: {
+                uuid: 'desk-uuid',
+                name: 'Sales 123',
+                config: {},
+              },
+            },
+          },
+        }),
+      ],
       mocks: {
         $t: (key) => key,
       },
@@ -96,7 +109,19 @@ describe('DisconnectCopilotProjectModal', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     resetCopilotProjectState();
-    setActivePinia(createTestingPinia());
+    setActivePinia(
+      createTestingPinia({
+        initialState: {
+          config: {
+            project: {
+              uuid: 'desk-uuid',
+              name: 'Sales 123',
+              config: {},
+            },
+          },
+        },
+      }),
+    );
     const { setLinkedProject } = useCopilotProject();
     setLinkedProject(linkedProject);
     wrapper = createWrapper();
@@ -110,6 +135,12 @@ describe('DisconnectCopilotProjectModal', () => {
 
   it('disconnects the project, shows a toast and closes the modal', async () => {
     CopilotProjectService.remove.mockResolvedValue();
+    CopilotProjectService.getLinkedProject.mockResolvedValue({
+      ...linkedProject,
+      isConnected: false,
+      disconnectedBy: 'edu',
+      disconnectedOn: '2026-09-10T00:00:00Z',
+    });
 
     await wrapper.vm.disconnect();
 
@@ -124,8 +155,9 @@ describe('DisconnectCopilotProjectModal', () => {
     expect(wrapper.emitted('update:modelValue').at(-1)).toEqual([false]);
   });
 
-  it('shows an error toast and keeps the modal open on failure', async () => {
+  it('shows an error toast, closes the modal and keeps the project connected', async () => {
     CopilotProjectService.remove.mockRejectedValue(new Error('API Error'));
+    const { linkedProject: project } = useCopilotProject();
 
     await wrapper.vm.disconnect();
 
@@ -136,6 +168,7 @@ describe('DisconnectCopilotProjectModal', () => {
       },
       seconds: 5,
     });
-    expect(wrapper.emitted('update:modelValue')).toBeFalsy();
+    expect(wrapper.emitted('update:modelValue').at(-1)).toEqual([false]);
+    expect(project.value?.isConnected).toBe(true);
   });
 });

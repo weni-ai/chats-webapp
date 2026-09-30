@@ -4,6 +4,7 @@ export interface SelectOption {
 }
 
 export interface ShippingHistoryItem {
+  message?: string;
   contact?: { name?: string };
   queue?: { name?: string };
   sent_by?: { name?: string };

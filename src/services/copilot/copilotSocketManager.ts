@@ -21,6 +21,16 @@ function getIdleTimeoutMs() {
   return DEFAULT_IDLE_TIMEOUT_MS;
 }
 
+// @weni/webchat-service builds the final address as `wss://${socketUrl}/ws`
+// and only strips a leading `http(s)://` from `socketUrl` — it does not
+// account for a `ws(s)://` prefix. If the connection already carries a
+// `wss://`/`ws://` scheme (as returned by the copilot connections API),
+// the library ends up producing a malformed `wss://wss://host/ws` address.
+// Normalize here so only the bare host/path is handed to the service.
+function normalizeSocketUrl(socketUrl: string): string {
+  return socketUrl.replace(/^(https?|wss?):\/\//, '');
+}
+
 function isolateSessionStorage(
   service: WeniWebchatService,
   connection: CopilotConnection,
@@ -41,7 +51,11 @@ function ensureConnected(service: WeniWebchatService, key: string) {
     return;
   }
 
-  service.connect().catch((error) => {
+  const reconnect = service.isReconnecting?.()
+    ? service.reconnectNow()
+    : service.connect();
+
+  reconnect.catch((error) => {
     console.error(`Failed to reconnect copilot service for ${key}:`, error);
   });
 }
@@ -51,7 +65,7 @@ function createService(
   roomUuid: string,
 ): WeniWebchatService {
   const service = new WeniWebchatService({
-    socketUrl: connection.socketUrl,
+    socketUrl: normalizeSocketUrl(connection.socketUrl),
     channelUuid: connection.channelUuid,
     host: connection.host,
     connectOn: connection.connectOn || 'mount',

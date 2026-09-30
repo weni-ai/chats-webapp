@@ -88,4 +88,21 @@ describe('ChatsMessage', () => {
 
     expect(wrapper.emitted('reply')).toBeFalsy();
   });
+
+  it('renders extra slot content inside the bubble', () => {
+    wrapper = mount(ChatsMessage, {
+      slots: {
+        default: 'Message text content',
+        extra: '<div data-testid="chat-message-extra">Catalog preview</div>',
+      },
+      props: { time: new Date() },
+    });
+
+    expect(wrapper.find('[data-testid="chat-message-extra"]').exists()).toBe(
+      true,
+    );
+    expect(wrapper.find('[data-testid="chat-message-extra"]').text()).toBe(
+      'Catalog preview',
+    );
+  });
 });

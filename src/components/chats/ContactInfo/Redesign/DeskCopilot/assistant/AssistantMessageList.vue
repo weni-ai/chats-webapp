@@ -32,14 +32,24 @@
       />
       <AiMessage
         v-else
+        :messageId="message.id"
         :text="message.text"
         :suggestion="message.suggestion"
         :status="message.status"
         :type="message.type"
         :media="message.media"
         :filename="message.filename"
+        :productCarousel="message.productCarousel"
+        :productList="message.productList"
+        :getQuantity="getQuantity"
+        :readOnly="readOnly"
+        :liked="feedbackByMessageId[message.id] ?? null"
         @send="emit('send', $event)"
+        @send-catalog="emit('sendCatalog', $event)"
         @word-revealed="emit('wordRevealed')"
+        @add-to-cart="emit('addToCart', $event)"
+        @increment-cart-item="emit('incrementCartItem', $event)"
+        @decrement-cart-item="emit('decrementCartItem', $event)"
       />
     </template>
 
@@ -55,7 +65,15 @@
 </template>
 
 <script setup lang="ts">
-import type { AssistantMessage } from '@/services/assistant/types';
+import { computed, ref, watch } from 'vue';
+import { storeToRefs } from 'pinia';
+import type {
+  AssistantMessage,
+  ProductCarouselItem,
+} from '@/services/assistant/types';
+import type { CatalogPayload } from '@/services/assistant/buildCatalogPayload';
+import CopilotFeedback from '@/services/api/resources/chats/copilotFeedback';
+import { useRooms } from '@/store/modules/chats/rooms';
 import HumanMessage from './HumanMessage.vue';
 import AiMessage from './AiMessage.vue';
 import ThinkingIndicator from './ThinkingIndicator.vue';
@@ -65,7 +83,7 @@ defineOptions({
   name: 'AssistantMessageList',
 });
 
-withDefaults(
+const props = withDefaults(
   defineProps<{
     messages?: AssistantMessage[];
     isThinking?: boolean;
@@ -73,6 +91,9 @@ withDefaults(
     isLoadingHistory?: boolean;
     isVoiceModeActive?: boolean;
     voicePartialTranscript?: string;
+    getQuantity?: (productId: string) => number;
+    readOnly?: boolean;
+    roomUuid?: string;
   }>(),
   {
     messages: () => [],
@@ -81,13 +102,55 @@ withDefaults(
     isLoadingHistory: false,
     isVoiceModeActive: false,
     voicePartialTranscript: '',
+    getQuantity: () => 0,
+    readOnly: false,
+    roomUuid: '',
   },
 );
 
 const emit = defineEmits<{
   send: [text: string];
+  sendCatalog: [
+    payload: {
+      catalog: CatalogPayload;
+      text: string;
+      resolve?: () => void;
+      reject?: (error?: unknown) => void;
+    },
+  ];
   wordRevealed: [];
+  addToCart: [product: ProductCarouselItem];
+  incrementCartItem: [product: ProductCarouselItem];
+  decrementCartItem: [product: ProductCarouselItem];
 }>();
+
+const { activeRoom } = storeToRefs(useRooms());
+const feedbackByMessageId = ref<Record<string, boolean>>({});
+
+const resolvedRoomUuid = computed(
+  () => props.roomUuid || activeRoom.value?.uuid || '',
+);
+
+async function loadRoomFeedbacks(roomUuid: string) {
+  const feedbacks = await CopilotFeedback.getRoomFeedbacks({ roomUuid });
+  feedbackByMessageId.value = Object.fromEntries(
+    feedbacks
+      .filter((item) => item.message_id && typeof item.liked === 'boolean')
+      .map((item) => [item.message_id, item.liked]),
+  );
+}
+
+watch(
+  [resolvedRoomUuid, () => props.isLoadingHistory],
+  async ([roomUuid, isLoadingHistory]) => {
+    if (!roomUuid || isLoadingHistory) {
+      return;
+    }
+
+    await loadRoomFeedbacks(roomUuid);
+  },
+  { immediate: true },
+);
 </script>
 
 <style lang="scss" scoped>
@@ -96,6 +159,7 @@ const emit = defineEmits<{
   flex-direction: column;
   gap: $unnnic-space-3;
   width: 100%;
+  min-width: 0;
 
   &__loading {
     display: flex;

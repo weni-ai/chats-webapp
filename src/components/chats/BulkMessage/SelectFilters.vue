@@ -19,6 +19,7 @@
     <UnnnicMultiSelect
       class="bulk-message-form__select-filter"
       data-testid="select-filters-representatives"
+      :disabled="!props.enableRepresentativesFilter"
       :options="representativesOptions"
       :modelValue="props.representatives"
       :label="$t('mass_message.form.recipients.filters.representatives.label')"
@@ -33,7 +34,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue';
+import { ref, computed, onMounted, watch } from 'vue';
 
 import QueueService from '@/services/api/resources/settings/queue';
 import ProjectService from '@/services/api/resources/settings/project';
@@ -43,6 +44,7 @@ import i18n from '@/plugins/i18n';
 const props = defineProps<{
   queues: string[];
   representatives: string[];
+  enableRepresentativesFilter: boolean;
 }>();
 
 const emit = defineEmits<{
@@ -136,6 +138,15 @@ onMounted(() => {
   fetchQueues();
   fetchRepresentatives();
 });
+
+watch(
+  () => props.enableRepresentativesFilter,
+  (enable) => {
+    if (!enable) {
+      emit('update:representatives', []);
+    }
+  },
+);
 </script>
 
 <style scoped lang="scss">

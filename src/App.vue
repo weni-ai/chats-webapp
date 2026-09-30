@@ -51,9 +51,6 @@ import {
 } from '@/utils/config';
 
 import { moduleStorage } from '@/utils/storage';
-import { isFederatedModule } from '@/utils/moduleFederation';
-
-import moment from 'moment';
 
 export default {
   name: 'App',
@@ -167,7 +164,8 @@ export default {
         if (!newAppToken) return;
 
         if (isMobile()) {
-          if (this.appProject) this.initializeAppData(this.appProject);
+          const projectUuid = this.appProject || getProject();
+          if (projectUuid) this.initializeAppData(projectUuid);
         } else {
           this.getUser();
           this.getProject().then(() => {
@@ -275,10 +273,6 @@ export default {
       config.headers.Authorization = `Bearer ${token}`;
       return config;
     });
-  },
-
-  created() {
-    this.handleLocale();
   },
 
   mounted() {
@@ -396,29 +390,6 @@ export default {
       if (this.nextQuickMessagesShared) {
         this.loadQuickMessagesShared();
       }
-    },
-
-    handleLocale() {
-      // Federation: locale is mirrored from the host shared store in main.js.
-      // The parent postMessage handshake only works standalone/iframe.
-      if (isFederatedModule) return;
-
-      window.parent.postMessage({ event: 'getLanguage' }, '*');
-
-      window.addEventListener('message', (ev) => {
-        const message = ev.data;
-        const isLocaleChangeMessage = message?.event === 'setLanguage';
-
-        if (!isLocaleChangeMessage) return;
-
-        const locale = (message?.language || 'en').toLowerCase(); // 'en', 'pt-br', 'es'
-        const normalized = locale === 'en-us' ? 'en' : locale;
-
-        moment.locale(normalized);
-
-        // Composition API mode: locale is a Ref — assign `.value`.
-        this.$i18n.locale.value = normalized;
-      });
     },
 
     announceThemeToParent() {

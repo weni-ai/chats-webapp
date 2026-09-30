@@ -734,7 +734,7 @@ export default {
   .infos {
     display: flex;
     flex-direction: column;
-    gap: $unnnic-spacing-stack-sm;
+    gap: $unnnic-space-4;
 
     &-header {
       display: flex;
@@ -755,7 +755,7 @@ export default {
       }
 
       .sync-contact {
-        margin-left: -$unnnic-spacing-xs;
+        margin-left: -$unnnic-space-2;
 
         display: flex;
         align-items: center;
@@ -772,6 +772,7 @@ export default {
       flex-direction: column;
       padding-top: $unnnic-space-2;
       gap: $unnnic-space-1;
+      min-width: 0;
 
       &__item {
         display: flex;
@@ -813,5 +814,7 @@ export default {
   display: flex;
   flex-direction: column;
   gap: $unnnic-space-1;
+  min-width: 0;
+  width: 100%;
 }
 </style>

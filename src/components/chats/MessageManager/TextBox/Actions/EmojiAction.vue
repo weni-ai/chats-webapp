@@ -16,6 +16,8 @@ import { storeToRefs } from 'pinia';
 
 import { useMessageManager } from '@/store/modules/chats/messageManager';
 import { useAiTextImprovement } from '@/store/modules/chats/aiTextImprovement';
+import { useFeatureFlag } from '@/store/modules/featureFlag';
+import { useMediaMessagesWithTextFeatureFlag } from '@/composables/useMediaMessagesWithTextFeatureFlag';
 
 import ActionItem from './ActionItem.vue';
 
@@ -38,6 +40,11 @@ const {
 } = storeToRefs(useMessageManager());
 
 const { isLoading: isAiLoading } = storeToRefs(useAiTextImprovement());
+const { featureFlags } = storeToRefs(useFeatureFlag());
+
+const isMediaMessagesWithTextEnabled = computed(() =>
+  useMediaMessagesWithTextFeatureFlag(featureFlags.value),
+);
 
 const isDisabled = computed(() => {
   if (isInternalNote.value) {
@@ -48,7 +55,8 @@ const isDisabled = computed(() => {
     isDictationListening.value ||
     audioRecorderStatus.value !== 'idle' ||
     !!audioMessage.value ||
-    mediaUploadFiles.value.length > 0 ||
+    (mediaUploadFiles.value.length > 0 &&
+      !isMediaMessagesWithTextEnabled.value) ||
     inputMessage.value.startsWith('/')
   );
 });

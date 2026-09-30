@@ -75,4 +75,104 @@ describe('sendRoomMessageBySocket', () => {
       text: 'Hello',
     });
   });
+
+  it('should include media in content when media uuids are provided', async () => {
+    isSocketOpen.mockReturnValue(true);
+
+    const promise = sendRoomMessageBySocket({
+      room: 'room-1',
+      text: 'Caption',
+      media: ['media-1', 'media-2'],
+      requestId: 'req-2',
+    });
+
+    expect(sendMock).toHaveBeenCalledWith({
+      type: 'method',
+      action: 'message_create',
+      content: {
+        request_id: 'req-2',
+        room: 'room-1',
+        text: 'Caption',
+        media: ['media-1', 'media-2'],
+      },
+    });
+
+    resolvePendingRequest('req-2', {
+      request_id: 'req-2',
+      uuid: 'server-uuid-2',
+      text: 'Caption',
+    });
+
+    await expect(promise).resolves.toMatchObject({
+      uuid: 'server-uuid-2',
+      text: 'Caption',
+    });
+  });
+
+  it('should omit media from content for text-only messages', async () => {
+    isSocketOpen.mockReturnValue(true);
+
+    sendRoomMessageBySocket({
+      room: 'room-1',
+      text: 'Hello',
+      requestId: 'req-3',
+    });
+
+    expect(sendMock).toHaveBeenCalledWith({
+      type: 'method',
+      action: 'message_create',
+      content: {
+        request_id: 'req-3',
+        room: 'room-1',
+        text: 'Hello',
+      },
+    });
+    expect(sendMock.mock.calls[0][0].content.media).toBeUndefined();
+  });
+
+  it('should include catalog in content when provided', async () => {
+    isSocketOpen.mockReturnValue(true);
+    const catalog = {
+      carousel: true,
+      products: [
+        {
+          product: 'product',
+          product_retailer_ids: ['sku-1'],
+          product_retailer_info: [
+            { retailer_id: 'sku-1', name: 'Tile', price: '32' },
+          ],
+        },
+      ],
+    };
+
+    const promise = sendRoomMessageBySocket({
+      room: 'room-1',
+      text: 'Check these products',
+      catalog,
+      requestId: 'req-4',
+    });
+
+    expect(sendMock).toHaveBeenCalledWith({
+      type: 'method',
+      action: 'message_create',
+      content: {
+        request_id: 'req-4',
+        room: 'room-1',
+        text: 'Check these products',
+        catalog,
+      },
+    });
+
+    resolvePendingRequest('req-4', {
+      request_id: 'req-4',
+      uuid: 'server-uuid-4',
+      text: 'Check these products',
+      catalog,
+    });
+
+    await expect(promise).resolves.toMatchObject({
+      uuid: 'server-uuid-4',
+      catalog,
+    });
+  });
 });

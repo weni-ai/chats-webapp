@@ -100,8 +100,20 @@ import { useRooms } from '@/store/modules/chats/rooms';
 import QueueService from '@/services/api/resources/chats/queues';
 
 import i18n from '@/plugins/i18n';
+import { getProject } from '@/utils/config';
+import { setSelectedQueues } from '@/utils/queuesViewStorage';
+
+const props = withDefaults(
+  defineProps<{
+    isViewMode?: boolean;
+  }>(),
+  {
+    isViewMode: false,
+  },
+);
 
 const roomsStore = useRooms();
+
 const { filterQueues, activeTab, selectedOngoingRooms, selectedWaitingRooms } =
   storeToRefs(roomsStore);
 
@@ -114,6 +126,11 @@ const queuesOptions = ref<{ count: number; value: string; label: string }[]>(
   [],
 );
 const selectedQueues = ref<string[]>([]);
+
+const persistSelectedQueues = (queues: string[]) => {
+  if (props.isViewMode) return;
+  setSelectedQueues(getProject(), queues);
+};
 
 const queuesOptionsFiltered = computed(() => {
   return queuesOptions.value
@@ -170,6 +187,7 @@ const clearFilterQueues = () => {
   selectedOngoingRooms.value = [];
   selectedWaitingRooms.value = [];
   filterQueues.value = [];
+  persistSelectedQueues([]);
   openPopover.value = false;
 };
 
@@ -177,6 +195,7 @@ const applyFilterQueues = () => {
   selectedOngoingRooms.value = [];
   selectedWaitingRooms.value = [];
   filterQueues.value = cloneDeep(selectedQueues.value);
+  persistSelectedQueues(filterQueues.value);
   openPopover.value = false;
 };
 

@@ -3,9 +3,11 @@ import { setActivePinia, createPinia } from 'pinia';
 import { useRoomMessages } from '../roomMessages';
 import { useRooms } from '../rooms';
 import Message from '@/services/api/resources/chats/message';
+import Media from '@/services/api/resources/chats/media';
 import RoomNotes from '@/services/api/resources/chats/roomNotes';
 import { useFeatureFlag } from '@/store/modules/featureFlag';
 import { sendRoomMessageBySocket } from '@/services/api/websocket/messages';
+import { MEDIA_MESSAGES_WITH_TEXT_FEATURE_FLAG } from '@/composables/useMediaMessagesWithTextFeatureFlag';
 
 vi.mock('../rooms');
 vi.mock('@/store/modules/profile', () => ({
@@ -21,6 +23,11 @@ vi.mock('@/services/api/resources/chats/message', () => ({
     getByRoom: vi.fn(),
     sendRoomMessage: vi.fn(),
     sendRoomMedia: vi.fn(),
+  },
+}));
+vi.mock('@/services/api/resources/chats/media', () => ({
+  default: {
+    uploadRoomMedia: vi.fn(),
   },
 }));
 vi.mock('@/services/api/resources/chats/roomNotes', () => ({
@@ -64,6 +71,7 @@ describe('useRoomMessages Store', () => {
     expect(roomMessagesStore.roomMessagesFailedUuids).toEqual([]);
     expect(roomMessagesStore.roomMessagesNext).toBe('');
     expect(roomMessagesStore.roomMessagesPrevious).toBe('');
+    expect(roomMessagesStore.roomMessagesRoomUuid).toBe('');
   });
 
   it('should add a failed message', () => {
@@ -80,11 +88,13 @@ describe('useRoomMessages Store', () => {
     roomMessagesStore.roomMessages = [{ uuid: '123' }];
     roomMessagesStore.roomMessagesNext = 'next';
     roomMessagesStore.roomMessagesPrevious = 'prev';
+    roomMessagesStore.roomMessagesRoomUuid = 'room-123';
 
     roomMessagesStore.resetRoomMessages();
     expect(roomMessagesStore.roomMessages).toEqual([]);
     expect(roomMessagesStore.roomMessagesNext).toBe('');
     expect(roomMessagesStore.roomMessagesPrevious).toBe('');
+    expect(roomMessagesStore.roomMessagesRoomUuid).toBe('');
   });
 
   it('should add a message', async () => {
@@ -242,6 +252,109 @@ describe('useRoomMessages Store', () => {
     expect(Message.sendRoomMessage).not.toHaveBeenCalled();
   });
 
+  it('should send a catalog message via socket even when the socket flag is off', async () => {
+    crypto.randomUUID.mockReturnValue('req-catalog-1');
+    const catalog = {
+      carousel: true,
+      products: [
+        {
+          product: 'product',
+          product_retailer_ids: ['sku-1'],
+          product_retailer_info: [
+            { retailer_id: 'sku-1', name: 'Tile', price: '32' },
+          ],
+        },
+      ],
+    };
+    sendRoomMessageBySocket.mockResolvedValue({
+      uuid: 'server-catalog',
+      text: 'Check these products',
+      catalog,
+      room: 'room-123',
+    });
+
+    await roomMessagesStore.sendRoomCatalogMessage(
+      catalog,
+      'Check these products',
+      'room-123',
+    );
+
+    expect(sendRoomMessageBySocket).toHaveBeenCalledWith({
+      room: 'room-123',
+      text: 'Check these products',
+      catalog,
+      requestId: 'req-catalog-1',
+    });
+    expect(Message.sendRoomMessage).not.toHaveBeenCalled();
+    expect(roomMessagesStore.roomMessages[0].catalog).toEqual(catalog);
+  });
+
+  it('should mark the catalog message as failed when socket send rejects', async () => {
+    crypto.randomUUID.mockReturnValue('req-catalog-fail');
+    sendRoomMessageBySocket.mockRejectedValue(new Error('timeout'));
+    const errorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+
+    await roomMessagesStore.sendRoomCatalogMessage(
+      {
+        carousel: true,
+        products: [
+          {
+            product: 'product',
+            product_retailer_ids: ['sku-1'],
+            product_retailer_info: [],
+          },
+        ],
+      },
+      'Check these products',
+      'room-123',
+    );
+
+    expect(roomMessagesStore.roomMessagesFailedUuids).toContain(
+      'req-catalog-fail',
+    );
+    errorSpy.mockRestore();
+  });
+
+  it('should resend a catalog message via socket even when the socket flag is off', async () => {
+    crypto.randomUUID.mockReturnValue('req-catalog-resend');
+    const catalog = {
+      carousel: true,
+      products: [
+        {
+          product: 'product',
+          product_retailer_ids: ['sku-1'],
+          product_retailer_info: [
+            { retailer_id: 'sku-1', name: 'Tile', price: '32' },
+          ],
+        },
+      ],
+    };
+    sendRoomMessageBySocket.mockResolvedValue({
+      uuid: 'server-catalog-2',
+      text: 'Check these products',
+      catalog,
+    });
+
+    await roomMessagesStore.resendRoomMessage({
+      message: {
+        uuid: 'old-catalog',
+        text: 'Check these products',
+        catalog,
+        room: 'room-123',
+        user: { email: 'test@test.com' },
+      },
+      roomUuid: 'room-123',
+    });
+
+    expect(sendRoomMessageBySocket).toHaveBeenCalledWith({
+      room: 'room-123',
+      text: 'Check these products',
+      catalog,
+      requestId: 'req-catalog-resend',
+    });
+    expect(Message.sendRoomMessage).not.toHaveBeenCalled();
+  });
+
   it('should send room medias with roomUuid', async () => {
     globalThis.URL.createObjectURL = vi.fn(() => 'blob:preview');
     Message.sendRoomMedia.mockResolvedValue({
@@ -268,6 +381,66 @@ describe('useRoomMessages Store', () => {
     expect(
       Message.sendRoomMedia.mock.calls[0][1].createMessage,
     ).toBeUndefined();
+  });
+
+  it('should upload all medias via v2 and create one message when the media with text flag is enabled', async () => {
+    globalThis.URL.createObjectURL = vi.fn(() => 'blob:preview');
+    useFeatureFlag.mockReturnValue({
+      featureFlags: {
+        active_features: [MEDIA_MESSAGES_WITH_TEXT_FEATURE_FLAG],
+      },
+    });
+    Media.uploadRoomMedia
+      .mockResolvedValueOnce({ uuid: 'uploaded-1' })
+      .mockResolvedValueOnce({ uuid: 'uploaded-2' });
+    Message.sendRoomMessage.mockResolvedValue({
+      uuid: 'msg-1',
+      text: 'caption',
+      media: [{ uuid: 'uploaded-1' }, { uuid: 'uploaded-2' }],
+    });
+    const file1 = new File(['x'], 'image.png', { type: 'image/png' });
+    const file2 = new File(['y'], 'photo.jpg', { type: 'image/jpeg' });
+
+    await roomMessagesStore.sendRoomMedias({
+      files: [file1, file2],
+      text: 'caption',
+      updateLoadingFiles: vi.fn(),
+      repliedMessage: null,
+      roomUuid: 'room-123',
+    });
+
+    expect(Media.uploadRoomMedia).toHaveBeenCalledTimes(2);
+    expect(Message.sendRoomMessage).toHaveBeenCalledWith(
+      'room-123',
+      expect.objectContaining({
+        text: 'caption',
+        media: ['uploaded-1', 'uploaded-2'],
+      }),
+    );
+    expect(Message.sendRoomMedia).not.toHaveBeenCalled();
+  });
+
+  it('should not create a message when a v2 upload fails', async () => {
+    vi.spyOn(console, 'error').mockImplementation(() => {});
+    globalThis.URL.createObjectURL = vi.fn(() => 'blob:preview');
+    useFeatureFlag.mockReturnValue({
+      featureFlags: {
+        active_features: [MEDIA_MESSAGES_WITH_TEXT_FEATURE_FLAG],
+      },
+    });
+    Media.uploadRoomMedia.mockRejectedValue(new Error('upload failed'));
+    const file = new File(['x'], 'image.png', { type: 'image/png' });
+
+    await roomMessagesStore.sendRoomMedias({
+      files: [file],
+      text: 'caption',
+      updateLoadingFiles: vi.fn(),
+      repliedMessage: null,
+      roomUuid: 'room-123',
+    });
+
+    expect(Message.sendRoomMessage).not.toHaveBeenCalled();
+    expect(Message.sendRoomMedia).not.toHaveBeenCalled();
   });
 
   it('should create media message via socket when the feature flag is enabled', async () => {
@@ -458,6 +631,7 @@ describe('useRoomMessages Store', () => {
     expect(roomMessagesStore.roomMessages).toEqual(mockMessages);
     expect(roomMessagesStore.roomMessagesNext).toBe('next-url');
     expect(roomMessagesStore.roomMessagesPrevious).toBe('prev-url');
+    expect(roomMessagesStore.roomMessagesRoomUuid).toBe('room-123');
   });
 
   it('should resend all failed messages in order forwarding each message room', async () => {

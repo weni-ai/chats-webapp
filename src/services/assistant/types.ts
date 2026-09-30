@@ -5,7 +5,41 @@ export type AssistantMessageType =
   | 'audio'
   | 'image'
   | 'video'
-  | 'file';
+  | 'file'
+  | 'order';
+
+export type ProductCarouselItem = {
+  product_retailer_id: string;
+  name: string;
+  price: string | number;
+  image: string;
+  sale_price?: string | number;
+  currency?: string;
+  description?: string;
+  seller_id?: string;
+  product_url?: string;
+};
+
+export type CartProductItem = ProductCarouselItem & {
+  quantity: number;
+};
+
+export type OrderProductItem = {
+  product_retailer_id: string;
+  name: string;
+  price: string | number;
+  sale_price?: string | number;
+  currency?: string;
+  image: string;
+  description?: string;
+  seller_id?: string;
+  quantity: number;
+};
+
+export type ProductListSection = {
+  title: string;
+  items: ProductCarouselItem[];
+};
 
 export type AssistantMessage = {
   id: string;
@@ -21,6 +55,15 @@ export type AssistantMessage = {
   quickReplies: string[];
   status: string;
   timestamp: number;
+  productCarousel?: {
+    text: string;
+    items: ProductCarouselItem[];
+  };
+  productList?: {
+    text: string;
+    header?: string;
+    sections: ProductListSection[];
+  };
 };
 
 export type AssistantQuickReply = string;

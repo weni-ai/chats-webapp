@@ -13,6 +13,7 @@ import { setActivePinia } from 'pinia';
 
 import TextArea from '../TextArea.vue';
 import { useMessageManager } from '@/store/modules/chats/messageManager';
+import { MEDIA_MESSAGES_WITH_TEXT_FEATURE_FLAG } from '@/composables/useMediaMessagesWithTextFeatureFlag';
 import i18n from '@/plugins/i18n';
 
 vi.mock('@/services/api/resources/chats/aiTextImprovement', () => ({
@@ -39,6 +40,7 @@ const createWrapper = (options = {}) => {
     isAiImproving = false,
     isInternalNote = false,
     mediaUploadFiles = [],
+    featureFlags = { active_features: [] },
   } = options;
 
   const pinia = createTestingPinia({
@@ -53,6 +55,7 @@ const createWrapper = (options = {}) => {
         inputMessageFocused: false,
       },
       aiTextImprovement: { isLoading: isAiImproving },
+      featureFlag: { featureFlags },
     },
   });
   setActivePinia(pinia);
@@ -166,6 +169,16 @@ describe('TextArea', () => {
         mediaUploadFiles: [new File(['x'], 'file.png', { type: 'image/png' })],
       });
       expect(wrapper.find('[data-testid="text-area"]').exists()).toBe(false);
+    });
+
+    it('should keep textarea visible when media is attached and the feature flag is enabled', () => {
+      const wrapper = createWrapper({
+        mediaUploadFiles: [new File(['x'], 'file.png', { type: 'image/png' })],
+        featureFlags: {
+          active_features: [MEDIA_MESSAGES_WITH_TEXT_FEATURE_FLAG],
+        },
+      });
+      expect(wrapper.find('[data-testid="text-area"]').exists()).toBe(true);
     });
   });
 });

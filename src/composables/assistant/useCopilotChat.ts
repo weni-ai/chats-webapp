@@ -16,10 +16,19 @@ import type { CopilotConnection } from '@/services/api/resources/chats/copilot';
 import { copilotSocketManager } from '@/services/copilot/copilotSocketManager';
 import { extractCartCount } from '@/services/assistant/cartCount';
 import { mapServiceMessage } from '@/services/assistant/messageMapper';
-import type { AssistantMessage } from '@/services/assistant/types';
+import { isUnansweredTrigger } from '@/services/assistant/unansweredMessages';
+import type {
+  AssistantMessage,
+  OrderProductItem,
+} from '@/services/assistant/types';
 
 type ConnectionRef = Ref<CopilotConnection | undefined>;
 type RoomUuidRef = Ref<string | undefined>;
+type AgentEmailRef = Ref<string | undefined>;
+type ContactUrnRef = Ref<string | undefined>;
+
+const SELLER_EMAIL_CUSTOM_FIELD = 'seller_email';
+const ORIGINAL_CONTACT_URN_CUSTOM_FIELD = 'original_contact_urn';
 
 const DEFAULT_FILE_CONFIG: FileConfig = {
   allowedTypes: [],
@@ -30,12 +39,15 @@ const DEFAULT_FILE_CONFIG: FileConfig = {
 export function useCopilotChat(
   connection: ConnectionRef,
   roomUuid: RoomUuidRef,
+  agentEmail: AgentEmailRef = ref(undefined),
+  originalContactUrn: ContactUrnRef = ref(undefined),
 ) {
   const messages = ref<AssistantMessage[]>([]);
   const isThinking = ref(false);
   const isTyping = ref(false);
   const cartCount = ref(0);
   const isLoadingHistory = ref(false);
+  const isConnected = ref(false);
   const isRecording = ref(false);
   const recordingDurationMs = ref(0);
   const isAudioRecordingSupported = ref(
@@ -50,6 +62,17 @@ export function useCopilotChat(
   let activeRoomUuid: string | null = null;
   let activeConnection: CopilotConnection | null = null;
   let historyLoadedTimer: ReturnType<typeof setTimeout> | null = null;
+  // webchat-service 1.17.2 times out getHistory after 30s without emitting
+  // HISTORY_LOADED or ERROR (the timeout lives on the internal history
+  // object). Local mocks that ignore get_history would otherwise keep the
+  // skeleton forever after CONNECTED sets isLoadingHistory.
+  const HISTORY_LOAD_FALLBACK_MS = 5000;
+  let historyFallbackTimer: ReturnType<typeof setTimeout> | null = null;
+  let pendingHiddenSend: {
+    text: string;
+    resolve: () => void;
+    reject: (_error: unknown) => void;
+  } | null = null;
 
   const suggestions = computed(() => {
     const lastAiMessage = [...messages.value]
@@ -68,6 +91,7 @@ export function useCopilotChat(
     isTyping.value = false;
     cartCount.value = 0;
     isLoadingHistory.value = false;
+    isConnected.value = false;
     isRecording.value = false;
     recordingDurationMs.value = 0;
     isVoiceEnabledByServer.value = false;
@@ -84,8 +108,26 @@ export function useCopilotChat(
     historyLoadedTimer = null;
   }
 
+  function clearHistoryFallbackTimer() {
+    if (!historyFallbackTimer) {
+      return;
+    }
+
+    clearTimeout(historyFallbackTimer);
+    historyFallbackTimer = null;
+  }
+
+  function startHistoryFallback() {
+    clearHistoryFallbackTimer();
+    historyFallbackTimer = setTimeout(() => {
+      historyFallbackTimer = null;
+      finishHistoryLoading();
+    }, HISTORY_LOAD_FALLBACK_MS);
+  }
+
   function finishHistoryLoading() {
     clearHistoryLoadedTimer();
+    clearHistoryFallbackTimer();
 
     if (activeService) {
       syncMessagesFromService(activeService);
@@ -94,8 +136,15 @@ export function useCopilotChat(
     isLoadingHistory.value = false;
   }
 
+  function isHiddenTriggerMessage(mapped: AssistantMessage) {
+    return mapped.direction === 'human' && isUnansweredTrigger(mapped.text);
+  }
+
   function syncMessagesFromService(service: WeniWebchatService) {
-    messages.value = service.getMessages().map(mapServiceMessage);
+    messages.value = service
+      .getMessages()
+      .map(mapServiceMessage)
+      .filter((mapped) => !isHiddenTriggerMessage(mapped));
   }
 
   function syncFileConfig(service: WeniWebchatService) {
@@ -109,6 +158,10 @@ export function useCopilotChat(
   }
 
   function upsertMappedMessage(mapped: AssistantMessage) {
+    if (isHiddenTriggerMessage(mapped)) {
+      return;
+    }
+
     const existingIndex = messages.value.findIndex(
       (item) => item.id === mapped.id,
     );
@@ -136,6 +189,22 @@ export function useCopilotChat(
   }
 
   function handleMessageSent(...args: unknown[]) {
+    const message = args[0] as Message;
+
+    if (
+      pendingHiddenSend &&
+      message?.hidden &&
+      message.text === pendingHiddenSend.text
+    ) {
+      const { resolve } = pendingHiddenSend;
+      pendingHiddenSend = null;
+      resolve();
+    }
+
+    if (message?.hidden) {
+      return;
+    }
+
     handleMessageReceived(...args);
   }
 
@@ -228,12 +297,43 @@ export function useCopilotChat(
     }, 0);
   }
 
-  function handleServiceError() {
+  function handleServiceError(...args: unknown[]) {
+    if (pendingHiddenSend) {
+      const { reject } = pendingHiddenSend;
+      pendingHiddenSend = null;
+      reject(args[0] ?? new Error('Copilot service error'));
+    }
+
     finishHistoryLoading();
+  }
+
+  function handleConnected() {
+    isConnected.value = true;
+    isLoadingHistory.value = true;
+    startHistoryFallback();
+  }
+
+  function handleDisconnected() {
+    isConnected.value = false;
+  }
+
+  function handleReconnectScheduled() {
+    isConnected.value = false;
+  }
+
+  function rejectPendingHiddenSend(error: unknown) {
+    if (!pendingHiddenSend) {
+      return;
+    }
+
+    const { reject } = pendingHiddenSend;
+    pendingHiddenSend = null;
+    reject(error);
   }
 
   function unsubscribe(service: WeniWebchatService) {
     clearHistoryLoadedTimer();
+    clearHistoryFallbackTimer();
     service.off(SERVICE_EVENTS.MESSAGE_RECEIVED, handleMessageReceived);
     service.off(SERVICE_EVENTS.MESSAGE_SENT, handleMessageSent);
     service.off(SERVICE_EVENTS.MESSAGE_UPDATED, handleMessageUpdated);
@@ -245,6 +345,9 @@ export function useCopilotChat(
     service.off(SERVICE_EVENTS.STATE_CHANGED, handleStateChanged);
     service.off(SERVICE_EVENTS.HISTORY_LOADED, handleHistoryLoaded);
     service.off(SERVICE_EVENTS.ERROR, handleServiceError);
+    service.off(SERVICE_EVENTS.CONNECTED, handleConnected);
+    service.off(SERVICE_EVENTS.DISCONNECTED, handleDisconnected);
+    service.off(SERVICE_EVENTS.RECONNECT_SCHEDULED, handleReconnectScheduled);
     service.off(SERVICE_EVENTS.RECORDING_STARTED, handleRecordingStarted);
     service.off(SERVICE_EVENTS.RECORDING_STOPPED, handleRecordingStopped);
     service.off(SERVICE_EVENTS.RECORDING_CANCELLED, handleRecordingCancelled);
@@ -264,6 +367,9 @@ export function useCopilotChat(
     service.on(SERVICE_EVENTS.STATE_CHANGED, handleStateChanged);
     service.on(SERVICE_EVENTS.HISTORY_LOADED, handleHistoryLoaded);
     service.on(SERVICE_EVENTS.ERROR, handleServiceError);
+    service.on(SERVICE_EVENTS.CONNECTED, handleConnected);
+    service.on(SERVICE_EVENTS.DISCONNECTED, handleDisconnected);
+    service.on(SERVICE_EVENTS.RECONNECT_SCHEDULED, handleReconnectScheduled);
     service.on(SERVICE_EVENTS.RECORDING_STARTED, handleRecordingStarted);
     service.on(SERVICE_EVENTS.RECORDING_STOPPED, handleRecordingStopped);
     service.on(SERVICE_EVENTS.RECORDING_CANCELLED, handleRecordingCancelled);
@@ -272,6 +378,8 @@ export function useCopilotChat(
   }
 
   function detachCurrentView() {
+    rejectPendingHiddenSend(new Error('Copilot service detached'));
+
     if (activeService) {
       unsubscribe(activeService);
     }
@@ -289,6 +397,18 @@ export function useCopilotChat(
     }
 
     copilotSocketManager.scheduleEviction(activeRoomUuid, activeConnection);
+  }
+
+  function applySessionCustomFields(service: WeniWebchatService) {
+    const email = agentEmail.value?.trim();
+    if (email) {
+      service.setCustomField(SELLER_EMAIL_CUSTOM_FIELD, email);
+    }
+
+    const contactUrn = originalContactUrn.value?.trim();
+    if (contactUrn) {
+      service.setCustomField(ORIGINAL_CONTACT_URN_CUSTOM_FIELD, contactUrn);
+    }
   }
 
   function attachService(
@@ -321,8 +441,10 @@ export function useCopilotChat(
     activeRoomUuid = currentRoomUuid;
     activeConnection = currentConnection;
     subscribe(service);
+    applySessionCustomFields(service);
     syncMessagesFromService(service);
     syncFileConfig(service);
+    isConnected.value = service.isConnected();
     isLoadingHistory.value = !service.isConnected();
     isAudioRecordingSupported.value =
       !!WeniWebchatService.isAudioRecordingSupported;
@@ -336,6 +458,36 @@ export function useCopilotChat(
     }
 
     activeService.sendMessage(trimmed);
+  }
+
+  function sendHiddenMessage(text: string): Promise<void> {
+    const trimmed = text.trim();
+
+    if (!trimmed || !activeService) {
+      return Promise.reject(new Error('Copilot service is not connected'));
+    }
+
+    if (pendingHiddenSend) {
+      pendingHiddenSend.reject(new Error('Replaced by a new hidden message'));
+      pendingHiddenSend = null;
+    }
+
+    return new Promise((resolve, reject) => {
+      pendingHiddenSend = { text: trimmed, resolve, reject };
+      activeService?.sendMessage(trimmed, { hidden: true });
+    });
+  }
+
+  async function sendOrder(productItems: OrderProductItem[]) {
+    if (
+      !activeService ||
+      !Array.isArray(productItems) ||
+      productItems.length === 0
+    ) {
+      return;
+    }
+
+    await activeService.sendOrder(productItems);
   }
 
   async function sendAttachment(file: File) {
@@ -413,6 +565,14 @@ export function useCopilotChat(
     { immediate: true },
   );
 
+  watch([agentEmail, originalContactUrn], () => {
+    if (!activeService) {
+      return;
+    }
+
+    applySessionCustomFields(activeService);
+  });
+
   if (getCurrentInstance()) {
     onUnmounted(() => {
       scheduleActiveRoomEviction();
@@ -425,6 +585,7 @@ export function useCopilotChat(
     isThinking,
     isTyping,
     isLoadingHistory,
+    isConnected,
     cartCount,
     suggestions,
     isRecording,
@@ -434,6 +595,8 @@ export function useCopilotChat(
     fileConfig,
     lastStreamingText,
     sendMessage,
+    sendHiddenMessage,
+    sendOrder,
     sendAttachment,
     startRecording,
     stopRecording,

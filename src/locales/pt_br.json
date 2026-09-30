@@ -341,7 +341,7 @@
         "tooltip": "Cada mensagem exibirá o nome do atendente que respondeu",
         "switch_active": "Exibir nome do atendente nas mensagens",
         "switch_disabled": "Exibir nome do atendente nas mensagens",
-        "hint": "Cada mensagem trocada terá o nome do atendente que está respondendo.",
+        "hint": "Cada mensagem enviada exibirá o nome do atendente que está respondendo.",
         "switch_label": "Usar assinatura"
       },
       "csat": {
@@ -821,7 +821,7 @@
     "alert_detached": "Contato desvinculado",
     "header": {
       "desk_copilot": "Desk Copilot",
-      "information": "Informações"
+      "information": "Detalhes do chat"
     },
     "linked_contact": "Contato vinculado ao atendente {name}",
     "see_contact_history": "Ver histórico",
@@ -848,22 +848,38 @@
     },
     "desk_copilot": {
       "assistant": {
+        "add_to_cart_action": "Adicionar ao carrinho",
         "attach_action": "Anexar arquivo",
         "cancel_recording": "Cancelar gravação",
+        "carousel_scroll_left_action": "Rolar para a esquerda",
+        "carousel_scroll_right_action": "Rolar para a direita",
+        "cart": {
+          "back_action": "Voltar",
+          "discount": "Desconto",
+          "place_order_action": "Realizar pedido",
+          "place_order_error": "Não foi possível realizar o pedido devido a um problema técnico",
+          "remove_item_action": "Remover item",
+          "subtotal": "Subtotal",
+          "title": "Carrinho",
+          "total": "Total"
+        },
         "copy_action": "Copiar",
+        "decrease_quantity_action": "Diminuir quantidade",
         "file_too_large": "Selecione um arquivo menor",
         "file_type_not_allowed": "Selecione um tipo de arquivo compatível",
         "image_attachment": "Anexo de imagem",
+        "increase_quantity_action": "Aumentar quantidade",
         "input_placeholder": "Pergunte ao assistente",
         "open_media_menu": "Abrir menu de mídia",
         "processing_information": "Processando informações",
-        "record_audio": "Áudio",
-        "recording_in_progress": "Gravando",
+        "record_audio": "Gravar áudio",
+        "recording_in_progress": "Gravação",
+        "remove_suggestion_action": "Remover sugestão",
         "scroll_to_bottom": "Ir ao final",
         "send_action": "Enviar",
         "send_audio": "Enviar áudio",
         "thinking_messages": {
-          "almost": "Quase pronto, só mais um momento",
+          "almost": "Quase pronto, só mais um instante",
           "connecting": "Conectando ideias",
           "processing": "Processando informações",
           "refining": "Refinando detalhes",
@@ -871,7 +887,7 @@
         },
         "upload_file": "Enviar arquivo",
         "voice_mode": {
-          "dismiss": "Dispensar",
+          "dismiss": "Fechar",
           "enter": "Iniciar modo de voz",
           "error_title": "Modo de voz indisponível",
           "exit": "Sair do modo de voz",
@@ -881,6 +897,7 @@
           "speaking": "Assistente falando"
         }
       },
+      "copied_to_message_input": "Texto copiado para o campo de mensagem",
       "copy_summary": "Copiar resumo",
       "disclaimer": {
         "description": "O Desk Copilot pode ajudar você com:",
@@ -892,7 +909,24 @@
           "sales_arguments": "Argumentos de venda"
         },
         "title": "Vá além dos resumos de conversa",
-        "title_without_summary": "Desbloqueie todo o seu potencial com o Desk Copilot"
+        "title_without_summary": "Explore todo o seu potencial com o Desk Copilot"
+      },
+      "feedback": {
+        "error": "Não foi possível enviar o feedback. Tente novamente.",
+        "message_tags": {
+          "confusing_answer": "Resposta confusa",
+          "did_not_load": "Não carregou",
+          "incomplete_answer": "Resposta incompleta",
+          "incorrect_answer": "Resposta incorreta",
+          "no_items_found": "Nenhum item encontrado",
+          "out_of_context_items": "Itens sugeridos fora de contexto",
+          "slow_to_load": "Demorou para carregar",
+          "unclear_interface": "Interface pouco clara"
+        },
+        "other": "Outro",
+        "placeholder": "Digite seu feedback aqui",
+        "sended": "Seu feedback foi enviado.",
+        "title": "O que precisa ser melhorado?"
       },
       "summary_title": "Resumo desta conversa"
     }
@@ -1072,6 +1106,7 @@
     "example_message_description": "Mensagens rápidas são respostas pré-definidas que ajudam a padronizar o atendimento ao cliente. Todos os atendentes deste setor podem usá-las, e você pode adicionar novas abaixo.",
     "personal": "Suas mensagens",
     "shared": "Mensagens compartilhadas",
+    "send_in_bulk": "Enviar em massa",
     "delete": "Excluir mensagem rápida",
     "delete_your_quick_message": "Excluir sua mensagem rápida",
     "delete_confirm": "Tem certeza de que deseja excluir a mensagem rápida?",
@@ -1095,7 +1130,30 @@
     "no_suggestions": "Nenhum resultado encontrado para o atalho informado",
     "disclaimer": "Digite / (barra) no campo de mensagem para ver mensagens rápidas",
     "action_open": "Abrir mensagens rápidas (/)",
-    "action_close": "Fechar mensagens rápidas"
+    "action_close": "Fechar mensagens rápidas",
+    "bulk": {
+      "confirmation": {
+        "checkbox_label": "Verifiquei todos os campos e quero enviar"
+      },
+      "contacts": {
+        "all": "Todos os contatos",
+        "helper": "Apenas contatos em atendimento podem receber esta mensagem",
+        "label": "Contatos"
+      },
+      "send": "{count, plural, =0 {Enviar para todos (0 contatos)} one {Enviar para todos ({count} contato)} other {Enviar para todos ({count} contatos)}}",
+      "sending": "{count, plural, one {Enviando a mensagem para {count} contato} other {Enviando a mensagem para {count} contatos}}",
+      "toast": {
+        "error": {
+          "message": "Não foi possível enviar a mensagem. Tente novamente."
+        },
+        "partial_success": {
+          "message": "{success, plural, one {Mensagem enviada para {success} contato, {failed} falhou.} other {Mensagem enviada para {success} contatos, {failed} falharam.}}"
+        },
+        "success": {
+          "message": "{count, plural, one {Mensagem enviada para {count} contato} other {Mensagem enviada para {count} contatos}}"
+        }
+      }
+    }
   },
   "discard": "Descartar",
   "on_boarding": {
@@ -1183,22 +1241,28 @@
         "connected_by": "Conectado por",
         "connected_to": "Conectado em",
         "created_on": "Criado em",
-        "description": "Este projeto é usado exclusivamente para gerenciar os agentes de IA do Desk Copilot. O acesso é feito apenas por esta seção.",
+        "description": "Este projeto é usado para gerenciar os agentes de IA do Desk Copilot. O acesso é feito apenas por esta seção.",
+        "disconnect": "Desconectar",
+        "disconnect_by": "Desconectado por",
+        "disconnect_on": "Desconectado em",
         "open": "Abrir",
-        "popover_change_option": "Alterar",
-        "popover_disconnect_option": "Desconectar"
+        "reconnect": "Reconectar"
       },
       "disconnect_modal": {
         "confirm": "Desconectar",
-        "description": "Este projeto perderá o acesso ao Desk Copilot até que um projeto Copilot seja reconectado. O projeto Copilot e as outras conexões não serão afetados.",
-        "error": "Não foi possível desconectar o projeto Copilot",
-        "success": "Projeto Copilot desconectado com sucesso",
+        "description": "Este projeto perderá o acesso ao Desk Copilot até que um projeto Copilot seja reconectado.",
+        "error": "Não foi possível desconectar o projeto Copilot.",
+        "success": "O projeto Copilot foi desconectado!",
         "title": "Desconectar projeto Copilot"
+      },
+      "disconnected_disclaimer": {
+        "description": "Para ativar o Desk Copilot, é preciso reconectar o projeto Copilot.",
+        "title": "O projeto Copilot está desconectado"
       },
       "empty_state": {
         "create_button": "Criar projeto Copilot",
-        "description": "Para ativar o Desk Copilot, conecte este projeto a um projeto Copilot onde seus agentes de IA são gerenciados",
-        "select_button": "Selecionar projeto Copilot",
+        "create_disabled_tooltip": "Você não tem permissão para criar um projeto do Copilot",
+        "description": "Para ativar o Desk Copilot, conecte este projeto a um projeto Copilot no qual seus agentes de IA são gerenciados.",
         "title": "Nenhum projeto Copilot conectado"
       },
       "enable_title": "Ativar Desk Copilot",
@@ -1212,7 +1276,7 @@
           "title": "Atualizações automáticas"
         },
         "centralized_agents": {
-          "description": "Gerencie todos os agentes de IA em um único projeto Copilot.",
+          "description": "Gerencie todos os agentes de IA em um único projeto Copilot",
           "title": "Agentes de IA centralizados"
         },
         "learn_more": "Saiba mais",
@@ -1224,23 +1288,19 @@
       },
       "modal": {
         "disclaimer": "Este projeto Copilot será criado e conectado automaticamente a este projeto.",
-        "error": "Não foi possível criar o projeto Copilot devido a um problema técnico",
+        "error": "Erro ao criar e conectar o projeto Copilot.",
         "input_label": "Defina o nome do projeto Copilot",
-        "success": "Projeto Copilot criado e conectado com sucesso",
+        "success": "Projeto Copilot criado e conectado!",
         "title": "Criar projeto Copilot"
       },
       "new_badge": "Novo",
-      "picker_modal": {
-        "assigned_agents_tag": "{count, plural, one {{count} agente atribuído} other {{count} agentes atribuídos}}",
-        "change_button": "Alterar",
-        "change_error": "Não foi possível alterar o projeto Copilot",
-        "change_success": "Projeto Copilot alterado com sucesso",
-        "change_title": "Alterar projeto Copilot",
-        "connect_button": "Conectar",
-        "connect_error": "Não foi possível conectar ao projeto Copilot",
-        "connect_success": "Projeto Copilot conectado com sucesso",
-        "search_placeholder": "Buscar por nome",
-        "select_title": "Selecionar projeto Copilot existente"
+      "no_permission_disclaimer": "Apenas usuários com permissão de Administrador ou Contribuidor podem ativar o Desk Copilot. Entre em contato com um desses usuários da sua equipe para ativar o recurso.",
+      "reconnect_modal": {
+        "confirm": "Reconectar",
+        "description": "Este projeto vai recuperar o acesso ao Desk Copilot ao reconectar o projeto Copilot.",
+        "error": "Não foi possível reconectar o projeto Copilot.",
+        "success": "O projeto Copilot foi reconectado!",
+        "title": "Reconectar projeto Copilot"
       }
     },
     "changes_saved": "Alterações salvas com sucesso",
@@ -1263,8 +1323,8 @@
         "hint": "Se essa opção estiver ativada, atendentes offline ou em pausa não poderão responder a chats em andamento."
       },
       "block_link_contact_agents": {
-        "switch_label": "Bloquear a vinculação de contatos pelos atendentes",
-        "hint": "Se essa opção estiver ativada, os atendentes não poderão vincular contatos a eles"
+        "switch_label": "Impedir que atendentes vinculem contatos",
+        "hint": "Se essa opção estiver ativada, os atendentes não poderão vincular contatos a si mesmos"
       },
       "bulk_transfer": {
         "tooltip": "Esta função permite que os atendentes transfiram diferentes contatos de uma só vez",
@@ -1276,7 +1336,7 @@
         "switch_inactive": "Bloquear a transferência de chats para atendentes offline"
       },
       "hide_desk_copilot_tab": {
-        "hint": "Quando ativada, os atendentes veem apenas a aba de informações no painel do contato",
+        "hint": "Quando essa opção está ativada, os atendentes veem apenas a aba Detalhes do chat no painel lateral.",
         "switch_label": "Ocultar aba Desk Copilot"
       },
       "hide_moderators_from_transfer": {
@@ -1357,7 +1417,7 @@
         "select": {
           "label": "Fluxos associados",
           "placeholder": "Selecione um ou mais fluxos",
-          "tooltip": "Associe fluxos a esta fila para definir quais fluxos ficam disponíveis ao filtrar por ela. Fluxos que não estão associados a nenhuma fila são considerados gerais e ficam disponíveis quando nenhum filtro de fila é aplicado."
+          "tooltip": "Associe fluxos a esta fila para definir quais ficam disponíveis ao filtrar por ela. Fluxos que não estão associados a nenhuma fila são considerados gerais e ficam disponíveis quando nenhum filtro de fila é aplicado."
         }
       },
       "message": {
@@ -1667,9 +1727,7 @@
       "no_contacts_filtered_alert": "Nenhum contato corresponde aos filtros selecionados. Tente ajustar seus filtros.",
       "contacts_count_disclaimer": "{count, plural, one {Esta mensagem será enviada para {count} contato. O número de destinatários pode mudar durante a entrega devido a transferências de conversa, encerramentos de conversa ou interações ocorrendo simultaneamente.} other {Esta mensagem será enviada para {count} contatos. O número de destinatários pode mudar durante a entrega devido a transferências de conversa, encerramentos de conversa ou interações ocorrendo simultaneamente.}}",
       "recipients": {
-        "title": "Destinatários",
-        "title_tooltip": "Esta mensagem será entregue a todos os contatos que correspondem aos filtros selecionados. Use este recurso para comunicações operacionais, como atrasos, incidentes e atualizações.",
-        "select_the_contacts_status": "Selecione o status do contato",
+        "at_least_one_status_must_be_selected": "Selecione pelo menos um status",
         "contacts_in_service": "Contatos em atendimento",
         "contacts_waiting_for_service": "Contatos aguardando atendimento",
         "filters": {
@@ -1681,9 +1739,12 @@
           "representatives": {
             "all": "Todos os atendentes",
             "label": "Selecione um atendente",
-            "placeholder": "Selecione pelo menos um representante"
+            "placeholder": "Selecione pelo menos um atendente"
           }
-        }
+        },
+        "select_the_contacts_status": "Selecione o status dos contatos",
+        "title": "Destinatários",
+        "title_tooltip": "Esta mensagem será entregue a todos os contatos que correspondem aos filtros selecionados. Use este recurso para comunicações operacionais, como atrasos, incidentes e atualizações."
       },
       "message": {
         "title": "Mensagem",
@@ -1713,7 +1774,7 @@
       },
       "partial_success": {
         "button": "Ver envios",
-        "message": "{success, plural, one {{failed, plural, one {Mensagem enviada para {success} contato, {failed} falhou.} other {Mensagem enviada para {success} contato, {failed} falharam.}}} other {{failed, plural, one {Mensagem enviada para {success} contatos, {failed} falhou.} other {Mensagem enviada para {success} contatos, {failed} falharam.}}}}"
+        "message": "{success, plural, one {Mensagem enviada para {success} contato, {failed} falhou.} other {Mensagem enviada para {success} contatos, {failed} falharam.}}"
       },
       "success": {
         "message": "{count, plural, one {Mensagem enviada para {count} contato} other {Mensagem enviada para {count} contatos}}"

@@ -2,7 +2,10 @@
   <section
     class="ai-message"
     data-testid="assistant-ai-message"
-    :class="{ 'ai-message--streaming': isStreamingOrBuffering }"
+    :class="{
+      'ai-message--streaming': isStreamingOrBuffering,
+      'ai-message--with-carousel': hasProductCatalog,
+    }"
   >
     <UnnnicIcon
       class="ai-message__icon"
@@ -37,11 +40,17 @@
         </p>
 
         <section
-          v-if="suggestionText || isStreamingOrBuffering"
+          v-if="suggestionText || isStreamingOrBuffering || hasProductCatalog"
           class="ai-message__suggestion"
+          :class="{
+            'ai-message__suggestion--with-carousel': hasProductCatalog,
+          }"
           data-testid="assistant-ai-suggestion"
         >
-          <p class="ai-message__suggestion-text">
+          <p
+            v-if="suggestionText || isStreamingOrBuffering"
+            class="ai-message__suggestion-text"
+          >
             {{ displayedSuggestionText
             }}<span
               v-if="isStreamingOrBuffering"
@@ -49,15 +58,43 @@
               data-testid="assistant-ai-caret"
             />
           </p>
+
+          <ProductCarousel
+            v-if="hasProductCarousel && !isStreamingOrBuffering"
+            :products="productCarousel?.items || []"
+            :getQuantity="getQuantity"
+            :dismissedIds="dismissedIds"
+            :readOnly="readOnly"
+            data-testid="assistant-ai-product-carousel"
+            @add="emit('addToCart', $event)"
+            @remove="handleRemoveSuggestion"
+            @increment="emit('incrementCartItem', $event)"
+            @decrement="emit('decrementCartItem', $event)"
+          />
+
+          <ProductListSections
+            v-else-if="hasProductList && !isStreamingOrBuffering"
+            :sections="productList?.sections || []"
+            :header="productList?.header"
+            :getQuantity="getQuantity"
+            :dismissedIds="dismissedIds"
+            :readOnly="readOnly"
+            data-testid="assistant-ai-product-list"
+            @add="emit('addToCart', $event)"
+            @remove="handleRemoveSuggestion"
+            @increment="emit('incrementCartItem', $event)"
+            @decrement="emit('decrementCartItem', $event)"
+          />
         </section>
 
         <section
-          v-if="suggestionText && !isStreamingOrBuffering"
+          v-if="showActions && !readOnly"
           class="ai-message__actions"
           data-testid="assistant-ai-actions"
         >
           <section class="ai-message__actions-left">
             <UnnnicButton
+              v-if="!hasProductCatalog"
               type="tertiary"
               size="small"
               data-testid="assistant-ai-copy"
@@ -68,8 +105,10 @@
             <UnnnicButton
               type="secondary"
               size="small"
+              :loading="isSending"
+              :disabled="isSending"
               data-testid="assistant-ai-send"
-              @click="emit('send', suggestionText)"
+              @click="handleSend"
             >
               {{ $t('contact_info.desk_copilot.assistant.send_action') }}
             </UnnnicButton>
@@ -88,7 +127,7 @@
                 clickable
                 scheme="fg-base"
                 data-testid="assistant-ai-thumb-up"
-                @click="feedbackLiked = true"
+                @click="handleThumbUp"
               />
             </UnnnicToolTip>
             <UnnnicToolTip
@@ -103,25 +142,46 @@
                 clickable
                 scheme="fg-base"
                 data-testid="assistant-ai-thumb-down"
-                @click="feedbackLiked = false"
+                @click="handleThumbDown"
               />
             </UnnnicToolTip>
           </section>
         </section>
       </template>
     </section>
+
+    <AiFeedbackModal
+      v-model="showFeedbackModal"
+      :tags="feedbackTags"
+      :isSubmitting="isSubmittingFeedback"
+      @submit="handleSubmitFeedback"
+      @cancel="handleCancelFeedback"
+    />
   </section>
 </template>
 
 <script setup lang="ts">
-import { computed, ref } from 'vue';
+import { computed, ref, watch } from 'vue';
+import { storeToRefs } from 'pinia';
 import { UnnnicCallAlert } from '@weni/unnnic-system';
-import i18n from '@/plugins/i18n';
 import { useStreamingBuffer } from '@/composables/assistant/useStreamingBuffer';
-import type { AssistantMessageType } from '@/services/assistant/types';
+import { copyTextToContactInput } from '@/composables/assistant/useCopyToContactInput';
+import { buildCatalogPayload } from '@/services/assistant/buildCatalogPayload';
+import type { CatalogPayload } from '@/services/assistant/buildCatalogPayload';
+import i18n from '@/plugins/i18n';
+import CopilotFeedback from '@/services/api/resources/chats/copilotFeedback';
+import type {
+  AssistantMessageType,
+  ProductCarouselItem,
+  ProductListSection,
+} from '@/services/assistant/types';
+import { useRooms } from '@/store/modules/chats/rooms';
+import AiFeedbackModal from '@/components/chats/ContactInfo/Redesign/DeskCopilot/AiFeedbackModal.vue';
 import AudioMessage from './media/AudioMessage.vue';
 import ImageMessage from './media/ImageMessage.vue';
 import FileMessage from './media/FileMessage.vue';
+import ProductCarousel from './ProductCarousel.vue';
+import ProductListSections from './ProductListSections.vue';
 
 defineOptions({
   name: 'AssistantAiMessage',
@@ -135,6 +195,19 @@ const props = withDefaults(
     type?: AssistantMessageType;
     media?: string;
     filename?: string;
+    productCarousel?: {
+      text: string;
+      items: ProductCarouselItem[];
+    };
+    productList?: {
+      text: string;
+      header?: string;
+      sections: ProductListSection[];
+    };
+    getQuantity?: (productId: string) => number;
+    readOnly?: boolean;
+    messageId?: string;
+    liked?: boolean | null;
   }>(),
   {
     suggestion: undefined,
@@ -142,18 +215,85 @@ const props = withDefaults(
     type: 'text',
     media: undefined,
     filename: undefined,
+    productCarousel: undefined,
+    productList: undefined,
+    getQuantity: () => 0,
+    readOnly: false,
+    messageId: '',
+    liked: null,
   },
 );
 
 const emit = defineEmits<{
   send: [text: string];
+  sendCatalog: [
+    payload: {
+      catalog: CatalogPayload;
+      text: string;
+      resolve: () => void;
+      reject: (error?: unknown) => void;
+    },
+  ];
   wordRevealed: [];
+  addToCart: [product: ProductCarouselItem];
+  incrementCartItem: [product: ProductCarouselItem];
+  decrementCartItem: [product: ProductCarouselItem];
 }>();
 
-const feedbackLiked = ref<boolean | null>(null);
+const roomsStore = useRooms();
+const { activeRoom } = storeToRefs(roomsStore);
+
+const feedbackLiked = ref<boolean | null>(props.liked ?? null);
+const previousLiked = ref<boolean | null>(null);
+const showFeedbackModal = ref(false);
+const isSubmittingFeedback = ref(false);
+const dismissedIds = ref<string[]>([]);
+const isSending = ref(false);
+const hasLocalFeedbackChange = ref(false);
+
+watch(
+  () => props.liked,
+  (liked) => {
+    if (hasLocalFeedbackChange.value) {
+      return;
+    }
+
+    if (liked === true || liked === false) {
+      feedbackLiked.value = liked;
+    }
+  },
+);
+
+const feedbackTags = computed(() => CopilotFeedback.getMessageFeedbackTags());
 
 const isStreaming = computed(() => props.status === 'streaming');
+const hasProductCarousel = computed(
+  () => (props.productCarousel?.items?.length || 0) > 0,
+);
+const hasProductList = computed(
+  () => (props.productList?.sections?.length || 0) > 0,
+);
+const hasProductCatalog = computed(
+  () => hasProductCarousel.value || hasProductList.value,
+);
+
 const sourceText = computed(() => {
+  if (hasProductCarousel.value) {
+    return (
+      props.productCarousel?.text?.trim() ||
+      props.suggestion?.trim() ||
+      props.text.trim()
+    );
+  }
+
+  if (hasProductList.value) {
+    return (
+      props.productList?.text?.trim() ||
+      props.suggestion?.trim() ||
+      props.text.trim()
+    );
+  }
+
   if (props.suggestion?.trim()) {
     return props.suggestion.trim();
   }
@@ -172,7 +312,7 @@ const isStreamingOrBuffering = computed(
 );
 
 const leadingText = computed(() => {
-  if (isStreamingOrBuffering.value) {
+  if (isStreamingOrBuffering.value || hasProductCatalog.value) {
     return '';
   }
 
@@ -184,6 +324,10 @@ const leadingText = computed(() => {
 });
 
 const suggestionText = computed(() => {
+  if (hasProductCatalog.value && !isStreamingOrBuffering.value) {
+    return sourceText.value;
+  }
+
   if (isStreamingOrBuffering.value) {
     return displayedText.value;
   }
@@ -197,27 +341,142 @@ const suggestionText = computed(() => {
 
 const displayedSuggestionText = computed(() => suggestionText.value);
 
-async function handleCopy() {
-  if (!suggestionText.value || !navigator.clipboard) {
+const sendText = computed(() => {
+  if (hasProductCatalog.value) {
+    return sourceText.value;
+  }
+
+  return suggestionText.value;
+});
+
+const showActions = computed(() => {
+  if (isStreamingOrBuffering.value) {
+    return false;
+  }
+
+  if (hasProductCatalog.value) {
+    return true;
+  }
+
+  return !!suggestionText.value;
+});
+
+async function handleSend() {
+  if (isSending.value) {
     return;
   }
 
+  if (hasProductCatalog.value) {
+    const catalog = hasProductCarousel.value
+      ? buildCatalogPayload({
+          carouselItems: props.productCarousel?.items,
+          dismissedIds: dismissedIds.value,
+        })
+      : buildCatalogPayload({
+          productList: props.productList,
+          dismissedIds: dismissedIds.value,
+        });
+
+    if (!catalog) {
+      return;
+    }
+
+    isSending.value = true;
+    try {
+      await new Promise((resolve, reject) => {
+        emit('sendCatalog', { catalog, text: sendText.value, resolve, reject });
+      });
+    } finally {
+      isSending.value = false;
+    }
+
+    return;
+  }
+
+  emit('send', sendText.value);
+}
+
+function handleRemoveSuggestion(product: ProductCarouselItem) {
+  if (dismissedIds.value.includes(product.product_retailer_id)) {
+    return;
+  }
+
+  dismissedIds.value = [...dismissedIds.value, product.product_retailer_id];
+}
+
+async function handleCopy() {
+  await copyTextToContactInput(suggestionText.value);
+}
+
+async function handleThumbUp() {
+  hasLocalFeedbackChange.value = true;
+  const likedBeforeThumbUp = feedbackLiked.value;
+  feedbackLiked.value = true;
+  const roomUuid = activeRoom.value?.uuid;
+  if (!roomUuid || !props.messageId) return;
+
   try {
-    await navigator.clipboard.writeText(suggestionText.value);
-    UnnnicCallAlert({
-      props: {
-        text: i18n.global.t('contact_info.value_copied'),
-        type: 'success',
-      },
+    await CopilotFeedback.sendMessageFeedback({
+      roomUuid,
+      messageId: props.messageId,
+      liked: true,
     });
   } catch (error) {
-    console.error('Failed to copy suggestion:', error);
+    feedbackLiked.value = likedBeforeThumbUp;
+    console.error(error);
+  }
+}
+
+function handleThumbDown() {
+  hasLocalFeedbackChange.value = true;
+  previousLiked.value = feedbackLiked.value;
+  feedbackLiked.value = false;
+  showFeedbackModal.value = true;
+}
+
+function handleCancelFeedback() {
+  feedbackLiked.value = previousLiked.value;
+  showFeedbackModal.value = false;
+}
+
+async function handleSubmitFeedback({
+  tags,
+  text,
+}: {
+  tags: string[];
+  text: string;
+}) {
+  const roomUuid = activeRoom.value?.uuid;
+  if (!roomUuid || !props.messageId) return;
+
+  isSubmittingFeedback.value = true;
+  try {
+    await CopilotFeedback.sendMessageFeedback({
+      roomUuid,
+      messageId: props.messageId,
+      liked: false,
+      text,
+      tags,
+    });
     UnnnicCallAlert({
       props: {
-        text: i18n.global.t('contact_info.error_copying_value'),
+        text: i18n.global.t('contact_info.desk_copilot.feedback.sended'),
+        type: 'success',
+      },
+      seconds: 5,
+    });
+    showFeedbackModal.value = false;
+  } catch (error) {
+    console.error(error);
+    UnnnicCallAlert({
+      props: {
+        text: i18n.global.t('contact_info.desk_copilot.feedback.error'),
         type: 'error',
       },
+      seconds: 5,
     });
+  } finally {
+    isSubmittingFeedback.value = false;
   }
 }
 </script>
@@ -235,6 +494,10 @@ async function handleCopy() {
 
   &--streaming {
     animation: none;
+  }
+
+  &--with-carousel {
+    max-width: 100%;
   }
 
   &__icon {
@@ -256,10 +519,26 @@ async function handleCopy() {
   }
 
   &__suggestion {
+    display: flex;
+    flex-direction: column;
+    gap: $unnnic-space-2;
     width: 100%;
+    min-width: 0;
     padding: $unnnic-space-3 $unnnic-space-4;
     border: 1px solid $unnnic-color-border-base;
     border-radius: $unnnic-radius-2;
+    overflow: hidden;
+
+    &--with-carousel {
+      max-width: 100%;
+      // Let the carousel use the full card width up to the right border
+      padding-right: 0;
+      overflow: visible;
+
+      .ai-message__suggestion-text {
+        padding-right: $unnnic-space-4;
+      }
+    }
   }
 
   &__suggestion-text {

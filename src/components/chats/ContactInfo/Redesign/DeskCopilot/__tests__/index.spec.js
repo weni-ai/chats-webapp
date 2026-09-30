@@ -13,7 +13,9 @@ import { createTestingPinia } from '@pinia/testing';
 import DeskCopilotTab from '../index.vue';
 import { useCopilotConnection } from '@/composables/useCopilotConnection';
 import { useCopilotChat } from '@/composables/assistant/useCopilotChat';
+import { useCopilotRoomContext } from '@/composables/assistant/useCopilotRoomContext';
 import { useRoomMessages } from '@/store/modules/chats/roomMessages';
+import { ASSISTED_SALES_FEATURE_FLAG } from '@/composables/useAssistedSalesFeatureFlag';
 import i18n from '@/plugins/i18n';
 
 vi.mock('@/composables/useCopilotConnection', () => ({
@@ -22,6 +24,12 @@ vi.mock('@/composables/useCopilotConnection', () => ({
 
 vi.mock('@/composables/assistant/useCopilotChat', () => ({
   useCopilotChat: vi.fn(),
+}));
+
+vi.mock('@/composables/assistant/useCopilotRoomContext', () => ({
+  useCopilotRoomContext: vi.fn(() => ({
+    markContextAsProcessed: vi.fn(),
+  })),
 }));
 
 vi.mock('@/composables/assistant/useVoiceMode', () => ({
@@ -86,6 +94,7 @@ function mockCopilotChat({
     isThinking: ref(isThinking),
     isTyping: ref(isTyping),
     isLoadingHistory: ref(isLoadingHistory),
+    isConnected: ref(true),
     cartCount: ref(cartCount),
     suggestions: ref(suggestions),
     isRecording: ref(false),
@@ -98,6 +107,8 @@ function mockCopilotChat({
       acceptAttribute: '',
     }),
     sendMessage: vi.fn(),
+    sendHiddenMessage: vi.fn().mockResolvedValue(undefined),
+    sendOrder: vi.fn(),
     sendAttachment: vi.fn(),
     startRecording: vi.fn(),
     stopRecording: vi.fn(),
@@ -115,12 +126,17 @@ const createWrapper = (props = {}, piniaState = {}) =>
           createSpy: vi.fn,
           initialState: {
             rooms: {
-              activeRoom: { uuid: 'room-1', queue: { sector: 'sector-1' } },
+              activeRoom: {
+                uuid: 'room-1',
+                user: { email: 'agent@example.com' },
+                is_waiting: false,
+                queue: { sector: 'sector-1' },
+              },
               roomsSummary: {},
               isLoadingActiveRoomSummary: false,
             },
             profile: {
-              me: { project_permission_role: 1 },
+              me: { email: 'agent@example.com', project_permission_role: 1 },
             },
             config: {
               project: { config: { has_chats_summary: true } },
@@ -140,26 +156,34 @@ const createWrapper = (props = {}, piniaState = {}) =>
         DeskCopilotSummaryMessage: {
           name: 'DeskCopilotSummaryMessage',
           template: '<div data-testid="desk-copilot-summary" />',
+          props: ['readOnly'],
         },
         SummaryMessage: {
           name: 'DeskCopilotSummaryMessage',
           template: '<div data-testid="desk-copilot-summary" />',
+          props: ['readOnly'],
         },
         DeskCopilotDisclaimer: {
           name: 'DeskCopilotDisclaimer',
           template: '<div data-testid="desk-copilot-disclaimer" />',
-          props: ['hasSummary', 'isHistory', 'isViewMode'],
+          props: ['hasSummary', 'isViewMode'],
         },
         Disclaimer: {
           name: 'DeskCopilotDisclaimer',
           template: '<div data-testid="desk-copilot-disclaimer" />',
-          props: ['hasSummary', 'isHistory', 'isViewMode'],
+          props: ['hasSummary', 'isViewMode'],
         },
         AssistantMessageList: {
           name: 'AssistantMessageList',
           template:
-            '<div data-testid="assistant-message-list" @click="$emit(\'send\', \'Suggested text\')"><div v-if="isLoadingHistory" data-testid="assistant-history-loading" /></div>',
-          props: ['messages', 'isThinking', 'isTyping', 'isLoadingHistory'],
+            "<div data-testid=\"assistant-message-list\" @click=\"$emit('send', 'Suggested text')\" @dblclick=\"$emit('sendCatalog', { catalog: { carousel: true, products: [{ product: 'product', product_retailer_ids: ['sku-1'], product_retailer_info: [] }] }, text: 'Check these products' })\"><div v-if=\"isLoadingHistory\" data-testid=\"assistant-history-loading\" /></div>",
+          props: [
+            'messages',
+            'isThinking',
+            'isTyping',
+            'isLoadingHistory',
+            'readOnly',
+          ],
         },
         AssistantInput: {
           name: 'AssistantInput',
@@ -174,6 +198,21 @@ const createWrapper = (props = {}, piniaState = {}) =>
           name: 'AssistantCartBadge',
           template: '<div data-testid="assistant-cart-badge" />',
           props: ['count'],
+        },
+        Cart: {
+          name: 'DeskCopilotCart',
+          template: '<div data-testid="desk-copilot-cart" />',
+        },
+        DeskCopilotHistoryView: {
+          name: 'DeskCopilotHistoryView',
+          template: '<div data-testid="desk-copilot-history" />',
+          props: [
+            'isConfigured',
+            'isLoadingConnection',
+            'roomUuid',
+            'enableRoomSummary',
+            'isViewMode',
+          ],
         },
         UnnnicButton: {
           name: 'UnnnicButton',
@@ -214,7 +253,6 @@ describe('DeskCopilotTab', () => {
       connection: defaultConnection,
     });
     mockCopilotChat({
-      cartCount: 1,
       suggestions: ['Ask about color'],
     });
     wrapper = createWrapper();
@@ -229,11 +267,20 @@ describe('DeskCopilotTab', () => {
     ).toBe(true);
     expect(wrapper.find('[data-testid="assistant-input"]').exists()).toBe(true);
     expect(wrapper.find('[data-testid="assistant-cart-badge"]').exists()).toBe(
-      true,
+      false,
     );
+    expect(
+      wrapper
+        .findComponent({ name: 'DeskCopilotSummaryMessage' })
+        .props('readOnly'),
+    ).toBe(false);
+    expect(
+      wrapper.findComponent({ name: 'AssistantMessageList' }).props('readOnly'),
+    ).toBe(false);
     expect(useCopilotChat).toHaveBeenCalled();
-    const [, roomUuid] = useCopilotChat.mock.calls[0];
+    const [, roomUuid, agentEmail] = useCopilotChat.mock.calls[0];
     expect(roomUuid.value).toBe('room-1');
+    expect(agentEmail.value).toBe('agent@example.com');
   });
 
   it('sends the AI suggestion directly to the active room', async () => {
@@ -254,6 +301,36 @@ describe('DeskCopilotTab', () => {
       'Suggested text',
       null,
       null,
+      'room-1',
+    );
+  });
+
+  it('sends a catalog suggestion directly to the active room', async () => {
+    mockCopilotConnection({
+      isConfigured: true,
+      connection: defaultConnection,
+    });
+    mockCopilotChat();
+    wrapper = createWrapper();
+
+    await flushPromises();
+    await wrapper
+      .find('[data-testid="assistant-message-list"]')
+      .trigger('dblclick');
+
+    const roomMessages = useRoomMessages();
+    expect(roomMessages.sendRoomCatalogMessage).toHaveBeenCalledWith(
+      {
+        carousel: true,
+        products: [
+          {
+            product: 'product',
+            product_retailer_ids: ['sku-1'],
+            product_retailer_info: [],
+          },
+        ],
+      },
+      'Check these products',
       'room-1',
     );
   });
@@ -303,5 +380,215 @@ describe('DeskCopilotTab', () => {
     expect(
       wrapper.find('[data-testid="assistant-history-loading"]').exists(),
     ).toBe(true);
+  });
+
+  it('renders the history view and disables live chat when isHistory', async () => {
+    mockCopilotConnection({
+      isConfigured: true,
+      connection: defaultConnection,
+    });
+    mockCopilotChat();
+    wrapper = createWrapper({ isHistory: true });
+
+    await flushPromises();
+
+    expect(wrapper.find('[data-testid="desk-copilot-history"]').exists()).toBe(
+      true,
+    );
+    expect(wrapper.find('[data-testid="desk-copilot-chat"]').exists()).toBe(
+      false,
+    );
+    expect(wrapper.find('[data-testid="assistant-input"]').exists()).toBe(
+      false,
+    );
+
+    const historyView = wrapper.findComponent({
+      name: 'DeskCopilotHistoryView',
+    });
+    expect(historyView.props('isConfigured')).toBe(true);
+    expect(historyView.props('roomUuid')).toBe('room-1');
+    expect(historyView.props('enableRoomSummary')).toBe(true);
+
+    const [, roomUuidArg] = useCopilotChat.mock.calls[0];
+    expect(roomUuidArg.value).toBeUndefined();
+  });
+
+  it('hides the chat input in view mode', async () => {
+    mockCopilotConnection({
+      isConfigured: true,
+      connection: defaultConnection,
+    });
+    mockCopilotChat({ suggestions: ['Ask about color'] });
+    wrapper = createWrapper({ isViewMode: true });
+
+    await flushPromises();
+
+    expect(
+      wrapper.find('[data-testid="assistant-message-list"]').exists(),
+    ).toBe(true);
+    expect(wrapper.find('[data-testid="assistant-input"]').exists()).toBe(
+      false,
+    );
+    expect(
+      wrapper.find('[data-testid="assistant-suggestion-chips"]').exists(),
+    ).toBe(false);
+    expect(
+      wrapper
+        .findComponent({ name: 'DeskCopilotSummaryMessage' })
+        .props('readOnly'),
+    ).toBe(true);
+    expect(
+      wrapper.findComponent({ name: 'AssistantMessageList' }).props('readOnly'),
+    ).toBe(true);
+  });
+
+  it('hides the chat input for waiting rooms without an assigned agent', async () => {
+    mockCopilotConnection({
+      isConfigured: true,
+      connection: defaultConnection,
+    });
+    mockCopilotChat({ suggestions: ['Ask about color'] });
+    wrapper = createWrapper(
+      {},
+      {
+        rooms: {
+          activeRoom: {
+            uuid: 'room-waiting',
+            user: null,
+            is_waiting: false,
+            queue: { sector: 'sector-1' },
+          },
+          roomsSummary: {},
+          isLoadingActiveRoomSummary: false,
+        },
+      },
+    );
+
+    await flushPromises();
+
+    expect(wrapper.find('[data-testid="assistant-input"]').exists()).toBe(
+      false,
+    );
+    expect(
+      wrapper.find('[data-testid="assistant-suggestion-chips"]').exists(),
+    ).toBe(false);
+    expect(
+      wrapper.findComponent({ name: 'AssistantMessageList' }).props('readOnly'),
+    ).toBe(true);
+  });
+
+  it('hides the chat input when the room is marked as waiting', async () => {
+    mockCopilotConnection({
+      isConfigured: true,
+      connection: defaultConnection,
+    });
+    mockCopilotChat();
+    wrapper = createWrapper(
+      {},
+      {
+        rooms: {
+          activeRoom: {
+            uuid: 'room-waiting',
+            user: { email: 'agent@example.com' },
+            is_waiting: true,
+            queue: { sector: 'sector-1' },
+          },
+          roomsSummary: {},
+          isLoadingActiveRoomSummary: false,
+        },
+      },
+    );
+
+    await flushPromises();
+
+    expect(wrapper.find('[data-testid="assistant-input"]').exists()).toBe(
+      false,
+    );
+    expect(
+      wrapper.findComponent({ name: 'AssistantMessageList' }).props('readOnly'),
+    ).toBe(true);
+  });
+
+  it('does not send an AI suggestion to the room while waiting', async () => {
+    mockCopilotConnection({
+      isConfigured: true,
+      connection: defaultConnection,
+    });
+    mockCopilotChat();
+    wrapper = createWrapper(
+      {},
+      {
+        rooms: {
+          activeRoom: {
+            uuid: 'room-waiting',
+            user: { email: 'agent@example.com' },
+            is_waiting: true,
+            queue: { sector: 'sector-1' },
+          },
+          roomsSummary: {},
+          isLoadingActiveRoomSummary: false,
+        },
+      },
+    );
+
+    await flushPromises();
+    await wrapper
+      .find('[data-testid="assistant-message-list"]')
+      .trigger('click');
+
+    expect(useRoomMessages().sendRoomMessage).not.toHaveBeenCalled();
+  });
+
+  it('does not enable proactive processing when assisted sales is off', async () => {
+    mockCopilotConnection({
+      isConfigured: true,
+      connection: defaultConnection,
+    });
+    mockCopilotChat();
+    wrapper = createWrapper(
+      {},
+      {
+        config: {
+          project: { uuid: 'project-1', config: { has_chats_summary: true } },
+        },
+        featureFlag: {
+          featureFlags: { active_features: [] },
+          featureFlagsLoaded: true,
+        },
+      },
+    );
+
+    await flushPromises();
+
+    expect(useCopilotRoomContext).toHaveBeenCalled();
+    const options = useCopilotRoomContext.mock.calls[0][0];
+    expect(options.enabled.value).toBe(false);
+  });
+
+  it('enables proactive processing when assisted sales is on for an assigned desktop room', async () => {
+    mockCopilotConnection({
+      isConfigured: true,
+      connection: defaultConnection,
+    });
+    mockCopilotChat();
+    wrapper = createWrapper(
+      {},
+      {
+        config: {
+          project: { uuid: 'project-1', config: { has_chats_summary: true } },
+        },
+        featureFlag: {
+          featureFlags: { active_features: [ASSISTED_SALES_FEATURE_FLAG] },
+          featureFlagsLoaded: true,
+        },
+      },
+    );
+
+    await flushPromises();
+
+    const options = useCopilotRoomContext.mock.calls[0][0];
+    expect(options.enabled.value).toBe(true);
+    expect(options.storageScope.value.channelUuid).toBe('channel-1');
+    expect(options.messagesRoomUuid.value).toBeUndefined();
   });
 });

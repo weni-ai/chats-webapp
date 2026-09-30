@@ -18,12 +18,14 @@
         sent: type === 'sent',
         automatic: automatic,
         sending: status === 'sending',
+        failed: status === 'failed',
         'is-document': isDocument,
         'is-media': isMedia,
         'is-image': isImage,
         'is-video': isVideo,
         'is-geo': isGeolocation,
         highlighted: highlighted,
+        'is-medias-group': hasMediasGroup,
       }"
     >
       <ReplyMessage
@@ -48,6 +50,7 @@
           'is-image': isImage,
           'is-video': isVideo,
           'is-geo': isGeolocation,
+          'is-medias-group': hasMediasGroup,
         }"
       >
         <UnnnicIcon
@@ -56,6 +59,12 @@
           icon="location_on"
           size="avatar-nano"
         />
+        <div
+          v-if="hasMediasGroup"
+          class="unnnic-chats-message__medias-group"
+        >
+          <slot name="medias" />
+        </div>
         <ChatsMessageText
           v-if="isText"
           :text="slotText"
@@ -123,6 +132,10 @@
           />
         </section>
       </main>
+      <slot
+        v-if="$slots.extra"
+        name="extra"
+      />
     </section>
 
     <section
@@ -256,10 +269,16 @@ export default {
     isMedia() {
       return !!this.mediaType;
     },
+    hasMediasGroup() {
+      return !!this.$slots.medias;
+    },
     isDocument() {
       return !!this.documentName;
     },
     isText() {
+      if (this.hasMediasGroup) {
+        return !!this.slotText;
+      }
       const validText = !this.isMedia || this.isGeolocation;
       return validText && !this.isDocument;
     },
@@ -297,6 +316,11 @@ export default {
 
   methods: {
     handleMessageClick() {
+      if (this.status === 'failed') {
+        this.$emit('click');
+        return;
+      }
+
       if (this.canReply) {
         this.$emit('reply');
       }
@@ -369,6 +393,15 @@ $defaultLineHeight: $unnnic-font-size-body-gt + $unnnic-line-height-medium;
   font: $unnnic-font-body;
 
   box-shadow: $unnnic-shadow-1;
+
+  &.failed {
+    cursor: pointer;
+  }
+
+  &.is-medias-group {
+    max-width: 500px;
+    padding: $unnnic-space-2 $unnnic-space-3;
+  }
 
   &__reply-action {
     display: flex;
@@ -464,6 +497,13 @@ $defaultLineHeight: $unnnic-font-size-body-gt + $unnnic-line-height-medium;
       }
     }
 
+    &.is-medias-group {
+      display: flex;
+      flex-direction: column;
+      align-items: stretch;
+      gap: $unnnic-space-2;
+    }
+
     &.is-document {
       min-width: 200px;
       max-width: 400px;
@@ -520,9 +560,16 @@ $defaultLineHeight: $unnnic-font-size-body-gt + $unnnic-line-height-medium;
     &-container {
       display: flex;
       align-items: center;
+      align-self: flex-end;
       gap: $unnnic-spacing-nano;
       flex-shrink: 0;
     }
+  }
+
+  &__medias-group {
+    display: flex;
+    flex-direction: column;
+    gap: $unnnic-space-2;
   }
 
   &__media__container {

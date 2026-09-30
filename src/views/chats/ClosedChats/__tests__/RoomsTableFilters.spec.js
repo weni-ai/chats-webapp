@@ -580,6 +580,34 @@ describe('RoomsTableFilters.vue', () => {
       }
     });
 
+    it('maps a startDate about twelve months ago to last_12_months on mobile', async () => {
+      isMobile.mockReturnValue(true);
+      const twelveMonthsAgo = new Date();
+      twelveMonthsAgo.setMonth(twelveMonthsAgo.getMonth() - 12);
+      const month = String(twelveMonthsAgo.getMonth() + 1).padStart(2, '0');
+      const day = String(twelveMonthsAgo.getDate()).padStart(2, '0');
+      const startDate = `${twelveMonthsAgo.getFullYear()}-${month}-${day}`;
+
+      wrapper = createWrapper({}, {}, { startDate });
+      await flushPromises();
+
+      expect(wrapper.vm.filterDate).toEqual(
+        wrapper.vm.datesToFilter.find(
+          (date) => date.value === 'last_12_months',
+        ),
+      );
+    });
+
+    it('keeps last_7_days when the mobile startDate is not a known preset', async () => {
+      isMobile.mockReturnValue(true);
+      wrapper = createWrapper({}, {}, { startDate: '2020-01-15' });
+      await flushPromises();
+
+      expect(wrapper.vm.filterDate).toEqual(
+        wrapper.vm.datesToFilter.find((date) => date.value === 'last_7_days'),
+      );
+    });
+
     it('query params take precedence over modelValue', async () => {
       isMobile.mockReturnValue(false);
       const valueProps = {

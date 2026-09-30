@@ -8,7 +8,7 @@ import {
   beforeAll,
   afterAll,
 } from 'vitest';
-import { ref } from 'vue';
+import { ref, nextTick } from 'vue';
 import { mount, config } from '@vue/test-utils';
 import { createTestingPinia } from '@pinia/testing';
 import { setActivePinia } from 'pinia';
@@ -17,28 +17,25 @@ import DictationAction from '../DictationAction.vue';
 import { useMessageManager } from '@/store/modules/chats/messageManager';
 import i18n from '@/plugins/i18n';
 
-const { mockStart, mockStop, mockResult, mockError } = vi.hoisted(() => {
-  const { ref: hoistedRef } = require('vue');
+const { mockStart, mockStop, mockResult, mockError, mockUseSpeechRecognition } =
+  vi.hoisted(() => {
+    const { ref: hoistedRef } = require('vue');
+    return {
+      mockStart: vi.fn(),
+      mockStop: vi.fn(),
+      mockResult: hoistedRef(''),
+      mockError: hoistedRef(null),
+      mockUseSpeechRecognition: vi.fn(),
+    };
+  });
+
+vi.mock('@/composables/useSpeechRecognition', async (importOriginal) => {
+  const actual = await importOriginal();
   return {
-    mockStart: vi.fn(),
-    mockStop: vi.fn(),
-    mockResult: hoistedRef(''),
-    mockError: hoistedRef(null),
+    ...actual,
+    useSpeechRecognition: mockUseSpeechRecognition,
   };
 });
-
-vi.mock('@/composables/useSpeechRecognition', () => ({
-  useSpeechRecognition: () => ({
-    result: mockResult,
-    error: mockError,
-    start: mockStart,
-    stop: mockStop,
-    isListening: ref(false),
-    isSupported: { value: true },
-    reset: vi.fn(),
-  }),
-  isSpeechRecognitionSupported: () => true,
-}));
 
 beforeAll(() => {
   config.global.plugins = (config.global.plugins || []).filter(
@@ -104,6 +101,15 @@ describe('DictationAction', () => {
     vi.clearAllMocks();
     mockResult.value = '';
     mockError.value = null;
+    mockUseSpeechRecognition.mockReturnValue({
+      result: mockResult,
+      error: mockError,
+      start: mockStart,
+      stop: mockStop,
+      isListening: ref(false),
+      isSupported: { value: true },
+      reset: vi.fn(),
+    });
   });
 
   afterEach(() => {
@@ -215,5 +221,42 @@ describe('DictationAction', () => {
 
     expect(removeSpy).toHaveBeenCalledWith('keydown', expect.any(Function));
     removeSpy.mockRestore();
+  });
+
+  it('should pass the mapped platform locale to speech recognition', () => {
+    const originalLocale = i18n.global.locale.value;
+    i18n.global.locale.value = 'es';
+
+    createWrapper();
+
+    expect(mockUseSpeechRecognition).toHaveBeenCalledWith(
+      expect.objectContaining({
+        continuous: true,
+        interimResults: true,
+        lang: expect.objectContaining({ value: 'es-ES' }),
+      }),
+    );
+
+    i18n.global.locale.value = originalLocale;
+  });
+
+  it('should update speech lang when the parent locale changes', async () => {
+    const originalLocale = i18n.global.locale.value;
+    i18n.global.locale.value = 'pt-br';
+
+    createWrapper();
+
+    const lang = mockUseSpeechRecognition.mock.calls[0][0].lang;
+    expect(lang.value).toBe('pt-BR');
+
+    i18n.global.locale.value = 'es';
+    await nextTick();
+    expect(lang.value).toBe('es-ES');
+
+    i18n.global.locale.value = 'en';
+    await nextTick();
+    expect(lang.value).toBe('en-US');
+
+    i18n.global.locale.value = originalLocale;
   });
 });

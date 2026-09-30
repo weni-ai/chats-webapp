@@ -143,4 +143,30 @@ export default {
     };
   },
   extractCursor,
+
+  async uploadRoomMedia(
+    roomId,
+    { media, updateLoadingFiles, loadingKey } = {},
+  ) {
+    const progressKey = loadingKey || `${media.name}${Date.now()}`;
+    updateLoadingFiles?.(progressKey, 0);
+
+    const response = await http.postForm(
+      '/media/',
+      {
+        content_type: media.type,
+        media_file: media,
+        room: roomId,
+      },
+      {
+        baseURL: http.defaults.baseURL.replace('/v1', '/v2'),
+        onUploadProgress: (event) => {
+          const progress = event.loaded / event.total;
+          updateLoadingFiles?.(progressKey, progress);
+        },
+      },
+    );
+
+    return response.data;
+  },
 };

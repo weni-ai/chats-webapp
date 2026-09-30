@@ -793,7 +793,7 @@
     "alert_detached": "Contact neasociat",
     "header": {
       "desk_copilot": "Desk Copilot",
-      "information": "Informații"
+      "information": "Detalii chat"
     },
     "linked_contact": "Contact asociat reprezentantului {name}",
     "see_contact_history": "Vezi istoric",
@@ -820,39 +820,56 @@
     },
     "desk_copilot": {
       "assistant": {
+        "add_to_cart_action": "Adaugă în coș",
         "attach_action": "Atașează fișier",
         "cancel_recording": "Anulează înregistrarea",
+        "carousel_scroll_left_action": "Derulează la stânga",
+        "carousel_scroll_right_action": "Derulează la dreapta",
+        "cart": {
+          "back_action": "Înapoi",
+          "discount": "Reducere",
+          "place_order_action": "Plasează comanda",
+          "place_order_error": "Nu s-a putut plasa comanda din cauza unei probleme tehnice",
+          "remove_item_action": "Elimină articolul",
+          "subtotal": "Subtotal",
+          "title": "Coș",
+          "total": "Total"
+        },
         "copy_action": "Copiază",
+        "decrease_quantity_action": "Scade cantitatea",
         "file_too_large": "Selectează un fișier mai mic",
-        "file_type_not_allowed": "Selectează un tip de fișier compatibil",
+        "file_type_not_allowed": "Selectează un tip de fișier acceptat",
         "image_attachment": "Atașament imagine",
+        "increase_quantity_action": "Crește cantitatea",
         "input_placeholder": "Întreabă asistentul",
         "open_media_menu": "Deschide meniul media",
         "processing_information": "Se procesează informațiile",
-        "record_audio": "Audio",
+        "record_audio": "Înregistrare audio",
         "recording_in_progress": "Se înregistrează",
+        "remove_suggestion_action": "Elimină sugestia",
         "scroll_to_bottom": "Mergi jos",
         "send_action": "Trimite",
         "send_audio": "Trimite audio",
         "thinking_messages": {
-          "almost": "Aproape gata, încă un moment",
+          "almost": "Aproape gata, mai durează puțin",
           "connecting": "Conectare idei",
           "processing": "Procesare informații",
           "refining": "Rafinare detalii",
-          "structuring": "Structurare răspuns"
+          "structuring": "Se structurează răspunsul"
         },
         "upload_file": "Încarcă fișier",
         "voice_mode": {
           "dismiss": "Închide",
           "enter": "Pornește modul vocal",
-          "error_title": "Modul vocal indisponibil",
-          "exit": "Ieși din modul vocal",
+          "error_title": "Modul vocal nu este disponibil",
+          "exit": "Oprește modul vocal",
           "listening": "Ascult",
           "processing": "Se transcrie",
           "retry": "Încearcă din nou",
           "speaking": "Asistentul vorbește"
         }
       },
+      "copied_to_message_input": "Text copiat în câmpul mesajului",
       "copy_summary": "Copiază rezumatul",
       "disclaimer": {
         "description": "Desk Copilot te poate ajuta cu:",
@@ -865,6 +882,23 @@
         },
         "title": "Mergi dincolo de rezumatele conversațiilor",
         "title_without_summary": "Deblochează-ți tot potențialul cu Desk Copilot"
+      },
+      "feedback": {
+        "error": "Nu am putut trimite feedbackul. Încearcă din nou.",
+        "message_tags": {
+          "confusing_answer": "Răspuns confuz",
+          "did_not_load": "Nu s-a încărcat",
+          "incomplete_answer": "Răspuns incomplet",
+          "incorrect_answer": "Răspuns incorect",
+          "no_items_found": "Nu s-au găsit articole",
+          "out_of_context_items": "Articolele sugerate erau în afara contextului",
+          "slow_to_load": "A durat prea mult să se încarce",
+          "unclear_interface": "Interfață neclară"
+        },
+        "other": "Altceva",
+        "placeholder": "Introdu feedbackul aici",
+        "sended": "Feedbackul tău a fost trimis.",
+        "title": "Ce trebuie îmbunătățit?"
       },
       "summary_title": "Rezumatul acestei conversații"
     }
@@ -1041,6 +1075,7 @@
     "example_message_description": "Mesajele rapide sunt răspunsuri predefinite care ajută la standardizarea serviciului pentru clienți. Toți reprezentanții din acest departament le pot utiliza, iar tu poți adăuga altele noi mai jos.",
     "personal": "Mesajele tale",
     "shared": "Mesaje distribuite",
+    "send_in_bulk": "Trimite în masă",
     "delete": "Șterge mesaj rapid",
     "delete_your_quick_message": "Șterge mesajul tău rapid",
     "delete_confirm": "Ești sigur că dorești să ștergi mesajul rapid?",
@@ -1064,7 +1099,30 @@
     "no_suggestions": "Nu s-au găsit rezultate pentru comanda rapidă introdusă",
     "disclaimer": "Tastează / (slash) în câmpul mesaj pentru a vedea mesajele rapide",
     "action_open": "Deschide mesajele rapide (/)",
-    "action_close": "Închide mesajele rapide"
+    "action_close": "Închide mesajele rapide",
+    "bulk": {
+      "confirmation": {
+        "checkbox_label": "Am verificat toate câmpurile și vreau să trimit"
+      },
+      "contacts": {
+        "all": "Toate contactele",
+        "helper": "Doar contactele dintr-un chat de asistență pot primi acest mesaj",
+        "label": "Contacte"
+      },
+      "send": "{count, plural, =0 {Trimite către toate (0 contacte)} one {Trimite către toate ({count} contact)} other {Trimite către toate ({count} contacte)}}",
+      "sending": "{count, plural, one {Se trimite mesajul către {count} contact} few {Se trimite mesajul către {count} contacte} other {Se trimite mesajul către {count} de contacte}}",
+      "toast": {
+        "error": {
+          "message": "Nu s-a putut trimite mesajul. Încearcă din nou."
+        },
+        "partial_success": {
+          "message": "{success, plural, one {Mesaj trimis către {success} contact, {failed} eșuat.} few {Mesaj trimis către {success} contacte, {failed} eșuate.} other {Mesaj trimis către {success} de contacte, {failed} eșuate.}}"
+        },
+        "success": {
+          "message": "{count, plural, one {Mesaj trimis către {count} contact} few {Mesaj trimis către {count} contacte} other {Mesaj trimis către {count} de contacte}}"
+        }
+      }
+    }
   },
   "discard": "Șterge",
   "on_boarding": {
@@ -1160,66 +1218,68 @@
         "assigned_agents": "Agenți atribuiți",
         "badge": "Copilot",
         "connected_by": "Conectat de",
-        "connected_to": "Conectat la",
+        "connected_to": "Conectat pe",
         "created_on": "Creat pe",
-        "description": "Acest proiect este folosit exclusiv pentru a gestiona agenții IA pentru Desk Copilot. Este accesibil doar din această secțiune.",
+        "description": "Acest proiect este folosit pentru a gestiona agenții AI ai Desk Copilot. Este accesibil doar din această secțiune.",
+        "disconnect": "Deconectează",
+        "disconnect_by": "Deconectat de",
+        "disconnect_on": "Deconectat pe",
         "open": "Deschide",
-        "popover_change_option": "Schimbă",
-        "popover_disconnect_option": "Deconectează"
+        "reconnect": "Reconectează"
       },
       "disconnect_modal": {
         "confirm": "Deconectează",
-        "description": "Acest proiect va pierde accesul la Desk Copilot până când un proiect Copilot este reconectat. Proiectul Copilot și celelalte conexiuni nu vor fi afectate.",
-        "error": "Nu s-a putut deconecta proiectul Copilot",
-        "success": "Proiect Copilot deconectat cu succes",
+        "description": "Acest proiect va pierde accesul la Desk Copilot până când un proiect Copilot este reconectat.",
+        "error": "Nu s-a putut deconecta proiectul Copilot.",
+        "success": "Proiectul Copilot a fost deconectat!",
         "title": "Deconectează proiectul Copilot"
+      },
+      "disconnected_disclaimer": {
+        "description": "Pentru a activa Desk Copilot, trebuie să reconectezi proiectul Copilot.",
+        "title": "Proiectul Copilot este deconectat"
       },
       "empty_state": {
         "create_button": "Creează proiect Copilot",
-        "description": "Pentru a activa Desk Copilot, conectează acest proiect la un proiect Copilot unde sunt gestionați agenții tăi IA",
-        "select_button": "Selectează proiect Copilot",
+        "create_disabled_tooltip": "Nu ai permisiunea de a crea un proiect Copilot",
+        "description": "Pentru a activa Desk Copilot, conectează acest proiect la un proiect Copilot unde sunt gestionați agenții tăi AI",
         "title": "Niciun proiect Copilot conectat"
       },
       "enable_title": "Activează Desk Copilot",
       "info": {
         "ai_assistance": {
-          "description": "Ajută-ți reprezentanții în timpul conversațiilor cu sugestii generate de IA, elemente recomandate și următoarele acțiuni.",
-          "title": "Asistență IA"
+          "description": "Ajută-ți reprezentanții în timpul conversațiilor cu sugestii generate de AI, elemente recomandate și următoarele acțiuni.",
+          "title": "Asistență AI"
         },
         "automatic_updates": {
           "description": "Modificările făcute în proiectul Copilot se reflectă în fiecare proiect Live Desk conectat.",
           "title": "Actualizări automate"
         },
         "centralized_agents": {
-          "description": "Gestionează toți agenții IA într-un singur proiect Copilot.",
-          "title": "Agenți IA centralizați"
+          "description": "Gestionează toți agenții AI într-un singur proiect Copilot",
+          "title": "Agenți AI centralizați"
         },
         "learn_more": "Află mai multe",
         "shared_across_projects": {
-          "description": "Un proiect Copilot poate fi partajat între mai multe proiecte Live Desk pentru a menține cunoștințele IA consistente.",
+          "description": "Un proiect Copilot poate fi partajat între mai multe proiecte Live Desk pentru a menține cunoștințele AI consecvente.",
           "title": "Partajat între proiecte"
         },
         "title": "Cum funcționează Desk Copilot"
       },
       "modal": {
         "disclaimer": "Acest proiect Copilot va fi creat și conectat automat la acest proiect.",
-        "error": "Nu s-a putut crea proiectul Copilot din cauza unei probleme tehnice",
+        "error": "Eroare la crearea și conectarea proiectului Copilot.",
         "input_label": "Definește numele proiectului Copilot",
-        "success": "Proiect Copilot creat și conectat cu succes",
+        "success": "Proiect Copilot creat și conectat!",
         "title": "Creează proiect Copilot"
       },
       "new_badge": "Nou",
-      "picker_modal": {
-        "assigned_agents_tag": "{count, plural, one {{count} agent atribuit} other {{count} agenți atribuiți}}",
-        "change_button": "Schimbă",
-        "change_error": "Nu s-a putut schimba proiectul Copilot",
-        "change_success": "Proiect Copilot schimbat cu succes",
-        "change_title": "Schimbă proiectul Copilot",
-        "connect_button": "Conectează",
-        "connect_error": "Nu s-a putut conecta la proiectul Copilot",
-        "connect_success": "Proiect Copilot conectat cu succes",
-        "search_placeholder": "Caută după nume",
-        "select_title": "Selectează proiectul Copilot existent"
+      "no_permission_disclaimer": "Doar utilizatorii cu permisiune de Administrator sau Contributor pot activa Desk Copilot. Contactează unul dintre acești utilizatori din echipa ta pentru a activa funcția.",
+      "reconnect_modal": {
+        "confirm": "Reconectează",
+        "description": "Acest proiect va recâștiga accesul la Desk Copilot prin reconectarea proiectului Copilot.",
+        "error": "Nu s-a putut reconecta proiectul Copilot.",
+        "success": "Proiectul Copilot a fost reconectat!",
+        "title": "Reconectează proiectul Copilot"
       }
     },
     "changes_saved": "Modificări salvate cu succes",
@@ -1251,7 +1311,7 @@
         "switch_inactive": "Blochează transferul chaturilor către reprezentanți offline"
       },
       "hide_desk_copilot_tab": {
-        "hint": "Când este activată, reprezentanții văd doar fila Informații în panoul contactului",
+        "hint": "Când este activată, reprezentanții văd doar fila Detalii chat în panoul lateral.",
         "switch_label": "Ascunde fila Desk Copilot"
       },
       "hide_moderators_from_transfer": {
@@ -1616,9 +1676,7 @@
       "no_contacts_filtered_alert": "Niciun contact nu corespunde filtrelor selectate. Încearcă să ajustezi filtrele.",
       "contacts_count_disclaimer": "{count, plural, one {Acest mesaj va fi trimis către {count} contact. Numărul de destinatari se poate schimba în timpul livrării din cauza transferurilor de conversație, închiderilor de conversație sau interacțiunilor care au loc simultan.} few {Acest mesaj va fi trimis către {count} contacte. Numărul de destinatari se poate schimba în timpul livrării din cauza transferurilor de conversație, închiderilor de conversație sau interacțiunilor care au loc simultan.} other {Acest mesaj va fi trimis către {count} de contacte. Numărul de destinatari se poate schimba în timpul livrării din cauza transferurilor de conversație, închiderilor de conversație sau interacțiunilor care au loc simultan.}}",
       "recipients": {
-        "title": "Destinatari",
-        "title_tooltip": "Acest mesaj va fi livrat tuturor contactelor care corespund filtrelor selectate. Folosește această funcție pentru comunicări operaționale precum întârzieri, incidente, actualizări.",
-        "select_the_contacts_status": "Selectează statusul contactelor",
+        "at_least_one_status_must_be_selected": "Selectează cel puțin un status",
         "contacts_in_service": "Contacte din chaturile de asistență",
         "contacts_waiting_for_service": "Contacte care așteaptă asistență",
         "filters": {
@@ -1632,7 +1690,10 @@
             "label": "Selectează un reprezentant",
             "placeholder": "Selectează cel puțin un reprezentant"
           }
-        }
+        },
+        "select_the_contacts_status": "Selectează statusul contactelor",
+        "title": "Destinatari",
+        "title_tooltip": "Acest mesaj va fi livrat tuturor contactelor care corespund filtrelor selectate. Folosește această funcție pentru comunicări operaționale precum întârzieri, incidente, actualizări."
       },
       "message": {
         "title": "Mesaj",
@@ -1662,7 +1723,7 @@
       },
       "partial_success": {
         "button": "Vezi trimiteri",
-        "message": "{success, plural, one {{failed, plural, one {Mesaj trimis către {success} contact, {failed} a eșuat.} few {Mesaj trimis către {success} contact, {failed} au eșuat.} other {Mesaj trimis către {success} contact, {failed} au eșuat.}}} few {{failed, plural, one {Mesaj trimis către {success} contacte, {failed} a eșuat.} few {Mesaj trimis către {success} contacte, {failed} au eșuat.} other {Mesaj trimis către {success} contacte, {failed} au eșuat.}}} other {{failed, plural, one {Mesaj trimis către {success} de contacte, {failed} a eșuat.} few {Mesaj trimis către {success} de contacte, {failed} au eșuat.} other {Mesaj trimis către {success} de contacte, {failed} au eșuat.}}}}"
+        "message": "{success, plural, one {Mesaj trimis către {success} contact, {failed} a eșuat.} other {Mesaj trimis către {success} contacte, {failed} au eșuat.}}"
       },
       "success": {
         "message": "{count, plural, one {Mesaj trimis către {count} contact} few {Mesaj trimis către {count} contacte} other {Mesaj trimis către {count} de contacte}}"

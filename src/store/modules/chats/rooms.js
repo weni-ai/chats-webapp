@@ -3,7 +3,7 @@ import { cloneDeep } from 'lodash';
 
 import { useDashboard } from '../dashboard';
 import { useProfile } from '../profile';
-import { useFeatureFlag } from '../featureFlag';
+import { useConfig } from '../config';
 import { useRoomCounters } from './roomCounters';
 
 import Room from '@/services/api/resources/chats/room';
@@ -14,6 +14,7 @@ import {
   markSummaryDismissed,
   clearSummaryDismissed,
 } from '@/utils/summaryDismissalStorage';
+import { clearRoom as clearCopilotReadRoom } from '@/utils/copilotReadStorage';
 import i18n from '@/plugins/i18n';
 
 export const useRooms = defineStore('rooms', {
@@ -217,12 +218,7 @@ export const useRooms = defineStore('rooms', {
       let gettedRooms = response.results || [];
       const listRoomHasNext = response.next;
 
-      const isPinRoomsOptimizationEnabled =
-        useFeatureFlag().featureFlags?.active_features?.includes(
-          'weniChatsPinRoomsOptimization',
-        );
-
-      if (roomsType === 'ongoing' && isPinRoomsOptimizationEnabled) {
+      if (roomsType === 'ongoing') {
         const newPinnedRooms = response.pinned_rooms || [];
         const newPinnedUuids = new Set(newPinnedRooms.map((room) => room.uuid));
 
@@ -552,6 +548,10 @@ export const useRooms = defineStore('rooms', {
       if (this.activeRoom && this.activeRoom?.uuid === roomUuid) {
         this.setActiveRoom(null);
       }
+
+      const projectUuid = useConfig().project?.uuid;
+      const agentEmail = useProfile().me?.email;
+      clearCopilotReadRoom({ projectUuid, agentEmail }, roomUuid);
     },
 
     addNewMessagesByRoom({ room, message }) {

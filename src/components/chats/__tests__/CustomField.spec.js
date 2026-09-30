@@ -45,14 +45,14 @@ describe('CustomField', () => {
     wrapperWithURL.unmount();
   });
 
-  it('should shows the input field when isCurrent prop is true', async () => {
+  it('should shows the textarea field when isCurrent prop is true', async () => {
     await wrapper.setProps({ isCurrent: true });
-    expect(wrapper.find('input[type="text"]').isVisible()).toBe(true);
+    expect(wrapper.find('textarea').isVisible()).toBe(true);
   });
 
-  it('should hides the input field when isCurrent prop is false', async () => {
+  it('should hides the textarea field when isCurrent prop is false', async () => {
     await wrapper.setProps({ isCurrent: false });
-    expect(wrapper.find('input[type="text"]').isVisible()).toBe(false);
+    expect(wrapper.find('textarea').isVisible()).toBe(false);
   });
 
   it('should emits "update-current-custom-field" event on h4 click', async () => {
@@ -65,9 +65,9 @@ describe('CustomField', () => {
     });
   });
 
-  it('should emits "update-current-custom-field" event on input value change', async () => {
-    const input = wrapper.find('input[type="text"]');
-    await input.setValue('New Description');
+  it('should emits "update-current-custom-field" event on textarea value change', async () => {
+    const textarea = wrapper.find('textarea');
+    await textarea.setValue('New Description');
     expect(wrapper.emitted('update-current-custom-field')).toBeTruthy();
     expect(wrapper.emitted('update-current-custom-field')[0][0]).toEqual({
       key: defaultProps.title,
@@ -75,15 +75,15 @@ describe('CustomField', () => {
     });
   });
 
-  it('should emits "save-value" event on input blur', async () => {
-    const input = wrapper.find('input[type="text"]');
-    await input.trigger('blur');
+  it('should emits "save-value" event on textarea blur', async () => {
+    const textarea = wrapper.find('textarea');
+    await textarea.trigger('blur');
     expect(wrapper.emitted('save-value')).toBeTruthy();
   });
 
-  it('should emits "save-value" event on input enter keypress', async () => {
-    const input = wrapper.find('input[type="text"]');
-    await input.trigger('keypress', { key: 'Enter' });
+  it('should emits "save-value" event on textarea enter keydown', async () => {
+    const textarea = wrapper.find('textarea');
+    await textarea.trigger('keydown', { key: 'Enter' });
     expect(wrapper.emitted('save-value')).toBeTruthy();
   });
 
@@ -93,7 +93,7 @@ describe('CustomField', () => {
     await wrapper.setProps({ isCurrent: true });
 
     expect(wrapper.find('.description h4').exists()).toBe(false);
-    expect(wrapper.find('input[type="text"]').isVisible()).toBe(true);
+    expect(wrapper.find('textarea').isVisible()).toBe(true);
   });
 
   it('should restore the description text (h4) after exiting edit mode', async () => {
@@ -118,5 +118,18 @@ describe('CustomField', () => {
     expect(wrapperUrl.find('.description a').exists()).toBe(true);
 
     wrapperUrl.unmount();
+  });
+
+  it('should render the full long description without truncating the text content', () => {
+    const longDescription =
+      'This is a very long custom field value that should remain fully visible after wrapping across multiple lines in the contact info sidebar.';
+    const wrapperLong = createWrapper({
+      ...defaultProps,
+      description: longDescription,
+    });
+
+    expect(wrapperLong.find('.description h4').text()).toBe(longDescription);
+
+    wrapperLong.unmount();
   });
 });
