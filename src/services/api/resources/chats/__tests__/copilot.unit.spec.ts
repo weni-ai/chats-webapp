@@ -10,7 +10,7 @@ vi.mock('@/utils/config', () => ({
   getProject: vi.fn(() => 'mocked-project-id'),
 }));
 
-import Copilot, { extractSectorUuid } from '../copilot';
+import Copilot, { extractProjectUuid, extractSectorUuid } from '../copilot';
 import http from '@/services/api/http';
 
 describe('Copilot service', () => {
@@ -51,9 +51,61 @@ describe('Copilot service', () => {
       ).toBe('sector-uuid');
     });
 
+    it('returns the sector uuid and ignores project_uuid', () => {
+      expect(
+        extractSectorUuid({
+          project_uuid: 'origin-project-1',
+          sector: 'sector-1',
+          conection: {
+            socketUrl: 'wss://example.com',
+            channelUuid: 'channel-1',
+            host: 'https://flows.weni.ai',
+            connectOn: 'mount',
+            storage: 'local',
+            callbackUrl: '',
+          },
+        }),
+      ).toBe('sector-1');
+    });
+
     it('returns undefined when there is no sector key', () => {
       expect(
         extractSectorUuid({
+          conection: {
+            socketUrl: 'wss://example.com',
+            channelUuid: 'channel-1',
+            host: 'https://flows.weni.ai',
+            connectOn: 'mount',
+            storage: 'local',
+            callbackUrl: '',
+          },
+        }),
+      ).toBeUndefined();
+    });
+  });
+
+  describe('extractProjectUuid', () => {
+    it('returns the origin project uuid from the connection item', () => {
+      expect(
+        extractProjectUuid({
+          project_uuid: 'origin-project-1',
+          sector: 'sector-1',
+          conection: {
+            socketUrl: 'wss://example.com',
+            channelUuid: 'channel-1',
+            host: 'https://flows.weni.ai',
+            connectOn: 'mount',
+            storage: 'local',
+            callbackUrl: '',
+          },
+        }),
+      ).toBe('origin-project-1');
+    });
+
+    it('returns undefined when project_uuid is missing', () => {
+      expect(
+        extractProjectUuid({
+          sector: 'sector-1',
           conection: {
             socketUrl: 'wss://example.com',
             channelUuid: 'channel-1',
