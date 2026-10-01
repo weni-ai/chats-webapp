@@ -8,6 +8,7 @@ import Copilot, {
   type CopilotConnection,
   type CopilotConnectionItem,
 } from '@/services/api/resources/chats/copilot';
+import { listSecondarySectorOrigins } from '@/services/api/resources/chats/copilotOrigin';
 import { useConfig } from '@/store/modules/config';
 import { useFeatureFlag } from '@/store/modules/featureFlag';
 
@@ -19,17 +20,25 @@ export type CopilotRoom = {
 };
 
 const connections = ref<CopilotConnectionItem[]>([]);
-const isLoading = ref(false);
+const sectorOriginProjects = ref<Record<string, string>>({});
+const isLoadingConnections = ref(false);
+const isLoadingOrigins = ref(false);
 let fetchPromise: Promise<void> | null = null;
+let originFetchPromise: Promise<void> | null = null;
 let cachedIsPrincipal: boolean | null = null;
 let cachedProjectUuid: string | null = null;
+let cachedOriginOrgUuid: string | null = null;
 
 export function resetCopilotConnectionState() {
   connections.value = [];
-  isLoading.value = false;
+  sectorOriginProjects.value = {};
+  isLoadingConnections.value = false;
+  isLoadingOrigins.value = false;
   fetchPromise = null;
+  originFetchPromise = null;
   cachedIsPrincipal = null;
   cachedProjectUuid = null;
+  cachedOriginOrgUuid = null;
 }
 
 export function useCopilotConnection(
@@ -64,7 +73,7 @@ export function useCopilotConnection(
       return fetchPromise;
     }
 
-    isLoading.value = true;
+    isLoadingConnections.value = true;
     cachedIsPrincipal = nextIsPrincipal;
     cachedProjectUuid = nextProjectUuid;
 
@@ -76,11 +85,46 @@ export function useCopilotConnection(
       } catch {
         connections.value = [];
       } finally {
-        isLoading.value = false;
+        isLoadingConnections.value = false;
       }
     })();
 
     return fetchPromise;
+  }
+
+  async function loadSectorOrigins(force = false) {
+    const orgUuid =
+      ((project.value as { org?: string } | undefined)?.org || '').trim() ||
+      null;
+
+    if (!isPrincipal.value || !orgUuid) {
+      sectorOriginProjects.value = {};
+      cachedOriginOrgUuid = null;
+      return;
+    }
+
+    if (
+      !force &&
+      originFetchPromise !== null &&
+      cachedOriginOrgUuid === orgUuid
+    ) {
+      return originFetchPromise;
+    }
+
+    isLoadingOrigins.value = true;
+    cachedOriginOrgUuid = orgUuid;
+
+    originFetchPromise = (async () => {
+      try {
+        sectorOriginProjects.value = await listSecondarySectorOrigins(orgUuid);
+      } catch {
+        sectorOriginProjects.value = {};
+      } finally {
+        isLoadingOrigins.value = false;
+      }
+    })();
+
+    return originFetchPromise;
   }
 
   const matchedItem = computed<CopilotConnectionItem | undefined>(() => {
@@ -107,24 +151,36 @@ export function useCopilotConnection(
   );
 
   const originProjectUuid = computed(() => {
-    if (isPrincipal.value) {
-      return extractOriginalProjectUuid(matchedItem.value);
+    if (!isPrincipal.value) {
+      return project.value?.uuid || undefined;
     }
 
-    return project.value?.uuid || undefined;
+    return (
+      extractOriginalProjectUuid(matchedItem.value) ||
+      sectorOriginProjects.value[toValue(room)?.queue?.sector || '']
+    );
   });
 
   const isConfigured = computed(() => !!connection.value);
+  const isLoading = computed(
+    () => isLoadingConnections.value || isLoadingOrigins.value,
+  );
 
   function reload() {
-    return loadConnections(true);
+    return Promise.all([loadConnections(true), loadSectorOrigins(true)]);
   }
 
   watch(
-    [canLoadConnections, isPrincipal, () => project.value?.uuid],
+    [
+      canLoadConnections,
+      isPrincipal,
+      () => project.value?.uuid,
+      () => (project.value as { org?: string } | undefined)?.org,
+    ],
     ([ready]) => {
       if (!ready) return;
-      loadConnections();
+      void loadConnections();
+      void loadSectorOrigins();
     },
     { immediate: true },
   );

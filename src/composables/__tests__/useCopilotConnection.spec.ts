@@ -7,11 +7,16 @@ import { ASSISTED_SALES_FEATURE_FLAG } from '@/composables/useAssistedSalesFeatu
 import { useConfig } from '@/store/modules/config';
 import { useFeatureFlag } from '@/store/modules/featureFlag';
 import Copilot from '@/services/api/resources/chats/copilot';
+import { listSecondarySectorOrigins } from '@/services/api/resources/chats/copilotOrigin';
 import {
   isCopilotConnectionConfigured,
   resetCopilotConnectionState,
   useCopilotConnection,
 } from '../useCopilotConnection';
+
+vi.mock('@/services/api/resources/chats/copilotOrigin', () => ({
+  listSecondarySectorOrigins: vi.fn().mockResolvedValue({}),
+}));
 
 vi.mock('@/services/api/resources/chats/copilot', async () => {
   const actual = await vi.importActual(
@@ -229,6 +234,45 @@ describe('useCopilotConnection', () => {
     expect(isConfigured.value).toBe(false);
     expect(connection.value).toBeUndefined();
     expect(originProjectUuid.value).toBeUndefined();
+  });
+
+  it('falls back to the secondary project of the room sector when the principal has no connection', async () => {
+    const configStore = useConfig();
+    configStore.project = {
+      uuid: 'project-uuid',
+      name: 'Desk',
+      config: { its_principal: true },
+      org: 'org-uuid',
+    };
+    Copilot.listConnections.mockResolvedValue([]);
+    listSecondarySectorOrigins.mockResolvedValue({
+      'sector-missing': 'secondary-from-sectors',
+    });
+
+    const room = ref({
+      uuid: 'room-1',
+      queue: { sector: 'sector-missing' },
+    });
+
+    const { connection, isConfigured, originProjectUuid, reload } =
+      useCopilotConnection(room);
+    await reload();
+
+    expect(listSecondarySectorOrigins).toHaveBeenCalledWith('org-uuid');
+    expect(isConfigured.value).toBe(false);
+    expect(connection.value).toBeUndefined();
+    expect(originProjectUuid.value).toBe('secondary-from-sectors');
+  });
+
+  it('does not list secondary sectors when the project is not principal', async () => {
+    Copilot.listConnections.mockResolvedValue([
+      { conection: defaultConnection },
+    ]);
+
+    const { reload } = useCopilotConnection();
+    await reload();
+
+    expect(listSecondarySectorOrigins).not.toHaveBeenCalled();
   });
 
   it('exposes configuration from loaded connections without a new watcher', async () => {
