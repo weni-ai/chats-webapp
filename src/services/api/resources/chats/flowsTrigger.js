@@ -1,4 +1,5 @@
 import http from '@/services/api/http';
+import { useProfile } from '@/store/modules/profile';
 import { getProject } from '@/utils/config';
 import { getURLParams } from '@/utils/requests';
 
@@ -220,6 +221,8 @@ export default {
       });
     }
 
+    const profileStore = useProfile();
+
     const endpoint = '/contacts/out_off_whatsapp_response_window/';
     const paramsNextReq = getURLParams({ URL: nextReq, endpoint });
 
@@ -232,6 +235,7 @@ export default {
       project: getProject(),
       limit,
       offset,
+      user: profileStore.me?.email,
     };
 
     if (sectors) params.sectors = sectors;
@@ -244,7 +248,7 @@ export default {
 
   async startOutOfWhatsappWindowFlow({ flow, ignored_contacts }, projectUuid) {
     const response = await http.post(
-      `/project/${projectUuid || getProject()}/out_off_whats_app_response_window/start_flow/`,
+      `/project/${projectUuid || getProject()}/out_off_whatsapp_response_window/start_flow/`,
       { flow, ignored_contacts },
     );
     return response.data;
