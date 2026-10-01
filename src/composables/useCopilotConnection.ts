@@ -3,7 +3,7 @@ import { storeToRefs } from 'pinia';
 
 import { useAssistedSalesFeatureFlag } from '@/composables/useAssistedSalesFeatureFlag';
 import Copilot, {
-  extractProjectUuid,
+  extractOriginalProjectUuid,
   extractSectorUuid,
   getMockCopilotConnection,
   type CopilotConnection,
@@ -114,7 +114,7 @@ export function useCopilotConnection(
 
   const originProjectUuid = computed(() => {
     if (isPrincipal.value) {
-      return extractProjectUuid(matchedItem.value);
+      return extractOriginalProjectUuid(matchedItem.value);
     }
 
     return project.value?.uuid || undefined;
