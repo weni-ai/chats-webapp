@@ -21,6 +21,7 @@
       v-else-if="!isLoadingConnection"
       :hasSummary="enableRoomSummary"
       :isViewMode="isViewMode"
+      :originProjectUuid="originProjectUuid"
     />
     <div ref="bottomAnchorRef" />
   </section>
@@ -46,6 +47,7 @@ const props = withDefaults(
     roomUuid?: string;
     enableRoomSummary?: boolean;
     isViewMode?: boolean;
+    originProjectUuid?: string;
   }>(),
   {
     isConfigured: false,
@@ -53,6 +55,7 @@ const props = withDefaults(
     roomUuid: undefined,
     enableRoomSummary: false,
     isViewMode: false,
+    originProjectUuid: undefined,
   },
 );
 
