@@ -5,7 +5,6 @@ import { useAssistedSalesFeatureFlag } from '@/composables/useAssistedSalesFeatu
 import Copilot, {
   extractOriginalProjectUuid,
   extractSectorUuid,
-  getMockCopilotConnection,
   type CopilotConnection,
   type CopilotConnectionItem,
 } from '@/services/api/resources/chats/copilot';
@@ -103,14 +102,9 @@ export function useCopilotConnection(
     );
   });
 
-  const connection = computed<CopilotConnection | undefined>(() => {
-    const mockConnection = getMockCopilotConnection();
-    if (mockConnection) {
-      return mockConnection;
-    }
-
-    return matchedItem.value?.conection;
-  });
+  const connection = computed<CopilotConnection | undefined>(
+    () => matchedItem.value?.conection,
+  );
 
   const originProjectUuid = computed(() => {
     if (isPrincipal.value) {
