@@ -1,10 +1,13 @@
 import env from '@/utils/env';
 
-export function buildCopilotProjectUrl(uuid: string): string {
-  const connectUrl = String(env('MODULE_FEDERATION_CONNECT_URL') || '').replace(
-    /\/$/,
-    '',
-  );
+function getConnectUrl(): string {
+  return String(env('MODULE_FEDERATION_CONNECT_URL') || '').replace(/\/$/, '');
+}
 
-  return `${connectUrl}/projects/${uuid}`;
+export function buildCopilotProjectUrl(uuid: string): string {
+  return `${getConnectUrl()}/projects/${uuid}`;
+}
+
+export function buildProjectCopilotSettingsUrl(uuid: string): string {
+  return `${getConnectUrl()}/projects/${uuid}/settings/chats?tab=desk_copilot`;
 }

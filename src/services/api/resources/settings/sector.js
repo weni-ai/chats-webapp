@@ -6,10 +6,10 @@ import { getProject } from '@/utils/config';
 import { getURLParams } from '@/utils/requests';
 
 export default {
-  async list({ nextReq, limit, offset } = {}) {
+  async list({ nextReq, limit, offset, project } = {}) {
     const endpoint = '/sector/';
     const paramsNextReq = getURLParams({ URL: nextReq, endpoint });
-    const params = { project: getProject(), limit, offset };
+    const params = { project: project || getProject(), limit, offset };
 
     let response;
 
