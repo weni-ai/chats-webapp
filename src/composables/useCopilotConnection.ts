@@ -3,6 +3,7 @@ import { storeToRefs } from 'pinia';
 
 import { useAssistedSalesFeatureFlag } from '@/composables/useAssistedSalesFeatureFlag';
 import Copilot, {
+  extractOriginalProjectUuid,
   extractSectorUuid,
   type CopilotConnection,
   type CopilotConnectionItem,
@@ -82,13 +83,13 @@ export function useCopilotConnection(
     return fetchPromise;
   }
 
-  const connection = computed<CopilotConnection | undefined>(() => {
+  const matchedItem = computed<CopilotConnectionItem | undefined>(() => {
     if (!connections.value.length) {
       return undefined;
     }
 
     if (!isPrincipal.value) {
-      return connections.value[0]?.conection;
+      return connections.value[0];
     }
 
     const sectorUuid = toValue(room)?.queue?.sector;
@@ -96,11 +97,21 @@ export function useCopilotConnection(
       return undefined;
     }
 
-    const matchedItem = connections.value.find(
+    return connections.value.find(
       (item) => extractSectorUuid(item) === sectorUuid,
     );
+  });
 
-    return matchedItem?.conection;
+  const connection = computed<CopilotConnection | undefined>(
+    () => matchedItem.value?.conection,
+  );
+
+  const originProjectUuid = computed(() => {
+    if (isPrincipal.value) {
+      return extractOriginalProjectUuid(matchedItem.value);
+    }
+
+    return project.value?.uuid || undefined;
   });
 
   const isConfigured = computed(() => !!connection.value);
@@ -121,6 +132,7 @@ export function useCopilotConnection(
   return {
     connection,
     connections,
+    originProjectUuid,
     isConfigured,
     isLoading,
     isPrincipal,

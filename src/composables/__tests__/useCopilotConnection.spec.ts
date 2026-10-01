@@ -164,7 +164,49 @@ describe('useCopilotConnection', () => {
     expect(connection.value?.channelUuid).toBe('channel-2');
   });
 
-  it('is not configured when the principal project has no matching sector', async () => {
+  it('matches the principal sector even when the item includes original_project_uuid', async () => {
+    const configStore = useConfig();
+    configStore.project.config = { its_principal: true };
+
+    Copilot.listConnections.mockResolvedValue([
+      {
+        original_project_uuid: 'origin-project-1',
+        sector: 'sector-1',
+        conection: { ...defaultConnection, channelUuid: 'channel-1' },
+      },
+      {
+        original_project_uuid: 'origin-project-2',
+        sector: 'sector-2',
+        conection: { ...defaultConnection, channelUuid: 'channel-2' },
+      },
+    ]);
+
+    const room = ref({
+      uuid: 'room-1',
+      queue: { sector: 'sector-2' },
+    });
+
+    const { connection, originProjectUuid, isConfigured, reload } =
+      useCopilotConnection(room);
+    await reload();
+
+    expect(isConfigured.value).toBe(true);
+    expect(connection.value?.channelUuid).toBe('channel-2');
+    expect(originProjectUuid.value).toBe('origin-project-2');
+  });
+
+  it('uses the current project uuid as originProjectUuid when the project is not principal', async () => {
+    Copilot.listConnections.mockResolvedValue([
+      { conection: defaultConnection, original_project_uuid: 'ignored-origin' },
+    ]);
+
+    const { originProjectUuid, reload } = useCopilotConnection();
+    await reload();
+
+    expect(originProjectUuid.value).toBe('project-uuid');
+  });
+
+  it('leaves originProjectUuid empty when the principal project has no matching sector', async () => {
     const configStore = useConfig();
     configStore.project.config = { its_principal: true };
 
@@ -180,11 +222,13 @@ describe('useCopilotConnection', () => {
       queue: { sector: 'sector-missing' },
     });
 
-    const { connection, isConfigured, reload } = useCopilotConnection(room);
+    const { connection, isConfigured, originProjectUuid, reload } =
+      useCopilotConnection(room);
     await reload();
 
     expect(isConfigured.value).toBe(false);
     expect(connection.value).toBeUndefined();
+    expect(originProjectUuid.value).toBeUndefined();
   });
 
   it('exposes configuration from loaded connections without a new watcher', async () => {
