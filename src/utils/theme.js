@@ -22,14 +22,37 @@ export function applyRouteAwareTheme(
     theme === 'dark' && !forceLight && !isLightOnlyRoute(routePath);
   // Toggle on this instance's `.chats-webapp` mount container (not `<html>`)
   // so the unnnic dark-mode overrides — which postcss-prefixwrap rewrites as
-  // `.chats-webapp .dark` / `.chats-webapp.dark` — actually match. In
-  // federation the host may keep two mounts alive (live desk + settings);
-  // `querySelector` would always hit the first one and leak theme state.
-  const target =
-    mountContainer ??
-    document.querySelector('.chats-webapp') ??
-    document.documentElement;
-  target.classList.toggle(DARK_CLASS, wantsDark);
+  // `.chats-webapp .dark` / `.chats-webapp.dark` — actually match.
+  //
+  // Deliberately NOT falling back to `document.querySelector('.chats-webapp')`
+  // when `mountContainer` is missing: federation can keep two DOM nodes with
+  // that class alive at once (live desk `#chats-app` + settings
+  // `#chats-settings-app`, the latter only removed when Settings' own
+  // `<RouterView>` unmounts). Guessing via `querySelector` would silently pick
+  // whichever one is first in the DOM — possibly the wrong, forced-light one —
+  // and leave the live desk container's own `.dark` class stale. Every caller
+  // in this codebase always resolves `mountContainer` explicitly
+  // (`chatsThemeMountContainer`, provided per-mount in `main.js`); if that ever
+  // comes back empty, no-op loudly instead of guessing wrong silently.
+  if (!mountContainer) {
+    if (process.env.NODE_ENV !== 'production') {
+      // eslint-disable-next-line no-console
+      console.warn(
+        '[chats] applyRouteAwareTheme called without a mount container — skipping to avoid theming the wrong `.chats-webapp` instance.',
+      );
+    }
+    return;
+  }
+  mountContainer.classList.toggle(DARK_CLASS, wantsDark);
+
+  // Live desk owns the document-global `.dark` that unprefixed unnnic base CSS
+  // (e.g. UnnnicSkeletonLoading in Desk Copilot) depends on. Re-assert it
+  // whenever this surface wants dark so a leftover settings MutationObserver
+  // or useTheme watcher cannot leave `<html>` stuck light after navigating
+  // settings → channels → live desk.
+  if (wantsDark) {
+    document.documentElement.classList.add(DARK_CLASS);
+  }
 }
 
 /**
@@ -83,6 +106,74 @@ export function stopLightThemeEnforcement() {
     darkGuardObserver.disconnect();
     darkGuardObserver = null;
   }
+}
+
+/**
+ * Mirror of light-theme enforcement for the live desk. After settings →
+ * channels → live desk the container paints correctly for one frame (eager
+ * `.dark` apply) and then a leftover `useTheme()` watcher or host toggle
+ * strips `.dark` from `<html>` and/or the mount container. Unprefixed unnnic
+ * tokens on the host stay dark (sidebar inspect) while chats-prefixed
+ * selectors that need `.chats-webapp.dark` lose the class — dark bubbles,
+ * light text. While live desk wants dark, re-assert both classes.
+ */
+let darkThemeEnforcementCount = 0;
+let darkKeepObserver = null;
+let darkKeepContainer = null;
+
+function assertDarkClasses() {
+  if (typeof document === 'undefined') return;
+  document.documentElement.classList.add(DARK_CLASS);
+  darkKeepContainer?.classList.add(DARK_CLASS);
+}
+
+export function startDarkThemeEnforcement(mountContainer) {
+  if (typeof document === 'undefined') return;
+
+  darkKeepContainer = mountContainer || darkKeepContainer;
+  darkThemeEnforcementCount += 1;
+  if (darkThemeEnforcementCount > 1) {
+    assertDarkClasses();
+    return;
+  }
+
+  assertDarkClasses();
+
+  if (typeof MutationObserver === 'undefined') return;
+
+  darkKeepObserver = new MutationObserver(() => {
+    const htmlMissingDark =
+      !document.documentElement.classList.contains(DARK_CLASS);
+    const containerMissingDark =
+      !!darkKeepContainer && !darkKeepContainer.classList.contains(DARK_CLASS);
+    if (htmlMissingDark || containerMissingDark) {
+      assertDarkClasses();
+    }
+  });
+
+  darkKeepObserver.observe(document.documentElement, {
+    attributes: true,
+    attributeFilter: ['class'],
+  });
+  if (darkKeepContainer) {
+    darkKeepObserver.observe(darkKeepContainer, {
+      attributes: true,
+      attributeFilter: ['class'],
+    });
+  }
+}
+
+export function stopDarkThemeEnforcement() {
+  if (darkThemeEnforcementCount === 0) return;
+
+  darkThemeEnforcementCount -= 1;
+  if (darkThemeEnforcementCount > 0) return;
+
+  if (darkKeepObserver) {
+    darkKeepObserver.disconnect();
+    darkKeepObserver = null;
+  }
+  darkKeepContainer = null;
 }
 
 /**
