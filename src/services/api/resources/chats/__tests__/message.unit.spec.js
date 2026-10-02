@@ -230,9 +230,10 @@ describe('Message service', () => {
           user_email: 'user@example.com',
           seen: true,
           room: 'room-123',
-          replied_message_id: 'msg-456',
+          reply_to: { external_id: 'msg-456' },
         },
       };
+
       http.post.mockResolvedValue(mockResponse);
 
       const messageData = {
@@ -252,7 +253,7 @@ describe('Message service', () => {
         text: 'Hello World',
         user_email: 'user@example.com',
         seen: true,
-        replied_message_id: 'msg-456',
+        reply_to: { external_id: 'msg-456' },
       });
       expect(result).toEqual(mockResponse.data);
     });

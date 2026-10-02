@@ -1,6 +1,9 @@
 <!-- This component was migrated from unnnic. -->
 <template>
-  <section class="unnnic-chats-message__text__container">
+  <section
+    v-if="formattedText"
+    class="unnnic-chats-message__text__container"
+  >
     <p
       class="unnnic-chats-message__text"
       v-html="formattedText"

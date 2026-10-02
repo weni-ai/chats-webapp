@@ -2,18 +2,20 @@
 <template>
   <section
     v-if="replyMessage"
-    :class="`reply-message reply-message--${props.replyMessage.user ? 'you' : 'contact'} ${messageType}`"
+    :class="[
+      'reply-message',
+      `reply-message--${isFromYou ? 'you' : 'contact'}`,
+      messageType,
+      { 'reply-message--composer': showClose },
+    ]"
+    data-testid="reply-message"
   >
     <section class="reply-message__message-container">
       <p
-        :class="`reply-message__contact-name reply-message__contact-name--${props.replyMessage.user ? 'you' : 'contact'}`"
+        :class="`reply-message__contact-name reply-message__contact-name--${isFromYou ? 'you' : 'contact'}`"
         data-testid="contact-name"
       >
-        {{
-          props.replyMessage.user
-            ? $t('chat_message.reply_message.you')
-            : props.replyMessage.contact.name
-        }}
+        {{ contactName }}
       </p>
       <section class="reply-message__content">
         <template v-if="contentType === 'text' || contentType === 'geo'">
@@ -108,19 +110,21 @@
     </section>
     <UnnnicIcon
       v-if="showClose"
+      class="reply-message__close"
       :class="{ right: !hasPreview }"
       icon="close"
       clickable
       data-testid="close-icon"
-      size="avatar-nano"
-      scheme="fg-base"
-      @click="$emit('close')"
+      size="sm"
+      scheme="fg-emphasized"
+      @click.stop="$emit('close')"
     />
   </section>
 </template>
 
 <script setup>
 import { computed, onUpdated, ref } from 'vue';
+import { useI18n } from 'vue-i18n';
 
 defineEmits(['close']);
 
@@ -137,6 +141,41 @@ const props = defineProps({
     type: Boolean,
     default: false,
   },
+});
+
+const { t } = useI18n();
+
+const isFromYou = computed(
+  () =>
+    !!(
+      props.replyMessage.user ||
+      props.replyMessage.bulk_message ||
+      props.replyMessage.is_automatic_message
+    ),
+);
+
+const contactName = computed(() => {
+  if (props.replyMessage.bulk_message) {
+    const sender =
+      props.replyMessage.bulk_message?.sent_by?.name ||
+      props.replyMessage.bulk_message?.sent_by?.email ||
+      '';
+    const treatedSender = sender.includes('@') ? sender.split('@')[0] : sender;
+
+    return t('automatic_message.bulk_message', {
+      sender: treatedSender,
+    });
+  }
+
+  if (props.replyMessage.is_automatic_message) {
+    return t('chats.search_messages.automated_support');
+  }
+
+  if (props.replyMessage.user) {
+    return t('chat_message.reply_message.you');
+  }
+
+  return props.replyMessage.contact.name;
 });
 
 const contentType = computed(() => {
@@ -177,32 +216,77 @@ onUpdated(() => {
 <style lang="scss" scoped>
 .reply-message {
   display: flex;
-  padding: $unnnic-spacing-xs;
-  gap: $unnnic-spacing-nano;
-  border-radius: $unnnic-border-radius-sm;
+  align-items: flex-start;
+  padding: $unnnic-space-2 $unnnic-spacing-xs;
+  gap: $unnnic-space-1;
+  border-radius: $unnnic-radius-2;
+  width: 100%;
+  box-sizing: border-box;
 
-  &.received {
+  &.received:not(.reply-message--composer) {
     background: $unnnic-color-bg-base-soft;
   }
-  &.sent {
+  &.sent:not(.reply-message--composer) {
     background: rgba(8, 103, 102, 0.1);
   }
-  &--you {
-    border-left: 2px solid $unnnic-color-bg-teal-strong;
+  &--you:not(.reply-message--composer),
+  &--contact:not(.reply-message--composer) {
+    border-left: 3px solid $unnnic-color-border-info;
   }
-  &--contact {
-    border-left: 2px solid $unnnic-color-bg-purple-strong;
+
+  &:not(.reply-message--composer) {
+    .reply-message__contact-name--you,
+    .reply-message__contact-name--contact {
+      color: $unnnic-color-fg-info;
+    }
+
+    .reply-message__content,
+    .reply-message__content-text {
+      color: $unnnic-color-fg-emphasized;
+    }
   }
+
+  &--composer {
+    background: $unnnic-color-bg-base;
+    border-radius: $unnnic-radius-2;
+    padding: $unnnic-space-2 $unnnic-spacing-xs;
+    box-shadow: $unnnic-shadow-1;
+
+    &.reply-message--you {
+      border-left: 3px solid $unnnic-color-border-info;
+    }
+
+    &.reply-message--contact {
+      border-left: 3px solid $unnnic-color-bg-purple-strong;
+    }
+
+    .reply-message__contact-name--you {
+      color: $unnnic-color-fg-info;
+    }
+
+    .reply-message__contact-name--contact {
+      color: $unnnic-color-bg-purple-strong;
+    }
+
+    .reply-message__content,
+    .reply-message__content-text {
+      color: $unnnic-color-fg-emphasized;
+    }
+  }
+
   &__message-container {
     display: flex;
     flex-direction: column;
-    gap: $unnnic-spacing-nano;
+    gap: $unnnic-space-1;
+    flex: 1;
+    min-width: 0;
   }
   &__contact-name {
     font-family: $unnnic-font-family-secondary;
     font-size: $unnnic-font-size-body-gt;
     font-weight: $unnnic-font-weight-bold;
     line-height: $unnnic-font-size-body-gt + $unnnic-line-height-md;
+    margin: 0;
     &--you {
       color: $unnnic-color-bg-teal-strong;
     }
@@ -219,6 +303,19 @@ onUpdated(() => {
     font-size: $unnnic-font-size-body-gt;
     line-height: $unnnic-font-size-body-gt + $unnnic-line-height-md;
   }
+  &__content-text {
+    margin: 0;
+    word-break: break-word;
+  }
+  &__close {
+    flex-shrink: 0;
+
+    :deep(.unnnic-icon),
+    :deep(svg) {
+      width: 20px;
+      height: 20px;
+    }
+  }
   &__media-preview {
     width: 100%;
     height: 100%;
@@ -226,6 +323,7 @@ onUpdated(() => {
     &-container {
       width: 50px;
       height: 50px;
+      flex-shrink: 0;
     }
   }
 }
