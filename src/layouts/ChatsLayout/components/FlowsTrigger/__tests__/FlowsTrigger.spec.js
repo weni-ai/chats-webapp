@@ -563,51 +563,54 @@ describe('FlowsTrigger/index.vue', () => {
 
   describe('views', () => {
     it('should keep an independent search field on each view', async () => {
-      const wrapper = await createWrapper();
+      const wrapper = await createWrapper({
+        piniaState: {
+          featureFlag: {
+            featureFlags: { active_features: ['weniChatsFlow24hWindow'] },
+          },
+        },
+      });
+
+      expect(
+        wrapper.find('[data-testid="flows-trigger-expired-window"]').exists(),
+      ).toBe(true);
+      expect(
+        wrapper.find('[data-testid="flows-trigger-search"]').exists(),
+      ).toBe(false);
+
+      await wrapper
+        .find('[data-testid="flows-trigger-expired-search"]')
+        .setValue('expired');
+
+      const segmented = wrapper.findComponent({
+        name: 'UnnnicSegmentedControl',
+      });
+      segmented.vm.$emit('update:modelValue', 'all_contacts');
+      await flushPromises();
 
       expect(wrapper.find('[data-testid="flows-contact-card"]').exists()).toBe(
         true,
       );
       expect(
-        wrapper.find('[data-testid="flows-trigger-search"]').exists(),
-      ).toBe(true);
+        wrapper.find('[data-testid="flows-trigger-search"]').element.value,
+      ).toBe('');
       expect(
-        wrapper.find('[data-testid="flows-trigger-expired-window"]').exists(),
+        wrapper.find('[data-testid="flows-trigger-expired-search"]').exists(),
       ).toBe(false);
 
       await wrapper
         .find('[data-testid="flows-trigger-search"]')
         .setValue('alice');
 
-      const segmented = wrapper.findComponent({
-        name: 'UnnnicSegmentedControl',
-      });
       segmented.vm.$emit('update:modelValue', 'expired_window');
       await wrapper.vm.$nextTick();
 
-      expect(wrapper.find('[data-testid="flows-contact-card"]').exists()).toBe(
-        false,
-      );
-      expect(
-        wrapper.find('[data-testid="flows-trigger-search"]').exists(),
-      ).toBe(false);
       expect(
         wrapper.find('[data-testid="flows-trigger-expired-search"]').element
           .value,
       ).toBe('');
-
-      await wrapper
-        .find('[data-testid="flows-trigger-expired-search"]')
-        .setValue('expired');
-
-      segmented.vm.$emit('update:modelValue', 'all_contacts');
-      await wrapper.vm.$nextTick();
-
       expect(
-        wrapper.find('[data-testid="flows-trigger-search"]').element.value,
-      ).toBe('');
-      expect(
-        wrapper.find('[data-testid="flows-trigger-expired-search"]').exists(),
+        wrapper.find('[data-testid="flows-trigger-search"]').exists(),
       ).toBe(false);
     });
   });

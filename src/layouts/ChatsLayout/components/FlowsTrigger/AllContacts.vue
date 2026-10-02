@@ -5,6 +5,7 @@
       <UnnnicInput
         v-model="searchUrn"
         iconLeft="search-1"
+        size="sm"
         :placeholder="$t('chats.search_contact')"
         data-testid="flows-trigger-search"
       />
