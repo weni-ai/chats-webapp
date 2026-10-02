@@ -3,28 +3,48 @@
     class="desk-copilot-settings"
     data-testid="desk-copilot-settings"
   >
-    <InfoCard v-if="!isLoading && !linkedProject" />
+    <UnnnicDisclaimer
+      v-if="showNoPermissionDisclaimer"
+      type="informational"
+      :description="$t('config_chats.desk_copilot.no_permission_disclaimer')"
+      data-testid="desk-copilot-no-permission"
+    />
 
-    <section class="desk-copilot-settings__enable">
+    <InfoCard v-if="showEmptyState" />
+
+    <UnnnicDisclaimer
+      v-if="showDisconnectedDisclaimer"
+      type="attention"
+      :title="$t('config_chats.desk_copilot.disconnected_disclaimer.title')"
+      :description="
+        $t('config_chats.desk_copilot.disconnected_disclaimer.description')
+      "
+      data-testid="desk-copilot-disconnected-disclaimer"
+    />
+
+    <section
+      v-if="showEmptyState || showProjectCard"
+      class="desk-copilot-settings__enable"
+    >
       <h2
-        v-if="!linkedProject"
+        v-if="showEmptyState"
         class="desk-copilot-settings__enable-title"
       >
         {{ $t('config_chats.desk_copilot.enable_title') }}
       </h2>
 
       <EmptyState
-        v-if="!isLoading && !linkedProject"
+        v-if="showEmptyState"
         :isCreateDisabled="isCreateDisabled"
         @open-create-modal="showCreateModal = true"
-        @open-select-modal="openPicker('connect')"
       />
 
       <ConnectedProjectCard
         v-else-if="linkedProject"
         :linkedProject="linkedProject"
-        @open-change-modal="openPicker('change')"
+        :readOnly="isReadOnly"
         @open-disconnect-modal="showDisconnectModal = true"
+        @open-reconnect-modal="showReconnectModal = true"
       />
     </section>
 
@@ -32,52 +52,71 @@
       v-model="showCreateModal"
       @created="handleCreated"
     />
-    <CopilotProjectPickerModal
-      v-model="showPickerModal"
-      :mode="pickerMode"
-    />
     <DisconnectCopilotProjectModal v-model="showDisconnectModal" />
+    <ReconnectCopilotProjectModal v-model="showReconnectModal" />
   </section>
 </template>
 
 <script setup lang="ts">
-import { onMounted, ref } from 'vue';
+import { computed, onMounted, ref } from 'vue';
 
 import InfoCard from './InfoCard.vue';
 import EmptyState from './EmptyState.vue';
 import ConnectedProjectCard from './ConnectedProjectCard.vue';
 import CreateCopilotProjectModal from './CreateCopilotProjectModal.vue';
-import CopilotProjectPickerModal from './CopilotProjectPickerModal.vue';
 import DisconnectCopilotProjectModal from './DisconnectCopilotProjectModal.vue';
+import ReconnectCopilotProjectModal from './ReconnectCopilotProjectModal.vue';
 import { useCopilotProject } from '@/composables/useCopilotProject';
-import { useCopilotProjectsList } from '@/composables/useCopilotProjectsList';
 import type { CopilotProject } from '@/services/api/resources/chats/copilotProject';
 
 defineOptions({
   name: 'DeskCopilotSettings',
 });
 
-type PickerMode = 'connect' | 'change';
-
 const {
   linkedProject,
   isLoading,
+  isLoadingCanCreate,
+  canCreateProject,
   isCreateDisabled,
   fetchLinkedProject,
   fetchCanCreate,
   setLinkedProject,
 } = useCopilotProject();
-const { fetchProjects } = useCopilotProjectsList();
 
 const showCreateModal = ref(false);
-const showPickerModal = ref(false);
 const showDisconnectModal = ref(false);
-const pickerMode = ref<PickerMode>('connect');
+const showReconnectModal = ref(false);
 
-function openPicker(mode: PickerMode) {
-  pickerMode.value = mode;
-  showPickerModal.value = true;
-}
+const isReady = computed(() => !isLoading.value && !isLoadingCanCreate.value);
+const isReadOnly = computed(() => !canCreateProject.value);
+const showEmptyState = computed(
+  () => isReady.value && canCreateProject.value && !linkedProject.value,
+);
+const showProjectCard = computed(() => {
+  if (!isReady.value || !linkedProject.value) {
+    return false;
+  }
+
+  if (canCreateProject.value) {
+    return true;
+  }
+
+  return !!linkedProject.value.isConnected;
+});
+const showDisconnectedDisclaimer = computed(
+  () =>
+    isReady.value &&
+    canCreateProject.value &&
+    !!linkedProject.value &&
+    !linkedProject.value.isConnected,
+);
+const showNoPermissionDisclaimer = computed(
+  () =>
+    isReady.value &&
+    !canCreateProject.value &&
+    !linkedProject.value?.isConnected,
+);
 
 function handleCreated(project: CopilotProject) {
   setLinkedProject(project);
@@ -87,7 +126,6 @@ function handleCreated(project: CopilotProject) {
 onMounted(() => {
   fetchLinkedProject();
   fetchCanCreate(true);
-  fetchProjects();
 });
 </script>
 

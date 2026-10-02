@@ -36,6 +36,11 @@ export type OrderProductItem = {
   quantity: number;
 };
 
+export type ProductListSection = {
+  title: string;
+  items: ProductCarouselItem[];
+};
+
 export type AssistantMessage = {
   id: string;
   direction: AssistantDirection;
@@ -53,6 +58,11 @@ export type AssistantMessage = {
   productCarousel?: {
     text: string;
     items: ProductCarouselItem[];
+  };
+  productList?: {
+    text: string;
+    header?: string;
+    sections: ProductListSection[];
   };
 };
 

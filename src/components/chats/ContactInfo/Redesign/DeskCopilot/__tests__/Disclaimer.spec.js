@@ -17,6 +17,10 @@ vi.mock('@/utils/hostBridge', () => ({
   emitToHost: vi.fn(),
 }));
 
+vi.mock('@/utils/env', () => ({
+  default: vi.fn(() => 'https://dash.stg.cloud.weni.ai'),
+}));
+
 beforeAll(() => {
   config.global.plugins = (config.global.plugins || []).filter(
     (plugin) => plugin !== i18n,
@@ -29,7 +33,11 @@ afterAll(() => {
   }
 });
 
-const createWrapper = ({ projectPermissionRole = 1, props = {} } = {}) =>
+const createWrapper = ({
+  projectPermissionRole = 1,
+  projectConfig = {},
+  props = {},
+} = {}) =>
   mount(Disclaimer, {
     props,
     global: {
@@ -39,6 +47,13 @@ const createWrapper = ({ projectPermissionRole = 1, props = {} } = {}) =>
           initialState: {
             profile: {
               me: { project_permission_role: projectPermissionRole },
+            },
+            config: {
+              project: {
+                uuid: 'current-project',
+                name: 'Desk',
+                config: { ...projectConfig },
+              },
             },
           },
         }),
@@ -64,6 +79,7 @@ describe('DeskCopilotDisclaimer', () => {
   afterEach(() => {
     wrapper?.unmount();
     vi.clearAllMocks();
+    vi.restoreAllMocks();
   });
 
   it('renders title, description and checklist items', () => {
@@ -99,7 +115,9 @@ describe('DeskCopilotDisclaimer', () => {
     ).toBe('contact_info.desk_copilot.disclaimer.title_without_summary');
   });
 
-  it('shows the enable button for admin users', () => {
+  it('shows the enable button for admin users, including history screens', () => {
+    // Intentional: Figma keeps Enable visible for admins on closed-room history.
+    // View-mode is the only screen that hides it (besides non-admin roles).
     wrapper = createWrapper({ projectPermissionRole: 1 });
 
     expect(
@@ -115,10 +133,10 @@ describe('DeskCopilotDisclaimer', () => {
     ).toBe(false);
   });
 
-  it('hides the enable button in history or view mode', () => {
+  it('hides the enable button in view mode', () => {
     wrapper = createWrapper({
       projectPermissionRole: 1,
-      props: { isHistory: true },
+      props: { isViewMode: true },
     });
 
     expect(
@@ -136,5 +154,37 @@ describe('DeskCopilotDisclaimer', () => {
     expect(emitToHost).toHaveBeenCalledWith('redirect', {
       path: 'chats-settings:?tab=desk_copilot',
     });
+  });
+
+  it('opens the secondary project settings in a new tab on the primary project', async () => {
+    const windowOpen = vi.spyOn(window, 'open').mockImplementation(() => null);
+
+    wrapper = createWrapper({
+      projectPermissionRole: 1,
+      projectConfig: { its_principal: true },
+      props: { originProjectUuid: 'secondary-uuid' },
+    });
+
+    await wrapper
+      .find('[data-testid="desk-copilot-enable-button"]')
+      .trigger('click');
+
+    expect(windowOpen).toHaveBeenCalledWith(
+      'https://dash.stg.cloud.weni.ai/projects/secondary-uuid/settings/chats?tab=desk_copilot',
+      '_blank',
+      'noopener,noreferrer',
+    );
+    expect(emitToHost).not.toHaveBeenCalled();
+  });
+
+  it('hides the enable button on the primary project when there is no origin project uuid', () => {
+    wrapper = createWrapper({
+      projectPermissionRole: 1,
+      projectConfig: { its_principal: true },
+    });
+
+    expect(
+      wrapper.find('[data-testid="desk-copilot-enable-button"]').exists(),
+    ).toBe(false);
   });
 });

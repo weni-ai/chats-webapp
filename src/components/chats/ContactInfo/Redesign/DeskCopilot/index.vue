@@ -3,109 +3,128 @@
     class="desk-copilot"
     data-testid="desk-copilot"
   >
-    <Cart
-      v-if="currentView === 'cart'"
-      :items="cartItems"
-      :totalQuantity="productCartTotalQuantity"
-      :currency="cartCurrency"
-      :subtotal="cartSubtotal"
-      :discount="cartDiscount"
-      :total="cartTotal"
-      @back="currentView = 'chat'"
-      @remove="removeCartItem"
-      @increment="incrementCartItem"
-      @decrement="decrementCartItem"
-      @place-order="handlePlaceOrder"
+    <DeskCopilotHistoryView
+      v-if="isHistory"
+      :isConfigured="isConfigured"
+      :isLoadingConnection="isLoadingConnection"
+      :roomUuid="roomUuid"
+      :enableRoomSummary="enableRoomSummary"
+      :isViewMode="isViewMode"
+      :originProjectUuid="originProjectUuid"
     />
 
     <template v-else>
-      <header
-        v-if="isConfigured && productCartTotalQuantity > 0"
-        class="desk-copilot__cart-header"
-        data-testid="desk-copilot-cart-header"
-      >
-        <CartBadge
-          :count="productCartTotalQuantity"
-          @click="currentView = 'cart'"
-        />
-      </header>
+      <Cart
+        v-if="currentView === 'cart' && canChatWithCopilot"
+        :items="cartItems"
+        :totalQuantity="productCartTotalQuantity"
+        :currency="cartCurrency"
+        :subtotal="cartSubtotal"
+        :discount="cartDiscount"
+        :total="cartTotal"
+        @back="currentView = 'chat'"
+        @remove="removeCartItem"
+        @increment="incrementCartItem"
+        @decrement="decrementCartItem"
+        @place-order="handlePlaceOrder"
+      />
 
-      <section
-        ref="listRef"
-        class="desk-copilot__chat"
-        data-testid="desk-copilot-chat"
-      >
-        <SummaryMessage v-if="enableRoomSummary" />
+      <template v-else>
+        <header
+          v-if="
+            isConfigured && canChatWithCopilot && productCartTotalQuantity > 0
+          "
+          class="desk-copilot__cart-header"
+          data-testid="desk-copilot-cart-header"
+        >
+          <CartBadge
+            :count="productCartTotalQuantity"
+            @click="currentView = 'cart'"
+          />
+        </header>
 
-        <template v-if="isConfigured">
-          <AssistantMessageList
-            :messages="messages"
-            :isThinking="isThinking"
-            :isTyping="isTyping"
-            :isLoadingHistory="isLoadingHistory"
-            :isVoiceModeActive="isVoiceModeActive"
-            :voicePartialTranscript="voicePartialTranscript"
-            :getQuantity="getCartQuantity"
-            @send="handleSendSuggestionToRoom"
-            @word-revealed="scrollToBottomIfNear()"
-            @add-to-cart="addCartItem"
-            @increment-cart-item="incrementCartItem"
-            @decrement-cart-item="decrementCartItem"
+        <section
+          ref="listRef"
+          class="desk-copilot__chat"
+          data-testid="desk-copilot-chat"
+        >
+          <SummaryMessage
+            v-if="enableRoomSummary"
+            :readOnly="!canChatWithCopilot"
           />
 
-          <section
-            v-if="showGoToBottom"
-            class="desk-copilot__go-to-bottom"
-          >
-            <UnnnicButton
-              class="desk-copilot__go-to-bottom-button"
-              type="tertiary"
-              size="small"
-              iconCenter="arrow_downward"
-              data-testid="assistant-scroll-to-bottom"
-              :aria-label="
-                $t('contact_info.desk_copilot.assistant.scroll_to_bottom')
-              "
-              @click="scrollToBottom()"
+          <template v-if="isConfigured">
+            <AssistantMessageList
+              :messages="messages"
+              :isThinking="isThinking"
+              :isTyping="isTyping"
+              :isLoadingHistory="isLoadingHistory"
+              :isVoiceModeActive="isVoiceModeActive"
+              :voicePartialTranscript="voicePartialTranscript"
+              :getQuantity="getCartQuantity"
+              :readOnly="!canChatWithCopilot"
+              @send="handleSendSuggestionToRoom"
+              @send-catalog="handleSendCatalogToRoom"
+              @word-revealed="scrollToBottomIfNear()"
+              @add-to-cart="addCartItem"
+              @increment-cart-item="incrementCartItem"
+              @decrement-cart-item="decrementCartItem"
             />
-          </section>
-        </template>
-        <div ref="bottomAnchorRef" />
-      </section>
 
-      <template v-if="isConfigured">
-        <SuggestionChips
-          v-if="!isVoiceModePageActive && !isRecording"
-          :suggestions="suggestions"
-          @select="sendMessage"
-        />
-        <AssistantInput
-          :isRecording="isRecording"
-          :recordingDurationMs="recordingDurationMs"
-          :isAudioRecordingSupported="isAudioRecordingSupported"
-          :canEnterVoiceMode="canEnterVoiceMode"
-          :isVoiceModePageActive="isVoiceModePageActive"
-          :voiceModeState="voiceModeState"
-          :voiceError="voiceError"
-          :fileConfig="fileConfig"
-          @send="sendMessage"
-          @attach="sendAttachment"
-          @start-recording="startRecording"
-          @stop-recording="stopRecording"
-          @cancel-recording="cancelRecording"
-          @voice-enter="enter"
-          @voice-exit="exit"
-          @voice-retry="retry"
-          @voice-dismiss="dismissError"
+            <section
+              v-if="showGoToBottom"
+              class="desk-copilot__go-to-bottom"
+            >
+              <UnnnicButton
+                class="desk-copilot__go-to-bottom-button"
+                type="tertiary"
+                size="small"
+                iconCenter="arrow_downward"
+                data-testid="assistant-scroll-to-bottom"
+                :aria-label="
+                  $t('contact_info.desk_copilot.assistant.scroll_to_bottom')
+                "
+                @click="scrollToBottom()"
+              />
+            </section>
+          </template>
+          <div ref="bottomAnchorRef" />
+        </section>
+
+        <template v-if="isConfigured && canChatWithCopilot">
+          <SuggestionChips
+            v-if="!isVoiceModePageActive && !isRecording"
+            :suggestions="suggestions"
+            @select="sendMessage"
+          />
+          <AssistantInput
+            :isRecording="isRecording"
+            :recordingDurationMs="recordingDurationMs"
+            :isAudioRecordingSupported="isAudioRecordingSupported"
+            :canEnterVoiceMode="canEnterVoiceMode"
+            :isVoiceModePageActive="isVoiceModePageActive"
+            :voiceModeState="voiceModeState"
+            :voiceError="voiceError"
+            :fileConfig="fileConfig"
+            @send="sendMessage"
+            @attach="sendAttachment"
+            @start-recording="startRecording"
+            @stop-recording="stopRecording"
+            @cancel-recording="cancelRecording"
+            @voice-enter="enter"
+            @voice-exit="exit"
+            @voice-retry="retry"
+            @voice-dismiss="dismissError"
+          />
+        </template>
+
+        <Disclaimer
+          v-if="!isLoadingConnection && !isConfigured"
+          :hasSummary="enableRoomSummary"
+          :isViewMode="isViewMode"
+          :originProjectUuid="originProjectUuid"
         />
       </template>
-
-      <Disclaimer
-        v-if="!isLoadingConnection && !isConfigured"
-        :hasSummary="enableRoomSummary"
-        :isHistory="isHistory"
-        :isViewMode="isViewMode"
-      />
     </template>
   </section>
 </template>
@@ -114,29 +133,35 @@
 import { computed, onMounted, ref, watch } from 'vue';
 import { storeToRefs } from 'pinia';
 import { UnnnicCallAlert } from '@weni/unnnic-system';
+import isMobile from 'is-mobile';
 import SummaryMessage from './SummaryMessage.vue';
 import Disclaimer from './Disclaimer.vue';
 import Cart from './Cart.vue';
+import DeskCopilotHistoryView from './DeskCopilotHistoryView.vue';
 import AssistantMessageList from './assistant/AssistantMessageList.vue';
 import AssistantInput from './assistant/AssistantInput.vue';
 import SuggestionChips from './assistant/SuggestionChips.vue';
 import CartBadge from './assistant/CartBadge.vue';
 import { useAutoScroll } from '@/composables/assistant/useAutoScroll';
 import { useCopilotChat } from '@/composables/assistant/useCopilotChat';
+import { useCopilotRoomContext } from '@/composables/assistant/useCopilotRoomContext';
 import { useProductCart } from '@/composables/assistant/useProductCart';
 import { useVoiceMode } from '@/composables/assistant/useVoiceMode';
 import { useCopilotConnection } from '@/composables/useCopilotConnection';
+import type { CatalogPayload } from '@/services/assistant/buildCatalogPayload';
+import { useAssistedSalesFeatureFlag } from '@/composables/useAssistedSalesFeatureFlag';
 import i18n from '@/plugins/i18n';
 import { useConfig } from '@/store/modules/config';
 import { useRooms } from '@/store/modules/chats/rooms';
 import { useRoomMessages } from '@/store/modules/chats/roomMessages';
 import { useProfile } from '@/store/modules/profile';
+import { useFeatureFlag } from '@/store/modules/featureFlag';
 
 defineOptions({
   name: 'DeskCopilotTab',
 });
 
-withDefaults(
+const props = withDefaults(
   defineProps<{
     isHistory?: boolean;
     isViewMode?: boolean;
@@ -154,37 +179,71 @@ const emit = defineEmits<{
 const { project } = storeToRefs(useConfig());
 const { activeRoom } = storeToRefs(useRooms());
 const { me } = storeToRefs(useProfile());
+const { featureFlags, featureFlagsLoaded } = storeToRefs(useFeatureFlag());
 const roomMessagesStore = useRoomMessages();
+const { roomMessages, roomMessagesRoomUuid } = storeToRefs(roomMessagesStore);
+const loadedMessagesRoomUuid = computed(
+  () => roomMessagesRoomUuid.value || undefined,
+);
 const agentEmail = computed(() => me.value?.email || undefined);
+const originalContactUrn = computed(() => activeRoom.value?.urn || undefined);
+const isAssistedSalesEnabled = computed(() =>
+  useAssistedSalesFeatureFlag(featureFlags.value),
+);
 
 const currentView = ref<'chat' | 'cart'>('chat');
 
 const {
   connection,
+  originProjectUuid,
   isConfigured,
   isLoading: isLoadingConnection,
 } = useCopilotConnection(activeRoom);
 
 const roomUuid = computed(() => activeRoom.value?.uuid);
+
+// Avoid opening socket / room context for closed rooms (history).
+const liveConnection = computed(() =>
+  props.isHistory ? undefined : connection.value,
+);
+const liveRoomUuid = computed(() =>
+  props.isHistory ? undefined : roomUuid.value,
+);
+
 const {
   messages,
   isThinking,
   isTyping,
   isLoadingHistory,
+  isConnected,
   suggestions,
   isRecording,
   recordingDurationMs,
   isAudioRecordingSupported,
   isVoiceEnabledByServer,
   fileConfig,
-  sendMessage,
+  sendMessage: sendCopilotMessage,
+  sendHiddenMessage,
   sendOrder,
   sendAttachment,
   startRecording,
   stopRecording,
   cancelRecording,
   requestVoiceTokens,
-} = useCopilotChat(connection, roomUuid, agentEmail);
+} = useCopilotChat(
+  liveConnection,
+  liveRoomUuid,
+  agentEmail,
+  originalContactUrn,
+  originProjectUuid,
+);
+
+const markContextAsProcessedRef = ref(() => {});
+
+function sendMessage(text: string) {
+  markContextAsProcessedRef.value();
+  sendCopilotMessage(text);
+}
 
 const {
   items: cartItems,
@@ -220,13 +279,56 @@ const {
   requestVoiceTokens,
 });
 
+const canChatWithCopilot = computed(
+  () =>
+    !props.isViewMode &&
+    !!activeRoom.value?.user &&
+    !activeRoom.value?.is_waiting,
+);
+
+const canRunProactive = computed(
+  () =>
+    featureFlagsLoaded.value &&
+    isAssistedSalesEnabled.value &&
+    isConfigured.value &&
+    !props.isHistory &&
+    !props.isViewMode &&
+    !!activeRoom.value?.user &&
+    !activeRoom.value?.is_waiting &&
+    activeRoom.value?.user?.email === me.value?.email &&
+    !isMobile(),
+);
+
+const isReady = computed(() => isConnected.value && !isLoadingHistory.value);
+const isBusy = computed(
+  () => isThinking.value || isTyping.value || isVoiceModeActive.value,
+);
+const storageScope = computed(() => ({
+  projectUuid: project.value?.uuid,
+  agentEmail: agentEmail.value,
+  channelUuid: liveConnection.value?.channelUuid,
+}));
+
+const { markContextAsProcessed } = useCopilotRoomContext({
+  connection: liveConnection,
+  roomUuid: liveRoomUuid,
+  roomMessages,
+  messagesRoomUuid: loadedMessagesRoomUuid,
+  enabled: canRunProactive,
+  isReady,
+  isBusy,
+  sendHiddenMessage,
+  storageScope,
+});
+markContextAsProcessedRef.value = markContextAsProcessed;
+
 const {
   listRef,
   bottomAnchorRef,
   showGoToBottom,
   scrollToBottom,
   scrollToBottomIfNear,
-} = useAutoScroll(messages, isThinking, isTyping);
+} = useAutoScroll(messages, { isThinking, isTyping, isLoadingHistory });
 
 const enableRoomSummary = computed(
   () => !!project.value?.config?.has_chats_summary,
@@ -236,14 +338,57 @@ async function handleSendSuggestionToRoom(text: string) {
   const trimmed = text?.trim();
   const activeRoomUuid = activeRoom.value?.uuid;
 
-  if (!trimmed || !activeRoomUuid) {
+  if (!canChatWithCopilot.value || !trimmed || !activeRoomUuid) {
     return;
   }
 
   await roomMessagesStore.sendRoomMessage(trimmed, null, null, activeRoomUuid);
 }
 
+const isSendingCatalog = ref(false);
+
+async function handleSendCatalogToRoom({
+  catalog,
+  text,
+  resolve,
+  reject,
+}: {
+  catalog: CatalogPayload;
+  text: string;
+  resolve?: () => void;
+  reject?: (error?: unknown) => void;
+}) {
+  const activeRoomUuid = activeRoom.value?.uuid;
+
+  if (
+    isSendingCatalog.value ||
+    !canChatWithCopilot.value ||
+    !catalog ||
+    !activeRoomUuid
+  ) {
+    resolve?.();
+    return;
+  }
+
+  isSendingCatalog.value = true;
+  try {
+    await roomMessagesStore.sendRoomCatalogMessage(
+      catalog,
+      text?.trim() || '',
+      activeRoomUuid,
+    );
+    resolve?.();
+  } catch (error) {
+    reject?.(error);
+  } finally {
+    isSendingCatalog.value = false;
+  }
+}
+
 async function handlePlaceOrder() {
+  if (!canChatWithCopilot.value) {
+    return;
+  }
   const productItems = toOrderProductItems();
   if (productItems.length === 0) {
     return;
@@ -268,6 +413,12 @@ async function handlePlaceOrder() {
 
 watch(productCartTotalQuantity, (quantity) => {
   if (quantity === 0 && currentView.value === 'cart') {
+    currentView.value = 'chat';
+  }
+});
+
+watch(canChatWithCopilot, (canChat) => {
+  if (!canChat && currentView.value === 'cart') {
     currentView.value = 'chat';
   }
 });

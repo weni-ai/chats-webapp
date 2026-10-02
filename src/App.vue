@@ -164,7 +164,8 @@ export default {
         if (!newAppToken) return;
 
         if (isMobile()) {
-          if (this.appProject) this.initializeAppData(this.appProject);
+          const projectUuid = this.appProject || getProject();
+          if (projectUuid) this.initializeAppData(projectUuid);
         } else {
           this.getUser();
           this.getProject().then(() => {

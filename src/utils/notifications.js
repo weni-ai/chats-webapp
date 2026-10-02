@@ -1,6 +1,7 @@
 import i18n from '@/plugins/i18n';
 import isMobile from 'is-mobile';
 import { emitToHost } from './hostBridge';
+import { isFederatedModule } from '@/utils/moduleFederation';
 
 function buildNotificationOptions({ message = '', image = '', title }) {
   return {
@@ -21,14 +22,11 @@ export function sendWindowNotification({
   const options = buildNotificationOptions({ message, image, title });
 
   if (
-    isMobile() &&
-    'serviceWorker' in navigator &&
+    !isFederatedModule &&
+    typeof Notification === 'function' &&
     Notification.permission === 'granted'
   ) {
-    navigator.serviceWorker.ready.then((registration) => {
-      registration.showNotification(title, options);
-    });
-
+    new Notification(title, options);
     return;
   }
 

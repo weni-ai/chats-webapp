@@ -174,15 +174,17 @@ onMounted(() => {
   position: relative;
 
   display: grid;
-  grid-template-columns: 1fr;
+  grid-template-columns: minmax(0, 1fr);
   grid-template-rows: auto auto;
   gap: $unnnic-space-2;
   margin-right: $unnnic-space-2;
   align-items: end;
+  min-width: 0;
 
   &__input-area {
     position: relative;
     width: 100%;
+    min-width: 0;
   }
 }
 </style>

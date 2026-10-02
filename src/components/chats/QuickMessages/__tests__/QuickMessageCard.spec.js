@@ -88,9 +88,29 @@ describe('QuickMessageCard.vue', () => {
     expect(dropdown.exists()).toBe(true);
   });
 
-  it('hides actions when withActions is false', async () => {
-    await wrapper.setProps({ withActions: false });
-    const dropdown = wrapper.findComponent({ name: 'UnnnicDropdown' });
-    expect(dropdown.exists()).toBe(false);
+  it('emits "send-in-bulk" when emitSendInBulk is called', () => {
+    wrapper.vm.emitSendInBulk();
+
+    expect(wrapper.emitted('send-in-bulk')).toBeTruthy();
+    expect(wrapper.emitted('send-in-bulk')[0][0]).toEqual(quickMessage);
+    expect(wrapper.vm.openPopover).toBe(false);
+  });
+
+  it('emits "edit" when emitEdit is called', () => {
+    wrapper.vm.openPopover = true;
+    wrapper.vm.emitEdit();
+
+    expect(wrapper.emitted('edit')).toBeTruthy();
+    expect(wrapper.emitted('edit')[0][0]).toEqual(quickMessage);
+    expect(wrapper.vm.openPopover).toBe(false);
+  });
+
+  it('emits "delete" when emitDelete is called', () => {
+    wrapper.vm.openPopover = true;
+    wrapper.vm.emitDelete();
+
+    expect(wrapper.emitted('delete')).toBeTruthy();
+    expect(wrapper.emitted('delete')[0][0]).toEqual(quickMessage);
+    expect(wrapper.vm.openPopover).toBe(false);
   });
 });

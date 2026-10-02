@@ -33,6 +33,7 @@
           @select="emitSelectQuickMessage"
           @edit="emitEditQuickMessage"
           @delete="emitDeleteQuickMessage"
+          @send-in-bulk="emitSendInBulkQuickMessage(quickMessage)"
         />
         <div
           v-if="infiniteScroll && !withoutQuickMessages"
@@ -115,6 +116,7 @@ export default {
     'select-quick-message',
     'edit-quick-message',
     'delete-quick-message',
+    'send-in-bulk',
     'open-new-quick-message',
     'load-more',
   ],
@@ -252,6 +254,9 @@ export default {
     },
     emitDeleteQuickMessage(quickMessage) {
       this.$emit('delete-quick-message', quickMessage);
+    },
+    emitSendInBulkQuickMessage(quickMessage) {
+      this.$emit('send-in-bulk', quickMessage);
     },
   },
 };

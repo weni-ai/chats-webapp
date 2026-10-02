@@ -124,9 +124,13 @@ describe('Keycloak Service', () => {
       const savedUser = {
         token: 'saved-token',
         refreshToken: 'saved-refresh-token',
+        timeSkew: 1,
       };
       global.sessionStorage.getItem.mockReturnValue(JSON.stringify(savedUser));
       mockKeycloakInstance.init.mockResolvedValue(true);
+      mockKeycloakInstance.token = 'saved-token';
+      mockKeycloakInstance.refreshToken = 'saved-refresh-token';
+      mockKeycloakInstance.timeSkew = 1;
       mockKeycloakInstance.updateToken.mockResolvedValue(true);
 
       const result = await keycloakService.isAuthenticated();
@@ -140,11 +144,13 @@ describe('Keycloak Service', () => {
           token: mockKeycloakInstance.token,
           refreshToken: mockKeycloakInstance.refreshToken,
           idToken: mockKeycloakInstance.idToken,
+          timeSkew: mockKeycloakInstance.timeSkew,
         }),
       );
 
       expect(mockKeycloakInstance.init).toHaveBeenCalledWith({
         useNonce: false,
+        checkLoginIframe: false,
         scope: 'email profile openid offline_access',
         pkceMethod: 'S256',
         ...savedUser,
@@ -166,6 +172,7 @@ describe('Keycloak Service', () => {
       global.sessionStorage.getItem.mockReturnValue(null);
       mockKeycloakInstance.init.mockResolvedValue(true);
       mockKeycloakInstance.authenticated = true;
+      mockKeycloakInstance.refreshToken = 'still-present';
 
       const mockIntervalId = 42;
       global.setInterval.mockReturnValue(mockIntervalId);
@@ -175,7 +182,7 @@ describe('Keycloak Service', () => {
       const intervalCalls = global.setInterval.mock.calls;
       const refreshCallback = intervalCalls[intervalCalls.length - 1][0];
 
-      const error = new Error('Token refresh failed');
+      const error = true;
       mockKeycloakInstance.updateToken.mockRejectedValue(error);
 
       refreshCallback();
@@ -191,6 +198,41 @@ describe('Keycloak Service', () => {
       expect(global.sessionStorage.removeItem).toHaveBeenCalledWith(
         'keycloak:user',
       );
+
+      consoleErrorSpy.mockRestore();
+    });
+
+    it('should keep the session when refresh fails but the refresh token remains', async () => {
+      const consoleErrorSpy = vi
+        .spyOn(console, 'error')
+        .mockImplementation(() => {});
+
+      global.sessionStorage.getItem.mockReturnValue(null);
+      mockKeycloakInstance.init.mockResolvedValue(true);
+      mockKeycloakInstance.authenticated = true;
+      mockKeycloakInstance.refreshToken = 'still-present';
+
+      const mockIntervalId = 42;
+      global.setInterval.mockReturnValue(mockIntervalId);
+
+      await keycloakService.isAuthenticated();
+
+      const intervalCalls = global.setInterval.mock.calls;
+      const refreshCallback = intervalCalls[intervalCalls.length - 1][0];
+
+      mockKeycloakInstance.updateToken.mockRejectedValue(undefined);
+      global.sessionStorage.removeItem.mockClear();
+
+      refreshCallback();
+      await new Promise((r) => queueMicrotask(r));
+      await new Promise((r) => queueMicrotask(r));
+
+      expect(consoleErrorSpy).toHaveBeenCalledWith(
+        'Failed to refresh token:',
+        undefined,
+      );
+      expect(global.clearInterval).not.toHaveBeenCalled();
+      expect(global.sessionStorage.removeItem).not.toHaveBeenCalled();
 
       consoleErrorSpy.mockRestore();
     });
@@ -211,6 +253,7 @@ describe('Keycloak Service', () => {
       mockKeycloakInstance.token = 'refreshed-token';
       mockKeycloakInstance.refreshToken = 'refreshed-refresh-token';
       mockKeycloakInstance.idToken = 'refreshed-id-token';
+      mockKeycloakInstance.timeSkew = 3;
       mockKeycloakInstance.updateToken.mockResolvedValue(true);
 
       global.sessionStorage.setItem.mockClear();
@@ -224,6 +267,7 @@ describe('Keycloak Service', () => {
           token: 'refreshed-token',
           refreshToken: 'refreshed-refresh-token',
           idToken: 'refreshed-id-token',
+          timeSkew: 3,
         }),
       );
     });
@@ -329,6 +373,7 @@ describe('Keycloak Service', () => {
 
       expect(mockKeycloakInstance.init).toHaveBeenCalledWith({
         useNonce: false,
+        checkLoginIframe: false,
         scope: 'email profile openid offline_access',
         pkceMethod: 'S256',
       });
@@ -346,6 +391,7 @@ describe('Keycloak Service', () => {
 
       expect(mockKeycloakInstance.init).toHaveBeenCalledWith({
         useNonce: false,
+        checkLoginIframe: false,
         scope: 'email profile openid offline_access',
         pkceMethod: 'S256',
       });

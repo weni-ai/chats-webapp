@@ -19,6 +19,18 @@ keycloak.logout = () => {
 let hasInitialized = false;
 let refreshTokenInterval = null;
 
+function persistKeycloakUser() {
+  sessionStorage.setItem(
+    'keycloak:user',
+    JSON.stringify({
+      token: keycloak.token,
+      refreshToken: keycloak.refreshToken,
+      idToken: keycloak.idToken,
+      timeSkew: keycloak.timeSkew,
+    }),
+  );
+}
+
 export default {
   plugin: {
     install(Vue) {
@@ -56,20 +68,14 @@ export default {
     try {
       const authenticated = await keycloak.init({
         useNonce: false,
+        checkLoginIframe: false,
         scope: 'email profile openid offline_access',
         pkceMethod: 'S256',
         ...toInsert,
       });
 
       if (authenticated) {
-        sessionStorage.setItem(
-          'keycloak:user',
-          JSON.stringify({
-            token: keycloak.token,
-            refreshToken: keycloak.refreshToken,
-            idToken: keycloak.idToken,
-          }),
-        );
+        persistKeycloakUser();
       }
 
       hasInitialized = true;
@@ -80,18 +86,17 @@ export default {
             .updateToken(70)
             .then((refreshed) => {
               if (refreshed) {
-                sessionStorage.setItem(
-                  'keycloak:user',
-                  JSON.stringify({
-                    token: keycloak.token,
-                    refreshToken: keycloak.refreshToken,
-                    idToken: keycloak.idToken,
-                  }),
-                );
+                persistKeycloakUser();
               }
             })
             .catch((error) => {
               console.error('Failed to refresh token:', error);
+              // keycloak-js rejects with `true` after a 400 (refresh token
+              // already cleared). `undefined` is the iframe/missing-token
+              // path and must not drop a session that still has a refresh token.
+              const sessionDead = error === true || !keycloak.refreshToken;
+              if (!sessionDead) return;
+
               clearInterval(refreshTokenInterval);
               refreshTokenInterval = null;
               sessionStorage.removeItem('keycloak:user');

@@ -9,11 +9,12 @@
       :contactName="headerRoomTitle"
       clickable
       @click="emitOpenRoomContactInfo"
+      @back="room = null"
     >
       <template #actions>
         <section class="home-chat-headers__actions">
           <UnnnicToolTip
-            v-if="enableRoomSummary"
+            v-if="showSummaryIcon"
             enabled
             :text="
               openActiveRoomSummary
@@ -112,6 +113,7 @@
       v-show="isShowingDiscussionHeader"
       :discussionContact="headerDiscussionSubtitle"
       :discussionSubject="headerDiscussionTitle"
+      @back="setActiveDiscussion(null)"
     >
       <template #actions>
         <section class="home-chat-headers__actions">
@@ -145,15 +147,17 @@
 </template>
 
 <script>
+import isMobile from 'is-mobile';
 import { format as dateFnsFormat, subYears as dateFnsSubYears } from 'date-fns';
 import { mapActions, mapState, mapWritableState } from 'pinia';
-import isMobile from 'is-mobile';
 
 import { useRooms } from '@/store/modules/chats/rooms';
 import { useDiscussions } from '@/store/modules/chats/discussions';
 import { useConfig } from '@/store/modules/config';
 import { useProfile } from '@/store/modules/profile';
 import { useRoomMessages } from '@/store/modules/chats/roomMessages';
+import { useFeatureFlag } from '@/store/modules/featureFlag';
+import { useAssistedSalesFeatureFlag } from '@/composables/useAssistedSalesFeatureFlag';
 
 import ChatHeaderLoading from '@/views/loadings/chat/ChatHeader.vue';
 import ChatHeaderSendFlow from '@/components/chats/chat/ChatHeaderSendFlow.vue';
@@ -199,8 +203,8 @@ export default {
   },
 
   computed: {
+    ...mapWritableState(useRooms, { room: 'activeRoom' }),
     ...mapState(useRooms, {
-      room: (store) => store.activeRoom,
       isLoadingCanSendMessageStatus: (store) =>
         store.isLoadingCanSendMessageStatus,
       isCanSendMessageActiveRoom: (store) => store.isCanSendMessageActiveRoom,
@@ -221,16 +225,21 @@ export default {
     ...mapState(useConfig, {
       enableRoomSummary: (store) => store.project?.config?.has_chats_summary,
     }),
+    ...mapState(useFeatureFlag, ['featureFlags']),
+
+    isAssistedSalesEnabled() {
+      return useAssistedSalesFeatureFlag(this.featureFlags);
+    },
+
+    showSummaryIcon() {
+      return this.enableRoomSummary && !this.isAssistedSalesEnabled;
+    },
 
     canEndDiscussion() {
       const isOwnDiscussion =
         this.me?.email === this.discussion?.created_by?.email;
 
       return isOwnDiscussion || isUserAdmin(this.me?.project_permission_role);
-    },
-
-    isMobile() {
-      return isMobile();
     },
 
     isShowingRoomHeader() {
@@ -283,6 +292,7 @@ export default {
 
   methods: {
     ...mapActions(useRooms, ['setOpenActiveRoomSummary']),
+    ...mapActions(useDiscussions, ['setActiveDiscussion']),
     emitOpenRoomContactInfo() {
       this.$emit('openRoomContactInfo');
     },
@@ -303,14 +313,27 @@ export default {
         'yyyy-MM-dd',
       );
 
+      const query = {
+        ...buildHistoryContactQuery(this.room),
+        protocol: this.room.protocol,
+        startDate: A_YEAR_AGO,
+        from: this.room.uuid,
+      };
+
+      if (isMobile()) {
+        this.$router.push({
+          name: 'home',
+          query: {
+            ...query,
+            view: 'history',
+          },
+        });
+        return;
+      }
+
       this.$router.push({
         name: 'closed-rooms',
-        query: {
-          ...buildHistoryContactQuery(this.room),
-          protocol: this.room.protocol,
-          startDate: A_YEAR_AGO,
-          from: this.room.uuid,
-        },
+        query,
       });
     },
     openTransferModal() {
