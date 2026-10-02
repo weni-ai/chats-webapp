@@ -43,7 +43,8 @@ const createWrapper = (props = {}) => {
         },
         AiMessage: {
           name: 'AssistantAiMessage',
-          template: '<div data-testid="assistant-ai-message" />',
+          template:
+            '<div data-testid="assistant-ai-message" @click="$emit(\'sendCatalog\', { catalog: { carousel: true, products: [] }, text: \'Catalog text\' })" />',
           props: [
             'messageId',
             'text',
@@ -216,6 +217,28 @@ describe('AssistantMessageList', () => {
 
     const aiMessage = wrapper.findComponent({ name: 'AssistantAiMessage' });
     expect(aiMessage.props('readOnly')).toBe(true);
+  });
+
+  it('forwards sendCatalog from AiMessage', async () => {
+    wrapper = createWrapper({
+      messages: [
+        {
+          id: 'ai-4',
+          direction: 'ai',
+          text: 'Catalog text',
+          quickReplies: [],
+          status: 'delivered',
+          timestamp: 1,
+        },
+      ],
+    });
+
+    await wrapper.find('[data-testid="assistant-ai-message"]').trigger('click');
+
+    expect(wrapper.emitted('sendCatalog')?.[0][0]).toEqual({
+      catalog: { carousel: true, products: [] },
+      text: 'Catalog text',
+    });
   });
 
   it('passes persisted liked state from room feedback', async () => {

@@ -47,7 +47,7 @@
     <HomeChatModals
       ref="home-chat-modals"
       data-testid="home-chat-modals"
-      @got-chat="emitCloseRoomContactInfo()"
+      @got-chat="handleGotChat"
       @select-quick-message="updateTextBoxMessage($event?.text)"
     />
   </section>
@@ -76,6 +76,10 @@ import HomeChatHeaders from './HomeChatHeaders.vue';
 import HomeChatModals from './HomeChatModals.vue';
 
 import { useMessageManager } from '@/store/modules/chats/messageManager';
+import {
+  openDeskCopilotTab,
+  shouldOpenDeskCopilotAfterTakeOver,
+} from '@/composables/useContactInfoTab';
 
 export default {
   name: 'HomeChat',
@@ -297,6 +301,15 @@ export default {
     },
     emitCloseRoomContactInfo() {
       this.$emit('close-room-contact-info');
+    },
+    handleGotChat() {
+      if (shouldOpenDeskCopilotAfterTakeOver(this.room)) {
+        openDeskCopilotTab();
+        this.emitOpenRoomContactInfo();
+        return;
+      }
+
+      this.emitCloseRoomContactInfo();
     },
     emitHandleShowQuickMessages() {
       this.$emit('handle-show-quick-messages');

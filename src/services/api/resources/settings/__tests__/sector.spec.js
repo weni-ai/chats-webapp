@@ -23,6 +23,27 @@ describe('Sector', () => {
     expect(result).toEqual(expectedData);
   });
 
+  it('should list sectors for an explicit project uuid', async () => {
+    const expectedData = ['sector1'];
+
+    http.get.mockResolvedValue({ data: expectedData });
+
+    const result = await Sector.list({
+      project: 'secondary-project-uuid',
+      limit: 50,
+      offset: 0,
+    });
+
+    expect(http.get).toHaveBeenCalledWith('/sector/', {
+      params: {
+        project: 'secondary-project-uuid',
+        limit: 50,
+        offset: 0,
+      },
+    });
+    expect(result).toEqual(expectedData);
+  });
+
   it('should return count of available sectors', async () => {
     const expectedData = 5;
 

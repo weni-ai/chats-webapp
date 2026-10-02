@@ -12,6 +12,7 @@ function msg(
     contact: overrides.contact,
     user: overrides.user,
     internal_note: overrides.internal_note,
+    media: overrides.media,
   };
 }
 
@@ -88,5 +89,61 @@ describe('buildRoomContext', () => {
     expect(result.startsWith('Contact: ')).toBe(true);
     expect(result.length).toBe(30);
     expect(result).toBe(`Contact: ${'x'.repeat(21)}`);
+  });
+
+  it('serializes media markers, public links and audio transcriptions', () => {
+    const result = buildRoomContext([
+      msg({
+        text: 'veja',
+        contact: { name: 'Cliente' },
+        media: [
+          { url: 'https://cdn.example/a.png', content_type: 'image/png' },
+          {
+            url: 'https://cdn.example/a.mp3',
+            content_type: 'audio/mpeg',
+            transcription: { text: 'olá', status: 'DONE' },
+          },
+        ],
+      }),
+    ]);
+
+    expect(result).toBe(
+      'Contact: veja [image] https://cdn.example/a.png [audio] https://cdn.example/a.mp3 (transcription: olá)',
+    );
+  });
+
+  it('counts media-only messages and uses [document] as the fallback marker', () => {
+    const result = buildRoomContext([
+      msg({
+        text: '',
+        contact: { name: 'Cliente' },
+        media: [
+          {
+            url: 'https://cdn.example/file.pdf',
+            content_type: 'application/pdf',
+          },
+        ],
+      }),
+    ]);
+
+    expect(result).toBe('Contact: [document] https://cdn.example/file.pdf');
+  });
+
+  it('does not cut a media url in half when truncating', () => {
+    const url = `https://cdn.example/${'a'.repeat(80)}.png`;
+    const result = buildRoomContext(
+      [
+        msg({
+          text: 'x'.repeat(50),
+          contact: { name: 'Cliente' },
+          media: [{ url, content_type: 'image/png' }],
+        }),
+      ],
+      { maxChars: 40 },
+    );
+
+    expect(result.includes(url)).toBe(true);
+    expect(result.startsWith('Contact:')).toBe(true);
+    expect(result.includes('[image]')).toBe(true);
   });
 });

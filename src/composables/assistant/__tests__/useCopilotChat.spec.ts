@@ -60,6 +60,9 @@ vi.mock('@weni/webchat-service', () => ({
     STATE_CHANGED: 'state:changed',
     HISTORY_LOADED: 'history:loaded',
     ERROR: 'error',
+    CONNECTED: 'connected',
+    DISCONNECTED: 'disconnected',
+    RECONNECT_SCHEDULED: 'reconnecting:scheduled',
     RECORDING_STARTED: 'recording:started',
     RECORDING_STOPPED: 'recording:stopped',
     RECORDING_CANCELLED: 'recording:cancelled',
@@ -91,6 +94,7 @@ describe('useCopilotChat', () => {
 
   afterEach(() => {
     listeners.clear();
+    vi.useRealTimers();
   });
 
   it('subscribes to service events and maps received messages', async () => {
@@ -403,5 +407,187 @@ describe('useCopilotChat', () => {
       'original_contact_urn',
       'whatsapp:5511888887777',
     );
+  });
+
+  it('sets origin_project_uuid custom field when the service attaches', async () => {
+    const connection = ref<CopilotConnection | undefined>(connectionValue);
+    const roomUuid = ref<string | undefined>('room-1');
+    const agentEmail = ref<string | undefined>(undefined);
+    const originalContactUrn = ref<string | undefined>(undefined);
+    const originProjectUuid = ref<string | undefined>('origin-project-1');
+
+    useCopilotChat(
+      connection,
+      roomUuid,
+      agentEmail,
+      originalContactUrn,
+      originProjectUuid,
+    );
+    await nextTick();
+
+    expect(serviceMock.setCustomField).toHaveBeenCalledWith(
+      'origin_project_uuid',
+      'origin-project-1',
+    );
+  });
+
+  it('sets origin_project_uuid when the origin project arrives after the service is attached', async () => {
+    const connection = ref<CopilotConnection | undefined>(connectionValue);
+    const roomUuid = ref<string | undefined>('room-1');
+    const agentEmail = ref<string | undefined>(undefined);
+    const originalContactUrn = ref<string | undefined>(undefined);
+    const originProjectUuid = ref<string | undefined>(undefined);
+
+    useCopilotChat(
+      connection,
+      roomUuid,
+      agentEmail,
+      originalContactUrn,
+      originProjectUuid,
+    );
+    await nextTick();
+
+    expect(serviceMock.setCustomField).not.toHaveBeenCalled();
+
+    originProjectUuid.value = 'origin-project-late';
+    await nextTick();
+
+    expect(serviceMock.setCustomField).toHaveBeenCalledWith(
+      'origin_project_uuid',
+      'origin-project-late',
+    );
+  });
+
+  it('ignores hidden messages and trigger prefixes in the visible list', async () => {
+    const connection = ref<CopilotConnection | undefined>(connectionValue);
+    const roomUuid = ref<string | undefined>('room-1');
+    const { messages } = useCopilotChat(connection, roomUuid);
+
+    await nextTick();
+
+    emit(SERVICE_EVENTS.MESSAGE_SENT, {
+      id: 'hidden-1',
+      type: 'text',
+      text: '[desk_copilot:unanswered_messages]\nContact: Oi',
+      timestamp: 1,
+      direction: 'outgoing',
+      status: 'sent',
+      hidden: true,
+    });
+
+    expect(messages.value).toEqual([]);
+
+    serviceMock.getMessages.mockReturnValue([
+      {
+        id: 'hidden-2',
+        type: 'text',
+        text: '[desk_copilot:unanswered_messages]\nContact: Oi',
+        timestamp: 1,
+        direction: 'outgoing',
+        status: 'delivered',
+      },
+    ]);
+
+    emit(SERVICE_EVENTS.HISTORY_LOADED);
+    await new Promise((resolve) => {
+      setTimeout(resolve, 0);
+    });
+
+    expect(messages.value).toEqual([]);
+  });
+
+  it('resolves sendHiddenMessage on MESSAGE_SENT and stays pending on disconnect', async () => {
+    const connection = ref<CopilotConnection | undefined>(connectionValue);
+    const roomUuid = ref<string | undefined>('room-1');
+    const { sendHiddenMessage, isConnected } = useCopilotChat(
+      connection,
+      roomUuid,
+    );
+
+    await nextTick();
+
+    const pending = sendHiddenMessage(
+      '[desk_copilot:unanswered_messages]\nContact: Oi',
+    );
+
+    expect(serviceMock.sendMessage).toHaveBeenCalledWith(
+      '[desk_copilot:unanswered_messages]\nContact: Oi',
+      { hidden: true },
+    );
+
+    emit(SERVICE_EVENTS.DISCONNECTED);
+    expect(isConnected.value).toBe(false);
+
+    emit(SERVICE_EVENTS.MESSAGE_SENT, {
+      id: 'hidden-1',
+      type: 'text',
+      text: '[desk_copilot:unanswered_messages]\nContact: Oi',
+      timestamp: 1,
+      direction: 'outgoing',
+      status: 'sent',
+      hidden: true,
+    });
+
+    await expect(pending).resolves.toBeUndefined();
+  });
+
+  it('sets isConnected to false when reconnect is scheduled', async () => {
+    serviceMock.isConnected.mockReturnValue(true);
+    const connection = ref<CopilotConnection | undefined>(connectionValue);
+    const roomUuid = ref<string | undefined>('room-1');
+    const { isConnected } = useCopilotChat(connection, roomUuid);
+
+    await nextTick();
+    expect(isConnected.value).toBe(true);
+
+    emit(SERVICE_EVENTS.RECONNECT_SCHEDULED, {
+      attempt: 1,
+      delayMs: 1000,
+      nextAttemptAt: Date.now() + 1000,
+    });
+
+    expect(isConnected.value).toBe(false);
+  });
+
+  it('clears history loading when CONNECTED is followed by HISTORY_LOADED', async () => {
+    const connection = ref<CopilotConnection | undefined>(connectionValue);
+    const roomUuid = ref<string | undefined>('room-1');
+    const { isLoadingHistory, isConnected } = useCopilotChat(
+      connection,
+      roomUuid,
+    );
+
+    await nextTick();
+
+    emit(SERVICE_EVENTS.CONNECTED);
+    expect(isConnected.value).toBe(true);
+    expect(isLoadingHistory.value).toBe(true);
+
+    emit(SERVICE_EVENTS.HISTORY_LOADED);
+    await new Promise((resolve) => {
+      setTimeout(resolve, 0);
+    });
+
+    expect(isLoadingHistory.value).toBe(false);
+  });
+
+  it('clears history loading after CONNECTED if HISTORY_LOADED never arrives', async () => {
+    vi.useFakeTimers();
+    const connection = ref<CopilotConnection | undefined>(connectionValue);
+    const roomUuid = ref<string | undefined>('room-1');
+    const { isLoadingHistory } = useCopilotChat(connection, roomUuid);
+
+    await nextTick();
+
+    emit(SERVICE_EVENTS.CONNECTED);
+    expect(isLoadingHistory.value).toBe(true);
+
+    await vi.advanceTimersByTimeAsync(4999);
+    expect(isLoadingHistory.value).toBe(true);
+
+    await vi.advanceTimersByTimeAsync(1);
+    expect(isLoadingHistory.value).toBe(false);
+
+    vi.useRealTimers();
   });
 });

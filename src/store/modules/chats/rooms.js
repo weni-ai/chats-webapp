@@ -3,6 +3,7 @@ import { cloneDeep } from 'lodash';
 
 import { useDashboard } from '../dashboard';
 import { useProfile } from '../profile';
+import { useConfig } from '../config';
 import { useRoomCounters } from './roomCounters';
 
 import Room from '@/services/api/resources/chats/room';
@@ -13,6 +14,7 @@ import {
   markSummaryDismissed,
   clearSummaryDismissed,
 } from '@/utils/summaryDismissalStorage';
+import { clearRoom as clearCopilotReadRoom } from '@/utils/copilotReadStorage';
 import i18n from '@/plugins/i18n';
 
 export const useRooms = defineStore('rooms', {
@@ -546,6 +548,10 @@ export const useRooms = defineStore('rooms', {
       if (this.activeRoom && this.activeRoom?.uuid === roomUuid) {
         this.setActiveRoom(null);
       }
+
+      const projectUuid = useConfig().project?.uuid;
+      const agentEmail = useProfile().me?.email;
+      clearCopilotReadRoom({ projectUuid, agentEmail }, roomUuid);
     },
 
     addNewMessagesByRoom({ room, message }) {

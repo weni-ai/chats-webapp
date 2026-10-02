@@ -2,24 +2,35 @@ import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 
 import { copilotSocketManager } from '../copilotSocketManager';
 
-const { init, destroy, setContext, connect, MockService } = vi.hoisted(() => {
-  const init = vi.fn().mockResolvedValue(undefined);
-  const destroy = vi.fn();
-  const setContext = vi.fn();
-  const connect = vi.fn().mockResolvedValue(undefined);
-  const MockService = vi.fn().mockImplementation((config) => ({
-    config,
-    session: { sessionKey: 'weni:webchat:session' },
-    init,
-    destroy,
-    setContext,
-    connect,
-    isConnected: vi.fn(() => true),
-    isConnecting: vi.fn(() => false),
-  }));
+const { init, destroy, setContext, connect, reconnectNow, MockService } =
+  vi.hoisted(() => {
+    const init = vi.fn().mockResolvedValue(undefined);
+    const destroy = vi.fn();
+    const setContext = vi.fn();
+    const connect = vi.fn().mockResolvedValue(undefined);
+    const reconnectNow = vi.fn().mockResolvedValue(undefined);
+    const MockService = vi.fn().mockImplementation((config) => ({
+      config,
+      session: { sessionKey: 'weni:webchat:session' },
+      init,
+      destroy,
+      setContext,
+      connect,
+      reconnectNow,
+      isConnected: vi.fn(() => true),
+      isConnecting: vi.fn(() => false),
+      isReconnecting: vi.fn(() => false),
+    }));
 
-  return { init, destroy, setContext, connect, MockService };
-});
+    return {
+      init,
+      destroy,
+      setContext,
+      connect,
+      reconnectNow,
+      MockService,
+    };
+  });
 
 vi.mock('@weni/webchat-service', () => ({
   default: MockService,
@@ -228,6 +239,29 @@ describe('copilotSocketManager', () => {
 
     expect(resumed).toBe(first);
     expect(connect).toHaveBeenCalledTimes(1);
+    expect(init).toHaveBeenCalledTimes(1);
+  });
+
+  it('calls reconnectNow when an existing service is in backoff', () => {
+    const first = copilotSocketManager.getOrCreateService('room-1', connection);
+    const firstMock = first as typeof first & {
+      isConnected: ReturnType<typeof vi.fn>;
+      isConnecting: ReturnType<typeof vi.fn>;
+      isReconnecting: ReturnType<typeof vi.fn>;
+    };
+
+    firstMock.isConnected.mockReturnValue(false);
+    firstMock.isConnecting.mockReturnValue(false);
+    firstMock.isReconnecting.mockReturnValue(true);
+
+    const resumed = copilotSocketManager.getOrCreateService(
+      'room-1',
+      connection,
+    );
+
+    expect(resumed).toBe(first);
+    expect(reconnectNow).toHaveBeenCalledTimes(1);
+    expect(connect).not.toHaveBeenCalled();
     expect(init).toHaveBeenCalledTimes(1);
   });
 

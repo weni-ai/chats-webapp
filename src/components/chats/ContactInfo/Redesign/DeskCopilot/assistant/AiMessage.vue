@@ -105,8 +105,10 @@
             <UnnnicButton
               type="secondary"
               size="small"
+              :loading="isSending"
+              :disabled="isSending"
               data-testid="assistant-ai-send"
-              @click="emit('send', sendText)"
+              @click="handleSend"
             >
               {{ $t('contact_info.desk_copilot.assistant.send_action') }}
             </UnnnicButton>
@@ -164,6 +166,8 @@ import { storeToRefs } from 'pinia';
 import { UnnnicCallAlert } from '@weni/unnnic-system';
 import { useStreamingBuffer } from '@/composables/assistant/useStreamingBuffer';
 import { copyTextToContactInput } from '@/composables/assistant/useCopyToContactInput';
+import { buildCatalogPayload } from '@/services/assistant/buildCatalogPayload';
+import type { CatalogPayload } from '@/services/assistant/buildCatalogPayload';
 import i18n from '@/plugins/i18n';
 import CopilotFeedback from '@/services/api/resources/chats/copilotFeedback';
 import type {
@@ -222,6 +226,14 @@ const props = withDefaults(
 
 const emit = defineEmits<{
   send: [text: string];
+  sendCatalog: [
+    payload: {
+      catalog: CatalogPayload;
+      text: string;
+      resolve: () => void;
+      reject: (error?: unknown) => void;
+    },
+  ];
   wordRevealed: [];
   addToCart: [product: ProductCarouselItem];
   incrementCartItem: [product: ProductCarouselItem];
@@ -236,6 +248,7 @@ const previousLiked = ref<boolean | null>(null);
 const showFeedbackModal = ref(false);
 const isSubmittingFeedback = ref(false);
 const dismissedIds = ref<string[]>([]);
+const isSending = ref(false);
 const hasLocalFeedbackChange = ref(false);
 
 watch(
@@ -342,11 +355,46 @@ const showActions = computed(() => {
   }
 
   if (hasProductCatalog.value) {
-    return !!sendText.value;
+    return true;
   }
 
   return !!suggestionText.value;
 });
+
+async function handleSend() {
+  if (isSending.value) {
+    return;
+  }
+
+  if (hasProductCatalog.value) {
+    const catalog = hasProductCarousel.value
+      ? buildCatalogPayload({
+          carouselItems: props.productCarousel?.items,
+          dismissedIds: dismissedIds.value,
+        })
+      : buildCatalogPayload({
+          productList: props.productList,
+          dismissedIds: dismissedIds.value,
+        });
+
+    if (!catalog) {
+      return;
+    }
+
+    isSending.value = true;
+    try {
+      await new Promise((resolve, reject) => {
+        emit('sendCatalog', { catalog, text: sendText.value, resolve, reject });
+      });
+    } finally {
+      isSending.value = false;
+    }
+
+    return;
+  }
+
+  emit('send', sendText.value);
+}
 
 function handleRemoveSuggestion(product: ProductCarouselItem) {
   if (dismissedIds.value.includes(product.product_retailer_id)) {
