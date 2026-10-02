@@ -29,6 +29,7 @@ vi.mock('@/services/api/resources/chats/flowsTrigger', () => ({
   default: {
     sendFlow: vi.fn(),
     getFlowTemplates: vi.fn(),
+    startOutOfWhatsappWindowFlow: vi.fn(),
   },
 }));
 
@@ -314,5 +315,69 @@ describe('SendFlowButton', () => {
       ([payload]) => payload.contacts,
     );
     expect(contactsCalled).toEqual([['c1'], ['c2'], ['c3']]);
+  });
+
+  it('issues one expired-window POST with ignored contacts', async () => {
+    FlowsTrigger.startOutOfWhatsappWindowFlow.mockResolvedValue({});
+
+    await wrapper.setProps({
+      selectedFlow: 'flow-uuid',
+      projectUuidFlow: 'project-uuid',
+      expiredWindow: true,
+      expiredWindowFlow: {
+        sendToAll: true,
+        ignoredContacts: ['contact-2'],
+        includedContacts: [],
+      },
+      contacts: [],
+      cachedTemplate: cachedTemplateWithVariables,
+    });
+
+    await wrapper.vm.doSendFlow({
+      nomecontato: 'static text',
+    });
+
+    expect(FlowsTrigger.sendFlow).not.toHaveBeenCalled();
+    expect(FlowsTrigger.startOutOfWhatsappWindowFlow).toHaveBeenCalledTimes(1);
+    expect(FlowsTrigger.startOutOfWhatsappWindowFlow).toHaveBeenCalledWith(
+      {
+        flow: 'flow-uuid',
+        ignored_contacts: ['contact-2'],
+        included_contacts: [],
+        send_to_all: true,
+      },
+      'project-uuid',
+    );
+    expect(wrapper.emitted('send-flow-finished')[0][0]).toEqual({
+      hasError: false,
+    });
+  });
+
+  it('issues one expired-window POST with included contacts when search is active', async () => {
+    FlowsTrigger.startOutOfWhatsappWindowFlow.mockResolvedValue({});
+
+    await wrapper.setProps({
+      selectedFlow: 'flow-uuid',
+      projectUuidFlow: 'project-uuid',
+      expiredWindow: true,
+      expiredWindowFlow: {
+        sendToAll: false,
+        ignoredContacts: [],
+        includedContacts: ['contact-1'],
+      },
+      contacts: [],
+    });
+
+    await wrapper.vm.doSendFlow();
+
+    expect(FlowsTrigger.startOutOfWhatsappWindowFlow).toHaveBeenCalledWith(
+      {
+        flow: 'flow-uuid',
+        ignored_contacts: [],
+        included_contacts: ['contact-1'],
+        send_to_all: false,
+      },
+      'project-uuid',
+    );
   });
 });

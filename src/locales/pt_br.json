@@ -1072,6 +1072,7 @@
     "sending": "Enviando fluxo",
     "successfully_triggered": "Fluxo disparado com sucesso",
     "error_triggering": "Erro ao disparar fluxo",
+    "expired_window_disclaimer": "{count, plural, one {{count} contato selecionado tem um chat ativo, mas a janela do WhatsApp está fechada.} other {{count} contatos selecionados têm um chat ativo, mas a janela do WhatsApp está fechada.}}",
     "successfully_add_contact": "Contato adicionado com sucesso",
     "contact_already_exists": "O número {contact} já está salvo na sua lista de contatos",
     "variable_mapping": {

@@ -2,13 +2,18 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import FlowsTringger from '../flowsTrigger';
 import http from '@/services/api/http';
 import { getProject } from '@/utils/config';
+import { useProfile } from '@/store/modules/profile';
 
 vi.mock('@/services/api/http');
 vi.mock('@/utils/config');
+vi.mock('@/store/modules/profile', () => ({
+  useProfile: vi.fn(),
+}));
 
 beforeEach(() => {
   vi.resetAllMocks();
   getProject.mockReturnValue('mock-project-uuid');
+  useProfile.mockReturnValue({ me: { email: 'agent@example.com' } });
 });
 
 describe('FlowsTringger service', () => {
@@ -189,6 +194,134 @@ describe('FlowsTringger service', () => {
       mockPayload,
     );
     expect(result).toEqual(mockResponse);
+  });
+
+  it('should list contacts outside the whatsapp window', async () => {
+    const mockResponse = {
+      next: null,
+      previous: null,
+      count: 1,
+      results: [{ uuid: 'contact-1', name: 'Ana', urns: [] }],
+    };
+    http.get.mockResolvedValue({ data: mockResponse });
+
+    const result = await FlowsTringger.listOutOfWhatsappWindowContacts({
+      sectors: 'sector-1,sector-2',
+      queues: 'queue-1',
+      search: 'ana',
+      limit: 20,
+      offset: 0,
+    });
+
+    expect(http.get).toHaveBeenCalledWith(
+      '/contacts/out_off_whatsapp_response_window/',
+      {
+        params: {
+          project: 'mock-project-uuid',
+          limit: 20,
+          offset: 0,
+          user: 'agent@example.com',
+          sectors: 'sector-1,sector-2',
+          queues: 'queue-1',
+          search: 'ana',
+        },
+      },
+    );
+    expect(result).toEqual(mockResponse);
+  });
+
+  it('should omit empty filters when listing contacts outside the whatsapp window', async () => {
+    http.get.mockResolvedValue({
+      data: { results: [], count: 0, next: null },
+    });
+
+    await FlowsTringger.listOutOfWhatsappWindowContacts({
+      limit: 20,
+      offset: 0,
+    });
+
+    expect(http.get).toHaveBeenCalledWith(
+      '/contacts/out_off_whatsapp_response_window/',
+      {
+        params: {
+          project: 'mock-project-uuid',
+          limit: 20,
+          offset: 0,
+          user: 'agent@example.com',
+        },
+      },
+    );
+  });
+
+  it('should follow the next url when listing more contacts outside the whatsapp window', async () => {
+    const nextReq =
+      'https://api.example.com/v1/contacts/out_off_whatsapp_response_window/?limit=20&offset=20&project=mock-project-uuid';
+    http.get.mockResolvedValue({ data: { results: [], next: null } });
+
+    await FlowsTringger.listOutOfWhatsappWindowContacts({ nextReq });
+
+    expect(http.get).toHaveBeenCalledWith(
+      '/contacts/out_off_whatsapp_response_window/?limit=20&offset=20&project=mock-project-uuid',
+    );
+  });
+
+  it('should start a flow for contacts outside the whatsapp window', async () => {
+    const payload = {
+      flow: 'flow-uuid',
+      ignored_contacts: ['contact-2'],
+      included_contacts: [],
+      send_to_all: true,
+    };
+    http.post.mockResolvedValue({ data: { success: true } });
+
+    const result = await FlowsTringger.startOutOfWhatsappWindowFlow(
+      payload,
+      'custom-project-uuid',
+    );
+
+    expect(http.post).toHaveBeenCalledWith(
+      '/project/custom-project-uuid/out_off_whatsapp_response_window/start_flow/',
+      payload,
+    );
+    expect(result).toEqual({ success: true });
+  });
+
+  it('should start the expired window flow for included contacts when send_to_all is false', async () => {
+    const payload = {
+      flow: 'flow-uuid',
+      ignored_contacts: [],
+      included_contacts: ['contact-1'],
+      send_to_all: false,
+    };
+    http.post.mockResolvedValue({ data: { success: true } });
+
+    await FlowsTringger.startOutOfWhatsappWindowFlow(payload);
+
+    expect(http.post).toHaveBeenCalledWith(
+      '/project/mock-project-uuid/out_off_whatsapp_response_window/start_flow/',
+      payload,
+    );
+  });
+
+  it('should start the expired window flow with the current project when projectUuid is not provided', async () => {
+    http.post.mockResolvedValue({ data: { success: true } });
+
+    await FlowsTringger.startOutOfWhatsappWindowFlow({
+      flow: 'flow-uuid',
+      ignored_contacts: [],
+      included_contacts: [],
+      send_to_all: true,
+    });
+
+    expect(http.post).toHaveBeenCalledWith(
+      '/project/mock-project-uuid/out_off_whatsapp_response_window/start_flow/',
+      {
+        flow: 'flow-uuid',
+        ignored_contacts: [],
+        included_contacts: [],
+        send_to_all: true,
+      },
+    );
   });
 
   it('should get flow templates with the current project when projectUuid is not provided', async () => {
