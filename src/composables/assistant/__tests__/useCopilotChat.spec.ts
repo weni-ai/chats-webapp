@@ -409,6 +409,55 @@ describe('useCopilotChat', () => {
     );
   });
 
+  it('sets origin_project_uuid custom field when the service attaches', async () => {
+    const connection = ref<CopilotConnection | undefined>(connectionValue);
+    const roomUuid = ref<string | undefined>('room-1');
+    const agentEmail = ref<string | undefined>(undefined);
+    const originalContactUrn = ref<string | undefined>(undefined);
+    const originProjectUuid = ref<string | undefined>('origin-project-1');
+
+    useCopilotChat(
+      connection,
+      roomUuid,
+      agentEmail,
+      originalContactUrn,
+      originProjectUuid,
+    );
+    await nextTick();
+
+    expect(serviceMock.setCustomField).toHaveBeenCalledWith(
+      'origin_project_uuid',
+      'origin-project-1',
+    );
+  });
+
+  it('sets origin_project_uuid when the origin project arrives after the service is attached', async () => {
+    const connection = ref<CopilotConnection | undefined>(connectionValue);
+    const roomUuid = ref<string | undefined>('room-1');
+    const agentEmail = ref<string | undefined>(undefined);
+    const originalContactUrn = ref<string | undefined>(undefined);
+    const originProjectUuid = ref<string | undefined>(undefined);
+
+    useCopilotChat(
+      connection,
+      roomUuid,
+      agentEmail,
+      originalContactUrn,
+      originProjectUuid,
+    );
+    await nextTick();
+
+    expect(serviceMock.setCustomField).not.toHaveBeenCalled();
+
+    originProjectUuid.value = 'origin-project-late';
+    await nextTick();
+
+    expect(serviceMock.setCustomField).toHaveBeenCalledWith(
+      'origin_project_uuid',
+      'origin-project-late',
+    );
+  });
+
   it('ignores hidden messages and trigger prefixes in the visible list', async () => {
     const connection = ref<CopilotConnection | undefined>(connectionValue);
     const roomUuid = ref<string | undefined>('room-1');

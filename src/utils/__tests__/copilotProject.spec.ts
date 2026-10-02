@@ -5,7 +5,10 @@ vi.mock('@/utils/env', () => ({
 }));
 
 import env from '@/utils/env';
-import { buildCopilotProjectUrl } from '../copilotProject';
+import {
+  buildCopilotProjectUrl,
+  buildProjectCopilotSettingsUrl,
+} from '../copilotProject';
 
 describe('buildCopilotProjectUrl', () => {
   beforeEach(() => {
@@ -26,6 +29,28 @@ describe('buildCopilotProjectUrl', () => {
 
     expect(buildCopilotProjectUrl('copilot-uuid')).toBe(
       'https://dash.stg.cloud.weni.ai/projects/copilot-uuid',
+    );
+  });
+});
+
+describe('buildProjectCopilotSettingsUrl', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
+  it('builds the chats copilot settings URL for a project', () => {
+    env.mockReturnValue('https://dash.stg.cloud.weni.ai');
+
+    expect(buildProjectCopilotSettingsUrl('secondary-uuid')).toBe(
+      'https://dash.stg.cloud.weni.ai/projects/secondary-uuid/settings/chats?tab=desk_copilot',
+    );
+  });
+
+  it('strips a trailing slash from the connect URL', () => {
+    env.mockReturnValue('https://dash.stg.cloud.weni.ai/');
+
+    expect(buildProjectCopilotSettingsUrl('secondary-uuid')).toBe(
+      'https://dash.stg.cloud.weni.ai/projects/secondary-uuid/settings/chats?tab=desk_copilot',
     );
   });
 });

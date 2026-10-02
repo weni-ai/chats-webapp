@@ -26,9 +26,11 @@ type ConnectionRef = Ref<CopilotConnection | undefined>;
 type RoomUuidRef = Ref<string | undefined>;
 type AgentEmailRef = Ref<string | undefined>;
 type ContactUrnRef = Ref<string | undefined>;
+type OriginProjectUuidRef = Ref<string | undefined>;
 
 const SELLER_EMAIL_CUSTOM_FIELD = 'seller_email';
 const ORIGINAL_CONTACT_URN_CUSTOM_FIELD = 'original_contact_urn';
+const ORIGIN_PROJECT_UUID_CUSTOM_FIELD = 'origin_project_uuid';
 
 const DEFAULT_FILE_CONFIG: FileConfig = {
   allowedTypes: [],
@@ -41,6 +43,7 @@ export function useCopilotChat(
   roomUuid: RoomUuidRef,
   agentEmail: AgentEmailRef = ref(undefined),
   originalContactUrn: ContactUrnRef = ref(undefined),
+  originProjectUuid: OriginProjectUuidRef = ref(undefined),
 ) {
   const messages = ref<AssistantMessage[]>([]);
   const isThinking = ref(false);
@@ -409,6 +412,11 @@ export function useCopilotChat(
     if (contactUrn) {
       service.setCustomField(ORIGINAL_CONTACT_URN_CUSTOM_FIELD, contactUrn);
     }
+
+    const originUuid = originProjectUuid.value?.trim();
+    if (originUuid) {
+      service.setCustomField(ORIGIN_PROJECT_UUID_CUSTOM_FIELD, originUuid);
+    }
   }
 
   function attachService(
@@ -565,7 +573,7 @@ export function useCopilotChat(
     { immediate: true },
   );
 
-  watch([agentEmail, originalContactUrn], () => {
+  watch([agentEmail, originalContactUrn, originProjectUuid], () => {
     if (!activeService) {
       return;
     }
