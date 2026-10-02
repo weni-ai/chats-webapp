@@ -6,12 +6,22 @@ import { useRooms } from '@/store/modules/chats/rooms';
 import { useDiscussions } from '@/store/modules/chats/discussions';
 import * as roomUtils from '@/utils/room';
 import i18n from '@/plugins/i18n';
+import {
+  openDeskCopilotTab,
+  shouldOpenDeskCopilotAfterTakeOver,
+} from '@/composables/useContactInfoTab';
+import { moduleStorage } from '@/utils/storage';
 
 beforeAll(() => {
   config.global.plugins = config.global.plugins.filter(
     (plugin) => plugin !== i18n,
   );
 });
+
+vi.mock('@/composables/useContactInfoTab', () => ({
+  shouldOpenDeskCopilotAfterTakeOver: vi.fn(() => false),
+  openDeskCopilotTab: vi.fn(),
+}));
 
 vi.mock('@/utils/room', async (importOriginal) => {
   const actual = await importOriginal();
@@ -522,6 +532,25 @@ describe('ViewMode', () => {
         email: '',
         name: '',
       });
+      expect(mockRouter.push).toHaveBeenCalledWith({
+        name: 'room',
+        params: { roomId: mockRoom.uuid },
+      });
+      expect(openDeskCopilotTab).not.toHaveBeenCalled();
+    });
+
+    it('opens the desk copilot tab after take over when assisted sales is configured', () => {
+      vi.mocked(shouldOpenDeskCopilotAfterTakeOver).mockReturnValueOnce(true);
+      const setItemSpy = vi.spyOn(moduleStorage, 'setItem');
+      const wrapper = createWrapper({
+        dashboard: { viewedAgent: mockAgent },
+        rooms: { activeRoom: mockRoom },
+      });
+
+      wrapper.vm.whenGetChat();
+
+      expect(openDeskCopilotTab).toHaveBeenCalled();
+      expect(setItemSpy).toHaveBeenCalledWith('isRoomContactInfoOpen', true);
       expect(mockRouter.push).toHaveBeenCalledWith({
         name: 'room',
         params: { roomId: mockRoom.uuid },

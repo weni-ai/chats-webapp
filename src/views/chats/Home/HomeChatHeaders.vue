@@ -113,6 +113,7 @@
       v-show="isShowingDiscussionHeader"
       :discussionContact="headerDiscussionSubtitle"
       :discussionSubject="headerDiscussionTitle"
+      @back="setActiveDiscussion(null)"
     >
       <template #actions>
         <section class="home-chat-headers__actions">
@@ -291,6 +292,7 @@ export default {
 
   methods: {
     ...mapActions(useRooms, ['setOpenActiveRoomSummary']),
+    ...mapActions(useDiscussions, ['setActiveDiscussion']),
     emitOpenRoomContactInfo() {
       this.$emit('openRoomContactInfo');
     },
