@@ -42,6 +42,7 @@ export const useRoomMessages = defineStore('roomMessages', {
     showScrollToBottomButton: false,
     showSearchMessagesDrawer: false,
     isLoadingAllMessages: false,
+    roomMessagesRoomUuid: '',
   }),
   actions: {
     addRoomMessageSorted({ message, addBefore, reorderMessageMinute }) {
@@ -73,6 +74,7 @@ export const useRoomMessages = defineStore('roomMessages', {
       this.resetRoomMessagesSorted();
       this.roomMessagesNext = '';
       this.roomMessagesPrevious = '';
+      this.roomMessagesRoomUuid = '';
     },
 
     removeMessageFromSendings(messageUuid) {
@@ -201,19 +203,23 @@ export const useRoomMessages = defineStore('roomMessages', {
     },
     async getRoomMessages() {
       const roomsStore = useRooms();
+      const requestedRoomUuid = roomsStore.activeRoom?.uuid;
 
       const nextReq = this.roomMessagesNext;
 
       await treatMessages({
-        itemUuid: roomsStore.activeRoom?.uuid,
+        itemUuid: requestedRoomUuid,
         getItemMessages: () =>
-          Message.getByRoom({ nextReq }, roomsStore.activeRoom?.uuid),
+          Message.getByRoom({ nextReq }, requestedRoomUuid),
         oldMessages: this.roomMessages,
         nextReq,
         addSortedMessage: ({ message, addBefore }) =>
           this.addRoomMessageSorted({ message, addBefore }),
         resetSortedMessages: () => this.resetRoomMessagesSorted(),
-        setMessages: (messages) => (this.roomMessages = messages),
+        setMessages: (messages) => {
+          this.roomMessages = messages;
+          this.roomMessagesRoomUuid = requestedRoomUuid || '';
+        },
         setMessagesNext: (nextMessage) => (this.roomMessagesNext = nextMessage),
         setMessagesPrevious: (previousMessage) =>
           (this.roomMessagesPrevious = previousMessage),
@@ -291,6 +297,36 @@ export const useRoomMessages = defineStore('roomMessages', {
         addSortedMessage: (message) => this.addRoomMessageSorted({ message }),
         updateMessage: ({ message, toUpdateMessageUuid }) =>
           this.updateMessage({ message, toUpdateMessageUuid }),
+      });
+    },
+
+    async sendRoomCatalogMessage(catalog, text = '', roomUuid = '') {
+      const roomsStore = useRooms();
+      const { activeRoom } = roomsStore;
+
+      if (!activeRoom || !roomUuid || !catalog) return;
+
+      const requestId = crypto.randomUUID();
+
+      await sendMessage({
+        itemType: 'room',
+        itemUuid: roomUuid,
+        itemUser: activeRoom.user,
+        message: text,
+        catalog,
+        uuid: requestId,
+        sendItemMessage: () =>
+          sendRoomMessageBySocket({
+            room: roomUuid,
+            text,
+            catalog,
+            requestId,
+          }),
+        addMessage: (message) => this.handlingAddMessage({ message }),
+        addSortedMessage: (message) => this.addRoomMessageSorted({ message }),
+        updateMessage: ({ message, toUpdateMessageUuid }) =>
+          this.updateMessage({ message, toUpdateMessageUuid }),
+        addFailedMessage: (message) => this.addFailedMessage({ message }),
       });
     },
 
@@ -547,8 +583,9 @@ export const useRoomMessages = defineStore('roomMessages', {
       const useSocket = useSocketMessageFeatureFlag(
         featureFlagStore.featureFlags,
       );
+      const catalog = message.catalog || null;
 
-      if (useSocket) {
+      if (useSocket || catalog) {
         const requestId = crypto.randomUUID();
 
         await resendMessage({
@@ -559,6 +596,7 @@ export const useRoomMessages = defineStore('roomMessages', {
               room: roomUuid,
               text: message.text,
               requestId,
+              ...(catalog ? { catalog } : {}),
             }),
           updateMessage: ({ message: updatedMessage, toUpdateMessageUuid }) =>
             this.updateMessage({

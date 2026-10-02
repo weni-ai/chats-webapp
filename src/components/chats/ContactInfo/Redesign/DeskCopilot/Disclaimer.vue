@@ -53,8 +53,10 @@
 import { computed } from 'vue';
 import { storeToRefs } from 'pinia';
 import { useProfile } from '@/store/modules/profile';
+import { useConfig } from '@/store/modules/config';
 import { isUserAdmin } from '@/utils/permissions';
 import { emitToHost } from '@/utils/hostBridge';
+import { buildProjectCopilotSettingsUrl } from '@/utils/copilotProject';
 
 defineOptions({
   name: 'DeskCopilotDisclaimer',
@@ -64,14 +66,17 @@ const props = withDefaults(
   defineProps<{
     hasSummary?: boolean;
     isViewMode?: boolean;
+    originProjectUuid?: string;
   }>(),
   {
     hasSummary: false,
     isViewMode: false,
+    originProjectUuid: undefined,
   },
 );
 
 const { me } = storeToRefs(useProfile());
+const { isPrimaryProject } = storeToRefs(useConfig());
 
 const titleKey = computed(() =>
   props.hasSummary
@@ -87,10 +92,22 @@ const disclaimerItems = [
 ] as const;
 
 const showEnableButton = computed(
-  () => isUserAdmin(me.value?.project_permission_role) && !props.isViewMode,
+  () =>
+    isUserAdmin(me.value?.project_permission_role) &&
+    !props.isViewMode &&
+    (!isPrimaryProject.value || !!props.originProjectUuid),
 );
 
 function handleEnable() {
+  if (isPrimaryProject.value && props.originProjectUuid) {
+    window.open(
+      buildProjectCopilotSettingsUrl(props.originProjectUuid),
+      '_blank',
+      'noopener,noreferrer',
+    );
+    return;
+  }
+
   emitToHost('redirect', { path: 'chats-settings:?tab=desk_copilot' });
 }
 </script>

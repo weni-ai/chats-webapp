@@ -13,6 +13,7 @@ import ContactInfoRedesign from '../index.vue';
 import { moduleStorage } from '@/utils/storage';
 import i18n from '@/plugins/i18n';
 import { useConfig } from '@/store/modules/config';
+import { openDeskCopilotTab } from '@/composables/useContactInfoTab';
 
 vi.mock('@/utils/storage', () => ({
   moduleStorage: {
@@ -152,5 +153,18 @@ describe('ContactInfoRedesign', () => {
     expect(wrapper.findComponent({ name: 'AboutContactCard' }).exists()).toBe(
       true,
     );
+  });
+
+  it('switches to desk copilot when the shared tab helper opens it', async () => {
+    moduleStorage.getItem.mockReturnValue('information');
+    wrapper = createWrapper();
+
+    expect(wrapper.find('[data-testid="desk-copilot"]').exists()).toBe(false);
+
+    openDeskCopilotTab();
+    await wrapper.vm.$nextTick();
+
+    expect(wrapper.find('[data-testid="desk-copilot"]').exists()).toBe(true);
+    expect(wrapper.vm.activeTab).toBe('desk_copilot');
   });
 });
