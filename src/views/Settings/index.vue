@@ -119,7 +119,8 @@ const router = useRouter();
 const route = useRoute();
 
 const configStore = useConfig();
-const { isSecondaryProject, enableGroupsMode } = storeToRefs(configStore);
+const { isSecondaryProject, isPrimaryProject, enableGroupsMode } =
+  storeToRefs(configStore);
 
 const { featureFlags, featureFlagsLoaded } = storeToRefs(useFeatureFlag());
 const isAssistedSalesEnabled = computed(() =>
@@ -135,14 +136,15 @@ const { sectors, groups } = storeToRefs(settingsStore);
 const activeTab = ref('');
 
 const settingsTabs = computed(() => {
-  const deskCopilotTab = isAssistedSalesEnabled.value
-    ? [
-        {
-          label: t('config_chats.tabs.desk_copilot'),
-          value: 'desk_copilot',
-        },
-      ]
-    : [];
+  const deskCopilotTab =
+    isAssistedSalesEnabled.value && !isPrimaryProject.value
+      ? [
+          {
+            label: t('config_chats.tabs.desk_copilot'),
+            value: 'desk_copilot',
+          },
+        ]
+      : [];
 
   if (isSecondaryProject.value) {
     return [
@@ -232,9 +234,9 @@ const openNewGroupDrawer = () => {
 };
 
 watch(
-  [featureFlagsLoaded, isAssistedSalesEnabled],
-  ([loaded, enabled]) => {
-    if (!loaded || !enabled) return;
+  [featureFlagsLoaded, isAssistedSalesEnabled, isPrimaryProject],
+  ([loaded, enabled, isPrimary]) => {
+    if (!loaded || !enabled || isPrimary) return;
     fetchLinkedProject();
   },
   { immediate: true },

@@ -163,6 +163,26 @@ describe('Settings/index.vue (SettingsPage)', () => {
       ).toBe(false);
     });
 
+    it('hides the Desk Copilot tab on the primary groups project even when the flag is on', () => {
+      wrapper = createWrapper({
+        projectConfig: { its_principal: true },
+        activeFeatures: [ASSISTED_SALES_FEATURE_FLAG],
+      });
+      const tabValues = wrapper.vm.settingsTabs.map((tab) => tab.value);
+
+      expect(tabValues).not.toContain('desk_copilot');
+    });
+
+    it('shows the Desk Copilot tab on the secondary groups project when the flag is on', () => {
+      wrapper = createWrapper({
+        projectConfig: { its_principal: false },
+        activeFeatures: [ASSISTED_SALES_FEATURE_FLAG],
+      });
+      const tabValues = wrapper.vm.settingsTabs.map((tab) => tab.value);
+
+      expect(tabValues).toEqual(['general', 'desk_copilot']);
+    });
+
     it('shows the Desk Copilot tab and New badge when the flag is on', () => {
       wrapper = createWrapper({
         activeFeatures: [ASSISTED_SALES_FEATURE_FLAG],

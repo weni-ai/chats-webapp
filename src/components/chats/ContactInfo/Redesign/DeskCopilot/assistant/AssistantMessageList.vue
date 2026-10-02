@@ -45,6 +45,7 @@
         :readOnly="readOnly"
         :liked="feedbackByMessageId[message.id] ?? null"
         @send="emit('send', $event)"
+        @send-catalog="emit('sendCatalog', $event)"
         @word-revealed="emit('wordRevealed')"
         @add-to-cart="emit('addToCart', $event)"
         @increment-cart-item="emit('incrementCartItem', $event)"
@@ -70,6 +71,7 @@ import type {
   AssistantMessage,
   ProductCarouselItem,
 } from '@/services/assistant/types';
+import type { CatalogPayload } from '@/services/assistant/buildCatalogPayload';
 import CopilotFeedback from '@/services/api/resources/chats/copilotFeedback';
 import { useRooms } from '@/store/modules/chats/rooms';
 import HumanMessage from './HumanMessage.vue';
@@ -108,6 +110,14 @@ const props = withDefaults(
 
 const emit = defineEmits<{
   send: [text: string];
+  sendCatalog: [
+    payload: {
+      catalog: CatalogPayload;
+      text: string;
+      resolve?: () => void;
+      reject?: (error?: unknown) => void;
+    },
+  ];
   wordRevealed: [];
   addToCart: [product: ProductCarouselItem];
   incrementCartItem: [product: ProductCarouselItem];

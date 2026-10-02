@@ -81,7 +81,7 @@ const createWrapper = (props = {}) =>
         Disclaimer: {
           name: 'DeskCopilotDisclaimer',
           template: '<div data-testid="desk-copilot-disclaimer" />',
-          props: ['hasSummary', 'isViewMode'],
+          props: ['hasSummary', 'isViewMode', 'originProjectUuid'],
         },
       },
     },

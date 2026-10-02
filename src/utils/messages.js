@@ -26,6 +26,7 @@ export function createTemporaryMessage({
   repliedMessage = null,
   internalNote = null,
   uuid,
+  catalog = null,
 }) {
   const internalNoteMedia = internalNote?.media || [];
 
@@ -41,6 +42,7 @@ export function createTemporaryMessage({
     internal_note: internalNote
       ? { ...internalNote, media: internalNoteMedia }
       : null,
+    catalog: catalog || null,
   };
 }
 
@@ -195,6 +197,7 @@ export async function sendMessage({
   internalNote,
   uuid,
   addFailedMessage,
+  catalog,
 }) {
   if (!itemUuid) {
     return;
@@ -209,6 +212,7 @@ export async function sendMessage({
     repliedMessage,
     internalNote,
     uuid,
+    catalog,
   });
 
   addMessage(temporaryMessage);
