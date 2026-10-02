@@ -26,7 +26,6 @@
         </h2>
         <section class="form-section__select-managers">
           <UnnnicInput
-            v-if="!isEditing"
             v-model="sector.name"
             :label="$t('sector.name')"
             :placeholder="$t('sector.placeholder')"
