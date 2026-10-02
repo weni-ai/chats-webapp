@@ -1074,6 +1074,7 @@
     "sending": "Sending flow",
     "successfully_triggered": "Flow triggered successfully",
     "error_triggering": "Error triggering flow",
+    "expired_window_disclaimer": "{count, plural, one {{count} selected contact has an active chat, but the WhatsApp window is closed.} other {{count} selected contacts have an active chat, but the WhatsApp window is closed.}}",
     "successfully_add_contact": "Contact added successfully",
     "contact_already_exists": "The number {contact} is already saved in your contact list",
     "variable_mapping": {

@@ -1,7 +1,7 @@
 import http from '@/services/api/http';
+import { useProfile } from '@/store/modules/profile';
 import { getProject } from '@/utils/config';
-
-// const uuid = getProject();
+import { getURLParams } from '@/utils/requests';
 
 export default {
   async getListOfContacts(next, search) {
@@ -110,6 +110,50 @@ export default {
     const response = await http.post(
       `/project/${projectUuid || getProject()}/start_flow/`,
       object,
+    );
+    return response.data;
+  },
+
+  async listOutOfWhatsappWindowContacts({
+    nextReq,
+    sectors,
+    queues,
+    search,
+    limit = 20,
+    offset = 0,
+  } = {}) {
+    const profileStore = useProfile();
+
+    const endpoint = '/contacts/out_off_whatsapp_response_window/';
+    const paramsNextReq = getURLParams({ URL: nextReq, endpoint });
+
+    if (nextReq && paramsNextReq) {
+      const response = await http.get(`${endpoint}${paramsNextReq}`);
+      return response.data;
+    }
+
+    const params = {
+      project: getProject(),
+      limit,
+      offset,
+      user: profileStore.me?.email,
+    };
+
+    if (sectors) params.sectors = sectors;
+    if (queues) params.queues = queues;
+    if (search) params.search = search;
+
+    const response = await http.get(endpoint, { params });
+    return response.data;
+  },
+
+  async startOutOfWhatsappWindowFlow(
+    { flow, ignored_contacts = [], included_contacts = [], send_to_all },
+    projectUuid,
+  ) {
+    const response = await http.post(
+      `/project/${projectUuid || getProject()}/out_off_whatsapp_response_window/start_flow/`,
+      { flow, ignored_contacts, included_contacts, send_to_all },
     );
     return response.data;
   },

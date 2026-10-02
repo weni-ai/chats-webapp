@@ -1043,6 +1043,7 @@
     "sending": "Se trimite fluxul",
     "successfully_triggered": "Flux declanșat cu succes",
     "error_triggering": "Eroare la declanșarea fluxului",
+    "expired_window_disclaimer": "{count, plural, one {{count} contact selectat are un chat activ, dar fereastra WhatsApp este închisă.} few {{count} contacte selectate au un chat activ, dar fereastra WhatsApp este închisă.} other {{count} de contacte selectate au un chat activ, dar fereastra WhatsApp este închisă.}}",
     "successfully_add_contact": "Contact adăugat cu succes",
     "contact_already_exists": "Numărul {contact} este deja salvat în lista ta de contacte",
     "variable_mapping": {

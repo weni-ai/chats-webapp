@@ -45,6 +45,8 @@
         :groups="selectedGroup"
         :selectedContact="selectedContact"
         :isProjectPrincipal="isProjectPrincipal"
+        :expiredWindow="isExpiredWindowActive"
+        :expiredWindowFlow="expiredWindowFlow"
         @update:selected-flow="updateSelectedFlow"
         @update:project-uuid-flow="updateProjectUuidFlow"
         @update:cached-template="updateCachedTemplate"
@@ -94,10 +96,11 @@
           v-else-if="
             activeView === 'expired_window' && enableExpiredWindowFeature
           "
+          @update:selection="onExpiredWindowSelection"
         />
       </section>
       <UnnnicButton
-        v-if="isMobile && selected.length > 0"
+        v-if="isMobile && hasSelectedTargets"
         class="flows-trigger__mobile-send"
         type="primary"
         iconCenter="send"
@@ -117,10 +120,7 @@
           @click="$emit('close')"
         />
         <UnnnicButton
-          :disabled="
-            listOfGroupAndContactsSelected.length === 0 ||
-            hasCachedTemplateVariables
-          "
+          :disabled="!hasSelectedTargets || hasCachedTemplateVariables"
           :text="selectedFlow ? $t('send') : $t('continue')"
           type="primary"
           size="small"
@@ -152,6 +152,8 @@
         v-if="showSendFlowModal"
         :contacts="selected"
         :isProjectPrincipal="isProjectPrincipal"
+        :expiredWindow="isExpiredWindowActive"
+        :expiredWindowFlow="expiredWindowFlow"
         @close="closeSendFlow"
         @send-flow-finished="$emit('close')"
       />
@@ -264,6 +266,13 @@ export default {
     showInlineVariableModal: false,
     inlineTemplate: null,
     cachedTemplate: null,
+
+    expiredWindowFlow: {
+      sendToAll: true,
+      ignoredContacts: [],
+      includedContacts: [],
+    },
+    expiredSelectedCount: 0,
   }),
 
   computed: {
@@ -311,6 +320,17 @@ export default {
     },
     listOfGroupAndContactsSelected() {
       return this.selected.concat(this.selectedGroup);
+    },
+    isExpiredWindowActive() {
+      return (
+        this.enableExpiredWindowFeature && this.activeView === 'expired_window'
+      );
+    },
+    hasSelectedTargets() {
+      if (this.isExpiredWindowActive) {
+        return this.expiredSelectedCount > 0;
+      }
+      return this.listOfGroupAndContactsSelected.length > 0;
     },
     showSendFlowModal() {
       return this.isMobile && this.showSendFlow;
@@ -361,6 +381,20 @@ export default {
 
     updateProjectUuidFlow(projectUuidFlow) {
       this.projectUuidFlow = projectUuidFlow;
+    },
+
+    onExpiredWindowSelection({
+      sendToAll,
+      ignoredContacts,
+      includedContacts,
+      selectedCount,
+    }) {
+      this.expiredWindowFlow = {
+        sendToAll,
+        ignoredContacts,
+        includedContacts,
+      };
+      this.expiredSelectedCount = selectedCount;
     },
 
     updateCachedTemplate(cachedTemplate) {
@@ -535,6 +569,39 @@ export default {
     },
 
     async doSendFlowToContacts(params) {
+      if (this.isExpiredWindowActive) {
+        let hasError = false;
+        this.isLoadingSendFlow = true;
+
+        try {
+          await FlowsTrigger.startOutOfWhatsappWindowFlow(
+            {
+              flow: this.selectedFlow,
+              ignored_contacts: this.expiredWindowFlow.ignoredContacts,
+              included_contacts: this.expiredWindowFlow.includedContacts,
+              send_to_all: this.expiredWindowFlow.sendToAll,
+            },
+            this.projectUuidFlow,
+          );
+        } catch (error) {
+          console.error('sendFlowToContacts', error);
+          hasError = true;
+        } finally {
+          this.isLoadingSendFlow = false;
+          callUnnnicAlert({
+            props: {
+              text: hasError
+                ? this.$t('flows_trigger.error_triggering')
+                : this.$t('flows_trigger.successfully_triggered'),
+              type: hasError ? 'error' : 'success',
+            },
+            seconds: 5,
+          });
+          this.$emit('close');
+        }
+        return;
+      }
+
       let hasError = false;
 
       this.isLoadingSendFlow = true;
