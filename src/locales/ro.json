@@ -1064,6 +1064,10 @@
         "agent_name": "Numele reprezentantului",
         "agent_email": "E-mail reprezentant"
       }
+    },
+    "views": {
+      "all_contacts": "Toate contactele",
+      "expired_window": "Fereastră expirată"
     }
   },
   "quick_messages": {
