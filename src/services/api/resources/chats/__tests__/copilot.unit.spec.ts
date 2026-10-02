@@ -10,7 +10,10 @@ vi.mock('@/utils/config', () => ({
   getProject: vi.fn(() => 'mocked-project-id'),
 }));
 
-import Copilot, { extractSectorUuid } from '../copilot';
+import Copilot, {
+  extractOriginalProjectUuid,
+  extractSectorUuid,
+} from '../copilot';
 import http from '@/services/api/http';
 
 describe('Copilot service', () => {
@@ -19,9 +22,27 @@ describe('Copilot service', () => {
   });
 
   describe('extractSectorUuid', () => {
-    it('returns the sector uuid from a sector key', () => {
+    it('reads sector from the list_connections payload', () => {
       expect(
         extractSectorUuid({
+          sector: '0f73dc97-3d05-4bbb-bdd7-d96b23aff2c5',
+          original_project_uuid: '234fe868-273c-494a-a353-fa2fa2350582',
+          conection: {
+            socketUrl: 'wss://websocket.weni.ai',
+            channelUuid: '1d8ea7f5-8d60-4162-97bf-1f684914702d',
+            host: 'https://flows.weni.ai',
+            connectOn: 'mount',
+            storage: 'local',
+            callbackUrl: '',
+          },
+        }),
+      ).toBe('0f73dc97-3d05-4bbb-bdd7-d96b23aff2c5');
+    });
+
+    it('returns the sector uuid and ignores original_project_uuid', () => {
+      expect(
+        extractSectorUuid({
+          original_project_uuid: 'origin-project-1',
           sector: 'sector-1',
           conection: {
             socketUrl: 'wss://example.com',
@@ -35,10 +56,9 @@ describe('Copilot service', () => {
       ).toBe('sector-1');
     });
 
-    it('returns the value of the first non-conection key', () => {
+    it('returns undefined when sector is missing', () => {
       expect(
         extractSectorUuid({
-          'sector-uuid': 'sector-uuid',
           conection: {
             socketUrl: 'wss://example.com',
             channelUuid: 'channel-1',
@@ -48,12 +68,32 @@ describe('Copilot service', () => {
             callbackUrl: '',
           },
         }),
-      ).toBe('sector-uuid');
+      ).toBeUndefined();
+    });
+  });
+
+  describe('extractOriginalProjectUuid', () => {
+    it('returns the original project uuid from the connection item', () => {
+      expect(
+        extractOriginalProjectUuid({
+          sector: '0f73dc97-3d05-4bbb-bdd7-d96b23aff2c5',
+          original_project_uuid: '234fe868-273c-494a-a353-fa2fa2350582',
+          conection: {
+            socketUrl: 'wss://websocket.weni.ai',
+            channelUuid: '1d8ea7f5-8d60-4162-97bf-1f684914702d',
+            host: 'https://flows.weni.ai',
+            connectOn: 'mount',
+            storage: 'local',
+            callbackUrl: '',
+          },
+        }),
+      ).toBe('234fe868-273c-494a-a353-fa2fa2350582');
     });
 
-    it('returns undefined when there is no sector key', () => {
+    it('returns undefined when original_project_uuid is missing', () => {
       expect(
-        extractSectorUuid({
+        extractOriginalProjectUuid({
+          sector: 'sector-1',
           conection: {
             socketUrl: 'wss://example.com',
             channelUuid: 'channel-1',

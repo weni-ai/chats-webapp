@@ -10,6 +10,7 @@
       :roomUuid="roomUuid"
       :enableRoomSummary="enableRoomSummary"
       :isViewMode="isViewMode"
+      :originProjectUuid="originProjectUuid"
     />
 
     <template v-else>
@@ -121,6 +122,7 @@
           v-if="!isLoadingConnection && !isConfigured"
           :hasSummary="enableRoomSummary"
           :isViewMode="isViewMode"
+          :originProjectUuid="originProjectUuid"
         />
       </template>
     </template>
@@ -193,6 +195,7 @@ const currentView = ref<'chat' | 'cart'>('chat');
 
 const {
   connection,
+  originProjectUuid,
   isConfigured,
   isLoading: isLoadingConnection,
 } = useCopilotConnection(activeRoom);
@@ -232,6 +235,7 @@ const {
   liveRoomUuid,
   agentEmail,
   originalContactUrn,
+  originProjectUuid,
 );
 
 const markContextAsProcessedRef = ref(() => {});
@@ -324,7 +328,7 @@ const {
   showGoToBottom,
   scrollToBottom,
   scrollToBottomIfNear,
-} = useAutoScroll(messages, isThinking, isTyping);
+} = useAutoScroll(messages, { isThinking, isTyping, isLoadingHistory });
 
 const enableRoomSummary = computed(
   () => !!project.value?.config?.has_chats_summary,

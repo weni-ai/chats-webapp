@@ -9,18 +9,20 @@ const TestHost = defineComponent({
     const messages = ref<{ id: string }[]>([]);
     const isThinking = ref(false);
     const isTyping = ref(false);
+    const isLoadingHistory = ref(false);
     const {
       listRef,
       bottomAnchorRef,
       showGoToBottom,
       scrollToBottom,
       scrollToBottomIfNear,
-    } = useAutoScroll(messages, isThinking, isTyping);
+    } = useAutoScroll(messages, { isThinking, isTyping, isLoadingHistory });
 
     return {
       messages,
       isThinking,
       isTyping,
+      isLoadingHistory,
       listRef,
       bottomAnchorRef,
       showGoToBottom,
@@ -158,11 +160,32 @@ describe('useAutoScroll', () => {
     mountHost();
     wrapper.vm.messages.push({ id: '1' });
     await nextTick();
+    await nextTick();
+    await new Promise((resolve) => requestAnimationFrame(resolve));
 
     const list = mockListMetrics({ scrollTop: 0 });
     list.dispatchEvent(new Event('scroll'));
     await nextTick();
 
     expect(wrapper.vm.showGoToBottom).toBe(true);
+  });
+
+  it('pins to the bottom when history finishes loading even if the list is at the top', async () => {
+    mountHost();
+    await nextTick();
+
+    const list = mockListMetrics({ scrollTop: 0 });
+    wrapper.vm.isLoadingHistory = true;
+    await nextTick();
+    await nextTick();
+
+    wrapper.vm.messages.push({ id: '1' }, { id: '2' });
+    wrapper.vm.isLoadingHistory = false;
+    await nextTick();
+    await nextTick();
+    await new Promise((resolve) => requestAnimationFrame(resolve));
+
+    expect(list.scrollTop).toBe(400);
+    expect(wrapper.vm.showGoToBottom).toBe(false);
   });
 });

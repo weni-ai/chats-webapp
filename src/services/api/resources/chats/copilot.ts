@@ -12,26 +12,29 @@ export type CopilotConnection = {
 
 export type CopilotConnectionItem = {
   conection: CopilotConnection;
-  [key: string]: string | CopilotConnection;
+  sector?: string;
+  project_uuid?: string;
+  original_project_uuid?: string;
 };
 
 type ListConnectionsParams = {
   isPrincipal?: boolean;
 };
 
-const CONNECTION_KEY = 'conection';
+function readUuid(value?: string): string | undefined {
+  return value?.trim() || undefined;
+}
 
 export function extractSectorUuid(
-  item: CopilotConnectionItem,
+  item?: CopilotConnectionItem | null,
 ): string | undefined {
-  const sectorKey = Object.keys(item).find((key) => key !== CONNECTION_KEY);
+  return readUuid(item?.sector);
+}
 
-  if (!sectorKey) {
-    return undefined;
-  }
-
-  const value = item[sectorKey];
-  return typeof value === 'string' && value ? value : undefined;
+export function extractOriginalProjectUuid(
+  item?: CopilotConnectionItem | null,
+): string | undefined {
+  return readUuid(item?.original_project_uuid);
 }
 
 export default {
