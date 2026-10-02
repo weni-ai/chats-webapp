@@ -2,13 +2,18 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import FlowsTringger from '../flowsTrigger';
 import http from '@/services/api/http';
 import { getProject } from '@/utils/config';
+import { useProfile } from '@/store/modules/profile';
 
 vi.mock('@/services/api/http');
 vi.mock('@/utils/config');
+vi.mock('@/store/modules/profile', () => ({
+  useProfile: vi.fn(),
+}));
 
 beforeEach(() => {
   vi.resetAllMocks();
   getProject.mockReturnValue('mock-project-uuid');
+  useProfile.mockReturnValue({ me: { email: 'agent@example.com' } });
 });
 
 describe('FlowsTringger service', () => {
@@ -213,11 +218,12 @@ describe('FlowsTringger service', () => {
       {
         params: {
           project: 'mock-project-uuid',
+          limit: 20,
+          offset: 0,
+          user: 'agent@example.com',
           sectors: 'sector-1,sector-2',
           queues: 'queue-1',
           search: 'ana',
-          limit: 20,
-          offset: 0,
         },
       },
     );
@@ -241,6 +247,7 @@ describe('FlowsTringger service', () => {
           project: 'mock-project-uuid',
           limit: 20,
           offset: 0,
+          user: 'agent@example.com',
         },
       },
     );
