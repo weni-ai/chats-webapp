@@ -4,6 +4,7 @@
     :class="['home-chats-layout', { 'has-discussion': !!discussion }]"
     data-testid="chats-layout"
     @show-quick-messages="showQuickMessages = true"
+    @open-flows-trigger="openFlowsTrigger()"
   >
     <ChatsBackground
       v-if="!room?.uuid && !discussion?.uuid && !isChatSkeletonActive"
@@ -42,6 +43,11 @@
         v-if="discussion"
         data-testid="discussion-sidebar"
       />
+      <LayoutFlowsTrigger
+        v-if="showFlowsTrigger"
+        :selectedContact="flowsTriggerContact"
+        @close="closeFlowsTrigger()"
+      />
     </template>
 
     <ModalFeedback
@@ -69,6 +75,7 @@ import ContactInfo from '@/components/chats/ContactInfo/index.vue';
 import ModalFeedback from './ModalFeedback.vue';
 import QuickMessages from '@/components/chats/QuickMessages/index.vue';
 import SearchMessages from '@/components/chats/SearchMessages/index.vue';
+import LayoutFlowsTrigger from '@/layouts/ChatsLayout/components/FlowsTrigger/index.vue';
 
 import HomeChat from './HomeChat.vue';
 
@@ -87,6 +94,7 @@ export default {
     ModalFeedback,
     QuickMessages,
     SearchMessages,
+    LayoutFlowsTrigger,
   },
 
   props: {
@@ -102,6 +110,8 @@ export default {
 
   data() {
     return {
+      showFlowsTrigger: false,
+      flowsTriggerContact: null,
       showQuickMessages: false,
       isRoomContactInfoOpen: moduleStorage.getItem(
         'isRoomContactInfoOpen',
@@ -154,9 +164,11 @@ export default {
       this.isRoomContactInfoOpen = false;
     },
     openFlowsTrigger() {
-      this.$refs['chats-layout']?.openFlowsTrigger({
-        contact: this.room?.contact,
-      });
+      this.showFlowsTrigger = true;
+    },
+    closeFlowsTrigger() {
+      this.showFlowsTrigger = false;
+      this.flowsTriggerContact = null;
     },
     updateTextBoxMessage(message) {
       this.$refs['home-chat']?.updateTextBoxMessage(message);

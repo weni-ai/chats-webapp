@@ -8,10 +8,7 @@
   >
     <CopilotConnectionLoader />
 
-    <slot
-      v-if="isRoomListVisible"
-      name="room-list"
-    >
+    <slot name="room-list">
       <SidebarLoading v-show="isLoadingSidebar" />
       <div
         v-show="!isLoadingSidebar"
@@ -34,22 +31,11 @@
           :isViewMode="isViewMode"
           :dashboard="canAccessDashboard"
           :showFlowsTriggerButton="canTriggerFlows"
-          @open-flows-trigger="openFlowsTrigger"
+          @open-flows-trigger="$emit('open-flows-trigger')"
           @show-quick-messages="$emit('show-quick-messages')"
           @open-bulk-message="openBulkMessage"
         />
       </div>
-    </slot>
-
-    <slot
-      v-if="flowsTriggerVisible"
-      name="flows-trigger"
-    >
-      <LayoutFlowsTrigger
-        class="room-list"
-        :selectedContact="flowsTriggerContact"
-        @close="closeFlowsTrigger"
-      />
     </slot>
 
     <BulkMessage
@@ -78,7 +64,6 @@ import { useBulkMessageSend } from '@/store/modules/chats/bulkMessageSend';
 
 import SidebarLoading from '@/views/loadings/HomeSidebar.vue';
 import TheCardGroups from './components/TheCardGroups/index.vue';
-import LayoutFlowsTrigger from './components/FlowsTrigger/index.vue';
 import ChatsLayoutFooterButton from './components/FooterButton/index.vue';
 import ViewOptions from './components/ViewOptions/index.vue';
 import BulkMessage from '@/components/chats/BulkMessage/index.vue';
@@ -94,7 +79,6 @@ export default {
   components: {
     TheCardGroups,
     SidebarLoading,
-    LayoutFlowsTrigger,
     ChatsLayoutFooterButton,
     ViewOptions,
     StatusBar,
@@ -108,7 +92,7 @@ export default {
       default: '',
     },
   },
-  emits: ['select-quick-message', 'show-quick-messages'],
+  emits: ['select-quick-message', 'show-quick-messages', 'open-flows-trigger'],
 
   data: () => ({
     sectors: {},
@@ -116,9 +100,6 @@ export default {
     isLoadingSidebar: true,
     canTriggerFlows: false,
     canAccessDashboard: false,
-    showFlowsTrigger: false,
-    showQuickMessages: false,
-    flowsTriggerContact: null,
     quickMessage: '',
   }),
 
@@ -129,12 +110,6 @@ export default {
       return asideSlot.some(
         (slot) => slot.type && typeof slot.type === 'object',
       );
-    },
-    isRoomListVisible() {
-      return !this.showFlowsTrigger && !this.showQuickMessages;
-    },
-    flowsTriggerVisible() {
-      return this.showFlowsTrigger && !this.showQuickMessages;
     },
     isViewMode() {
       return !!this.viewedAgent;
@@ -154,18 +129,19 @@ export default {
     closeBulkMessage() {
       this.showBulkSendView = false;
     },
-    openFlowsTrigger({ contact = null } = {}) {
-      if (contact) {
-        this.flowsTriggerContact = contact;
-      }
-      this.showFlowsTrigger = true;
-    },
-    closeFlowsTrigger() {
-      this.showFlowsTrigger = false;
-      if (this.flowsTriggerContact) {
-        this.flowsTriggerContact = null;
-      }
-    },
+    // TODO: verify
+    // openFlowsTrigger({ contact = null } = {}) {
+    //   if (contact) {
+    //     this.flowsTriggerContact = contact;
+    //   }
+    //   this.showFlowsTrigger = true;
+    // },
+    // closeFlowsTrigger() {
+    //   this.showFlowsTrigger = false;
+    //   if (this.flowsTriggerContact) {
+    //     this.flowsTriggerContact = null;
+    //   }
+    // },
 
     async getCountSectors() {
       try {

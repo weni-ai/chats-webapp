@@ -8,14 +8,30 @@
           data-testid="flows-trigger-header"
         >
           <template #actions>
-            <UnnnicButton
-              type="tertiary"
-              size="small"
-              iconCenter="close"
-              :ariaLabel="$t('close')"
-              data-testid="flows-trigger-close"
-              @click="$emit('close')"
-            />
+            <UnnnicToolTip
+              enabled
+              :text="$t('flows_trigger.triggered_flows.title')"
+            >
+              <UnnnicButton
+                type="tertiary"
+                size="small"
+                iconCenter="history"
+                data-testid="flows-trigger-history"
+                @click="showTriggeredFlowsModal = true"
+              />
+            </UnnnicToolTip>
+            <UnnnicToolTip
+              enabled
+              :text="$t('flows_trigger.add_new_contact.title')"
+            >
+              <UnnnicButton
+                type="tertiary"
+                size="small"
+                iconCenter="person_add"
+                data-testid="flows-trigger-add-contact"
+                @click="openNewContactModal"
+              />
+            </UnnnicToolTip>
           </template>
         </UnnnicPageHeader>
       </section>
@@ -41,14 +57,6 @@
       class="flows-trigger"
     >
       <header class="flows-trigger__header">
-        <UnnnicButton
-          v-if="!isMobile"
-          type="secondary"
-          size="small"
-          :text="$t('flows_trigger.triggered_flows.title')"
-          @click="showTriggeredFlowsModal = true"
-        />
-
         <UnnnicInput
           v-model="searchUrn"
           iconLeft="search-1"
@@ -165,9 +173,8 @@
         <UnnnicButton
           size="small"
           type="secondary"
-          :text="$t('add')"
-          iconLeft="add"
-          @click="openNewContactModal"
+          :text="$t('cancel')"
+          @click="$emit('close')"
         />
         <UnnnicButton
           :disabled="
