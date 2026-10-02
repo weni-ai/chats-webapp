@@ -510,7 +510,11 @@ describe('FlowsTrigger/index.vue', () => {
           },
         },
       });
-      wrapper.vm.expiredIgnoredContacts = ['contact-2'];
+      wrapper.vm.expiredWindowFlow = {
+        sendToAll: true,
+        ignoredContacts: ['contact-2'],
+        includedContacts: [],
+      };
       wrapper.vm.expiredSelectedCount = 1;
       wrapper.vm.selectedFlow = 'flow-uuid-1';
       wrapper.vm.projectUuidFlow = 'project-uuid-1';
@@ -524,6 +528,8 @@ describe('FlowsTrigger/index.vue', () => {
         {
           flow: 'flow-uuid-1',
           ignored_contacts: ['contact-2'],
+          included_contacts: [],
+          send_to_all: true,
         },
         'project-uuid-1',
       );

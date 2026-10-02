@@ -324,7 +324,11 @@ describe('SendFlowButton', () => {
       selectedFlow: 'flow-uuid',
       projectUuidFlow: 'project-uuid',
       expiredWindow: true,
-      ignoredContacts: ['contact-2'],
+      expiredWindowFlow: {
+        sendToAll: true,
+        ignoredContacts: ['contact-2'],
+        includedContacts: [],
+      },
       contacts: [],
       cachedTemplate: cachedTemplateWithVariables,
     });
@@ -339,11 +343,41 @@ describe('SendFlowButton', () => {
       {
         flow: 'flow-uuid',
         ignored_contacts: ['contact-2'],
+        included_contacts: [],
+        send_to_all: true,
       },
       'project-uuid',
     );
     expect(wrapper.emitted('send-flow-finished')[0][0]).toEqual({
       hasError: false,
     });
+  });
+
+  it('issues one expired-window POST with included contacts when search is active', async () => {
+    FlowsTrigger.startOutOfWhatsappWindowFlow.mockResolvedValue({});
+
+    await wrapper.setProps({
+      selectedFlow: 'flow-uuid',
+      projectUuidFlow: 'project-uuid',
+      expiredWindow: true,
+      expiredWindowFlow: {
+        sendToAll: false,
+        ignoredContacts: [],
+        includedContacts: ['contact-1'],
+      },
+      contacts: [],
+    });
+
+    await wrapper.vm.doSendFlow();
+
+    expect(FlowsTrigger.startOutOfWhatsappWindowFlow).toHaveBeenCalledWith(
+      {
+        flow: 'flow-uuid',
+        ignored_contacts: [],
+        included_contacts: ['contact-1'],
+        send_to_all: false,
+      },
+      'project-uuid',
+    );
   });
 });

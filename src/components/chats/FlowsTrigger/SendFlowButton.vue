@@ -60,9 +60,13 @@ export default {
       type: Boolean,
       default: false,
     },
-    ignoredContacts: {
-      type: Array,
-      default: () => [],
+    expiredWindowFlow: {
+      type: Object,
+      default: () => ({
+        sendToAll: true,
+        ignoredContacts: [],
+        includedContacts: [],
+      }),
     },
   },
   emits: ['send-flow-started', 'send-flow-finished', 'back-to-contact-list'],
@@ -126,7 +130,9 @@ export default {
         await FlowsTrigger.startOutOfWhatsappWindowFlow(
           {
             flow: this.selectedFlow,
-            ignored_contacts: this.ignoredContacts,
+            ignored_contacts: this.expiredWindowFlow.ignoredContacts,
+            included_contacts: this.expiredWindowFlow.includedContacts,
+            send_to_all: this.expiredWindowFlow.sendToAll,
           },
           this.projectUuidFlow,
         );

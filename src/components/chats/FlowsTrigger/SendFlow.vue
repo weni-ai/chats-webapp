@@ -51,7 +51,7 @@
         :isCheckingTemplate="isCheckingTemplate"
         :cachedTemplate="cachedTemplate"
         :expiredWindow="expiredWindow"
-        :ignoredContacts="ignoredContacts"
+        :expiredWindowFlow="expiredWindowFlow"
         data-testid="send-flow-button"
         @back-to-contact-list="backToContactList"
         @send-flow-started="openModalProgress"
@@ -105,9 +105,13 @@ export default {
       type: Boolean,
       default: false,
     },
-    ignoredContacts: {
-      type: Array,
-      default: () => [],
+    expiredWindowFlow: {
+      type: Object,
+      default: () => ({
+        sendToAll: true,
+        ignoredContacts: [],
+        includedContacts: [],
+      }),
     },
   },
   emits: [

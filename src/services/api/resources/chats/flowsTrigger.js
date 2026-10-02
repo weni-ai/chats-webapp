@@ -246,10 +246,13 @@ export default {
     return response.data;
   },
 
-  async startOutOfWhatsappWindowFlow({ flow, ignored_contacts }, projectUuid) {
+  async startOutOfWhatsappWindowFlow(
+    { flow, ignored_contacts = [], included_contacts = [], send_to_all },
+    projectUuid,
+  ) {
     const response = await http.post(
       `/project/${projectUuid || getProject()}/out_off_whatsapp_response_window/start_flow/`,
-      { flow, ignored_contacts },
+      { flow, ignored_contacts, included_contacts, send_to_all },
     );
     return response.data;
   },

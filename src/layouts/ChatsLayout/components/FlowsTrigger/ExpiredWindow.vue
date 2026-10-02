@@ -196,8 +196,18 @@ const activeFiltersCount = computed(
 const canLoadMoreSectors = () =>
   Boolean(sectorsNext.value) && !isLoadingSectors.value;
 
+const hasSearch = computed(() => Boolean(searchContact.value));
+
+const includedContactUuids = computed(() =>
+  contacts.value
+    .filter((contact) => !ignoredContactUuids.value.includes(contact.uuid))
+    .map((contact) => contact.uuid),
+);
+
 const selectedCount = computed(() =>
-  Math.max(contactsCount.value - ignoredContactUuids.value.length, 0),
+  hasSearch.value
+    ? includedContactUuids.value.length
+    : Math.max(contactsCount.value - ignoredContactUuids.value.length, 0),
 );
 
 const showNoResults = computed(
@@ -334,8 +344,12 @@ function isContactSelected(contact) {
 }
 
 function emitSelection() {
+  const ignoredContacts = [...ignoredContactUuids.value];
+
   emit('update:selection', {
-    ignoredContacts: [...ignoredContactUuids.value],
+    sendToAll: !hasSearch.value,
+    ignoredContacts: hasSearch.value ? [] : ignoredContacts,
+    includedContacts: hasSearch.value ? [...includedContactUuids.value] : [],
     selectedCount: selectedCount.value,
   });
 }

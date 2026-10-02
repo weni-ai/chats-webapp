@@ -28,7 +28,7 @@
           :isCheckingTemplate="isCheckingTemplate"
           :cachedTemplate="cachedTemplate"
           :expiredWindow="expiredWindow"
-          :ignoredContacts="ignoredContacts"
+          :expiredWindowFlow="expiredWindowFlow"
           data-testid="send-flow-button"
           @send-flow-finished="finishSendFlow"
         />
@@ -87,9 +87,13 @@ export default {
       type: Boolean,
       default: false,
     },
-    ignoredContacts: {
-      type: Array,
-      default: () => [],
+    expiredWindowFlow: {
+      type: Object,
+      default: () => ({
+        sendToAll: true,
+        ignoredContacts: [],
+        includedContacts: [],
+      }),
     },
   },
   emits: ['close', 'send-flow-finished'],

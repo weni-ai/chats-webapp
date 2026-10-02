@@ -171,7 +171,9 @@ describe('FlowsTriggerExpiredWindow', () => {
       wrapper.find('[data-testid="flows-trigger-expired-disclaimer"]').text(),
     ).toBe(t('flows_trigger.expired_window_disclaimer', { count: 8 }));
     expect(wrapper.emitted('update:selection').at(-1)[0]).toEqual({
+      sendToAll: true,
       ignoredContacts: [],
+      includedContacts: [],
       selectedCount: 8,
     });
   });
@@ -184,7 +186,9 @@ describe('FlowsTriggerExpiredWindow', () => {
 
     expect(cards[0].attributes('data-selected')).toBe('false');
     expect(wrapper.emitted('update:selection').at(-1)[0]).toEqual({
+      sendToAll: true,
       ignoredContacts: ['contact-1'],
+      includedContacts: [],
       selectedCount: 7,
     });
 
@@ -192,7 +196,9 @@ describe('FlowsTriggerExpiredWindow', () => {
 
     expect(cards[0].attributes('data-selected')).toBe('true');
     expect(wrapper.emitted('update:selection').at(-1)[0]).toEqual({
+      sendToAll: true,
       ignoredContacts: [],
+      includedContacts: [],
       selectedCount: 8,
     });
   });
@@ -231,7 +237,9 @@ describe('FlowsTriggerExpiredWindow', () => {
     expect(cards[2].attributes('data-selected')).toBe('true');
     expect(cards[2].attributes('data-name')).toBe('Bia');
     expect(wrapper.emitted('update:selection').at(-1)[0]).toEqual({
+      sendToAll: true,
       ignoredContacts: ['contact-1'],
+      includedContacts: [],
       selectedCount: 7,
     });
   });
@@ -260,9 +268,37 @@ describe('FlowsTriggerExpiredWindow', () => {
       queues: undefined,
       search: 'ana',
     });
+    expect(wrapper.emitted('update:selection').at(-1)[0]).toEqual({
+      sendToAll: false,
+      ignoredContacts: [],
+      includedContacts: ['contact-1', 'contact-2'],
+      selectedCount: 2,
+    });
     expect(
-      wrapper.emitted('update:selection').at(-1)[0].ignoredContacts,
-    ).toEqual([]);
+      wrapper.find('[data-testid="flows-trigger-expired-disclaimer"]').text(),
+    ).toBe(t('flows_trigger.expired_window_disclaimer', { count: 2 }));
+  });
+
+  it('sends loaded selected contacts when a search is applied', async () => {
+    vi.useFakeTimers();
+    const wrapper = await createWrapper();
+
+    await wrapper
+      .find('[data-testid="flows-trigger-expired-search"]')
+      .setValue('ana');
+    await vi.advanceTimersByTimeAsync(500);
+    await flushPromises();
+
+    await wrapper
+      .findAll('[data-testid="flows-contact-card"]')[0]
+      .trigger('click');
+
+    expect(wrapper.emitted('update:selection').at(-1)[0]).toEqual({
+      sendToAll: false,
+      ignoredContacts: [],
+      includedContacts: ['contact-2'],
+      selectedCount: 1,
+    });
   });
 
   it('resets the ignored contacts when filters are applied', async () => {
@@ -293,9 +329,12 @@ describe('FlowsTriggerExpiredWindow', () => {
       queues: undefined,
       search: undefined,
     });
-    expect(
-      wrapper.emitted('update:selection').at(-1)[0].ignoredContacts,
-    ).toEqual([]);
+    expect(wrapper.emitted('update:selection').at(-1)[0]).toEqual({
+      sendToAll: true,
+      ignoredContacts: [],
+      includedContacts: [],
+      selectedCount: 8,
+    });
   });
 
   it('shows an empty state when the request returns no contacts', async () => {

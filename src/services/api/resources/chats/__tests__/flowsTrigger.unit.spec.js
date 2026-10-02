@@ -262,6 +262,8 @@ describe('FlowsTringger service', () => {
     const payload = {
       flow: 'flow-uuid',
       ignored_contacts: ['contact-2'],
+      included_contacts: [],
+      send_to_all: true,
     };
     http.post.mockResolvedValue({ data: { success: true } });
 
@@ -271,10 +273,27 @@ describe('FlowsTringger service', () => {
     );
 
     expect(http.post).toHaveBeenCalledWith(
-      '/project/custom-project-uuid/out_off_whats_app_response_window/start_flow/',
+      '/project/custom-project-uuid/out_off_whatsapp_response_window/start_flow/',
       payload,
     );
     expect(result).toEqual({ success: true });
+  });
+
+  it('should start the expired window flow for included contacts when send_to_all is false', async () => {
+    const payload = {
+      flow: 'flow-uuid',
+      ignored_contacts: [],
+      included_contacts: ['contact-1'],
+      send_to_all: false,
+    };
+    http.post.mockResolvedValue({ data: { success: true } });
+
+    await FlowsTringger.startOutOfWhatsappWindowFlow(payload);
+
+    expect(http.post).toHaveBeenCalledWith(
+      '/project/mock-project-uuid/out_off_whatsapp_response_window/start_flow/',
+      payload,
+    );
   });
 
   it('should start the expired window flow with the current project when projectUuid is not provided', async () => {
@@ -283,11 +302,18 @@ describe('FlowsTringger service', () => {
     await FlowsTringger.startOutOfWhatsappWindowFlow({
       flow: 'flow-uuid',
       ignored_contacts: [],
+      included_contacts: [],
+      send_to_all: true,
     });
 
     expect(http.post).toHaveBeenCalledWith(
-      '/project/mock-project-uuid/out_off_whats_app_response_window/start_flow/',
-      { flow: 'flow-uuid', ignored_contacts: [] },
+      '/project/mock-project-uuid/out_off_whatsapp_response_window/start_flow/',
+      {
+        flow: 'flow-uuid',
+        ignored_contacts: [],
+        included_contacts: [],
+        send_to_all: true,
+      },
     );
   });
 

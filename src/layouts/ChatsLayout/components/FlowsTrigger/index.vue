@@ -46,7 +46,7 @@
         :selectedContact="selectedContact"
         :isProjectPrincipal="isProjectPrincipal"
         :expiredWindow="isExpiredWindowActive"
-        :ignoredContacts="expiredIgnoredContacts"
+        :expiredWindowFlow="expiredWindowFlow"
         @update:selected-flow="updateSelectedFlow"
         @update:project-uuid-flow="updateProjectUuidFlow"
         @update:cached-template="updateCachedTemplate"
@@ -153,7 +153,7 @@
         :contacts="selected"
         :isProjectPrincipal="isProjectPrincipal"
         :expiredWindow="isExpiredWindowActive"
-        :ignoredContacts="expiredIgnoredContacts"
+        :expiredWindowFlow="expiredWindowFlow"
         @close="closeSendFlow"
         @send-flow-finished="$emit('close')"
       />
@@ -267,7 +267,11 @@ export default {
     inlineTemplate: null,
     cachedTemplate: null,
 
-    expiredIgnoredContacts: [],
+    expiredWindowFlow: {
+      sendToAll: true,
+      ignoredContacts: [],
+      includedContacts: [],
+    },
     expiredSelectedCount: 0,
   }),
 
@@ -379,8 +383,17 @@ export default {
       this.projectUuidFlow = projectUuidFlow;
     },
 
-    onExpiredWindowSelection({ ignoredContacts, selectedCount }) {
-      this.expiredIgnoredContacts = ignoredContacts;
+    onExpiredWindowSelection({
+      sendToAll,
+      ignoredContacts,
+      includedContacts,
+      selectedCount,
+    }) {
+      this.expiredWindowFlow = {
+        sendToAll,
+        ignoredContacts,
+        includedContacts,
+      };
       this.expiredSelectedCount = selectedCount;
     },
 
@@ -564,7 +577,9 @@ export default {
           await FlowsTrigger.startOutOfWhatsappWindowFlow(
             {
               flow: this.selectedFlow,
-              ignored_contacts: this.expiredIgnoredContacts,
+              ignored_contacts: this.expiredWindowFlow.ignoredContacts,
+              included_contacts: this.expiredWindowFlow.includedContacts,
+              send_to_all: this.expiredWindowFlow.sendToAll,
             },
             this.projectUuidFlow,
           );
