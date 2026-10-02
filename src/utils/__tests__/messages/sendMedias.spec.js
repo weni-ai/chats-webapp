@@ -121,6 +121,7 @@ describe('Messages utils', () => {
         seen: true,
         created_on: expect.any(String),
         replied_message: null,
+        catalog: null,
       };
 
       // Verify temporary messages were created and added

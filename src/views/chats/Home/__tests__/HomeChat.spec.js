@@ -20,6 +20,15 @@ import ChatsDropzone from '@/layouts/ChatsLayout/components/ChatsDropzone/index.
 import RoomService from '@/services/api/resources/chats/room';
 
 import { setActivePinia } from 'pinia';
+import {
+  openDeskCopilotTab,
+  shouldOpenDeskCopilotAfterTakeOver,
+} from '@/composables/useContactInfoTab';
+
+vi.mock('@/composables/useContactInfoTab', () => ({
+  shouldOpenDeskCopilotAfterTakeOver: vi.fn(() => false),
+  openDeskCopilotTab: vi.fn(),
+}));
 
 vi.mock('@/services/api/resources/chats/message');
 
@@ -166,6 +175,8 @@ describe('HomeChat.vue', () => {
     useDiscussionMessages().getDiscussionMessages = vi
       .fn()
       .mockResolvedValue([]);
+    vi.mocked(shouldOpenDeskCopilotAfterTakeOver).mockReturnValue(false);
+    vi.mocked(openDeskCopilotTab).mockClear();
     wrapper = createWrapper();
   });
 
@@ -255,7 +266,9 @@ describe('HomeChat.vue', () => {
         messageManagerStore,
         'addMediaUploadFiles',
       );
-      const fakeFiles = [new File(['content'], 'file1.png', { type: 'image/png' })];
+      const fakeFiles = [
+        new File(['content'], 'file1.png', { type: 'image/png' }),
+      ];
 
       wrapper.vm.openModalFileUploader(fakeFiles);
 
@@ -293,6 +306,29 @@ describe('HomeChat.vue', () => {
 
       expect(closeRoomContactInfoSpy).toHaveBeenCalled();
       expect(wrapper.emitted('close-room-contact-info')).toBeTruthy();
+      expect(openDeskCopilotTab).not.toHaveBeenCalled();
+    });
+
+    it('opens the desk copilot tab after take over when assisted sales is configured', async () => {
+      vi.mocked(shouldOpenDeskCopilotAfterTakeOver).mockReturnValueOnce(true);
+      const openRoomContactInfoSpy = vi.spyOn(
+        wrapper.vm,
+        'emitOpenRoomContactInfo',
+      );
+      const closeRoomContactInfoSpy = vi.spyOn(
+        wrapper.vm,
+        'emitCloseRoomContactInfo',
+      );
+
+      const modals = wrapper.findComponent('[data-testid="home-chat-modals"]');
+      await modals.vm.$emit('got-chat');
+      await wrapper.vm.$nextTick();
+
+      expect(openDeskCopilotTab).toHaveBeenCalled();
+      expect(openRoomContactInfoSpy).toHaveBeenCalled();
+      expect(closeRoomContactInfoSpy).not.toHaveBeenCalled();
+      expect(wrapper.emitted('open-room-contact-info')).toBeTruthy();
+      expect(wrapper.emitted('close-room-contact-info')).toBeFalsy();
     });
 
     it('should update textBoxMessage when select-quick-message is emitted', async () => {
