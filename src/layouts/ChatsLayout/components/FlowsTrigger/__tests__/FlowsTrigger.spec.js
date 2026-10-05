@@ -472,7 +472,7 @@ describe('FlowsTrigger/index.vue', () => {
       expect(wrapper.emitted('close')).toBeTruthy();
     });
 
-    it('should disable primary action when cached template has variables', async () => {
+    it('should not disable primary action when cached template has variables', async () => {
       const wrapper = await createWrapper();
 
       wrapper.vm.selected = [mockContacts[0]];
@@ -485,10 +485,10 @@ describe('FlowsTrigger/index.vue', () => {
         .findAll('button')
         .find((button) => [t('continue'), t('send')].includes(button.text()));
 
-      expect(primaryButton.attributes('disabled')).toBeDefined();
+      expect(primaryButton.attributes('disabled')).toBeUndefined();
     });
 
-    it('should open variable mapping modal when cached template has variables', async () => {
+    it('should not open variable mapping modal when there are no recipients', async () => {
       const wrapper = await createWrapper();
 
       wrapper.vm.updateCachedTemplate({
@@ -497,7 +497,67 @@ describe('FlowsTrigger/index.vue', () => {
       });
       await wrapper.vm.$nextTick();
 
+      expect(wrapper.vm.cachedTemplate).toEqual({
+        templates: [{ variables: ['nomecontato'] }],
+        total_template_qty: 1,
+      });
+      expect(wrapper.vm.showInlineVariableModal).toBe(false);
+      expect(
+        wrapper.find('[data-testid="modal-variable-mapping"]').exists(),
+      ).toBe(false);
+    });
+
+    it('should open variable mapping modal immediately when selectedContact is provided', async () => {
+      const wrapper = await createWrapper({
+        props: {
+          selectedContact: mockContacts[0],
+        },
+      });
+
+      wrapper.vm.updateCachedTemplate({
+        templates: [{ variables: ['nomecontato'] }],
+        total_template_qty: 1,
+      });
+      await wrapper.vm.$nextTick();
+
+      expect(wrapper.vm.hasRecipients).toBe(true);
       expect(wrapper.vm.showInlineVariableModal).toBe(true);
+      expect(
+        wrapper.find('[data-testid="modal-variable-mapping"]').exists(),
+      ).toBe(true);
+    });
+
+    it('should open variable mapping modal when cached template has variables and there are recipients', async () => {
+      const wrapper = await createWrapper();
+
+      wrapper.vm.selected = [mockContacts[0]];
+      wrapper.vm.updateCachedTemplate({
+        templates: [{ variables: ['nomecontato'] }],
+        total_template_qty: 1,
+      });
+      await wrapper.vm.$nextTick();
+
+      expect(wrapper.vm.showInlineVariableModal).toBe(true);
+      expect(
+        wrapper.find('[data-testid="modal-variable-mapping"]').exists(),
+      ).toBe(true);
+    });
+
+    it('should open variable mapping modal from sendFlowToContacts when template has variables', async () => {
+      const wrapper = await createWrapper();
+      wrapper.vm.selected = [mockContacts[0]];
+      wrapper.vm.selectedFlow = 'flow-uuid-1';
+      wrapper.vm.cachedTemplate = {
+        templates: [{ variables: ['nomecontato'] }],
+        total_template_qty: 1,
+      };
+
+      await wrapper.vm.sendFlowToContacts();
+      await wrapper.vm.$nextTick();
+
+      expect(FlowsTriggerService.sendFlow).not.toHaveBeenCalled();
+      expect(wrapper.vm.showInlineVariableModal).toBe(true);
+      expect(wrapper.vm.inlineTemplate).toEqual(wrapper.vm.cachedTemplate);
       expect(
         wrapper.find('[data-testid="modal-variable-mapping"]').exists(),
       ).toBe(true);
