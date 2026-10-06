@@ -670,6 +670,25 @@ describe('State Rooms', () => {
 
       expect(roomsStore.activeRoom).toBeNull();
     });
+
+    it('clears the copilot cart for the closed room', async () => {
+      const copilotCartStorage = await import('@/utils/copilotCartStorage');
+      const { useConfig } = await import('@/store/modules/config');
+      const clearRoomCartSpy = vi
+        .spyOn(copilotCartStorage, 'clearRoomCart')
+        .mockImplementation(() => {});
+
+      useConfig().$patch({ project: { uuid: 'project-1' } });
+
+      roomsStore.applyClose('r1');
+
+      expect(clearRoomCartSpy).toHaveBeenCalledWith(
+        { projectUuid: 'project-1', agentEmail: 'testing-adm@weni.ai' },
+        'r1',
+      );
+
+      clearRoomCartSpy.mockRestore();
+    });
   });
 
   describe('updateRoom (alreadyClosedThisBatch guard)', () => {

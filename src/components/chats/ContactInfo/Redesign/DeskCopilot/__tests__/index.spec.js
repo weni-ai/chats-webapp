@@ -108,7 +108,7 @@ function mockCopilotChat({
     }),
     sendMessage: vi.fn(),
     sendHiddenMessage: vi.fn().mockResolvedValue(undefined),
-    sendOrder: vi.fn(),
+    sendOrder: vi.fn().mockResolvedValue(undefined),
     sendAttachment: vi.fn(),
     startRecording: vi.fn(),
     stopRecording: vi.fn(),
@@ -176,7 +176,7 @@ const createWrapper = (props = {}, piniaState = {}) =>
         AssistantMessageList: {
           name: 'AssistantMessageList',
           template:
-            "<div data-testid=\"assistant-message-list\" @click=\"$emit('send', 'Suggested text')\" @dblclick=\"$emit('sendCatalog', { catalog: { carousel: true, products: [{ product: 'product', product_retailer_ids: ['sku-1'], product_retailer_info: [] }] }, text: 'Check these products' })\"><div v-if=\"isLoadingHistory\" data-testid=\"assistant-history-loading\" /></div>",
+            "<div data-testid=\"assistant-message-list\" @click=\"$emit('send', 'Suggested text')\" @dblclick=\"$emit('sendCatalog', { catalog: { carousel: true, products: [{ product: 'product', product_retailer_ids: ['sku-1'], product_retailer_info: [] }] }, text: 'Check these products' })\"><button data-testid=\"stub-add-to-cart\" @click.stop=\"$emit('add-to-cart', { product_retailer_id: 'sku-1', name: 'Tile', price: 32, sale_price: 27, currency: 'BRL', image: 'https://example.com/tile.png', description: 'Gray tile', seller_id: '1' })\" /><div v-if=\"isLoadingHistory\" data-testid=\"assistant-history-loading\" /></div>",
           props: [
             'messages',
             'isThinking',
@@ -196,12 +196,22 @@ const createWrapper = (props = {}, piniaState = {}) =>
         },
         CartBadge: {
           name: 'AssistantCartBadge',
-          template: '<div data-testid="assistant-cart-badge" />',
+          template:
+            '<div data-testid="assistant-cart-badge" @click="$emit(\'click\')" />',
           props: ['count'],
         },
         Cart: {
           name: 'DeskCopilotCart',
-          template: '<div data-testid="desk-copilot-cart" />',
+          template:
+            '<div data-testid="desk-copilot-cart"><button data-testid="stub-place-order" @click="$emit(\'placeOrder\')" /><button data-testid="stub-increment" @click="$emit(\'increment\', items[0])" /></div>',
+          props: [
+            'items',
+            'totalQuantity',
+            'currency',
+            'subtotal',
+            'discount',
+            'total',
+          ],
         },
         DeskCopilotHistoryView: {
           name: 'DeskCopilotHistoryView',
@@ -590,5 +600,52 @@ describe('DeskCopilotTab', () => {
     expect(options.enabled.value).toBe(true);
     expect(options.storageScope.value.channelUuid).toBe('channel-1');
     expect(options.messagesRoomUuid.value).toBeUndefined();
+  });
+
+  it('keeps cart items after placing an order and sends them again after an edit', async () => {
+    mockCopilotConnection({
+      isConfigured: true,
+      connection: defaultConnection,
+    });
+    mockCopilotChat();
+    wrapper = createWrapper();
+
+    await flushPromises();
+    await wrapper.find('[data-testid="stub-add-to-cart"]').trigger('click');
+    await flushPromises();
+    await wrapper.find('[data-testid="assistant-cart-badge"]').trigger('click');
+    await wrapper.find('[data-testid="stub-place-order"]').trigger('click');
+    await flushPromises();
+
+    const { sendOrder } = useCopilotChat.mock.results[0].value;
+    expect(sendOrder).toHaveBeenCalledTimes(1);
+    expect(sendOrder.mock.calls[0][0]).toEqual([
+      expect.objectContaining({
+        product_retailer_id: 'sku-1',
+        quantity: 1,
+      }),
+    ]);
+    expect(wrapper.find('[data-testid="desk-copilot-cart"]').exists()).toBe(
+      false,
+    );
+    expect(wrapper.find('[data-testid="assistant-cart-badge"]').exists()).toBe(
+      true,
+    );
+
+    await wrapper.find('[data-testid="assistant-cart-badge"]').trigger('click');
+    await wrapper.find('[data-testid="stub-increment"]').trigger('click');
+    await wrapper.find('[data-testid="stub-place-order"]').trigger('click');
+    await flushPromises();
+
+    expect(sendOrder).toHaveBeenCalledTimes(2);
+    expect(sendOrder.mock.calls[1][0]).toEqual([
+      expect.objectContaining({
+        product_retailer_id: 'sku-1',
+        quantity: 2,
+      }),
+    ]);
+    expect(wrapper.find('[data-testid="assistant-cart-badge"]').exists()).toBe(
+      true,
+    );
   });
 });
