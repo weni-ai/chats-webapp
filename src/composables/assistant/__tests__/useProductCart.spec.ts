@@ -1,5 +1,11 @@
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
+import { effectScope, ref } from 'vue';
 import { useProductCart } from '../useProductCart';
+import {
+  buildCopilotCartStorageKey,
+  saveRoomCart,
+} from '@/utils/copilotCartStorage';
+import { moduleStorage } from '@/utils/storage';
 
 const PRODUCT = {
   product_retailer_id: 'sku-1',
@@ -11,6 +17,40 @@ const PRODUCT = {
   description: 'Gray tile',
   seller_id: '1',
 };
+
+const SCOPE = {
+  projectUuid: 'project-1',
+  agentEmail: 'agent@example.com',
+};
+
+function stubLocalStorage() {
+  const mockLocalStorage = {};
+
+  vi.stubGlobal('localStorage', {
+    getItem: vi.fn((key) => mockLocalStorage[key] ?? null),
+    setItem: vi.fn((key, value) => {
+      mockLocalStorage[key] = value;
+    }),
+    removeItem: vi.fn((key) => {
+      delete mockLocalStorage[key];
+    }),
+    clear: vi.fn(() => {
+      Object.keys(mockLocalStorage).forEach(
+        (key) => delete mockLocalStorage[key],
+      );
+    }),
+    key: vi.fn((index) => Object.keys(mockLocalStorage)[index] ?? null),
+    get length() {
+      return Object.keys(mockLocalStorage).length;
+    },
+  });
+}
+
+function runWithScope(factory) {
+  const scope = effectScope();
+  const api = scope.run(factory);
+  return { api, stop: () => scope.stop() };
+}
 
 describe('useProductCart', () => {
   it('adds, increments, decrements and removes items', () => {
@@ -81,5 +121,85 @@ describe('useProductCart', () => {
 
     expect(cart.items.value).toHaveLength(0);
     expect(cart.totalQuantity.value).toBe(0);
+  });
+
+  describe('per-room persistence', () => {
+    beforeEach(() => {
+      stubLocalStorage();
+    });
+
+    afterEach(() => {
+      vi.unstubAllGlobals();
+    });
+
+    it('hydrates the cart from storage for the current room', () => {
+      saveRoomCart(SCOPE, 'room-1', {
+        'sku-1': { ...PRODUCT, quantity: 2 },
+      });
+
+      const roomUuid = ref('room-1');
+      const storageScope = ref(SCOPE);
+      const { api, stop } = runWithScope(() =>
+        useProductCart({ roomUuid, storageScope }),
+      );
+
+      expect(api.getQuantity('sku-1')).toBe(2);
+      expect(api.totalQuantity.value).toBe(2);
+      stop();
+    });
+
+    it('saves when items are edited', () => {
+      const roomUuid = ref('room-1');
+      const storageScope = ref(SCOPE);
+      const { api, stop } = runWithScope(() =>
+        useProductCart({ roomUuid, storageScope }),
+      );
+
+      api.setQuantity(PRODUCT, 3);
+
+      expect(
+        moduleStorage.getItem(
+          buildCopilotCartStorageKey(SCOPE.projectUuid, SCOPE.agentEmail),
+        )['room-1'].items['sku-1'].quantity,
+      ).toBe(3);
+      stop();
+    });
+
+    it('swaps the cart when switching rooms', () => {
+      saveRoomCart(SCOPE, 'room-1', {
+        'sku-1': { ...PRODUCT, quantity: 2 },
+      });
+      saveRoomCart(SCOPE, 'room-2', {
+        'sku-1': { ...PRODUCT, quantity: 5 },
+      });
+
+      const roomUuid = ref('room-1');
+      const storageScope = ref(SCOPE);
+      const { api, stop } = runWithScope(() =>
+        useProductCart({ roomUuid, storageScope }),
+      );
+
+      expect(api.getQuantity('sku-1')).toBe(2);
+
+      roomUuid.value = 'room-2';
+      expect(api.getQuantity('sku-1')).toBe(5);
+
+      api.setQuantity(PRODUCT, 1);
+      roomUuid.value = 'room-1';
+      expect(api.getQuantity('sku-1')).toBe(2);
+      stop();
+    });
+
+    it('works without a scope', () => {
+      const cart = useProductCart();
+      cart.addItem(PRODUCT);
+
+      expect(cart.getQuantity('sku-1')).toBe(1);
+      expect(
+        moduleStorage.getItem(
+          buildCopilotCartStorageKey(SCOPE.projectUuid, SCOPE.agentEmail),
+        ),
+      ).toBeNull();
+    });
   });
 });
