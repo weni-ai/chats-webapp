@@ -46,7 +46,6 @@
         :contacts="contacts"
         :selectedContact="selectedContact"
         :selectedFlow="selectedFlow"
-        :isProjectPrincipal="isProjectPrincipal"
         :projectUuidFlow="projectUuidFlow"
         :isCheckingTemplate="isCheckingTemplate"
         :cachedTemplate="cachedTemplate"
@@ -185,7 +184,6 @@ export default {
       this.setCachedTemplate(null);
 
       if (!flowUuid) return;
-      if (this.isProjectPrincipal) return;
 
       this.isCheckingTemplate = true;
       try {
