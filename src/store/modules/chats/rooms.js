@@ -15,6 +15,7 @@ import {
   clearSummaryDismissed,
 } from '@/utils/summaryDismissalStorage';
 import { clearRoom as clearCopilotReadRoom } from '@/utils/copilotReadStorage';
+import { clearRoomCart } from '@/utils/copilotCartStorage';
 import i18n from '@/plugins/i18n';
 
 export const useRooms = defineStore('rooms', {
@@ -551,7 +552,9 @@ export const useRooms = defineStore('rooms', {
 
       const projectUuid = useConfig().project?.uuid;
       const agentEmail = useProfile().me?.email;
-      clearCopilotReadRoom({ projectUuid, agentEmail }, roomUuid);
+      const storageScope = { projectUuid, agentEmail };
+      clearCopilotReadRoom(storageScope, roomUuid);
+      clearRoomCart(storageScope, roomUuid);
     },
 
     addNewMessagesByRoom({ room, message }) {
