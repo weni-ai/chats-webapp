@@ -110,6 +110,18 @@ describe('stripSuggestedReplyFences', () => {
     expect(stripSuggestedReplyFences('Intro\n``')).toBe('Intro');
   });
 
+  it('leaves a closed markdown code block unchanged', () => {
+    const codeBlock = 'Text\n```js\ncode\n```';
+
+    expect(stripSuggestedReplyFences(codeBlock)).toBe(codeBlock);
+  });
+
+  it('leaves an unmatched regular code fence unchanged', () => {
+    const openCodeBlock = 'Text\n```js\ncode';
+
+    expect(stripSuggestedReplyFences(openCodeBlock)).toBe(openCodeBlock);
+  });
+
   it('leaves messages without fences unchanged', () => {
     expect(stripSuggestedReplyFences('No fences here')).toBe('No fences here');
   });
