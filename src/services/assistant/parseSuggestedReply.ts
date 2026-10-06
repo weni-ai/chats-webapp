@@ -29,19 +29,49 @@ function stripTrailingNewline(text: string): string {
   return text;
 }
 
+function countFences(text: string): number {
+  let count = 0;
+  let index = 0;
+
+  while ((index = text.indexOf('```', index)) !== -1) {
+    count += 1;
+    index += 3;
+  }
+
+  return count;
+}
+
+function isSameLineFenceLabel(after: string): boolean {
+  return !after.includes('\n') && !after.includes('\r');
+}
+
 function isPrefixOfSuggestedReplyLabel(after: string): boolean {
-  if (after.includes('\n') || after.includes('\r')) {
+  if (!isSameLineFenceLabel(after)) {
     return false;
   }
 
-  return SUGGESTED_REPLY_LABEL.startsWith(after.trimEnd().toLowerCase());
+  const label = after.trimEnd();
+  return (
+    label.length > 0 && SUGGESTED_REPLY_LABEL.startsWith(label.toLowerCase())
+  );
+}
+
+function isBareUnmatchedOpener(text: string, after: string): boolean {
+  return (
+    isSameLineFenceLabel(after) &&
+    after.trimEnd().length === 0 &&
+    countFences(text) % 2 === 1
+  );
 }
 
 function stripIncompleteOpeningFence(text: string): string {
   const tripleIndex = text.lastIndexOf('```');
   if (tripleIndex !== -1) {
     const after = text.slice(tripleIndex + 3);
-    if (isPrefixOfSuggestedReplyLabel(after)) {
+    if (
+      isPrefixOfSuggestedReplyLabel(after) ||
+      isBareUnmatchedOpener(text, after)
+    ) {
       return stripTrailingNewline(text.slice(0, tripleIndex));
     }
 
