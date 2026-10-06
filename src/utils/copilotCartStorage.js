@@ -31,14 +31,15 @@ function normalizeCartItems(cart) {
     const keyProductId = typeof key === 'string' ? key : '';
     const productId = itemProductId || keyProductId;
 
-    if (!productId || !isValidQuantity(item.quantity)) {
+    const quantity = Math.floor(item.quantity);
+    if (!productId || !isValidQuantity(quantity)) {
       return;
     }
 
     items[productId] = {
       ...item,
       product_retailer_id: productId,
-      quantity: Math.floor(item.quantity),
+      quantity,
     };
   });
 

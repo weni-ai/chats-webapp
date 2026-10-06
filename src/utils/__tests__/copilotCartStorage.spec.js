@@ -139,6 +139,19 @@ describe('copilotCartStorage', () => {
     });
   });
 
+  it('drops quantities that floor to less than 1 and floors the rest', () => {
+    saveRoomCart(SCOPE, 'room-1', {
+      'sku-1': { ...PRODUCT, quantity: 0.5 },
+    });
+    expect(getRoomCart(SCOPE, 'room-1')).toEqual({});
+    expect(moduleStorage.getItem(STORAGE_KEY)).toBeNull();
+
+    saveRoomCart(SCOPE, 'room-1', {
+      'sku-1': { ...PRODUCT, quantity: 1.9 },
+    });
+    expect(getRoomCart(SCOPE, 'room-1')['sku-1'].quantity).toBe(1);
+  });
+
   it('removes the room entry when the cart is empty', () => {
     saveRoomCart(SCOPE, 'room-1', {
       'sku-1': { ...PRODUCT, quantity: 1 },
