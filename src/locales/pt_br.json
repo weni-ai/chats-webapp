@@ -1301,6 +1301,10 @@
         "error": "Não foi possível reconectar o projeto Copilot.",
         "success": "O projeto Copilot foi reconectado!",
         "title": "Reconectar projeto Copilot"
+      },
+      "multi_agents_disclaimer": {
+        "description": "Este projeto não suporta múltiplos agentes, o que é necessário para ativar o Desk Copilot.",
+        "title": "O Desk Copilot não está disponível para este projeto"
       }
     },
     "changes_saved": "Alterações salvas com sucesso",

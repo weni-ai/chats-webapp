@@ -1280,6 +1280,10 @@
         "error": "Nu s-a putut reconecta proiectul Copilot.",
         "success": "Proiectul Copilot a fost reconectat!",
         "title": "Reconectează proiectul Copilot"
+      },
+      "multi_agents_disclaimer": {
+        "description": "Acest proiect nu acceptă mai mulți agenți, ceea ce este necesar pentru a activa Desk Copilot.",
+        "title": "Desk Copilot nu este disponibil pentru acest proiect"
       }
     },
     "changes_saved": "Modificări salvate cu succes",
