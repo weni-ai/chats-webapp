@@ -4,6 +4,16 @@
     data-testid="desk-copilot-settings"
   >
     <UnnnicDisclaimer
+      v-if="showMultiAgentsDisclaimer"
+      type="informational"
+      :title="$t('config_chats.desk_copilot.multi_agents_disclaimer.title')"
+      :description="
+        $t('config_chats.desk_copilot.multi_agents_disclaimer.description')
+      "
+      data-testid="desk-copilot-multi-agents-disclaimer"
+    />
+
+    <UnnnicDisclaimer
       v-if="showNoPermissionDisclaimer"
       type="informational"
       :description="$t('config_chats.desk_copilot.no_permission_disclaimer')"
@@ -77,10 +87,13 @@ const {
   linkedProject,
   isLoading,
   isLoadingCanCreate,
+  isLoadingMultiAgents,
   canCreateProject,
+  supportsMultiAgents,
   isCreateDisabled,
   fetchLinkedProject,
   fetchCanCreate,
+  fetchMultiAgents,
   setLinkedProject,
 } = useCopilotProject();
 
@@ -88,10 +101,22 @@ const showCreateModal = ref(false);
 const showDisconnectModal = ref(false);
 const showReconnectModal = ref(false);
 
-const isReady = computed(() => !isLoading.value && !isLoadingCanCreate.value);
+const isReady = computed(
+  () =>
+    !isLoading.value &&
+    !isLoadingCanCreate.value &&
+    !isLoadingMultiAgents.value,
+);
 const isReadOnly = computed(() => !canCreateProject.value);
 const showEmptyState = computed(
-  () => isReady.value && canCreateProject.value && !linkedProject.value,
+  () =>
+    isReady.value &&
+    canCreateProject.value &&
+    supportsMultiAgents.value &&
+    !linkedProject.value,
+);
+const showMultiAgentsDisclaimer = computed(
+  () => isReady.value && !linkedProject.value && !supportsMultiAgents.value,
 );
 const showProjectCard = computed(() => {
   if (!isReady.value || !linkedProject.value) {
@@ -115,7 +140,8 @@ const showNoPermissionDisclaimer = computed(
   () =>
     isReady.value &&
     !canCreateProject.value &&
-    !linkedProject.value?.isConnected,
+    !linkedProject.value?.isConnected &&
+    !showMultiAgentsDisclaimer.value,
 );
 
 function handleCreated(project: CopilotProject) {
@@ -126,6 +152,7 @@ function handleCreated(project: CopilotProject) {
 onMounted(() => {
   fetchLinkedProject();
   fetchCanCreate(true);
+  fetchMultiAgents(true);
 });
 </script>
 
