@@ -1293,6 +1293,10 @@
         "success": "Copilot project created and connected!",
         "title": "Create Copilot Project"
       },
+      "multi_agents_disclaimer": {
+        "description": "This project doesn't support multi-agents, which is required to enable Desk Copilot.",
+        "title": "Desk Copilot is not available for this project"
+      },
       "new_badge": "New",
       "no_permission_disclaimer": "Only users with Administrator or Contributor permissions can enable Desk Copilot. Please contact one of these users on your team to activate the feature.",
       "reconnect_modal": {

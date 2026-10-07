@@ -1272,6 +1272,10 @@
         "success": "Proiect Copilot creat și conectat!",
         "title": "Creează proiect Copilot"
       },
+      "multi_agents_disclaimer": {
+        "description": "Acest proiect nu suportă mai mulți agenți, ceea ce este necesar pentru a activa Desk Copilot.",
+        "title": "Desk Copilot nu este disponibil pentru acest proiect"
+      },
       "new_badge": "Nou",
       "no_permission_disclaimer": "Doar utilizatorii cu permisiune de Administrator sau Contributor pot activa Desk Copilot. Contactează unul dintre acești utilizatori din echipa ta pentru a activa funcția.",
       "reconnect_modal": {
