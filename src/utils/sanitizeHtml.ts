@@ -5,8 +5,8 @@ const SANITIZE_CONFIG: Config = {
   USE_PROFILES: { html: true },
   ADD_ATTR: ['target'],
   CUSTOM_ELEMENT_HANDLING: {
-    tagNameCheck: false,
-    attributeNameCheck: false,
+    tagNameCheck: null,
+    attributeNameCheck: null,
     allowCustomizedBuiltInElements: false,
   },
 };
