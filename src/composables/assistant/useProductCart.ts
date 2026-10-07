@@ -1,4 +1,4 @@
-import { computed, ref } from 'vue';
+import { computed, ref, toValue, watch, type MaybeRefOrGetter } from 'vue';
 
 import type {
   CartProductItem,
@@ -6,9 +6,21 @@ import type {
   ProductCarouselItem,
 } from '@/services/assistant/types';
 import { parseProductPrice } from '@/services/assistant/currency';
+import { getRoomCart, saveRoomCart } from '@/utils/copilotCartStorage';
 
-export function useProductCart() {
+export type CopilotCartStorageScope = {
+  projectUuid?: string;
+  agentEmail?: string;
+};
+
+export type UseProductCartOptions = {
+  roomUuid?: MaybeRefOrGetter<string | undefined>;
+  storageScope?: MaybeRefOrGetter<CopilotCartStorageScope>;
+};
+
+export function useProductCart(options: UseProductCartOptions = {}) {
   const cart = ref<Record<string, CartProductItem>>({});
+  let isHydrating = false;
 
   const items = computed(() =>
     Object.values(cart.value).filter((item) => item.quantity > 0),
@@ -106,6 +118,50 @@ export function useProductCart() {
       seller_id: item.seller_id,
       quantity: item.quantity,
     }));
+  }
+
+  function currentRoomUuid() {
+    return toValue(options.roomUuid);
+  }
+
+  function currentStorageScope() {
+    return toValue(options.storageScope);
+  }
+
+  function hydrateFromStorage() {
+    const roomUuid = currentRoomUuid();
+    const scope = currentStorageScope();
+
+    isHydrating = true;
+    cart.value =
+      roomUuid && scope?.projectUuid && scope?.agentEmail
+        ? getRoomCart(scope, roomUuid)
+        : {};
+    isHydrating = false;
+  }
+
+  function persistToStorage() {
+    if (isHydrating) {
+      return;
+    }
+
+    const roomUuid = currentRoomUuid();
+    const scope = currentStorageScope();
+    if (!roomUuid || !scope) {
+      return;
+    }
+
+    saveRoomCart(scope, roomUuid, cart.value);
+  }
+
+  if (options.roomUuid || options.storageScope) {
+    watch(
+      [() => currentRoomUuid(), () => currentStorageScope()],
+      hydrateFromStorage,
+      { immediate: true, flush: 'sync' },
+    );
+
+    watch(cart, persistToStorage, { deep: true, flush: 'sync' });
   }
 
   return {

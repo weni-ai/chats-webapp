@@ -170,10 +170,7 @@
           @click="openNewContactModal"
         />
         <UnnnicButton
-          :disabled="
-            listOfGroupAndContactsSelected.length === 0 ||
-            hasCachedTemplateVariables
-          "
+          :disabled="listOfGroupAndContactsSelected.length === 0"
           :text="selectedFlow ? $t('send') : $t('continue')"
           type="primary"
           size="small"
@@ -340,6 +337,12 @@ export default {
       return hasTemplateVariables(this.cachedTemplate?.templates ?? []);
     },
 
+    hasRecipients() {
+      const hasSelectedContact =
+        this.selectedContact && Object.keys(this.selectedContact).length > 0;
+      return hasSelectedContact || this.selected.length > 0;
+    },
+
     contactsForResolution() {
       if (
         this.selectedContact &&
@@ -496,7 +499,10 @@ export default {
     updateCachedTemplate(cachedTemplate) {
       this.cachedTemplate = cachedTemplate;
 
-      if (hasTemplateVariables(cachedTemplate?.templates ?? [])) {
+      if (
+        hasTemplateVariables(cachedTemplate?.templates ?? []) &&
+        this.hasRecipients
+      ) {
         this.inlineTemplate = cachedTemplate;
         this.showInlineVariableModal = true;
         return;
@@ -716,7 +722,11 @@ export default {
     },
 
     async sendFlowToContacts() {
-      if (this.hasCachedTemplateVariables) return;
+      if (this.hasCachedTemplateVariables) {
+        this.inlineTemplate = this.cachedTemplate;
+        this.showInlineVariableModal = true;
+        return;
+      }
 
       await this.doSendFlowToContacts();
     },

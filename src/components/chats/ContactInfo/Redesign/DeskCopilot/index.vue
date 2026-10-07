@@ -245,6 +245,12 @@ function sendMessage(text: string) {
   sendCopilotMessage(text);
 }
 
+const storageScope = computed(() => ({
+  projectUuid: project.value?.uuid,
+  agentEmail: agentEmail.value,
+  channelUuid: liveConnection.value?.channelUuid,
+}));
+
 const {
   items: cartItems,
   totalQuantity: productCartTotalQuantity,
@@ -257,9 +263,11 @@ const {
   incrementQuantity: incrementCartItem,
   decrementQuantity: decrementCartItem,
   removeItem: removeCartItem,
-  clear: clearCart,
   toOrderProductItems,
-} = useProductCart();
+} = useProductCart({
+  roomUuid: liveRoomUuid,
+  storageScope,
+});
 
 const {
   canEnterVoiceMode,
@@ -303,11 +311,6 @@ const isReady = computed(() => isConnected.value && !isLoadingHistory.value);
 const isBusy = computed(
   () => isThinking.value || isTyping.value || isVoiceModeActive.value,
 );
-const storageScope = computed(() => ({
-  projectUuid: project.value?.uuid,
-  agentEmail: agentEmail.value,
-  channelUuid: liveConnection.value?.channelUuid,
-}));
 
 const { markContextAsProcessed } = useCopilotRoomContext({
   connection: liveConnection,
@@ -396,7 +399,6 @@ async function handlePlaceOrder() {
 
   try {
     await sendOrder(productItems);
-    clearCart();
     currentView.value = 'chat';
   } catch (error) {
     console.error('Failed to place order:', error);

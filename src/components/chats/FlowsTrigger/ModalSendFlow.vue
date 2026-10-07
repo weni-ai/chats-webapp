@@ -24,7 +24,6 @@
           class="modal-send-flow__handler"
           :contacts="contacts"
           :selectedFlow="selectedFlow"
-          :isProjectPrincipal="isProjectPrincipal"
           :isCheckingTemplate="isCheckingTemplate"
           :cachedTemplate="cachedTemplate"
           data-testid="send-flow-button"
