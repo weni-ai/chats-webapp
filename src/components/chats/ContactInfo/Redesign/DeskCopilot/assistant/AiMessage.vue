@@ -87,6 +87,14 @@
           />
         </section>
 
+        <p
+          v-if="trailingText"
+          class="ai-message__trailing"
+          data-testid="assistant-ai-trailing"
+        >
+          {{ trailingText }}
+        </p>
+
         <section
           v-if="showActions && !readOnly"
           class="ai-message__actions"
@@ -168,6 +176,10 @@ import { useStreamingBuffer } from '@/composables/assistant/useStreamingBuffer';
 import { copyTextToContactInput } from '@/composables/assistant/useCopyToContactInput';
 import { buildCatalogPayload } from '@/services/assistant/buildCatalogPayload';
 import type { CatalogPayload } from '@/services/assistant/buildCatalogPayload';
+import {
+  parseSuggestedReply,
+  stripSuggestedReplyFences,
+} from '@/services/assistant/parseSuggestedReply';
 import i18n from '@/plugins/i18n';
 import CopilotFeedback from '@/services/api/resources/chats/copilotFeedback';
 import type {
@@ -277,6 +289,15 @@ const hasProductCatalog = computed(
   () => hasProductCarousel.value || hasProductList.value,
 );
 
+const parsedReply = computed(() => parseSuggestedReply(props.text));
+
+const effectiveSuggestion = computed(() => {
+  return (
+    props.suggestion?.trim() ||
+    (parsedReply.value.hasBlock ? parsedReply.value.reply : '')
+  );
+});
+
 const sourceText = computed(() => {
   if (hasProductCarousel.value) {
     return (
@@ -294,8 +315,16 @@ const sourceText = computed(() => {
     );
   }
 
-  if (props.suggestion?.trim()) {
-    return props.suggestion.trim();
+  if (isStreaming.value) {
+    if (props.suggestion?.trim()) {
+      return props.suggestion.trim();
+    }
+
+    return stripSuggestedReplyFences(props.text);
+  }
+
+  if (effectiveSuggestion.value) {
+    return effectiveSuggestion.value;
   }
 
   return props.text.trim();
@@ -320,7 +349,23 @@ const leadingText = computed(() => {
     return props.text.trim();
   }
 
+  if (parsedReply.value.hasBlock) {
+    return parsedReply.value.leading;
+  }
+
   return '';
+});
+
+const trailingText = computed(() => {
+  if (isStreamingOrBuffering.value || hasProductCatalog.value) {
+    return '';
+  }
+
+  if (props.suggestion?.trim() || !parsedReply.value.hasBlock) {
+    return '';
+  }
+
+  return parsedReply.value.trailing;
 });
 
 const suggestionText = computed(() => {
@@ -332,8 +377,8 @@ const suggestionText = computed(() => {
     return displayedText.value;
   }
 
-  if (props.suggestion?.trim()) {
-    return props.suggestion.trim();
+  if (effectiveSuggestion.value) {
+    return effectiveSuggestion.value;
   }
 
   return props.text.trim();
@@ -512,7 +557,8 @@ async function handleSubmitFeedback({
     min-width: 0;
   }
 
-  &__leading {
+  &__leading,
+  &__trailing {
     font: $unnnic-font-emphasis;
     color: $unnnic-color-fg-emphasized;
     overflow-wrap: anywhere;
