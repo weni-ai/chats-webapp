@@ -403,9 +403,9 @@ describe('AssistantAiMessage', () => {
       suggestion: undefined,
     });
 
-    expect(wrapper.find('[data-testid="assistant-ai-leading"]').text()).toBe(
-      suggestedReplyLeading,
-    );
+    const leading = wrapper.find('[data-testid="assistant-ai-leading"]');
+    expect(leading.text()).toBe(suggestedReplyLeading.replaceAll('**', ''));
+    expect(leading.html()).toContain('<strong>Endereço da loja 1:</strong>');
     expect(wrapper.find('[data-testid="assistant-ai-suggestion"]').text()).toBe(
       suggestedReply,
     );
@@ -459,9 +459,9 @@ describe('AssistantAiMessage', () => {
       suggestion: 'Metadata suggestion',
     });
 
-    expect(wrapper.find('[data-testid="assistant-ai-leading"]').text()).toBe(
-      suggestedReplyText,
-    );
+    const leading = wrapper.find('[data-testid="assistant-ai-leading"]');
+    expect(leading.text()).toContain('Endereço da loja 1:');
+    expect(leading.html()).toContain('<strong>Endereço da loja 1:</strong>');
     expect(wrapper.find('[data-testid="assistant-ai-suggestion"]').text()).toBe(
       'Metadata suggestion',
     );
@@ -485,5 +485,33 @@ describe('AssistantAiMessage', () => {
     expect(wrapper.find('[data-testid="assistant-ai-trailing"]').text()).toBe(
       'After.',
     );
+  });
+
+  it('renders markdown formatting in the suggestion while copy and send stay raw', async () => {
+    const writeText = vi.fn().mockResolvedValue(undefined);
+    Object.defineProperty(navigator, 'clipboard', {
+      configurable: true,
+      value: { writeText },
+    });
+
+    const rawSuggestion =
+      'Please try **bold** and a [link](https://example.com)';
+    const messageManager = useMessageManager();
+    wrapper = createWrapper({
+      text: 'Intro',
+      suggestion: rawSuggestion,
+    });
+
+    const suggestion = wrapper.find('[data-testid="assistant-ai-suggestion"]');
+    expect(suggestion.html()).toContain('<strong>bold</strong>');
+    expect(suggestion.html()).toContain('href="https://example.com"');
+    expect(suggestion.html()).toContain('target="_blank"');
+
+    await wrapper.find('[data-testid="assistant-ai-copy"]').trigger('click');
+    expect(writeText).toHaveBeenCalledWith(rawSuggestion);
+    expect(messageManager.inputMessage).toBe(rawSuggestion);
+
+    await wrapper.find('[data-testid="assistant-ai-send"]').trigger('click');
+    expect(wrapper.emitted('send')?.[0]).toEqual([rawSuggestion]);
   });
 });
