@@ -206,4 +206,32 @@ describe('copilotProject service', () => {
       );
     });
   });
+
+  describe('supportsMultiAgents', () => {
+    it('returns true when the project supports multi-agents', async () => {
+      http.get.mockResolvedValue({ data: { multi_agents: true } });
+
+      await expect(
+        CopilotProjectService.supportsMultiAgents('desk-uuid'),
+      ).resolves.toBe(true);
+
+      expect(http.get).toHaveBeenCalledWith('/multi-agents/desk-uuid/');
+    });
+
+    it('returns false when the project does not support multi-agents', async () => {
+      http.get.mockResolvedValue({ data: { multi_agents: false } });
+
+      await expect(
+        CopilotProjectService.supportsMultiAgents('desk-uuid'),
+      ).resolves.toBe(false);
+    });
+
+    it('returns false when multi_agents is missing from the payload', async () => {
+      http.get.mockResolvedValue({ data: {} });
+
+      await expect(
+        CopilotProjectService.supportsMultiAgents('desk-uuid'),
+      ).resolves.toBe(false);
+    });
+  });
 });

@@ -10,16 +10,22 @@ const linkedProject = ref<CopilotProject | null>(null);
 const isLoading = ref(true);
 const canCreateProject = ref(false);
 const isLoadingCanCreate = ref(true);
+const supportsMultiAgents = ref(true);
+const isLoadingMultiAgents = ref(true);
 let fetchPromise: Promise<void> | null = null;
 let canCreatePromise: Promise<void> | null = null;
+let multiAgentsPromise: Promise<void> | null = null;
 
 export function resetCopilotProjectState() {
   linkedProject.value = null;
   isLoading.value = true;
   canCreateProject.value = false;
   isLoadingCanCreate.value = true;
+  supportsMultiAgents.value = true;
+  isLoadingMultiAgents.value = true;
   fetchPromise = null;
   canCreatePromise = null;
+  multiAgentsPromise = null;
 }
 
 export function useCopilotProject() {
@@ -147,6 +153,34 @@ export function useCopilotProject() {
     return canCreatePromise;
   }
 
+  async function fetchMultiAgents(force = false) {
+    const projectUuid = project.value?.uuid;
+
+    if (!projectUuid) {
+      supportsMultiAgents.value = true;
+      isLoadingMultiAgents.value = false;
+      return;
+    }
+
+    if (multiAgentsPromise !== null && !force) {
+      return multiAgentsPromise;
+    }
+
+    isLoadingMultiAgents.value = true;
+    multiAgentsPromise = (async () => {
+      try {
+        supportsMultiAgents.value =
+          await CopilotProjectService.supportsMultiAgents(projectUuid);
+      } catch {
+        supportsMultiAgents.value = true;
+      } finally {
+        isLoadingMultiAgents.value = false;
+      }
+    })();
+
+    return multiAgentsPromise;
+  }
+
   const isLinked = computed(() => !!linkedProject.value);
   const isConnected = computed(() => !!linkedProject.value?.isConnected);
   const showNewBadge = computed(() => !isConnected.value);
@@ -159,12 +193,15 @@ export function useCopilotProject() {
     isLoading,
     canCreateProject,
     isLoadingCanCreate,
+    supportsMultiAgents,
+    isLoadingMultiAgents,
     isCreateDisabled,
     isLinked,
     isConnected,
     showNewBadge,
     fetchLinkedProject,
     fetchCanCreate,
+    fetchMultiAgents,
     setLinkedProject,
     createProject,
     reconnectLinkedProject,
