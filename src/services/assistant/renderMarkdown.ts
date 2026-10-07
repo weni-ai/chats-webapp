@@ -5,13 +5,27 @@ const STREAMING_CARET =
   '<span class="ai-message__caret" data-testid="assistant-ai-caret"></span>';
 const TEXT_CONTAINER_CLOSE = /<\/(p|li|h[1-6]|td|th|dd|code)>/gi;
 
-function renderLink(token: string | { href?: string; text?: string }): string {
-  if (typeof token === 'string' && token.includes('mailto:')) {
-    return token.replace('mailto:', '');
+function isMailto(value: string | undefined): boolean {
+  return typeof value === 'string' && value.includes('mailto:');
+}
+
+export function renderLink(
+  token: string | { href?: string; text?: string },
+): string {
+  if (typeof token === 'string') {
+    if (isMailto(token)) {
+      return token.replace('mailto:', '');
+    }
+
+    return `<a target="_blank" rel="noopener noreferrer" href="${token}">${token}</a>`;
   }
 
-  const href = typeof token === 'string' ? token : token.href || String(token);
-  const text = typeof token === 'string' ? token : token.text || String(token);
+  if (isMailto(token.href)) {
+    return token.text || token.href?.replace('mailto:', '') || '';
+  }
+
+  const href = token.href || '';
+  const text = token.text || href;
 
   return `<a target="_blank" rel="noopener noreferrer" href="${href}">${text}</a>`;
 }
@@ -30,7 +44,7 @@ export function appendStreamingCaret(html: string): string {
   if (!html) return STREAMING_CARET;
 
   const matches = [...html.matchAll(TEXT_CONTAINER_CLOSE)];
-  const last = matches[matches.length - 1];
+  const last = matches.at(-1);
   if (!last) return `${html}${STREAMING_CARET}`;
 
   const index = last.index;
