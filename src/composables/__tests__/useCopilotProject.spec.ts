@@ -12,6 +12,7 @@ vi.mock('@/services/api/resources/chats/copilotProject', () => ({
   default: {
     getLinkedProject: vi.fn(),
     canCreate: vi.fn(),
+    supportsMultiAgents: vi.fn(),
     create: vi.fn(),
     reconnect: vi.fn(),
     remove: vi.fn(),
@@ -280,5 +281,92 @@ describe('useCopilotProject', () => {
 
     expect(canCreateProject.value).toBe(false);
     expect(isCreateDisabled.value).toBe(true);
+  });
+
+  it('loads multi-agents support from the API', async () => {
+    CopilotProjectService.supportsMultiAgents.mockResolvedValue(false);
+
+    const { fetchMultiAgents, supportsMultiAgents, isLoadingMultiAgents } =
+      useCopilotProject();
+
+    await fetchMultiAgents(true);
+
+    expect(CopilotProjectService.supportsMultiAgents).toHaveBeenCalledWith(
+      'desk-uuid',
+    );
+    expect(supportsMultiAgents.value).toBe(false);
+    expect(isLoadingMultiAgents.value).toBe(false);
+  });
+
+  it('treats a multi-agents request error as supported', async () => {
+    CopilotProjectService.supportsMultiAgents.mockRejectedValue(
+      new Error('network'),
+    );
+
+    const { fetchMultiAgents, supportsMultiAgents, isLoadingMultiAgents } =
+      useCopilotProject();
+
+    await fetchMultiAgents(true);
+
+    expect(supportsMultiAgents.value).toBe(true);
+    expect(isLoadingMultiAgents.value).toBe(false);
+  });
+
+  it('keeps multi-agents as supported when the project uuid is missing', async () => {
+    const configStore = useConfig();
+    configStore.project = {
+      uuid: '',
+      name: '',
+      config: {},
+    };
+
+    const { fetchMultiAgents, supportsMultiAgents, isLoadingMultiAgents } =
+      useCopilotProject();
+
+    await fetchMultiAgents(true);
+
+    expect(CopilotProjectService.supportsMultiAgents).not.toHaveBeenCalled();
+    expect(supportsMultiAgents.value).toBe(true);
+    expect(isLoadingMultiAgents.value).toBe(false);
+  });
+
+  it('reuses the in-flight multi-agents request unless forced', async () => {
+    let resolveRequest: (value: boolean) => void = () => undefined;
+    CopilotProjectService.supportsMultiAgents.mockImplementation(
+      () =>
+        new Promise((resolve) => {
+          resolveRequest = resolve;
+        }),
+    );
+
+    const { fetchMultiAgents } = useCopilotProject();
+
+    const first = fetchMultiAgents();
+    const second = fetchMultiAgents();
+    resolveRequest(true);
+    await Promise.all([first, second]);
+
+    expect(CopilotProjectService.supportsMultiAgents).toHaveBeenCalledTimes(1);
+
+    CopilotProjectService.supportsMultiAgents.mockResolvedValue(false);
+    await fetchMultiAgents(true);
+
+    expect(CopilotProjectService.supportsMultiAgents).toHaveBeenCalledTimes(2);
+  });
+
+  it('resets multi-agents state', async () => {
+    CopilotProjectService.supportsMultiAgents.mockResolvedValue(false);
+
+    const { fetchMultiAgents, supportsMultiAgents, isLoadingMultiAgents } =
+      useCopilotProject();
+
+    await fetchMultiAgents(true);
+    expect(supportsMultiAgents.value).toBe(false);
+    expect(isLoadingMultiAgents.value).toBe(false);
+
+    resetCopilotProjectState();
+
+    expect(supportsMultiAgents.value).toBe(true);
+    expect(isLoadingMultiAgents.value).toBe(true);
   });
 });
