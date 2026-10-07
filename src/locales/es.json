@@ -1293,10 +1293,6 @@
         "success": "¡Proyecto Copilot creado y conectado!",
         "title": "Crear proyecto Copilot"
       },
-      "multi_agents_disclaimer": {
-        "description": "Este proyecto no admite múltiples agentes, lo que es necesario para activar Desk Copilot.",
-        "title": "Desk Copilot no está disponible en este proyecto"
-      },
       "new_badge": "Nuevo",
       "no_permission_disclaimer": "Solo los usuarios con permiso de Administrador o Contribuidor pueden activar Desk Copilot. Contacta a uno de estos usuarios de tu equipo para activar la función.",
       "reconnect_modal": {
