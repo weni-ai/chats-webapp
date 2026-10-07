@@ -13,6 +13,7 @@ vi.mock('@/services/api/resources/chats/copilotProject', () => ({
   default: {
     getLinkedProject: vi.fn().mockResolvedValue(null),
     canCreate: vi.fn().mockResolvedValue(true),
+    supportsMultiAgents: vi.fn().mockResolvedValue(true),
     create: vi.fn(),
     reconnect: vi.fn(),
     remove: vi.fn(),
@@ -107,6 +108,7 @@ describe('DeskCopilotSettings', () => {
     vi.clearAllMocks();
     CopilotProjectService.getLinkedProject.mockResolvedValue(null);
     CopilotProjectService.canCreate.mockResolvedValue(true);
+    CopilotProjectService.supportsMultiAgents.mockResolvedValue(true);
   });
 
   it('shows the empty state when no project is linked', async () => {
@@ -256,6 +258,47 @@ describe('DeskCopilotSettings', () => {
     ).toBe(true);
     expect(
       wrapper.find('[data-testid="desk-copilot-connected-card"]').exists(),
+    ).toBe(false);
+  });
+
+  it('shows the multi-agents disclaimer and hides creation for AB1 projects', async () => {
+    CopilotProjectService.supportsMultiAgents.mockResolvedValue(false);
+    CopilotProjectService.canCreate.mockResolvedValue(false);
+    const wrapper = createWrapper();
+    await flush(wrapper);
+
+    expect(CopilotProjectService.supportsMultiAgents).toHaveBeenCalledWith(
+      'desk-uuid',
+    );
+    expect(
+      wrapper
+        .find('[data-testid="desk-copilot-multi-agents-disclaimer"]')
+        .exists(),
+    ).toBe(true);
+    expect(
+      wrapper.find('[data-testid="desk-copilot-empty-state"]').exists(),
+    ).toBe(false);
+    expect(
+      wrapper.find('[data-testid="desk-copilot-no-permission"]').exists(),
+    ).toBe(false);
+  });
+
+  it('keeps the connected card for AB1 projects that already have a linked project', async () => {
+    CopilotProjectService.supportsMultiAgents.mockResolvedValue(false);
+    CopilotProjectService.getLinkedProject.mockResolvedValue(linkedProject);
+    const wrapper = createWrapper();
+    await flush(wrapper);
+
+    expect(
+      wrapper.find('[data-testid="desk-copilot-connected-card"]').exists(),
+    ).toBe(true);
+    expect(
+      wrapper
+        .find('[data-testid="desk-copilot-multi-agents-disclaimer"]')
+        .exists(),
+    ).toBe(false);
+    expect(
+      wrapper.find('[data-testid="desk-copilot-empty-state"]').exists(),
     ).toBe(false);
   });
 });
