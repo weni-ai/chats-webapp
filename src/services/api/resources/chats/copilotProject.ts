@@ -136,4 +136,16 @@ export default {
 
     return response.data?.can_create === true;
   },
+
+  async supportsMultiAgents(projectUuid: string): Promise<boolean> {
+    if (IS_MOCKED) {
+      return true;
+    }
+
+    const response = await http.get<{ multi_agents?: boolean }>(
+      `/multi-agents/${projectUuid}/`,
+    );
+
+    return response.data?.multi_agents === true;
+  },
 };
