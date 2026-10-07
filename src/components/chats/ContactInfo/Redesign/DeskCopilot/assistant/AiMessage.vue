@@ -89,7 +89,7 @@
 
         <p
           v-if="trailingText"
-          class="ai-message__leading"
+          class="ai-message__trailing"
           data-testid="assistant-ai-trailing"
         >
           {{ trailingText }}
@@ -557,7 +557,8 @@ async function handleSubmitFeedback({
     min-width: 0;
   }
 
-  &__leading {
+  &__leading,
+  &__trailing {
     font: $unnnic-font-emphasis;
     color: $unnnic-color-fg-emphasized;
     overflow-wrap: anywhere;
