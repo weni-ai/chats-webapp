@@ -295,6 +295,12 @@ export default {
       return hasTemplateVariables(this.cachedTemplate?.templates ?? []);
     },
 
+    hasRecipients() {
+      const hasSelectedContact =
+        this.selectedContact && Object.keys(this.selectedContact).length > 0;
+      return hasSelectedContact || this.selected.length > 0;
+    },
+
     contactsForResolution() {
       if (
         this.selectedContact &&
@@ -400,7 +406,10 @@ export default {
     updateCachedTemplate(cachedTemplate) {
       this.cachedTemplate = cachedTemplate;
 
-      if (hasTemplateVariables(cachedTemplate?.templates ?? [])) {
+      if (
+        hasTemplateVariables(cachedTemplate?.templates ?? []) &&
+        this.hasRecipients
+      ) {
         this.inlineTemplate = cachedTemplate;
         this.showInlineVariableModal = true;
         return;
@@ -553,7 +562,11 @@ export default {
     },
 
     async sendFlowToContacts() {
-      if (this.hasCachedTemplateVariables) return;
+      if (this.hasCachedTemplateVariables) {
+        this.inlineTemplate = this.cachedTemplate;
+        this.showInlineVariableModal = true;
+        return;
+      }
 
       await this.doSendFlowToContacts();
     },

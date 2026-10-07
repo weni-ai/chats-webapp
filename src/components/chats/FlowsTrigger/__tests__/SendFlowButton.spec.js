@@ -99,9 +99,22 @@ describe('SendFlowButton', () => {
     expect(button.attributes('disabled')).toBeUndefined();
   });
 
-  it('disables the button when the selected flow has template variables', async () => {
+  it('does not disable the button for template variables when there are no contacts', async () => {
     await wrapper.setProps({
       selectedFlow: 'flow-uuid',
+      selectedContact: null,
+      contacts: [],
+      cachedTemplate: cachedTemplateWithVariables,
+    });
+
+    const button = wrapper.find('[data-testid="send-flow-button"]');
+    expect(button.attributes('disabled')).toBeUndefined();
+  });
+
+  it('disables the button when there are contacts and the selected flow has template variables', async () => {
+    await wrapper.setProps({
+      selectedFlow: 'flow-uuid',
+      contacts: [{ external_id: 'contact-1', name: 'Contact 1' }],
       cachedTemplate: cachedTemplateWithVariables,
     });
 
@@ -196,28 +209,21 @@ describe('SendFlowButton', () => {
     });
   });
 
-  it('bypasses template check and sends directly when isProjectPrincipal=true', async () => {
+  it('continues to the contact list when there are no contacts even if the template has variables', async () => {
     FlowsTrigger.sendFlow.mockResolvedValue({});
 
     await wrapper.setProps({
       selectedFlow: 'flow-uuid',
-      contacts: [{ external_id: 'contact-1', name: 'Contact 1' }],
-      isProjectPrincipal: true,
-      projectUuidFlow: 'project-uuid',
+      selectedContact: null,
+      contacts: [],
       cachedTemplate: cachedTemplateWithVariables,
     });
 
     await wrapper.find('[data-testid="send-flow-button"]').trigger('click');
     await new Promise((resolve) => setTimeout(resolve, 0));
 
-    expect(FlowsTrigger.getFlowTemplates).not.toHaveBeenCalled();
-    expect(FlowsTrigger.sendFlow).toHaveBeenCalledWith(
-      expect.objectContaining({
-        flow: 'flow-uuid',
-        contacts: ['contact-1'],
-      }),
-      'project-uuid',
-    );
+    expect(wrapper.emitted('back-to-contact-list')).toHaveLength(1);
+    expect(FlowsTrigger.sendFlow).not.toHaveBeenCalled();
   });
 
   it('sends with params when doSendFlow is called directly', async () => {

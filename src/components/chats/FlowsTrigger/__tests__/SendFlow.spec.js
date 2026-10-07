@@ -1,4 +1,4 @@
-import { mount, config } from '@vue/test-utils';
+import { mount, config, flushPromises } from '@vue/test-utils';
 import {
   expect,
   describe,
@@ -15,9 +15,7 @@ import SendFlowButton from '../SendFlowButton.vue';
 import callUnnnicAlert from '@/utils/callUnnnicAlert';
 import FlowsTrigger from '@/services/api/resources/chats/flowsTrigger';
 
-import {
-  createFlowsTriggerPinia,
-} from './testHelpers';
+import { createFlowsTriggerPinia } from './testHelpers';
 
 vi.mock('@/utils/callUnnnicAlert');
 
@@ -143,15 +141,28 @@ describe('SendFlow', () => {
   });
 
   describe('template check on flow selection', () => {
-    it('does not check templates when isProjectPrincipal=true', async () => {
+    it('checks templates with projectUuidFlow when isProjectPrincipal=true', async () => {
+      FlowsTrigger.getFlowTemplates.mockResolvedValueOnce(
+        templatesWithVariablesResponse,
+      );
+
       await wrapper.setProps({ isProjectPrincipal: true });
+      wrapper.vm.projectUuidFlow = 'sub-project-uuid';
+      await flushPromises();
+
       await wrapper
         .findComponent('[data-testid="select-flow"]')
         .vm.$emit('update:modelValue', 'flow-1');
-      await new Promise((resolve) => setTimeout(resolve, 0));
+      await flushPromises();
 
-      expect(FlowsTrigger.getFlowTemplates).not.toHaveBeenCalled();
-      expect(wrapper.vm.cachedTemplate).toBe(null);
+      expect(FlowsTrigger.getFlowTemplates).toHaveBeenCalledWith(
+        'flow-1',
+        'sub-project-uuid',
+      );
+      expect(wrapper.vm.cachedTemplate).toEqual({
+        templates: templatesWithVariablesResponse.templates,
+        total_template_qty: templatesWithVariablesResponse.total_template_qty,
+      });
     });
 
     it('caches the template when the selected flow has variables', async () => {

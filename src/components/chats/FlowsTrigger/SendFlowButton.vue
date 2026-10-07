@@ -40,10 +40,6 @@ export default {
       type: String,
       required: true,
     },
-    isProjectPrincipal: {
-      type: Boolean,
-      default: false,
-    },
     projectUuidFlow: {
       type: String,
       default: '',
@@ -87,9 +83,7 @@ export default {
       return !this.selectedContact && this.contacts.length === 0;
     },
     hasTemplateVariables() {
-      if (this.isProjectPrincipal) {
-        return false;
-      }
+      if (this.noHasContacts) return false;
 
       return hasTemplateVariables(this.cachedTemplate?.templates ?? []);
     },

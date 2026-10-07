@@ -78,6 +78,17 @@ const createWrapper = (props = {}) => {
 describe('AssistantAiMessage', () => {
   let wrapper;
 
+  const suggestedReply =
+    'A loja 1 fica na Avenida Brigadeiro Faria Lima, 4440, em São Paulo, SP, CEP 04538-132. Vou seguir com seu atendimento por aqui.';
+  const suggestedReplyLeading =
+    '**Endereço da loja 1:** Loja Faria Lima, 4440 Avenida Brigadeiro Faria Lima, São Paulo, SP - 04538-132. Fonte: base de conhecimento do projeto. Não há ferramenta de transferência disponível nesta sessão. Como o atendimento já está com um representante humano, você pode assumir a conversa e responder:';
+  const suggestedReplyText = [
+    suggestedReplyLeading,
+    '```suggested-reply',
+    suggestedReply,
+    '```',
+  ].join('\n');
+
   beforeEach(() => {
     setActivePinia(createPinia());
   });
@@ -384,5 +395,95 @@ describe('AssistantAiMessage', () => {
     expect(
       wrapper.findComponent({ name: 'AiFeedbackModal' }).props('modelValue'),
     ).toBe(false);
+  });
+
+  it('renders the suggested-reply block in the card and leading text outside', () => {
+    wrapper = createWrapper({
+      text: suggestedReplyText,
+      suggestion: undefined,
+    });
+
+    expect(wrapper.find('[data-testid="assistant-ai-leading"]').text()).toBe(
+      suggestedReplyLeading,
+    );
+    expect(wrapper.find('[data-testid="assistant-ai-suggestion"]').text()).toBe(
+      suggestedReply,
+    );
+    expect(wrapper.find('[data-testid="assistant-ai-trailing"]').exists()).toBe(
+      false,
+    );
+  });
+
+  it('copies and sends only the suggested-reply content', async () => {
+    const writeText = vi.fn().mockResolvedValue(undefined);
+    Object.defineProperty(navigator, 'clipboard', {
+      configurable: true,
+      value: { writeText },
+    });
+
+    const messageManager = useMessageManager();
+    wrapper = createWrapper({
+      text: suggestedReplyText,
+      suggestion: undefined,
+    });
+
+    await wrapper.find('[data-testid="assistant-ai-copy"]').trigger('click');
+    expect(writeText).toHaveBeenCalledWith(suggestedReply);
+    expect(messageManager.inputMessage).toBe(suggestedReply);
+
+    await wrapper.find('[data-testid="assistant-ai-send"]').trigger('click');
+    expect(wrapper.emitted('send')?.[0]).toEqual([suggestedReply]);
+  });
+
+  it('copies the full text when there is no suggested-reply block', async () => {
+    const writeText = vi.fn().mockResolvedValue(undefined);
+    Object.defineProperty(navigator, 'clipboard', {
+      configurable: true,
+      value: { writeText },
+    });
+
+    const messageManager = useMessageManager();
+    wrapper = createWrapper({
+      text: 'Only text reply',
+      suggestion: undefined,
+    });
+
+    await wrapper.find('[data-testid="assistant-ai-copy"]').trigger('click');
+    expect(writeText).toHaveBeenCalledWith('Only text reply');
+    expect(messageManager.inputMessage).toBe('Only text reply');
+  });
+
+  it('prefers metadata suggestion over a suggested-reply block', async () => {
+    wrapper = createWrapper({
+      text: suggestedReplyText,
+      suggestion: 'Metadata suggestion',
+    });
+
+    expect(wrapper.find('[data-testid="assistant-ai-leading"]').text()).toBe(
+      suggestedReplyText,
+    );
+    expect(wrapper.find('[data-testid="assistant-ai-suggestion"]').text()).toBe(
+      'Metadata suggestion',
+    );
+
+    await wrapper.find('[data-testid="assistant-ai-send"]').trigger('click');
+    expect(wrapper.emitted('send')?.[0]).toEqual(['Metadata suggestion']);
+  });
+
+  it('renders trailing text after the suggested-reply card', () => {
+    wrapper = createWrapper({
+      text: 'Before.\n```suggested-reply\nReply body\n```\nAfter.',
+      suggestion: undefined,
+    });
+
+    expect(wrapper.find('[data-testid="assistant-ai-leading"]').text()).toBe(
+      'Before.',
+    );
+    expect(wrapper.find('[data-testid="assistant-ai-suggestion"]').text()).toBe(
+      'Reply body',
+    );
+    expect(wrapper.find('[data-testid="assistant-ai-trailing"]').text()).toBe(
+      'After.',
+    );
   });
 });

@@ -7,6 +7,7 @@ import {
   type Ref,
 } from 'vue';
 import type { AssistantMessage } from '@/services/assistant/types';
+import { stripSuggestedReplyFences } from '@/services/assistant/parseSuggestedReply';
 import { VoiceService } from '@/services/voice';
 
 type VoiceErrorLike = {
@@ -168,7 +169,9 @@ export function useVoiceMode({
         return;
       }
 
-      const fullText = lastAiMessage.suggestion || lastAiMessage.text || '';
+      const fullText = stripSuggestedReplyFences(
+        lastAiMessage.suggestion || lastAiMessage.text || '',
+      );
       if (!fullText) {
         return;
       }
