@@ -900,7 +900,8 @@
         "sended": "Feedbackul tău a fost trimis.",
         "title": "Ce trebuie îmbunătățit?"
       },
-      "summary_title": "Rezumatul acestei conversații"
+      "summary_title": "Rezumatul acestei conversații",
+      "view_complete_history": "Vizualizare istoric complet"
     }
   },
   "discussions": {
