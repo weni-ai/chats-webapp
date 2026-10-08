@@ -96,7 +96,6 @@ function openHistory() {
   min-height: 0;
   min-width: 0;
   overflow: hidden auto;
-  padding-bottom: $unnnic-space-2;
 
   &__view-button {
     width: 100%;
