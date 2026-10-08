@@ -31,13 +31,13 @@
       />
 
       <template v-else>
-        <p
+        <!-- eslint-disable vue/no-v-html -->
+        <section
           v-if="leadingText"
-          class="ai-message__leading"
+          class="ai-message__leading ai-message__markdown"
           data-testid="assistant-ai-leading"
-        >
-          {{ leadingText }}
-        </p>
+          v-html="leadingHtml"
+        />
 
         <section
           v-if="suggestionText || isStreamingOrBuffering || hasProductCatalog"
@@ -47,17 +47,11 @@
           }"
           data-testid="assistant-ai-suggestion"
         >
-          <p
+          <section
             v-if="suggestionText || isStreamingOrBuffering"
-            class="ai-message__suggestion-text"
-          >
-            {{ displayedSuggestionText
-            }}<span
-              v-if="isStreamingOrBuffering"
-              class="ai-message__caret"
-              data-testid="assistant-ai-caret"
-            />
-          </p>
+            class="ai-message__suggestion-text ai-message__markdown"
+            v-html="suggestionHtml"
+          />
 
           <ProductCarousel
             v-if="hasProductCarousel && !isStreamingOrBuffering"
@@ -87,13 +81,13 @@
           />
         </section>
 
-        <p
+        <section
           v-if="trailingText"
-          class="ai-message__trailing"
+          class="ai-message__trailing ai-message__markdown"
           data-testid="assistant-ai-trailing"
-        >
-          {{ trailingText }}
-        </p>
+          v-html="trailingHtml"
+        />
+        <!-- eslint-enable vue/no-v-html -->
 
         <section
           v-if="showActions && !readOnly"
@@ -180,6 +174,10 @@ import {
   parseSuggestedReply,
   stripSuggestedReplyFences,
 } from '@/services/assistant/parseSuggestedReply';
+import {
+  appendStreamingCaret,
+  renderMarkdown,
+} from '@/services/assistant/renderMarkdown';
 import i18n from '@/plugins/i18n';
 import CopilotFeedback from '@/services/api/resources/chats/copilotFeedback';
 import type {
@@ -386,6 +384,31 @@ const suggestionText = computed(() => {
 
 const displayedSuggestionText = computed(() => suggestionText.value);
 
+const leadingHtml = computed(() => {
+  if (!leadingText.value) {
+    return '';
+  }
+
+  return renderMarkdown(leadingText.value);
+});
+
+const trailingHtml = computed(() => {
+  if (!trailingText.value) {
+    return '';
+  }
+
+  return renderMarkdown(trailingText.value);
+});
+
+const suggestionHtml = computed(() => {
+  if (!displayedSuggestionText.value && !isStreamingOrBuffering.value) {
+    return '';
+  }
+
+  const html = renderMarkdown(displayedSuggestionText.value);
+  return isStreamingOrBuffering.value ? appendStreamingCaret(html) : html;
+});
+
 const sendText = computed(() => {
   if (hasProductCatalog.value) {
     return sourceText.value;
@@ -564,6 +587,39 @@ async function handleSubmitFeedback({
     overflow-wrap: anywhere;
   }
 
+  &__markdown {
+    :deep(p) {
+      margin: $unnnic-space-2 0;
+
+      &:first-child {
+        margin-top: 0;
+      }
+
+      &:last-child {
+        margin-bottom: 0;
+      }
+    }
+
+    :deep(a) {
+      color: inherit;
+      text-decoration: underline;
+
+      &:hover {
+        opacity: 0.8;
+      }
+    }
+
+    :deep(ul),
+    :deep(ol) {
+      margin: $unnnic-space-2 0;
+      padding-left: $unnnic-space-6;
+    }
+
+    :deep(li) {
+      margin: $unnnic-space-1 0;
+    }
+  }
+
   &__suggestion {
     display: flex;
     flex-direction: column;
@@ -593,7 +649,7 @@ async function handleSubmitFeedback({
     overflow-wrap: anywhere;
   }
 
-  &__caret {
+  :deep(.ai-message__caret) {
     display: inline-block;
     width: 1px;
     height: 1.2em;
