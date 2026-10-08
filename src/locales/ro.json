@@ -1065,7 +1065,8 @@
         "agent_name": "Numele reprezentantului",
         "agent_email": "E-mail reprezentant"
       }
-    }
+    },
+    "select_queue": "Filtrează după coadă (opțional)"
   },
   "quick_messages": {
     "title": "Mesaje rapide",

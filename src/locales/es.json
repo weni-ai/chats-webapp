@@ -1096,7 +1096,8 @@
         "agent_name": "Nombre del representante",
         "agent_email": "Email del representante"
       }
-    }
+    },
+    "select_queue": "Filtrar por cola (opcional)"
   },
   "quick_messages": {
     "title": "Mensajes rápidos",
