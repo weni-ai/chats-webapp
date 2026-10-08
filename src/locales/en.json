@@ -928,7 +928,8 @@
         "sended": "Your feedback has been submitted.",
         "title": "What needs to be improved?"
       },
-      "summary_title": "Summary of this conversation"
+      "summary_title": "Summary of this conversation",
+      "view_complete_history": "View complete history"
     }
   },
   "discussions": {
