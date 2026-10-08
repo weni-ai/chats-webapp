@@ -72,9 +72,11 @@ function mockCopilotConnection({
   isConfigured = false,
   isLoading = false,
   connection = undefined,
+  originProjectUuid = 'origin-project',
 } = {}) {
   useCopilotConnection.mockReturnValue({
     connection: ref(connection),
+    originProjectUuid: computed(() => originProjectUuid),
     isConfigured: computed(() => isConfigured),
     isLoading: ref(isLoading),
     reload: vi.fn(),
@@ -128,6 +130,8 @@ const createWrapper = (props = {}, piniaState = {}) =>
             rooms: {
               activeRoom: {
                 uuid: 'room-1',
+                created_on: '2026-02-01T12:00:00Z',
+                ended_at: '2026-02-11T15:00:00Z',
                 user: { email: 'agent@example.com' },
                 is_waiting: false,
                 queue: { sector: 'sector-1' },
@@ -219,9 +223,10 @@ const createWrapper = (props = {}, piniaState = {}) =>
           props: [
             'isConfigured',
             'isLoadingConnection',
-            'roomUuid',
+            'room',
             'enableRoomSummary',
             'isViewMode',
+            'originProjectUuid',
           ],
         },
         UnnnicButton: {
@@ -416,7 +421,12 @@ describe('DeskCopilotTab', () => {
       name: 'DeskCopilotHistoryView',
     });
     expect(historyView.props('isConfigured')).toBe(true);
-    expect(historyView.props('roomUuid')).toBe('room-1');
+    expect(historyView.props('room')).toMatchObject({
+      uuid: 'room-1',
+      created_on: '2026-02-01T12:00:00Z',
+      ended_at: '2026-02-11T15:00:00Z',
+    });
+    expect(historyView.props('originProjectUuid')).toBe('origin-project');
     expect(historyView.props('enableRoomSummary')).toBe(true);
 
     const [, roomUuidArg] = useCopilotChat.mock.calls[0];

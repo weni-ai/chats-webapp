@@ -7,7 +7,7 @@
       v-if="isHistory"
       :isConfigured="isConfigured"
       :isLoadingConnection="isLoadingConnection"
-      :roomUuid="roomUuid"
+      :room="activeRoom"
       :enableRoomSummary="enableRoomSummary"
       :isViewMode="isViewMode"
       :originProjectUuid="originProjectUuid"

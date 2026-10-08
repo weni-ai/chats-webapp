@@ -7,15 +7,19 @@ import {
   afterAll,
   vi,
 } from 'vitest';
-import { ref } from 'vue';
+import { computed, ref } from 'vue';
 import { mount, config, flushPromises } from '@vue/test-utils';
 import { createTestingPinia } from '@pinia/testing';
 import DeskCopilotHistoryView from '../DeskCopilotHistoryView.vue';
-import { useCopilotHistory } from '@/composables/assistant/useCopilotHistory';
+import { useCopilotConversationUrl } from '@/composables/assistant/useCopilotConversationUrl';
 import i18n from '@/plugins/i18n';
 
-vi.mock('@/composables/assistant/useCopilotHistory', () => ({
-  useCopilotHistory: vi.fn(),
+vi.mock('@/composables/assistant/useCopilotConversationUrl', () => ({
+  useCopilotConversationUrl: vi.fn(),
+}));
+
+vi.mock('@/utils/hostBridge', () => ({
+  emitToHost: vi.fn(),
 }));
 
 beforeAll(() => {
@@ -30,21 +34,31 @@ afterAll(() => {
   }
 });
 
-function mockCopilotHistory({ messages = [], isLoading = false } = {}) {
-  useCopilotHistory.mockReturnValue({
-    messages: ref(messages),
+const historyUrl =
+  'https://dash.weni.ai/projects/copilot-project/ai-conversations/conversations?search=room-1&start=2026-02-01&end=2026-02-11';
+
+function mockConversationUrl({ url = undefined, isLoading = false } = {}) {
+  useCopilotConversationUrl.mockReturnValue({
+    url: computed(() => url),
     isLoading: ref(isLoading),
-    hasMore: ref(false),
-    error: ref(null),
-    loadMore: vi.fn(),
-    reload: vi.fn(),
   });
 }
 
-const createWrapper = (props = {}) =>
+const defaultRoom = {
+  uuid: 'room-1',
+  created_on: '2026-02-01T12:00:00Z',
+  ended_at: '2026-02-11T15:00:00Z',
+};
+
+const createWrapper = ({
+  props = {},
+  projectPermissionRole = 1,
+  stubDisclaimer = true,
+} = {}) =>
   mount(DeskCopilotHistoryView, {
     props: {
-      roomUuid: 'room-1',
+      room: defaultRoom,
+      originProjectUuid: 'origin-project',
       ...props,
     },
     global: {
@@ -53,12 +67,21 @@ const createWrapper = (props = {}) =>
           createSpy: vi.fn,
           initialState: {
             rooms: {
-              activeRoom: { uuid: 'room-1' },
+              activeRoom: defaultRoom,
               roomsSummary: {},
               isLoadingActiveRoomSummary: false,
             },
             profile: {
-              me: { email: 'agent@example.com', project_permission_role: 1 },
+              me: {
+                email: 'agent@example.com',
+                project_permission_role: projectPermissionRole,
+              },
+            },
+            config: {
+              project: {
+                uuid: 'current-project',
+                config: {},
+              },
             },
           },
         }),
@@ -72,16 +95,22 @@ const createWrapper = (props = {}) =>
           template: '<div data-testid="desk-copilot-summary" />',
           props: ['readOnly'],
         },
-        AssistantMessageList: {
-          name: 'AssistantMessageList',
+        ...(stubDisclaimer
+          ? {
+              Disclaimer: {
+                name: 'DeskCopilotDisclaimer',
+                template: '<div data-testid="desk-copilot-disclaimer" />',
+                props: ['hasSummary', 'isViewMode', 'originProjectUuid'],
+              },
+            }
+          : {}),
+        UnnnicIcon: true,
+        UnnnicButton: {
+          name: 'UnnnicButton',
+          inheritAttrs: false,
+          props: ['text', 'loading', 'disabled', 'type', 'size', 'iconLeft'],
           template:
-            '<div data-testid="assistant-message-list"><div v-if="isLoadingHistory" data-testid="assistant-history-loading" /></div>',
-          props: ['messages', 'isLoadingHistory', 'readOnly', 'roomUuid'],
-        },
-        Disclaimer: {
-          name: 'DeskCopilotDisclaimer',
-          template: '<div data-testid="desk-copilot-disclaimer" />',
-          props: ['hasSummary', 'isViewMode', 'originProjectUuid'],
+            '<button class="unnnic-button" :data-testid="$attrs[\'data-testid\']" :disabled="disabled" @click="$emit(\'click\')"><slot />{{ text }}</button>',
         },
       },
     },
@@ -93,13 +122,16 @@ describe('DeskCopilotHistoryView', () => {
   afterEach(() => {
     wrapper?.unmount();
     vi.clearAllMocks();
+    vi.restoreAllMocks();
   });
 
-  it('renders summary and disclaimer when copilot is not configured', async () => {
-    mockCopilotHistory();
+  it('renders a read-only summary and disclaimer when copilot is not configured', async () => {
+    mockConversationUrl();
     wrapper = createWrapper({
-      isConfigured: false,
-      enableRoomSummary: true,
+      props: {
+        isConfigured: false,
+        enableRoomSummary: true,
+      },
     });
 
     await flushPromises();
@@ -114,7 +146,7 @@ describe('DeskCopilotHistoryView', () => {
       wrapper.find('[data-testid="desk-copilot-disclaimer"]').exists(),
     ).toBe(true);
     expect(
-      wrapper.find('[data-testid="assistant-message-list"]').exists(),
+      wrapper.find('[data-testid="desk-copilot-view-history-button"]').exists(),
     ).toBe(false);
 
     const summary = wrapper.findComponent({
@@ -123,22 +155,13 @@ describe('DeskCopilotHistoryView', () => {
     expect(summary.props('readOnly')).toBe(true);
   });
 
-  it('renders read-only message list when copilot is configured', async () => {
-    mockCopilotHistory({
-      messages: [
-        {
-          id: '1',
-          direction: 'human',
-          text: 'Hello',
-          quickReplies: [],
-          status: 'sent',
-          timestamp: 1,
-        },
-      ],
-    });
+  it('shows the view complete history button when copilot is configured', async () => {
+    mockConversationUrl({ url: historyUrl });
     wrapper = createWrapper({
-      isConfigured: true,
-      enableRoomSummary: true,
+      props: {
+        isConfigured: true,
+        enableRoomSummary: true,
+      },
     });
 
     await flushPromises();
@@ -146,30 +169,75 @@ describe('DeskCopilotHistoryView', () => {
     expect(
       wrapper.find('[data-testid="desk-copilot-disclaimer"]').exists(),
     ).toBe(false);
+    expect(wrapper.find('[data-testid="desk-copilot-summary"]').exists()).toBe(
+      true,
+    );
 
-    const list = wrapper.findComponent({ name: 'AssistantMessageList' });
-    expect(list.exists()).toBe(true);
-    expect(list.props('readOnly')).toBe(true);
-    expect(list.props('roomUuid')).toBe('room-1');
-    expect(list.props('messages')).toHaveLength(1);
+    const button = wrapper.findComponent({ name: 'UnnnicButton' });
+    expect(button.exists()).toBe(true);
+    expect(button.props('text')).toBe(
+      'contact_info.desk_copilot.view_complete_history',
+    );
+    expect(button.props('disabled')).toBe(false);
+    expect(button.props('iconLeft')).toBe('arrow_outward');
   });
 
-  it('shows loading state while history is fetching', async () => {
-    mockCopilotHistory({ isLoading: true });
-    wrapper = createWrapper({ isConfigured: true });
+  it('opens the conversations URL in a new tab', async () => {
+    const windowOpen = vi.spyOn(window, 'open').mockImplementation(() => null);
+    mockConversationUrl({ url: historyUrl });
+    wrapper = createWrapper({
+      props: { isConfigured: true },
+    });
+
+    await flushPromises();
+    await wrapper
+      .find('[data-testid="desk-copilot-view-history-button"]')
+      .trigger('click');
+
+    expect(windowOpen).toHaveBeenCalledWith(
+      historyUrl,
+      '_blank',
+      'noopener,noreferrer',
+    );
+  });
+
+  it('disables the button while the conversations URL is loading', async () => {
+    mockConversationUrl({ isLoading: true });
+    wrapper = createWrapper({
+      props: { isConfigured: true },
+    });
+
+    await flushPromises();
+
+    const button = wrapper.findComponent({ name: 'UnnnicButton' });
+    expect(button.exists()).toBe(true);
+    expect(button.props('loading')).toBe(true);
+    expect(button.props('disabled')).toBe(true);
+  });
+
+  it('hides the button when configured but no URL can be built', async () => {
+    mockConversationUrl({ url: undefined, isLoading: false });
+    wrapper = createWrapper({
+      props: { isConfigured: true },
+    });
 
     await flushPromises();
 
     expect(
-      wrapper.find('[data-testid="assistant-history-loading"]').exists(),
-    ).toBe(true);
+      wrapper.find('[data-testid="desk-copilot-view-history-button"]').exists(),
+    ).toBe(false);
+    expect(
+      wrapper.find('[data-testid="desk-copilot-disclaimer"]').exists(),
+    ).toBe(false);
   });
 
   it('hides disclaimer while connection is still loading', async () => {
-    mockCopilotHistory();
+    mockConversationUrl();
     wrapper = createWrapper({
-      isConfigured: false,
-      isLoadingConnection: true,
+      props: {
+        isConfigured: false,
+        isLoadingConnection: true,
+      },
     });
 
     await flushPromises();
@@ -179,14 +247,59 @@ describe('DeskCopilotHistoryView', () => {
     ).toBe(false);
   });
 
-  it('passes roomUuid to useCopilotHistory', async () => {
-    mockCopilotHistory();
-    wrapper = createWrapper({ roomUuid: 'room-history-1' });
+  it('passes origin project and room to the conversations URL composable', async () => {
+    mockConversationUrl({ url: historyUrl });
+    wrapper = createWrapper({
+      props: {
+        isConfigured: true,
+        originProjectUuid: 'origin-2',
+        room: defaultRoom,
+      },
+    });
 
     await flushPromises();
 
-    expect(useCopilotHistory).toHaveBeenCalled();
-    const [roomUuidArg] = useCopilotHistory.mock.calls[0];
-    expect(roomUuidArg.value).toBe('room-history-1');
+    expect(useCopilotConversationUrl).toHaveBeenCalled();
+    const [originArg, roomArg, enabledArg] =
+      useCopilotConversationUrl.mock.calls[0];
+    expect(originArg.value).toBe('origin-2');
+    expect(roomArg.value).toEqual(defaultRoom);
+    expect(enabledArg.value).toBe(true);
+  });
+
+  it('shows the enable button for admin users when copilot is not configured', async () => {
+    mockConversationUrl();
+    wrapper = createWrapper({
+      props: {
+        isConfigured: false,
+        enableRoomSummary: true,
+      },
+      projectPermissionRole: 1,
+      stubDisclaimer: false,
+    });
+
+    await flushPromises();
+
+    expect(
+      wrapper.find('[data-testid="desk-copilot-enable-button"]').exists(),
+    ).toBe(true);
+  });
+
+  it('hides the enable button for agent users when copilot is not configured', async () => {
+    mockConversationUrl();
+    wrapper = createWrapper({
+      props: {
+        isConfigured: false,
+        enableRoomSummary: true,
+      },
+      projectPermissionRole: 2,
+      stubDisclaimer: false,
+    });
+
+    await flushPromises();
+
+    expect(
+      wrapper.find('[data-testid="desk-copilot-enable-button"]').exists(),
+    ).toBe(false);
   });
 });
