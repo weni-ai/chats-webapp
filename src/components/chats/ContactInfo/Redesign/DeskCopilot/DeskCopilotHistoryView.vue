@@ -1,6 +1,5 @@
 <template>
   <section
-    ref="listRef"
     class="desk-copilot-history"
     data-testid="desk-copilot-history"
   >
@@ -9,32 +8,37 @@
       :readOnly="true"
     />
 
-    <AssistantMessageList
-      v-if="isConfigured"
-      :messages="messages"
-      :isLoadingHistory="isLoading"
-      :readOnly="true"
-      :roomUuid="roomUuid"
+    <UnnnicButton
+      v-if="showHistoryButton"
+      class="desk-copilot-history__view-button"
+      type="secondary"
+      size="large"
+      iconLeft="arrow_outward"
+      :text="$t('contact_info.desk_copilot.view_complete_history')"
+      :loading="isLoadingUrl"
+      :disabled="!historyUrl"
+      data-testid="desk-copilot-view-history-button"
+      @click="openHistory"
     />
 
     <Disclaimer
-      v-else-if="!isLoadingConnection"
+      v-else-if="!isConfigured && !isLoadingConnection"
       :hasSummary="enableRoomSummary"
       :isViewMode="isViewMode"
       :originProjectUuid="originProjectUuid"
     />
-    <div ref="bottomAnchorRef" />
   </section>
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue';
+import { computed, toRef } from 'vue';
 
-import { useAutoScroll } from '@/composables/assistant/useAutoScroll';
-import { useCopilotHistory } from '@/composables/assistant/useCopilotHistory';
+import {
+  useCopilotConversationUrl,
+  type CopilotConversationRoom,
+} from '@/composables/assistant/useCopilotConversationUrl';
 import SummaryMessage from './SummaryMessage.vue';
 import Disclaimer from './Disclaimer.vue';
-import AssistantMessageList from './assistant/AssistantMessageList.vue';
 
 defineOptions({
   name: 'DeskCopilotHistoryView',
@@ -44,7 +48,7 @@ const props = withDefaults(
   defineProps<{
     isConfigured?: boolean;
     isLoadingConnection?: boolean;
-    roomUuid?: string;
+    room?: CopilotConversationRoom | null;
     enableRoomSummary?: boolean;
     isViewMode?: boolean;
     originProjectUuid?: string;
@@ -52,19 +56,34 @@ const props = withDefaults(
   {
     isConfigured: false,
     isLoadingConnection: false,
-    roomUuid: undefined,
+    room: undefined,
     enableRoomSummary: false,
     isViewMode: false,
     originProjectUuid: undefined,
   },
 );
 
-const roomUuidRef = computed(() => props.roomUuid);
+const originProjectUuidRef = toRef(props, 'originProjectUuid');
+const roomRef = toRef(props, 'room');
+const isConfiguredRef = toRef(props, 'isConfigured');
 
-const { messages, isLoading } = useCopilotHistory(roomUuidRef);
-const { listRef, bottomAnchorRef } = useAutoScroll(messages, {
-  isLoadingHistory: isLoading,
-});
+const { url: historyUrl, isLoading: isLoadingUrl } = useCopilotConversationUrl(
+  originProjectUuidRef,
+  roomRef,
+  isConfiguredRef,
+);
+
+const showHistoryButton = computed(
+  () => props.isConfigured && (isLoadingUrl.value || !!historyUrl.value),
+);
+
+function openHistory() {
+  if (!historyUrl.value) {
+    return;
+  }
+
+  window.open(historyUrl.value, '_blank', 'noopener,noreferrer');
+}
 </script>
 
 <style lang="scss" scoped>
@@ -78,6 +97,12 @@ const { listRef, bottomAnchorRef } = useAutoScroll(messages, {
   min-width: 0;
   overflow: hidden auto;
   padding-bottom: $unnnic-space-2;
+
+  &__view-button {
+    width: 100%;
+    margin-top: auto;
+    flex-shrink: 0;
+  }
 
   :deep(.desk-copilot-disclaimer) {
     margin-top: auto;
