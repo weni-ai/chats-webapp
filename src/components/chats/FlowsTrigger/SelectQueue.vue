@@ -8,7 +8,7 @@
       data-testid="select-queue-input"
       :options="queues"
       :disabled="isDisabled || isLoading"
-      :label="$t('select_queue')"
+      :label="$t('flows_trigger.select_queue')"
       :placeholder="$t('search_or_select')"
       returnObject
       clearable

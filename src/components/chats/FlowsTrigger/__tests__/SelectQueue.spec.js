@@ -39,6 +39,16 @@ describe('SelectQueue', () => {
     );
   });
 
+  it('shows the queue filter label as optional', () => {
+    const select = wrapper.findComponent('[data-testid="select-queue-input"]');
+
+    expect(select.props('label')).toBe(
+      wrapper.vm.$t('flows_trigger.select_queue'),
+    );
+    expect(select.props('label')).toContain('optional');
+    expect(select.props('clearable')).toBe(true);
+  });
+
   it('maps the profile queues into options using queue and queue_name', () => {
     const select = wrapper.findComponent('[data-testid="select-queue-input"]');
 
