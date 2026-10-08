@@ -144,6 +144,30 @@ describe('useCopilotConversationUrl', () => {
     expect(url.value).toBeUndefined();
   });
 
+  it('retries the linked project lookup after a failed request', async () => {
+    CopilotProjectService.getLinkedProject
+      .mockRejectedValueOnce(new Error('network'))
+      .mockResolvedValueOnce(linkedProject);
+
+    const first = useCopilotConversationUrl(
+      'origin-project',
+      { uuid: 'room-1', created_on: '2026-02-01T00:00:00Z' },
+      true,
+    );
+    await vi.waitFor(() => expect(first.isLoading.value).toBe(false));
+    expect(first.url.value).toBeUndefined();
+
+    const second = useCopilotConversationUrl(
+      'origin-project',
+      { uuid: 'room-1', created_on: '2026-02-01T00:00:00Z' },
+      true,
+    );
+    await vi.waitFor(() => expect(second.isLoading.value).toBe(false));
+
+    expect(CopilotProjectService.getLinkedProject).toHaveBeenCalledTimes(2);
+    expect(second.url.value).toContain('search=room-1');
+  });
+
   it('caches the linked project lookup by origin uuid', async () => {
     CopilotProjectService.getLinkedProject.mockResolvedValue(linkedProject);
 

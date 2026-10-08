@@ -47,7 +47,6 @@ async function resolveCopilotProjectUuid(
       linkedProjectUuidByOrigin.set(originProjectUuid, uuid);
       return uuid;
     } catch {
-      linkedProjectUuidByOrigin.set(originProjectUuid, null);
       return null;
     } finally {
       inflightByOrigin.delete(originProjectUuid);
