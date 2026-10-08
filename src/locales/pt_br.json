@@ -1095,7 +1095,8 @@
         "agent_name": "Nome do atendente",
         "agent_email": "Email do atendente"
       }
-    }
+    },
+    "select_queue": "Filtrar por fila (opcional)"
   },
   "quick_messages": {
     "title": "Mensagens rápidas",
